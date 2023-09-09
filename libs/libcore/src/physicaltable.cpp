@@ -666,11 +666,12 @@ void PhysicalTable::removeObject(BaseObject *obj)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
 
 			if(tab_obj)
+			{
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
+				tab_obj->unsetDependencies();
+			}
 			else
 				removeObject(obj->getName(true), ObjectType::Table);
-
-			obj->unsetDependencies();
 		}
 	}
 	catch(Exception &e)

@@ -163,8 +163,8 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return QApplication::translate("BaseObject",obj_type_names[enum_t(obj_type)].toStdString().c_str(),"", -1);
-	else
-		return "";
+
+	return "";
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
@@ -606,7 +606,8 @@ void BaseObject::setOwner(BaseObject *owner)
 	setCodeInvalidated(this->owner != owner);
 	this->owner=owner;
 
-	setDependency(owner);
+	if(owner)
+		setDependency(owner);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -619,7 +620,8 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace=tablespace;
 
-	setDependency(tablespace);
+	if(tablespace)
+		setDependency(tablespace);
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -632,7 +634,8 @@ void BaseObject::setCollation(BaseObject *collation)
 	setCodeInvalidated(this->collation != collation);
 	this->collation=collation;
 
-	setDependency(collation);
+	if(collation)
+		setDependency(collation);
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1219,10 +1222,6 @@ void BaseObject::setCodeInvalidated(bool value)
 		cached_names[RawName].clear();
 		cached_names[FmtName].clear();
 		cached_names[Signature].clear();
-
-		#warning "Define the best place to call the deps update method"
-		//object_deps.clear();
-		//updateDependencies();
 	}
 }
 
@@ -1470,9 +1469,6 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 
 std::vector<BaseObject*> BaseObject::getDependencies()
 {
-	//if(object_deps.empty())
-	//	updateDependencies();
-
 	return object_deps;
 }
 
@@ -1484,7 +1480,10 @@ std::vector<BaseObject*> BaseObject::getReferences()
 void BaseObject::setDependency(BaseObject* dep_obj)
 {
 	if(!dep_obj)
-		return;
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(obj_name == "table_c")
+		getName();
 
 	object_deps.push_back(dep_obj);
 	dep_obj->setReference(this);
@@ -1493,7 +1492,10 @@ void BaseObject::setDependency(BaseObject* dep_obj)
 void BaseObject::setReference(BaseObject *ref_obj)
 {
 	if(!ref_obj)
-		return;
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(obj_name == "table_c")
+		getName();
 
 	object_refs.push_back(ref_obj);
 }
@@ -1502,6 +1504,9 @@ void BaseObject::unsetReference(BaseObject *ref_obj)
 {
 	if(!ref_obj)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(obj_name == "table_c")
+		getName();
 
 	auto itr = std::find(object_refs.begin(), object_refs.end(), ref_obj);
 
@@ -1514,6 +1519,9 @@ void BaseObject::unsetDependency(BaseObject *dep_obj)
 	if(!dep_obj)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	if(obj_name == "table_c")
+		getName();
+
 	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
 
 	if(itr != object_deps.end())
@@ -1522,6 +1530,9 @@ void BaseObject::unsetDependency(BaseObject *dep_obj)
 
 void BaseObject::unsetDependencies()
 {
+	if(obj_name == "table_c")
+		getName();
+
 	for(auto &obj : object_deps)
 		obj->unsetReference(this);
 
@@ -1530,6 +1541,9 @@ void BaseObject::unsetDependencies()
 
 void BaseObject::unsetReferences()
 {
+	if(obj_name == "table_c")
+		getName();
+
 	for(auto &obj : object_refs)
 		obj->unsetDependency(this);
 
