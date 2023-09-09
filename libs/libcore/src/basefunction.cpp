@@ -77,6 +77,7 @@ void BaseFunction::addParameter(Parameter param)
 						ErrorCode::AsgDuplicatedParameterFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
+	setDependency(param.getType().getObject());
 	parameters.push_back(param);
 	createSignature();
 }
@@ -182,17 +183,18 @@ void BaseFunction::setSymbol(const QString &symbol)
 	this->symbol=symbol;
 }
 
-void BaseFunction::setLanguage(BaseObject *language)
+void BaseFunction::setLanguage(BaseObject *lang)
 {
 	//Raises an error if the language is not allocated
-	if(!language)
+	if(!lang)
 		throw Exception(ErrorCode::AsgNotAllocatedLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the language object is invalid
-	else if(language->getObjectType()!=ObjectType::Language)
+	else if(lang->getObjectType()!=ObjectType::Language)
 		throw Exception(ErrorCode::AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(this->language != language);
-	this->language=language;
+	setDependency(lang, this->language);
+	setCodeInvalidated(this->language != lang);
+	this->language=lang;
 }
 
 void BaseFunction::setSecurityType(SecurityType sec_type)
@@ -207,6 +209,7 @@ void BaseFunction::addTransformType(PgSqlType type)
 
 	if(!isTransformTypeExists(type))
 	{
+		setDependency(type.getObject());
 		transform_types.push_back(type);
 		setCodeInvalidated(true);
 	}
@@ -311,12 +314,18 @@ QString BaseFunction::getSymbol()
 
 void BaseFunction::removeParameters()
 {
+	for(auto &param : parameters)
+		unsetDependency(param.getType().getObject());
+
 	parameters.clear();
 	createSignature();
 }
 
 void BaseFunction::removeTransformTypes()
 {
+	for(auto &type : transform_types)
+		unsetDependency(type.getObject());
+
 	transform_types.clear();
 	setCodeInvalidated(true);
 }
@@ -328,19 +337,19 @@ bool BaseFunction::isTransformTypeExists(PgSqlType type)
 
 void BaseFunction::removeParameter(const QString &name, PgSqlType type)
 {
-	std::vector<Parameter>::iterator itr,itr_end;
+	auto itr = parameters.begin(),
+			itr_end=parameters.end();
 
-	itr=parameters.begin();
-	itr_end=parameters.end();
-
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
 		//Compares the iterator name and type with the passed name an type
 		if(itr->getName()==name && itr->getType()==(~type))
 		{
+			unsetDependency(itr->getType().getObject());
 			parameters.erase(itr);
 			break;
 		}
+
 		itr++;
 	}
 
@@ -354,8 +363,9 @@ void BaseFunction::removeParameter(unsigned param_idx)
 	if(param_idx>=parameters.size())
 		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	std::vector<Parameter>::iterator itr;
-	itr=parameters.begin()+param_idx;
+	auto itr = parameters.begin()+param_idx;
+
+	unsetDependency(itr->getType().getObject());
 	parameters.erase(itr);
 
 	createSignature();

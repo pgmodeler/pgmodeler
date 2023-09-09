@@ -97,8 +97,8 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 void Aggregate::setStateType(PgSqlType st_type)
 {
-	BaseObject *curr_st_type_ref = state_type.getUnderlyingObject(),
-			*new_st_type_ref = st_type.getUnderlyingObject();
+	BaseObject *curr_st_type_ref = state_type.getObject(),
+			*new_st_type_ref = st_type.getObject();
 
 	setDependency(curr_st_type_ref, new_st_type_ref);
 	st_type.reset();
@@ -164,7 +164,7 @@ void Aggregate::setTypesAttribute(SchemaParser::CodeType def_type)
 
 void Aggregate::addDataType(PgSqlType type)
 {
-	BaseObject *usr_type_ref = type.getUnderlyingObject();
+	BaseObject *usr_type_ref = type.getObject();
 
 	type.reset();
 	setDependency(usr_type_ref);
@@ -181,7 +181,7 @@ void Aggregate::removeDataType(unsigned type_idx)
 	//Removes the type at the specified position
 	auto type_itr = data_types.begin() + type_idx;
 	PgSqlType type = *type_itr;
-	BaseObject *usr_type_ref = type.getUnderlyingObject();
+	BaseObject *usr_type_ref = type.getObject();
 
 	unsetDependency(usr_type_ref);
 	data_types.erase(type_itr);
@@ -191,7 +191,7 @@ void Aggregate::removeDataType(unsigned type_idx)
 void Aggregate::removeDataTypes()
 {
 	for(auto &type : data_types)
-		unsetDependency(type.getUnderlyingObject());
+		unsetDependency(type.getObject());
 
 	data_types.clear();
 	setCodeInvalidated(true);

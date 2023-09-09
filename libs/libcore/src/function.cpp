@@ -73,8 +73,10 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 
 	Parameter p;
 	p.setName(name);
-	p.setType(type);
+	p.setType(type);	
 	ret_table_columns.push_back(p);
+
+	setDependency(type.getObject());
 	setCodeInvalidated(true);
 }
 
@@ -110,8 +112,9 @@ void Function::setRowAmount(unsigned row_amount)
 void Function::setReturnType(PgSqlType type)
 {
 	type.reset();
+	setDependency(type.getObject(), return_type.getObject());
 	setCodeInvalidated(return_type != type);
-	return_type=type;
+	return_type = type;
 	ret_table_columns.clear();
 }
 
@@ -218,17 +221,21 @@ unsigned Function::getRowAmount()
 
 void Function::removeReturnedTableColumns()
 {
+	for(auto &param : ret_table_columns)
+		unsetDependency(param.getType().getObject());
+
 	ret_table_columns.clear();
 	setCodeInvalidated(true);
 }
 
 void Function::removeReturnedTableColumn(unsigned column_idx)
 {
-	if(column_idx>=ret_table_columns.size())
+	if(column_idx >= ret_table_columns.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	std::vector<Parameter>::iterator itr;
-	itr=ret_table_columns.begin()+column_idx;
+	auto itr = ret_table_columns.begin() + column_idx;
+
+	unsetDependency(itr->getType().getObject());
 	ret_table_columns.erase(itr);
 	setCodeInvalidated(true);
 }

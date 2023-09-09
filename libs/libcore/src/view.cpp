@@ -901,7 +901,7 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 	itr=obj_list->begin() + obj_idx;
 
-	(*itr)->unsetDependencies();
+	//(*itr)->unsetDependencies();
 
 	(*itr)->setParentTable(nullptr);
 	obj_list->erase(itr);

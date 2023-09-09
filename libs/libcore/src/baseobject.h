@@ -105,6 +105,16 @@ class __libcore BaseObject {
 				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
 				object_deps;
 
+		//! \brief Register an object as a reference to the "this" object
+		virtual void setReference(BaseObject *ref_obj);
+
+		//! \brief Unregister an object as a reference to the "this" object
+		virtual void unsetReference(BaseObject *ref_obj);
+
+		void unsetDependencies();
+
+		void unsetReferences();
+
 	protected:
 		SchemaParser schparser;
 
@@ -272,19 +282,16 @@ class __libcore BaseObject {
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
+		/*! \brief Defines the dep_obj as a dependency of the "this" object.
+		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
+		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
 		virtual void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
 
-		virtual void setReference(BaseObject *ref_obj);
-
-		virtual void unsetReference(BaseObject *ref_obj);
-
+		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
+		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
 		virtual void unsetDependency(BaseObject *dep_obj);
 
 	public:
-		void unsetDependencies();
-
-		void unsetReferences();
-
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
 

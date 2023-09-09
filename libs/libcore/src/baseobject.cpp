@@ -591,8 +591,8 @@ void BaseObject::setSchema(BaseObject *schema)
 		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->schema != schema);
-	this->schema=schema;
-	setDependency(schema);
+	this->schema = schema;
+	setDependency(schema, this->schema);
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -603,8 +603,8 @@ void BaseObject::setOwner(BaseObject *owner)
 		throw Exception(ErrorCode::AsgRoleObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->owner != owner);
-	this->owner=owner;
-	setDependency(owner);
+	this->owner = owner;
+	setDependency(owner, this->owner);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -615,8 +615,8 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 		throw Exception(ErrorCode::AsgTablespaceInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->tablespace != tablespace);
-	this->tablespace=tablespace;
-	setDependency(tablespace);
+	this->tablespace = tablespace;
+	setDependency(tablespace, this->tablespace);
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -627,8 +627,8 @@ void BaseObject::setCollation(BaseObject *collation)
 		throw Exception(ErrorCode::AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->collation != collation);
-	this->collation=collation;
-	setDependency(collation);
+	this->collation = collation;
+	setDependency(collation, this->collation);
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1510,14 +1510,14 @@ void BaseObject::unsetDependency(BaseObject *dep_obj)
 	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
 
 	if(itr != object_deps.end())
+	{
+		dep_obj->unsetReference(this);
 		object_deps.erase(itr);
+	}
 }
 
 void BaseObject::unsetDependencies()
 {
-	if(obj_name == "table_c")
-		getName();
-
 	for(auto &obj : object_deps)
 		obj->unsetReference(this);
 
@@ -1526,9 +1526,6 @@ void BaseObject::unsetDependencies()
 
 void BaseObject::unsetReferences()
 {
-	if(obj_name == "table_c")
-		getName();
-
 	for(auto &obj : object_refs)
 		obj->unsetDependency(this);
 

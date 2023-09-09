@@ -350,7 +350,7 @@ void *PgSqlType::getUserTypeReference()
 	return nullptr;
 }
 
-BaseObject *PgSqlType::getUnderlyingObject()
+BaseObject *PgSqlType::getObject()
 {
 	if(this->isUserType())
 	{

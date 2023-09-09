@@ -288,8 +288,8 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		 [[deprecated]]
 		void *getUserTypeReference();
 
-		//! \brief Returns the reference to the underlying database model object that is used as user-defined type
-		BaseObject *getUnderlyingObject();
+		//! \brief Returns the reference to the database model object that is used as user-defined type
+		BaseObject *getObject();
 
 		//! \brief Returns the configuration id for the user defined type
 		unsigned getUserTypeConfig();
