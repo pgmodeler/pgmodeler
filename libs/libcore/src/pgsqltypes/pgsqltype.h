@@ -70,18 +70,18 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 	protected:
 		//! \brief Adds a new reference to the user defined type
-		static void addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf);
+		static void addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf);
 
 		//! \brief Removes a reference to the user defined type
-		static void removeUserType(const QString &type_name, void *ptype);
+		static void removeUserType(const QString &type_name, BaseObject *ptype);
 
 		//! \brief Renames a user defined type
-		static void renameUserType(const QString &type_name, void *ptype, const QString &new_name);
+		static void renameUserType(const QString &type_name, BaseObject *ptype, const QString &new_name);
 
 		/*! \brief Removes all registered types for the specified database model. Caution:
 		This method must be called only when destroying the model. Calling it in any other
 		situation can cause unexpected results */
-		static void removeUserTypes(void *pmodel);
+		static void removeUserTypes(DatabaseModel *pmodel);
 
 		//! \brief Returns the name of the type using its id
 		static QString getUserTypeName(unsigned type_id);
@@ -92,7 +92,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		/*! \brief Sets the type based on the object (user defined type) address. This
 		 * method searches exclusively on the user_types vector */
-		unsigned setUserType(void *ptype);
+		unsigned setUserType(BaseObject *ptype);
 
 		/*! \brief Sets the type based on the id. This version also looks into the user_types vector
 		 * in order to check if the type id being assigend belongs to an user defined type */
@@ -137,7 +137,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		PgSqlType(const QString &type_name);
 
 		//! \brief Creates a type from a pointer that references an user defined type (Type class)
-		PgSqlType(void *ptype);
+		PgSqlType(BaseObject *ptype);
 
 		/*! \brief Creates a type from a type name and a series of data like
 		 * dimension, length, precision, timezone option, interval type and spatial type.
@@ -152,7 +152,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		 * and a series of data like dimension, length, precision, timezone option, interval type and spatial type.
 		 * All parameters are optional except ptype and dimension which can be used to quickly create
 		 * array of a certain type. */
-		PgSqlType(void *ptype, unsigned dimension,
+		PgSqlType(BaseObject *ptype, unsigned dimension,
 							unsigned length = 0, int precision = -1,
 							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
 							SpatialType spatial_type = SpatialType());
@@ -172,15 +172,15 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		try to return the correct type. The method will raise errors if the type could not be configured */
 		static PgSqlType parseString(const QString &str);
 
-		static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=nullptr);
+		static unsigned getUserTypeIndex(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel = nullptr);
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
 		/*! \brief Returns if the type is registered in the list of valid types (built-in one and user defined).
 		The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
-		static bool isRegistered(const QString &type, void *pmodel=nullptr);
+		static bool isRegistered(const QString &type, DatabaseModel *pmodel = nullptr);
 
-		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
-		static void getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(QStringList &type_list, DatabaseModel *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(std::vector<BaseObject *> &ptypes, DatabaseModel *pmodel, unsigned inc_usr_types);
 		static QStringList getTypes(bool oids = true, bool pseudos = true);
 
 		void setDimension(unsigned dim);
@@ -264,7 +264,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		//! \brief Returns the complet SQL definition for the type (same as calling getSQLTypeName(true))
 		QString operator * ();
 
-		unsigned operator << (void *ptype);
+		unsigned operator << (BaseObject *ptype);
 		unsigned operator = (unsigned type_id) override;
 		unsigned operator = (const QString &type_name) override;
 
@@ -278,14 +278,18 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool operator == (const QString &type_name);
 
 		//! \brief Compares the index of the "this" with the provided type reference. If an exact match is needed use isExactTo()
-		bool operator == (void *ptype);
+		bool operator == (BaseObject *ptype);
 
 		bool operator != (const QString &type_name);
 		bool operator != (PgSqlType type);
 		bool operator != (unsigned type_idx) override;
 
 		//! \brief Returns the pointer to the user defined type which denotes the the pgsql type
+		 [[deprecated]]
 		void *getUserTypeReference();
+
+		//! \brief Returns the reference to the underlying database model object that is used as user-defined type
+		BaseObject *getUnderlyingObject();
 
 		//! \brief Returns the configuration id for the user defined type
 		unsigned getUserTypeConfig();
