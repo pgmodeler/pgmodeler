@@ -66,19 +66,20 @@ void Column::setName(const QString &name)
 	}
 }
 
-void Column::setType(PgSqlType type)
+void Column::setType(PgSqlType tp)
 {
 	//An error is raised if the column receive a pseudo-type as data type.
-	if(type.isPseudoType())
+	if(tp.isPseudoType())
 		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(this->identity_type != IdentityType::Null && !type.isIntegerType())
+	else if(this->identity_type != IdentityType::Null && !tp.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
-	setCodeInvalidated(this->type != type);
-	this->type=type;
+	setDependency(tp.getObject(), type.getObject());
+	setCodeInvalidated(this->type != tp);
+	this->type=tp;
 }
 
 void Column::setIdentityType(IdentityType id_type)
@@ -202,8 +203,9 @@ void Column::setSequence(BaseObject *seq)
 		generated = false;
 	}
 
+	setDependency(seq, sequence);
 	setCodeInvalidated(sequence != seq);
-	sequence=seq;
+	sequence = seq;
 }
 
 BaseObject *Column::getSequence()
