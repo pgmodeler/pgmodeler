@@ -165,7 +165,8 @@ class __libcore BaseFunction: public BaseObject {
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
 
-		virtual void updateDependencies() override;
+		virtual void updateDependencies() = 0 ;
+		void updateDependencies(const std::vector<BaseObject *> &deps);
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;

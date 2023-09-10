@@ -1551,13 +1551,13 @@ void BaseObject::updateDependencies()
 
 void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
 {
-	for(auto &obj : { schema, tablespace, owner, collation })
-	{
-		if(!obj)
-			continue;
-	}
+	std::vector<BaseObject *> aux_deps = {
+		schema, tablespace, owner, collation
+	};
 
-	for(auto &obj : dep_objs)
+	aux_deps.insert(aux_deps.end(), dep_objs.begin(), dep_objs.end());
+
+	for(auto &obj : aux_deps)
 	{
 		if(!obj)
 			continue;

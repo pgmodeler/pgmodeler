@@ -839,6 +839,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 			else
 				obj_list->insert(obj_list->begin() + obj_idx, tab_obj);
 
+			tab_obj->updateDependencies();
 			setCodeInvalidated(true);
 		}
 		catch(Exception &e)
@@ -901,9 +902,9 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 	itr=obj_list->begin() + obj_idx;
 
-	//(*itr)->unsetDependencies();
-
+	(*itr)->clearAllDepsRefs();
 	(*itr)->setParentTable(nullptr);
+
 	obj_list->erase(itr);
 	setCodeInvalidated(true);
 }

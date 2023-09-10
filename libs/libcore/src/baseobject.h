@@ -111,9 +111,14 @@ class __libcore BaseObject {
 		//! \brief Unregister an object as a reference to the "this" object
 		virtual void unsetReference(BaseObject *ref_obj);
 
-		//void unsetDependencies();
+		/*! \brief Defines the dep_obj as a dependency of the "this" object.
+		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
+		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
+		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
 
-		//void unsetReferences();
+		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
+		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
+		void unsetDependency(BaseObject *dep_obj);
 
 	protected:
 		SchemaParser schparser;
@@ -281,15 +286,6 @@ class __libcore BaseObject {
 		static QString getAlterCode(QString sch_name, attribs_map &attribs, bool ignore_ukn_attribs=false, bool ignore_empty_attribs=false);
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
-
-		/*! \brief Defines the dep_obj as a dependency of the "this" object.
-		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
-		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
-		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
-
-		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
-		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
-		void unsetDependency(BaseObject *dep_obj);
 
 		/*! \brief This version, called inside updateDependencies(), just run through the provided
 		 *  object list and unsets the dependency link between the "this" object and the items

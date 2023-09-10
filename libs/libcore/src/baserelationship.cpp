@@ -606,6 +606,11 @@ QString BaseRelationship::getRelationshipTypeName()
 	return getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View);
 }
 
+void BaseRelationship::updateDependencies()
+{
+	BaseObject::updateDependencies({ src_table, dst_table });
+}
+
 void BaseRelationship::setCodeInvalidated(bool value)
 {
 	if(src_table)

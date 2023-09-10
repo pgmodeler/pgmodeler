@@ -804,25 +804,25 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Returns all the objects that the object depends on. The boolean paramenter is used to include the
 		 indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
 		 the informed object, e.g., a schema linked to a table that is referenced in a view */
-		[[deprecated]]
+		[[deprecated("To be replaced by BaseObject::getDependecies")]]
 		void getObjectDependecies(BaseObject *objeto, std::vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
 		/*! \brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
 		additionally its children objects (for schemas, tables or views) as well permissions.
 		This method is less efficient than the non recursive version and is used only as an auxiliary operation for
 		getCreationOrder(BaseObject *object) */
-		[[deprecated]]
+		[[deprecated("To be replaced by BaseObject::getDependecies")]]
 		void __getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs);
 
 		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
 		 generally applied when excluding objects, this means that the method will stop the search when the first
 		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
-		[[deprecated]]
+		[[deprecated("To be replaced by BaseObject::getReferences")]]
 		void getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
 
 		/*! \brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
 		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
-		[[deprecated]]
+		[[deprecated("To be replaced by BaseObject::getReferences")]]
 		void __getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclude_perms=false);
 
 		/*! \brief Marks the graphical objects of the provided types as modified forcing their redraw. User can specify only a set of

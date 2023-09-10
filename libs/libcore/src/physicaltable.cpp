@@ -465,6 +465,8 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					if(obj_type==ObjectType::Constraint)
 						dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
 				}
+
+				tab_obj->updateDependencies();
 			}
 			else if(isPhysicalTable(obj_type))
 			{
@@ -668,7 +670,6 @@ void PhysicalTable::removeObject(BaseObject *obj)
 			if(tab_obj)
 			{
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
-				//tab_obj->unsetDependencies();
 			}
 			else
 				removeObject(obj->getName(true), ObjectType::Table);
@@ -727,6 +728,8 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 			if(constr && constr->getConstraintType()==ConstraintType::PrimaryKey)
 				dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
+
+			tab_obj->clearAllDepsRefs();
 		}
 		else
 		{
@@ -760,6 +763,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 								ErrorCode::RemColumnRefByPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
+			column->clearDependencies();
 			column->setParentTable(nullptr);
 			columns.erase(itr);
 		}

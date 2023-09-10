@@ -336,7 +336,7 @@ void Function::updateDependencies()
 	for(auto &param : ret_table_columns)
 		deps.push_back(param.getType().getObject());
 
-	BaseFunction::updateDependencies();
+	BaseFunction::updateDependencies(deps);
 }
 
 void Function::configureSearchAttributes()

@@ -3414,6 +3414,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			validateRelationships();
 		}
 
+		this->updateDependencies();
 		this->setInvalidated(false);
 		emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
 

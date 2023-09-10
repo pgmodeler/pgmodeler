@@ -404,15 +404,17 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	this->setCodeInvalidated(true);
 }
 
-void BaseFunction::updateDependencies()
+void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps)
 {
-	std::vector<BaseObject *> deps = { language };
+	std::vector<BaseObject *> aux_deps = { language };
+
+	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
 
 	for(auto &param : parameters)
-		deps.push_back(param.getType().getObject());
+		aux_deps.push_back(param.getType().getObject());
 
 	for(auto &type : transform_types)
-		deps.push_back(type.getObject());
+		aux_deps.push_back(type.getObject());
 
 	BaseObject::updateDependencies(deps);
 }

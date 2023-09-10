@@ -186,6 +186,8 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		QString getRelationshipTypeName();
 
+		virtual void updateDependencies() override;
+
 		friend class DatabaseModel;
 		friend class RelationshipWidget;
 		friend class ModelWidget;

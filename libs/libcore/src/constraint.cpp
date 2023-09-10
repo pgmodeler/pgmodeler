@@ -264,7 +264,7 @@ void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool 
 
 void Constraint::setReferencedTable(BaseTable *ref_tab)
 {
-	setDependency(ref_tab, this->ref_table);
+	//setDependency(ref_tab, this->ref_table);
 	this->ref_table = ref_tab;
 }
 
