@@ -77,7 +77,7 @@ void BaseFunction::addParameter(Parameter param)
 						ErrorCode::AsgDuplicatedParameterFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
-	setDependency(param.getType().getObject());
+	//setDependency(param.getType().getObject());
 	parameters.push_back(param);
 	createSignature();
 }
@@ -192,7 +192,7 @@ void BaseFunction::setLanguage(BaseObject *lang)
 	else if(lang->getObjectType()!=ObjectType::Language)
 		throw Exception(ErrorCode::AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setDependency(lang, this->language);
+	//setDependency(lang, this->language);
 	setCodeInvalidated(this->language != lang);
 	this->language=lang;
 }
@@ -209,7 +209,7 @@ void BaseFunction::addTransformType(PgSqlType type)
 
 	if(!isTransformTypeExists(type))
 	{
-		setDependency(type.getObject());
+		//setDependency(type.getObject());
 		transform_types.push_back(type);
 		setCodeInvalidated(true);
 	}
@@ -314,8 +314,8 @@ QString BaseFunction::getSymbol()
 
 void BaseFunction::removeParameters()
 {
-	for(auto &param : parameters)
-		unsetDependency(param.getType().getObject());
+	//for(auto &param : parameters)
+	//	unsetDependency(param.getType().getObject());
 
 	parameters.clear();
 	createSignature();
@@ -323,8 +323,8 @@ void BaseFunction::removeParameters()
 
 void BaseFunction::removeTransformTypes()
 {
-	for(auto &type : transform_types)
-		unsetDependency(type.getObject());
+	//for(auto &type : transform_types)
+	//	unsetDependency(type.getObject());
 
 	transform_types.clear();
 	setCodeInvalidated(true);
@@ -345,7 +345,7 @@ void BaseFunction::removeParameter(const QString &name, PgSqlType type)
 		//Compares the iterator name and type with the passed name an type
 		if(itr->getName()==name && itr->getType()==(~type))
 		{
-			unsetDependency(itr->getType().getObject());
+			//unsetDependency(itr->getType().getObject());
 			parameters.erase(itr);
 			break;
 		}
@@ -365,7 +365,7 @@ void BaseFunction::removeParameter(unsigned param_idx)
 
 	auto itr = parameters.begin()+param_idx;
 
-	unsetDependency(itr->getType().getObject());
+	//unsetDependency(itr->getType().getObject());
 	parameters.erase(itr);
 
 	createSignature();
@@ -402,6 +402,19 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
 	signature=this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
 	this->setCodeInvalidated(true);
+}
+
+void BaseFunction::updateDependencies()
+{
+	std::vector<BaseObject *> deps = { language };
+
+	for(auto &param : parameters)
+		deps.push_back(param.getType().getObject());
+
+	for(auto &type : transform_types)
+		deps.push_back(type.getObject());
+
+	BaseObject::updateDependencies(deps);
 }
 
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)

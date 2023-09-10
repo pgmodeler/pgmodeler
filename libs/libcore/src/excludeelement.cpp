@@ -39,3 +39,19 @@ bool ExcludeElement::operator == (ExcludeElement &elem)
 	return (this->_operator==elem._operator &&
 					*(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
 }
+
+/* void ExcludeElement::setDependencies(BaseObject *p_obj)
+{
+	Element::setDependencies(p_obj);
+
+	if(parent_obj && _operator)
+		parent_obj->setDependency(_operator);
+}
+
+void ExcludeElement::unsetDependencies()
+{
+	Element::unsetDependencies();
+
+	if(parent_obj && _operator)
+		parent_obj->unsetDependency(_operator);
+} */

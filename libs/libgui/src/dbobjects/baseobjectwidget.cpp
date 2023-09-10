@@ -862,6 +862,10 @@ void BaseObjectWidget::finishConfiguration()
 					prev_schema->setModified(true);
 			}
 
+			#warning "Updating the object depencencies after closing the editing model"
+			object->clearDependencies();
+			object->updateDependencies();
+
 			emit s_objectManipulated();
 			emit s_closeRequested();
 		}

@@ -181,7 +181,7 @@ void Constraint::addColumn(Column *column, ColumnsId cols_id)
 				setColumnsNotNull(true);
 			}
 
-			setDependency(column);
+			//setDependency(column);
 			setCodeInvalidated(true);
 		}
 	}
@@ -191,12 +191,7 @@ void Constraint::addColumns(const std::vector<Column *> &cols, ColumnsId cols_id
 {
 	try
 	{
-		/* if(cols_id == ReferencedCols)
-			ref_columns.clear();
-		else
-			columns.clear(); */
-
-		removeColumns(cols_id);
+		removeColumns();
 
 		for(auto &col : cols)
 			addColumn(col, cols_id);
@@ -376,7 +371,7 @@ unsigned Constraint::getColumnCount(ColumnsId cols_id)
 	return columns.size();
 }
 
-void Constraint::removeColumns(ColumnsId cols_id)
+/* void Constraint::removeColumns(ColumnsId cols_id)
 {
 	auto *cols_vect = (cols_id == SourceCols ? &columns : &ref_columns);
 
@@ -384,13 +379,15 @@ void Constraint::removeColumns(ColumnsId cols_id)
 		unsetDependency(col);
 
 	cols_vect->clear();
-}
+} */
 
 void Constraint::removeColumns()
 {
 	setColumnsNotNull(false);
-	removeColumns(SourceCols);
-	removeColumns(ReferencedCols);
+	columns.clear();
+	ref_columns.clear();
+	//removeColumns(SourceCols);
+	//removeColumns(ReferencedCols);
 	setCodeInvalidated(true);
 }
 
@@ -421,7 +418,7 @@ void Constraint::removeColumn(const QString &name, ColumnsId cols_id)
 
 			//Remove its iterator from the list
 			cols->erase(itr);
-			unsetDependency(col);
+			//unsetDependency(col);
 			setCodeInvalidated(true);
 			break;
 		}
@@ -537,19 +534,22 @@ std::vector<ExcludeElement> Constraint::getExcludeElements()
 
 void Constraint::addExcludeElements(std::vector<ExcludeElement> &elems)
 {
-	std::vector<ExcludeElement> elems_bkp=excl_elements;
+	std::vector<ExcludeElement> elems_bkp = excl_elements;
 
 	try
 	{
-		excl_elements.clear();
+		removeExcludeElements();
 
-		#warning "Set dependency to all objects inside exclude elem."
-		for(unsigned i=0; i < elems.size(); i++)
-			addExcludeElement(elems[i]);
+		for(auto &elem : elems)
+			addExcludeElement(elem);
 	}
 	catch(Exception &e)
 	{
-		excl_elements = elems_bkp;
+		removeExcludeElements();
+
+		for(auto &elem : elems_bkp)
+			addExcludeElement(elem);
+
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -562,88 +562,18 @@ void Constraint::addExcludeElement(ExcludeElement elem)
 	if(elem.getExpression().isEmpty() && !elem.getColumn())
 		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	#warning "Set dependency to all objects inside exclude elem."
+	//#warning "Set dependency to all objects inside exclude elem."
+	//elem.setDependencies(this);
 	excl_elements.push_back(elem);
-	setCodeInvalidated(true);
-}
-
-void Constraint::addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
-{
-	try
-	{
-		ExcludeElement elem;
-
-		//Raises an error if the expression is empty
-		if(expr.isEmpty())
-			throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Configures the element
-		elem.setExpression(expr);
-		elem.setOperatorClass(op_class);
-		elem.setOperator(oper);
-		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
-
-		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		#warning "Set dependency to all objects inside exclude elem."
-		excl_elements.push_back(elem);
-		setCodeInvalidated(true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
-{
-	try
-	{
-		ExcludeElement elem;
-
-		//Case the column is not allocated raises an error
-		if(!column)
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
-							.arg(this->getName())
-							.arg(this->getTypeName()),
-							ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Configures the element
-		elem.setColumn(column);
-		elem.setOperatorClass(op_class);
-		elem.setOperator(oper);
-		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
-
-		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		#warning "Set dependency to all objects inside exclude elem."
-		excl_elements.push_back(elem);
-		setCodeInvalidated(true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void Constraint::removeExcludeElement(unsigned elem_idx)
-{
-	if(elem_idx >= excl_elements.size())
-		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	excl_elements.erase(excl_elements.begin() + elem_idx);
 	setCodeInvalidated(true);
 }
 
 void Constraint::removeExcludeElements()
 {
-	#warning "Unset dependency to all objects inside exclude elem."
+	//#warning "Unset dependency to all objects inside exclude elem."
+	//for(auto &elem : excl_elements)
+	//	elem.unsetDependencies();
+
 	excl_elements.clear();
 	setCodeInvalidated(true);
 }

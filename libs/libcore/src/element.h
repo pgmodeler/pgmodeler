@@ -30,7 +30,7 @@
 #include "collation.h"
 
 class __libcore Element {
-	private:
+	protected:
 		/*! \brief Column referenced by the  element. This attribute is
 		 mutually exclusive with the expression attribute and simple column */
 		Column *column;
@@ -56,10 +56,15 @@ class __libcore Element {
 		//! \brief Compares the attributes of provided element against this returning true/false if the match or not
 		bool isEqualsTo(Element &elem);
 
-	protected:
+		BaseObject *parent_obj;
+
 		SchemaParser schparser;
 
 		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
+
+		void setDependencies(BaseObject *p_obj);
+
+		void unsetDependencies();
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element

@@ -30,6 +30,11 @@ class __libcore ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 
+	protected:
+		//void setDependencies(BaseObject *p_obj);
+
+		//void unsetDependencies();
+
 	public:
 		ExcludeElement();
 
@@ -44,6 +49,8 @@ class __libcore ExcludeElement: public Element {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		bool operator == (ExcludeElement &elem);
+
+		//friend class Constraint;
 };
 
 /* Registering the ExcludeElement class as a Qt MetaType in order to make

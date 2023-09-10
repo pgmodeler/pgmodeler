@@ -165,6 +165,8 @@ class __libcore BaseFunction: public BaseObject {
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
 
+		virtual void updateDependencies() override;
+
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;
 		virtual QString getAlterCode(BaseObject *object) = 0;

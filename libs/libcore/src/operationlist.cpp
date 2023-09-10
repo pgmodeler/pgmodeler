@@ -634,9 +634,6 @@ void OperationList::redoOperation()
 		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
-		//unsigned chain_size=0, pos=0;
-
-		//chain_size=getChainSize();
 
 		do
 		{
@@ -659,9 +656,6 @@ void OperationList::redoOperation()
 
 			try
 			{
-				//if(chain_size > 0 && operation->isOperationValid())
-				//	pos++;
-
 				//Executes the redo operation (second argument as 'true')
 				executeOperation(operation, true);
 			}
@@ -768,19 +762,28 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(aux_obj)
 				oper->setXMLDefinition(orig_obj->getSourceCode(SchemaParser::XmlCode));
 
-
 			//For pk constraint, before restore the previous configuration, uncheck the not-null flag of the source columns
 			if(obj_type==ObjectType::Constraint)
 				dynamic_cast<Constraint *>(orig_obj)->setColumnsNotNull(false);
 
 			/* The original object (obtained from the table, relationship or model) will have its
-		previous values restored with the existing copy on the pool. After restoring the object
-		on the pool will have the same attributes as the object before being restored
-		to enable redo operations */
+			 * previous values restored with the existing copy on the pool. After restoring the object
+			 * on the pool will have the same attributes as the object before being restored
+			 * to enable redo operations */
+
+			/* When executing a ObjModified operation, we nee first to clear the original
+			 * object's dependencies to update them further */
+			if(op_type == Operation::ObjModified)
+				orig_obj->clearDependencies();
+
 			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
 			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
 			CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
 			object=orig_obj;
+
+			// Updating the original object dependencies after restoring the previous state
+			if(op_type != Operation::ObjMoved)
+				orig_obj->updateDependencies();
 
 			if(aux_obj)
 				CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
@@ -795,7 +798,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			the existing pool object will be inserted into table or in your relationship
 			on its original index */
 		else if((op_type==Operation::ObjRemoved && !redo) ||
-				(op_type==Operation::ObjCreated && redo))
+						(op_type==Operation::ObjCreated && redo))
 		{
 			if(aux_obj)
 				CoreUtilsNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);

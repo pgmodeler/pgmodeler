@@ -49,7 +49,7 @@ void BaseTable::resetCurrentPages()
 
 void BaseTable::setTag(Tag *tag)
 {
-	setDependency(tag, this->tag);
+	//setDependency(tag, this->tag);
 	setCodeInvalidated(this->tag != tag);
 	this->tag=tag;
 }

@@ -20,6 +20,7 @@
 
 Element::Element()
 {
+	parent_obj = nullptr;
 	column=nullptr;
 	operator_class=nullptr;
 	sorting_attibs[NullsFirst]=false;
@@ -137,6 +138,34 @@ void Element::configureAttributes(attribs_map &attributes, SchemaParser::CodeTyp
 			attributes[Attributes::OpClass]=operator_class->getSourceCode(def_type, true);
 	}
 }
+
+/* void Element::setDependencies(BaseObject *p_obj)
+{
+	Element::unsetDependencies();
+
+	if(!p_obj)
+		return;
+
+	parent_obj = p_obj;
+
+	if(operator_class)
+		parent_obj->setDependency(operator_class);
+
+	if(column)
+		parent_obj->setDependency(column);
+}
+
+void Element::unsetDependencies()
+{
+	if(!parent_obj)
+		return;
+
+	if(operator_class)
+		parent_obj->unsetDependency(operator_class);
+
+	if(column)
+		parent_obj->unsetDependency(column);
+} */
 
 bool Element::isEqualsTo(Element &elem)
 {

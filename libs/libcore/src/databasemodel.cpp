@@ -447,6 +447,9 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 			object->getSourceCode(SchemaParser::XmlCode);
 		else
 			object->getSourceCode(SchemaParser::SqlCode);
+
+		//#warning "Updating objects deps after adding to model"
+		object->updateDependencies();
 	}
 	catch(Exception &e)
 	{
@@ -542,7 +545,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 		}
 
 		#warning "Clears up the dependencies/references of the object being removed"
-		object->unsetDependencies();
+		object->clearAllDepsRefs();
 
 		object->setDatabase(nullptr);
 		emit s_objectRemoved(object);

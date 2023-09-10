@@ -76,7 +76,7 @@ void Language::setFunction(Function *func, FunctionId func_id)
 				 func->getParameter(0).getType() == "internal" &&
 				 func->getLanguage()->getName().toLower() == DefaultLanguages::C) )))
 	{
-		setDependency(func, functions[func_id]);
+		//setDependency(func, functions[func_id]);
 		setCodeInvalidated(functions[func_id] != func);
 		this->functions[func_id]=func;
 	}

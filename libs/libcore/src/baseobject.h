@@ -111,9 +111,9 @@ class __libcore BaseObject {
 		//! \brief Unregister an object as a reference to the "this" object
 		virtual void unsetReference(BaseObject *ref_obj);
 
-		void unsetDependencies();
+		//void unsetDependencies();
 
-		void unsetReferences();
+		//void unsetReferences();
 
 	protected:
 		SchemaParser schparser;
@@ -285,13 +285,20 @@ class __libcore BaseObject {
 		/*! \brief Defines the dep_obj as a dependency of the "this" object.
 		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
 		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
-		virtual void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
+		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
 
 		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
 		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
-		virtual void unsetDependency(BaseObject *dep_obj);
+		void unsetDependency(BaseObject *dep_obj);
 
-	public:
+		/*! \brief This version, called inside updateDependencies(), just run through the provided
+		 *  object list and unsets the dependency link between the "this" object and the items
+		 *  ih the list. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		void updateDependencies(const std::vector<BaseObject *> &dep_objs);
+
+		public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
 
@@ -585,6 +592,21 @@ class __libcore BaseObject {
 		static QString getSearchAttributeI18N(const QString &search_attr);
 
 		static QStringList getSearchAttributesNames();
+
+		//! \brief Unset all dependecies at once
+		void clearDependencies();
+
+		//! \brief Unset all dependecies at once
+		void clearReferences();
+
+		//! \brief Clears both dependencies and references
+		void clearAllDepsRefs();
+
+		/*! \brief Updates the dependencies list based upon the current relationship between
+		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		virtual void updateDependencies();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

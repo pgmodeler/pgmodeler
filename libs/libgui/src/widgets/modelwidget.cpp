@@ -2334,7 +2334,11 @@ void ModelWidget::moveToSchema()
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
+				#warning "Updating dependencies after setting up a new schema via quick actions"
+				obj->clearDependencies();
 				obj->setSchema(schema);
+				obj->updateDependencies();
+
 				obj_graph=dynamic_cast<BaseGraphicObject *>(obj);
 
 				//If the object is a graphical one, move it to a position near to the new schema box
@@ -2419,7 +2423,10 @@ void ModelWidget::changeOwner()
 				if(obj->getObjectType()!=ObjectType::Database)
 					op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
+				#warning "Update dependencies after changing the owner via quick actions"
+				obj->clearDependencies();
 				obj->setOwner(owner);
+				obj->updateDependencies();
 			}
 		}
 
@@ -2453,7 +2460,11 @@ void ModelWidget::setTag()
 			if(tab)
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
+
+				#warning "Update dependencies after setting up a new tag via quick actions"
+				tab->clearDependencies();
 				tab->setTag(dynamic_cast<Tag *>(tag));
+				tab->updateDependencies();
 			}
 		}
 

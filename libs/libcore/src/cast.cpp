@@ -51,7 +51,7 @@ void Cast::setDataType(DataTypeId type_idx, PgSqlType type)
 						.arg(BaseObject::getTypeName(ObjectType::Cast)),
 						ErrorCode::AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setDependency(type.getObject(), types[type_idx].getObject());
+	//setDependency(type.getObject(), types[type_idx].getObject());
 	setCodeInvalidated(this->types[type_idx] != type);
 	this->types[type_idx]=type;
 
@@ -130,7 +130,7 @@ void Cast::setCastFunction(Function *cast_func)
 						.arg(BaseObject::getTypeName(ObjectType::Cast)),
 						ErrorCode::AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setDependency(cast_func, cast_function);
+	//setDependency(cast_func, cast_function);
 	setCodeInvalidated(cast_function != cast_func);
 	this->cast_function=cast_func;
 }

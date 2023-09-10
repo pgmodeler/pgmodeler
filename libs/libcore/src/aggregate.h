@@ -66,6 +66,8 @@ class __libcore Aggregate: public BaseObject {
 	protected:
 		virtual void configureSearchAttributes();
 
+		virtual void updateDependencies();
+
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
 		enum FunctionId: unsigned {

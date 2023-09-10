@@ -102,7 +102,7 @@ class __libcore Constraint: public TableObject{
 
 		void setDeclInTableAttribute();
 
-		void removeColumns(ColumnsId cols_id);
+		//void removeColumns(ColumnsId cols_id);
 
 		protected:
 		virtual void configureSearchAttributes();
@@ -253,12 +253,6 @@ class __libcore Constraint: public TableObject{
 		 * the one in the constraint */
 		bool isColumnsExist(std::vector<Column *> columns, ColumnsId cols_id, bool strict_check);
 
-		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
-		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
-
-		//! \brief Adds an exclude element to the constraint using an expression (only exclude constraint)
-		void addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
-
 		//! \brief Adds an exclude element to the constraint using other pre-configured element (only exclude constraint)
 		void addExcludeElement(ExcludeElement elem);
 
@@ -267,9 +261,6 @@ class __libcore Constraint: public TableObject{
 
 		//! \brief Returns the exclude element index
 		int getExcludeElementIndex(ExcludeElement elem);
-
-		//! \brief Remove an exclude element using its index
-		void removeExcludeElement(unsigned idx_elem);
 
 		//! \brief Remove all exclude elements from the constraint
 		void removeExcludeElements();
