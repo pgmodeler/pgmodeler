@@ -416,7 +416,7 @@ void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps)
 	for(auto &type : transform_types)
 		aux_deps.push_back(type.getObject());
 
-	BaseObject::updateDependencies(deps);
+	BaseObject::updateDependencies(aux_deps);
 }
 
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)
