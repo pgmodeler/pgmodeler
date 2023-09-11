@@ -49,19 +49,3 @@ std::vector<BaseObject *> ExcludeElement::getDependencies()
 
 	return deps;
 }
-
-/* void ExcludeElement::setDependencies(BaseObject *p_obj)
-{
-	Element::setDependencies(p_obj);
-
-	if(parent_obj && _operator)
-		parent_obj->setDependency(_operator);
-}
-
-void ExcludeElement::unsetDependencies()
-{
-	Element::unsetDependencies();
-
-	if(parent_obj && _operator)
-		parent_obj->unsetDependency(_operator);
-} */

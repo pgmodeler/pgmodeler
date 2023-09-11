@@ -45,7 +45,6 @@ void Aggregate::setFunction(FunctionId func_id, Function *func)
 						.arg(BaseObject::getTypeName(ObjectType::Aggregate)),
 						ErrorCode::AsgFunctionInvalidConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//setDependency(func, functions[func_id]);
 	setCodeInvalidated(functions[func_id]!=func);
 	functions[func_id]=func;
 }
@@ -97,10 +96,6 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 
 void Aggregate::setStateType(PgSqlType st_type)
 {
-	BaseObject *curr_st_type_ref = state_type.getObject(),
-			*new_st_type_ref = st_type.getObject();
-
-	//setDependency(curr_st_type_ref, new_st_type_ref);
 	st_type.reset();
 	setCodeInvalidated(state_type != st_type);
 	state_type = st_type;
@@ -134,7 +129,6 @@ void Aggregate::setSortOperator(Operator *sort_op)
 			throw Exception(ErrorCode::AsgInvalidOperatorTypes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	//setDependency(sort_operator, sort_op);
 	setCodeInvalidated(sort_operator != sort_op);
 	this->sort_operator=sort_op;
 }
@@ -164,10 +158,7 @@ void Aggregate::setTypesAttribute(SchemaParser::CodeType def_type)
 
 void Aggregate::addDataType(PgSqlType type)
 {
-	//BaseObject *usr_type_ref = type.getObject();
-
 	type.reset();
-	//setDependency(usr_type_ref);
 	data_types.push_back(type);
 	setCodeInvalidated(true);
 }
@@ -180,19 +171,12 @@ void Aggregate::removeDataType(unsigned type_idx)
 
 	//Removes the type at the specified position
 	auto type_itr = data_types.begin() + type_idx;
-	//PgSqlType type = *type_itr;
-	//BaseObject *usr_type_ref = type.getObject();
-
-	//unsetDependency(usr_type_ref);
 	data_types.erase(type_itr);
 	setCodeInvalidated(true);
 }
 
 void Aggregate::removeDataTypes()
 {
-	//for(auto &type : data_types)
-		//unsetDependency(type.getObject());
-
 	data_types.clear();
 	setCodeInvalidated(true);
 }

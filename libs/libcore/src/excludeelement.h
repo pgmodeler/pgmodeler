@@ -30,11 +30,6 @@ class __libcore ExcludeElement: public Element {
 	private:
 		Operator *_operator;
 
-	protected:
-		//void setDependencies(BaseObject *p_obj);
-
-		//void unsetDependencies();
-
 	public:
 		ExcludeElement();
 

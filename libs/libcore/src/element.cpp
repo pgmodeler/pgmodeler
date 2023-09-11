@@ -139,34 +139,6 @@ void Element::configureAttributes(attribs_map &attributes, SchemaParser::CodeTyp
 	}
 }
 
-/* void Element::setDependencies(BaseObject *p_obj)
-{
-	Element::unsetDependencies();
-
-	if(!p_obj)
-		return;
-
-	parent_obj = p_obj;
-
-	if(operator_class)
-		parent_obj->setDependency(operator_class);
-
-	if(column)
-		parent_obj->setDependency(column);
-}
-
-void Element::unsetDependencies()
-{
-	if(!parent_obj)
-		return;
-
-	if(operator_class)
-		parent_obj->unsetDependency(operator_class);
-
-	if(column)
-		parent_obj->unsetDependency(column);
-} */
-
 bool Element::isEqualsTo(Element &elem)
 {
   return (this->column == elem.column &&

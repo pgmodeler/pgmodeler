@@ -77,7 +77,6 @@ void Column::setType(PgSqlType tp)
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
-	//setDependency(tp.getObject(), type.getObject());
 	setCodeInvalidated(this->type != tp);
 	this->type=tp;
 }
@@ -203,7 +202,6 @@ void Column::setSequence(BaseObject *seq)
 		generated = false;
 	}
 
-	//setDependency(seq, sequence);
 	setCodeInvalidated(sequence != seq);
 	sequence = seq;
 }

@@ -102,8 +102,6 @@ class __libcore Constraint: public TableObject{
 
 		void setDeclInTableAttribute();
 
-		//void removeColumns(ColumnsId cols_id);
-
 	protected:
 		virtual void configureSearchAttributes() override;
 

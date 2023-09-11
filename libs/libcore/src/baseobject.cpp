@@ -137,8 +137,6 @@ BaseObject::BaseObject()
 BaseObject::~BaseObject()
 {
 	#warning "Cleanup dependencies and references before destroy object!"
-	//unsetDependencies();
-	//unsetReferences();
 	clearAllDepsRefs();
 }
 
@@ -593,7 +591,6 @@ void BaseObject::setSchema(BaseObject *schema)
 
 	setCodeInvalidated(this->schema != schema);
 	this->schema = schema;
-	//setDependency(schema, this->schema);
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -605,7 +602,6 @@ void BaseObject::setOwner(BaseObject *owner)
 
 	setCodeInvalidated(this->owner != owner);
 	this->owner = owner;
-	//setDependency(owner, this->owner);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -617,7 +613,6 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 
 	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace = tablespace;
-	//setDependency(tablespace, this->tablespace);
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -629,7 +624,6 @@ void BaseObject::setCollation(BaseObject *collation)
 
 	setCodeInvalidated(this->collation != collation);
 	this->collation = collation;
-	//setDependency(collation, this->collation);
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1565,19 +1559,3 @@ void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
 		setDependency(obj);
 	}
 }
-
-/* void BaseObject::unsetDependencies()
-{
-	for(auto &obj : object_deps)
-		obj->unsetReference(this);
-
-	object_deps.clear();
-}
-
-void BaseObject::unsetReferences()
-{
-	for(auto &obj : object_refs)
-		obj->unsetDependency(this);
-
-	object_refs.clear();
-} */

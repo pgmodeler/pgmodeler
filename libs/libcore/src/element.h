@@ -62,10 +62,6 @@ class __libcore Element {
 
 		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
 
-		//void setDependencies(BaseObject *p_obj);
-
-		//void unsetDependencies();
-
 	public:
 		//! \brief Constants used to reference the sorting method of the element
 		enum SortOrder: unsigned {

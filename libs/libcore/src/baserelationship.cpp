@@ -51,12 +51,6 @@ BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTab
 		this->rel_type=rel_type;
 		this->custom_color=QColor(Qt::transparent);
 		this->reference_fk=nullptr;
-
-		//setDependency(src_tab, src_table);
-
-		//if(src_tab != dst_tab)
-		//	setDependency(dst_tab, dst_table);
-
 		this->src_table=src_tab;
 		this->dst_table=dst_tab;
 
@@ -169,11 +163,6 @@ void BaseRelationship::configureRelationship()
 
 BaseRelationship::~BaseRelationship()
 {
-	//unsetDependency(src_table);
-
-	//if(!isSelfRelationship())
-	//	unsetDependency(dst_table);
-
 	disconnectRelationship();
 
 	//Unallocates the labels
