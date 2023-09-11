@@ -82,7 +82,7 @@ class __libcore Column: public TableObject{
 		//! \brief Underlying sequence's cache value (only for identity column)
 		seq_cache;
 
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		//! \brief Holds the pattern for nextval() function call
@@ -111,7 +111,7 @@ class __libcore Column: public TableObject{
 		/*! \brief Defines the column name. This method keeps the last column name
 		 stored to assist the objects like constraints / indixes and sequences
 		 that is referencing the column by its old name. */
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Returns the not null state of the column
 		bool isNotNull();
@@ -132,9 +132,9 @@ class __libcore Column: public TableObject{
 		QString getDefaultValue();
 
 		//! \brief Returns the SQL/XML code definition for the column
-		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
 
-		virtual QString getAlterCode(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object) override;
 
 		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */
@@ -167,6 +167,8 @@ class __libcore Column: public TableObject{
 		void operator = (Column &col);
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
 };
 
 #endif

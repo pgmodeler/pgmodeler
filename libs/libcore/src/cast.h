@@ -62,7 +62,7 @@ class __libcore  Cast: public BaseObject {
 		bool is_in_out;
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Cast();
@@ -70,7 +70,7 @@ class __libcore  Cast: public BaseObject {
 	 virtual ~Cast(){}
 
 		//! \brief This method has a hardcoded way to generated the cast's name. It'll reject any value passed by its parameter
-		virtual void setName(const QString &);
+		virtual void setName(const QString &) override;
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
@@ -105,6 +105,8 @@ class __libcore  Cast: public BaseObject {
 		virtual QString getSignature(bool=false) final;
 
 		QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

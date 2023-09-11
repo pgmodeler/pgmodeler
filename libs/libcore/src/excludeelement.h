@@ -41,16 +41,18 @@ class __libcore ExcludeElement: public Element {
 		virtual ~ExcludeElement() {}
 
 		//! \brief Defines the operator used by the exclude element
-		void setOperator(Operator *oper);
+		virtual void setOperator(Operator *oper) override;
 
 		//! \brief Returns the operator used by the exclude element
-		Operator *getOperator();
+		virtual Operator *getOperator() override;
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		bool operator == (ExcludeElement &elem);
 
 		//friend class Constraint;
+
+		virtual std::vector<BaseObject *> getDependencies() override;
 };
 
 /* Registering the ExcludeElement class as a Qt MetaType in order to make

@@ -782,3 +782,20 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
+
+void Constraint::updateDependencies()
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	deps.insert(deps.end(), columns.begin(), columns.end());
+	deps.insert(deps.end(), ref_columns.begin(), ref_columns.end());
+	deps.push_back(ref_table);
+
+	for(auto &elem : excl_elements)
+	{
+		aux_deps = elem.getDependencies();
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	TableObject::updateDependencies(deps);
+}

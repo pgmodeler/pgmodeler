@@ -40,6 +40,16 @@ bool ExcludeElement::operator == (ExcludeElement &elem)
 					*(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
 }
 
+std::vector<BaseObject *> ExcludeElement::getDependencies()
+{
+	std::vector<BaseObject *> deps = Element::getDependencies();
+
+	if(_operator)
+		deps.push_back(_operator);
+
+	return deps;
+}
+
 /* void ExcludeElement::setDependencies(BaseObject *p_obj)
 {
 	Element::setDependencies(p_obj);

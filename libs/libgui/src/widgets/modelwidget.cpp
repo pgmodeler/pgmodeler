@@ -4433,8 +4433,9 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 	popup_menu.addSeparator();
 	popup_menu.addAction(action_source_code);
 
-	if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
-		popup_menu.addAction(action_deps_refs);
+	#warning "Test!"
+	//if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+	popup_menu.addAction(action_deps_refs);
 }
 
 void ModelWidget::configureDatabaseActions()

@@ -104,8 +104,8 @@ class __libcore Constraint: public TableObject{
 
 		//void removeColumns(ColumnsId cols_id);
 
-		protected:
-		virtual void configureSearchAttributes();
+	protected:
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Constraint();
@@ -148,7 +148,7 @@ class __libcore Constraint: public TableObject{
 		void setReferencedTable(BaseTable *tab_ref);
 
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
-		void setTablespace(BaseObject *tabspc);
+		virtual void setTablespace(BaseObject *tabspc) override;
 
 		/*! \brief Defines the constraint fill factor (only for primary keys and unique).
 				Values less than 10 (except 0) or above 100 will be adjusted to accepted values. To use the default
@@ -272,7 +272,9 @@ class __libcore Constraint: public TableObject{
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
-		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
+		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={}) override;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

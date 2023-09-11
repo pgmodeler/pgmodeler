@@ -183,6 +183,19 @@ bool Element::operator == (Element &elem)
 	return isEqualsTo(elem);
 }
 
+std::vector<BaseObject *> Element::getDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	if(operator_class)
+		deps.push_back(operator_class);
+
+	if(column)
+		deps.push_back(column);
+
+	return deps;
+}
+
 bool Element::operator == (const Element &elem)
 {
 	return isEqualsTo(const_cast<Element &>(elem));

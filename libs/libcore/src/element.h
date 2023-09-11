@@ -62,9 +62,9 @@ class __libcore Element {
 
 		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
 
-		void setDependencies(BaseObject *p_obj);
+		//void setDependencies(BaseObject *p_obj);
 
-		void unsetDependencies();
+		//void unsetDependencies();
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
@@ -102,8 +102,11 @@ class __libcore Element {
 		bool isSortingEnabled();
 
 		virtual QString getSourceCode(SchemaParser::CodeType) { return ""; }
+
 		bool operator == (Element &elem);
 		bool operator ==(const Element &elem);
+
+		virtual std::vector<BaseObject *> getDependencies();
 };
 
 #endif
