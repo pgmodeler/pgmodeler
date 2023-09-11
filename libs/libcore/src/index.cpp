@@ -549,3 +549,19 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
+
+void Index::updateDependencies()
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	for(auto &elem : idx_elements)
+	{
+		aux_deps = elem.getDependencies();
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	for(auto &col : included_cols)
+		deps.push_back(col);
+
+	TableObject::updateDependencies(deps);
+}

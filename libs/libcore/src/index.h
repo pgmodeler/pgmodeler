@@ -172,6 +172,8 @@ class __libcore Index: public TableObject{
 		std::vector<SimpleColumn> getSimpleColumns();
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
 };
 
 #endif

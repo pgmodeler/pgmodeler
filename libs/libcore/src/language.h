@@ -55,7 +55,7 @@ class __libcore Language: public BaseObject{
 		virtual ~Language(){}
 
 		//! \brief Sets the language name
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Sets whether the language is trusted or not
 		void setTrusted(bool value);
@@ -72,6 +72,8 @@ class __libcore Language: public BaseObject{
 		//! \brief Returns the SQL / XML code definition for the language
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif
