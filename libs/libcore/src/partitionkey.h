@@ -44,6 +44,8 @@ class __libcore PartitionKey: public Element {
 
 		//! \brief Returns the SQL / XML code definition for the partition key
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the PartitionKey class as a Qt MetaType in order to make
