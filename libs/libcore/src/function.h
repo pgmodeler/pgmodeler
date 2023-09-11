@@ -68,7 +68,7 @@ class __libcore Function: public BaseFunction {
 		void setTableReturnTypeAttribute(SchemaParser::CodeType def_type);
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Function();

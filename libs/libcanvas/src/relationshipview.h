@@ -155,8 +155,8 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-		virtual QPainterPath shape() const;
-		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+		virtual QPainterPath shape() const override;
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
 		This method is called whenever the placeholder usage is toggled. If the placeholders are on

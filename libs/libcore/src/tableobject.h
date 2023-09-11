@@ -78,11 +78,11 @@ class __libcore TableObject: public BaseObject {
 		/*! \brief This method is purely virtual to force the derived classes
 	overload this method. This also makes class TableObject
 	not instantiable */
-		virtual QString getSourceCode(SchemaParser::CodeType def_type)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override = 0;
 
-		virtual QString getDropCode(bool cascade);
+		virtual QString getDropCode(bool cascade) override;
 
-		virtual QString getSignature(bool format = true);
+		virtual QString getSignature(bool format = true) override;
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking();
