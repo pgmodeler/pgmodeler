@@ -49,8 +49,9 @@ class __libcore Extension: public BaseObject {
 
 		virtual ~Extension(){}
 
-		void setName(const QString &name);
-		void setSchema(BaseObject *schema);
+		virtual void setName(const QString &name) override;
+
+		virtual void setSchema(BaseObject *schema) override;
 
 		/*! \brief Defines if the extension handles a datatype. When setting to true
 		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when

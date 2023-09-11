@@ -104,7 +104,7 @@ QString ForeignTable::getAlterCode(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[Attributes::AlterCmds] = BaseObject::getAlterCode(object);
+		attributes[Attributes::AlterCmds] = BaseTable::getAlterCode(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attribs);
 		copyAttributes(attribs);
 		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
@@ -113,4 +113,9 @@ QString ForeignTable::getAlterCode(BaseObject *object)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void ForeignTable::updateDependencies()
+{
+	BaseObject::updateDependencies({ foreign_server });
 }

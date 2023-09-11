@@ -45,8 +45,6 @@ class __libcore ExcludeElement: public Element {
 
 		bool operator == (ExcludeElement &elem);
 
-		//friend class Constraint;
-
 		virtual std::vector<BaseObject *> getDependencies() override;
 };
 

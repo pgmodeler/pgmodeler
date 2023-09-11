@@ -144,3 +144,8 @@ QString ForeignDataWrapper::getAlterCode(BaseObject *object)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
+
+void ForeignDataWrapper::updateDependencies()
+{
+	BaseObject::updateDependencies({ validator_func, handler_func });
+}
