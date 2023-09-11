@@ -108,6 +108,8 @@ class __libcore OperatorClassElement {
 
 		//! \brief Operator to compare two elements, returns true when all atributes has the same configuration
 		bool operator == (OperatorClassElement &elem);
+
+		std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the OperatorClassElement class as a Qt MetaType in order to make

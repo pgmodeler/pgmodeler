@@ -32,6 +32,8 @@ class __libcore Parameter: public Column {
 		is in, out or both (IN, OUT, INOUT, VARIADIC) */
 		bool is_in, is_out, is_variadic;
 
+		virtual void updateDependencies() override {};
+
 	public:
 		Parameter();
 		Parameter(const Parameter &param);

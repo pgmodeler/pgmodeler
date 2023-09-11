@@ -90,6 +90,8 @@ class __libcore OperatorClass: public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif
