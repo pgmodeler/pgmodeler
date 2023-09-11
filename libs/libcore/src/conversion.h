@@ -74,6 +74,8 @@ class __libcore Conversion: public BaseObject {
 
 		//! \brief Returns the SQL/XML code definition for the conversion
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

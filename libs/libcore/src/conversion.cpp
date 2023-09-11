@@ -54,9 +54,10 @@ void Conversion::setConversionFunction(Function *conv_func)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
 						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	/* The conversion function must have 5 parameters if it's not the case
+	/* The conversion function must have 5 (or 6 in PG 14+) parameters if it's not the case
 		raises an error. */
-	else if(conv_func->getParameterCount()!=5)
+	else if(conv_func->getParameterCount() < 5 ||
+					conv_func->getParameterCount() > 6)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
@@ -67,13 +68,16 @@ void Conversion::setConversionFunction(Function *conv_func)
 			conv_func->getParameter(1).getType()!="integer" ||
 			conv_func->getParameter(2).getType()!="cstring" ||
 			conv_func->getParameter(3).getType()!="internal" ||
-			conv_func->getParameter(4).getType()!="integer")
+			conv_func->getParameter(4).getType()!="integer" ||
+			(conv_func->getParameterCount() == 6 &&
+			 conv_func->getParameter(5).getType() != "boolean"))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
 						ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error if the conversion function return type is not 'void'
-	else if(conv_func->getReturnType()!="void")
+	//Raises an error if the conversion function return type is not 'void' (or integer in PG14+)
+	else if(conv_func->getReturnType() != "void" &&
+					 conv_func->getReturnType() != "integer")
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjectType::Conversion)),
@@ -127,3 +131,7 @@ QString Conversion::getSourceCode(SchemaParser::CodeType def_type)
 	return BaseObject::__getSourceCode(def_type);
 }
 
+void Conversion::updateDependencies()
+{
+	BaseObject::updateDependencies({ conversion_func });
+}
