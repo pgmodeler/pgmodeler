@@ -155,7 +155,7 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-		virtual QPainterPath shape() const override;
+		//virtual QPainterPath shape() const override;
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
@@ -168,7 +168,10 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 	public:
 		RelationshipView(BaseRelationship *rel);
+
 		virtual ~RelationshipView();
+
+		virtual QPainterPath shape() const override;
 
 		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
 		void configureBoundingRect();
