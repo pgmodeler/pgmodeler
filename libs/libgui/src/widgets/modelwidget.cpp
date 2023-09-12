@@ -1776,9 +1776,10 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 	plugins_actions = plugin_acts;
 }
 
-void ModelWidget::adjustSceneSize()
+void ModelWidget::adjustSceneSize(bool reset_viewp_pos)
 {
-	viewport->centerOn(0,0);
+	if(reset_viewp_pos)
+		viewport->centerOn(0,0);
 
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
@@ -5130,6 +5131,8 @@ void ModelWidget::updateModelLayersInfo()
 	db_model->setLayerNamesVisible(scene->isLayerNamesVisible());
 	db_model->setLayerRectsVisible(scene->isLayerRectsVisible());
 	setModified(true);
+
+	adjustSceneSize(false);
 }
 
 void ModelWidget::rearrangeTablesHierarchically()
