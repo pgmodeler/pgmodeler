@@ -450,6 +450,22 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
 		//#warning "Updating objects deps after adding to model"
 		object->updateDependencies();
+
+		BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
+
+		if(graph_obj)
+		{
+		/* Validating the object's layers. If one or more layers are invalid then the object will be
+		 * moved to the default layer (idx = 0) */
+			for(auto &layer_id : graph_obj->getLayers())
+			{
+				if(layer_id >= layers.size())
+				{
+					graph_obj->removeFromLayer(layer_id);
+					graph_obj->addToLayer(0);
+				}
+			}
+		}
 	}
 	catch(Exception &e)
 	{

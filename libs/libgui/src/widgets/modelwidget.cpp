@@ -3396,8 +3396,8 @@ void ModelWidget::removeObjects(bool cascade)
 					else
 					{
 						//If the object does not exists on the model it'll not be processed.
-						aux_obj=db_model->getObject(obj_name, obj_type);
-						if(aux_obj!=object)
+						aux_obj = db_model->getObject(obj_name, obj_type);
+						if(!aux_obj/* != object */)
 							continue;
 					}
 
