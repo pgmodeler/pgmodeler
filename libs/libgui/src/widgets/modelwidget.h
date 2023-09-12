@@ -376,9 +376,8 @@ class __libgui ModelWidget: public QWidget {
 		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
-		 * rect when some object is out of bound. The parameter reset_viewp_pos when true
-		 * centers the viewport position in the origin point */
-		void adjustSceneSize(bool reset_viewp_pos = true);
+		rect when some object is out of bound */
+		void adjustSceneSize();
 
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);
