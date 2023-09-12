@@ -190,7 +190,10 @@ void Constraint::addColumns(const std::vector<Column *> &cols, ColumnsId cols_id
 {
 	try
 	{
-		removeColumns();
+		if(cols_id == SourceCols)
+			columns.clear();
+		else
+			ref_columns.clear();
 
 		for(auto &col : cols)
 			addColumn(col, cols_id);
