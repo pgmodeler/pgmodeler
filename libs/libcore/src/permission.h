@@ -164,6 +164,8 @@ class __libcore Permission: public BaseObject {
 		virtual QString getSignature(bool = false) final;
 
 		virtual QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

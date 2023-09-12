@@ -37,7 +37,7 @@ class __libcore Procedure: public BaseFunction {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 		virtual QString getAlterCode(BaseObject *object) final;
 
-		virtual void updateDependencies() override {}
+		virtual void updateDependencies() override;
 };
 
 #endif

@@ -2993,6 +2993,7 @@ void DatabaseModel::addPermission(Permission *perm)
 
 		permissions.push_back(perm);
 		perm->setDatabase(this);
+		perm->updateDependencies();
 	}
 	catch(Exception &e)
 	{

@@ -204,6 +204,12 @@ QString Transform::getDropCode(bool cascade)
 	return BaseObject::getDropCode(cascade);
 }
 
+void Transform::updateDependencies()
+{
+	BaseObject::updateDependencies({ type.getObject(), language,
+																	 functions[FromSqlFunc], functions[ToSqlFunc] });
+}
+
 void Transform::operator = (Transform &transf)
 {
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(transf);

@@ -96,12 +96,12 @@ class __libcore Sequence: public BaseObject {
 		void setOwnerColumn(Column *column);
 
 		//! \brief Sets the sequence name
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		/*! \brief Sets the schema that the sequence belongs. This method raises an error
 		 when there is a owner column and the schema to be set is different from
 		 the column parent table schema */
-		void setSchema(BaseObject *schema);
+		virtual void setSchema(BaseObject *schema) override;
 
 		bool isCycle();
 		QString getMaxValue();
@@ -127,6 +127,8 @@ class __libcore Sequence: public BaseObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
 };
 
 #endif

@@ -95,6 +95,8 @@ class __libcore Policy : public TableObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		bool isRoleExists(Role *role);
+
+		virtual void updateDependencies() override;
 };
 
 #endif

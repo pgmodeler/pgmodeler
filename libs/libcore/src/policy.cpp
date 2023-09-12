@@ -180,3 +180,13 @@ bool Policy::isRoleExists(Role *role)
 	if(!role)	return false;
 	return (std::find(roles.begin(), roles.end(), role) != roles.end());
 }
+
+void Policy::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &rl : roles)
+		deps.push_back(rl);
+
+	TableObject::updateDependencies(deps);
+}

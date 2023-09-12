@@ -131,6 +131,8 @@ class __libcore Role: public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		virtual QString getAlterCode(BaseObject *object) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

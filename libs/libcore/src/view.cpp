@@ -1203,10 +1203,25 @@ QString View::getAlterCode(BaseObject *object)
 	try
 	{
 		attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
-		return BaseObject::getAlterCode(object);
+		return BaseTable::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void View::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &ref : references)
+	{
+		if(ref.getColumn())
+			deps.push_back(ref.getColumn());
+		else if(ref.getTable())
+			deps.push_back(ref.getTable());
+	}
+
+	BaseTable::updateDependencies(deps);
 }
