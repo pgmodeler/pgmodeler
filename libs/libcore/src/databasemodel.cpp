@@ -783,6 +783,9 @@ void DatabaseModel::destroyObjects()
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
 
+	BaseObject::setClearDepsInDtor(false);
+	BaseGraphicObject::setUpdatesEnabled(false);
+
 	for(unsigned i=0; i < 5; i++)
 	{
 		for(auto &object : *this->getObjectList(graph_types[i]))
@@ -863,6 +866,9 @@ void DatabaseModel::destroyObjects()
 		for(auto type : rem_obj_types)
 			getObjectList(type)->clear();
 	}
+
+	BaseGraphicObject::setUpdatesEnabled(true);
+	BaseObject::setClearDepsInDtor(true);
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)

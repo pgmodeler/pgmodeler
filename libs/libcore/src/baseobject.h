@@ -93,6 +93,9 @@ class __libcore BaseObject {
 
 		static bool escape_comments;
 
+		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		static bool clear_deps_in_dtor;
+
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
 
@@ -106,10 +109,10 @@ class __libcore BaseObject {
 				object_deps;
 
 		//! \brief Register an object as a reference to the "this" object
-		virtual void setReference(BaseObject *ref_obj);
+		void setReference(BaseObject *ref_obj);
 
 		//! \brief Unregister an object as a reference to the "this" object
-		virtual void unsetReference(BaseObject *ref_obj);
+		void unsetReference(BaseObject *ref_obj);
 
 		/*! \brief Defines the dep_obj as a dependency of the "this" object.
 		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
@@ -119,6 +122,11 @@ class __libcore BaseObject {
 		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
 		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
 		void unsetDependency(BaseObject *dep_obj);
+
+		/*! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		 *  This is useful to avoid calling the method clearAllDepsRefs() when destroying the entire
+		 *  database model. See more in BaseObject::~BaseObject() */
+		static void setClearDepsInDtor(bool value);
 
 	protected:
 		SchemaParser schparser;

@@ -648,10 +648,10 @@ ModelWidget::~ModelWidget()
 	tags_menu.clear();
 	break_rel_menu.clear();
 
-	delete viewport;
+	//delete viewport;
 	delete scene;
-	delete op_list;
-	delete db_model;
+	//delete op_list;
+	//delete db_model;
 }
 
 void ModelWidget::setModified(bool value)

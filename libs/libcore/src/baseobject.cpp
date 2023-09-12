@@ -24,6 +24,8 @@
 
 bool BaseObject::ignore_db_version = false;
 
+bool BaseObject::clear_deps_in_dtor = true;
+
 const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
 
 /* CAUTION: If both amount and order of the enumerations are modified
@@ -137,7 +139,8 @@ BaseObject::BaseObject()
 BaseObject::~BaseObject()
 {
 	#warning "Cleanup dependencies and references before destroy object!"
-	clearAllDepsRefs();
+	if(clear_deps_in_dtor)
+		clearAllDepsRefs();
 }
 
 unsigned BaseObject::getGlobalId()
@@ -1511,6 +1514,11 @@ void BaseObject::unsetDependency(BaseObject *dep_obj)
 		dep_obj->unsetReference(this);
 		object_deps.erase(itr);
 	}
+}
+
+void BaseObject::setClearDepsInDtor(bool value)
+{
+	clear_deps_in_dtor = value;
 }
 
 void BaseObject::clearDependencies()
