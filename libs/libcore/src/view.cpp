@@ -394,7 +394,7 @@ Reference View::getReference(unsigned ref_id, Reference::SqlType sql_type)
 		return references[vect_idref->at(ref_id)];
 }
 
-void View::removeReference(unsigned ref_id)
+/* void View::removeReference(unsigned ref_id)
 {
 	std::vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
 	std::vector<unsigned>::iterator itr, itr_end;
@@ -423,10 +423,18 @@ void View::removeReference(unsigned ref_id)
 	references.erase(references.begin() + ref_id);
 	generateColumns();
 	setCodeInvalidated(true);
-}
+} */
 
 void View::removeReferences()
 {
+	/* for(auto &ref : references)
+	{
+		if(ref.getColumn())
+			unsetReference(ref.getColumn());
+		else if(ref.getTable())
+			unsetReference(ref.getTable());
+	} */
+
 	references.clear();
 	exp_select.clear();
 	exp_from.clear();
@@ -436,7 +444,7 @@ void View::removeReferences()
 	setCodeInvalidated(true);
 }
 
-void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
+/* void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
 {
 	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
@@ -445,7 +453,7 @@ void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
 
 	vect_idref->erase(vect_idref->begin() + expr_id);
 	setCodeInvalidated(true);
-}
+} */
 
 int View::getReferenceIndex(Reference &ref, Reference::SqlType sql_type)
 {
@@ -1213,14 +1221,12 @@ QString View::getAlterCode(BaseObject *object)
 
 void View::updateDependencies()
 {
-	std::vector<BaseObject *> deps;
+	std::vector<BaseObject *> deps, aux_deps;
 
 	for(auto &ref : references)
 	{
-		if(ref.getColumn())
-			deps.push_back(ref.getColumn());
-		else if(ref.getTable())
-			deps.push_back(ref.getTable());
+		aux_deps = ref.getDependencies(false);
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
 	}
 
 	BaseTable::updateDependencies(deps);

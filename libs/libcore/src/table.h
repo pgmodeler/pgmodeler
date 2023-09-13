@@ -74,13 +74,13 @@ class __libcore Table: public PhysicalTable {
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs();
 
-		void addObject(BaseObject *object, int obj_idx = -1);
+		virtual void addObject(BaseObject *object, int obj_idx = -1) override;
 
-		void removeObject(unsigned obj_idx, ObjectType obj_type);
+		virtual void removeObject(unsigned obj_idx, ObjectType obj_type) override;
 
-		void removeObject(const QString &name, ObjectType obj_type);
+		virtual void removeObject(const QString &name, ObjectType obj_type) override;
 
-		void removeObject(BaseObject *obj);
+		virtual void removeObject(BaseObject *obj) override;
 
 		//! \brief Adds a index to table (optionally the user can add the object at the specified index 'idx')
 		void addIndex(Index *ind, int idx=-1);
@@ -157,7 +157,7 @@ class __libcore Table: public PhysicalTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type) override;
 
 		/*! \brief Returns if some of the foreign keys references the specified table. This method only considers the foreign keys
 		 created by the user. Relationship created foreign keys are discarded from the search. */
@@ -181,7 +181,9 @@ class __libcore Table: public PhysicalTable {
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
 		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
-		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {}) override;
+
+		virtual void updateDependencies() override;
 
 		friend class Relationship;
 		friend class OperationList;

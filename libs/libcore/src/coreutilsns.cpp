@@ -40,6 +40,27 @@
 #include "schema.h"
 
 namespace CoreUtilsNs {
+
+	std::vector<BaseObject *> filterObjectsByType(const std::vector<BaseObject *> &list, const std::vector<ObjectType> &excl_types)
+	{
+		if(excl_types.empty() || list.empty())
+			return list;
+
+		std::vector<BaseObject *> filtered_objs;
+
+		/* Using std::copy_if to include in the filtered_obj list only the object
+		 * which type is not in excl_types */
+		std::copy_if(list.begin(), list.end(), std::back_inserter(filtered_objs),
+								 [&excl_types](BaseObject *obj)
+								 {
+									return obj &&
+												 std::find(excl_types.begin(), excl_types.end(),
+																	 obj->getObjectType()) == excl_types.end();
+								 });
+
+		return filtered_objs;
+	}
+
 	template <class Class>
 	void copyObject(BaseObject **psrc_obj, Class *copy_obj)
 	{

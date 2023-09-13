@@ -384,6 +384,11 @@ QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
 	}
 }
 
+void Table::updateDependencies()
+{
+	BaseTable::updateDependencies({});
+}
+
 QString Table::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);

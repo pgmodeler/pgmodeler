@@ -1460,14 +1460,56 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	}
 }
 
-std::vector<BaseObject*> BaseObject::getDependencies()
+std::vector<BaseObject *> BaseObject::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types)
 {
+	if(inc_indirect_deps)
+	{
+		std::vector<BaseObject *> ind_deps;
+
+		__getDependencies(object_deps, ind_deps);
+
+		if(!excl_types.empty())
+			return CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
+
+		return ind_deps;
+	}
+
+	if(!excl_types.empty())
+		return CoreUtilsNs::filterObjectsByType(object_deps, excl_types);
+
 	return object_deps;
 }
 
-std::vector<BaseObject*> BaseObject::getReferences()
+void BaseObject::__getDependencies(const std::vector<BaseObject *> &deps, std::vector<BaseObject *> &ind_deps)
 {
+	for(auto &obj :deps)
+	{
+		ind_deps.push_back(obj);
+		__getDependencies(obj->getDependencies(), ind_deps);
+	}
+}
+
+std::vector<BaseObject*> BaseObject::getReferences(bool inc_indirect_reps)
+{
+	if(inc_indirect_reps)
+	{
+		std::vector<BaseObject *> ind_refs;
+
+		__getDependencies(object_refs, ind_refs);
+
+		return ind_refs;
+	}
+
 	return object_refs;
+}
+
+void BaseObject::__getReferences(const std::vector<BaseObject *> &refs, std::vector<BaseObject *> &ind_refs)
+{
+	for(auto &obj :refs)
+	{
+		ind_refs.push_back(obj);
+		__getReferences(obj->getReferences(), ind_refs);
+	}
 }
 
 void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)

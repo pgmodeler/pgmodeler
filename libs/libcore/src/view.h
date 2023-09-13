@@ -186,13 +186,13 @@ class __libcore View: public BaseTable {
 
 		/*! \brief Remove the reference from the view using its index, removing all the elements
 		 from the exp_??? vectors when they make use of the deleted reference. */
-		void removeReference(unsigned ref_id);
+		//void removeReference(unsigned ref_id);
 
 		//! \brief Removes all the references from the view
 		void removeReferences();
 
 		//! \brief Removes an element from the expression list specified by the 'sql_type' parameter
-		void removeReference(unsigned expr_id, Reference::SqlType sql_type);
+		//void removeReference(unsigned expr_id, Reference::SqlType sql_type);
 
 		//! \brief Returns the commom table expression
 		QString getCommomTableExpression();

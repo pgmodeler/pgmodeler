@@ -18,6 +18,7 @@
 
 #include "basetable.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
 
 BaseTable::BaseTable()
 {
@@ -174,4 +175,39 @@ void BaseTable::setPosition(const QPointF &pos)
 {
 	BaseGraphicObject::setPosition(pos);
 	resetHashCode();
+}
+
+std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types)
+{
+	if(inc_indirect_deps)
+	{
+		std::vector<BaseObject *> deps = BaseObject::getDependencies(true);
+
+		for(auto &obj : getObjects())
+			BaseObject::__getDependencies(obj->getDependencies(), deps);
+
+
+		if(!excl_types.empty())
+			return CoreUtilsNs::filterObjectsByType(deps, excl_types);
+
+		return deps;
+	}
+
+	return BaseObject::getDependencies(false, excl_types);
+}
+
+void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)
+{
+	std::vector<BaseObject *> aux_deps = { tag	};
+	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
+
+	for(auto &obj : aux_deps)
+	{
+		if(!obj)
+			continue;
+
+		setDependency(obj);
+	}
+
+	BaseObject::updateDependencies(deps);
 }

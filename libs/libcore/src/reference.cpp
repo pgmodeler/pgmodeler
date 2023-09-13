@@ -359,6 +359,24 @@ bool Reference::operator == (Reference &refer)
 		}
 	}
 	else
-		return false;
+	return false;
+}
+
+std::vector<BaseObject *> Reference::getDependencies(bool incl_indirect_deps)
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	if(column)
+		deps.push_back(column);
+	else if(table)
+		deps.push_back(table);
+
+	if(incl_indirect_deps && (column || table))
+	{
+		aux_deps = column ? column->getDependencies(true) : table->getDependencies(true);
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	return deps;
 }
 

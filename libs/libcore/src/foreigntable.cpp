@@ -117,5 +117,5 @@ QString ForeignTable::getAlterCode(BaseObject *object)
 
 void ForeignTable::updateDependencies()
 {
-	BaseObject::updateDependencies({ foreign_server });
+	PhysicalTable::updateDependencies({ foreign_server });
 }

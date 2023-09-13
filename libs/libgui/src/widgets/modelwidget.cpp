@@ -2356,9 +2356,11 @@ void ModelWidget::moveToSchema()
 				}
 
 				//Invalidating the code of the object's references
-				db_model->getObjectReferences(obj, ref_objs);
+				#warning "Testing new getReferences method."
+				//db_model->getObjectReferences(obj, ref_objs);
+				ref_objs = obj->getReferences();
 
-				for(BaseObject *ref_obj : ref_objs)
+				for(auto &ref_obj : ref_objs)
 					ref_obj->setCodeInvalidated(true);
 			}
 		}
@@ -2560,7 +2562,9 @@ void ModelWidget::selectTaggedTables()
 					dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
 
 	scene->clearSelection();
-	db_model->getObjectReferences(tag, objects);
+	#warning "Testing new getReferences method."
+	//db_model->getObjectReferences(tag, objects);
+	objects = tag->getReferences();
 
 	for(auto object : objects)
 	{
@@ -2668,15 +2672,11 @@ void ModelWidget::cutObjects()
 void ModelWidget::copyObjects(bool duplicate_mode)
 {
 	std::map<unsigned, BaseObject *> objs_map;
-	std::map<unsigned, BaseObject *>::iterator obj_itr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<BaseObject *> deps;
-	BaseObject *object=nullptr;
-	TableObject *tab_obj=nullptr;
-	BaseTable *table=nullptr;
-	Constraint *constr=nullptr;
-	ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Constraint, ObjectType::Policy };
-	unsigned i, type_id, count;
+	BaseObject *object = nullptr;
+	TableObject *tab_obj = nullptr;
+	BaseTable *table = nullptr;
+	Constraint *constr = nullptr;
 	Messagebox msg_box;
 
 	if(selected_objects.size()==1)
@@ -2700,80 +2700,61 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	if(ModelWidget::cut_operation)
 		cut_objects=selected_objects;
 
-	itr=selected_objects.begin();
-	itr_end=selected_objects.end();
-
-	while(itr!=itr_end)
+	for(auto &object : selected_objects)
 	{
-		object=(*itr);
-
 		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
-		if(object->getObjectType()!=ObjectType::BaseRelationship)
+		if(object->getObjectType() == ObjectType::BaseRelationship)
+			continue;
+
+		#warning "Testing new getDependencies method."
+		if(msg_box.result()==QDialog::Accepted)
+			deps = object->getDependencies(true, { ObjectType::Column });
+
+		deps.push_back(object);
+
+		/* Copying the special objects (which references columns added by relationship) in order
+		to be correclty created when pasted */
+		if(object->getObjectType()==ObjectType::Table || object->getObjectType() == ObjectType::View)
 		{
-			if(msg_box.result()==QDialog::Accepted)
-				db_model->getObjectDependecies(object, deps, true);
-			else
-				deps.push_back(object);
+			table = dynamic_cast<BaseTable *>(object);
 
-			/* Copying the special objects (which references columns added by relationship) in order
-			to be correclty created when pasted */
-			if(object->getObjectType()==ObjectType::Table || object->getObjectType() == ObjectType::View)
+			for(auto &obj : table->getObjects({ ObjectType::Column }))
 			{
-				table=dynamic_cast<BaseTable *>(object);
+				tab_obj = dynamic_cast<TableObject *>(obj);
+				constr = dynamic_cast<Constraint *>(tab_obj);
 
-				for(type_id=0; type_id <= 4; type_id++)
+				/* The object is only inserted at the list when it was not included by relationship but references
+				columns added by relationship. Case the object is a constraint, it cannot be a primary key because
+				this type of constraint is treated separetely by relationships */
+				if(duplicate_mode ||
+						(!duplicate_mode && !tab_obj->isAddedByRelationship() &&
+						 (!constr ||	(((constr &&
+								 (constr->getConstraintType()==ConstraintType::ForeignKey ||
+									(constr->getConstraintType()==ConstraintType::Unique &&
+									 constr->isReferRelationshipAddedColumn()))))))))
 				{
-					count=table->getObjectCount(types[type_id]);
-
-					for(i=0; i < count; i++)
-					{
-						tab_obj=dynamic_cast<TableObject *>(table->getObject(i, types[type_id]));
-						constr=dynamic_cast<Constraint *>(tab_obj);
-
-						/* The object is only inserted at the list when it was not included by relationship but references
-						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
-						this type of constraint is treated separetely by relationships */
-						if(duplicate_mode ||
-						   (!duplicate_mode &&
-							!tab_obj->isAddedByRelationship() &&
-							 (!constr ||
-								(((constr &&
-									(constr->getConstraintType()==ConstraintType::ForeignKey ||
-									 (constr->getConstraintType()==ConstraintType::Unique &&
-									constr->isReferRelationshipAddedColumn()))))))))
-							deps.push_back(tab_obj);
-					}
-
-					if(object->getObjectType() == ObjectType::View && type_id >= 2)
-						break;
+					deps.push_back(tab_obj);
 				}
 			}
 		}
-		itr++;
 	}
 
-	itr=deps.begin();
-	itr_end=deps.end();
-
-	//Storing the objects ids in a auxiliary vector
-	while(itr!=itr_end)
-	{
-		object=(*itr);
-		objs_map[object->getObjectId()]=object;
-		itr++;
-	}
+	//Storing the objects ids in a auxiliary map organizing them by creation order
+	std::for_each(deps.begin(), deps.end(), [&objs_map](BaseObject *object) {
+		objs_map[object->getObjectId()] = object;
+	});
 
 	copied_objects.clear();
-	obj_itr=objs_map.begin();
-	while(obj_itr!=objs_map.end())
+
+	for(auto &obj_itr : objs_map)
 	{
-		object=obj_itr->second;
+		object = obj_itr.second;
 
 		//Reserved object aren't copied
-		if(!object->isSystemObject())
-			copied_objects.push_back(object);
+		if(object->isSystemObject())
+			continue;
 
-		obj_itr++;
+		copied_objects.push_back(object);
 	}
 }
 
@@ -3960,7 +3941,9 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	{
 		//For tag object the fade is applied in the tables/views related to it
 		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == ObjectType::Tag)
-			db_model->getObjectReferences(selected_objects[0], list);
+			#warning "Testing new getReferences method."
+			//db_model->getObjectReferences(selected_objects[0], list);
+			list = selected_objects[0]->getReferences();
 		else
 		{
 			bool fade_rels = action == action_fade_rels_in || action == action_fade_rels_out,

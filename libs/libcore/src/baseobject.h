@@ -108,21 +108,6 @@ class __libcore BaseObject {
 				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
 				object_deps;
 
-		//! \brief Register an object as a reference to the "this" object
-		void setReference(BaseObject *ref_obj);
-
-		//! \brief Unregister an object as a reference to the "this" object
-		void unsetReference(BaseObject *ref_obj);
-
-		/*! \brief Defines the dep_obj as a dependency of the "this" object.
-		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
-		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
-		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
-
-		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
-		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
-		void unsetDependency(BaseObject *dep_obj);
-
 		/*! \brief Indicates if the dependences/references of the object must be erased on the destructor
 		 *  This is useful to avoid calling the method clearAllDepsRefs() when destroying the entire
 		 *  database model. See more in BaseObject::~BaseObject() */
@@ -302,7 +287,22 @@ class __libcore BaseObject {
 		 *  because it can be expensive in terms of processing if lots of objects calls it */
 		void updateDependencies(const std::vector<BaseObject *> &dep_objs);
 
-		public:
+		//! \brief Register an object as a reference to the "this" object
+		void setReference(BaseObject *ref_obj);
+
+					 //! \brief Unregister an object as a reference to the "this" object
+		void unsetReference(BaseObject *ref_obj);
+
+		/*! \brief Defines the dep_obj as a dependency of the "this" object.
+		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
+		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
+		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
+
+		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
+		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
+		void unsetDependency(BaseObject *dep_obj);
+
+	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
 
@@ -579,9 +579,18 @@ class __libcore BaseObject {
 		//! \brief Returns the set of attributes used by the search mechanism
 		attribs_map getSearchAttributes();
 
-		std::vector<BaseObject *> getDependencies();
+		/*! \brief Returns all the objects that the this object depends on.
+		 * The boolean paramenter inc_indirect_deps is used to include the indirect dependencies
+		 * in the returned list. Indirect dependencies are the dependencies of the objects that are
+		 * dependencies of the this object, e.g., view V that depends on a table T that dependes on a schema S.
+		 * NOTE: performance reases the inc_indirect_deps returns only the first level of indirect dependencies. */
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {});
 
-		std::vector<BaseObject *> getReferences();
+		void __getDependencies(const std::vector<BaseObject *> &deps, std::vector<BaseObject *> &ind_deps);
+
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false);
+
+		void __getReferences(const std::vector<BaseObject *> &refs, std::vector<BaseObject *> &ind_refs);
 
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error

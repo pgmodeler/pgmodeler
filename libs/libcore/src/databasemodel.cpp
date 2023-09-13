@@ -513,8 +513,10 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			std::vector<BaseObject *> refs;
 
 			//Get the table references
+			#warning "Testing new getReferences method."
 			if(check_refs)
-				getObjectReferences(object, refs, true, true);
+				//getObjectReferences(object, refs, true, true);
+				refs = object->getReferences();
 
 			//If there are objects referencing the table
 			if(!refs.empty())
@@ -7361,7 +7363,10 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 	if(column && column->getParentTable())
 	{
 		std::vector<BaseObject *> refs;
-		getObjectReferences(column, refs);
+
+		#warning "Testing new getReferences method."
+		//getObjectReferences(column, refs);
+		refs = column->getReferences();
 
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
@@ -10599,7 +10604,9 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 		#warning "Debug!"
 		PgSqlType::renameUserType(prev_name, obj, obj_sig);
 
-		getObjectReferences(obj, refs);
+		#warning "Testing new getReferences method."
+		//getObjectReferences(obj, refs);
+		refs = obj->getReferences();
 
 		//For graphical objects set them as modified to redraw them
 		if(BaseTable::isBaseTable(obj->getObjectType()))

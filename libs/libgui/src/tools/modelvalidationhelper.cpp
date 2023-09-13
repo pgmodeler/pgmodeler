@@ -336,7 +336,9 @@ void ModelValidationHelper::validateModel()
 					}
 					else
 					{
-						db_model->getObjectReferences(object, refs);
+						#warning "Testing new getReferences method."
+						//db_model->getObjectReferences(object, refs);
+						refs = object->getReferences();
 
 						while(!refs.empty() && !valid_canceled)
 						{
