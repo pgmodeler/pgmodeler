@@ -208,6 +208,8 @@ class __libcore Trigger: public TableObject{
 		void validateTrigger();
 
 		QString getDataDictionary(const attribs_map &extra_attribs);
+
+		virtual void updateDependencies() override;
 };
 
 #endif

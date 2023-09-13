@@ -541,3 +541,13 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
+
+void Trigger::updateDependencies()
+{
+	std::vector<BaseObject *> deps = { function, referenced_table };
+
+	for(auto &col : upd_columns)
+		deps.push_back(col);
+
+	TableObject::updateDependencies(deps);
+}
