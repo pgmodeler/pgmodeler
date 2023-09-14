@@ -1384,6 +1384,7 @@ void Relationship::connectRelationship()
 			dst_tab_prev_name=dst_table->getName();
 
 			this->invalidated=false;
+			setSQLDisabled(sql_disabled);
 		}
 	}
 	catch(Exception &e)
@@ -2990,4 +2991,18 @@ bool Relationship::isReceiverTableMandatory()
 	else
 		return ((getReceiverTable() == src_table && isTableMandatory(SrcTable)) ||
 						(getReceiverTable() == dst_table && isTableMandatory(DstTable)));
+}
+
+void Relationship::setSQLDisabled(bool value)
+{
+	BaseRelationship::setSQLDisabled(value);
+
+	for(auto &obj : gen_columns)
+		obj->setSQLDisabled(value);
+
+	for(auto &obj : getGeneratedConstraints())
+		obj->setSQLDisabled(value);
+
+	if(table_relnn)
+		table_relnn->setSQLDisabled(value);
 }

@@ -19,6 +19,7 @@
 #include "basetable.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
+#include "column.h"
 
 BaseTable::BaseTable()
 {
@@ -129,10 +130,11 @@ void BaseTable::generateHashCode()
 	buf.append(obj_name);
 
 	for(auto &obj : getObjects())
-		buf.append(obj->getName());
+		buf.append(dynamic_cast<TableObject *>(obj)->getHashCode());
 
 	buf.append(tag ? tag->getName() : "");
 	buf.append(schema ? schema->getName() : "");
+	buf.append(QString::number(sql_disabled));
 	buf.append(QString::number(collapse_mode));
 	buf.append(QString::number(static_cast<int>(pagination_enabled)));
 	buf.append(QString::number(curr_page[0]));

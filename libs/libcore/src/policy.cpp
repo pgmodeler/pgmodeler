@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "policy.h"
+#include "utilsns.h"
 
 Policy::Policy() : TableObject()
 {
@@ -189,4 +190,10 @@ void Policy::updateDependencies()
 		deps.push_back(rl);
 
 	TableObject::updateDependencies(deps);
+}
+
+void Policy::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + QString::number(permissive) + ~policy_cmd);
 }

@@ -97,6 +97,8 @@ class __libcore Policy : public TableObject {
 		bool isRoleExists(Role *role);
 
 		virtual void updateDependencies() override;
+
+		virtual void generateHashCode() override;
 };
 
 #endif

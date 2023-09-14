@@ -3413,10 +3413,10 @@ void ModelWidget::removeObjects(bool cascade)
 							obj_idx=table->getObjectIndex(tab_obj->getName(true), obj_type);
 
 							try
-							{
+							{								
 								//If the object is a column validates the column removal before remove it
-								if(!cascade && obj_type==ObjectType::Column)
-									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
+								//if(!cascade && obj_type==ObjectType::Column)
+								//	db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::ObjRemoved, obj_idx, table);

@@ -7358,27 +7358,6 @@ Permission *DatabaseModel::createPermission()
 	return perm;
 }
 
-void DatabaseModel::validateColumnRemoval(Column *column)
-{
-	if(column && column->getParentTable())
-	{
-		std::vector<BaseObject *> refs;
-
-		#warning "Testing new getReferences method."
-		//getObjectReferences(column, refs);
-		refs = column->getReferences();
-
-		//Raises an error if there are objects referencing the column
-		if(!refs.empty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::RemDirectReference)
-							.arg(column->getParentTable()->getName(true) + "." + column->getName(true))
-							.arg(column->getTypeName())
-							.arg(refs[0]->getName(true))
-				.arg(refs[0]->getTypeName()),
-				ErrorCode::RemDirectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-}
-
 void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab)
 {
 	try

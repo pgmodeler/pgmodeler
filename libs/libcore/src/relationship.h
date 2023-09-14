@@ -536,6 +536,8 @@ class __libcore Relationship: public BaseRelationship {
 		//! \brief Returns true when the receiver table is mandatory in the relationship
 		bool isReceiverTableMandatory();
 
+		virtual void setSQLDisabled(bool value) override;
+
 		friend class DatabaseModel;
 		friend class ModelWidget;
 		friend class RelationshipWidget;

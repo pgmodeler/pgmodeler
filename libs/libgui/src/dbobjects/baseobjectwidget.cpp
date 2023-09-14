@@ -178,29 +178,24 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, B
 
 void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 {
-	std::vector<BaseObject *> refs;
-	TableObject *tab_obj=nullptr;
+	TableObject *tab_obj = nullptr;
 
-	model->getObjectReferences(object, refs);
-
-	while(!refs.empty())
+	for(auto &obj : object->getReferences())
 	{
-		tab_obj=dynamic_cast<TableObject *>(refs.back());
+		tab_obj = dynamic_cast<TableObject *>(obj);
 
 		//If the object is a relationship added does not do anything since the relationship itself will be disabled
 		if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 		{
-			refs.back()->setSQLDisabled(disable_sql_chk->isChecked());
+			obj->setSQLDisabled(disable_sql_chk->isChecked());
 
 			//Update the parent table graphical representation to show the disabled child object
 			if(tab_obj)
 				tab_obj->getParentTable()->setModified(true);
 
 			//Disable the references of the current object too
-			disableReferencesSQL(refs.back());
+			disableReferencesSQL(obj);
 		}
-
-		refs.pop_back();
 	}
 }
 
@@ -822,12 +817,14 @@ void BaseObjectWidget::finishConfiguration()
 					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
-			model->getObjectReferences(object, ref_objs);
-			for(auto &obj : ref_objs)
+			#warning "Testing BaseObject::getReferences"
+			//model->getObjectReferences(object, ref_objs);
+			//for(auto &obj : ref_objs)
+			for(auto &obj : object->getReferences())
 			{
 				obj->setCodeInvalidated(true);
 
-				if(obj->getObjectType()==ObjectType::Column)
+				if(obj->getObjectType() == ObjectType::Column)
 					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 			}
 

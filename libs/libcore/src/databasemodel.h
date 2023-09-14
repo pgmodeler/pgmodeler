@@ -790,10 +790,6 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Updates the fk relationships for all table on the model
 		void updateTablesFKRelationships();
 
-		/*! \brief Validates the removal of the specified column raising errors when the passed object
-		 is still being referecend */
-		void validateColumnRemoval(Column *column);
-
 		//! \brief Validates the relationship to reflect the modifications on the column/constraint of the passed table
 		void validateRelationships(TableObject *object, Table *parent_tab);
 

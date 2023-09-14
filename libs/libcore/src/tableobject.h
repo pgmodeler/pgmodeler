@@ -49,6 +49,8 @@ class __libcore TableObject: public BaseObject {
 		bool decl_in_table;
 
 	protected:
+		QString hash_code;
+
 		//! \brief Defines that the object is included by relationship (1-1, 1-n, n-n)
 		void setAddedByLinking(bool value);
 
@@ -59,9 +61,9 @@ class __libcore TableObject: public BaseObject {
 		void setAddedByCopy(bool value);
 
 		/*! \brief Defines that the object's SQL code must be created inside parent's
-	table declaration, this is true by default. This attribute is only changed
-	on export operations. This attribute is used only by columns and constraints, other
-	types of child objects will ignore it */
+		 * table declaration, this is true by default. This attribute is only changed
+		 * on export operations. This attribute is used only by columns and constraints, other
+		 * types of child objects will ignore it */
 		void setDeclaredInTable(bool value);
 
 	public:
@@ -76,8 +78,8 @@ class __libcore TableObject: public BaseObject {
 		BaseTable *getParentTable();
 
 		/*! \brief This method is purely virtual to force the derived classes
-	overload this method. This also makes class TableObject
-	not instantiable */
+		 *  overload this method. This also makes class TableObject
+		 *  not instantiable */
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) override = 0;
 
 		virtual QString getDropCode(bool cascade) override;
@@ -105,6 +107,10 @@ class __libcore TableObject: public BaseObject {
 		virtual void setCodeInvalidated(bool value) override;
 
 		void operator = (TableObject &object);
+
+		virtual void generateHashCode();
+
+		QString getHashCode();
 
 		friend class Relationship;
 		friend class PhysicalTable;

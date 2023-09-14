@@ -87,6 +87,8 @@ class __libcore Rule: public TableObject{
 
 		//! \brief Returns the SQL / XML definition for the rule
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual void generateHashCode() override;
 };
 
 #endif

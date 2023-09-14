@@ -17,6 +17,7 @@
 */
 
 #include "index.h"
+#include "utilsns.h"
 
 Index::Index()
 {
@@ -564,4 +565,15 @@ void Index::updateDependencies()
 		deps.push_back(col);
 
 	TableObject::updateDependencies(deps);
+}
+
+void Index::generateHashCode()
+{
+	QString str_attr;
+	TableObject::generateHashCode();
+
+	for(auto &attr : index_attribs)
+		str_attr.append(QString::number(attr));
+
+	hash_code = UtilsNs::getStringHash(hash_code + str_attr);
 }

@@ -17,6 +17,7 @@
 */
 
 #include "rule.h"
+#include "utilsns.h"
 
 Rule::Rule()
 {
@@ -135,4 +136,10 @@ QString Rule::getSourceCode(SchemaParser::CodeType def_type)
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	return BaseObject::__getSourceCode(def_type);
+}
+
+void Rule::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + ~execution_type + ~event_type);
 }

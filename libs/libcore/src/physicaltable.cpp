@@ -746,11 +746,11 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(!refs.empty())
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemInderectReference)
-								.arg(column->getName())
+								.arg(column->getSignature())
 								.arg(column->getTypeName())
-								.arg(refs[0]->getName())
+								.arg(refs[0]->getSignature())
 						.arg(refs[0]->getTypeName())
-						.arg(this->getName(true))
+						.arg(this->getSignature())
 						.arg(this->getTypeName()),
 						ErrorCode::RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -759,7 +759,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(isPartitionKeyRefColumn(column))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemColumnRefByPartitionKey)
-								.arg(column->getName()).arg(this->getName(true)),
+								.arg(column->getSignature()).arg(this->getSignature()),
 								ErrorCode::RemColumnRefByPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 

@@ -551,3 +551,14 @@ void Trigger::updateDependencies()
 
 	TableObject::updateDependencies(deps);
 }
+
+void Trigger::generateHashCode()
+{
+	QString str_events;
+	TableObject::generateHashCode();
+
+	for(auto &itr : events)
+		str_events.append(QString::number(isExecuteOnEvent(itr.first)));
+
+	hash_code = UtilsNs::getStringHash(hash_code + ~firing_type + str_events);
+}

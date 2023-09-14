@@ -174,6 +174,8 @@ class __libcore Index: public TableObject{
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
 
 		virtual void updateDependencies() override;
+
+		virtual void generateHashCode() override;
 };
 
 #endif
