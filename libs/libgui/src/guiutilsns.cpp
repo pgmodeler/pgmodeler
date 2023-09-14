@@ -171,6 +171,22 @@ namespace GuiUtilsNs {
 						constr->setSQLDisabled(disable);
 				}
 			}
+
+			// If its a graphical object, we force the visual update of it
+			if(graph_obj)
+			{
+				BaseRelationship *base_rel = dynamic_cast<BaseRelationship *>(graph_obj);
+				graph_obj->setModified(true);
+
+				if(base_rel)
+				{
+					base_rel->getTable(BaseRelationship::SrcTable)->setModified(true);
+
+					if(!base_rel->isSelfRelationship())
+						base_rel->getTable(BaseRelationship::DstTable)->setModified(true);
+				}
+			}
+
 		}
 	}
 

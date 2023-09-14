@@ -3005,7 +3005,4 @@ void Relationship::setSQLDisabled(bool value)
 		table_relnn->setSQLDisabled(value);
 
 	BaseRelationship::setSQLDisabled(value);
-
-	src_table->resetHashCode();
-	dst_table->resetHashCode();
 }

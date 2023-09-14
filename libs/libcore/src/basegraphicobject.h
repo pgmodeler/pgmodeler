@@ -98,7 +98,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		/*! \brief Sets whether the object is system or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the same signal s_objectProtected() */
-		virtual void setSystemObject(bool value);
+		virtual void setSystemObject(bool value) override;
 
 		//! \brief Sets the object's position
 		virtual void setPosition(const QPointF &pos);
@@ -107,7 +107,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		 This method emits the signal s_objectModified() */
 		virtual void setModified(bool value);
 
-		virtual void setSQLDisabled(bool value);
+		virtual void setSQLDisabled(bool value) override;
 
 		//! \brief Sets the fade out status of the receiver object
 		void setFadedOut(bool value);

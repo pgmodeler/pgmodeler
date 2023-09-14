@@ -117,7 +117,10 @@ QString TableObject::getHashCode()
 void TableObject::setCodeInvalidated(bool value)
 {
 	if(parent_table)
+	{
 		parent_table->BaseObject::setCodeInvalidated(value);
+		parent_table->resetHashCode();
+	}
 
 	BaseObject::setCodeInvalidated(value);
 	generateHashCode();
