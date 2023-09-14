@@ -817,9 +817,6 @@ void BaseObjectWidget::finishConfiguration()
 					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
-			#warning "Testing BaseObject::getReferences"
-			//model->getObjectReferences(object, ref_objs);
-			//for(auto &obj : ref_objs)
 			for(auto &obj : object->getReferences())
 			{
 				obj->setCodeInvalidated(true);

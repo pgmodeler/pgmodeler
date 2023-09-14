@@ -2687,7 +2687,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	//Destroying detached columns before create inheritances
 	for(Column *col : inherited_cols)
 	{
-		dbmodel->getObjectReferences(col, refs, true);
+		refs = col->getReferences();
 
 		if(refs.empty())
 		{
