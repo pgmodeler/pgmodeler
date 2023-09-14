@@ -130,6 +130,7 @@ namespace GuiUtilsNs {
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
 			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
 
 			if(object->isSystemObject())
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)

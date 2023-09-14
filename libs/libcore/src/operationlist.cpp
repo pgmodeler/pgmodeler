@@ -932,12 +932,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			}
 			else if(obj_type==ObjectType::Tag)
 			{
-				#warning "Testing BaseObject::getReferences!"
-				std::vector<BaseObject *> refs;
-				//model->getObjectReferences(object, refs);
-				refs = object->getReferences();
-
-				for(auto &obj : refs)
+				for(auto &obj : object->getReferences())
 					dynamic_cast<BaseTable *>(obj)->setModified(true);
 			}
 		}
@@ -948,12 +943,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				 object->getObjectType()==ObjectType::Table || object->getObjectType()==ObjectType::ForeignTable ||
 				 object->getObjectType()==ObjectType::View || object->getObjectType()==ObjectType::Extension))
 		{
-			#warning "Testing BaseObject::getReferences!"
-			std::vector<BaseObject *> ref_objs;
-			//model->getObjectReferences(object, ref_objs);
-			ref_objs = object->getReferences();
-
-			for(auto &obj : ref_objs)
+			for(auto &obj : object->getReferences())
 			{
 				if(obj->getObjectType() == ObjectType::Column)
 					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);

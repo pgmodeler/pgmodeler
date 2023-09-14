@@ -2995,8 +2995,6 @@ bool Relationship::isReceiverTableMandatory()
 
 void Relationship::setSQLDisabled(bool value)
 {
-	BaseRelationship::setSQLDisabled(value);
-
 	for(auto &obj : gen_columns)
 		obj->setSQLDisabled(value);
 
@@ -3005,4 +3003,9 @@ void Relationship::setSQLDisabled(bool value)
 
 	if(table_relnn)
 		table_relnn->setSQLDisabled(value);
+
+	BaseRelationship::setSQLDisabled(value);
+
+	src_table->resetHashCode();
+	dst_table->resetHashCode();
 }

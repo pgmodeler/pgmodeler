@@ -324,7 +324,7 @@ class __libcore Relationship: public BaseRelationship {
 		 unique key used in 1-1 relationships */
 		std::vector<Constraint *> getGeneratedConstraints();
 
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
