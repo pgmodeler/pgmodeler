@@ -93,7 +93,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		/*! \brief Sets whether the object is protected or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the signal s_objectProtected() */
-		virtual void setProtected(bool value);
+		virtual void setProtected(bool value) override;
 
 		/*! \brief Sets whether the object is system or not (method overloading
 		 from base class BaseObject) the difference is that this method
@@ -128,7 +128,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
-		virtual QString getSourceCode(SchemaParser::CodeType)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType) override = 0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);
