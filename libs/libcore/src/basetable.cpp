@@ -181,16 +181,15 @@ std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, con
 {
 	if(inc_indirect_deps)
 	{
-		std::vector<BaseObject *> deps = BaseObject::getDependencies(true);
+		std::vector<BaseObject *> ind_deps = BaseObject::getDependencies(true);
 
 		for(auto &obj : getObjects())
-			BaseObject::__getDependencies(obj->getDependencies(), deps);
-
+			BaseObject::__getLinkedObjects(ObjDependencies, obj->getDependencies(), ind_deps);
 
 		if(!excl_types.empty())
-			return CoreUtilsNs::filterObjectsByType(deps, excl_types);
+			return CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
 
-		return deps;
+		return ind_deps;
 	}
 
 	return BaseObject::getDependencies(false, excl_types);

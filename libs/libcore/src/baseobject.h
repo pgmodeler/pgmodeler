@@ -302,6 +302,16 @@ class __libcore BaseObject {
 		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
 		void unsetDependency(BaseObject *dep_obj);
 
+		//! \brief Link type used to determine the kind of objects retrived by the functions getLinkedObjects()
+		enum ObjLinkType: unsigned {
+			ObjDependencies,
+			ObjReferences
+		};
+
+		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types);
+
+		void __getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
@@ -586,11 +596,7 @@ class __libcore BaseObject {
 		 * NOTE: performance reases the inc_indirect_deps returns only the first level of indirect dependencies. */
 		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {});
 
-		void __getDependencies(const std::vector<BaseObject *> &deps, std::vector<BaseObject *> &ind_deps);
-
-		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false);
-
-		void __getReferences(const std::vector<BaseObject *> &refs, std::vector<BaseObject *> &ind_refs);
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false, const std::vector<ObjectType> &excl_types = {});
 
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error
