@@ -1358,7 +1358,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
 
-		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
+		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
 
 		GuiUtilsNs::updateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);

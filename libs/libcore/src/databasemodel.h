@@ -781,16 +781,17 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
 		std::vector<BaseObject *> findObjects(const QString &pattern, std::vector<ObjectType> types,
-																		 bool case_sensitive, bool is_regexp, bool exact_match,
-																		 const QString &search_attr = Attributes::Name);
+																					bool case_sensitive, bool is_regexp, bool exact_match,
+																					const QString &search_attr = Attributes::Name);
 
 		/*! \brief Returns a list of objects searching them by using the filter syntax [type]:[pattern]:[mode]
 		 * The provided list of filter strings is composed by:
 		 * > The object type (schema name, see BaseObject::getSchemaName())
 		 * > The search pattern itself
 		 * > The pattern mode (regexp | wildcard)
-		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name) */
-		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
+		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name)
+		 * The parameter any_incl_cols indicates if the any filter type must filter columns too */
+		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name, bool any_incl_cols = false);
 
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition();

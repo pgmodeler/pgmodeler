@@ -8650,7 +8650,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	setDefaultObject(getObject("public", ObjectType::Schema), ObjectType::Schema);
 }
 
-std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
+std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr, bool any_incl_cols)
 {
 	std::vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
@@ -8687,8 +8687,18 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 		types.clear();
 
 		if(obj_type == ObjectType::BaseObject)
-			types = BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship, ObjectType::Textbox,
-																								ObjectType::Tag, ObjectType::GenericSql, ObjectType::Database });
+		{
+			std::vector<ObjectType> excl_types = {
+				ObjectType::BaseRelationship, ObjectType::Textbox,
+				ObjectType::Tag, ObjectType::GenericSql, ObjectType::Database
+			};
+
+			// Including Columns to the excluded type if the "any" filter doen't include columns
+			if(!any_incl_cols)
+				excl_types.push_back(ObjectType::Column);
+
+			types = BaseObject::getObjectTypes(true, excl_types);
+		}
 		else
 			types.push_back(obj_type);
 
