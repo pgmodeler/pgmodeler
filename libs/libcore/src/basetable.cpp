@@ -179,7 +179,7 @@ void BaseTable::setPosition(const QPointF &pos)
 	resetHashCode();
 }
 
-std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types)
+std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
 {
 	if(inc_indirect_deps)
 	{
@@ -189,12 +189,19 @@ std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, con
 			BaseObject::__getLinkedObjects(ObjDependencies, obj->getDependencies(), ind_deps);
 
 		if(!excl_types.empty())
-			return CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
+			ind_deps = CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
+
+		if(rem_duplicates)
+		{
+			std::sort(ind_deps.begin(), ind_deps.end());
+			auto end = std::unique(ind_deps.begin(), ind_deps.end());
+			ind_deps.erase(end, ind_deps.end());
+		}
 
 		return ind_deps;
 	}
 
-	return BaseObject::getDependencies(false, excl_types);
+	return BaseObject::getDependencies(false, excl_types, rem_duplicates);
 }
 
 void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)

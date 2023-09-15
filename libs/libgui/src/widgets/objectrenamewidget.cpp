@@ -186,7 +186,6 @@ void ObjectRenameWidget::applyRenaming()
 				if(object->getObjectType() == ObjectType::Schema)
 				{
 					model->validateSchemaRenaming(dynamic_cast<Schema *>(object), prev_name);
-					//dynamic_cast<Schema *>(object)->setModified(true);
 				}
 				else if(graph_obj)
 				{

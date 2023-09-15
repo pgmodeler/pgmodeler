@@ -1460,37 +1460,42 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	}
 }
 
-std::vector<BaseObject *> BaseObject::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types)
+std::vector<BaseObject *> BaseObject::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
 {
-	return getLinkedObjects(ObjDependencies, inc_indirect_deps, excl_types);
+	return getLinkedObjects(ObjDependencies, inc_indirect_deps, excl_types, rem_duplicates);
 }
 
-std::vector<BaseObject*> BaseObject::getReferences(bool inc_indirect_refs, const std::vector<ObjectType> &excl_types)
+std::vector<BaseObject*> BaseObject::getReferences(bool inc_indirect_refs, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
 {
-	return getLinkedObjects(ObjReferences, inc_indirect_refs, excl_types);
+	return getLinkedObjects(ObjReferences, inc_indirect_refs, excl_types, rem_duplicates);
 }
 
-std::vector<BaseObject *> BaseObject::getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types)
+std::vector<BaseObject *> BaseObject::getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
 {
-	std::vector<BaseObject *> *obj_list =
-			(lnk_type == ObjDependencies ? &object_deps : &object_refs);
+	std::vector<BaseObject *> linked_objs,
+			*obj_list =	(lnk_type == ObjDependencies ? &object_deps : &object_refs);
 
 	if(incl_ind_links)
 	{
-		std::vector<BaseObject *> ind_links;
-
-		__getLinkedObjects(lnk_type, *obj_list, ind_links);
+		__getLinkedObjects(lnk_type, *obj_list, linked_objs);
 
 		if(!excl_types.empty())
-			return CoreUtilsNs::filterObjectsByType(ind_links, excl_types);
-
-		return ind_links;
+			linked_objs = CoreUtilsNs::filterObjectsByType(linked_objs, excl_types);
 	}
 
 	if(!excl_types.empty())
-		return CoreUtilsNs::filterObjectsByType(*obj_list, excl_types);
+		linked_objs = CoreUtilsNs::filterObjectsByType(*obj_list, excl_types);
+	else
+		linked_objs = *obj_list;
 
-	return *obj_list;
+	if(rem_duplicates)
+	{
+		std::sort(linked_objs.begin(), linked_objs.end());
+		auto end = std::unique(linked_objs.begin(), linked_objs.end());
+		linked_objs.erase(end, linked_objs.end());
+	}
+
+	return linked_objs;
 }
 
 void BaseObject::__getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links)

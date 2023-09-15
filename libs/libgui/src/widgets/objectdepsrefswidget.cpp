@@ -27,10 +27,8 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	connect(exc_ind_deps_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	connect(inc_ind_refs_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	//connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
-	//connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(inc_indirect_links_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(unique_results_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
 	connect(dependencies_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 	connect(references_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
@@ -69,27 +67,11 @@ void ObjectDepsRefsWidget::applyConfiguration()
 
 void ObjectDepsRefsWidget::updateObjectTables()
 {
-	std::vector<BaseObject *> objs;
-	//model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
+	GuiUtilsNs::updateObjectsTable(dependencies_view,
+																	this->object->getDependencies(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 
-	/* As the list of dependencies include the this->object itself is necessary
-	to remove only for semantics reasons */
-	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	GuiUtilsNs::updateObjectsTable(dependencies_view, objs);
-
-	objs.clear();
-	/*if(!inc_ind_refs_chk->isChecked())
-		model->getObjectReferences(object, objs);
-	else
-		model->__getObjectReferences(object, objs);*/
-	
-	GuiUtilsNs::updateObjectsTable(references_view, objs);
-
-	#warning "Testing new dependencies/references mechanism!"
-	GuiUtilsNs::updateObjectsTable(test_deps_view, this->object->getDependencies(!exc_ind_deps_chk->isChecked()));
-
-	#warning "Testing new dependencies/references mechanism!"
-	GuiUtilsNs::updateObjectsTable(test_refs_view, this->object->getReferences(inc_ind_refs_chk->isChecked()));
+	GuiUtilsNs::updateObjectsTable(references_view,
+																	this->object->getReferences(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 }
 
 void ObjectDepsRefsWidget::handleItemSelection(const QModelIndex& index)
@@ -127,7 +109,8 @@ void ObjectDepsRefsWidget::handleItemSelection(const QModelIndex& index)
 		{
 			references_view->setEnabled(false);
 			dependencies_view->setEnabled(false);
-			exc_ind_deps_chk->setEnabled(false);
+			inc_indirect_links_chk->setEnabled(false);
+			unique_results_chk->setEnabled(false);
 			alert_frm->setVisible(true);
 		}
 	}

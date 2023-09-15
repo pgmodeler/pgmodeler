@@ -308,7 +308,7 @@ class __libcore BaseObject {
 			ObjReferences
 		};
 
-		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types);
+		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates);
 
 		void __getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links);
 
@@ -594,9 +594,9 @@ class __libcore BaseObject {
 		 * in the returned list. Indirect dependencies are the dependencies of the objects that are
 		 * dependencies of the this object, e.g., view V that depends on a table T that dependes on a schema S.
 		 * NOTE: performance reases the inc_indirect_deps returns only the first level of indirect dependencies. */
-		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {});
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
 
-		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false, const std::vector<ObjectType> &excl_types = {});
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
 
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error
