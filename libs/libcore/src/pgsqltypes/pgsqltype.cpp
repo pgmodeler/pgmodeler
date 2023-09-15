@@ -342,14 +342,6 @@ unsigned PgSqlType::operator = (const QString &type_name)
 	return setType(type_name);
 }
 
-void *PgSqlType::getUserTypeReference()
-{
-	if(this->isUserType())
-		return (user_types[this->type_idx - (PseudoEnd + 1)].ptype);
-
-	return nullptr;
-}
-
 BaseObject *PgSqlType::getObject()
 {
 	if(this->isUserType())

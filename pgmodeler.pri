@@ -8,6 +8,8 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+contains(CONFIG, debug):DEFINES+=PGMODELER_DEBUG
+
 # Disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER

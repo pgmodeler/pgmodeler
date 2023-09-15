@@ -318,12 +318,8 @@ class __libcore PhysicalTable: public BaseTable {
 		//! \brief Returns the specified object type list. Returns null if an invalid object type is provided
 		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
-		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
-		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
-		 deletion of the object, getting only the first reference to the object candidate for deletion.
-		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		[[deprecated("To be replaced by BaseObject::getReferences")]]
-		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
+		//! \brief Returns a list of objects that references the providede column.
+		std::vector<TableObject *> getColumnReferences(Column *column);
 
 		//! \brief Reset the current index of the objects created by relationship
 		void resetRelObjectsIndexes();

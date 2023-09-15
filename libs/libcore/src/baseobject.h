@@ -308,8 +308,14 @@ class __libcore BaseObject {
 			ObjReferences
 		};
 
+		/*! \brief Returns the list of objects linked to "this".
+		 * The lkn_type determines the modality of the objects to be retrieved (see ObjLinkType enum).
+		 * The parameter incl_ind_links will include in the resulting list all the indirect links of the object
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
 		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates);
 
+		//! \brief This is the recursive version of the getLinkedObjects method
 		void __getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links);
 
 	public:
@@ -593,10 +599,17 @@ class __libcore BaseObject {
 		 * The boolean paramenter inc_indirect_deps is used to include the indirect dependencies
 		 * in the returned list. Indirect dependencies are the dependencies of the objects that are
 		 * dependencies of the this object, e.g., view V that depends on a table T that dependes on a schema S.
-		 * NOTE: performance reases the inc_indirect_deps returns only the first level of indirect dependencies. */
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
 		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
 
-		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_reps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
+		/*! \brief Returns all the objects that in which references the this object.
+		 * The boolean paramenter inc_indirect_refs is used to include the indirect references
+		 * in the returned list. Indirect references are the references of the objects that are
+		 * references to the this object, e.g., column C that references a type T that references a schema S.
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_refs = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
 
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error

@@ -513,9 +513,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			std::vector<BaseObject *> refs;
 
 			//Get the table references
-			#warning "Testing new getReferences method."
 			if(check_refs)
-				//getObjectReferences(object, refs, true, true);
 				refs = object->getReferences();
 
 			//If there are objects referencing the table
@@ -562,9 +560,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 		}
 
-		#warning "Clears up the dependencies/references of the object being removed"
 		object->clearAllDepsRefs();
-
 		object->setDatabase(nullptr);
 		emit s_objectRemoved(object);
 	}
@@ -8537,22 +8533,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 		prev_name = fmt_prev_sch_name + "." +	obj->getName();
 		obj_sig = obj->getSignature();
 
-		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
-		the correct reference to table */
-		/*if(obj->getObjectType() == ObjectType::Table)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj_sig);
-		else if(obj->getObjectType() == ObjectType::View)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj_sig);
-		else if(obj->getObjectType() == ObjectType::ForeignTable)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj_sig);
-		else
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj_sig);*/
-
-		#warning "Debug!"
 		PgSqlType::renameUserType(prev_name, obj, obj_sig);
-
-		#warning "Testing new getReferences method."
-		//getObjectReferences(obj, refs);
 		refs = obj->getReferences();
 
 		//For graphical objects set them as modified to redraw them

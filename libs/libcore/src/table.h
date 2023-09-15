@@ -163,12 +163,6 @@ class __libcore Table: public PhysicalTable {
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
 
-		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
-		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
-		 deletion of the object, getting only the first reference to the object candidate for deletion.
-		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
-
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
 		virtual QString getAlterCode(BaseObject *object) final;
 

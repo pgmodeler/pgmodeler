@@ -1732,7 +1732,9 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
-		quint64 start = QDateTime::currentSecsSinceEpoch();
+		#ifdef PGMODELER_DEBUG
+			quint64 start = QDateTime::currentSecsSinceEpoch();
+		#endif
 
 		db_model->loadModel(filename);
 		this->filename=filename;
@@ -1744,9 +1746,13 @@ void ModelWidget::loadModel(const QString &filename)
 		protected_model_frm->setVisible(db_model->isProtected());
 		setModified(false);
 
-		quint64 end = QDateTime::currentSecsSinceEpoch();
-		QTextStream out(stdout);
-		out << "Model loaded in " << end - start << "s" << Qt::endl;
+		#ifdef PGMODELER_DEBUG
+			quint64 end = QDateTime::currentSecsSinceEpoch();
+			QTextStream out(stdout);
+			out << "File: " << filename << Qt::endl;
+			out << "Loaded in " << end - start << "s" << Qt::endl;
+			out << "---" << Qt::endl;
+		#endif
 	}
 	catch(Exception &e)
 	{
@@ -2334,7 +2340,6 @@ void ModelWidget::moveToSchema()
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
-				#warning "Updating dependencies after setting up a new schema via quick actions"
 				obj->clearDependencies();
 				obj->setSchema(schema);
 				obj->updateDependencies();
@@ -2356,11 +2361,7 @@ void ModelWidget::moveToSchema()
 				}
 
 				//Invalidating the code of the object's references
-				#warning "Testing new getReferences method."
-				//db_model->getObjectReferences(obj, ref_objs);
-				ref_objs = obj->getReferences();
-
-				for(auto &ref_obj : ref_objs)
+				for(auto &ref_obj : obj->getReferences())
 					ref_obj->setCodeInvalidated(true);
 			}
 		}
@@ -2425,7 +2426,6 @@ void ModelWidget::changeOwner()
 				if(obj->getObjectType()!=ObjectType::Database)
 					op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
-				#warning "Update dependencies after changing the owner via quick actions"
 				obj->clearDependencies();
 				obj->setOwner(owner);
 				obj->updateDependencies();
@@ -2462,8 +2462,6 @@ void ModelWidget::setTag()
 			if(tab)
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
-
-				#warning "Update dependencies after setting up a new tag via quick actions"
 				tab->clearDependencies();
 				tab->setTag(dynamic_cast<Tag *>(tag));
 				tab->updateDependencies();
@@ -2552,9 +2550,8 @@ void ModelWidget::selectTableRelationships()
 
 void ModelWidget::selectTaggedTables()
 {
-	QObject *obj_sender=dynamic_cast<QAction *>(sender());
-	Tag *tag=nullptr;
-	std::vector<BaseObject *> objects;
+	QObject *obj_sender = dynamic_cast<QAction *>(sender());
+	Tag *tag = nullptr;
 	BaseObjectView *obj_view = nullptr;
 
 	tag=dynamic_cast<Tag *>(
@@ -2562,11 +2559,8 @@ void ModelWidget::selectTaggedTables()
 					dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
 
 	scene->clearSelection();
-	#warning "Testing new getReferences method."
-	//db_model->getObjectReferences(tag, objects);
-	objects = tag->getReferences();
 
-	for(auto object : objects)
+	for(auto &object : tag->getReferences())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getOverlyingObject());
 		obj_view->setSelected(true);
@@ -2706,7 +2700,6 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 		if(object->getObjectType() == ObjectType::BaseRelationship)
 			continue;
 
-		#warning "Testing new getDependencies method."
 		if(msg_box.result()==QDialog::Accepted)
 			deps = object->getDependencies(true, { ObjectType::Column });
 
@@ -3932,8 +3925,6 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	{
 		//For tag object the fade is applied in the tables/views related to it
 		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == ObjectType::Tag)
-			#warning "Testing new getReferences method."
-			//db_model->getObjectReferences(selected_objects[0], list);
 			list = selected_objects[0]->getReferences();
 		else
 		{
@@ -4407,9 +4398,8 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 	popup_menu.addSeparator();
 	popup_menu.addAction(action_source_code);
 
-	#warning "Test!"
-	//if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
-	popup_menu.addAction(action_deps_refs);
+	if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+		popup_menu.addAction(action_deps_refs);
 }
 
 void ModelWidget::configureDatabaseActions()

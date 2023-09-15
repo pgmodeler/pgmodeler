@@ -408,42 +408,6 @@ void Table::operator = (Table &tab)
 	this->rls_enabled=tab.rls_enabled;
 }
 
-void Table::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
-{
-	if(column && !column->isAddedByRelationship())
-	{
-		unsigned count, i;
-		IndexElement elem;
-		Column *col=nullptr;
-		std::vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
-		Index *ind=nullptr;
-
-		itr=indexes.begin();
-		itr_end=indexes.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			ind=dynamic_cast<Index *>(*itr);
-			itr++;
-
-			count=ind->getIndexElementCount();
-			for(i=0; i < count  && (!exclusion_mode || (exclusion_mode && !found)); i++)
-			{
-				elem=ind->getIndexElement(i);
-				col=elem.getColumn();
-				if(col && col==column)
-				{
-					found=true;
-					refs.push_back(ind);
-				}
-			}
-		}
-
-		PhysicalTable::getColumnReferences(column, refs, exclusion_mode);
-	}
-}
-
 QString Table::getTruncateDefinition(bool cascade)
 {
 	try

@@ -284,10 +284,6 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		bool operator != (PgSqlType type);
 		bool operator != (unsigned type_idx) override;
 
-		//! \brief Returns the pointer to the user defined type which denotes the the pgsql type
-		 [[deprecated]]
-		void *getUserTypeReference();
-
 		//! \brief Returns the reference to the database model object that is used as user-defined type
 		BaseObject *getObject();
 

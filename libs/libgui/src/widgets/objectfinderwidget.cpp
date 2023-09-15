@@ -287,7 +287,6 @@ void ObjectFinderWidget::selectObject()
 
 	BaseGraphicObject *graph_obj = nullptr;
 	BaseObjectView *obj_view = nullptr;
-	TableObject *tab_obj = nullptr;
 	BaseObject *object = nullptr;
 	QModelIndexList sel_indexes = result_view->selectionModel()->selectedIndexes();
 
@@ -322,10 +321,6 @@ void ObjectFinderWidget::selectObject()
 	for(auto &obj : selected_objs)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-		tab_obj = dynamic_cast<TableObject *>(obj);
-
-		//if(tab_obj && !graph_obj)
-		//	graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
 		if(graph_obj)
 		{

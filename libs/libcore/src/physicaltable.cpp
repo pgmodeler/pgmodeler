@@ -740,7 +740,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			column=dynamic_cast<Column *>(*itr);
 
 			//Gets the references to the column before the exclusion
-			getColumnReferences(column, refs, true);
+			refs = getColumnReferences(column);
 
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
@@ -1530,54 +1530,22 @@ void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsig
 	}
 }
 
-void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
+std::vector<TableObject *> PhysicalTable::getColumnReferences(Column *column)
 {
-	if(column && !column->isAddedByRelationship())
-	{
-		unsigned count, i;
-		Column *col=nullptr, *col1=nullptr;
-		std::vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
-		Constraint *constr=nullptr;
-		Trigger *trig=nullptr;
+	if(!column || column->isAddedByRelationship())
+		return {};
 
-		itr=constraints.begin();
-		itr_end=constraints.end();
+	std::vector<BaseObject *> refs = column->getReferences();
+	std::vector<TableObject *> col_refs;
 
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			constr=dynamic_cast<Constraint *>(*itr);
-			itr++;
+	std::for_each(refs.begin(), refs.end(),
+								[&col_refs](auto &obj)
+								{
+									if(TableObject::isTableObject(obj->getObjectType()))
+										col_refs.push_back(dynamic_cast<TableObject *>(obj));
+								});
 
-			col=constr->getColumn(column->getName(), Constraint::SourceCols);
-			col1=constr->getColumn(column->getName(), Constraint::ReferencedCols);
-
-			if((col && col==column) || (col1 && col1==column))
-			{
-				found=true;
-				refs.push_back(constr);
-			}
-		}
-
-		itr=triggers.begin();
-		itr_end=triggers.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			trig=dynamic_cast<Trigger *>(*itr);
-			itr++;
-
-			count=trig->getColumnCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !found)); i++)
-			{
-				if(trig->getColumn(i)==column)
-				{
-					found=true;
-					refs.push_back(trig);
-				}
-			}
-		}
-	}
+	return col_refs;
 }
 
 std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)

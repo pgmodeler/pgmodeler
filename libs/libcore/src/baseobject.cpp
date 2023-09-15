@@ -138,7 +138,6 @@ BaseObject::BaseObject()
 
 BaseObject::~BaseObject()
 {
-	#warning "Cleanup dependencies and references before destroy object!"
 	if(clear_deps_in_dtor)
 		clearAllDepsRefs();
 }
