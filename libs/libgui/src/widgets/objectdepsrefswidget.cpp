@@ -70,7 +70,7 @@ void ObjectDepsRefsWidget::applyConfiguration()
 void ObjectDepsRefsWidget::updateObjectTables()
 {
 	std::vector<BaseObject *> objs;
-	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
+	//model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
 
 	/* As the list of dependencies include the this->object itself is necessary
 	to remove only for semantics reasons */
@@ -78,10 +78,10 @@ void ObjectDepsRefsWidget::updateObjectTables()
 	GuiUtilsNs::updateObjectsTable(dependencies_view, objs);
 
 	objs.clear();
-	if(!inc_ind_refs_chk->isChecked())
+	/*if(!inc_ind_refs_chk->isChecked())
 		model->getObjectReferences(object, objs);
 	else
-		model->__getObjectReferences(object, objs);
+		model->__getObjectReferences(object, objs);*/
 	
 	GuiUtilsNs::updateObjectsTable(references_view, objs);
 

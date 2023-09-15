@@ -351,13 +351,16 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		dbmodel.addObject(&to_sql_func);
 		dbmodel.addObject(&transf);
 
-		dbmodel.getObjectReferences(&from_sql_func, refs);
+		//dbmodel.getObjectReferences(&from_sql_func, refs);
+		refs = from_sql_func.getReferences();
 		from_sql_refs = refs.size();
 
-		dbmodel.getObjectReferences(&to_sql_func, refs);
+		//dbmodel.getObjectReferences(&to_sql_func, refs);
+		refs = to_sql_func.getReferences();
 		to_sql_refs = refs.size();
 
-		dbmodel.getObjectDependecies(&transf, deps);
+		//dbmodel.getObjectDependecies(&transf, deps);
+		deps = transf.getDependencies();
 		transf_deps = deps.size();
 
 		dbmodel.removeObject(&transf);

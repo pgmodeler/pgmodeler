@@ -233,16 +233,19 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		model.addForeignDataWrapper(&fdw);
 
 		std::vector<BaseObject *> deps;
-		model.getObjectDependecies(&fdw, deps);
+		//model.getObjectDependecies(&fdw, deps);
+		deps = fdw.getDependencies();
 
 		QVERIFY(deps.size() >= 3);
 
 		deps.clear();
-		model.getObjectReferences(&func_validator, deps);
+		//model.getObjectReferences(&func_validator, deps);
+		deps = func_validator.getReferences();
 		QVERIFY(deps.size() == 1);
 
 		deps.clear();
-		model.getObjectReferences(&func_handler, deps);
+		//model.getObjectReferences(&func_handler, deps);
+		deps = func_handler.getReferences();
 		QVERIFY(deps.size() == 1);
 
 		model.removeForeignDataWrapper(&fdw);

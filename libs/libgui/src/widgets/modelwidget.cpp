@@ -3269,14 +3269,9 @@ void ModelWidget::removeObjects(bool cascade)
 				//If in cascade mode, retrieve all references to the object (direct and indirect)
 				if(cascade)
 				{
-					std::vector<BaseObject *> refs;
-
 					for(BaseObject *sel_obj : sel_objs)
 					{
-						refs.clear();
-						db_model->__getObjectReferences(sel_obj, refs);
-
-						for(BaseObject *ref_obj : refs)
+						for(BaseObject *ref_obj : sel_obj->getReferences())
 						{
 							obj_id=ref_obj->getObjectId();
 							tab_obj=dynamic_cast<TableObject *>(ref_obj);
@@ -3414,10 +3409,6 @@ void ModelWidget::removeObjects(bool cascade)
 
 							try
 							{								
-								//If the object is a column validates the column removal before remove it
-								//if(!cascade && obj_type==ObjectType::Column)
-								//	db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
-
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::ObjRemoved, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);

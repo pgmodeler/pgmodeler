@@ -210,16 +210,10 @@ void ObjectRenameWidget::applyRenaming()
 					dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 				}
 
-				Column *col = nullptr;
-				model->getObjectReferences(object, ref_objs);
-
-				for(auto &obj : ref_objs)
+				for(auto &obj : object->getReferences())
 				{
-					if(obj->getObjectType()==ObjectType::Column)
-					{
-						col=dynamic_cast<Column *>(obj);
-						col->getParentTable()->setModified(true);
-					}
+					if(obj->getObjectType() == ObjectType::Column)
+						dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 				}
 
 				renamed_objs++;

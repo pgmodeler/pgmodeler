@@ -203,7 +203,6 @@ void FunctionWidget::alternateReturnTypes()
 
 void FunctionWidget::validateConfiguredFunction()
 {
-	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<BaseObject *> obj_list;
 	Conversion *conv = nullptr;
 	Cast *cast = nullptr;
@@ -212,25 +211,18 @@ void FunctionWidget::validateConfiguredFunction()
 	Operator *oper = nullptr;
 	Type *type = nullptr;
 	Function *func = nullptr;
-	BaseObject *object = nullptr;
 	Transform *transf = nullptr;
 	ForeignDataWrapper *fdw = nullptr;
 	ObjectType obj_type;
 	unsigned idx = 0;
 
-	func=dynamic_cast<Function *>(this->object);
+	func = dynamic_cast<Function *>(this->object);
 
 	try
 	{
-		model->getObjectReferences(func, obj_list);
-		itr = obj_list.begin();
-		itr_end = obj_list.end();
-
-		while(itr != itr_end)
+		for(auto &object : func->getReferences())
 		{
-			object = (*itr);
 			obj_type = object->getObjectType();
-			itr++;
 
 			/* The validation of the function happens as follows:
 

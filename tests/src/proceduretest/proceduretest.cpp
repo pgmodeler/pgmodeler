@@ -306,8 +306,11 @@ void ProcedureTest::modelReturnsProcedureDepsRefs()
 		proc.addParameter(param);
 
 		model.addProcedure(&proc);
-		model.getObjectReferences(&proc, refs);
-		model.getObjectDependecies(&proc, deps);
+		//model.getObjectReferences(&proc, refs);
+		refs = proc.getReferences();
+
+		//model.getObjectDependecies(&proc, deps);
+		deps = proc.getDependencies();
 
 		model.removeProcedure(&proc);
 		model.removeType(&type);
