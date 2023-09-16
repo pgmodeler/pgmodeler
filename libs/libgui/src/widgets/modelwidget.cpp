@@ -751,6 +751,9 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		if(!m_event)
 			return false;
 
+		if(m_event->button() != Qt::NoButton)
+			new_obj_overlay_wgt->hide();
+
 		if(event->type() == QEvent::GraphicsSceneMouseMove)
 		{
 			emit s_sceneInteracted(m_event->scenePos());
