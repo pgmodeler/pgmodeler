@@ -269,7 +269,9 @@ void ObjectFinderWidget::findObjects()
 	/* Everytime we make a new object search the selectionModel of the result view changes
 	 * so we need to disconnect the signals/slot from the current selection model before
 	 * the searching and then reconnect the new selection model to the related slots */
-	disconnect(result_view->selectionModel(), nullptr, this, nullptr);
+	if(result_view->selectionModel())
+		disconnect(result_view->selectionModel(), nullptr, this, nullptr);
+
 	GuiUtilsNs::updateObjectsTable(result_view, found_objs, search_attr);
 	connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
 
