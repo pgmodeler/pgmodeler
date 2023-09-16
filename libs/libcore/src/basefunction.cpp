@@ -182,17 +182,17 @@ void BaseFunction::setSymbol(const QString &symbol)
 	this->symbol=symbol;
 }
 
-void BaseFunction::setLanguage(BaseObject *language)
+void BaseFunction::setLanguage(BaseObject *lang)
 {
 	//Raises an error if the language is not allocated
-	if(!language)
+	if(!lang)
 		throw Exception(ErrorCode::AsgNotAllocatedLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the language object is invalid
-	else if(language->getObjectType()!=ObjectType::Language)
+	else if(lang->getObjectType()!=ObjectType::Language)
 		throw Exception(ErrorCode::AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(this->language != language);
-	this->language=language;
+	setCodeInvalidated(this->language != lang);
+	this->language=lang;
 }
 
 void BaseFunction::setSecurityType(SecurityType sec_type)
@@ -328,12 +328,10 @@ bool BaseFunction::isTransformTypeExists(PgSqlType type)
 
 void BaseFunction::removeParameter(const QString &name, PgSqlType type)
 {
-	std::vector<Parameter>::iterator itr,itr_end;
+	auto itr = parameters.begin(),
+			itr_end=parameters.end();
 
-	itr=parameters.begin();
-	itr_end=parameters.end();
-
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
 		//Compares the iterator name and type with the passed name an type
 		if(itr->getName()==name && itr->getType()==(~type))
@@ -341,6 +339,7 @@ void BaseFunction::removeParameter(const QString &name, PgSqlType type)
 			parameters.erase(itr);
 			break;
 		}
+
 		itr++;
 	}
 
@@ -354,10 +353,8 @@ void BaseFunction::removeParameter(unsigned param_idx)
 	if(param_idx>=parameters.size())
 		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	std::vector<Parameter>::iterator itr;
-	itr=parameters.begin()+param_idx;
+	auto itr = parameters.begin() + param_idx;
 	parameters.erase(itr);
-
 	createSignature();
 }
 
@@ -392,6 +389,21 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
 	signature=this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
 	this->setCodeInvalidated(true);
+}
+
+void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps)
+{
+	std::vector<BaseObject *> aux_deps = { language };
+
+	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
+
+	for(auto &param : parameters)
+		aux_deps.push_back(param.getType().getObject());
+
+	for(auto &type : transform_types)
+		aux_deps.push_back(type.getObject());
+
+	BaseObject::updateDependencies(aux_deps);
 }
 
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)

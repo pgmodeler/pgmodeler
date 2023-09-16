@@ -130,6 +130,7 @@ namespace GuiUtilsNs {
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
 			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
 
 			if(object->isSystemObject())
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
@@ -170,6 +171,22 @@ namespace GuiUtilsNs {
 						constr->setSQLDisabled(disable);
 				}
 			}
+
+			// If its a graphical object, we force the visual update of it
+			if(graph_obj)
+			{
+				BaseRelationship *base_rel = dynamic_cast<BaseRelationship *>(graph_obj);
+				graph_obj->setModified(true);
+
+				if(base_rel)
+				{
+					base_rel->getTable(BaseRelationship::SrcTable)->setModified(true);
+
+					if(!base_rel->isSelfRelationship())
+						base_rel->getTable(BaseRelationship::DstTable)->setModified(true);
+				}
+			}
+
 		}
 	}
 
@@ -177,31 +194,25 @@ namespace GuiUtilsNs {
 	{
 		if(object && object->getDatabase())
 		{
-			std::vector<BaseObject *> refs;
-			TableObject *tab_obj=nullptr;
-			DatabaseModel *model=dynamic_cast<DatabaseModel *>(object->getDatabase());
+			TableObject *tab_obj = nullptr;
 
-			model->getObjectReferences(object, refs);
-
-			while(!refs.empty())
+			for(auto &obj : object->getReferences())
 			{
-				tab_obj=dynamic_cast<TableObject *>(refs.back());
+				tab_obj = dynamic_cast<TableObject *>(obj);
 
 				//If the object is a relationship added does not do anything since the relationship itself will be disabled
-				if(refs.back()->getObjectType()!=ObjectType::BaseRelationship &&
+				if(obj->getObjectType()!=ObjectType::BaseRelationship &&
 						(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 				{
-					refs.back()->setSQLDisabled(object->isSQLDisabled());
+					obj->setSQLDisabled(object->isSQLDisabled());
 
 					//Update the parent table graphical representation to show the disabled child object
 					if(tab_obj)
 						tab_obj->getParentTable()->setModified(true);
 
 					//Disable the references of the current object too
-					disableReferencesSQL(refs.back());
+					disableReferencesSQL(obj);
 				}
-
-				refs.pop_back();
 			}
 		}
 	}

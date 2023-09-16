@@ -465,6 +465,8 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					if(obj_type==ObjectType::Constraint)
 						dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
 				}
+
+				tab_obj->updateDependencies();
 			}
 			else if(isPhysicalTable(obj_type))
 			{
@@ -666,7 +668,9 @@ void PhysicalTable::removeObject(BaseObject *obj)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
 
 			if(tab_obj)
+			{
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
+			}
 			else
 				removeObject(obj->getName(true), ObjectType::Table);
 		}
@@ -724,6 +728,8 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 			if(constr && constr->getConstraintType()==ConstraintType::PrimaryKey)
 				dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
+
+			tab_obj->clearAllDepsRefs();
 		}
 		else
 		{
@@ -734,17 +740,17 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			column=dynamic_cast<Column *>(*itr);
 
 			//Gets the references to the column before the exclusion
-			getColumnReferences(column, refs, true);
+			refs = getColumnReferences(column);
 
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemInderectReference)
-								.arg(column->getName())
+								.arg(column->getSignature())
 								.arg(column->getTypeName())
-								.arg(refs[0]->getName())
+								.arg(refs[0]->getSignature())
 						.arg(refs[0]->getTypeName())
-						.arg(this->getName(true))
+						.arg(this->getSignature())
 						.arg(this->getTypeName()),
 						ErrorCode::RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -753,10 +759,11 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(isPartitionKeyRefColumn(column))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemColumnRefByPartitionKey)
-								.arg(column->getName()).arg(this->getName(true)),
+								.arg(column->getSignature()).arg(this->getSignature()),
 								ErrorCode::RemColumnRefByPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
+			column->clearDependencies();
 			column->setParentTable(nullptr);
 			columns.erase(itr);
 		}
@@ -1523,54 +1530,22 @@ void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsig
 	}
 }
 
-void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
+std::vector<TableObject *> PhysicalTable::getColumnReferences(Column *column)
 {
-	if(column && !column->isAddedByRelationship())
-	{
-		unsigned count, i;
-		Column *col=nullptr, *col1=nullptr;
-		std::vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
-		Constraint *constr=nullptr;
-		Trigger *trig=nullptr;
+	if(!column || column->isAddedByRelationship())
+		return {};
 
-		itr=constraints.begin();
-		itr_end=constraints.end();
+	std::vector<BaseObject *> refs = column->getReferences();
+	std::vector<TableObject *> col_refs;
 
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			constr=dynamic_cast<Constraint *>(*itr);
-			itr++;
+	std::for_each(refs.begin(), refs.end(),
+								[&col_refs](auto &obj)
+								{
+									if(TableObject::isTableObject(obj->getObjectType()))
+										col_refs.push_back(dynamic_cast<TableObject *>(obj));
+								});
 
-			col=constr->getColumn(column->getName(), Constraint::SourceCols);
-			col1=constr->getColumn(column->getName(), Constraint::ReferencedCols);
-
-			if((col && col==column) || (col1 && col1==column))
-			{
-				found=true;
-				refs.push_back(constr);
-			}
-		}
-
-		itr=triggers.begin();
-		itr_end=triggers.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			trig=dynamic_cast<Trigger *>(*itr);
-			itr++;
-
-			count=trig->getColumnCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !found)); i++)
-			{
-				if(trig->getColumn(i)==column)
-				{
-					found=true;
-					refs.push_back(trig);
-				}
-			}
-		}
-	}
+	return col_refs;
 }
 
 std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)

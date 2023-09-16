@@ -134,9 +134,12 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 		model.addUserMapping(&usr_mapping);
 
 		std::vector<BaseObject *> refs, deps;
-		model.getObjectDependecies(&usr_mapping, deps);
+		//model.getObjectDependecies(&usr_mapping, deps);
+		deps = usr_mapping.getDependencies();
 
-		model.getObjectReferences(&server, refs);
+		//model.getObjectReferences(&server, refs);
+		refs = server.getReferences();
+
 		model.removeUserMapping(&usr_mapping);
 		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);

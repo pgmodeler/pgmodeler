@@ -189,3 +189,21 @@ bool OperatorClassElement::operator == (OperatorClassElement &elem)
 					this->op_family == elem.op_family);
 }
 
+std::vector<BaseObject *> OperatorClassElement::getDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	if(function)
+		deps.push_back(function);
+
+	if(_operator)
+		deps.push_back(_operator);
+
+	if(op_family)
+		deps.push_back(op_family);
+
+	if(storage.getObject())
+		deps.push_back(storage.getObject());
+
+	return deps;
+}

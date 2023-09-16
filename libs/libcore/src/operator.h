@@ -43,7 +43,7 @@ class __libcore Operator: public BaseObject {
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		enum FunctionId: unsigned {
@@ -64,8 +64,10 @@ class __libcore Operator: public BaseObject {
 
 		Operator();
 
+		virtual ~Operator(){}
+
 		//! \brief Defines the name of the operator
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICT])
 		void setFunction(Function *func, FunctionId func_id);
@@ -105,7 +107,9 @@ class __libcore Operator: public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Returns the operator signature
-		virtual QString getSignature(bool format_name=true);
+		virtual QString getSignature(bool format_name=true) override;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

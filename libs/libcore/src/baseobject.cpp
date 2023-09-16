@@ -24,6 +24,8 @@
 
 bool BaseObject::ignore_db_version = false;
 
+bool BaseObject::clear_deps_in_dtor = true;
+
 const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
 
 /* CAUTION: If both amount and order of the enumerations are modified
@@ -134,6 +136,12 @@ BaseObject::BaseObject()
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
+BaseObject::~BaseObject()
+{
+	if(clear_deps_in_dtor)
+		clearAllDepsRefs();
+}
+
 unsigned BaseObject::getGlobalId()
 {
 	return global_id;
@@ -156,8 +164,8 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return QApplication::translate("BaseObject",obj_type_names[enum_t(obj_type)].toStdString().c_str(),"", -1);
-	else
-		return "";
+
+	return "";
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
@@ -584,7 +592,7 @@ void BaseObject::setSchema(BaseObject *schema)
 		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->schema != schema);
-	this->schema=schema;
+	this->schema = schema;
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -595,7 +603,7 @@ void BaseObject::setOwner(BaseObject *owner)
 		throw Exception(ErrorCode::AsgRoleObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->owner != owner);
-	this->owner=owner;
+	this->owner = owner;
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -606,7 +614,7 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 		throw Exception(ErrorCode::AsgTablespaceInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->tablespace != tablespace);
-	this->tablespace=tablespace;
+	this->tablespace = tablespace;
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -617,7 +625,7 @@ void BaseObject::setCollation(BaseObject *collation)
 		throw Exception(ErrorCode::AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->collation != collation);
-	this->collation=collation;
+	this->collation = collation;
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -1171,6 +1179,7 @@ QStringList BaseObject::getSearchAttributesNames()
 
 void BaseObject::operator = (BaseObject &obj)
 {
+	//clearDependencies();
 	this->owner=obj.owner;
 	this->schema=obj.schema;
 	this->tablespace=obj.tablespace;
@@ -1183,6 +1192,7 @@ void BaseObject::operator = (BaseObject &obj)
 	this->sql_disabled=obj.sql_disabled;
 	this->system_obj=obj.system_obj;
 	this->setCodeInvalidated(true);
+	//updateDependencies();
 }
 
 void BaseObject::setCodeInvalidated(bool value)
@@ -1446,5 +1456,152 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+std::vector<BaseObject *> BaseObject::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	return getLinkedObjects(ObjDependencies, inc_indirect_deps, excl_types, rem_duplicates);
+}
+
+std::vector<BaseObject*> BaseObject::getReferences(bool inc_indirect_refs, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	return getLinkedObjects(ObjReferences, inc_indirect_refs, excl_types, rem_duplicates);
+}
+
+std::vector<BaseObject *> BaseObject::getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	std::vector<BaseObject *> linked_objs,
+			*obj_list =	(lnk_type == ObjDependencies ? &object_deps : &object_refs);
+
+	if(incl_ind_links)
+	{
+		__getLinkedObjects(lnk_type, *obj_list, linked_objs);
+
+		if(!excl_types.empty())
+			linked_objs = CoreUtilsNs::filterObjectsByType(linked_objs, excl_types);
+	}
+
+	if(!excl_types.empty())
+		linked_objs = CoreUtilsNs::filterObjectsByType(*obj_list, excl_types);
+	else
+		linked_objs = *obj_list;
+
+	if(rem_duplicates)
+	{
+		std::sort(linked_objs.begin(), linked_objs.end());
+		auto end = std::unique(linked_objs.begin(), linked_objs.end());
+		linked_objs.erase(end, linked_objs.end());
+	}
+
+	return linked_objs;
+}
+
+void BaseObject::__getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links)
+{
+	for(auto &obj : objs)
+	{
+		ind_links.push_back(obj);
+		__getLinkedObjects(lnk_type,
+											 lnk_type == ObjDependencies ? obj->getDependencies() : obj->getReferences(),
+											 ind_links);
+	}
+}
+
+void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)
+{
+	// If we are replacing a dependency we first need to undo the previous dependency
+	if(prev_dep_obj)
+		unsetDependency(prev_dep_obj);
+
+	if(!dep_obj)
+		return;
+
+	object_deps.push_back(dep_obj);
+	dep_obj->setReference(this);
+}
+
+void BaseObject::setReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		return;
+
+	object_refs.push_back(ref_obj);
+}
+
+void BaseObject::unsetReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		return;
+
+	auto itr = std::find(object_refs.begin(), object_refs.end(), ref_obj);
+
+	if(itr != object_refs.end())
+		object_refs.erase(itr);
+}
+
+void BaseObject::unsetDependency(BaseObject *dep_obj)
+{
+	if(!dep_obj)
+		return;
+
+	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
+
+	if(itr != object_deps.end())
+	{
+		dep_obj->unsetReference(this);
+		object_deps.erase(itr);
+	}
+}
+
+void BaseObject::setClearDepsInDtor(bool value)
+{
+	clear_deps_in_dtor = value;
+}
+
+void BaseObject::clearDependencies()
+{
+	if(object_deps.empty() && object_refs.empty())
+		return;
+
+	for(auto &obj : object_deps)
+		obj->unsetReference(this);
+
+	object_deps.clear();
+}
+
+void BaseObject::clearReferences()
+{
+	for(auto &obj : object_refs)
+		obj->unsetDependency(this);
+
+	object_refs.clear();
+}
+
+void BaseObject::clearAllDepsRefs()
+{
+	clearDependencies();
+	clearReferences();
+}
+
+void BaseObject::updateDependencies()
+{
+	updateDependencies({});
+}
+
+void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
+{
+	std::vector<BaseObject *> aux_deps = {
+		schema, tablespace, owner, collation
+	};
+
+	aux_deps.insert(aux_deps.end(), dep_objs.begin(), dep_objs.end());
+
+	for(auto &obj : aux_deps)
+	{
+		if(!obj)
+			continue;
+
+		setDependency(obj);
 	}
 }

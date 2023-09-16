@@ -53,6 +53,8 @@ class __libcore Textbox: public BaseGraphicObject{
 		 method used to get the current text */
 		Textbox();
 
+		virtual ~Textbox(){}
+
 		//! \brief Sets the attributes of the text
 		void setTextAttribute(TextAttrib attrib, bool value);
 

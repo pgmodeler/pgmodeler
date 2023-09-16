@@ -70,6 +70,8 @@ class __libcore Index: public TableObject{
 
 		Index();
 
+		virtual ~Index(){}
+
 		//! \brief Adds an element to the index using an column
 		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
@@ -170,6 +172,10 @@ class __libcore Index: public TableObject{
 		std::vector<SimpleColumn> getSimpleColumns();
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
+
+		virtual void generateHashCode() override;
 };
 
 #endif

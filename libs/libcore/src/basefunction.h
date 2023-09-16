@@ -72,6 +72,8 @@ class __libcore BaseFunction: public BaseObject {
 
 		BaseFunction();
 
+		virtual ~BaseFunction() {}
+
 		//! \brief Sets the function name updating its signature
 		void setName(const QString &name);
 
@@ -162,6 +164,10 @@ class __libcore BaseFunction: public BaseObject {
 		 to adequately format the function and parameters names. By default
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
+
+		virtual void updateDependencies() = 0 ;
+
+		void updateDependencies(const std::vector<BaseObject *> &deps);
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;

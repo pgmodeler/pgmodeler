@@ -93,11 +93,25 @@ class __libcore BaseObject {
 
 		static bool escape_comments;
 
+		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		static bool clear_deps_in_dtor;
+
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
+
+		//! \brief Stores the objects that references the "this" object
+		std::vector<BaseObject *> object_refs,
+
+				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
+				object_deps;
+
+		/*! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		 *  This is useful to avoid calling the method clearAllDepsRefs() when destroying the entire
+		 *  database model. See more in BaseObject::~BaseObject() */
+		static void setClearDepsInDtor(bool value);
 
 	protected:
 		SchemaParser schparser;
@@ -266,6 +280,44 @@ class __libcore BaseObject {
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
+		/*! \brief This version, called inside updateDependencies(), just run through the provided
+		 *  object list and unsets the dependency link between the "this" object and the items
+		 *  ih the list. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		void updateDependencies(const std::vector<BaseObject *> &dep_objs);
+
+		//! \brief Register an object as a reference to the "this" object
+		void setReference(BaseObject *ref_obj);
+
+					 //! \brief Unregister an object as a reference to the "this" object
+		void unsetReference(BaseObject *ref_obj);
+
+		/*! \brief Defines the dep_obj as a dependency of the "this" object.
+		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
+		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
+		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
+
+		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
+		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
+		void unsetDependency(BaseObject *dep_obj);
+
+		//! \brief Link type used to determine the kind of objects retrived by the functions getLinkedObjects()
+		enum ObjLinkType: unsigned {
+			ObjDependencies,
+			ObjReferences
+		};
+
+		/*! \brief Returns the list of objects linked to "this".
+		 * The lkn_type determines the modality of the objects to be retrieved (see ObjLinkType enum).
+		 * The parameter incl_ind_links will include in the resulting list all the indirect links of the object
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates);
+
+		//! \brief This is the recursive version of the getLinkedObjects method
+		void __getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
@@ -276,7 +328,8 @@ class __libcore BaseObject {
 		static constexpr unsigned DefMaxObjectCount=20;
 
 		BaseObject();
-		virtual ~BaseObject(void){}
+
+		virtual ~BaseObject();
 
 		//! \brief Returns the reference to the database that owns the object
 		BaseObject *getDatabase();
@@ -542,6 +595,22 @@ class __libcore BaseObject {
 		//! \brief Returns the set of attributes used by the search mechanism
 		attribs_map getSearchAttributes();
 
+		/*! \brief Returns all the objects that the this object depends on.
+		 * The boolean paramenter inc_indirect_deps is used to include the indirect dependencies
+		 * in the returned list. Indirect dependencies are the dependencies of the objects that are
+		 * dependencies of the this object, e.g., view V that depends on a table T that dependes on a schema S.
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
+
+		/*! \brief Returns all the objects that in which references the this object.
+		 * The boolean paramenter inc_indirect_refs is used to include the indirect references
+		 * in the returned list. Indirect references are the references of the objects that are
+		 * references to the this object, e.g., column C that references a type T that references a schema S.
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_refs = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
+
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error
 		 *  is raised. When true, the error is not raised, but the overall usage of the tool may be affected
@@ -555,6 +624,21 @@ class __libcore BaseObject {
 		static QString getSearchAttributeI18N(const QString &search_attr);
 
 		static QStringList getSearchAttributesNames();
+
+		//! \brief Unset all dependecies at once
+		void clearDependencies();
+
+		//! \brief Unset all dependecies at once
+		void clearReferences();
+
+		//! \brief Clears both dependencies and references
+		void clearAllDepsRefs();
+
+		/*! \brief Updates the dependencies list based upon the current relationship between
+		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		virtual void updateDependencies();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

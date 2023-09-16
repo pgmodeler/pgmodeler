@@ -648,10 +648,10 @@ ModelWidget::~ModelWidget()
 	tags_menu.clear();
 	break_rel_menu.clear();
 
-	delete viewport;
+	//delete viewport;
 	delete scene;
-	delete op_list;
-	delete db_model;
+	//delete op_list;
+	//delete db_model;
 }
 
 void ModelWidget::setModified(bool value)
@@ -750,6 +750,9 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 
 		if(!m_event)
 			return false;
+
+		if(m_event->button() != Qt::NoButton)
+			new_obj_overlay_wgt->hide();
 
 		if(event->type() == QEvent::GraphicsSceneMouseMove)
 		{
@@ -1732,6 +1735,10 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
 
+		#ifdef PGMODELER_DEBUG
+			quint64 start = QDateTime::currentSecsSinceEpoch();
+		#endif
+
 		db_model->loadModel(filename);
 		this->filename=filename;
 		updateObjectsOpacity();
@@ -1741,6 +1748,14 @@ void ModelWidget::loadModel(const QString &filename)
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
 		setModified(false);
+
+		#ifdef PGMODELER_DEBUG
+			quint64 end = QDateTime::currentSecsSinceEpoch();
+			QTextStream out(stdout);
+			out << "File: " << filename << Qt::endl;
+			out << "Loaded in " << end - start << "s" << Qt::endl;
+			out << "---" << Qt::endl;
+		#endif
 	}
 	catch(Exception &e)
 	{
@@ -2328,7 +2343,10 @@ void ModelWidget::moveToSchema()
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
+				obj->clearDependencies();
 				obj->setSchema(schema);
+				obj->updateDependencies();
+
 				obj_graph=dynamic_cast<BaseGraphicObject *>(obj);
 
 				//If the object is a graphical one, move it to a position near to the new schema box
@@ -2346,9 +2364,7 @@ void ModelWidget::moveToSchema()
 				}
 
 				//Invalidating the code of the object's references
-				db_model->getObjectReferences(obj, ref_objs);
-
-				for(BaseObject *ref_obj : ref_objs)
+				for(auto &ref_obj : obj->getReferences())
 					ref_obj->setCodeInvalidated(true);
 			}
 		}
@@ -2413,7 +2429,9 @@ void ModelWidget::changeOwner()
 				if(obj->getObjectType()!=ObjectType::Database)
 					op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
 
+				obj->clearDependencies();
 				obj->setOwner(owner);
+				obj->updateDependencies();
 			}
 		}
 
@@ -2447,7 +2465,9 @@ void ModelWidget::setTag()
 			if(tab)
 			{
 				op_id=op_list->registerObject(obj, Operation::ObjModified, -1);
+				tab->clearDependencies();
 				tab->setTag(dynamic_cast<Tag *>(tag));
+				tab->updateDependencies();
 			}
 		}
 
@@ -2533,9 +2553,8 @@ void ModelWidget::selectTableRelationships()
 
 void ModelWidget::selectTaggedTables()
 {
-	QObject *obj_sender=dynamic_cast<QAction *>(sender());
-	Tag *tag=nullptr;
-	std::vector<BaseObject *> objects;
+	QObject *obj_sender = dynamic_cast<QAction *>(sender());
+	Tag *tag = nullptr;
 	BaseObjectView *obj_view = nullptr;
 
 	tag=dynamic_cast<Tag *>(
@@ -2543,9 +2562,8 @@ void ModelWidget::selectTaggedTables()
 					dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
 
 	scene->clearSelection();
-	db_model->getObjectReferences(tag, objects);
 
-	for(auto object : objects)
+	for(auto &object : tag->getReferences())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getOverlyingObject());
 		obj_view->setSelected(true);
@@ -2651,15 +2669,11 @@ void ModelWidget::cutObjects()
 void ModelWidget::copyObjects(bool duplicate_mode)
 {
 	std::map<unsigned, BaseObject *> objs_map;
-	std::map<unsigned, BaseObject *>::iterator obj_itr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<BaseObject *> deps;
-	BaseObject *object=nullptr;
-	TableObject *tab_obj=nullptr;
-	BaseTable *table=nullptr;
-	Constraint *constr=nullptr;
-	ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Constraint, ObjectType::Policy };
-	unsigned i, type_id, count;
+	BaseObject *object = nullptr;
+	TableObject *tab_obj = nullptr;
+	BaseTable *table = nullptr;
+	Constraint *constr = nullptr;
 	Messagebox msg_box;
 
 	if(selected_objects.size()==1)
@@ -2683,80 +2697,60 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	if(ModelWidget::cut_operation)
 		cut_objects=selected_objects;
 
-	itr=selected_objects.begin();
-	itr_end=selected_objects.end();
-
-	while(itr!=itr_end)
+	for(auto &object : selected_objects)
 	{
-		object=(*itr);
-
 		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
-		if(object->getObjectType()!=ObjectType::BaseRelationship)
+		if(object->getObjectType() == ObjectType::BaseRelationship)
+			continue;
+
+		if(msg_box.result()==QDialog::Accepted)
+			deps = object->getDependencies(true, { ObjectType::Column });
+
+		deps.push_back(object);
+
+		/* Copying the special objects (which references columns added by relationship) in order
+		to be correclty created when pasted */
+		if(object->getObjectType()==ObjectType::Table || object->getObjectType() == ObjectType::View)
 		{
-			if(msg_box.result()==QDialog::Accepted)
-				db_model->getObjectDependecies(object, deps, true);
-			else
-				deps.push_back(object);
+			table = dynamic_cast<BaseTable *>(object);
 
-			/* Copying the special objects (which references columns added by relationship) in order
-			to be correclty created when pasted */
-			if(object->getObjectType()==ObjectType::Table || object->getObjectType() == ObjectType::View)
+			for(auto &obj : table->getObjects({ ObjectType::Column }))
 			{
-				table=dynamic_cast<BaseTable *>(object);
+				tab_obj = dynamic_cast<TableObject *>(obj);
+				constr = dynamic_cast<Constraint *>(tab_obj);
 
-				for(type_id=0; type_id <= 4; type_id++)
+				/* The object is only inserted at the list when it was not included by relationship but references
+				columns added by relationship. Case the object is a constraint, it cannot be a primary key because
+				this type of constraint is treated separetely by relationships */
+				if(duplicate_mode ||
+						(!duplicate_mode && !tab_obj->isAddedByRelationship() &&
+						 (!constr ||	(((constr &&
+								 (constr->getConstraintType()==ConstraintType::ForeignKey ||
+									(constr->getConstraintType()==ConstraintType::Unique &&
+									 constr->isReferRelationshipAddedColumn()))))))))
 				{
-					count=table->getObjectCount(types[type_id]);
-
-					for(i=0; i < count; i++)
-					{
-						tab_obj=dynamic_cast<TableObject *>(table->getObject(i, types[type_id]));
-						constr=dynamic_cast<Constraint *>(tab_obj);
-
-						/* The object is only inserted at the list when it was not included by relationship but references
-						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
-						this type of constraint is treated separetely by relationships */
-						if(duplicate_mode ||
-						   (!duplicate_mode &&
-							!tab_obj->isAddedByRelationship() &&
-							 (!constr ||
-								(((constr &&
-									(constr->getConstraintType()==ConstraintType::ForeignKey ||
-									 (constr->getConstraintType()==ConstraintType::Unique &&
-									constr->isReferRelationshipAddedColumn()))))))))
-							deps.push_back(tab_obj);
-					}
-
-					if(object->getObjectType() == ObjectType::View && type_id >= 2)
-						break;
+					deps.push_back(tab_obj);
 				}
 			}
 		}
-		itr++;
 	}
 
-	itr=deps.begin();
-	itr_end=deps.end();
-
-	//Storing the objects ids in a auxiliary vector
-	while(itr!=itr_end)
-	{
-		object=(*itr);
-		objs_map[object->getObjectId()]=object;
-		itr++;
-	}
+	//Storing the objects ids in a auxiliary map organizing them by creation order
+	std::for_each(deps.begin(), deps.end(), [&objs_map](BaseObject *object) {
+		objs_map[object->getObjectId()] = object;
+	});
 
 	copied_objects.clear();
-	obj_itr=objs_map.begin();
-	while(obj_itr!=objs_map.end())
+
+	for(auto &obj_itr : objs_map)
 	{
-		object=obj_itr->second;
+		object = obj_itr.second;
 
 		//Reserved object aren't copied
-		if(!object->isSystemObject())
-			copied_objects.push_back(object);
+		if(object->isSystemObject())
+			continue;
 
-		obj_itr++;
+		copied_objects.push_back(object);
 	}
 }
 
@@ -3271,14 +3265,9 @@ void ModelWidget::removeObjects(bool cascade)
 				//If in cascade mode, retrieve all references to the object (direct and indirect)
 				if(cascade)
 				{
-					std::vector<BaseObject *> refs;
-
 					for(BaseObject *sel_obj : sel_objs)
 					{
-						refs.clear();
-						db_model->__getObjectReferences(sel_obj, refs);
-
-						for(BaseObject *ref_obj : refs)
+						for(BaseObject *ref_obj : sel_obj->getReferences())
 						{
 							obj_id=ref_obj->getObjectId();
 							tab_obj=dynamic_cast<TableObject *>(ref_obj);
@@ -3379,8 +3368,8 @@ void ModelWidget::removeObjects(bool cascade)
 					else
 					{
 						//If the object does not exists on the model it'll not be processed.
-						aux_obj=db_model->getObject(obj_name, obj_type);
-						if(aux_obj!=object)
+						aux_obj = db_model->getObject(obj_name, obj_type);
+						if(!aux_obj/* != object */)
 							continue;
 					}
 
@@ -3415,11 +3404,7 @@ void ModelWidget::removeObjects(bool cascade)
 							obj_idx=table->getObjectIndex(tab_obj->getName(true), obj_type);
 
 							try
-							{
-								//If the object is a column validates the column removal before remove it
-								if(!cascade && obj_type==ObjectType::Column)
-									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
-
+							{								
 								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::ObjRemoved, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
@@ -3943,7 +3928,7 @@ void ModelWidget::fadeObjects(QAction *action, bool fade_in)
 	{
 		//For tag object the fade is applied in the tables/views related to it
 		if(selected_objects.size() == 1 && selected_objects[0]->getObjectType() == ObjectType::Tag)
-			db_model->getObjectReferences(selected_objects[0], list);
+			list = selected_objects[0]->getReferences();
 		else
 		{
 			bool fade_rels = action == action_fade_rels_in || action == action_fade_rels_out,

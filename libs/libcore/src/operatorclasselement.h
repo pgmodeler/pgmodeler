@@ -67,7 +67,8 @@ class __libcore OperatorClassElement {
 
 	public:
 		OperatorClassElement();
-		virtual ~OperatorClassElement(void){}
+
+		virtual ~OperatorClassElement(){}
 
 		//! \brief Defines the element as a function clause
 		void setFunction(Function *func, unsigned stg_number);
@@ -107,6 +108,8 @@ class __libcore OperatorClassElement {
 
 		//! \brief Operator to compare two elements, returns true when all atributes has the same configuration
 		bool operator == (OperatorClassElement &elem);
+
+		std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the OperatorClassElement class as a Qt MetaType in order to make

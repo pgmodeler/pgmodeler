@@ -692,9 +692,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 
 							if(types[i]==ObjectType::Tag)
 							{
-								db_model->getObjectReferences(object, ref_list);
-
-								for(auto &ref : ref_list)
+								for(auto &ref : object->getReferences())
 									createItemForObject(ref, item2, false);
 							}
 						}

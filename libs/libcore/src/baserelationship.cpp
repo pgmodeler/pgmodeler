@@ -48,11 +48,12 @@ BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTab
 		this->connected=false;
 		this->src_mandatory=src_mandatory;
 		this->dst_mandatory=dst_mandatory;
-		this->src_table=src_tab;
-		this->dst_table=dst_tab;
 		this->rel_type=rel_type;
 		this->custom_color=QColor(Qt::transparent);
 		this->reference_fk=nullptr;
+		this->src_table=src_tab;
+		this->dst_table=dst_tab;
+
 
 		for(unsigned i=0; i < 3; i++)
 		{
@@ -448,7 +449,7 @@ bool BaseRelationship::canSimulateRelationship11()
 
 QString BaseRelationship::getSourceCode(SchemaParser::CodeType def_type)
 {
-	QString code_def=getCachedCode(def_type);
+	QString code_def = getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlCode)
@@ -592,6 +593,11 @@ QString BaseRelationship::getRelationshipTypeName(RelType rel_type, bool is_view
 QString BaseRelationship::getRelationshipTypeName()
 {
 	return getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View);
+}
+
+void BaseRelationship::updateDependencies()
+{
+	BaseObject::updateDependencies({ src_table, dst_table });
 }
 
 void BaseRelationship::setCodeInvalidated(bool value)

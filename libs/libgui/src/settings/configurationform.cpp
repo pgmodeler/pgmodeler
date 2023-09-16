@@ -23,12 +23,12 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 {
 	setupUi(this);
 
-	general_conf=new GeneralConfigWidget(this);
-	appearance_conf=new AppearanceConfigWidget(this);
-	connections_conf=new ConnectionsConfigWidget(this);
-	relationships_conf=new RelationshipConfigWidget(this);
-	snippets_conf=new SnippetsConfigWidget(this);
-	plugins_conf=new PluginsConfigWidget(this);
+	general_conf=new GeneralConfigWidget;
+	appearance_conf=new AppearanceConfigWidget;
+	connections_conf=new ConnectionsConfigWidget;
+	relationships_conf=new RelationshipConfigWidget;
+	snippets_conf=new SnippetsConfigWidget;
+	plugins_conf=new PluginsConfigWidget;
 
 	QWidgetList wgt_list={ general_conf, appearance_conf, relationships_conf,
 												 connections_conf, snippets_conf, plugins_conf };

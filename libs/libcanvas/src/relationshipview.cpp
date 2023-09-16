@@ -357,13 +357,10 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		}
 		else if(event->modifiers()==Qt::ShiftModifier)
 		{
-			QLineF lin;
-			QPointF p;
 			QRectF rect;
 			unsigned i = 0, count = 0;
 			bool pnt_rem=false;
 			std::vector<QPointF> points = base_rel->getPoints();
-			QLineF::IntersectType inter_type;
 
 			if(!base_rel->isSelfRelationship())
 			{
@@ -610,8 +607,16 @@ void RelationshipView::configureLine()
 
 	configureBoundingRect();
 
+	/* We skip the line configuration if the line is still being configured, or the bounding rectangles
+	 * of the involved tables are not valid (they wasn't rendered/configured yet) or the
+	 * hash codes of both tables are unchanged since the last call to this method */
 	if(configuring_line ||
+
 			!BaseGraphicObject::isUpdatesEnabled() ||
+
+			!tables[src_tab]->boundingRect().isValid() ||
+
+			!tables[dst_tab]->boundingRect().isValid() ||
 
 			((!tab_hashes[src_tab].isEmpty() &&
 					tab_hashes[src_tab] == base_rel->getTable(src_tab)->getHashCode()) &&
@@ -623,7 +628,7 @@ void RelationshipView::configureLine()
 	tab_hashes[src_tab] = base_rel->getTable(src_tab)->getHashCode();
 	tab_hashes[dst_tab] = base_rel->getTable(dst_tab)->getHashCode();
 
-	//Reconnect the tables is the placeholder usage changes
+	//Reconnect the tables if the placeholder usage changes
 	if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
 	{
 		connectTables();
@@ -1358,7 +1363,7 @@ void RelationshipView::configureDescriptor()
 								(pol.boundingRect().height() + (VertSpacing * 2)) * factor);
 
 	if(base_rel->isSelfRelationship())
-		pnt=points.at(points.size()/2);
+		pnt = points.at(points.size()/2);
 	else
 	{
 		if(!curves.empty())
@@ -2065,7 +2070,7 @@ void RelationshipView::configureBoundingRect()
 
 	for(int i = 0; i < 2; i++)
 	{
-		if(!cf_descriptors[i])
+		if(!cf_descriptors[i] || !cf_descriptors[i]->isVisible())
 			continue;
 
 		rect.setTopLeft(mapToScene(cf_descriptors[i]->pos()));
@@ -2092,6 +2097,9 @@ void RelationshipView::configureBoundingRect()
 	{
 		for(auto &line : lines)
 		{
+			if(!line->isVisible())
+				continue;
+
 			rect = line->boundingRect();
 			brect = brect.united(line->boundingRect());
 			stroke = ps.createStroke(line->shape());
@@ -2102,6 +2110,9 @@ void RelationshipView::configureBoundingRect()
 	{
 		for(auto &curve : curves)
 		{
+			if(!curve->isVisible())
+				continue;
+
 			rect = curve->boundingRect();
 			brect = brect.united(curve->boundingRect());
 			stroke = ps.createStroke(curve->shape());

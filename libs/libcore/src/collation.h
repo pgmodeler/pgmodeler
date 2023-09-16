@@ -67,6 +67,8 @@ class __libcore Collation : public BaseObject {
 	public:
 		Collation();
 
+		virtual ~Collation(){}
+
 		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
 		has no effect. To use custom localizations the user must reset 'locale' to a empty value. */

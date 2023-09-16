@@ -747,14 +747,15 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 				}
 
 				/* If the info is for DROP, generate the drop for referer objects of the
-		 one marked to be dropped */
+				 * one marked to be dropped */
 				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
 					ObjectType obj_type=object->getObjectType();
 
-					imported_model->getObjectReferences(object, ref_objs);
+					//imported_model->getObjectReferences(object, ref_objs);
+					ref_objs = object->getReferences();
 
 					for(auto &obj : ref_objs)
 					{
@@ -1174,7 +1175,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 			object->getObjectType()!=ObjectType::Database)
 	{
 		std::vector<BaseObject *> ref_objs;
-		BaseObject *aux_obj=nullptr;
+		BaseObject *aux_obj = nullptr;
 
 		/* If the specified object is not a table's child object,
 	   try to get an object from database which name is the same as 'object' */
@@ -1195,7 +1196,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 		}
 
 		//Get all references to the retrieved object on the database
-		imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
+		//imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
+		ref_objs = aux_obj->getReferences(false, { ObjectType::Permission });
 
 		/* If the to-be recreate object is a constraint check if it's a pk,
 		 if so, the fk's linked to it need to be recreated as well */
@@ -1212,12 +1214,14 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 				for(i=0; i < col_cnt; i++)
 				{
 					//Get the objects referencing the source columns of the pk
-					imported_model->getObjectReferences(constr->getColumn(i, Constraint::SourceCols), ref_aux, false, true);
+					//imported_model->getObjectReferences(constr->getColumn(i, Constraint::SourceCols), ref_aux, false, true);
+					ref_aux = constr->getColumn(i, Constraint::SourceCols)->getReferences(false, { ObjectType::Permission });
 
 					//Selecting only fks from the references list
-					for(BaseObject *obj : ref_aux)
+					for(auto &obj : ref_aux)
 					{
-						aux_constr=dynamic_cast<Constraint *>(obj);
+						aux_constr = dynamic_cast<Constraint *>(obj);
+
 						if(aux_constr && aux_constr->getConstraintType()==ConstraintType::ForeignKey)
 							ref_objs.push_back(aux_constr);
 					}

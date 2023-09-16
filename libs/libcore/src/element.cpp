@@ -20,6 +20,7 @@
 
 Element::Element()
 {
+	parent_obj = nullptr;
 	column=nullptr;
 	operator_class=nullptr;
 	sorting_attibs[NullsFirst]=false;
@@ -152,6 +153,19 @@ bool Element::isEqualsTo(Element &elem)
 bool Element::operator == (Element &elem)
 {
 	return isEqualsTo(elem);
+}
+
+std::vector<BaseObject *> Element::getDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	if(operator_class)
+		deps.push_back(operator_class);
+
+	if(column)
+		deps.push_back(column);
+
+	return deps;
 }
 
 bool Element::operator == (const Element &elem)

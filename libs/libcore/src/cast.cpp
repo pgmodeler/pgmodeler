@@ -213,7 +213,14 @@ void Cast::configureSearchAttributes()
 
 	BaseObject::configureSearchAttributes();
 
-	arg_types += *types[0];
-	arg_types += *types[1];
+	arg_types += *types[SrcType];
+	arg_types += *types[DstType];
 	search_attribs[Attributes::Type] = arg_types.join("; ");
+}
+
+void Cast::updateDependencies()
+{
+	BaseObject::updateDependencies({ cast_function,
+																	types[SrcType].getObject(),
+																	types[DstType].getObject() });
 }

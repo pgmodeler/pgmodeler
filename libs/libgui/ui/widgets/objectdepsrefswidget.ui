@@ -33,7 +33,7 @@
    <property name="spacing">
     <number>5</number>
    </property>
-   <item row="1" column="0">
+   <item row="4" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -68,16 +68,6 @@
        <property name="spacing">
         <number>5</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="exc_ind_deps_chk">
-         <property name="text">
-          <string>Exclude indirect dependencies</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QTableView" name="dependencies_view">
          <property name="editTriggers">
@@ -141,13 +131,6 @@
        <property name="spacing">
         <number>5</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="inc_ind_refs_chk">
-         <property name="text">
-          <string>Include indirect references</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QTableView" name="references_view">
          <property name="editTriggers">
@@ -257,6 +240,48 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="inc_indirect_links_chk">
+       <property name="statusTip">
+        <string>&lt;p&gt;Toggles the display of all the dependencies and references including the ones not directly linked to the original object used to retrieve the dependencies and references.&lt;/p&gt;</string>
+       </property>
+       <property name="text">
+        <string>Include indirectly linked objects</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="unique_results_chk">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="statusTip">
+        <string>Toggles the removal of duplicate results in the grids.</string>
+       </property>
+       <property name="text">
+        <string>Display unique results</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

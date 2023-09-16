@@ -52,3 +52,13 @@ QString IndexElement::getSourceCode(SchemaParser::CodeType def_type)
 	return schparser.getSourceCode(Attributes::IndexElement, attributes, def_type);
 }
 
+std::vector<BaseObject *> IndexElement::getDependencies()
+{
+	std::vector<BaseObject *> deps = Element::getDependencies();
+
+	if(collation)
+		deps.push_back(collation);
+
+	return deps;
+}
+

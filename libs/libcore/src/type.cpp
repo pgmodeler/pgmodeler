@@ -825,3 +825,15 @@ void Type::operator = (Type &type)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
+void Type::updateDependencies()
+{
+	std::vector<BaseObject *> deps = {
+		like_type.getObject(), subtype.getObject(), subtype_opclass
+	};
+
+	for(auto &tp_attr : type_attribs)
+		deps.push_back(tp_attr.getType().getObject());
+
+	BaseObject::updateDependencies(deps);
+}
+

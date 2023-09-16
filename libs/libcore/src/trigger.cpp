@@ -541,3 +541,24 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
+
+void Trigger::updateDependencies()
+{
+	std::vector<BaseObject *> deps = { function, referenced_table };
+
+	for(auto &col : upd_columns)
+		deps.push_back(col);
+
+	TableObject::updateDependencies(deps);
+}
+
+void Trigger::generateHashCode()
+{
+	QString str_events;
+	TableObject::generateHashCode();
+
+	for(auto &itr : events)
+		str_events.append(QString::number(isExecuteOnEvent(itr.first)));
+
+	hash_code = UtilsNs::getStringHash(hash_code + ~firing_type + str_events);
+}

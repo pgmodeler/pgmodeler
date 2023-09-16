@@ -42,6 +42,8 @@ class __libcore ForeignObject {
 
 		ForeignObject();
 
+		virtual ~ForeignObject(){}
+
 		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);
 		void removeOption(const QString &opt);

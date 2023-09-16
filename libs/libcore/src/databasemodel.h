@@ -255,45 +255,6 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Set the initial capacity of the objects list for a optimized memory usage
 		void setObjectListsCapacity(unsigned capacity);
 
-		void getViewReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode);
-		void getPhysicalTableReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getFunctionReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getSchemaReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getUserDefTypesReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getRoleReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getTablespaceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getLanguageReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOpClassReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOperatorReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getCollationReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOpFamilyReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getColumnReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getTagReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getSequenceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getFdwReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getServerReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-
-		void getOpClassDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getDomainDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getCastDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getProcedureDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getFunctionDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getAggregateDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getLanguageDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getOperatorDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getRoleDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getPhysicalTableDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTypeDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getViewDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getGenericSQLDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTransformDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-
 		/*! \brief Configures all the shell types related to base user-defined base. By default, this method will convert
 		 * parameters of functions that are part of a user defined type and return the shell types SQL code. If the parameter reset_config
 		 * the method will only restore the original configuration of the functions and return an empty string. */
@@ -790,36 +751,12 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Updates the fk relationships for all table on the model
 		void updateTablesFKRelationships();
 
-		/*! \brief Validates the removal of the specified column raising errors when the passed object
-		 is still being referecend */
-		void validateColumnRemoval(Column *column);
-
 		//! \brief Validates the relationship to reflect the modifications on the column/constraint of the passed table
 		void validateRelationships(TableObject *object, Table *parent_tab);
 
 		/*! \brief Checks if from the passed relationship some redundacy is found. Redundancy generates infinite column
 		 propagation over the tables. This method raises an error when found some. */
 		void checkRelationshipRedundancy(Relationship *rel);
-
-		/*! \brief Returns all the objects that the object depends on. The boolean paramenter is used to include the
-		 indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
-		 the informed object, e.g., a schema linked to a table that is referenced in a view */
-		void getObjectDependecies(BaseObject *objeto, std::vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
-
-		/*! \brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
-		additionally its children objects (for schemas, tables or views) as well permissions.
-		This method is less efficient than the non recursive version and is used only as an auxiliary operation for
-		getCreationOrder(BaseObject *object) */
-		void __getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs);
-
-		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
-		 generally applied when excluding objects, this means that the method will stop the search when the first
-		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
-		void getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
-
-		/*! \brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
-		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
-		void __getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclude_perms=false);
 
 		/*! \brief Marks the graphical objects of the provided types as modified forcing their redraw. User can specify only a set of
 	 graphical objects to be marked */
@@ -844,16 +781,17 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
 		std::vector<BaseObject *> findObjects(const QString &pattern, std::vector<ObjectType> types,
-																		 bool case_sensitive, bool is_regexp, bool exact_match,
-																		 const QString &search_attr = Attributes::Name);
+																					bool case_sensitive, bool is_regexp, bool exact_match,
+																					const QString &search_attr = Attributes::Name);
 
 		/*! \brief Returns a list of objects searching them by using the filter syntax [type]:[pattern]:[mode]
 		 * The provided list of filter strings is composed by:
 		 * > The object type (schema name, see BaseObject::getSchemaName())
 		 * > The search pattern itself
 		 * > The pattern mode (regexp | wildcard)
-		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name) */
-		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
+		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name)
+		 * The parameter any_incl_cols indicates if the any filter type must filter columns too */
+		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name, bool any_incl_cols = false);
 
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition();

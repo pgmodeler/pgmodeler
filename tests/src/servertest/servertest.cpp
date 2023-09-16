@@ -110,9 +110,12 @@ void ServerTest::modelReturnsDepsAndRefsForServer()
 		model.addForeignServer(&server);
 
 		std::vector<BaseObject *> refs, deps;
-		model.getObjectDependecies(&server, deps);
+		//model.getObjectDependecies(&server, deps);
+		deps = server.getDependencies();
 
-		model.getObjectReferences(&fdw, refs);
+		//model.getObjectReferences(&fdw, refs);
+		refs = fdw.getReferences();
+
 		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);

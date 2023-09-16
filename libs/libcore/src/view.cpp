@@ -42,7 +42,7 @@ View::~View()
 
 	for(unsigned i=0; i < 3; i++)
 	{
-		list=getObjectList(types[i]);
+		list = getObjectList(types[i]);
 		while(!list->empty())
 		{
 			delete list->back();
@@ -394,7 +394,7 @@ Reference View::getReference(unsigned ref_id, Reference::SqlType sql_type)
 		return references[vect_idref->at(ref_id)];
 }
 
-void View::removeReference(unsigned ref_id)
+/* void View::removeReference(unsigned ref_id)
 {
 	std::vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
 	std::vector<unsigned>::iterator itr, itr_end;
@@ -423,10 +423,18 @@ void View::removeReference(unsigned ref_id)
 	references.erase(references.begin() + ref_id);
 	generateColumns();
 	setCodeInvalidated(true);
-}
+} */
 
 void View::removeReferences()
 {
+	/* for(auto &ref : references)
+	{
+		if(ref.getColumn())
+			unsetReference(ref.getColumn());
+		else if(ref.getTable())
+			unsetReference(ref.getTable());
+	} */
+
 	references.clear();
 	exp_select.clear();
 	exp_from.clear();
@@ -436,7 +444,7 @@ void View::removeReferences()
 	setCodeInvalidated(true);
 }
 
-void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
+/* void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
 {
 	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
@@ -445,7 +453,7 @@ void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
 
 	vect_idref->erase(vect_idref->begin() + expr_id);
 	setCodeInvalidated(true);
-}
+} */
 
 int View::getReferenceIndex(Reference &ref, Reference::SqlType sql_type)
 {
@@ -839,6 +847,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 			else
 				obj_list->insert(obj_list->begin() + obj_idx, tab_obj);
 
+			tab_obj->updateDependencies();
 			setCodeInvalidated(true);
 		}
 		catch(Exception &e)
@@ -900,7 +909,10 @@ void View::removeObject(unsigned obj_idx, ObjectType obj_type)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	itr=obj_list->begin() + obj_idx;
+
+	(*itr)->clearAllDepsRefs();
 	(*itr)->setParentTable(nullptr);
+
 	obj_list->erase(itr);
 	setCodeInvalidated(true);
 }
@@ -1199,10 +1211,23 @@ QString View::getAlterCode(BaseObject *object)
 	try
 	{
 		attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
-		return BaseObject::getAlterCode(object);
+		return BaseTable::getAlterCode(object);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void View::updateDependencies()
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	for(auto &ref : references)
+	{
+		aux_deps = ref.getDependencies(false);
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	BaseTable::updateDependencies(deps);
 }

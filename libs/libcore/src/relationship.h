@@ -324,7 +324,7 @@ class __libcore Relationship: public BaseRelationship {
 		 unique key used in 1-1 relationships */
 		std::vector<Constraint *> getGeneratedConstraints();
 
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
@@ -344,6 +344,8 @@ class __libcore Relationship: public BaseRelationship {
 					 ActionType fk_del_act=ActionType::Null,
 					 ActionType fk_upd_act=ActionType::Null,
 					 CopyOptions copy_op = CopyOptions());
+
+		virtual ~Relationship(){}
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();
@@ -533,6 +535,8 @@ class __libcore Relationship: public BaseRelationship {
 
 		//! \brief Returns true when the receiver table is mandatory in the relationship
 		bool isReceiverTableMandatory();
+
+		virtual void setSQLDisabled(bool value) override;
 
 		friend class DatabaseModel;
 		friend class ModelWidget;

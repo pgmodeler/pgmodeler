@@ -32,10 +32,14 @@ class __libcore Parameter: public Column {
 		is in, out or both (IN, OUT, INOUT, VARIADIC) */
 		bool is_in, is_out, is_variadic;
 
+		virtual void updateDependencies() override {}
+
 	public:
 		Parameter();
 		Parameter(const Parameter &param);
 		Parameter(const QString &name, PgSqlType type, bool in = false, bool out = false, bool variadic = false);
+
+		virtual ~Parameter(){}
 
 		void setType(PgSqlType type);
 		void setIn(bool value);

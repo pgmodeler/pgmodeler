@@ -242,3 +242,13 @@ QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 
 	return this->BaseObject::__getSourceCode(def_type);
 }
+
+void GenericSQL::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &ref : objects_refs)
+		deps.push_back(ref.object);
+
+	BaseObject::updateDependencies(deps);
+}

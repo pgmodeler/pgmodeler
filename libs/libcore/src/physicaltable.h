@@ -123,16 +123,17 @@ class __libcore PhysicalTable: public BaseTable {
 
 	public:
 		PhysicalTable();
-		~PhysicalTable(){}
+
+		virtual ~PhysicalTable(){}
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
 		static bool isPhysicalTable(ObjectType obj_type);
 
 		//! \brief Defines the table's name. This method updates the type named after the table
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Defines the table's schema. This method updates the type named after the table
-		void setSchema(BaseObject *schema);
+		virtual void setSchema(BaseObject *schema) override;
 
 		//! \brief Configures the copy table
 		void setCopyTable(PhysicalTable *tab);
@@ -156,22 +157,22 @@ class __libcore PhysicalTable: public BaseTable {
 		PhysicalTable *getPartitionedTable();
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
-		void addObject(BaseObject *obj, int obj_idx=-1);
+		virtual void addObject(BaseObject *obj, int obj_idx=-1) override;
 
 		//! \brief Gets a object from table through its index and type
-		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
+		virtual BaseObject *getObject(unsigned obj_idx, ObjectType obj_type) override;
 
 		//! \brief Gets a object from table through its name and type
-		BaseObject *getObject(const QString &name, ObjectType obj_type);
+		virtual BaseObject *getObject(const QString &name, ObjectType obj_type) override;
 
 		//! \brief Removes a object from table through its index and type
-		void removeObject(unsigned obj_idx, ObjectType obj_type);
+		virtual void removeObject(unsigned obj_idx, ObjectType obj_type) override;
 
 		//! \brief Removes a object from table through its name and type
-		void removeObject(const QString &name, ObjectType obj_type);
+		virtual void removeObject(const QString &name, ObjectType obj_type) override;
 
 		//! \brief Removes the specified object from table
-		void removeObject(BaseObject *obj);
+		virtual void removeObject(BaseObject *obj) override;
 
 		//! \brief Adds a column to table (optionally the user can add the object at the specified index 'idx')
 		void addColumn(Column *col, int idx=-1);
@@ -245,7 +246,7 @@ class __libcore PhysicalTable: public BaseTable {
 
 		/*! \brief Gets the the count for the specified object type. The boolean parameter indicates
 		 that objects added by relationship must be counted */
-		unsigned getObjectCount(ObjectType obj_type, bool inc_added_by_rel=true);
+		virtual unsigned getObjectCount(ObjectType obj_type, bool inc_added_by_rel=true) override;
 
 		//! \brief Removes a column through its name
 		void removeColumn(const QString &name);
@@ -266,24 +267,24 @@ class __libcore PhysicalTable: public BaseTable {
 		void removeTrigger(unsigned idx);
 
 		//! \brief Returns the SQL / XML definition for table
-		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override = 0;
 
 		//! \brief Gets the object index using its name and type
-		int getObjectIndex(const QString &name, ObjectType obj_type);
+		virtual int getObjectIndex(const QString &name, ObjectType obj_type) override;
 
 		/*! \brief Returns the index for the specified table object.
 		If the object specified on the parameter owns to another table other than 'this'
 		then the name of the objects are compared instead of the memory address */
-		int getObjectIndex(BaseObject *obj);
+		virtual int getObjectIndex(BaseObject *obj) override;
 
 		//! \brief Returns the children objects of the table excluding the provided children types
-		std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {});
+		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {}) override;
 
 		//! \brief Returns all the partition keys used by the table
 		std::vector<PartitionKey> getPartitionKeys();
 
 		//! \brief Protects the table and its aggregated objects against modification
-		void setProtected(bool value);
+		virtual void setProtected(bool value) override;
 
 		//! \brief Toggles the generation of columns and constraints in form of ALTER commands
 		void setGenerateAlterCmds(bool value);
@@ -317,11 +318,8 @@ class __libcore PhysicalTable: public BaseTable {
 		//! \brief Returns the specified object type list. Returns null if an invalid object type is provided
 		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
-		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
-		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
-		 deletion of the object, getting only the first reference to the object candidate for deletion.
-		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
+		//! \brief Returns a list of objects that references the providede column.
+		std::vector<TableObject *> getColumnReferences(Column *column);
 
 		//! \brief Reset the current index of the objects created by relationship
 		void resetRelObjectsIndexes();
@@ -338,11 +336,11 @@ class __libcore PhysicalTable: public BaseTable {
 		void setRelObjectsIndexes(const std::vector<QString> &obj_names, const std::vector<unsigned> &idxs, ObjectType obj_type);
 
 		//! \brief Invalidates the cached code forcing the generation of both SQL and XML
-		void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
 		/*! \brief Returns the alter definition by comparing the this table against the one provided via parameter
 		 * This is a pure virtual method and must be implemented by children classes */
-		virtual QString getAlterCode(BaseObject *object) = 0;
+		virtual QString getAlterCode(BaseObject *object) override = 0;
 
 		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
 		In order to separate columns and values use the DATA_SEPARATOR char and to separate
@@ -362,11 +360,11 @@ class __libcore PhysicalTable: public BaseTable {
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
 		void setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
-		virtual void setObjectListsCapacity(unsigned capacity);
+		virtual void setObjectListsCapacity(unsigned capacity) override;
 
-		virtual unsigned getMaxObjectCount();
+		virtual unsigned getMaxObjectCount() override;
 
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
 
 		friend class Relationship;
 		friend class OperationList;

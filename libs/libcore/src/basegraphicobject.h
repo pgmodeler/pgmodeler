@@ -88,17 +88,17 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 
 		BaseGraphicObject();
 
-		~BaseGraphicObject(void){}
+		virtual ~BaseGraphicObject() {}
 
 		/*! \brief Sets whether the object is protected or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the signal s_objectProtected() */
-		virtual void setProtected(bool value);
+		virtual void setProtected(bool value) override;
 
 		/*! \brief Sets whether the object is system or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the same signal s_objectProtected() */
-		virtual void setSystemObject(bool value);
+		virtual void setSystemObject(bool value) override;
 
 		//! \brief Sets the object's position
 		virtual void setPosition(const QPointF &pos);
@@ -107,7 +107,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		 This method emits the signal s_objectModified() */
 		virtual void setModified(bool value);
 
-		virtual void setSQLDisabled(bool value);
+		virtual void setSQLDisabled(bool value) override;
 
 		//! \brief Sets the fade out status of the receiver object
 		void setFadedOut(bool value);
@@ -128,7 +128,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
-		virtual QString getSourceCode(SchemaParser::CodeType)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType) override = 0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);

@@ -140,6 +140,9 @@ class __libcore Reference {
 		/*! \brief Compare the attributes of two references returning true
 		 when they have the same values */
 		bool operator == (Reference &refer);
+
+		std::vector<BaseObject *> getDependencies(bool incl_indirect_deps);
+
 };
 
 /* Registering the Reference class as a Qt MetaType in order to make

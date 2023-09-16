@@ -187,9 +187,9 @@ QString TableObjectView::formatUserTypeName(PgSqlType type)
 {
 	QString fmt_type_name = *type;
 
-	if(type.isUserType() && type.getUserTypeReference() && hide_sch_name_usr_type)
+	if(type.isUserType() && type.getObject() && hide_sch_name_usr_type)
 	{
-		BaseObject *obj = reinterpret_cast<BaseObject *>(type.getUserTypeReference());
+		BaseObject *obj = type.getObject();
 		fmt_type_name.remove(obj->getSchema()->getName() + ".");
 	}
 

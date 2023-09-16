@@ -8,6 +8,8 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+contains(CONFIG, debug):DEFINES+=PGMODELER_DEBUG
+
 # Disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
@@ -231,8 +233,8 @@ linux: {
 }
 
 macx {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/14/lib/libpq.dylib
-  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/14/include
+	!defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/15/lib/libpq.dylib
+	!defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/15/include
   !defined(XML_INC, var): XML_INC = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
   !defined(XML_LIB, var): XML_LIB = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd
   INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"

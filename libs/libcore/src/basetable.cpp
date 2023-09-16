@@ -18,6 +18,8 @@
 
 #include "basetable.h"
 #include "utilsns.h"
+#include "coreutilsns.h"
+#include "column.h"
 
 BaseTable::BaseTable()
 {
@@ -128,10 +130,11 @@ void BaseTable::generateHashCode()
 	buf.append(obj_name);
 
 	for(auto &obj : getObjects())
-		buf.append(obj->getName());
+		buf.append(dynamic_cast<TableObject *>(obj)->getHashCode());
 
 	buf.append(tag ? tag->getName() : "");
 	buf.append(schema ? schema->getName() : "");
+	buf.append(QString::number(sql_disabled));
 	buf.append(QString::number(collapse_mode));
 	buf.append(QString::number(static_cast<int>(pagination_enabled)));
 	buf.append(QString::number(curr_page[0]));
@@ -174,4 +177,45 @@ void BaseTable::setPosition(const QPointF &pos)
 {
 	BaseGraphicObject::setPosition(pos);
 	resetHashCode();
+}
+
+std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	if(inc_indirect_deps)
+	{
+		std::vector<BaseObject *> ind_deps = BaseObject::getDependencies(true);
+
+		for(auto &obj : getObjects())
+			BaseObject::__getLinkedObjects(ObjDependencies, obj->getDependencies(), ind_deps);
+
+		if(!excl_types.empty())
+			ind_deps = CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
+
+		if(rem_duplicates)
+		{
+			std::sort(ind_deps.begin(), ind_deps.end());
+			auto end = std::unique(ind_deps.begin(), ind_deps.end());
+			ind_deps.erase(end, ind_deps.end());
+		}
+
+		return ind_deps;
+	}
+
+	return BaseObject::getDependencies(false, excl_types, rem_duplicates);
+}
+
+void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)
+{
+	std::vector<BaseObject *> aux_deps = { tag	};
+	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
+
+	for(auto &obj : aux_deps)
+	{
+		if(!obj)
+			continue;
+
+		setDependency(obj);
+	}
+
+	BaseObject::updateDependencies(deps);
 }

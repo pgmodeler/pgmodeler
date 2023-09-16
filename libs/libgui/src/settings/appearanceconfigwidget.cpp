@@ -342,7 +342,9 @@ CREATE TABLE public.table_b (\n \
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
 {
+	scene->blockSignals(true);
 	scene->removeItem(placeholder);
+	scene->blockSignals(false);
 
 	delete placeholder;
 	delete viewp;

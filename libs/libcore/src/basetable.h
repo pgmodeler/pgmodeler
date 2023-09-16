@@ -60,6 +60,8 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		BaseTable();
 
+		virtual ~BaseTable() {}
+
 		QString getHashCode();
 
 		virtual void setTag(Tag *tag);
@@ -152,6 +154,14 @@ class __libcore BaseTable: public BaseGraphicObject {
 		void resetHashCode();
 
 		virtual void setPosition(const QPointF &pos) override;
+
+		virtual void updateDependencies() override = 0;
+
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false,
+																											 const std::vector<ObjectType> &excl_types = {},
+																											 bool rem_duplcates = false) override;
+
+		void updateDependencies(const std::vector<BaseObject *> &deps);
 
 		friend class DatabaseModel;
 };

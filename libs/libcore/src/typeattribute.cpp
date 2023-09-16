@@ -67,6 +67,6 @@ QString TypeAttribute::getSourceCode(SchemaParser::CodeType def_type)
 void TypeAttribute::operator = (const TypeAttribute &tpattrib)
 {
     this->obj_name = tpattrib.obj_name;
-    this->type = tpattrib.type;
-    this->collation = tpattrib.collation;
+		this->type = tpattrib.type;
+		this->collation = tpattrib.collation;
 }
