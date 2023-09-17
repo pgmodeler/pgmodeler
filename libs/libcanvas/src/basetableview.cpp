@@ -374,7 +374,7 @@ void BaseTableView::configureTag()
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
-		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
+		tag_item->setTextColor(BaseObjectView::getFontStyle(Attributes::Tag).foreground().color());
 
 		p1=tag_item->getTextBoundingRect().topLeft();
 		p2=tag_item->getTextBoundingRect().bottomRight();

@@ -10,6 +10,7 @@
 %if {color} %then [ color=] "{color}" %end
 %if {faded-out} %then [ faded-out=] "true" %end
 %if {z-value} %then [ z-value=] "{z-value}" %end
+%if {width} %then [ width=] "{width}" %end
 
 [ font-size=] "{font-size}"
 

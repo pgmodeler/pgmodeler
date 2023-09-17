@@ -6870,6 +6870,8 @@ Textbox *DatabaseModel::createTextbox()
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
 
+		txtbox->setTextWidth(attribs[Attributes::Width].toDouble());
+
 		if(!attribs[Attributes::Color].isEmpty())
 			txtbox->setTextColor(QColor(attribs[Attributes::Color]));
 

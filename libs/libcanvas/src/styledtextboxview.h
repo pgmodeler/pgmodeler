@@ -34,11 +34,18 @@ class __libcanvas StyledTextboxView: public TextboxView {
 		//! \brief Fold indicator appended at bottom-right corner of the object
 		QGraphicsPolygonItem *fold;
 
+		QGraphicsTextItem *styled_txt_item;
+
 	public:
+		static constexpr double DefaultWidth = 200;
+
 		StyledTextboxView(Textbox *txtbox, bool override_style=false);
+
+		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
 		virtual ~StyledTextboxView();
 
-	protected slots:
+	 protected slots:
 		virtual void configureObject() override;
 };
 
