@@ -1324,25 +1324,22 @@ void ObjectsScene::keyPressEvent(QKeyEvent *event)
 			}
 		}
 
+		int move_step = static_cast<int>(grid_size);
+
 		if(event->key() == Qt::Key_Up)
-			dy = -1;
+			dy = -move_step;
 		else if(event->key() == Qt::Key_Down)
-			dy = 1;
+			dy = move_step;
 
 		if(event->key() == Qt::Key_Left)
-			dx = -1;
+			dx = -move_step;
 		else if(event->key() == Qt::Key_Right)
-			dx = 1;
+			dx = move_step;
 
 		if(event->modifiers() == Qt::ControlModifier)
 		{
 			dx *= 10;
 			dy *= 10;
-		}
-		else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-		{
-			dx *= 100;
-			dy *= 100;
 		}
 
 		for(auto item : selectedItems())
