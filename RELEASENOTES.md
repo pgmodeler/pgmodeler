@@ -1,9 +1,9 @@
-v1.1.0-alpha
+v1.1.0-alpha1
 ------
-<em>Release date: June 09, 2023</em><br/>
-<em>Changes since: <strong>v1.0.x</strong></em><br/>
+<em>Release date: September 29, 2023</em><br/>
+<em>Changes since: <strong>v1.1.0-alpha</strong></em><br/>
 
-<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-alpha causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
+<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-alpha1 causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
 
 After five months of development, the first alpha release for pgModeler 1.1.0 is finally ready and brings some important improvements compared to 1.0.x. Below, the key changes are briefly detailed:
 
