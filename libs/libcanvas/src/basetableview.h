@@ -178,6 +178,9 @@ class __libcanvas BaseTableView: public BaseObjectView {
 		//! \brief Selects all the relationships connected to the table
 		void selectRelationships();
 
+		//! \brief Selects the child item view in the table view that is related to tab_obj
+		void setChildSelected(TableObject *tab_obj);
+
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */

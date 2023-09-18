@@ -320,9 +320,13 @@ void ObjectFinderWidget::selectObject()
 	}
 
 	// Highlighting the selected graphical objects
+	TableObject *tab_obj = nullptr;
+	BaseTableView *tab_view = nullptr;
+
 	for(auto &obj : selected_objs)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		tab_obj = dynamic_cast<TableObject *>(obj);
 
 		if(graph_obj)
 		{
@@ -333,6 +337,12 @@ void ObjectFinderWidget::selectObject()
 				model_wgt->viewport->centerOn(obj_view);
 				obj_view->setSelected(true);
 			}
+		}
+		else if(tab_obj)
+		{
+			tab_view = dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getOverlyingObject());
+			tab_view->setChildSelected(tab_obj);
+			model_wgt->viewport->centerOn(tab_view);
 		}
 	}
 

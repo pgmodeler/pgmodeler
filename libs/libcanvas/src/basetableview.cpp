@@ -625,3 +625,28 @@ void BaseTableView::selectRelationships()
 	for(auto &rel : connected_rels)
 		dynamic_cast<BaseObjectView *>(rel->getOverlyingObject())->setSelected(true);
 }
+
+void BaseTableView::setChildSelected(TableObject *tab_obj)
+{
+	if(!tab_obj)
+		return;
+
+	TableObjectView *tab_obj_view = nullptr;
+	QList<QGraphicsItem *> items;
+
+	items.append(columns->childItems());
+	items.append(ext_attribs->childItems());
+
+	for(auto &item : items)
+	{
+		tab_obj_view = dynamic_cast<TableObjectView *>(item);
+
+		if(tab_obj_view && tab_obj_view->getUnderlyingObject() == tab_obj)
+		{
+			tab_obj_view->setFakeSelection(true);
+			sel_child_objs.append(tab_obj_view);
+			emit s_childrenSelectionChanged();
+			break;
+		}
+	}
+}
