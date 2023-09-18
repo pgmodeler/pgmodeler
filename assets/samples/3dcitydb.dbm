@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 CAUTION: Do not modify this file unless you know what you are doing.
-         Unexpected results may occur if the code is changed deliberately.
+ Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,0" last-zoom="1"
-	 default-owner="postgres">
-<database name="3DCityDB_v3.3" encoding="UTF8">
+<dbmodel pgmodeler-ver="1.1.0-alpha1" use-changelog="false" last-position="1,1" last-zoom="0.8" max-obj-count="315"
+	 default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#a29f3a"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="3DCityDB_v3.3" encoding="UTF8" is-template="false" allow-conns="true">
 	<role name="postgres"/>
 	<tablespace name="pg_default"/>
 </database>
+
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<schema name="citydb" layers="0" fill-color="#e1e1e1" name-color="#000000">
+</schema>
 
 <tag name="buidling_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -16,6 +27,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ffd500,#ffaa00,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="waterbody_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -23,6 +36,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#a5f3ff,#7be9ff,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="land_use_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -30,6 +45,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#59aa74,#57aa83,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="vegetation_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -37,6 +54,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#d8e11c,#c6e622,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="city_furniture_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -44,6 +63,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#0082be,#00557f,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="tunnel_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -51,6 +72,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ceac00,#b99a00,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="bridge_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -58,6 +81,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ff9b7d,#ff7e7e,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="transportation_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -65,6 +90,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#c8c8c8,#afafaf,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="relief_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -72,6 +99,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#91704f,#6f563c,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="city_object_group_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -79,6 +108,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ffd4f4,#ffc2f4,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="core_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -86,6 +117,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ffffa6,#fffb73,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="generics_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -93,6 +126,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#9393dd,#7b7bb9,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
 <tag name="appearance_module">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -100,6 +135,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#000000"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#ffffff,#f0f0f0,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#ffffff,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#ffffff,#000000"/>
 </tag>
 <tag name="global">
 	<style id="table-body" colors="#cecece,#fafafa,#000000"/>
@@ -107,33 +144,23 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#000000"/>
 	<style id="table-title" colors="#474747,#000000,#000000"/>
+	<style id="table-toggler-body" colors="#ffffff,#cecece,#000000"/>
+	<style id="table-toggler-btns" colors="#ffffff,#cecece,#000000"/>
 </tag>
-<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
-</schema>
-
-<schema name="citydb" rect-visible="true" fill-color="#e1e1e1">
-</schema>
-
 <extension name="postgis">
 	<schema name="public"/>
-	<comment><![CDATA[PostGIS geometry, geography, and raster spatial types and functions]]></comment>
+	<comment> <![CDATA[PostGIS geometry, geography, and raster spatial types and functions]]> </comment>
 </extension>
 
-<sequence name="citymodel_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="citymodel_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<sequence name="cityobject_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="cityobject_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="cityobject_member">
+<table name="cityobject_member" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="2980" y="1020"/>
@@ -148,14 +175,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="external_ref_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="external_ref_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="generalization">
+<table name="generalization" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="2860" y="1580"/>
@@ -170,17 +194,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="surface_geometry_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="surface_geometry_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="cityobjectgroup">
+<table name="cityobjectgroup" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="city_object_group_module"/>
-	<position x="3580" y="926"/>
+	<position x="3580" y="920"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -216,10 +237,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="group_to_cityobject">
+<table name="group_to_cityobject" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="city_object_group_module"/>
-	<position x="3580" y="1346"/>
+	<position x="3580" y="1340"/>
 	<column name="cityobject_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -234,10 +255,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="database_srs">
+<table name="database_srs" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="citydb"/>
 	<tag name="global"/>
-	<position x="660" y="606"/>
+	<position x="660" y="600"/>
 	<column name="srid" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -249,10 +270,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="objectclass">
+<table name="objectclass" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="global"/>
-	<position x="1940" y="2506"/>
+	<position x="1940" y="2500"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -267,14 +288,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="implicit_geometry_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="implicit_geometry_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="city_furniture">
+<table name="city_furniture" layers="0" collapse-mode="2" max-obj-count="37" z-value="0">
 	<schema name="citydb"/>
 	<tag name="city_furniture_module"/>
 	<position x="780" y="3320"/>
@@ -376,17 +394,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="cityobject_genericatt_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="cityobject_genericatt_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="generic_cityobject">
+<table name="generic_cityobject" layers="0" collapse-mode="2" max-obj-count="44" z-value="0">
 	<schema name="citydb"/>
 	<tag name="generics_module"/>
-	<position x="1400" y="326"/>
+	<position x="1400" y="320"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -503,14 +518,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="address_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="address_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="address_to_building">
+<table name="address_to_building" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
 	<position x="3720" y="5900"/>
@@ -525,10 +537,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="building">
+<table name="building" layers="0" collapse-mode="2" max-obj-count="45" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
-	<position x="3520" y="3526"/>
+	<position x="3520" y="3520"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -648,7 +660,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="building_furniture">
+<table name="building_furniture" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
 	<position x="2700" y="5480"/>
@@ -696,10 +708,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="building_installation">
+<table name="building_installation" layers="0" collapse-mode="2" max-obj-count="30" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
-	<position x="2640" y="3626"/>
+	<position x="2640" y="3620"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -780,10 +792,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="opening">
+<table name="opening" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
-	<position x="3360" y="5306"/>
+	<position x="3360" y="5300"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -822,10 +834,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="opening_to_them_surface">
+<table name="opening_to_them_surface" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
-	<position x="3660" y="5026"/>
+	<position x="3660" y="5020"/>
 	<column name="opening_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -837,7 +849,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="room">
+<table name="room" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
 	<position x="2560" y="4780"/>
@@ -876,10 +888,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="thematic_surface">
+<table name="thematic_surface" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="citydb"/>
 	<tag name="buidling_module"/>
-	<position x="4080" y="4646"/>
+	<position x="4080" y="4640"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -909,21 +921,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="appearance_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="appearance_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<sequence name="surface_data_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="surface_data_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="textureparam">
+<table name="textureparam" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="citydb"/>
 	<tag name="appearance_module"/>
 	<position x="5120" y="1460"/>
@@ -947,7 +953,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="appear_to_surface_data">
+<table name="appear_to_surface_data" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="appearance_module"/>
 	<position x="5120" y="720"/>
@@ -962,7 +968,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="breakline_relief">
+<table name="breakline_relief" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
 	<position x="5880" y="2460"/>
@@ -980,7 +986,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="masspoint_relief">
+<table name="masspoint_relief" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
 	<position x="5880" y="2180"/>
@@ -995,10 +1001,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="relief_component">
+<table name="relief_component" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
-	<position x="4860" y="2346"/>
+	<position x="4860" y="2340"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1015,14 +1021,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="relief_comp_lod_chk" type="ck-constr" table="citydb.relief_component">
-			<expression><![CDATA[((lod >= (0)::numeric) AND (lod < (5)::numeric))]]></expression>
+			<expression> <![CDATA[((lod >= (0)::numeric) AND (lod < (5)::numeric))]]> </expression>
 	</constraint>
 </table>
 
-<table name="relief_feat_to_rel_comp">
+<table name="relief_feat_to_rel_comp" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
-	<position x="5040" y="1926"/>
+	<position x="5040" y="1920"/>
 	<column name="relief_component_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1034,7 +1040,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="relief_feature">
+<table name="relief_feature" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
 	<position x="4480" y="2000"/>
@@ -1048,11 +1054,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="relief_feat_lod_chk" type="ck-constr" table="citydb.relief_feature">
-			<expression><![CDATA[((lod >= (0)::numeric) AND (lod < (5)::numeric))]]></expression>
+			<expression> <![CDATA[((lod >= (0)::numeric) AND (lod < (5)::numeric))]]> </expression>
 	</constraint>
 </table>
 
-<table name="tin_relief">
+<table name="tin_relief" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
 	<position x="5720" y="1620"/>
@@ -1082,10 +1088,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="transportation_complex">
+<table name="transportation_complex" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="citydb"/>
 	<tag name="transportation_module"/>
-	<position x="4720" y="3006"/>
+	<position x="4720" y="3000"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1130,7 +1136,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="traffic_area">
+<table name="traffic_area" layers="0" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="citydb"/>
 	<tag name="transportation_module"/>
 	<position x="5400" y="2600"/>
@@ -1181,10 +1187,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="land_use">
+<table name="land_use" layers="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="citydb"/>
 	<tag name="land_use_module"/>
-	<position x="180" y="1866"/>
+	<position x="180" y="1860"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1226,10 +1232,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="plant_cover">
+<table name="plant_cover" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
 	<schema name="citydb"/>
 	<tag name="vegetation_module"/>
-	<position x="200" y="2426"/>
+	<position x="200" y="2420"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1286,10 +1292,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="solitary_vegetat_object">
+<table name="solitary_vegetat_object" layers="0" collapse-mode="2" max-obj-count="42" z-value="0">
 	<schema name="citydb"/>
 	<tag name="vegetation_module"/>
-	<position x="160" y="3206"/>
+	<position x="160" y="3200"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1400,7 +1406,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="waterbody">
+<table name="waterbody" layers="0" collapse-mode="2" max-obj-count="18" z-value="0">
 	<schema name="citydb"/>
 	<tag name="waterbody_module"/>
 	<position x="660" y="1560"/>
@@ -1454,10 +1460,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="waterbod_to_waterbnd_srf">
+<table name="waterbod_to_waterbnd_srf" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="waterbody_module"/>
-	<position x="60" y="1046"/>
+	<position x="60" y="1040"/>
 	<column name="waterboundary_surface_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1469,10 +1475,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="waterboundary_surface">
+<table name="waterboundary_surface" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="citydb"/>
 	<tag name="waterbody_module"/>
-	<position x="760" y="1046"/>
+	<position x="760" y="1040"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1499,7 +1505,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="raster_relief">
+<table name="raster_relief" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="relief_module"/>
 	<position x="5900" y="1940"/>
@@ -1517,7 +1523,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel">
+<table name="tunnel" layers="0" collapse-mode="2" max-obj-count="31" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
 	<position x="1820" y="5440"/>
@@ -1604,10 +1610,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel_open_to_them_srf">
+<table name="tunnel_open_to_them_srf" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
-	<position x="920" y="5746"/>
+	<position x="920" y="5740"/>
 	<column name="tunnel_opening_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1619,10 +1625,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel_hollow_space">
+<table name="tunnel_hollow_space" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
-	<position x="160" y="5506"/>
+	<position x="160" y="5500"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1658,10 +1664,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel_thematic_surface">
+<table name="tunnel_thematic_surface" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
-	<position x="880" y="4766"/>
+	<position x="880" y="4760"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1691,14 +1697,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="tex_image_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="tex_image_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="tunnel_opening">
+<table name="tunnel_opening" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
 	<position x="940" y="6020"/>
@@ -1737,10 +1740,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel_installation">
+<table name="tunnel_installation" layers="0" collapse-mode="2" max-obj-count="30" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
-	<position x="120" y="4406"/>
+	<position x="120" y="4400"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1821,10 +1824,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tunnel_furniture">
+<table name="tunnel_furniture" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="citydb"/>
 	<tag name="tunnel_module"/>
-	<position x="120" y="6046"/>
+	<position x="120" y="6040"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1869,10 +1872,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge">
+<table name="bridge" layers="0" collapse-mode="2" max-obj-count="32" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="4640" y="5206"/>
+	<position x="4640" y="5200"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -1959,10 +1962,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_furniture">
+<table name="bridge_furniture" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="6000" y="4926"/>
+	<position x="6000" y="4920"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2007,10 +2010,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_installation">
+<table name="bridge_installation" layers="0" collapse-mode="2" max-obj-count="30" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="5300" y="3606"/>
+	<position x="5300" y="3600"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2091,10 +2094,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_opening">
+<table name="bridge_opening" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="5300" y="6046"/>
+	<position x="5300" y="6040"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2133,10 +2136,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_open_to_them_srf">
+<table name="bridge_open_to_them_srf" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="5320" y="5306"/>
+	<position x="5320" y="5300"/>
 	<column name="bridge_opening_id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2148,10 +2151,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_room">
+<table name="bridge_room" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="6040" y="4386"/>
+	<position x="6040" y="4380"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2187,10 +2190,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_thematic_surface">
+<table name="bridge_thematic_surface" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
-	<position x="5340" y="4586"/>
+	<position x="5340" y="4580"/>
 	<column name="id" not-null="true">
 		<type name="integer" length="1"/>
 	</column>
@@ -2223,7 +2226,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="bridge_constr_element">
+<table name="bridge_constr_element" layers="0" collapse-mode="2" max-obj-count="38" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
 	<position x="6000" y="3080"/>
@@ -2328,7 +2331,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="address_to_bridge">
+<table name="address_to_bridge" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="citydb"/>
 	<tag name="bridge_module"/>
 	<position x="4160" y="5940"/>
@@ -2343,17 +2346,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<sequence name="grid_coverage_seq"
-	 start="1" increment="1"
-	 min-value="0" max-value="2147483647"
-	 cache="1" cycle="false">
+<sequence name="grid_coverage_seq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="citydb"/>
 </sequence>
 
-<table name="cityobject">
+<table name="cityobject" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
-	<position x="2740" y="2986"/>
+	<position x="2740" y="2980"/>
 	<column name="id" not-null="true" default-value="nextval('citydb.cityobject_seq'::regclass)">
 		<type name="integer" length="1"/>
 	</column>
@@ -2410,7 +2410,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="appearance">
+<table name="appearance" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="citydb"/>
 	<tag name="appearance_module"/>
 	<position x="4360" y="520"/>
@@ -2446,7 +2446,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="implicit_geometry">
+<table name="implicit_geometry" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="2720" y="1940"/>
@@ -2473,10 +2473,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="surface_geometry">
+<table name="surface_geometry" layers="0" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="citydb"/>
 	<tag name="global"/>
-	<position x="3600" y="2006"/>
+	<position x="3600" y="2000"/>
 	<column name="id" not-null="true" default-value="nextval('citydb.surface_geometry_seq'::regclass)">
 		<type name="integer" length="1"/>
 	</column>
@@ -2524,7 +2524,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="address">
+<table name="address" layers="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="3240" y="6200"/>
@@ -2569,7 +2569,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="surface_data">
+<table name="surface_data" layers="0" collapse-mode="2" max-obj-count="26" z-value="0">
 	<schema name="citydb"/>
 	<tag name="appearance_module"/>
 	<position x="4460" y="1080"/>
@@ -2644,7 +2644,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="citymodel">
+<table name="citymodel" layers="0" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="2780" y="560"/>
@@ -2692,10 +2692,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="cityobject_genericattrib">
+<table name="cityobject_genericattrib" layers="0" collapse-mode="2" max-obj-count="19" z-value="0">
 	<schema name="citydb"/>
 	<tag name="generics_module"/>
-	<position x="2080" y="826"/>
+	<position x="2080" y="820"/>
 	<column name="id" not-null="true" default-value="nextval('citydb.cityobject_genericatt_seq'::regclass)">
 		<type name="integer" length="1"/>
 	</column>
@@ -2749,7 +2749,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="external_reference">
+<table name="external_reference" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="citydb"/>
 	<tag name="core_module"/>
 	<position x="3060" y="1280"/>
@@ -2773,7 +2773,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="tex_image">
+<table name="tex_image" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="citydb"/>
 	<tag name="appearance_module"/>
 	<position x="5160" y="1100"/>
@@ -2797,7 +2797,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="grid_coverage">
+<table name="grid_coverage" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="citydb"/>
 	<tag name="global"/>
 	<position x="6000" y="1420"/>
@@ -5615,7 +5615,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="gist" factor="0">
 		<idxelement use-sorting="false">
-			<expression><![CDATA[ST_ConvexHull(rasterproperty)]]></expression>
+			<expression> <![CDATA[ST_ConvexHull(rasterproperty)]]> </expression>
 		</idxelement>
 </index>
 
@@ -5654,17 +5654,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<textbox name="info_txt" font-size="12">
-	<position x="60" y="40"/>
-	<comment><![CDATA[[ 3DCityDB Project ]
+<textbox name="info_txt" layers="0" z-value="0" width="639.172" font-size="12">
+	<position x="80" y="100"/>
+	<comment> <![CDATA[[ 3DCityDB Project ]
 
-The award winning 3D City Database is a free geo database to store, represent, and manage virtual 3D
-city models on top of a standard spatial relational database. The database schema implements the
-CityGML standard with semantically rich and multi-scale urban objects facilitating complex analysis
-tasks, far beyond visualization.
+The award winning 3D City Database is a free geo database to store, represent, and manage virtual 3D city models on top of a standard spatial relational database. The database schema implements the CityGML standard with semantically rich and multi-scale urban objects facilitating complex analysis tasks, far beyond visualization.
 
 Site: http://www.3dcitydb.org
-Created by: Felix Kunde]]></comment>
+Created by: Felix Kunde]]> </comment>
 </textbox>
 
 <constraint name="cityobject_member_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -7245,825 +7242,1385 @@ Created by: Felix Kunde]]></comment>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_cityobject_member_cityobject" type="relfk"
+<relationship name="rel_cityobject_member_cityobject" type="relfk" layers="0"
 	 src-table="citydb.cityobject_member"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="cityobject_member_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobject_member_citymodel" type="relfk"
+<relationship name="rel_cityobject_member_citymodel" type="relfk" layers="0"
 	 src-table="citydb.cityobject_member"
-	 dst-table="citydb.citymodel"
+	 dst-table="citydb.citymodel" reference-fk="cityobject_member_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_generalization_cityobject" type="relfk"
+<relationship name="rel_generalization_cityobject" type="relfk" layers="0"
 	 src-table="citydb.generalization"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="general_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobjectgroup_cityobject" type="relfk"
+<relationship name="rel_cityobjectgroup_cityobject" type="relfk" layers="0"
 	 src-table="citydb.cityobjectgroup"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="group_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobjectgroup_surface_geometry" type="relfk"
+<relationship name="rel_cityobjectgroup_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.cityobjectgroup"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="group_brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_group_to_cityobject_cityobject" type="relfk"
+<relationship name="rel_group_to_cityobject_cityobject" type="relfk" layers="0"
 	 src-table="citydb.group_to_cityobject"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="group_to_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_group_to_cityobject_cityobjectgroup" type="relfk"
+<relationship name="rel_group_to_cityobject_cityobjectgroup" type="relfk" layers="0"
 	 src-table="citydb.group_to_cityobject"
-	 dst-table="citydb.cityobjectgroup"
+	 dst-table="citydb.cityobjectgroup" reference-fk="group_to_cityobject_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_objectclass_objectclass" type="relfk"
+<relationship name="rel_objectclass_objectclass" type="relfk" layers="0"
 	 src-table="citydb.objectclass"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="objectclass_superclass_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="2231.69" y="2563.6"/>
-	<position x="2231.69" y="2495"/>
-	<position x="2127.12" y="2495"/>
+		<position x="2302.48" y="2563.51"/>
+	<position x="2302.48" y="2467"/>
+	<position x="2159.66" y="2467"/>
 	</line>
 </relationship>
 
-<relationship name="rel_city_furniture_cityobject" type="relfk"
+<relationship name="rel_city_furniture_cityobject" type="relfk" layers="0"
 	 src-table="citydb.city_furniture"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="city_furn_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_city_furniture_surface_geometry" type="relfk"
+<relationship name="rel_city_furniture_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.city_furniture"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="city_furn_lod1brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_city_furniture_implicit_geometry" type="relfk"
+<relationship name="rel_city_furniture_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.city_furniture"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="city_furn_lod1impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_generic_cityobject_cityobject" type="relfk"
+<relationship name="rel_generic_cityobject_cityobject" type="relfk" layers="0"
 	 src-table="citydb.generic_cityobject"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="gen_object_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_generic_cityobject_surface_geometry" type="relfk"
+<relationship name="rel_generic_cityobject_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.generic_cityobject"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="gen_object_lod0brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_generic_cityobject_implicit_geometry" type="relfk"
+<relationship name="rel_generic_cityobject_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.generic_cityobject"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="gen_object_lod0impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_address_to_building_address" type="relfk"
+<relationship name="rel_address_to_building_address" type="relfk" layers="0"
 	 src-table="citydb.address_to_building"
-	 dst-table="citydb.address"
+	 dst-table="citydb.address" reference-fk="address_to_building_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_address_to_building_building" type="relfk"
+<relationship name="rel_address_to_building_building" type="relfk" layers="0"
 	 src-table="citydb.address_to_building"
-	 dst-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="address_to_building_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_cityobject" type="relfk"
+<relationship name="rel_building_cityobject" type="relfk" layers="0"
 	 src-table="citydb.building"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="building_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_building" type="relfk"
+<relationship name="rel_building_building" type="relfk" layers="0"
 	 src-table="citydb.building"
-	 dst-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="building_parent_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="3903.02" y="4025.6"/>
-	<position x="3903.02" y="3515"/>
-	<position x="3768.01" y="3515"/>
+		<position x="4033.34" y="4073.17"/>
+	<position x="4033.34" y="3487"/>
+	<position x="3840.22" y="3487"/>
 	</line>
 </relationship>
 
-<relationship name="rel_building_surface_geometry" type="relfk"
+<relationship name="rel_building_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.building"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod0footprint_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_furniture_cityobject" type="relfk"
+<relationship name="rel_building_furniture_cityobject" type="relfk" layers="0"
 	 src-table="citydb.building_furniture"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bldg_furn_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_furniture_room" type="relfk"
+<relationship name="rel_building_furniture_room" type="relfk" layers="0"
 	 src-table="citydb.building_furniture"
-	 dst-table="citydb.room"
+	 dst-table="citydb.room" reference-fk="bldg_furn_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_furniture_surface_geometry" type="relfk"
+<relationship name="rel_building_furniture_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.building_furniture"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bldg_furn_lod4brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_furniture_implicit_geometry" type="relfk"
+<relationship name="rel_building_furniture_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.building_furniture"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bldg_furn_lod4impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_cityobject" type="relfk"
+<relationship name="rel_building_installation_cityobject" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bldg_inst_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_objectclass" type="relfk"
+<relationship name="rel_building_installation_objectclass" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="bldg_inst_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_building" type="relfk"
+<relationship name="rel_building_installation_building" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="bldg_inst_building_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_room" type="relfk"
+<relationship name="rel_building_installation_room" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.room"
+	 dst-table="citydb.room" reference-fk="bldg_inst_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_surface_geometry" type="relfk"
+<relationship name="rel_building_installation_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bldg_inst_lod2brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_installation_implicit_geometry" type="relfk"
+<relationship name="rel_building_installation_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.building_installation"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bldg_inst_lod2impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_cityobject" type="relfk"
+<relationship name="rel_opening_cityobject" type="relfk" layers="0"
 	 src-table="citydb.opening"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="opening_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_objectclass" type="relfk"
+<relationship name="rel_opening_objectclass" type="relfk" layers="0"
 	 src-table="citydb.opening"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="opening_objectclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_address" type="relfk"
+<relationship name="rel_opening_address" type="relfk" layers="0"
 	 src-table="citydb.opening"
-	 dst-table="citydb.address"
+	 dst-table="citydb.address" reference-fk="opening_address_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_surface_geometry" type="relfk"
+<relationship name="rel_opening_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.opening"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="opening_lod3msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_implicit_geometry" type="relfk"
+<relationship name="rel_opening_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.opening"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="opening_lod3impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_to_them_surface_opening" type="relfk"
+<relationship name="rel_opening_to_them_surface_opening" type="relfk" layers="0"
 	 src-table="citydb.opening_to_them_surface"
-	 dst-table="citydb.opening"
+	 dst-table="citydb.opening" reference-fk="open_to_them_surface_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_opening_to_them_surface_thematic_surface" type="relfk"
+<relationship name="rel_opening_to_them_surface_thematic_surface" type="relfk" layers="0"
 	 src-table="citydb.opening_to_them_surface"
-	 dst-table="citydb.thematic_surface"
+	 dst-table="citydb.thematic_surface" reference-fk="open_to_them_surface_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_room_cityobject" type="relfk"
+<relationship name="rel_room_cityobject" type="relfk" layers="0"
 	 src-table="citydb.room"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="room_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_room_building" type="relfk"
+<relationship name="rel_room_building" type="relfk" layers="0"
 	 src-table="citydb.room"
-	 dst-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="room_building_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_room_surface_geometry" type="relfk"
+<relationship name="rel_room_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.room"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="room_lod4msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_cityobject" type="relfk"
+<relationship name="rel_thematic_surface_cityobject" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="them_surface_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_objectclass" type="relfk"
+<relationship name="rel_thematic_surface_objectclass" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="them_surface_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_building" type="relfk"
+<relationship name="rel_thematic_surface_building" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="them_surface_building_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_room" type="relfk"
+<relationship name="rel_thematic_surface_room" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.room"
+	 dst-table="citydb.room" reference-fk="them_surface_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_building_installation" type="relfk"
+<relationship name="rel_thematic_surface_building_installation" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.building_installation"
+	 dst-table="citydb.building_installation" reference-fk="them_surface_bldg_inst_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_thematic_surface_surface_geometry" type="relfk"
+<relationship name="rel_thematic_surface_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.thematic_surface"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="them_surface_lod2msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_textureparam_surface_geometry" type="relfk"
+<relationship name="rel_textureparam_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.textureparam"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="texparam_geom_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_textureparam_surface_data" type="relfk"
+<relationship name="rel_textureparam_surface_data" type="relfk" layers="0"
 	 src-table="citydb.textureparam"
-	 dst-table="citydb.surface_data"
+	 dst-table="citydb.surface_data" reference-fk="texparam_surface_data_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_appear_to_surface_data_surface_data" type="relfk"
+<relationship name="rel_appear_to_surface_data_surface_data" type="relfk" layers="0"
 	 src-table="citydb.appear_to_surface_data"
-	 dst-table="citydb.surface_data"
+	 dst-table="citydb.surface_data" reference-fk="app_to_surf_data_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_appear_to_surface_data_appearance" type="relfk"
+<relationship name="rel_appear_to_surface_data_appearance" type="relfk" layers="0"
 	 src-table="citydb.appear_to_surface_data"
-	 dst-table="citydb.appearance"
+	 dst-table="citydb.appearance" reference-fk="app_to_surf_data_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_breakline_relief_relief_component" type="relfk"
+<relationship name="rel_breakline_relief_relief_component" type="relfk" layers="0"
 	 src-table="citydb.breakline_relief"
-	 dst-table="citydb.relief_component"
+	 dst-table="citydb.relief_component" reference-fk="breakline_relief_comp_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_masspoint_relief_relief_component" type="relfk"
+<relationship name="rel_masspoint_relief_relief_component" type="relfk" layers="0"
 	 src-table="citydb.masspoint_relief"
-	 dst-table="citydb.relief_component"
+	 dst-table="citydb.relief_component" reference-fk="masspoint_relief_comp_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_relief_component_cityobject" type="relfk"
+<relationship name="rel_relief_component_cityobject" type="relfk" layers="0"
 	 src-table="citydb.relief_component"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="relief_comp_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_relief_component_objectclass" type="relfk"
+<relationship name="rel_relief_component_objectclass" type="relfk" layers="0"
 	 src-table="citydb.relief_component"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="relief_comp_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_relief_feat_to_rel_comp_relief_component" type="relfk"
+<relationship name="rel_relief_feat_to_rel_comp_relief_component" type="relfk" layers="0"
 	 src-table="citydb.relief_feat_to_rel_comp"
-	 dst-table="citydb.relief_component"
+	 dst-table="citydb.relief_component" reference-fk="rel_feat_to_rel_comp_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_relief_feat_to_rel_comp_relief_feature" type="relfk"
+<relationship name="rel_relief_feat_to_rel_comp_relief_feature" type="relfk" layers="0"
 	 src-table="citydb.relief_feat_to_rel_comp"
-	 dst-table="citydb.relief_feature"
+	 dst-table="citydb.relief_feature" reference-fk="rel_feat_to_rel_comp_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_relief_feature_cityobject" type="relfk"
+<relationship name="rel_relief_feature_cityobject" type="relfk" layers="0"
 	 src-table="citydb.relief_feature"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="relief_feat_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tin_relief_relief_component" type="relfk"
+<relationship name="rel_tin_relief_relief_component" type="relfk" layers="0"
 	 src-table="citydb.tin_relief"
-	 dst-table="citydb.relief_component"
+	 dst-table="citydb.relief_component" reference-fk="tin_relief_comp_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tin_relief_surface_geometry" type="relfk"
+<relationship name="rel_tin_relief_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tin_relief"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tin_relief_geom_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_transportation_complex_objectclass" type="relfk"
+<relationship name="rel_transportation_complex_objectclass" type="relfk" layers="0"
 	 src-table="citydb.transportation_complex"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="tran_complex_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_transportation_complex_cityobject" type="relfk"
+<relationship name="rel_transportation_complex_cityobject" type="relfk" layers="0"
 	 src-table="citydb.transportation_complex"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tran_complex_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_transportation_complex_surface_geometry" type="relfk"
+<relationship name="rel_transportation_complex_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.transportation_complex"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tran_complex_lod1msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_traffic_area_cityobject" type="relfk"
+<relationship name="rel_traffic_area_cityobject" type="relfk" layers="0"
 	 src-table="citydb.traffic_area"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="traffic_area_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_traffic_area_objectclass" type="relfk"
+<relationship name="rel_traffic_area_objectclass" type="relfk" layers="0"
 	 src-table="citydb.traffic_area"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="traffic_area_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_traffic_area_surface_geometry" type="relfk"
+<relationship name="rel_traffic_area_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.traffic_area"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="traffic_area_lod2msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_traffic_area_transportation_complex" type="relfk"
+<relationship name="rel_traffic_area_transportation_complex" type="relfk" layers="0"
 	 src-table="citydb.traffic_area"
-	 dst-table="citydb.transportation_complex"
+	 dst-table="citydb.transportation_complex" reference-fk="traffic_area_trancmplx_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_land_use_cityobject" type="relfk"
+<relationship name="rel_land_use_cityobject" type="relfk" layers="0"
 	 src-table="citydb.land_use"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="land_use_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_land_use_surface_geometry" type="relfk"
+<relationship name="rel_land_use_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.land_use"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="land_use_lod0msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_plant_cover_cityobject" type="relfk"
+<relationship name="rel_plant_cover_cityobject" type="relfk" layers="0"
 	 src-table="citydb.plant_cover"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="plant_cover_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_plant_cover_surface_geometry" type="relfk"
+<relationship name="rel_plant_cover_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.plant_cover"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod1msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_solitary_vegetat_object_cityobject" type="relfk"
+<relationship name="rel_solitary_vegetat_object_cityobject" type="relfk" layers="0"
 	 src-table="citydb.solitary_vegetat_object"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="sol_veg_obj_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_solitary_vegetat_object_surface_geometry" type="relfk"
+<relationship name="rel_solitary_vegetat_object_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.solitary_vegetat_object"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="sol_veg_obj_lod1brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_solitary_vegetat_object_implicit_geometry" type="relfk"
+<relationship name="rel_solitary_vegetat_object_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.solitary_vegetat_object"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="sol_veg_obj_lod1impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterbody_cityobject" type="relfk"
+<relationship name="rel_waterbody_cityobject" type="relfk" layers="0"
 	 src-table="citydb.waterbody"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="waterbody_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterbody_surface_geometry" type="relfk"
+<relationship name="rel_waterbody_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.waterbody"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod0msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterbod_to_waterbnd_srf_waterboundary_surface" type="relfk"
+<relationship name="rel_waterbod_to_waterbnd_srf_waterboundary_surface" type="relfk" layers="0"
 	 src-table="citydb.waterbod_to_waterbnd_srf"
-	 dst-table="citydb.waterboundary_surface"
+	 dst-table="citydb.waterboundary_surface" reference-fk="waterbod_to_waterbnd_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterbod_to_waterbnd_srf_waterbody" type="relfk"
+<relationship name="rel_waterbod_to_waterbnd_srf_waterbody" type="relfk" layers="0"
 	 src-table="citydb.waterbod_to_waterbnd_srf"
-	 dst-table="citydb.waterbody"
+	 dst-table="citydb.waterbody" reference-fk="waterbod_to_waterbnd_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterboundary_surface_cityobject" type="relfk"
+<relationship name="rel_waterboundary_surface_cityobject" type="relfk" layers="0"
 	 src-table="citydb.waterboundary_surface"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="waterbnd_srf_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterboundary_surface_objectclass" type="relfk"
+<relationship name="rel_waterboundary_surface_objectclass" type="relfk" layers="0"
 	 src-table="citydb.waterboundary_surface"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="waterbnd_srf_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_waterboundary_surface_surface_geometry" type="relfk"
+<relationship name="rel_waterboundary_surface_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.waterboundary_surface"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbnd_srf_lod2srf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_raster_relief_relief_component" type="relfk"
+<relationship name="rel_raster_relief_relief_component" type="relfk" layers="0"
 	 src-table="citydb.raster_relief"
-	 dst-table="citydb.relief_component"
+	 dst-table="citydb.relief_component" reference-fk="raster_relief_comp_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_raster_relief_grid_coverage" type="relfk"
+<relationship name="rel_raster_relief_grid_coverage" type="relfk" layers="0"
 	 src-table="citydb.raster_relief"
-	 dst-table="citydb.grid_coverage"
+	 dst-table="citydb.grid_coverage" reference-fk="raster_relief_coverage_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_cityobject" type="relfk"
+<relationship name="rel_tunnel_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tunnel_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_tunnel" type="relfk"
+<relationship name="rel_tunnel_tunnel" type="relfk" layers="0"
 	 src-table="citydb.tunnel"
-	 dst-table="citydb.tunnel"
+	 dst-table="citydb.tunnel" reference-fk="tunnel_parent_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="2174.49" y="5830.8"/>
-	<position x="2174.49" y="5429"/>
-	<position x="2048.99" y="5429"/>
+		<position x="2298.1" y="5872.64"/>
+	<position x="2298.1" y="5407"/>
+	<position x="2116.73" y="5407"/>
 	</line>
 </relationship>
 
-<relationship name="rel_tunnel_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod1msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_open_to_them_srf_tunnel_opening" type="relfk"
+<relationship name="rel_tunnel_open_to_them_srf_tunnel_opening" type="relfk" layers="0"
 	 src-table="citydb.tunnel_open_to_them_srf"
-	 dst-table="citydb.tunnel_opening"
+	 dst-table="citydb.tunnel_opening" reference-fk="tun_open_to_them_srf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_open_to_them_srf_tunnel_thematic_surface" type="relfk"
+<relationship name="rel_tunnel_open_to_them_srf_tunnel_thematic_surface" type="relfk" layers="0"
 	 src-table="citydb.tunnel_open_to_them_srf"
-	 dst-table="citydb.tunnel_thematic_surface"
+	 dst-table="citydb.tunnel_thematic_surface" reference-fk="tun_open_to_them_srf_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_hollow_space_cityobject" type="relfk"
+<relationship name="rel_tunnel_hollow_space_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel_hollow_space"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tun_hspace_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_hollow_space_tunnel" type="relfk"
+<relationship name="rel_tunnel_hollow_space_tunnel" type="relfk" layers="0"
 	 src-table="citydb.tunnel_hollow_space"
-	 dst-table="citydb.tunnel"
+	 dst-table="citydb.tunnel" reference-fk="tun_hspace_tunnel_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_hollow_space_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_hollow_space_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_hollow_space"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tun_hspace_lod4msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_cityobject" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tun_them_srf_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_objectclass" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_objectclass" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="tun_them_srf_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_tunnel" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_tunnel" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.tunnel"
+	 dst-table="citydb.tunnel" reference-fk="tun_them_srf_tunnel_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_tunnel_hollow_space" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_tunnel_hollow_space" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.tunnel_hollow_space"
+	 dst-table="citydb.tunnel_hollow_space" reference-fk="tun_them_srf_hspace_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_tunnel_installation" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_tunnel_installation" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.tunnel_installation"
+	 dst-table="citydb.tunnel_installation" reference-fk="tun_them_srf_tun_inst_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_thematic_surface_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_thematic_surface_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_thematic_surface"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tun_them_srf_lod2msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_opening_cityobject" type="relfk"
+<relationship name="rel_tunnel_opening_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel_opening"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tunnel_open_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_opening_objectclass" type="relfk"
+<relationship name="rel_tunnel_opening_objectclass" type="relfk" layers="0"
 	 src-table="citydb.tunnel_opening"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="tunnel_open_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_opening_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_opening_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_opening"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_open_lod3msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_opening_implicit_geometry" type="relfk"
+<relationship name="rel_tunnel_opening_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_opening"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_open_lod3impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_cityobject" type="relfk"
+<relationship name="rel_tunnel_installation_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tunnel_inst_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_objectclass" type="relfk"
+<relationship name="rel_tunnel_installation_objectclass" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="tunnel_inst_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_tunnel" type="relfk"
+<relationship name="rel_tunnel_installation_tunnel" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.tunnel"
+	 dst-table="citydb.tunnel" reference-fk="tunnel_inst_tunnel_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_tunnel_hollow_space" type="relfk"
+<relationship name="rel_tunnel_installation_tunnel_hollow_space" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.tunnel_hollow_space"
+	 dst-table="citydb.tunnel_hollow_space" reference-fk="tunnel_inst_hspace_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_installation_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_inst_lod2brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_installation_implicit_geometry" type="relfk"
+<relationship name="rel_tunnel_installation_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_installation"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_inst_lod2impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_furniture_cityobject" type="relfk"
+<relationship name="rel_tunnel_furniture_cityobject" type="relfk" layers="0"
 	 src-table="citydb.tunnel_furniture"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="tunnel_furn_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_furniture_tunnel_hollow_space" type="relfk"
+<relationship name="rel_tunnel_furniture_tunnel_hollow_space" type="relfk" layers="0"
 	 src-table="citydb.tunnel_furniture"
-	 dst-table="citydb.tunnel_hollow_space"
+	 dst-table="citydb.tunnel_hollow_space" reference-fk="tunnel_furn_hspace_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_furniture_surface_geometry" type="relfk"
+<relationship name="rel_tunnel_furniture_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_furniture"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_furn_lod4brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_tunnel_furniture_implicit_geometry" type="relfk"
+<relationship name="rel_tunnel_furniture_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.tunnel_furniture"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_furn_lod4impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_cityobject" type="relfk"
+<relationship name="rel_bridge_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_bridge" type="relfk"
+<relationship name="rel_bridge_bridge" type="relfk" layers="0"
 	 src-table="citydb.bridge"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="bridge_parent_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="4994.49" y="5603.6"/>
-	<position x="4994.49" y="5195"/>
-	<position x="4868.99" y="5195"/>
+		<position x="5118.1" y="5640.17"/>
+	<position x="5118.1" y="5167"/>
+	<position x="4936.73" y="5167"/>
 	</line>
 </relationship>
 
-<relationship name="rel_bridge_surface_geometry" type="relfk"
+<relationship name="rel_bridge_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod1msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_furniture_cityobject" type="relfk"
+<relationship name="rel_bridge_furniture_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_furniture"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_furn_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_furniture_bridge_room" type="relfk"
+<relationship name="rel_bridge_furniture_bridge_room" type="relfk" layers="0"
 	 src-table="citydb.bridge_furniture"
-	 dst-table="citydb.bridge_room"
+	 dst-table="citydb.bridge_room" reference-fk="bridge_furn_brd_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_furniture_surface_geometry" type="relfk"
+<relationship name="rel_bridge_furniture_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_furniture"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_furn_lod4brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_furniture_implicit_geometry" type="relfk"
+<relationship name="rel_bridge_furniture_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_furniture"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_furn_lod4impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_cityobject" type="relfk"
+<relationship name="rel_bridge_installation_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_inst_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_objectclass" type="relfk"
+<relationship name="rel_bridge_installation_objectclass" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="bridge_inst_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_bridge" type="relfk"
+<relationship name="rel_bridge_installation_bridge" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="bridge_inst_bridge_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_bridge_room" type="relfk"
+<relationship name="rel_bridge_installation_bridge_room" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.bridge_room"
+	 dst-table="citydb.bridge_room" reference-fk="bridge_inst_brd_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_surface_geometry" type="relfk"
+<relationship name="rel_bridge_installation_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_inst_lod2brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_installation_implicit_geometry" type="relfk"
+<relationship name="rel_bridge_installation_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_installation"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_inst_lod2impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_opening_cityobject" type="relfk"
+<relationship name="rel_bridge_opening_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_opening"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_open_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_opening_objectclass" type="relfk"
+<relationship name="rel_bridge_opening_objectclass" type="relfk" layers="0"
 	 src-table="citydb.bridge_opening"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="bridge_open_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_opening_address" type="relfk"
+<relationship name="rel_bridge_opening_address" type="relfk" layers="0"
 	 src-table="citydb.bridge_opening"
-	 dst-table="citydb.address"
+	 dst-table="citydb.address" reference-fk="bridge_open_address_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_opening_surface_geometry" type="relfk"
+<relationship name="rel_bridge_opening_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_opening"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_open_lod3msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_opening_implicit_geometry" type="relfk"
+<relationship name="rel_bridge_opening_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_opening"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_open_lod3impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_open_to_them_srf_bridge_opening" type="relfk"
+<relationship name="rel_bridge_open_to_them_srf_bridge_opening" type="relfk" layers="0"
 	 src-table="citydb.bridge_open_to_them_srf"
-	 dst-table="citydb.bridge_opening"
+	 dst-table="citydb.bridge_opening" reference-fk="brd_open_to_them_srf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_open_to_them_srf_bridge_thematic_surface" type="relfk"
+<relationship name="rel_bridge_open_to_them_srf_bridge_thematic_surface" type="relfk" layers="0"
 	 src-table="citydb.bridge_open_to_them_srf"
-	 dst-table="citydb.bridge_thematic_surface"
+	 dst-table="citydb.bridge_thematic_surface" reference-fk="brd_open_to_them_srf_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_room_cityobject" type="relfk"
+<relationship name="rel_bridge_room_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_room"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_room_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_room_bridge" type="relfk"
+<relationship name="rel_bridge_room_bridge" type="relfk" layers="0"
 	 src-table="citydb.bridge_room"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="bridge_room_bridge_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_room_surface_geometry" type="relfk"
+<relationship name="rel_bridge_room_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_room"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_room_lod4msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_cityobject" type="relfk"
+<relationship name="rel_bridge_thematic_surface_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="brd_them_srf_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_objectclass" type="relfk"
+<relationship name="rel_bridge_thematic_surface_objectclass" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="brd_them_srf_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_bridge" type="relfk"
+<relationship name="rel_bridge_thematic_surface_bridge" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="brd_them_srf_bridge_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_bridge_room" type="relfk"
+<relationship name="rel_bridge_thematic_surface_bridge_room" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.bridge_room"
+	 dst-table="citydb.bridge_room" reference-fk="brd_them_srf_brd_room_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_bridge_installation" type="relfk"
+<relationship name="rel_bridge_thematic_surface_bridge_installation" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.bridge_installation"
+	 dst-table="citydb.bridge_installation" reference-fk="brd_them_srf_brd_inst_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_bridge_constr_element" type="relfk"
+<relationship name="rel_bridge_thematic_surface_bridge_constr_element" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.bridge_constr_element"
+	 dst-table="citydb.bridge_constr_element" reference-fk="brd_them_srf_brd_const_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_thematic_surface_surface_geometry" type="relfk"
+<relationship name="rel_bridge_thematic_surface_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_thematic_surface"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="brd_them_srf_lod2msrf_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_constr_element_cityobject" type="relfk"
+<relationship name="rel_bridge_constr_element_cityobject" type="relfk" layers="0"
 	 src-table="citydb.bridge_constr_element"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="bridge_constr_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_constr_element_bridge" type="relfk"
+<relationship name="rel_bridge_constr_element_bridge" type="relfk" layers="0"
 	 src-table="citydb.bridge_constr_element"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="bridge_constr_bridge_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_constr_element_surface_geometry" type="relfk"
+<relationship name="rel_bridge_constr_element_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_constr_element"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_constr_lod1brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_bridge_constr_element_implicit_geometry" type="relfk"
+<relationship name="rel_bridge_constr_element_implicit_geometry" type="relfk" layers="0"
 	 src-table="citydb.bridge_constr_element"
-	 dst-table="citydb.implicit_geometry"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_constr_lod1impl_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_address_to_bridge_address" type="relfk"
+<relationship name="rel_address_to_bridge_address" type="relfk" layers="0"
 	 src-table="citydb.address_to_bridge"
-	 dst-table="citydb.address"
+	 dst-table="citydb.address" reference-fk="address_to_bridge_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_address_to_bridge_bridge" type="relfk"
+<relationship name="rel_address_to_bridge_bridge" type="relfk" layers="0"
 	 src-table="citydb.address_to_bridge"
-	 dst-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="address_to_bridge_fk1"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobject_objectclass" type="relfk"
+<relationship name="rel_cityobject_objectclass" type="relfk" layers="0"
 	 src-table="citydb.cityobject"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="cityobject_objectclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_appearance_cityobject" type="relfk"
+<relationship name="rel_appearance_cityobject" type="relfk" layers="0"
 	 src-table="citydb.appearance"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="appearance_cityobject_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_appearance_citymodel" type="relfk"
+<relationship name="rel_appearance_citymodel" type="relfk" layers="0"
 	 src-table="citydb.appearance"
-	 dst-table="citydb.citymodel"
+	 dst-table="citydb.citymodel" reference-fk="appearance_citymodel_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_implicit_geometry_surface_geometry" type="relfk"
+<relationship name="rel_implicit_geometry_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.implicit_geometry"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="implicit_geom_brep_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_surface_geometry_surface_geometry" type="relfk"
+<relationship name="rel_surface_geometry_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.surface_geometry"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="surface_geom_parent_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="3934.62" y="2186"/>
-	<position x="3934.62" y="1995"/>
-	<position x="3815.74" y="1995"/>
+		<position x="4053.01" y="2199.11"/>
+	<position x="4053.01" y="1967"/>
+	<position x="3880.01" y="1967"/>
 	</line>
 </relationship>
 
-<relationship name="rel_surface_geometry_cityobject" type="relfk"
+<relationship name="rel_surface_geometry_cityobject" type="relfk" layers="0"
 	 src-table="citydb.surface_geometry"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="surface_geom_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_surface_data_tex_image" type="relfk"
+<relationship name="rel_surface_data_tex_image" type="relfk" layers="0"
 	 src-table="citydb.surface_data"
-	 dst-table="citydb.tex_image"
+	 dst-table="citydb.tex_image" reference-fk="surface_data_tex_image_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_surface_data_objectclass" type="relfk"
+<relationship name="rel_surface_data_objectclass" type="relfk" layers="0"
 	 src-table="citydb.surface_data"
-	 dst-table="citydb.objectclass"
+	 dst-table="citydb.objectclass" reference-fk="surface_data_objclass_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobject_genericattrib_cityobject_genericattrib" type="relfk"
+<relationship name="rel_cityobject_genericattrib_cityobject_genericattrib" type="relfk" layers="0"
 	 src-table="citydb.cityobject_genericattrib"
-	 dst-table="citydb.cityobject_genericattrib"
+	 dst-table="citydb.cityobject_genericattrib" reference-fk="genericattrib_parent_fk"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="2430.01" y="1012.8"/>
-	<position x="2430.01" y="815"/>
-	<position x="2306.01" y="815"/>
+		<position x="2527.13" y="1026.64"/>
+	<position x="2527.13" y="787"/>
+	<position x="2356.08" y="787"/>
 	</line>
 </relationship>
 
-<relationship name="rel_cityobject_genericattrib_surface_geometry" type="relfk"
+<relationship name="rel_cityobject_genericattrib_surface_geometry" type="relfk" layers="0"
 	 src-table="citydb.cityobject_genericattrib"
-	 dst-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="genericattrib_geom_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_cityobject_genericattrib_cityobject" type="relfk"
+<relationship name="rel_cityobject_genericattrib_cityobject" type="relfk" layers="0"
 	 src-table="citydb.cityobject_genericattrib"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="genericattrib_cityobj_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_external_reference_cityobject" type="relfk"
+<relationship name="rel_external_reference_cityobject" type="relfk" layers="0"
 	 src-table="citydb.external_reference"
-	 dst-table="citydb.cityobject"
+	 dst-table="citydb.cityobject" reference-fk="ext_ref_cityobject_fk"
 	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generalization_cityobject1" type="relfk" layers="0"
+	 src-table="citydb.generalization"
+	 dst-table="citydb.cityobject" reference-fk="general_generalizes_to_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_cityobjectgroup_cityobject1" type="relfk" layers="0"
+	 src-table="citydb.cityobjectgroup"
+	 dst-table="citydb.cityobject" reference-fk="group_parent_cityobj_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.surface_geometry" reference-fk="city_furn_lod2brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.surface_geometry" reference-fk="city_furn_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.surface_geometry" reference-fk="city_furn_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.implicit_geometry" reference-fk="city_furn_lod2impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.implicit_geometry" reference-fk="city_furn_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_city_furniture_implicit_geometry3" type="relfk" layers="0"
+	 src-table="citydb.city_furniture"
+	 dst-table="citydb.implicit_geometry" reference-fk="city_furn_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.surface_geometry" reference-fk="gen_object_lod1brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.surface_geometry" reference-fk="gen_object_lod2brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.surface_geometry" reference-fk="gen_object_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.surface_geometry" reference-fk="gen_object_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.implicit_geometry" reference-fk="gen_object_lod1impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.implicit_geometry" reference-fk="gen_object_lod2impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_implicit_geometry3" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.implicit_geometry" reference-fk="gen_object_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_generic_cityobject_implicit_geometry4" type="relfk" layers="0"
+	 src-table="citydb.generic_cityobject"
+	 dst-table="citydb.implicit_geometry" reference-fk="gen_object_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_building1" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.building" reference-fk="building_root_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="4071.76" y="4111.6"/>
+	<position x="4071.76" y="3448.57"/>
+	<position x="3801.8" y="3448.57"/>
+	</line>
+</relationship>
+
+<relationship name="rel_building_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod0roofprint_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod1msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry5" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry6" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod1solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry7" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod2solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry8" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod3solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_surface_geometry9" type="relfk" layers="0"
+	 src-table="citydb.building"
+	 dst-table="citydb.surface_geometry" reference-fk="building_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_installation_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.building_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="bldg_inst_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_installation_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.building_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="bldg_inst_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_installation_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.building_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="bldg_inst_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_building_installation_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.building_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="bldg_inst_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_opening_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.opening"
+	 dst-table="citydb.surface_geometry" reference-fk="opening_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_opening_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.opening"
+	 dst-table="citydb.implicit_geometry" reference-fk="opening_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_room_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.room"
+	 dst-table="citydb.surface_geometry" reference-fk="room_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_thematic_surface_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="them_surface_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_thematic_surface_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="them_surface_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_transportation_complex_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.transportation_complex"
+	 dst-table="citydb.surface_geometry" reference-fk="tran_complex_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_transportation_complex_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.transportation_complex"
+	 dst-table="citydb.surface_geometry" reference-fk="tran_complex_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_transportation_complex_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.transportation_complex"
+	 dst-table="citydb.surface_geometry" reference-fk="tran_complex_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_traffic_area_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.traffic_area"
+	 dst-table="citydb.surface_geometry" reference-fk="traffic_area_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_traffic_area_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.traffic_area"
+	 dst-table="citydb.surface_geometry" reference-fk="traffic_area_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_land_use_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.land_use"
+	 dst-table="citydb.surface_geometry" reference-fk="land_use_lod1msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_land_use_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.land_use"
+	 dst-table="citydb.surface_geometry" reference-fk="land_use_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_land_use_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.land_use"
+	 dst-table="citydb.surface_geometry" reference-fk="land_use_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_land_use_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.land_use"
+	 dst-table="citydb.surface_geometry" reference-fk="land_use_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod1msolid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry5" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod2msolid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry6" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod3msolid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_plant_cover_surface_geometry7" type="relfk" layers="0"
+	 src-table="citydb.plant_cover"
+	 dst-table="citydb.surface_geometry" reference-fk="plant_cover_lod4msolid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.surface_geometry" reference-fk="sol_veg_obj_lod2brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.surface_geometry" reference-fk="sol_veg_obj_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.surface_geometry" reference-fk="sol_veg_obj_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.implicit_geometry" reference-fk="sol_veg_obj_lod2impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.implicit_geometry" reference-fk="sol_veg_obj_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_solitary_vegetat_object_implicit_geometry3" type="relfk" layers="0"
+	 src-table="citydb.solitary_vegetat_object"
+	 dst-table="citydb.implicit_geometry" reference-fk="sol_veg_obj_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterbody_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.waterbody"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod1msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterbody_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.waterbody"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod1solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterbody_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.waterbody"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod2solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterbody_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.waterbody"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod3solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterbody_surface_geometry5" type="relfk" layers="0"
+	 src-table="citydb.waterbody"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbody_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterboundary_surface_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.waterboundary_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbnd_srf_lod3srf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_waterboundary_surface_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.waterboundary_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="waterbnd_srf_lod4srf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_tunnel1" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.tunnel" reference-fk="tunnel_root_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2333.71" y="5908.25"/>
+	<position x="2333.71" y="5371.39"/>
+	<position x="2081.13" y="5371.39"/>
+	</line>
+</relationship>
+
+<relationship name="rel_tunnel_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod1solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry5" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod2solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry6" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod3solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_surface_geometry7" type="relfk" layers="0"
+	 src-table="citydb.tunnel"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_hollow_space_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_hollow_space"
+	 dst-table="citydb.surface_geometry" reference-fk="tun_hspace_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_thematic_surface_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="tun_them_srf_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_thematic_surface_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.tunnel_thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="tun_them_srf_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_opening_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_opening"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_open_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_opening_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_opening"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_open_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_installation_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_inst_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_installation_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.tunnel_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="tunnel_inst_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_installation_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.tunnel_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_inst_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_tunnel_installation_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.tunnel_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="tunnel_inst_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_bridge1" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.bridge" reference-fk="bridge_root_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="5153.71" y="5675.78"/>
+	<position x="5153.71" y="5131.39"/>
+	<position x="4901.13" y="5131.39"/>
+	</line>
+</relationship>
+
+<relationship name="rel_bridge_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod2msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry4" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod1solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry5" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod2solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry6" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod3solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_surface_geometry7" type="relfk" layers="0"
+	 src-table="citydb.bridge"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_installation_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_inst_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_installation_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge_installation"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_inst_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_installation_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_inst_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_installation_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge_installation"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_inst_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_opening_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_opening"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_open_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_opening_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_opening"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_open_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_room_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_room"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_room_lod4solid_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_thematic_surface_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="brd_them_srf_lod3msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_thematic_surface_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge_thematic_surface"
+	 dst-table="citydb.surface_geometry" reference-fk="brd_them_srf_lod4msrf_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_constr_lod2brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_surface_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_constr_lod3brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_surface_geometry3" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.surface_geometry" reference-fk="bridge_constr_lod4brep_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_implicit_geometry1" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_constr_lod2impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_implicit_geometry2" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_constr_lod3impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_bridge_constr_element_implicit_geometry3" type="relfk" layers="0"
+	 src-table="citydb.bridge_constr_element"
+	 dst-table="citydb.implicit_geometry" reference-fk="bridge_constr_lod4impl_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_surface_geometry_surface_geometry1" type="relfk" layers="0"
+	 src-table="citydb.surface_geometry"
+	 dst-table="citydb.surface_geometry" reference-fk="surface_geom_root_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="4086.61" y="2232.71"/>
+	<position x="4086.61" y="1933.4"/>
+	<position x="3846.41" y="1933.4"/>
+	</line>
+</relationship>
+
+<relationship name="rel_cityobject_genericattrib_cityobject_genericattrib1" type="relfk" layers="0"
+	 src-table="citydb.cityobject_genericattrib"
+	 dst-table="citydb.cityobject_genericattrib" reference-fk="genericattrib_root_fk"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2560.26" y="1059.77"/>
+	<position x="2560.26" y="753.87"/>
+	<position x="2322.95" y="753.87"/>
+	</line>
+</relationship>
 
 </dbmodel>

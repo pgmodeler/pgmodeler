@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.0-alpha" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
+<dbmodel pgmodeler-ver="1.1.0-alpha1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -13,14 +13,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <database name="demodb" is-template="false" allow-conns="true">
 </database>
 
-<schema name="public" layers="0" rect-visible="true" fill-color="#6abdb2" sql-disabled="true">
+<schema name="public" layers="0" rect-visible="true" fill-color="#6abdb2" name-color="#000000" sql-disabled="true">
 </schema>
 
-<schema name="schema_a" layers="0" rect-visible="true" fill-color="#df83eb">
+<schema name="schema_a" layers="0" rect-visible="true" fill-color="#df83eb" name-color="#000000">
 	<role name="postgres"/>
 </schema>
 
-<schema name="schema_b" layers="0" rect-visible="true" fill-color="#fbe97f">
+<schema name="schema_b" layers="0" rect-visible="true" fill-color="#fbe97f" name-color="#000000">
 	<role name="postgres"/>
 </schema>
 
@@ -136,7 +136,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="schema_b"/>
 	<role name="postgres"/>
 	<tag name="red_tables"/>
-	<position x="120" y="320"/>
+	<position x="120" y="380"/>
 </table>
 
 <relationship name="table_a_has_many_table_d" type="rel1n" layers="0"
@@ -218,10 +218,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<return-type>
 	<type name="trigger" length="0"/>
 	</return-type>
-	<definition><![CDATA[BEGIN
+	<definition> <![CDATA[BEGIN
   -- this functions does nothing! --
   RETURN NEW;
-END;]]></definition>
+END;]]> </definition>
 </function>
 
 <trigger name="dummy_trigger" firing-type="BEFORE" per-line="true" constraint="false"
@@ -233,11 +233,11 @@ END;]]></definition>
 <view name="view_test" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="schema_b"/>
 	<role name="postgres"/>
-	<position x="640" y="280"/>
+	<position x="620" y="400"/>
 	<reference table="schema_a.table_d" column="id_a_table_a" alias="td" column-alias="id"/>
 	<reference table="public.table_a" alias="ta"/>
 	<reference alias="_expr">
-		<expression><![CDATA[(SELECT random())]]></expression>
+		<expression> <![CDATA[(SELECT random())]]> </expression>
 	</reference>
 	<expression type="select-exp">0,1,2</expression>
 	<expression type="from-exp">0,1</expression>
@@ -254,64 +254,40 @@ END;]]></definition>
 	 dst-table="public.table_a"
 	 src-required="false" dst-required="false"/>
 
-<textbox name="pagila_desc" layers="0" z-value="0" font-size="11">
-	<position x="840" y="40"/>
-	<comment><![CDATA[[ demodb database ]
+<textbox name="pagila_desc" layers="0" z-value="0" width="495.844" font-size="11">
+	<position x="20" y="20"/>
+	<comment> <![CDATA[[ demodb database ]
 
-This database model demonstrate some features when designing
-database models. It does not represent any specific context but can
-be exported to the database since it generates well formed SQL syntax.]]></comment>
+This database model demonstrate some features when designing database models. It does not represent any specific context but can be exported to the database since it generates well formed SQL syntax.]]> </comment>
 </textbox>
 
-<textbox name="view_test_txt" layers="0" z-value="0" font-size="10">
-	<position x="960" y="240"/>
-	<comment><![CDATA[Views can be constructed from
-references to tables or using 
-SQL expressions.]]></comment>
+<textbox name="view_test_txt" layers="0" z-value="0" width="187.203" font-size="10">
+	<position x="800" y="400"/>
+	<comment> <![CDATA[Views can be constructed from references to tables or using  SQL expressions.]]> </comment>
 </textbox>
 
-<textbox name="tag_txt" layers="0" z-value="0" font-size="10">
-	<position x="120" y="80"/>
-	<comment><![CDATA[Note the table below with a different color.
-pgModeler implements the concept of "tags"
-in order to permit user to graphically separate
-tables through different colors.]]></comment>
+<textbox name="tag_txt" layers="0" z-value="0" width="306.719" font-size="10">
+	<position x="260" y="260"/>
+	<comment> <![CDATA[Note the table below with a different color. pgModeler implements the concept of "tags" in order to permit user to graphically separate tables through different colors.]]> </comment>
 </textbox>
 
-<textbox name="col_propag_txt" layers="0" z-value="0" font-size="10">
-	<position x="120" y="1640"/>
-	<comment><![CDATA[pgModeler implements a mechanism
-called "column propagation" when using
-relationships 1:1, 1:n and generalization.
+<textbox name="col_propag_txt" layers="0" z-value="0" width="464.188" font-size="10">
+	<position x="120" y="1480"/>
+	<comment> <![CDATA[pgModeler implements a mechanism called "column propagation" when using relationships 1:1, 1:n and generalization.
 
-This mechanism creates the needed columns
-and constraints in a cascade way on all set
-of tables affected by one or more relationships.
+This mechanism creates the needed columns and constraints in a cascade way on all set of tables affected by one or more relationships.
 
-For instance, the "table_c" is linked to "table_f"
-through the column "id_f_table_f" generated by
-the relationship that connects them. Ahead,
-the "table_e" inherits "table_c", and, as a
-result, all columns of the latter are copied
-to the first, including the column "id_f_table_f"
-product of another relationship.]]></comment>
+For instance, the "table_c" is linked to "table_f" through the column "id_f_table_f" generated by
+the relationship that connects them. Ahead, the "table_e" inherits "table_c", and, as a result, all columns of the latter are copied to the first, including the column "id_f_table_f" product of another relationship.]]> </comment>
 </textbox>
 
-<textbox name="fk_rel_txt" layers="0" z-value="0" font-size="10">
-	<position x="2240" y="1240"/>
-	<comment><![CDATA[User is not obligated to use the relationships
-to generate the foreign keys. You can manually
-create your own foreign keys on the desired tables
-and pgModeler will automatically create the
-relationships to graphically represent the 
-link between them.
+<textbox name="fk_rel_txt" layers="0" z-value="0" width="285.906" font-size="10">
+	<position x="2040" y="1240"/>
+	<comment> <![CDATA[User is not obligated to use the relationships to generate the foreign keys. You can manually create your own foreign keys on the desired tables and pgModeler will automatically create the relationships to graphically represent the link between them.
 
-You can check that situation on "table_h". There
-we have three foreign keys created by hand 
-pointing repectively to "table_a", "table_e" and 
-"table_f". Note the relationships linking the 
-mentioned tables, those objects weren't created
-by the user.]]></comment>
+You can check that situation on "table_h". There we have three foreign keys created by hand 
+pointing repectively to "table_a", "table_e" and  "table_f". Note the relationships linking the 
+mentioned tables, those objects weren't created by the user.]]> </comment>
 </textbox>
 
 <relationship name="table_e_inherits_table_c" type="relgen" layers="0"
@@ -333,9 +309,9 @@ by the user.]]></comment>
 	 src-required="false" dst-required="false"
 	 table-name="many_table_e_has_many_table_e">
 	<line>
-		<position x="1703.14" y="1018.43"/>
-	<position x="1703.14" y="887"/>
-	<position x="1540.09" y="887"/>
+		<position x="1543.26" y="983.508"/>
+	<position x="1543.26" y="887"/>
+	<position x="1433.5" y="887"/>
 	</line>
 	<label ref-type="src-label">
 		<position x="8" y="-15.76"/>
