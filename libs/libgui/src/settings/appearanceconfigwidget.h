@@ -146,7 +146,12 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 
+		//! \brief Returns the currently selected theme
 		static QString getUiThemeId();
+
+		/*! \brief Returns the currently UI palette lightness.
+		 * Return values can Attributes::Light or Attributes::Dark */
+		static QString getUiLightness(const QPalette &pal);
 
 		static std::map<QString, attribs_map> getConfigurationParams();
 

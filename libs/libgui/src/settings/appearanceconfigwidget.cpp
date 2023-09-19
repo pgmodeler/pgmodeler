@@ -929,9 +929,29 @@ void AppearanceConfigWidget::applyUiTheme()
 	setConfigurationChanged(true);
 }
 
+QString AppearanceConfigWidget::__getUiThemeId()
+{
+	if(ui_theme_cmb->currentIndex() > 0)
+		return ui_theme_cmb->currentData(Qt::UserRole).toString();
+
+	/* If the user chose the "System default" theme
+	 * we check if the system is using dark theme (text color lightness greater
+	 * than window color lightness) or light theme */
+	return getUiLightness(system_pal);
+}
+
 QString AppearanceConfigWidget::getUiThemeId()
 {
 	return UiThemeId;
+}
+
+QString AppearanceConfigWidget::getUiLightness(const QPalette &pal)
+{
+	if(pal.color(QPalette::WindowText).lightness() >
+			pal.color(QPalette::Window).lightness())
+		return Attributes::Dark;
+
+	return Attributes::Light;
 }
 
 void AppearanceConfigWidget::previewUiSettings()
@@ -988,21 +1008,6 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-}
-
-QString AppearanceConfigWidget::__getUiThemeId()
-{
-	if(ui_theme_cmb->currentIndex() > 0)
-		return ui_theme_cmb->currentData(Qt::UserRole).toString();
-
-	/* If the user chose the "System default" theme
-	 * we check if the system is using dark theme (text color lightness greater than window color lightness)
-	 * or light theme */
-	if(system_pal.color(QPalette::WindowText).lightness() >
-			system_pal.color(QPalette::Window).lightness())
-		return Attributes::Dark;
-
-	return Attributes::Light;
 }
 
 void AppearanceConfigWidget::applyUiStyleSheet()
