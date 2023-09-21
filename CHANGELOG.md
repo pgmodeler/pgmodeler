@@ -5,11 +5,13 @@ v1.1.0-alpha1
 ------
 <em>Release date: September 29, 2023</em><br/>
 
+* [New] Added version descriptor for PostgreSQL 16.
 * [New] Added support for highlighting table child objects in ObjectFinderWidget.
 * [New] Added the method BaseTableView::setChildSelected.
 * [New] Added support for resizing the text boxes in the model using Shift + mouse movement.
 * [New] Created the method generateHashCode in TableObject and its derived classes.
 * [New] Added the method BaseObject::getLinkedObjects.
+* [New] Added the method AppearanceConfigWidget::getUiLightness.
 * [New] Created the utility function CoreUtilsNs::filterObjectsByType.
 * [New] Added the method BaseObject::setClearDepsInDtor to determine whether the dependencies/references should be undone when destroying an object.
 * [New] Created a simplified mechanism for mapping dependencies and references between objects improving the performance of several parts of the tool.
