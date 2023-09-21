@@ -21,32 +21,35 @@
 
 namespace PgSqlVersions {
 	const QString
-	PgSqlVersion100 = QString("10.0"),
-	PgSqlVersion110 = QString("11.0"),
-	PgSqlVersion120 = QString("12.0"),
-	PgSqlVersion130 = QString("13.0"),
-	PgSqlVersion140 = QString("14.0"),
-	PgSqlVersion150 = QString("15.0"),
-	DefaulVersion = PgSqlVersion150;
+	PgSqlVersion100("10.0"),
+	PgSqlVersion110("11.0"),
+	PgSqlVersion120("12.0"),
+	PgSqlVersion130("13.0"),
+	PgSqlVersion140("14.0"),
+	PgSqlVersion150("15.0"),
+	PgSqlVersion160("16.0"),
+	DefaulVersion = PgSqlVersion160,
+	MinimumVersion = PgSqlVersion100;
 
 	const QStringList
 	AllVersions = {
-		PgSqlVersion150, PgSqlVersion140,
-		PgSqlVersion130, PgSqlVersion120,
-		PgSqlVersion110, PgSqlVersion100
+		PgSqlVersion160, PgSqlVersion150,
+		PgSqlVersion140, PgSqlVersion130,
+		PgSqlVersion120, PgSqlVersion110,
+		PgSqlVersion100
 	};
 
 	QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver)
 	{
 		unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
-				minor_ver = QString(PgSqlVersion100).remove('.').toUInt(),
+				minor_ver = QString(MinimumVersion).remove('.').toUInt(),
 				default_ver = QString(DefaulVersion).remove('.').toUInt();
 
 		if(!ignore_legacy_ver && curr_ver != 0 && (curr_ver < minor_ver))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvPostgreSQLVersion)
 							.arg(pgsql_ver)
-							.arg(PgSqlVersions::PgSqlVersion100)
+							.arg(PgSqlVersions::MinimumVersion)
 							.arg(PgSqlVersions::DefaulVersion),
 							ErrorCode::InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
