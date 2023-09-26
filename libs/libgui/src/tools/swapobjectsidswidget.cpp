@@ -99,7 +99,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 		}
 	});
 	
-	GuiUtilsNs::updateObjectsTable(objects_view, objects, "");
+	GuiUtilsNs::populateObjectsTable(objects_view, objects, "");
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
 		filterObjects();

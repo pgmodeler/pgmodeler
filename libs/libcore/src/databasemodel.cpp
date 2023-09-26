@@ -10093,35 +10093,43 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	}
 }
 
-QString DatabaseModel::getChangelogDefinition()
+QString DatabaseModel::getChangelogDefinition(bool csv_format)
 {
 	if(!persist_changelog)
 		return "";
 
 	try
 	{
-		QDateTime date;
-		QString signature, action, xml_code;
-		ObjectType type;
+		QString date, type, signature, action,
+				buffer, tmpl_line("\"%1\";\"%2\";\"%3\";\"%4\"\n");
 		attribs_map attribs;
 
 		for(auto &entry : changelog)
 		{
-			date = std::get<LogDate>(entry);
+			date = std::get<LogDate>(entry).toString(Qt::ISODate);
 			signature = std::get<LogSinature>(entry);
-			type = std::get<LogObjectType>(entry);
+			type = BaseObject::getSchemaName(std::get<LogObjectType>(entry));
 			action = std::get<LogAction>(entry);
 
-			attribs[Attributes::Date] = date.toString(Qt::ISODate);
-			attribs[Attributes::Signature] = signature;
-			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
-			attribs[Attributes::Action] = action;
-
-			xml_code += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
+			if(csv_format)
+			{
+				buffer += tmpl_line.arg(date, signature, type, action);
+			}
+			else
+			{
+				attribs[Attributes::Date] = date;
+				attribs[Attributes::Signature] = signature;
+				attribs[Attributes::Type] = type;
+				attribs[Attributes::Action] = action;
+				buffer += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
+			}
 		}
 
+		if(csv_format)
+			return buffer;
+
 		attribs.clear();
-		attribs[Attributes::Entry] = xml_code;
+		attribs[Attributes::Entry] = buffer;
 		schparser.ignoreEmptyAttributes(true);
 		return schparser.getSourceCode(Attributes::Changelog, attribs, SchemaParser::XmlCode);
 	}

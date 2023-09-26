@@ -21,6 +21,7 @@
 #include "guiutilsns.h"
 #include "columndatawidget.h"
 #include "baseform.h"
+#include "csvparser.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {
@@ -110,15 +111,56 @@ date of modification in partial diff will be unavailable! Do you want to proceed
 void ChangelogWidget::inspectChangelog()
 {
 	BaseForm base_form;
-	ColumnDataWidget *data_wgt = new ColumnDataWidget(true, GlobalAttributes::getXMLHighlightConfPath());
+	QTableWidget *data_tbw = new QTableWidget;
+	CsvDocument csv_doc;
+	CsvParser csv_parser;
 
-	base_form.setMainWidget(data_wgt);
+	try
+	{
+		QString csv_buf = model->getDatabaseModel()->getChangelogDefinition(true);
+
+		csv_buf.prepend(QString("\"%1\";\"%2\";\"%3\";\"%4\"\n")
+									 .arg(tr("Date"), tr("Object"), tr("Type"), tr("Action")));
+
+		csv_parser.setColumnInFirstRow(true);
+		csv_doc = csv_parser.parseBuffer(csv_buf);
+		GuiUtilsNs::populateTable(data_tbw, csv_doc);
+
+		QHeaderView *header = data_tbw->horizontalHeader();
+		QAbstractItemModel *h_model = header->model();
+		QStringList icons = {
+			GuiUtilsNs::getIconPath("typedatetime"), GuiUtilsNs::getIconPath("objects"),
+			GuiUtilsNs::getIconPath("usertype"), GuiUtilsNs::getIconPath("changelog")
+		};
+
+		for(int section = 0; section <= 3; section++)
+		{
+			h_model->setHeaderData(section, Qt::Horizontal,
+														 QVariant::fromValue<Qt::Alignment>(Qt::AlignLeft | Qt::AlignVCenter),
+														 Qt::TextAlignmentRole);
+
+			h_model->setHeaderData(section, Qt::Horizontal, QIcon(icons[section]), Qt::DecorationRole);
+		}
+
+		header->swapSections(0, 1);
+		header->swapSections(1, 2);
+		header->setStretchLastSection(true);
+		data_tbw->setSortingEnabled(true);
+		data_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
+		data_tbw->setAlternatingRowColors(true);
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
+
+	data_tbw->setWindowTitle("Changelog entries");
+	base_form.setMainWidget(data_tbw);
 	base_form.setButtonConfiguration(Messagebox::OkButton);
 	base_form.apply_ok_btn->setShortcut(QKeySequence("Enter"));
-
-	data_wgt->setWindowTitle(tr("Changelog entries"));
-	data_wgt->setData(model->getDatabaseModel()->getChangelogDefinition());
-	data_wgt->setReadOnly(true);
+	base_form.main_frm->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																									 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&base_form, this->metaObject()->className());
 	base_form.exec();

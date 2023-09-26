@@ -858,7 +858,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		void setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type);
 
 		//! \brief Returns the XML code for the changelog
-		QString getChangelogDefinition();
+		QString getChangelogDefinition(bool csv_format = false);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

@@ -169,7 +169,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, &ModelDatabaseDiffForm::applyPartialDiffFilters);
 
 		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
-			GuiUtilsNs::updateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
+			GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 		});
 
 #ifdef DEMO_VERSION
@@ -1360,7 +1360,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 
 		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
 
-		GuiUtilsNs::updateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
+		GuiUtilsNs::populateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
 	}
 	else if(src_connections_cmb->currentIndex() > 0 &&

@@ -67,10 +67,10 @@ void ObjectDepsRefsWidget::applyConfiguration()
 
 void ObjectDepsRefsWidget::updateObjectTables()
 {
-	GuiUtilsNs::updateObjectsTable(dependencies_view,
+	GuiUtilsNs::populateObjectsTable(dependencies_view,
 																	this->object->getDependencies(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 
-	GuiUtilsNs::updateObjectsTable(references_view,
+	GuiUtilsNs::populateObjectsTable(references_view,
 																	this->object->getReferences(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 }
 

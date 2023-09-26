@@ -96,7 +96,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		if(database_cmb->currentIndex()==0)
 		{
 			db_objects_tw->clear();
-			GuiUtilsNs::updateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
+			GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 		}
 
 		import_btn->setEnabled(enable);
@@ -180,7 +180,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		obj_attrs = import_hlp.getObjects(types);
-		GuiUtilsNs::updateObjectsTable(flt_objects_view, obj_attrs);
+		GuiUtilsNs::populateObjectsTable(flt_objects_view, obj_attrs);
 		flt_objects_view->setEnabled(flt_objects_view->model()->rowCount() > 0);
 		qApp->restoreOverrideCursor();
 	}
@@ -446,7 +446,7 @@ Do you really want to proceed?"),
 			{
 				//List the objects using the static helper method
 				db_objects_tw->clear();
-				GuiUtilsNs::updateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
+				GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 				db_objects_stw->setCurrentIndex(0);
 				DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);
 				objs_parent_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0);

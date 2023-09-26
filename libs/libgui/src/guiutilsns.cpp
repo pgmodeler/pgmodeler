@@ -536,7 +536,7 @@ namespace GuiUtilsNs {
 		handleFileDialogSatate(file_dlg, false);
 	}
 
-	void updateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)
+	void populateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)
 	{
 		if(!table_vw)
 			return;
@@ -568,7 +568,7 @@ namespace GuiUtilsNs {
 		table_vw->setSortingEnabled(true);
 	}
 
-	void updateObjectsTable(QTableView *table_vw, const std::vector<attribs_map> &attribs)
+	void populateObjectsTable(QTableView *table_vw, const std::vector<attribs_map> &attribs)
 	{
 		if(!table_vw)
 			return;
@@ -629,6 +629,41 @@ namespace GuiUtilsNs {
 			return file_dlg.selectedFiles();
 
 		return QStringList();
+	}
+
+	void populateTable(QTableWidget *tab_wgt, const CsvDocument &csv_doc)
+	{
+		if(!tab_wgt || csv_doc.isEmpty())
+			return;
+
+		int col = 0;
+		QTableWidgetItem *item = nullptr;
+
+		tab_wgt->setUpdatesEnabled(false);
+		tab_wgt->clear();
+		tab_wgt->setColumnCount(csv_doc.getColumnCount());
+
+		// Populating the header
+		for(auto &col_name : csv_doc.getColumnNames())
+		{
+			item = new QTableWidgetItem(col_name);
+			tab_wgt->setHorizontalHeaderItem(col++, item);
+		}
+
+		//Populating the grid with the data
+		for(int row = 0; row < csv_doc.getRowCount(); row++)
+		{
+			tab_wgt->insertRow(tab_wgt->rowCount());
+
+			for(int col = 0; col < csv_doc.getColumnCount(); col++)
+			{
+				item = new QTableWidgetItem(csv_doc.getValue(row, col));
+				tab_wgt->setItem(row, col, item);
+			}
+		}
+
+		tab_wgt->resizeColumnsToContents();
+		tab_wgt->setUpdatesEnabled(true);
 	}
 
 	bool selectAndSaveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,

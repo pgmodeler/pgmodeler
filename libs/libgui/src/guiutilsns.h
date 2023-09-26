@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
+#include "csvdocument.h"
 
 namespace GuiUtilsNs {
 	static constexpr int LtMargin = 5,
@@ -114,10 +115,13 @@ namespace GuiUtilsNs {
 	/*! \brief Lists the objects in a QTableView using a list of database model objects as data source.
 	 * The first column on each row of table contains the reference to the object.
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-	extern __libgui void updateObjectsTable(QTableView *tab_view, const std::vector<BaseObject *> &objects, const QString &search_attr = "");
+	extern __libgui void populateObjectsTable(QTableView *tab_view, const std::vector<BaseObject *> &objects, const QString &search_attr = "");
 
 	//! \brief Lists the objects in a QTableView using a list of object attributes (see Catalog::getObjects) as data source.
-	extern __libgui void updateObjectsTable(QTableView *tab_view, const std::vector<attribs_map> &attribs);
+	extern __libgui void populateObjectsTable(QTableView *tab_view, const std::vector<attribs_map> &attribs);
+
+	//! \brief Populates the provided table widget with the data in a parsed CSV document.
+	extern __libgui void populateTable(QTableWidget *tab_tbw, const CsvDocument &csv_doc);
 
 	/*! \brief Opens an instance of QFileDialog with the provided attributes.
 	 *  The method returns the files/directories selected by the user in the dialog */
