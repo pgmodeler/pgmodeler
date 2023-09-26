@@ -1585,7 +1585,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	for(auto &obj : tables)
 	{
-		tab_view=dynamic_cast<BaseTableView *>(obj);
+		tab_view = dynamic_cast<BaseTableView *>(obj);
 
 		//Realign tables if the parent schema had the position adjusted too
 		if(align_objs_grid)
@@ -1607,12 +1607,18 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
 
-	QRectF rect = this->itemsBoundingRect();
+	QRectF rect = this->itemsBoundingRect(),
+			old_scene_rect = sceneRect();
 	rect.setTopLeft(QPointF(0,0));
 	rect.setWidth(rect.width() + (2 * grid_size));
 	rect.setHeight(rect.height() + (2 * grid_size));
 	setSceneRect(rect);
-	invalidate();
+
+	/* We invalidate the entire scene if the old scene size differs from the new one
+	 * calculated based upon the items bounding rects after objects movement */
+	if(old_scene_rect.height() != rect.height() ||
+		 old_scene_rect.width() != rect.width())
+		invalidate();
 
 	emit s_objectsMoved(true);
 }
