@@ -496,19 +496,6 @@ QPainterPath RelationshipView::shape() const
 	return rel_shape;
 }
 
-void RelationshipView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-{
-	/* Workaround: For some unkown reason, an artifact rectangle is being draw
-	 * around the relationship everytime it is selected. To avoid that we force
-	 * the painter to have no pen and the clipping area to be the exposed area
-	 * of the object */
-	painter->save();
-	painter->setPen(Qt::NoPen);
-	painter->setClipRect(option->exposedRect);
-	BaseObjectView::paint(painter, option, widget);
-	painter->restore();
-}
-
 void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	BaseRelationship *base_rel=this->getUnderlyingObject();
@@ -604,8 +591,6 @@ void RelationshipView::configureLine()
 	BaseRelationship *base_rel = this->getUnderlyingObject();
 	BaseRelationship::TableId src_tab = BaseRelationship::SrcTable,
 			dst_tab = BaseRelationship::DstTable;
-
-	configureBoundingRect();
 
 	/* We skip the line configuration if the line is still being configured, or the bounding rectangles
 	 * of the involved tables are not valid (they wasn't rendered/configured yet) or the
@@ -1247,6 +1232,8 @@ void RelationshipView::configureLine()
 	this->configureLabels();
 
 	this->configureProtectedIcon();
+
+	configureBoundingRect();
 
 	configuring_line=false;
 
@@ -2055,55 +2042,36 @@ double RelationshipView::getDefaultPenWidth()
 
 void RelationshipView::configureBoundingRect()
 {
-	QRectF rect, brect;
-
 	rel_shape.clear();
 	setFlag(QGraphicsItem::ItemClipsToShape);
 	prepareGeometryChange();
 
 	if(descriptor && descriptor->isVisible())
-	{
-		brect.setTopLeft(descriptor->pos());
-		brect.setSize(descriptor->boundingRect().size());
-		rel_shape.addPath(descriptor->shape());
-	}
-
-	for(int i = 0; i < 2; i++)
-	{
-		if(!cf_descriptors[i] || !cf_descriptors[i]->isVisible())
-			continue;
-
-		rect.setTopLeft(mapToScene(cf_descriptors[i]->pos()));
-		rect.setSize(cf_descriptors[i]->boundingRect().size());
-		brect = brect.united(rect);
-	}
+		rel_shape.addPolygon(descriptor->polygon());
 
 	for(int i = 0; i < 3; i++)
 	{
 		if(!labels[i] || !labels[i]->isVisible())
 			continue;
 
-		rect.setTopLeft(labels[i]->scenePos());
-		rect.setSize(labels[i]->boundingRect().size());
-		brect = brect.united(rect);
-		rel_shape.addPath(labels[i]->shape());
+		rel_shape.addRect(labels[i]->mapRectToScene(labels[i]->boundingRect()));
 	}
 
 	QPainterPathStroker ps;
-	QPainterPath	stroke;
 	ps.setWidth(LineSelStrokeWidth);
 
 	if(!use_curved_lines)
 	{
+		QPainterPath ln_path;
+
 		for(auto &line : lines)
 		{
 			if(!line->isVisible())
 				continue;
 
-			rect = line->boundingRect();
-			brect = brect.united(line->boundingRect());
-			stroke = ps.createStroke(line->shape());
-			rel_shape.addPath(stroke);
+			ln_path = QPainterPath(line->line().p1());
+			ln_path.lineTo(line->line().p2());
+			rel_shape.addPath(ps.createStroke(ln_path));
 		}
 	}
 	else
@@ -2113,13 +2081,22 @@ void RelationshipView::configureBoundingRect()
 			if(!curve->isVisible())
 				continue;
 
-			rect = curve->boundingRect();
-			brect = brect.united(curve->boundingRect());
-			stroke = ps.createStroke(curve->shape());
-			rel_shape.addPath(stroke);
+			rel_shape.addPath(ps.createStroke(curve->path()));
 		}
 	}
 
-	rect = rel_shape.boundingRect();
-	bounding_rect = brect;
+	bounding_rect = rel_shape.boundingRect();
+}
+
+void RelationshipView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+	/* Workaround: For some unknown reason, an artifact rectangle is being draw
+	 * around the relationship everytime it is selected. To avoid that we force
+	 * the painter to have no pen and the clipping area to be the exposed area
+	 * of the object */
+	painter->save();
+	painter->setPen(Qt::NoPen);
+	painter->setClipRect(option->exposedRect);
+	BaseObjectView::paint(painter, option, widget);
+	painter->restore();
 }

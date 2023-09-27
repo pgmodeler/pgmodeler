@@ -197,6 +197,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static constexpr double MinScaleFactor = 0.100000,
 		MaxScaleFactor = 5.000001;
 
+		static constexpr double MinSceneWidth = 2000,
+				MinSceneHeight = 1500;
+
 		static constexpr unsigned DefaultLayer = 0;
 
 		//! \brief Stores the default grid line color

@@ -85,6 +85,7 @@ ObjectsScene::ObjectsScene()
 	scene_move_timer.setInterval(SceneMoveTimeout);
 	corner_hover_timer.setInterval(SceneMoveTimeout * 10);
 	object_move_timer.setInterval(SceneMoveTimeout * 10);
+	setSceneRect(QRectF(0,0, MinSceneWidth, MinSceneHeight));
 }
 
 ObjectsScene::~ObjectsScene()
@@ -663,87 +664,57 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
 {
-	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
+	QSizeF sz = rect.size();
+
+	if(sz.width() < MinSceneWidth)
+		sz.setWidth(MinSceneWidth);
+
+	if(sz.height() < MinSceneHeight)
+		sz.setHeight(MinSceneHeight);
+
+	QGraphicsScene::setSceneRect(0, 0, sz.width(), sz.height());
 }
 
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only, bool incl_layer_rects)
 {
 	if(!seek_only_db_objs)
 		return QGraphicsScene::itemsBoundingRect();
-	else
+
+	QRectF items_rect, rect;
+	QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
+	BaseObjectView *obj_view = nullptr;
+	QPointF pnt;
+	QFontMetricsF fm(LayerItem::getDefaultFont());
+	ObjectType obj_type;
+	BaseGraphicObject *graph_obj = nullptr;
+
+	for(auto &item : items)
 	{
-		QRectF rect=QGraphicsScene::itemsBoundingRect();
-		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
-		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
-		BaseObjectView *obj_view=nullptr;
-		QPointF pnt;
-		BaseGraphicObject *graph_obj=nullptr;
-		QFontMetricsF fm(LayerItem::getDefaultFont());
-		ObjectType obj_type;
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
 
-		for(auto &item : items)
+		if(!obj_view || !obj_view->isVisible() || !graph_obj)
+			continue;
+
+		obj_type = graph_obj->getObjectType();
+		rect = obj_view->mapRectToScene(obj_view->boundingRect());
+
+		if(graph_obj && incl_layer_rects && is_layer_rects_visible &&
+			 obj_type != ObjectType::Schema &&
+			 obj_type != ObjectType::BaseRelationship &&
+			 obj_type != ObjectType::Relationship)
 		{
-			obj_view=dynamic_cast<BaseObjectView *>(item);
+			pnt = QPointF(LayerItem::LayerPadding * graph_obj->getLayersCount(),
+										(is_layer_names_visible ? fm.height() : LayerItem::LayerPadding) * graph_obj->getLayersCount());
 
-			if(obj_view && obj_view->isVisible())
-			{
-				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
-
-				if(graph_obj)
-				{
-					obj_type = graph_obj->getObjectType();
-
-					if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
-					{
-						pnt = graph_obj->getPosition();
-
-						// Including the object's layer rects top-left dimension in the brect calculation (only for tables and textboxes)
-						if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
-						{
-							pnt += QPointF(-LayerItem::LayerPadding * graph_obj->getLayersCount(),
-														 (is_layer_names_visible ? -fm.height() : -LayerItem::LayerPadding) * graph_obj->getLayersCount());
-						}
-					}
-					else
-						pnt = dynamic_cast<RelationshipView *>(obj_view)->boundingRect().topLeft();
-
-					if(pnt.x() < x)
-						x=pnt.x();
-
-					if(pnt.y() < y)
-						y=pnt.y();
-
-					if(selected_only)
-					{
-						if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
-						{
-							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
-
-							// Including the object's layer rects bottom-right dimension in the brect calculation (only for tables and textboxes)
-							if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
-							{
-								pnt += QPointF(LayerItem::LayerPadding * graph_obj->getLayersCount(),
-															 LayerItem::LayerPadding * graph_obj->getLayersCount());
-							}
-						}
-						else
-							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->boundingRect().bottomRight();
-
-						if(pnt.x() > x2)
-							x2 = pnt.x();
-
-						if(pnt.y() > y2)
-							y2 = pnt.y();
-					}
-				}
-			}
+			rect.setTopLeft(rect.topLeft() - pnt);
+			rect.setBottomRight(rect.bottomRight() + pnt);
 		}
 
-		if(selected_only)
-			return QRectF(QPointF(x, y), QPointF(x2, y2));
-		else
-			return QRectF(QPointF(x, y), rect.bottomRight());
+		items_rect = items_rect.united(rect);
 	}
+
+	return items_rect;
 }
 
 void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -1607,11 +1578,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
 
-	QRectF rect = this->itemsBoundingRect(),
+	QRectF rect = this->itemsBoundingRect(true, false, true),
 			old_scene_rect = sceneRect();
 	rect.setTopLeft(QPointF(0,0));
 	rect.setWidth(rect.width() + (2 * grid_size));
 	rect.setHeight(rect.height() + (2 * grid_size));
+
 	setSceneRect(rect);
 
 	/* We invalidate the entire scene if the old scene size differs from the new one

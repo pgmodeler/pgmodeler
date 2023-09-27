@@ -147,7 +147,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	xmlparser=db_model->getXMLParser();
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
-	scene->setSceneRect(QRectF(0,0,2000,2000));
 	scene->installEventFilter(this);
 
 	viewport=new QGraphicsView(scene);
