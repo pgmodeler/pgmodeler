@@ -25,15 +25,15 @@ Here we are, after working for 4 months, bringing you the last alpha release of 
 
 **Bug fixes:** Also, as part of the constant search for the overall tool's stability and reliability, almost twenty bugs were fixed, and below we highlight some key ones:<br/>
 * Minor fix in the object finder widget to avoid disconnecting a null selection which could lead to crashes.<br/>
-* Minor fix in database model widget to hide the new object overlay when moving a selection of objects in the design area.<br/>
-* Minor fix in the object removal routine in model widget that was not erasing an object in case it shared the same name of other objects in the same schema.<br/>
-* Minor fix in the object addtion routine to validate the layer of the object being added. If one or more layers are invalid the object will be moved to the default layer 0.<br/>
-* Minor fix in pgmodeler-cli whe extracting the objects's XML code during model file structure repair in order to restore correctly the layers name/count.<br/>
+* Minor fix in the database model widget to hide the new object overlay when moving a selection of objects in the design area.<br/>
+* Minor fix in the object removal routine in a model widget that was not erasing an object in case it shared the same name of other objects in the same schema.<br/>
+* Minor fix in the object addition routine to validate the layer of the object being added. If one or more layers are invalid the object will be moved to the default layer 0.<br/>
+* Minor fix in pgmodeler-cli when extracting the objects' XML code during model file structure repair in order to restore correctly the layers name/count.<br/>
 * Fixed a bug in partial reverse engineering that was not correctly importing functions in some specific conditions.<br/>
 * Fixed a bug in partial reverse engineering that was not importing some objects' dependencies correctly.<br/>
-* Fixed a bug in appearance configuration widget that was not updating the example model colors when changing the UI theme.<br/>
+* Fixed a bug in the appearance configuration widget that was not updating the example model colors when changing the UI theme.<br/>
 * Fixed a crash when double-clicking the overview widget.<br/>
-* Fixed the data dictionaries schema files for tables and views.<br/>
+* Fixed the data dictionary schema files for tables and views.<br/>
 * Fixed a bug in the database model that was causing FK relationships of a hidden layer to be displayed after loading the model.<br/>
 * Fixed a bug in the scene move action that was causing the grid to not be displayed after a panning/wheel move.<br/>
 
