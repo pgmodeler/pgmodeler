@@ -17,6 +17,12 @@
 */
 
 #include "objectsscene.h"
+#include "relationshipview.h"
+#include "styledtextboxview.h"
+#include "graphicalview.h"
+#include "tableview.h"
+#include "schemaview.h"
+#include "databasemodel.h"
 
 ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
 
@@ -79,6 +85,7 @@ ObjectsScene::ObjectsScene()
 	scene_move_timer.setInterval(SceneMoveTimeout);
 	corner_hover_timer.setInterval(SceneMoveTimeout * 10);
 	object_move_timer.setInterval(SceneMoveTimeout * 10);
+	setSceneRect(QRectF(0,0, MinSceneWidth, MinSceneHeight));
 }
 
 ObjectsScene::~ObjectsScene()
@@ -617,7 +624,6 @@ void ObjectsScene::setLockDelimiterScale(bool lock, double curr_scale)
 		delimiter_scale = 1;
 
 	lock_delim_scale = lock;
-	//setGridSize(grid_size);
 }
 
 bool ObjectsScene::isDelimiterScaleLocked()
@@ -658,87 +664,57 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
 {
-	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
+	QSizeF sz = rect.size();
+
+	if(sz.width() < MinSceneWidth)
+		sz.setWidth(MinSceneWidth);
+
+	if(sz.height() < MinSceneHeight)
+		sz.setHeight(MinSceneHeight);
+
+	QGraphicsScene::setSceneRect(0, 0, sz.width(), sz.height());
 }
 
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only, bool incl_layer_rects)
 {
 	if(!seek_only_db_objs)
 		return QGraphicsScene::itemsBoundingRect();
-	else
+
+	QRectF items_rect, rect;
+	QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
+	BaseObjectView *obj_view = nullptr;
+	QPointF pnt;
+	QFontMetricsF fm(LayerItem::getDefaultFont());
+	ObjectType obj_type;
+	BaseGraphicObject *graph_obj = nullptr;
+
+	for(auto &item : items)
 	{
-		QRectF rect=QGraphicsScene::itemsBoundingRect();
-		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
-		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
-		BaseObjectView *obj_view=nullptr;
-		QPointF pnt;
-		BaseGraphicObject *graph_obj=nullptr;
-		QFontMetricsF fm(LayerItem::getDefaultFont());
-		ObjectType obj_type;
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
 
-		for(auto &item : items)
+		if(!obj_view || !obj_view->isVisible() || !graph_obj)
+			continue;
+
+		obj_type = graph_obj->getObjectType();
+		rect = obj_view->mapRectToScene(obj_view->boundingRect());
+
+		if(graph_obj && incl_layer_rects && is_layer_rects_visible &&
+			 obj_type != ObjectType::Schema &&
+			 obj_type != ObjectType::BaseRelationship &&
+			 obj_type != ObjectType::Relationship)
 		{
-			obj_view=dynamic_cast<BaseObjectView *>(item);
+			pnt = QPointF(LayerItem::LayerPadding * graph_obj->getLayersCount(),
+										(is_layer_names_visible ? fm.height() : LayerItem::LayerPadding) * graph_obj->getLayersCount());
 
-			if(obj_view && obj_view->isVisible())
-			{
-				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
-
-				if(graph_obj)
-				{
-					obj_type = graph_obj->getObjectType();
-
-					if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
-					{
-						pnt = graph_obj->getPosition();
-
-						// Including the object's layer rects top-left dimension in the brect calculation (only for tables and textboxes)
-						if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
-						{
-							pnt += QPointF(-LayerItem::LayerPadding * graph_obj->getLayersCount(),
-														 (is_layer_names_visible ? -fm.height() : -LayerItem::LayerPadding) * graph_obj->getLayersCount());
-						}
-					}
-					else
-						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
-
-					if(pnt.x() < x)
-						x=pnt.x();
-
-					if(pnt.y() < y)
-						y=pnt.y();
-
-					if(selected_only)
-					{
-						if(obj_type != ObjectType::Relationship && obj_type != ObjectType::BaseRelationship)
-						{
-							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
-
-							// Including the object's layer rects bottom-right dimension in the brect calculation (only for tables and textboxes)
-							if(incl_layer_rects && is_layer_rects_visible && obj_type != ObjectType::Schema)
-							{
-								pnt += QPointF(LayerItem::LayerPadding * graph_obj->getLayersCount(),
-															 LayerItem::LayerPadding * graph_obj->getLayersCount());
-							}
-						}
-						else
-							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
-
-						if(pnt.x() > x2)
-							x2 = pnt.x();
-
-						if(pnt.y() > y2)
-							y2 = pnt.y();
-					}
-				}
-			}
+			rect.setTopLeft(rect.topLeft() - pnt);
+			rect.setBottomRight(rect.bottomRight() + pnt);
 		}
 
-		if(selected_only)
-			return QRectF(QPointF(x, y), QPointF(x2, y2));
-		else
-			return QRectF(QPointF(x, y), rect.bottomRight());
+		items_rect = items_rect.united(rect);
 	}
+
+	return items_rect;
 }
 
 void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -751,7 +727,9 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 									BaseObjectView::getScreenDpiFactor();
 	QSizeF aux_size;
 	QPen pen = QPen(QColor(), pen_width);
-	int scene_lim_x = 0, scene_lim_y = 0;
+	int scene_lim_x = 0, scene_lim_y = 0,
+			start_x = 0, start_y = 0,
+			end_x = 0, end_y = 0;
 
 	// Retrieve the page rect considering the orientation, margin and page size
 	aux_size = page_layout.paintRect(QPageLayout::Point).size() * delim_factor;
@@ -765,20 +743,24 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
-	painter->fillRect(rect, canvas_color);
 
-	if(show_grid)
+	start_x = (round(rect.left()/grid_size) * grid_size) - grid_size;
+	start_y = (round(rect.top()/grid_size) * grid_size) - grid_size;
+	end_x = rect.right() < scene_w ? rect.right() : scene_w;
+	end_y = rect.bottom() < scene_h ? rect.bottom() : scene_h;
+
+	if(show_grid && !move_scene)
 	{
 		int px = 0, py = 0;
 
-		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.50 : 1));
+		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.65 : 1));
 		pen.setColor(grid_color);
 		painter->setPen(pen);
 
 		//Draws the grid
-		for(px = 0; px < scene_w; px += grid_size)
+		for(px = start_x; px <= end_x; px += grid_size)
 		{
-			for(py = 0; py < scene_h; py += grid_size)
+			for(py = start_y; py <= end_y; py += grid_size)
 			{
 				if(grid_pattern == GridPattern::SquarePattern)
 					painter->drawRect(QRectF(QPointF(px, py), QPointF(px + grid_size, py + grid_size)));
@@ -802,7 +784,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	}
 
 	//Creates the page delimiter lines
-	if(show_page_delim)
+	if(show_page_delim && !move_scene)
 	{
 		pen.setWidthF(pen_width * 1.15);
 		pen.setColor(delimiters_color);
@@ -810,9 +792,9 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setDashPattern({3, 5});
 		painter->setPen(pen);
 
-		for(int px = 0; px < scene_w; px += page_w)
+		for(int px = 0; px < end_x; px += page_w)
 		{
-			for(int py = 0; py < scene_h; py += page_h)
+			for(int py = 0; py < end_y; py += page_h)
 			{
 				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
 				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
@@ -821,7 +803,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	}
 
 	// Drawing the scene boundaries
-	if(show_scene_limits)
+	if(show_scene_limits && !move_scene)
 	{
 		pen.setColor(QColor(255, 0, 0));
 		pen.setStyle(Qt::SolidLine);
@@ -959,45 +941,44 @@ void ObjectsScene::handleChildrenSelectionChanged()
 
 void ObjectsScene::addItem(QGraphicsItem *item)
 {
-	if(item)
+	if(!item)	return;
+
+	RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
+	BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
+	BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
+	TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
+
+	if(rel)
+		connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
+	else if(tab)
 	{
-		RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
-		BaseTableView *tab=dynamic_cast<BaseTableView *>(item);
-		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
-		TextboxView *txtbox=dynamic_cast<TextboxView *>(item);
-
-		if(rel)
-			connect(rel, &RelationshipView::s_relationshipModified, this, &ObjectsScene::s_objectModified);
-		else if(tab)
-		{
-			connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
-			connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
-			connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
-			connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
-			connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
-			connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
-		}
-
-		if(obj)
-		{		
-			obj->setVisible(isLayersActive(obj->getLayers()));
-
-			// Relationships and schemas don't have their z value changed
-			if(!rel && !dynamic_cast<SchemaView *>(item))
-				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
-
-			connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
-
-			// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
-			if(tab || txtbox)
-				connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
-		}
-
-		QGraphicsScene::addItem(item);
-
-		if(tab || txtbox)
-			updateLayerRects();
+		connect(tab, &BaseTableView::s_popupMenuRequested, this, &ObjectsScene::handlePopupMenuRequested);
+		connect(tab, &BaseTableView::s_childrenSelectionChanged, this, &ObjectsScene::handleChildrenSelectionChanged);
+		connect(tab, &BaseTableView::s_collapseModeChanged, this, &ObjectsScene::s_collapseModeChanged);
+		connect(tab, &BaseTableView::s_paginationToggled, this, &ObjectsScene::s_paginationToggled);
+		connect(tab, &BaseTableView::s_currentPageChanged, this, &ObjectsScene::s_currentPageChanged);
+		connect(tab, &BaseTableView::s_sceneClearRequested, this, &ObjectsScene::clearSelection);
 	}
+
+	if(obj)
+	{
+		obj->setVisible(isLayersActive(obj->getLayers()));
+
+		// Relationships and schemas don't have their z value changed
+		if(!rel && !dynamic_cast<SchemaView *>(item))
+			obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
+
+		connect(obj, &BaseObjectView::s_objectSelected, this, &ObjectsScene::handleObjectSelection);
+
+		// Tables and textboxes are observed for dimension changes so the layers they are in are correctly updated
+		if(tab || txtbox)
+			connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
+	}
+
+	QGraphicsScene::addItem(item);
+
+	if(tab || txtbox)
+		updateLayerRects();
 }
 
 void ObjectsScene::removeItem(QGraphicsItem *item)
@@ -1314,25 +1295,22 @@ void ObjectsScene::keyPressEvent(QKeyEvent *event)
 			}
 		}
 
+		int move_step = static_cast<int>(grid_size);
+
 		if(event->key() == Qt::Key_Up)
-			dy = -1;
+			dy = -move_step;
 		else if(event->key() == Qt::Key_Down)
-			dy = 1;
+			dy = move_step;
 
 		if(event->key() == Qt::Key_Left)
-			dx = -1;
+			dx = -move_step;
 		else if(event->key() == Qt::Key_Right)
-			dx = 1;
+			dx = move_step;
 
 		if(event->modifiers() == Qt::ControlModifier)
 		{
 			dx *= 10;
 			dy *= 10;
-		}
-		else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-		{
-			dx *= 100;
-			dy *= 100;
 		}
 
 		for(auto item : selectedItems())
@@ -1578,7 +1556,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	for(auto &obj : tables)
 	{
-		tab_view=dynamic_cast<BaseTableView *>(obj);
+		tab_view = dynamic_cast<BaseTableView *>(obj);
 
 		//Realign tables if the parent schema had the position adjusted too
 		if(align_objs_grid)
@@ -1600,12 +1578,19 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
 
-	QRectF rect = this->itemsBoundingRect();
+	QRectF rect = this->itemsBoundingRect(true, false, true),
+			old_scene_rect = sceneRect();
 	rect.setTopLeft(QPointF(0,0));
 	rect.setWidth(rect.width() + (2 * grid_size));
 	rect.setHeight(rect.height() + (2 * grid_size));
+
 	setSceneRect(rect);
-	invalidate();
+
+	/* We invalidate the entire scene if the old scene size differs from the new one
+	 * calculated based upon the items bounding rects after objects movement */
+	if(old_scene_rect.height() != rect.height() ||
+		 old_scene_rect.width() != rect.width())
+		invalidate();
 
 	emit s_objectsMoved(true);
 }

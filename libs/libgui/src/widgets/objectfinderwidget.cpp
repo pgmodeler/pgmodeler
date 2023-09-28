@@ -18,23 +18,7 @@
 
 #include "objectfinderwidget.h"
 #include "guiutilsns.h"
-#include "coreutilsns.h"
-#include "objectstablewidget.h"
-
-const QStringList ObjectFinderWidget::search_attribs =
-{ Attributes::Name, Attributes::Comment, Attributes::Signature,
-	Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
-	Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
-	Attributes::DstTable, Attributes::RelatedForeignKey,
-	Attributes::SrcColumns, Attributes::RefColumns };
-
-const QStringList ObjectFinderWidget::search_attribs_i18n =
-{ QT_TR_NOOP("Name"), QT_TR_NOOP("Comment"), QT_TR_NOOP("Signature"),
-	QT_TR_NOOP("Schema"), QT_TR_NOOP("Owner"), QT_TR_NOOP("Tablespace"),
-	QT_TR_NOOP("Data type"), QT_TR_NOOP("Return type"),
-	QT_TR_NOOP("Source table"), QT_TR_NOOP("Destination table"),
-	QT_TR_NOOP("Related foreign key"),	QT_TR_NOOP("Source column(s)"),
-	QT_TR_NOOP("Referenced column(s)") };
+#include "objectslistmodel.h"
 
 ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
@@ -82,10 +66,10 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 
 	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
 	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
-	connect(result_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectFinderWidget::selectObject);
-	connect(result_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectFinderWidget::editObject);
-	connect(result_tbw, &QTableWidget::itemPressed, this, &ObjectFinderWidget::showObjectMenu);
 	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
+
+	connect(result_view, &QTableView::doubleClicked, this, &ObjectFinderWidget::editObject);
+	connect(result_view, &QTableView::pressed, this, &ObjectFinderWidget::showObjectMenu);
 
 	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
@@ -94,8 +78,8 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 			exact_match_chk->setChecked(false);
 	});
 
-	for(auto &attr : search_attribs_i18n)
-		search_attrs_cmb->addItem(attr);
+	for(auto &attr : BaseObject::getSearchAttributesNames())
+		search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
@@ -186,16 +170,13 @@ void ObjectFinderWidget::selectObjects()
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
 
-	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
+	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox,
+												ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->end());
 	}
-
-	model_wgt->scene->blockSignals(true);
-	//fadeObjects();
-	model_wgt->scene->blockSignals(false);
 
 	sel_listed = qobject_cast<QAction *>(sender()) == select_menu.actions().at(0);
 
@@ -241,7 +222,7 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	pattern_edt->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
 	find_btn->setEnabled(enable && !pattern_edt->text().isEmpty());
-	result_tbw->setEnabled(enable);
+	result_view->setEnabled(enable);
 }
 
 void ObjectFinderWidget::clearResult()
@@ -250,8 +231,7 @@ void ObjectFinderWidget::clearResult()
 	found_objs.clear();
 	selected_objs.clear();
 
-	result_tbw->clearContents();
-	result_tbw->setRowCount(0);
+	GuiUtilsNs::populateObjectsTable(result_view, std::vector<BaseObject *>());
 
 	found_lbl->setVisible(false);
 	clear_res_btn->setEnabled(false);
@@ -262,101 +242,107 @@ void ObjectFinderWidget::clearResult()
 
 void ObjectFinderWidget::findObjects()
 {
-	if(model_wgt)
-	{
-		std::vector<ObjectType> types;
-		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
-		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
+	if(!model_wgt)
+		return;
 
-		qApp->setOverrideCursor(Qt::WaitCursor);
-		clearResult();
-		types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
+	std::vector<ObjectType> types;
+	QString search_attr = search_attrs_cmb->currentData().toString();
 
-		//Search the objects on model
-		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
+	qApp->setOverrideCursor(Qt::WaitCursor);
+	clearResult();
+	types = obj_types_lst->getTypesPerCheckState(Qt::Checked);
+
+	//Search the objects on model
+	found_objs = model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
 																													case_sensitive_chk->isChecked(),
 																													regexp_chk->isChecked(),
 																													exact_match_chk->isChecked(),
 																													search_attr);
+	found_lbl->setVisible(true);
 
-		//Show the found objects on the result table
-		GuiUtilsNs::updateObjectTable(result_tbw, found_objs, search_attr);
+	//Show a message indicating the number of found objects
+	if(!found_objs.empty())
+		found_lbl->setText(tr("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
+	else
+		found_lbl->setText(tr("No objects found."));
 
-		//Rename the last column of the results grid wth the name of the field used to search objects
-		if(search_attr != Attributes::Name &&
-			 search_attr != Attributes::Schema &&
-			 search_attr != Attributes::Comment)
-			item->setText(search_attrs_cmb->currentText());
-		else
-			item->setText(tr("Comment"));
+	/* Everytime we make a new object search the selectionModel of the result view changes
+	 * so we need to disconnect the signals/slot from the current selection model before
+	 * the searching and then reconnect the new selection model to the related slots */
+	if(result_view->selectionModel())
+		disconnect(result_view->selectionModel(), nullptr, this, nullptr);
 
-		found_lbl->setVisible(true);
+	GuiUtilsNs::populateObjectsTable(result_view, found_objs, search_attr);
+	connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
 
-		//Show a message indicating the number of found objects
-		if(!found_objs.empty())
-		{
-			found_lbl->setText(tr("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
-			result_tbw->horizontalHeader()->setStretchLastSection(true);
-			result_tbw->resizeColumnsToContents();
-		}
-		else
-			found_lbl->setText(tr("No objects found."));
-
-		clear_res_btn->setEnabled(!found_objs.empty());
-		select_btn->setEnabled(!found_objs.empty());
-		fade_btn->setEnabled(!found_objs.empty());
-		//fadeObjects();
-		qApp->restoreOverrideCursor();
-	}
+	clear_res_btn->setEnabled(!found_objs.empty());
+	select_btn->setEnabled(!found_objs.empty());
+	fade_btn->setEnabled(!found_objs.empty());
+	qApp->restoreOverrideCursor();
 }
 
 void ObjectFinderWidget::selectObject()
 {
-	BaseGraphicObject *graph_obj = nullptr;
-	BaseObjectView *obj_view = nullptr;
-	TableObject *tab_obj = nullptr;
-	BaseObject *object = nullptr;
-
+	selected_obj = nullptr;
 	selected_objs.clear();
 	model_wgt->scene->clearSelection();
 
-	if(result_tbw->selectedRanges().size() == 1 && result_tbw->currentItem()->column() == 0)
-	{
-		object = reinterpret_cast<BaseObject *>(result_tbw->currentItem()->data(Qt::UserRole).value<void *>());
-		selected_obj = object;
+	BaseGraphicObject *graph_obj = nullptr;
+	BaseObjectView *obj_view = nullptr;
+	BaseObject *object = nullptr;
+	QModelIndexList sel_indexes = result_view->selectionModel()->selectedIndexes();
 
-		if(object->getObjectType() == ObjectType::Permission)
-			return;
+	if(sel_indexes.size() == 1)
+	{
+		QModelIndex index = sel_indexes.at(0);
+
+		if(index.column() == ObjectsListModel::ObjName ||
+			 index.column() == ObjectsListModel::ParentName)
+		{
+			object = reinterpret_cast<BaseObject *>(index.data(Qt::UserRole).value<void *>());
+
+			if(object->getObjectType() == ObjectType::Permission)
+				return;
+
+			selected_obj = object;
+		}
 	}
 
-	for(auto &item : result_tbw->selectedItems())
+	for(auto &index : sel_indexes)
 	{
-		object = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
+		object = reinterpret_cast<BaseObject *>(index.data(Qt::UserRole).value<void *>());
 
-		if(item->column() != 0 ||
+		if(!object ||
 			 (object && object->getObjectType() == ObjectType::Permission))
 			continue;
 
-		selected_objs.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
+		selected_objs.push_back(object);
 	}
+
+	// Highlighting the selected graphical objects
+	TableObject *tab_obj = nullptr;
+	BaseTableView *tab_view = nullptr;
 
 	for(auto &obj : selected_objs)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
 		tab_obj = dynamic_cast<TableObject *>(obj);
 
-		if(tab_obj && !graph_obj)
-			graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
-
 		if(graph_obj)
 		{
-			obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+			obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
 			if(obj_view)
 			{
 				model_wgt->viewport->centerOn(obj_view);
 				obj_view->setSelected(true);
 			}
+		}
+		else if(tab_obj)
+		{
+			tab_view = dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getOverlyingObject());
+			tab_view->setChildSelected(tab_obj);
+			model_wgt->viewport->centerOn(tab_view);
 		}
 	}
 
@@ -385,6 +371,6 @@ void ObjectFinderWidget::editObject()
 			model_wgt->editObject();
 		}
 
-		selected_obj=nullptr;
+		selected_obj = nullptr;
 	}
 }

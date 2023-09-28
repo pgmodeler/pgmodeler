@@ -190,10 +190,10 @@ void Constraint::addColumns(const std::vector<Column *> &cols, ColumnsId cols_id
 {
 	try
 	{
-		if(cols_id == ReferencedCols)
-			ref_columns.clear();
-		else
+		if(cols_id == SourceCols)
 			columns.clear();
+		else
+			ref_columns.clear();
 
 		for(auto &col : cols)
 			addColumn(col, cols_id);
@@ -264,9 +264,9 @@ void Constraint::setColumnsAttribute(ColumnsId cols_id, unsigned def_type, bool 
 	attributes[attrib]=str_cols;
 }
 
-void Constraint::setReferencedTable(BaseTable *tab_ref)
+void Constraint::setReferencedTable(BaseTable *ref_tab)
 {
-	this->ref_table=tab_ref;
+	this->ref_table = ref_tab;
 }
 
 void Constraint::setDeferralType(DeferralType deferral_type)
@@ -522,18 +522,22 @@ std::vector<ExcludeElement> Constraint::getExcludeElements()
 
 void Constraint::addExcludeElements(std::vector<ExcludeElement> &elems)
 {
-	std::vector<ExcludeElement> elems_bkp=excl_elements;
+	std::vector<ExcludeElement> elems_bkp = excl_elements;
 
 	try
 	{
-		excl_elements.clear();
+		removeExcludeElements();
 
-		for(unsigned i=0; i < elems.size(); i++)
-			addExcludeElement(elems[i]);
+		for(auto &elem : elems)
+			addExcludeElement(elem);
 	}
 	catch(Exception &e)
 	{
-		excl_elements = elems_bkp;
+		removeExcludeElements();
+
+		for(auto &elem : elems_bkp)
+			addExcludeElement(elem);
+
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -550,78 +554,6 @@ void Constraint::addExcludeElement(ExcludeElement elem)
 	setCodeInvalidated(true);
 }
 
-void Constraint::addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
-{
-	try
-	{
-		ExcludeElement elem;
-
-		//Raises an error if the expression is empty
-		if(expr.isEmpty())
-			throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Configures the element
-		elem.setExpression(expr);
-		elem.setOperatorClass(op_class);
-		elem.setOperator(oper);
-		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
-
-		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		excl_elements.push_back(elem);
-		setCodeInvalidated(true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
-{
-	try
-	{
-		ExcludeElement elem;
-
-		//Case the column is not allocated raises an error
-		if(!column)
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
-							.arg(this->getName())
-							.arg(this->getTypeName()),
-							ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Configures the element
-		elem.setColumn(column);
-		elem.setOperatorClass(op_class);
-		elem.setOperator(oper);
-		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
-
-		if(getExcludeElementIndex(elem) >= 0)
-			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		excl_elements.push_back(elem);
-		setCodeInvalidated(true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void Constraint::removeExcludeElement(unsigned elem_idx)
-{
-	if(elem_idx >= excl_elements.size())
-		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	excl_elements.erase(excl_elements.begin() + elem_idx);
-	setCodeInvalidated(true);
-}
-
 void Constraint::removeExcludeElements()
 {
 	excl_elements.clear();
@@ -633,10 +565,7 @@ void Constraint::setColumnsNotNull(bool value)
 	if(constr_type==ConstraintType::PrimaryKey)
 	{
 		for(auto &col : columns)
-		{
-			//if(!col->isAddedByRelationship())
 			col->setNotNull(value);
-		}
 	}
 }
 
@@ -834,4 +763,21 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void Constraint::updateDependencies()
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	deps.insert(deps.end(), columns.begin(), columns.end());
+	deps.insert(deps.end(), ref_columns.begin(), ref_columns.end());
+	deps.push_back(ref_table);
+
+	for(auto &elem : excl_elements)
+	{
+		aux_deps = elem.getDependencies();
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	TableObject::updateDependencies(deps);
 }

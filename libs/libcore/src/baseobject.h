@@ -27,14 +27,14 @@
 
 #include "coreglobal.h"
 #include "attributes.h"
-#include "exception.h"
 #include "schemaparser.h"
-#include "xmlparser.h"
 #include <map>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
 #include <type_traits>
+#include "enumtype.h"
+#include "exception.h"
 
 enum class ObjectType: unsigned {
 	Column,
@@ -91,16 +91,27 @@ class __libcore BaseObject {
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! \brief Indicates the the cached code enabled.
-		static bool use_cached_code;
-
 		static bool escape_comments;
+
+		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		static bool clear_deps_in_dtor;
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
+
+		//! \brief Stores the objects that references the "this" object
+		std::vector<BaseObject *> object_refs,
+
+				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
+				object_deps;
+
+		/*! \brief Indicates if the dependences/references of the object must be erased on the destructor
+		 *  This is useful to avoid calling the method clearAllDepsRefs() when destroying the entire
+		 *  database model. See more in BaseObject::~BaseObject() */
+		static void setClearDepsInDtor(bool value);
 
 	protected:
 		SchemaParser schparser;
@@ -151,7 +162,19 @@ class __libcore BaseObject {
 		QString cached_code[2],
 
 		//! \brief Stores the xml code in reduced form
-		cached_reduced_code;
+		cached_reduced_code,
+
+		/*! \brief Store the cached names of the object (raw name, formated name, signature)
+		 *  This will avoid calling the name validation/formatting everytime the object name
+		 *  need to be retrieved, improving the overall perfomance */
+		cached_names[3];
+
+		//! \brief References the cached names entries
+		enum CachedNameId: unsigned {
+			RawName, // Original name without formatting (double-quotes)
+			FmtName, // Original name with formatting (double-quotes)
+			Signature // Original name prefixed by the schema's name (both formatted)
+		};
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
@@ -164,6 +187,11 @@ class __libcore BaseObject {
 		/*! \brief Stores the name of the type of objects to be used in error messages formatting
 		 and others operations that envolves object type name */
 		static const QString obj_type_names[ObjectTypeCount];
+
+		//! \brief This map stores the translate human readable names of each search attribute use by the object
+		static const attribs_map search_attribs_i18n;
+
+		static const QStringList search_attribs_names;
 
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
@@ -252,6 +280,44 @@ class __libcore BaseObject {
 
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
+		/*! \brief This version, called inside updateDependencies(), just run through the provided
+		 *  object list and unsets the dependency link between the "this" object and the items
+		 *  ih the list. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		void updateDependencies(const std::vector<BaseObject *> &dep_objs);
+
+		//! \brief Register an object as a reference to the "this" object
+		void setReference(BaseObject *ref_obj);
+
+					 //! \brief Unregister an object as a reference to the "this" object
+		void unsetReference(BaseObject *ref_obj);
+
+		/*! \brief Defines the dep_obj as a dependency of the "this" object.
+		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
+		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
+		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
+
+		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
+		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
+		void unsetDependency(BaseObject *dep_obj);
+
+		//! \brief Link type used to determine the kind of objects retrived by the functions getLinkedObjects()
+		enum ObjLinkType: unsigned {
+			ObjDependencies,
+			ObjReferences
+		};
+
+		/*! \brief Returns the list of objects linked to "this".
+		 * The lkn_type determines the modality of the objects to be retrieved (see ObjLinkType enum).
+		 * The parameter incl_ind_links will include in the resulting list all the indirect links of the object
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		std::vector<BaseObject *> getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates);
+
+		//! \brief This is the recursive version of the getLinkedObjects method
+		void __getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links);
+
 	public:
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static constexpr int ObjectNameMaxLength=63;
@@ -262,7 +328,8 @@ class __libcore BaseObject {
 		static constexpr unsigned DefMaxObjectCount=20;
 
 		BaseObject();
-		virtual ~BaseObject(void){}
+
+		virtual ~BaseObject();
 
 		//! \brief Returns the reference to the database that owns the object
 		BaseObject *getDatabase();
@@ -458,6 +525,9 @@ class __libcore BaseObject {
 		//! \brief Returns if the specified type accepts an alias (friendly name)
 		static bool acceptsAlias(ObjectType obj_type);
 
+		//! \brief Returns if the specified type accepts comment
+		static bool acceptsComment(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema();
 
@@ -479,6 +549,12 @@ class __libcore BaseObject {
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand();
 
+		//! \brief Returns if the object accepts the use of alias
+		bool acceptsAlias();
+
+		//! \brief Returns if the object accepts comment
+		bool acceptsComment();
+
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
 				will automatically invalidate the code but for all other setters / attributes the user must call
@@ -494,13 +570,6 @@ class __libcore BaseObject {
 		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
 		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
-
-		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
-				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
-				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache.
-				This cached code switch may be removed in the future since and the cache will be mandatorily used due to its better
-				performance compared to non cached code, even with the drawback of using more memory. */
-		static void enableCachedCode(bool value);
 
 		/*! \brief Returns the valid object types in a vector. The types
 		ObjectType::ObjBaseObject, TYPE_ATTRIBUTE and ObjectType::ObjBaseTable aren't included in return vector.
@@ -526,6 +595,22 @@ class __libcore BaseObject {
 		//! \brief Returns the set of attributes used by the search mechanism
 		attribs_map getSearchAttributes();
 
+		/*! \brief Returns all the objects that the this object depends on.
+		 * The boolean paramenter inc_indirect_deps is used to include the indirect dependencies
+		 * in the returned list. Indirect dependencies are the dependencies of the objects that are
+		 * dependencies of the this object, e.g., view V that depends on a table T that dependes on a schema S.
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
+
+		/*! \brief Returns all the objects that in which references the this object.
+		 * The boolean paramenter inc_indirect_refs is used to include the indirect references
+		 * in the returned list. Indirect references are the references of the objects that are
+		 * references to the this object, e.g., column C that references a type T that references a schema S.
+		 * The parameter excl_types is used to exclude the objects of the types in it from the resulting list.
+		 * The parameter rem_duplicates is used to return a list without duplicate elements */
+		virtual std::vector<BaseObject *> getReferences(bool inc_indirect_refs = false, const std::vector<ObjectType> &excl_types = {}, bool rem_duplicates = false);
+
 		/*! \brief Ignores the PostgreSQL version checking during code generation.
 		 *  When false (the default behavior), when generating code which db version is < 10, an error
 		 *  is raised. When true, the error is not raised, but the overall usage of the tool may be affected
@@ -534,6 +619,26 @@ class __libcore BaseObject {
 
 		//! \brief Indicates if the database version is ignored in the code generation
 		static bool isDbVersionIgnored();
+
+		//! \brief Returns the translated human readable search attribute name
+		static QString getSearchAttributeI18N(const QString &search_attr);
+
+		static QStringList getSearchAttributesNames();
+
+		//! \brief Unset all dependecies at once
+		void clearDependencies();
+
+		//! \brief Unset all dependecies at once
+		void clearReferences();
+
+		//! \brief Clears both dependencies and references
+		void clearAllDepsRefs();
+
+		/*! \brief Updates the dependencies list based upon the current relationship between
+		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific
+		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  because it can be expensive in terms of processing if lots of objects calls it */
+		virtual void updateDependencies();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

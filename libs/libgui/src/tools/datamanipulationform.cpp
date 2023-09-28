@@ -21,8 +21,6 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "baseform.h"
-#include "widgets/columndatawidget.h"
 #include "widgets/objectstablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
@@ -265,6 +263,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	paste_menu.installEventFilter(this);
 	edit_menu.installEventFilter(this);
 	export_menu.installEventFilter(this);
+
+	GuiUtilsNs::updateDropShadows(bnts_parent_wgt->findChildren<QWidget *>());
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -306,6 +306,9 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 
 void DataManipulationForm::reject()
 {
+	if(confirmFormClose() == QDialog::Rejected)
+		return;
+
   GeneralConfigWidget::saveWidgetGeometry(this);
 	QDialog::reject();
 }
@@ -1642,9 +1645,30 @@ void DataManipulationForm::resizeEvent(QResizeEvent *event)
 	}
 }
 
-void DataManipulationForm::closeEvent(QCloseEvent *)
+int DataManipulationForm::confirmFormClose()
 {
-  GeneralConfigWidget::saveWidgetGeometry(this);
+	if(!changed_rows.empty())
+	{
+		Messagebox msgbox;
+
+		msgbox.show(tr("There are rows in the grid that were modified but not saved yet! Do you really want to close and abort the pending operations?"),
+								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+		return msgbox.result();
+	}
+
+	return QDialog::Accepted;
+}
+
+void DataManipulationForm::closeEvent(QCloseEvent *event)
+{
+	if(confirmFormClose() == QDialog::Rejected)
+	{
+		event->ignore();
+		return;
+	}
+
+	GeneralConfigWidget::saveWidgetGeometry(this);
 }
 
 void DataManipulationForm::setColumnsCheckState(Qt::CheckState state)

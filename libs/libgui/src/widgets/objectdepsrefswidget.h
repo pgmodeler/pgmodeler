@@ -27,7 +27,6 @@
 
 #include "ui_objectdepsrefswidget.h"
 #include "dbobjects/baseobjectwidget.h"
-#include "baseobjectview.h"
 
 class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
 	private:
@@ -45,9 +44,8 @@ class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectD
 		void applyConfiguration();
 
 	private slots:
-		void clearTables();
 		void updateObjectTables();
-		void handleItemSelection(QTableWidgetItem *item);
+		void handleItemSelection(const QModelIndex &index);
 };
 
 #endif

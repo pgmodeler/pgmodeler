@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
-#include "messagebox.h"
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
@@ -51,10 +50,6 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 
 		//! \brief Stores the objects currently selected on the tree/list
 		std::vector<BaseObject *> selected_objs;
-
-		/*! \brief Stores the  initial splitter size to be used in conjunction with the
-		object type visualization buttons */
-		QSettings widgets_conf;
 
 		//! \brief Reference model widget. This is the object used to populate the tree and list
 		ModelWidget *model_wgt;
@@ -84,7 +79,7 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void updateDatabaseTree();
 
 		//! \brief Updates the whole object list
-		void updateObjectsList();
+		void updateObjectsTable();
 
 		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);

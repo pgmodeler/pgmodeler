@@ -9,7 +9,6 @@ DEFINES += UTILS_SYMBOLS
 
 HEADERS += src/utilsglobal.h \
 	src/customuistyle.h \
-src/exportsym.h \
 src/exception.h \
 src/enumtype.h \
 src/globalattributes.h \

@@ -38,7 +38,9 @@ class __libcore Tablespace: public BaseObject{
 	public:
 		Tablespace();
 
-		void setName(const QString &name);
+		virtual ~Tablespace(){}
+
+		virtual void setName(const QString &name) override;
 
 		//! \brief Sets the directory where tablespace resides
 		void setDirectory(const QString &dir);

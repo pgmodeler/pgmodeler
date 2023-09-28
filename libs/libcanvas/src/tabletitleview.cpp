@@ -17,6 +17,9 @@
 */
 
 #include "tabletitleview.h"
+#include "schema.h"
+#include "tag.h"
+#include "physicaltable.h"
 
 TableTitleView::TableTitleView() : BaseObjectView(nullptr)
 {

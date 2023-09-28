@@ -109,6 +109,16 @@ QString Language::getSourceCode(SchemaParser::CodeType def_type)
 	return this->getSourceCode(def_type, false);
 }
 
+void Language::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &func : functions)
+		deps.push_back(func);
+
+	BaseObject::updateDependencies(deps);
+}
+
 QString Language::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);

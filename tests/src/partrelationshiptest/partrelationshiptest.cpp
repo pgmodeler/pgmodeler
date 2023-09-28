@@ -19,6 +19,7 @@
 #include <QtTest/QtTest>
 #include "relationship.h"
 #include "pgmodelerunittest.h"
+#include "schema.h"
 
 class PartRelationhipTest: public QObject, public PgModelerUnitTest {
 private:

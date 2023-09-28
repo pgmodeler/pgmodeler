@@ -36,11 +36,11 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 	else
 	{
 		RelationshipView *rel_view = dynamic_cast<RelationshipView *>(object);
-		QRectF rect = rel_view ? rel_view->__boundingRect() :
-														 QRectF(object->pos().x(),
-																		object->pos().y(),
-																		object->boundingRect().width(),
-																		object->boundingRect().height());
+		QRectF rect = rel_view ? rel_view->boundingRect() :
+											QRectF(object->pos().x(),
+														 object->pos().y(),
+														 object->boundingRect().width(),
+														 object->boundingRect().height());
 
 		obj_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
 		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));

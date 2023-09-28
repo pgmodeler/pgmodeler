@@ -336,14 +336,20 @@ void ModelValidationHelper::validateModel()
 					}
 					else
 					{
-						db_model->getObjectReferences(object, refs);
+						refs = object->getReferences();
 
-						while(!refs.empty() && !valid_canceled)
+						auto itr= refs.begin();
+						BaseObject *obj = nullptr;
+
+						while(itr != refs.end() && !valid_canceled)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered
-							tab_obj=dynamic_cast<TableObject *>(refs.back());
-							constr=dynamic_cast<Constraint *>(tab_obj);
-							col=dynamic_cast<Column *>(tab_obj);
+							obj = *itr;
+							itr++;
+
+							tab_obj = dynamic_cast<TableObject *>(obj);
+							constr = dynamic_cast<Constraint *>(tab_obj);
+							col = dynamic_cast<Column *>(tab_obj);
 
 							/*
 							 * If the current referrer object has an id less than reference object's id
@@ -351,22 +357,20 @@ void ModelValidationHelper::validateModel()
 							 * There's an exception which is that foreign keys are completely discarded from any validation
 							 * since they are always created at end of code definition being free of any reference breaking.
 							 */
-							if(object != refs.back() &&
+							if(object != obj &&
 								 (
 									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
 										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId()))
+									 (!constr && !col && obj->getObjectId() <= object->getObjectId()))
 								 )
 							{
 								if(col || constr)
-									refer_obj=tab_obj->getParentTable();
+									refer_obj = tab_obj->getParentTable();
 								else
-									refer_obj=refs.back();
+									refer_obj = obj;
 
 								refs_aux.push_back(refer_obj);
 							}
-
-							refs.pop_back();
 						}
 
 						/* Validating a special object. The validation made here is to check if the special object
@@ -447,7 +451,7 @@ void ModelValidationHelper::validateModel()
 							{
 								Column *col = nullptr;
 
-								for(auto &ref_obj : gen_sql->getReferencedObjects())
+								for(auto &ref_obj : gen_sql->getDependencies())
 								{
 									col = dynamic_cast<Column *>(ref_obj);
 									if(!col || !col->isAddedByRelationship()) continue;

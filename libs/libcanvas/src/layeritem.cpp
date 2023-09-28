@@ -95,7 +95,7 @@ QFont LayerItem::getDefaultFont()
 	QFont font = BaseObjectView::getFontStyle(Attributes::Global).font();
 
 	font.setItalic(false);
-	font.setPointSizeF(font.pointSizeF() * 0.60);
+	font.setPointSizeF(font.pointSizeF() * 0.725);
 
 	return font;
 }

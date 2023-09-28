@@ -29,7 +29,6 @@
 #include "ui_pgsqltypewidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
-#include "messagebox.h"
 
 class __libgui PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 	private:

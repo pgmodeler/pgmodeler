@@ -27,7 +27,6 @@
 #define RULE_H
 
 #include "tableobject.h"
-#include "column.h"
 #include "pgsqltypes/executiontype.h"
 #include "pgsqltypes/eventtype.h"
 
@@ -50,6 +49,8 @@ class __libcore Rule: public TableObject{
 
 	public:
 		Rule();
+
+		virtual ~Rule(){}
 
 		//! \brief Adds the SQL command to be executed by the rule
 		void addCommand(const QString &cmd);
@@ -86,6 +87,8 @@ class __libcore Rule: public TableObject{
 
 		//! \brief Returns the SQL / XML definition for the rule
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual void generateHashCode() override;
 };
 
 #endif

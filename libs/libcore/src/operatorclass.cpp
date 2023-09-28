@@ -197,3 +197,19 @@ QString OperatorClass::getSignature(bool format)
 {
 	return BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type);
 }
+
+void OperatorClass::updateDependencies()
+{
+	std::vector<BaseObject *> deps, elem_deps;
+
+	deps.push_back(family);
+	deps.push_back(data_type.getObject());
+
+	for(auto &elem : elements)
+	{
+		elem_deps = elem.getDependencies();
+		deps.insert(deps.cend(), elem_deps.begin(), elem_deps.end());
+	}
+
+	BaseObject::updateDependencies(deps);
+}

@@ -18,9 +18,10 @@
 
 #include "application.h"
 #include <QTranslator>
-#include "guiutilsns.h"
 #include "schemaeditorform.h"
 #include "pgmodelerapp.h"
+#include "exception.h"
+#include "enumtype.h"
 
 int main(int argc, char **argv)
 {

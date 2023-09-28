@@ -17,6 +17,7 @@
 */
 
 #include "baseform.h"
+#include "guiutilsns.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

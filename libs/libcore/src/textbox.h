@@ -37,6 +37,8 @@ class __libcore Textbox: public BaseGraphicObject{
 
 		double font_size;
 
+		double text_width;
+
 		//! \brief Color used to draw the text
 		QColor text_color;
 
@@ -53,6 +55,8 @@ class __libcore Textbox: public BaseGraphicObject{
 		 method used to get the current text */
 		Textbox();
 
+		virtual ~Textbox(){}
+
 		//! \brief Sets the attributes of the text
 		void setTextAttribute(TextAttrib attrib, bool value);
 
@@ -60,6 +64,8 @@ class __libcore Textbox: public BaseGraphicObject{
 		void setTextColor(const QColor &color);
 
 		void setFontSize(double size);
+
+		void setTextWidth(double width);
 
 		/*! \brief Since textboxes doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
@@ -71,6 +77,8 @@ class __libcore Textbox: public BaseGraphicObject{
 		QColor getTextColor();
 
 		double getFontSize();
+
+		double getTextWidth();
 
 		virtual void setZValue(int z_value);
 

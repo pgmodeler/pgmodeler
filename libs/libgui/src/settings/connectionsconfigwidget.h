@@ -28,7 +28,6 @@
 #include "ui_connectionsconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "connection.h"
-#include "messagebox.h"
 
 class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:

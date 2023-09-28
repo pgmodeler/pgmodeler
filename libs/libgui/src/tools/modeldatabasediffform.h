@@ -152,7 +152,7 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 
 		/*! \brief When performing a partial diff between two databases this method fills a map with the
 		 * filtered objects (type -> oids) in the database */
-		void getFilteredObjects(std::map<ObjectType, std::vector<unsigned> > &obj_oids);
+		//void getFilteredObjects(std::map<ObjectType, std::vector<unsigned> > &obj_oids);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);

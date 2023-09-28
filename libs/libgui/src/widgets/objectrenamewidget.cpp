@@ -19,6 +19,7 @@
 #include "objectrenamewidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
+#include "messagebox.h"
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
@@ -120,7 +121,7 @@ void ObjectRenameWidget::applyRenaming()
 			std::map<unsigned, BaseObject *>::reverse_iterator itr;
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
-			QString fmt_name, new_name;
+			QString prev_name, new_name;
 			std::vector<BaseObject *> ref_objs, obj_list;
 			std::vector<TableObject *> tab_objs;
 			std::map<ObjectType, std::vector<BaseObject *>> obj_map;
@@ -137,6 +138,7 @@ void ObjectRenameWidget::applyRenaming()
 			for(itr = sel_objs_map.rbegin(); itr != sel_objs_map.rend(); itr++)
 			{
 				object = itr->second;
+				prev_name = object->getName();
 				new_name = new_name_edt->text();
 				obj_type = object->getObjectType();
 				graph_obj = dynamic_cast<BaseGraphicObject *>(object);
@@ -183,8 +185,7 @@ void ObjectRenameWidget::applyRenaming()
 				//If the renamed object is a graphical one, set as modified to force its redraw
 				if(object->getObjectType() == ObjectType::Schema)
 				{
-					model->validateSchemaRenaming(dynamic_cast<Schema *>(object), new_name);
-					dynamic_cast<Schema *>(object)->setModified(true);
+					model->validateSchemaRenaming(dynamic_cast<Schema *>(object), prev_name);
 				}
 				else if(graph_obj)
 				{
@@ -208,16 +209,10 @@ void ObjectRenameWidget::applyRenaming()
 					dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 				}
 
-				Column *col = nullptr;
-				model->getObjectReferences(object, ref_objs);
-
-				for(auto &obj : ref_objs)
+				for(auto &obj : object->getReferences())
 				{
-					if(obj->getObjectType()==ObjectType::Column)
-					{
-						col=dynamic_cast<Column *>(obj);
-						col->getParentTable()->setModified(true);
-					}
+					if(obj->getObjectType() == ObjectType::Column)
+						dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 				}
 
 				renamed_objs++;

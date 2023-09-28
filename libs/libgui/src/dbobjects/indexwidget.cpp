@@ -17,6 +17,7 @@
 */
 
 #include "indexwidget.h"
+#include "guiutilsns.h"
 
 IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Index)
 {

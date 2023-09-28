@@ -139,3 +139,8 @@ QString EventTrigger::getSourceCode(SchemaParser::CodeType def_type)
 
 	return BaseObject::__getSourceCode(def_type);
 }
+
+void EventTrigger::updateDependencies()
+{
+	BaseObject::updateDependencies({ function });
+}

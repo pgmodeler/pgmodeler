@@ -17,13 +17,12 @@
 */
 
 #include "sqlexecutionwidget.h"
-#include "widgets/taskprogresswidget.h"
-#include "databaseexplorerwidget.h"
 #include "settings/snippetsconfigwidget.h"
 #include "guiutilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "datamanipulationform.h"
 #include "utilsns.h"
+#include "csvdocument.h"
+#include "messagebox.h"
 
 std::map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -254,6 +253,16 @@ void SQLExecutionWidget::setSQLCommand(const QString &sql)
 {
 	sql_cmd_txt->clear();
 	sql_cmd_txt->setPlainText(sql);
+}
+
+bool SQLExecutionWidget::hasSQLCommand()
+{
+	return !sql_cmd_txt->document()->isEmpty();
+}
+
+QString SQLExecutionWidget::getSQLCommand()
+{
+	return sql_cmd_txt->toPlainText();
 }
 
 void SQLExecutionWidget::enableCommandButtons()

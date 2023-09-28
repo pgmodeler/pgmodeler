@@ -20,7 +20,8 @@
 
 TextPolygonItem::TextPolygonItem(QGraphicsItem *parent) : QGraphicsPolygonItem(parent)
 {
-	text_item = new QGraphicsSimpleTextItem;
+	text_item = new QGraphicsTextItem;
+	word_wrap = false;
 }
 
 TextPolygonItem::~TextPolygonItem()
@@ -30,21 +31,24 @@ TextPolygonItem::~TextPolygonItem()
 
 void TextPolygonItem::setText(const QString &text)
 {
-	text_item->setText(text);
+	text_item->setPlainText(text);
 }
 
-void TextPolygonItem::setTextPen(const QPen &pen)
+void TextPolygonItem::setTextColor(const QColor &color)
 {
-	text_item->setPen(pen);
+	text_item->setDefaultTextColor(color);
 }
 
-void TextPolygonItem::setTextBrush(const QBrush &brush)
+void TextPolygonItem::setWordWrap(bool value)
 {
-	text_item->setBrush(brush);
+	word_wrap = value;
 }
 
 QRectF TextPolygonItem::getTextBoundingRect()
 {
+	if(word_wrap)
+		return boundingRect();
+
 	return text_item->boundingRect();
 }
 
@@ -71,7 +75,7 @@ QFont TextPolygonItem::getFont()
 void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	QGraphicsPolygonItem::paint(painter, option, widget);
-
 	painter->translate(text_item->pos());
+	text_item->setTextWidth(word_wrap ? boundingRect().width() : -1);
 	text_item->paint(painter, option, widget);
 }

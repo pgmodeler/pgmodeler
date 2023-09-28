@@ -33,7 +33,10 @@
 
 class __libcanvas TextPolygonItem : public QGraphicsPolygonItem {
 	private:
-		QGraphicsSimpleTextItem *text_item;
+
+	 QGraphicsTextItem *text_item;
+
+	 bool word_wrap;
 
 	public:
 		TextPolygonItem(QGraphicsItem *parent = nullptr);
@@ -46,11 +49,12 @@ class __libcanvas TextPolygonItem : public QGraphicsPolygonItem {
 		void setTextPos(const QPointF &pos);
 		void setTextPos(double x, double y);
 
-		//! \brief Defines the pen used by the text element
-		void setTextPen(const QPen &pen);
-
 		//! \brief Defines the brush used by the text element
-		void setTextBrush(const QBrush &brush);
+		void setTextColor(const QColor &color);
+
+		/*! \brief When true, forces the text to be restricted to the
+		 * wrap in the bounding rect limits. */
+		void setWordWrap(bool value);
 
 		//! \brief Returns the bounding rect of the text item
 		QRectF getTextBoundingRect();

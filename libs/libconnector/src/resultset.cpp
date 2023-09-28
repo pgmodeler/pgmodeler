@@ -17,6 +17,7 @@
 */
 
 #include "resultset.h"
+#include "exception.h"
 
 ResultSet::ResultSet()
 {

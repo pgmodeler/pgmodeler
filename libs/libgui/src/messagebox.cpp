@@ -18,7 +18,6 @@
 
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "baseobjectview.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

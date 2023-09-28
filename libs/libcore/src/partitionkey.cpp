@@ -51,3 +51,13 @@ QString PartitionKey::getSourceCode(SchemaParser::CodeType def_type)
 
 	return schparser.getSourceCode(Attributes::PartitionKey, attribs, def_type);
 }
+
+std::vector<BaseObject *> PartitionKey::getDependencies()
+{
+	std::vector<BaseObject *> deps = Element::getDependencies();
+
+	if(collation)
+		deps.push_back(collation);
+
+	return deps;
+}

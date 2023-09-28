@@ -102,3 +102,8 @@ QString UserMapping::getDropCode(bool)
 {
 	return BaseObject::getDropCode(false);
 }
+
+void UserMapping::updateDependencies()
+{
+	BaseObject::updateDependencies({ foreign_server });
+}

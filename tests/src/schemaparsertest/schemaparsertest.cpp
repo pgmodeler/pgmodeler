@@ -18,6 +18,7 @@
 
 #include <QtTest/QtTest>
 #include "schemaparser.h"
+#include "exception.h"
 
 class SchemaParserTest: public QObject {
 	private:

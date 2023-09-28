@@ -47,9 +47,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "ui_updatenotifierwidget.h"
-#include "messagebox.h"
-#include "globalattributes.h"
-#include "attributes.h"
+#include "guiglobal.h"
 
 class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:

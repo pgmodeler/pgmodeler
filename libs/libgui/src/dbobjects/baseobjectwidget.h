@@ -28,11 +28,8 @@
 #include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "widgets/modelobjectswidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
-#include "pgsqltypewidget.h"
-#include "guiutilsns.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
@@ -95,6 +92,8 @@ class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			The obj_type parameter must be specified to show the object type icon */
 		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
+		void configureFormFields(ObjectType obj_type);
+
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */
 		template<class Class>

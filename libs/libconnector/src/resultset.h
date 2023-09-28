@@ -28,7 +28,6 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #define RESULTSET_H
 
 #include "connectorglobal.h"
-#include "exception.h"
 #include "attribsmap.h"
 #include <libpq-fe.h>
 #include <cstdlib>

@@ -17,6 +17,7 @@
 */
 
 #include "collationwidget.h"
+#include "pgsqlversions.h"
 
 CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Collation)
 {

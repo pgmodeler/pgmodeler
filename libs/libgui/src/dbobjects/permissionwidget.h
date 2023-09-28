@@ -29,6 +29,7 @@
 #include "ui_permissionwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/modelobjectswidget.h"
+#include "utils/syntaxhighlighter.h"
 
 class __libgui PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:

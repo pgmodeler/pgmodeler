@@ -19,6 +19,7 @@
 #include <QtTest/QtTest>
 #include "csvparser.h"
 #include "utilsns.h"
+#include "exception.h"
 
 class CsvParserTest: public QObject {
 	private:

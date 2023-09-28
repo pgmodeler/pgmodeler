@@ -280,11 +280,6 @@ void ModelOverviewWidget::updateZoomFactor(double zoom)
 	this->resizeWindowFrame();
 }
 
-void ModelOverviewWidget::mouseDoubleClickEvent(QMouseEvent *)
-{
-	this->close();
-}
-
 void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	if(!frame->isEnabled())
@@ -316,7 +311,7 @@ void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
 		this->setCursor(QCursor(Qt::OpenHandCursor));
-		model->startPanningMove();
+		model->startSceneMove();
 	}
 }
 
@@ -326,7 +321,7 @@ void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
 	{
 		window_frm->setCursor(QCursor(Qt::ArrowCursor));
 		this->setCursor(QCursor(Qt::ArrowCursor));
-		model->finishPanningMove();
+		model->finishSceneMove();
 	}
 }
 

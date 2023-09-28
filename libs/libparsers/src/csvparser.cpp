@@ -18,6 +18,7 @@
 
 #include "csvparser.h"
 #include "utilsns.h"
+#include "exception.h"
 
 CsvParser::CsvParser()
 {

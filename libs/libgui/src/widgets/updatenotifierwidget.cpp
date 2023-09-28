@@ -18,6 +18,7 @@
 
 #include "updatenotifierwidget.h"
 #include "guiutilsns.h"
+#include "messagebox.h"
 
 UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {

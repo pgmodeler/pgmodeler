@@ -32,17 +32,19 @@ class __libcore TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 
-		QString getSourceCode(SchemaParser::CodeType, bool){ return ""; }
+		virtual QString getSourceCode(SchemaParser::CodeType, bool) override { return ""; }
 
 	public:
 		TypeAttribute();
 		TypeAttribute(const TypeAttribute &type_attr);
 
+		virtual ~TypeAttribute(){}
+
 		void setType(PgSqlType type);
 		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;		
 		void operator = (const TypeAttribute &tpattrib);
 };
 

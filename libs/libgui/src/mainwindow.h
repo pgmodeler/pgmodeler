@@ -30,20 +30,13 @@
 #include "ui_mainwindow.h"
 #include "widgets/modelwidget.h"
 #include "widgets/aboutwidget.h"
-#include "messagebox.h"
-#include "baseform.h"
 #include "tools/modelrestorationform.h"
 #include "widgets/operationlistwidget.h"
 #include "widgets/modelobjectswidget.h"
-#include "pgmodelerplugin.h"
 #include "widgets/modeloverviewwidget.h"
 #include "tools/modelvalidationwidget.h"
 #include "widgets/objectfinderwidget.h"
-#include "tools/modelexportform.h"
-#include "tools/databaseimportform.h"
-#include "tools/modeldatabasediffform.h"
 #include "tools/sqltoolwidget.h"
-#include "tools/modelfixform.h"
 #include "widgets/updatenotifierwidget.h"
 #include "widgets/modelnavigationwidget.h"
 #include "widgets/welcomewidget.h"
@@ -149,7 +142,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		more_actions_menu,
 
-		fix_menu;
+		fix_menu,
+
+		plugins_config_menu;
 
 		//! \brief Stores the loaded plugins toolbar actions
 		QList<QAction *> plugins_tb_acts;

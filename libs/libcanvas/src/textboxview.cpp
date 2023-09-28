@@ -58,7 +58,7 @@ void TextboxView::setFontStyle(const QTextCharFormat &fmt)
 	if(override_style)
 	{
 		text_item->setFont(fmt.font());
-		text_item->setTextBrush(fmt.foreground());
+		text_item->setTextColor(fmt.foreground().color());
 	}
 }
 
@@ -72,6 +72,8 @@ void TextboxView::__configureObject()
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getUnderlyingObject());
 	QTextCharFormat fmt=font_config[Attributes::Global];
 	QPolygonF polygon;
+
+	prepareGeometryChange();
 
 	polygon.append(QPointF(0.0,0.0));
 	polygon.append(QPointF(1.0,0.0));
@@ -92,16 +94,17 @@ void TextboxView::__configureObject()
 		font.setPointSizeF(txtbox->getFontSize());
 
 		text_item->setFont(font);
-		text_item->setTextBrush(txtbox->getTextColor());
+		text_item->setTextColor(txtbox->getTextColor());
 	}
 
 	text_item->setText(txtbox->getComment());
-	text_item->setTextPos(HorizSpacing * 2, VertSpacing * (text_item->getFont().italic() ? 0.90 : 0.50));
+	text_item->setTextPos(HorizSpacing * (text_item->getFont().italic() ? 1.5 : 2),
+												VertSpacing * (text_item->getFont().italic() ? 0.90 : 0.50));
 
-	resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
+	resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (1.5 * HorizSpacing)),
 								round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
 
-	text_item->setPos(0,0);
+	text_item->setPos(0, 0);
 	text_item->setPolygon(polygon);
 
 	protected_icon->setPos(text_item->boundingRect().width() + 2 * HorizSpacing,
@@ -119,6 +122,9 @@ void TextboxView::__configureObject()
 
 void TextboxView::configureObject()
 {
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
 	double old_width = bounding_rect.width(),
 			old_height = bounding_rect.height();
 

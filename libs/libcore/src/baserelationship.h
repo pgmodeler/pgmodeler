@@ -26,9 +26,8 @@
 #ifndef BASE_RELATIONSHIP_H
 #define BASE_RELATIONSHIP_H
 
-#include "table.h"
 #include "textbox.h"
-#include "schema.h"
+#include "constraint.h"
 #include <cmath>
 #include <QColor>
 
@@ -100,7 +99,7 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		void setReferenceForeignKey(Constraint *reference_fk);
 
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		//! \brief Constants used to reference the relationship labels
@@ -123,7 +122,7 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 		virtual ~BaseRelationship();
 
 		//! \brief Sets the name of the relationship
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Sets the mandatory participation for the specified table (Via constants SRC_TABLE | DST_TABLE)
 		void setMandatoryTable(TableId table_id, bool value);
@@ -145,7 +144,7 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		/*! \brief Since base relationships doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
-		virtual QString getSourceCode(SchemaParser::CodeType def_type);
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
 
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
 		bool isSelfRelationship();
@@ -179,13 +178,15 @@ class __libcore BaseRelationship: public BaseGraphicObject  {
 
 		QString getRelTypeAttribute();
 
-		virtual void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
-		virtual QString getAlterCode(BaseObject *) { return ""; }
+		virtual QString getAlterCode(BaseObject *) override { return ""; }
 
 		static QString getRelationshipTypeName(RelType rel_type, bool is_view = false);
 
 		QString getRelationshipTypeName();
+
+		virtual void updateDependencies() override;
 
 		friend class DatabaseModel;
 		friend class RelationshipWidget;

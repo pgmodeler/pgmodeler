@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "policy.h"
+#include "utilsns.h"
 
 Policy::Policy() : TableObject()
 {
@@ -179,4 +180,20 @@ bool Policy::isRoleExists(Role *role)
 {
 	if(!role)	return false;
 	return (std::find(roles.begin(), roles.end(), role) != roles.end());
+}
+
+void Policy::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &rl : roles)
+		deps.push_back(rl);
+
+	TableObject::updateDependencies(deps);
+}
+
+void Policy::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + QString::number(permissive) + ~policy_cmd);
 }

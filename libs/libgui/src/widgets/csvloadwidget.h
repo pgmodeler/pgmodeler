@@ -27,7 +27,7 @@
 
 #include "ui_csvloadwidget.h"
 #include "fileselectorwidget.h"
-#include "csvparser.h"
+#include "csvdocument.h"
 
 class __libgui CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:

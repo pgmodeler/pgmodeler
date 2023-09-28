@@ -17,6 +17,7 @@
 */
 
 #include "elementwidget.h"
+#include "baseobjectwidget.h"
 
 ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 {

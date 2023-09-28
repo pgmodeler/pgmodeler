@@ -17,15 +17,17 @@
 */
 
 #include "numberedtexteditor.h"
-#include "settings/generalconfigwidget.h"
 #include <QTextBlock>
 #include <QScrollBar>
 #include <QDebug>
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "guiutilsns.h"
-#include "utilsns.h"
 #include <QMenu>
+#include <QHBoxLayout>
+#include <QApplication>
+#include <QClipboard>
+#include "messagebox.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;

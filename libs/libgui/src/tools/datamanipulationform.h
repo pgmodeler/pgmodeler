@@ -111,18 +111,21 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows();
 
-		//! brief Browse a referenced or referencing table by the provided foreign key name
+		//! \brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
 		void resizeEvent(QResizeEvent *event);
 
-		void closeEvent(QCloseEvent *);
+		void closeEvent(QCloseEvent *event);
 
 		void setColumnsCheckState(Qt::CheckState state);
 
 		bool eventFilter(QObject *object, QEvent *event);
 
-	public:
+		//! \brief Shows a confirmation message before closing the form when there are pending operations in the grid
+		int confirmFormClose();
+
+public:
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog

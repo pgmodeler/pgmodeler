@@ -28,7 +28,6 @@
 #include "baseobjectwidget.h"
 #include "ui_tablewidget.h"
 #include "widgets/objectstablewidget.h"
-#include "tableview.h"
 #include "elementstablewidget.h"
 
 class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {

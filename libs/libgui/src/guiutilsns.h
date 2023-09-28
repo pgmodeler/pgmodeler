@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
+#include "csvdocument.h"
 
 namespace GuiUtilsNs {
 	static constexpr int LtMargin = 5,
@@ -79,8 +80,11 @@ namespace GuiUtilsNs {
 	//! \brief Returns the path, in the icon resource, to the provided icon name
 	extern __libgui QString getIconPath(const QString &icon);
 
-	//! \brief Returns the path, in the icon resource, to the icon of the provided object type
-	extern __libgui QString getIconPath(ObjectType obj_type);
+	/*! \brief Returns the path, in the icon resource, to the icon of the provided object type
+	 *  The parameter sub_type is used to retrive the sub type icon. Currently only relationships
+	 *  and constraints have sub types being for relationships the Relationship::RelType enum and
+	 *  constraints the class ConstraintType */
+	extern __libgui QString getIconPath(ObjectType obj_type, int sub_type = -1);
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
 	extern __libgui void resizeDialog(QWidget *dialog);
@@ -94,6 +98,9 @@ namespace GuiUtilsNs {
 	//! \brief Creates drop shadown on a widget
 	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
 
+	//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
+	extern __libgui void updateDropShadows(QWidgetList widgets);
+
 	/*! \brief Handles the currently provided file dialog state to file.
 	 * If save_state is true, then the dialog's state is saved to file
 	 * otherwise is restored */
@@ -105,9 +112,16 @@ namespace GuiUtilsNs {
 	//! \brief Restores the saved filed dialog from file/memory and applies to the provided file dialog
 	extern __libgui void restoreFileDialogState(QFileDialog *file_dlg);
 
-	/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
+	/*! \brief Lists the objects in a QTableView using a list of database model objects as data source.
+	 * The first column on each row of table contains the reference to the object.
 	 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-	extern __libgui void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
+	extern __libgui void populateObjectsTable(QTableView *tab_view, const std::vector<BaseObject *> &objects, const QString &search_attr = "");
+
+	//! \brief Lists the objects in a QTableView using a list of object attributes (see Catalog::getObjects) as data source.
+	extern __libgui void populateObjectsTable(QTableView *tab_view, const std::vector<attribs_map> &attribs);
+
+	//! \brief Populates the provided table widget with the data in a parsed CSV document.
+	extern __libgui void populateTable(QTableWidget *tab_tbw, const CsvDocument &csv_doc);
 
 	/*! \brief Opens an instance of QFileDialog with the provided attributes.
 	 *  The method returns the files/directories selected by the user in the dialog */

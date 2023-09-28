@@ -16,8 +16,8 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
-#include "coreutilsns.h"
 #include "utilsns.h"
+#include "tableobject.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
@@ -195,12 +195,28 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	if(filters.isEmpty())
 		return;
 
+	QStringList any_filters, filterable_types = getFilterableObjectNames();
+	QRegularExpression any_flt_regex = QRegularExpression(QString("^(%1)(.)+").arg(Attributes::Any));
+
+	any_filters = filters.filter(any_flt_regex);
+
+	for(auto &filter : any_filters)
+	{
+		/* If there's at least one "any" filter we create filters
+		 * for all object types using the pattern associated to the "any" filter */
+		for(auto &type : filterable_types)
+			filters.append(QString(filter).replace(Attributes::Any, type));
+	}
+
+	// Remove the any filters after converting them to object filters
+	for(auto &any_flt : any_filters)
+		filters.removeAll(any_flt);
+
 	ObjectType obj_type;
-	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
+	QString pattern, mode, parent_alias_ref, tab_filter = "^(%1)(.)+";
 	QStringList values,	modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	std::map<ObjectType, QStringList> tab_patterns;
 	std::map<ObjectType, QStringList> parsed_filters;
-	attribs_map fmt_filter;
 
 	bool has_tab_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
 			 has_view_filter = filters.indexOf(QRegularExpression(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,

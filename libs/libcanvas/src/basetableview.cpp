@@ -17,6 +17,7 @@
 */
 
 #include "basetableview.h"
+#include "schema.h"
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
@@ -39,11 +40,9 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
-	//ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
-	//columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	tag_item = new TextPolygonItem;
 	tag_item->setZValue(3);
@@ -375,7 +374,7 @@ void BaseTableView::configureTag()
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
-		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
+		tag_item->setTextColor(BaseObjectView::getFontStyle(Attributes::Tag).foreground().color());
 
 		p1=tag_item->getTextBoundingRect().topLeft();
 		p2=tag_item->getTextBoundingRect().bottomRight();
@@ -404,6 +403,8 @@ void BaseTableView::__configureObject(double width)
 	QBrush togg_brush, togg_btns_brush;
 	QPen togg_pen, togg_btns_pen;
 	double height = 0;
+
+	prepareGeometryChange();
 
 	if(tag)
 	{
@@ -623,4 +624,29 @@ void BaseTableView::selectRelationships()
 {
 	for(auto &rel : connected_rels)
 		dynamic_cast<BaseObjectView *>(rel->getOverlyingObject())->setSelected(true);
+}
+
+void BaseTableView::setChildSelected(TableObject *tab_obj)
+{
+	if(!tab_obj)
+		return;
+
+	TableObjectView *tab_obj_view = nullptr;
+	QList<QGraphicsItem *> items;
+
+	items.append(columns->childItems());
+	items.append(ext_attribs->childItems());
+
+	for(auto &item : items)
+	{
+		tab_obj_view = dynamic_cast<TableObjectView *>(item);
+
+		if(tab_obj_view && tab_obj_view->getUnderlyingObject() == tab_obj)
+		{
+			tab_obj_view->setFakeSelection(true);
+			sel_child_objs.append(tab_obj_view);
+			emit s_childrenSelectionChanged();
+			break;
+		}
+	}
 }

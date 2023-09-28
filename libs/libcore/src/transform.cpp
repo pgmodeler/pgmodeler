@@ -41,7 +41,7 @@ void Transform::setName(const QString &)
 	//	If the type is based upon a user-defined type we remove the schema name form its name
 	if(type.isUserType())
 	{
-		type_obj = reinterpret_cast<BaseObject *>(type.getUserTypeReference());
+		type_obj = type.getObject();
 
 		if(type_obj && type_obj->getSchema())
 			tp_name.remove(type_obj->getSchema()->getName() + ".");
@@ -202,6 +202,12 @@ QString Transform::getDropCode(bool cascade)
 {
 	attributes[Attributes::Signature] = QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
 	return BaseObject::getDropCode(cascade);
+}
+
+void Transform::updateDependencies()
+{
+	BaseObject::updateDependencies({ type.getObject(), language,
+																	 functions[FromSqlFunc], functions[ToSqlFunc] });
 }
 
 void Transform::operator = (Transform &transf)

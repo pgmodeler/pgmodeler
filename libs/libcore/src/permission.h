@@ -27,11 +27,9 @@
 #define PERMISSION_H
 
 #include "baseobject.h"
-#include "function.h"
 #include "role.h"
 #include <algorithm>
 #include <QTextStream>
-#include <QCryptographicHash>
 #include <QRegularExpression>
 
 class __libcore Permission: public BaseObject {
@@ -104,6 +102,8 @@ class __libcore Permission: public BaseObject {
 		 the class is created. */
 		Permission(BaseObject *obj);
 
+		virtual ~Permission(){}
+
 		//! \brief Adds a role that will have privileges over the object
 		void addRole(Role *role);
 
@@ -164,6 +164,8 @@ class __libcore Permission: public BaseObject {
 		virtual QString getSignature(bool = false) final;
 
 		virtual QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

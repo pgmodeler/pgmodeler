@@ -18,6 +18,7 @@
 
 #include "dbobjects/elementstablewidget.h"
 #include "settings/generalconfigwidget.h"
+#include "guiutilsns.h"
 
 ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 {

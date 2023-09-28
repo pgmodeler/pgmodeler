@@ -28,10 +28,10 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include "schemaparser.h"
-#include "exception.h"
 #include <stack>
 #include <iostream>
+#include "parsersglobal.h"
+#include <QString>
 #include "attribsmap.h"
 
 class __libparsers XmlParser {

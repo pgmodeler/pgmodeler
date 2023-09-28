@@ -25,7 +25,7 @@
 #ifndef COPY_OPTIONS_H
 #define COPY_OPTIONS_H
 
-#include "baseobject.h"
+#include "coreglobal.h"
 #include <QString>
 
 class __libcore CopyOptions {

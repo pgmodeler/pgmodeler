@@ -27,12 +27,10 @@
 
 #include <QtWidgets>
 #include <QPrinter>
-#include "relationshipview.h"
-#include "graphicalview.h"
-#include "tableview.h"
-#include "schemaview.h"
-#include "styledtextboxview.h"
 #include "layeritem.h"
+#include "baseobjectview.h"
+#include "basetableview.h"
+#include "doublenan.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
 	public:
@@ -84,8 +82,8 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		show_scene_limits;
 
 		static constexpr int SceneMoveStep=20,
-		SceneMoveTimeout=50,
-		SceneMoveThreshold=30;
+		SceneMoveTimeout=20,
+		SceneMoveThreshold=100;
 
 		//! \brief Timer responsible to move the scene
 		QTimer scene_move_timer,
@@ -198,6 +196,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static constexpr double MinScaleFactor = 0.100000,
 		MaxScaleFactor = 5.000001;
+
+		static constexpr double MinSceneWidth = 2000,
+				MinSceneHeight = 1500;
 
 		static constexpr unsigned DefaultLayer = 0;
 

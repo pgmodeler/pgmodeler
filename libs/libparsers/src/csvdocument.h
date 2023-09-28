@@ -25,7 +25,6 @@
 #ifndef CSV_DOCUMENT_H
 #define CSV_DOCUMENT_H
 
-#include "exception.h"
 #include "parsersglobal.h"
 #include <QStringList>
 

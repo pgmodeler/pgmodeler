@@ -26,7 +26,6 @@
 #define MODEL_FIX_FORM_H
 
 #include <QtWidgets>
-#include "globalattributes.h"
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
 

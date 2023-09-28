@@ -18,9 +18,13 @@
 
 #include "baseobject.h"
 #include "coreutilsns.h"
+#include "exception.h"
+#include "pgsqlversions.h"
 #include <QApplication>
 
 bool BaseObject::ignore_db_version = false;
+
+bool BaseObject::clear_deps_in_dtor = true;
 
 const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
 
@@ -70,6 +74,30 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"PROCEDURE"
 };
 
+const QStringList BaseObject::search_attribs_names = {
+		Attributes::Name, Attributes::Comment, Attributes::Signature,
+		Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
+		Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
+		Attributes::DstTable, Attributes::RelatedForeignKey, Attributes::SrcColumns,
+		Attributes::RefColumns
+};
+
+const attribs_map BaseObject::search_attribs_i18n = {
+	{ Attributes::Name, QT_TR_NOOP("Name") },
+	{ Attributes::Comment, QT_TR_NOOP("Comment") },
+	{ Attributes::Signature, QT_TR_NOOP("Signature") },
+	{ Attributes::Schema, QT_TR_NOOP("Schema") },
+	{ Attributes::Owner, QT_TR_NOOP("Owner") },
+	{ Attributes::Tablespace, QT_TR_NOOP("Tablespace") },
+	{ Attributes::Type, QT_TR_NOOP("Data type") },
+	{ Attributes::ReturnType, QT_TR_NOOP("Return type") },
+	{ Attributes::SrcTable, QT_TR_NOOP("Source table") },
+	{ Attributes::DstTable, QT_TR_NOOP("Destination table") },
+	{ Attributes::RelatedForeignKey, QT_TR_NOOP("Related foreign key") },
+	{ Attributes::SrcColumns, QT_TR_NOOP("Source column(s)") },
+	{ Attributes::RefColumns, QT_TR_NOOP("Referenced column(s)") }
+};
+
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
 	 starts at 4k because the id ranges 0, 1k, 2k, 3k, 4k
@@ -78,7 +106,6 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 unsigned BaseObject::global_id=5000;
 
 QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
-bool BaseObject::use_cached_code=true;
 bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject()
@@ -109,6 +136,12 @@ BaseObject::BaseObject()
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
+BaseObject::~BaseObject()
+{
+	if(clear_deps_in_dtor)
+		clearAllDepsRefs();
+}
+
 unsigned BaseObject::getGlobalId()
 {
 	return global_id;
@@ -131,8 +164,8 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return QApplication::translate("BaseObject",obj_type_names[enum_t(obj_type)].toStdString().c_str(),"", -1);
-	else
-		return "";
+
+	return "";
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
@@ -511,7 +544,14 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
 				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
-				 obj_type==ObjectType::ForeignTable);
+					obj_type==ObjectType::ForeignTable);
+}
+
+bool BaseObject::acceptsComment(ObjectType obj_type)
+{
+	return obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
+				 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+				 obj_type!=ObjectType::Permission;
 }
 
 bool BaseObject::acceptsCustomSQL()
@@ -529,6 +569,16 @@ bool BaseObject::acceptsDropCommand()
 	return BaseObject::acceptsDropCommand(this->obj_type);
 }
 
+bool BaseObject::acceptsAlias()
+{
+	return BaseObject::acceptsAlias(this->obj_type);
+}
+
+bool BaseObject::acceptsComment()
+{
+	return BaseObject::acceptsComment(this->obj_type);
+}
+
 void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
@@ -542,7 +592,7 @@ void BaseObject::setSchema(BaseObject *schema)
 		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->schema != schema);
-	this->schema=schema;
+	this->schema = schema;
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -553,7 +603,7 @@ void BaseObject::setOwner(BaseObject *owner)
 		throw Exception(ErrorCode::AsgRoleObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->owner != owner);
-	this->owner=owner;
+	this->owner = owner;
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -564,7 +614,7 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 		throw Exception(ErrorCode::AsgTablespaceInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->tablespace != tablespace);
-	this->tablespace=tablespace;
+	this->tablespace = tablespace;
 }
 
 void BaseObject::setCollation(BaseObject *collation)
@@ -575,7 +625,7 @@ void BaseObject::setCollation(BaseObject *collation)
 		throw Exception(ErrorCode::AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->collation != collation);
-	this->collation=collation;
+	this->collation = collation;
 }
 
 void BaseObject::setAppendedSQL(const QString &sql)
@@ -598,21 +648,39 @@ void BaseObject::setPrependedSQL(const QString &sql)
 
 QString BaseObject::getName(bool format, bool prepend_schema)
 {
+	CachedNameId name_id = RawName;
+
+	if(format && !prepend_schema)
+		name_id = FmtName;
+	else if(format && prepend_schema)
+		name_id = Signature;
+
+	/* If the schema name have changed somewhere we need to invalidate
+	 * the cache for the object's signature so it is generated again */
+	if(schema && name_id == Signature &&
+			!cached_names[name_id].isEmpty() &&
+			!cached_names[name_id].startsWith(schema->getName(true)))
+		cached_names[name_id].clear();
+
+	if(!cached_names[name_id].isEmpty())
+		return cached_names[name_id];
+
 	if(format)
 	{
-		QString aux_name;
-		aux_name=formatName(this->obj_name, (obj_type==ObjectType::Operator));
+		QString aux_name = formatName(obj_name, (obj_type == ObjectType::Operator));
 
-		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName(format)) + QChar('.') + aux_name;
+		if(schema && prepend_schema)
+			aux_name = formatName(schema->getName(format)) + QChar('.') + aux_name;
 
 		if(!aux_name.isEmpty())
+		{
+			cached_names[name_id] = aux_name;
 			return aux_name;
-		else
-			return this->obj_name;
+		}
 	}
 
-	return this->obj_name;
+	cached_names[name_id] = obj_name;
+	return obj_name;
 }
 
 QString BaseObject::getAlias()
@@ -897,16 +965,15 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 			clearAttributes();
 
 			//Database object doesn't handles cached code.
-			if(use_cached_code && obj_type!=ObjectType::Database)
+			if(obj_type != ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlCode ||
-						(!reduced_form && def_type==SchemaParser::XmlCode))
-					cached_code[def_type]=code_def;
+				if(def_type==SchemaParser::SqlCode ||	(!reduced_form && def_type==SchemaParser::XmlCode))
+					cached_code[def_type] = code_def;
 				else if(reduced_form)
-					cached_reduced_code=code_def;
+					cached_reduced_code = code_def;
 			}
 
-			code_invalidated=false;
+			code_invalidated = false;
 		}
 		catch(Exception &e)
 		{
@@ -1097,13 +1164,22 @@ bool BaseObject::isDbVersionIgnored()
 	return ignore_db_version;
 }
 
-void BaseObject::enableCachedCode(bool value)
+QString BaseObject::getSearchAttributeI18N(const QString &search_attr)
 {
-	use_cached_code=value;
+	if(!search_attribs_i18n.count(search_attr))
+		return "";
+
+	return search_attribs_i18n.at(search_attr);
+}
+
+QStringList BaseObject::getSearchAttributesNames()
+{
+	return search_attribs_names;
 }
 
 void BaseObject::operator = (BaseObject &obj)
 {
+	//clearDependencies();
 	this->owner=obj.owner;
 	this->schema=obj.schema;
 	this->tablespace=obj.tablespace;
@@ -1115,21 +1191,29 @@ void BaseObject::operator = (BaseObject &obj)
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
 	this->system_obj=obj.system_obj;
-	this->setCodeInvalidated(use_cached_code);
+	this->setCodeInvalidated(true);
+	//updateDependencies();
 }
 
 void BaseObject::setCodeInvalidated(bool value)
 {
-	if(use_cached_code && value!=code_invalidated)
+	if(value != code_invalidated)
 	{
 		if(value)
 		{
 			cached_reduced_code.clear();
-			cached_code[0].clear();
-			cached_code[1].clear();
+			cached_code[SchemaParser::SqlCode].clear();
+			cached_code[SchemaParser::XmlCode].clear();
 		}
 
 		code_invalidated=value;
+	}
+
+	if(value)
+	{
+		cached_names[RawName].clear();
+		cached_names[FmtName].clear();
+		cached_names[Signature].clear();
 	}
 }
 
@@ -1145,7 +1229,7 @@ void BaseObject::configureSearchAttributes()
 
 bool BaseObject::isCodeInvalidated()
 {
-	return (use_cached_code && code_invalidated);
+	return code_invalidated;
 }
 
 bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const QStringList &ignored_attribs, const QStringList &ignored_tags)
@@ -1214,7 +1298,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const QStringList &ignore
 
 QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 {
-	if(use_cached_code && def_type==SchemaParser::SqlCode && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+	if(def_type==SchemaParser::SqlCode && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
 		code_invalidated=true;
 
 	if(!code_invalidated &&
@@ -1372,5 +1456,152 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+std::vector<BaseObject *> BaseObject::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	return getLinkedObjects(ObjDependencies, inc_indirect_deps, excl_types, rem_duplicates);
+}
+
+std::vector<BaseObject*> BaseObject::getReferences(bool inc_indirect_refs, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	return getLinkedObjects(ObjReferences, inc_indirect_refs, excl_types, rem_duplicates);
+}
+
+std::vector<BaseObject *> BaseObject::getLinkedObjects(ObjLinkType lnk_type, bool incl_ind_links, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	std::vector<BaseObject *> linked_objs,
+			*obj_list =	(lnk_type == ObjDependencies ? &object_deps : &object_refs);
+
+	if(incl_ind_links)
+	{
+		__getLinkedObjects(lnk_type, *obj_list, linked_objs);
+
+		if(!excl_types.empty())
+			linked_objs = CoreUtilsNs::filterObjectsByType(linked_objs, excl_types);
+	}
+
+	if(!excl_types.empty())
+		linked_objs = CoreUtilsNs::filterObjectsByType(*obj_list, excl_types);
+	else
+		linked_objs = *obj_list;
+
+	if(rem_duplicates)
+	{
+		std::sort(linked_objs.begin(), linked_objs.end());
+		auto end = std::unique(linked_objs.begin(), linked_objs.end());
+		linked_objs.erase(end, linked_objs.end());
+	}
+
+	return linked_objs;
+}
+
+void BaseObject::__getLinkedObjects(ObjLinkType lnk_type, const std::vector<BaseObject *> &objs, std::vector<BaseObject *> &ind_links)
+{
+	for(auto &obj : objs)
+	{
+		ind_links.push_back(obj);
+		__getLinkedObjects(lnk_type,
+											 lnk_type == ObjDependencies ? obj->getDependencies() : obj->getReferences(),
+											 ind_links);
+	}
+}
+
+void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)
+{
+	// If we are replacing a dependency we first need to undo the previous dependency
+	if(prev_dep_obj)
+		unsetDependency(prev_dep_obj);
+
+	if(!dep_obj)
+		return;
+
+	object_deps.push_back(dep_obj);
+	dep_obj->setReference(this);
+}
+
+void BaseObject::setReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		return;
+
+	object_refs.push_back(ref_obj);
+}
+
+void BaseObject::unsetReference(BaseObject *ref_obj)
+{
+	if(!ref_obj)
+		return;
+
+	auto itr = std::find(object_refs.begin(), object_refs.end(), ref_obj);
+
+	if(itr != object_refs.end())
+		object_refs.erase(itr);
+}
+
+void BaseObject::unsetDependency(BaseObject *dep_obj)
+{
+	if(!dep_obj)
+		return;
+
+	auto itr = std::find(object_deps.begin(), object_deps.end(), dep_obj);
+
+	if(itr != object_deps.end())
+	{
+		dep_obj->unsetReference(this);
+		object_deps.erase(itr);
+	}
+}
+
+void BaseObject::setClearDepsInDtor(bool value)
+{
+	clear_deps_in_dtor = value;
+}
+
+void BaseObject::clearDependencies()
+{
+	if(object_deps.empty() && object_refs.empty())
+		return;
+
+	for(auto &obj : object_deps)
+		obj->unsetReference(this);
+
+	object_deps.clear();
+}
+
+void BaseObject::clearReferences()
+{
+	for(auto &obj : object_refs)
+		obj->unsetDependency(this);
+
+	object_refs.clear();
+}
+
+void BaseObject::clearAllDepsRefs()
+{
+	clearDependencies();
+	clearReferences();
+}
+
+void BaseObject::updateDependencies()
+{
+	updateDependencies({});
+}
+
+void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
+{
+	std::vector<BaseObject *> aux_deps = {
+		schema, tablespace, owner, collation
+	};
+
+	aux_deps.insert(aux_deps.end(), dep_objs.begin(), dep_objs.end());
+
+	for(auto &obj : aux_deps)
+	{
+		if(!obj)
+			continue;
+
+		setDependency(obj);
 	}
 }

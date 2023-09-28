@@ -48,8 +48,10 @@ class __libcore Transform : public BaseObject {
 	public:
 		Transform();
 
+		virtual ~Transform(){}
+
 		//! \brief This method has a hardcoded way to generated the transform's name. It'll reject any value passed by its parameter
-		virtual void setName(const QString &);
+		virtual void setName(const QString &) override;
 
 		void setType(PgSqlType tp);
 		void setLanguage(Language *lang);
@@ -63,6 +65,8 @@ class __libcore Transform : public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 		virtual QString getSignature(bool = false) final;
 		virtual QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

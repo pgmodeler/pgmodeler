@@ -95,6 +95,7 @@ class __libcore OperationList: public QObject {
 
 	public:
 		OperationList(DatabaseModel *model);
+
 		virtual ~OperationList();
 
 		/*! \brief Starts chaining operations.

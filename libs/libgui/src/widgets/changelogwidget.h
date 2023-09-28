@@ -45,6 +45,7 @@ class __libgui ChangelogWidget : public QWidget, Ui::ChangelogWidget {
 		void setVisible(bool value) override;
 		void updateChangelogInfo();
 		void clearChangelog();
+		void inspectChangelog();
 
 	signals:
 		void s_visibilityChanged(bool value);

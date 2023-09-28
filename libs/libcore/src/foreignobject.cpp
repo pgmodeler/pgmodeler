@@ -19,6 +19,7 @@
 #include "foreignobject.h"
 #include "exception.h"
 #include "attributes.h"
+#include "schemaparser.h"
 
 const QString ForeignObject::OptionsSeparator(",");
 const QString ForeignObject::OptionValueSeparator("=");

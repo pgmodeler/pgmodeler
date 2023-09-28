@@ -50,6 +50,8 @@ class __libcore BaseTable: public BaseGraphicObject {
 		//! \brief Stores the current page visible on the table
 		unsigned curr_page[2];
 
+		QString hash_code;
+
 	public:
 		enum TableSection: unsigned {
 			AttribsSection,
@@ -58,7 +60,12 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		BaseTable();
 
+		virtual ~BaseTable() {}
+
+		QString getHashCode();
+
 		virtual void setTag(Tag *tag);
+
 		virtual Tag *getTag();
 
 		//! \brief Returns true if the provided table is considered a base table (Table, ForeignTable, View)
@@ -95,9 +102,9 @@ class __libcore BaseTable: public BaseGraphicObject {
 		//! \brief Returns all children objects of the table but excluding the ones of the provided type
 		virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {})=0;
 
-		virtual QString getSourceCode(SchemaParser::CodeType tipo_def)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType tipo_def) override = 0;
 
-		virtual QString getAlterCode(BaseObject *object);
+		virtual QString getAlterCode(BaseObject *object) override;
 
 		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
 		 * This method should be called prior to adding the first object to the table because, depending o the capacity,
@@ -124,7 +131,7 @@ class __libcore BaseTable: public BaseGraphicObject {
 
 		bool isPaginationEnabled();
 
-		virtual void setZValue(int z_value);
+		virtual void setZValue(int z_value) override;
 
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
@@ -137,6 +144,24 @@ class __libcore BaseTable: public BaseGraphicObject {
 		 * The split parameter is used to inform the generation process that the dicts are being
 		 * saved in separated files. This changes the way links are generated inside the data dictionaries */
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) = 0;
+
+		virtual void setCodeInvalidated(bool value) override;
+
+		virtual void setModified(bool value) override;
+
+		virtual void generateHashCode();
+
+		void resetHashCode();
+
+		virtual void setPosition(const QPointF &pos) override;
+
+		virtual void updateDependencies() override = 0;
+
+		virtual std::vector<BaseObject *> getDependencies(bool inc_indirect_deps = false,
+																											 const std::vector<ObjectType> &excl_types = {},
+																											 bool rem_duplcates = false) override;
+
+		void updateDependencies(const std::vector<BaseObject *> &deps);
 
 		friend class DatabaseModel;
 };

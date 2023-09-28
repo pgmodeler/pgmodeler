@@ -18,6 +18,7 @@
 
 #include "referencewidget.h"
 #include "baseobjectwidget.h"
+#include "guiutilsns.h"
 
 ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>580</width>
-    <height>385</height>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -425,7 +425,7 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="design_gb_2">
+        <widget class="QGroupBox" name="canvas_gb">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -433,7 +433,7 @@
           </size>
          </property>
          <property name="title">
-          <string>&amp;Design</string>
+          <string>&amp;Canvas</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_13">
           <property name="spacing">

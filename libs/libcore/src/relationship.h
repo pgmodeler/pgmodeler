@@ -29,8 +29,8 @@ also generates the SQL code definition to represente the table link on PostgreSQ
 
 #include "baserelationship.h"
 #include "table.h"
-#include "textbox.h"
 #include "pgsqltypes/actiontype.h"
+#include <stack>
 
 /*
 ### Relationship implementation rules ###
@@ -224,6 +224,19 @@ class __libcore Relationship: public BaseRelationship {
 		//! \brief The partition bounding expression
 		QString part_bounding_expr;
 
+		std::stack<Column *> cols_stack;
+
+		std::stack<Constraint *> constrs_stack;
+
+		/*! \brief This method creates via "new" operator the object of the type Class, or, return an object from the
+		 * stack of discarded objects if available for reused */
+		template<class Class>
+		Class *createObject();
+
+		/*! \brief This method stores the object in a stack of discarded objects instead of using delete operator
+		 *  to free memory so the object can be resused the next time createObject() is called */
+		void discardObject(TableObject *object);
+
 		//! \brief Indicates if the column exists on the referenced column list
 		bool isColumnExists(Column *column);
 
@@ -311,7 +324,7 @@ class __libcore Relationship: public BaseRelationship {
 		 unique key used in 1-1 relationships */
 		std::vector<Constraint *> getGeneratedConstraints();
 
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
@@ -331,6 +344,8 @@ class __libcore Relationship: public BaseRelationship {
 					 ActionType fk_del_act=ActionType::Null,
 					 ActionType fk_upd_act=ActionType::Null,
 					 CopyOptions copy_op = CopyOptions());
+
+		virtual ~Relationship(){}
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();
@@ -520,6 +535,8 @@ class __libcore Relationship: public BaseRelationship {
 
 		//! \brief Returns true when the receiver table is mandatory in the relationship
 		bool isReceiverTableMandatory();
+
+		virtual void setSQLDisabled(bool value) override;
 
 		friend class DatabaseModel;
 		friend class ModelWidget;

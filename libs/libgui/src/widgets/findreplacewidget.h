@@ -28,7 +28,6 @@
 #include "guiglobal.h"
 #include "ui_findreplacewidget.h"
 #include <QPlainTextEdit>
-#include "exception.h"
 #include <QTimer>
 
 class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {

@@ -350,3 +350,19 @@ void Operator::configureSearchAttributes()
 	arg_types += *argument_types[1];
 	search_attribs[Attributes::Type] = arg_types.join("; ");
 }
+
+void Operator::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &func : functions)
+	deps.push_back(func);
+
+	for(auto &type : argument_types)
+	deps.push_back(type.getObject());
+
+	for(auto &oper : operators)
+	deps.push_back(oper);
+
+	BaseObject::updateDependencies(deps);
+}

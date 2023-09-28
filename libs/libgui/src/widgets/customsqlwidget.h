@@ -28,6 +28,7 @@
 #include "dbobjects/baseobjectwidget.h"
 #include "codecompletionwidget.h"
 #include "ui_customsqlwidget.h"
+#include "widgets/numberedtexteditor.h"
 
 class __libgui CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 	private:

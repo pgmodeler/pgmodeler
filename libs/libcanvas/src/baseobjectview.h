@@ -27,8 +27,6 @@
 
 #include <QtWidgets>
 #include "basegraphicobject.h"
-#include "baserelationship.h"
-#include "xmlparser.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
 
@@ -61,6 +59,8 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 any sort, but for the database model objects is the ESSENTIAL to know the selection order
 		 mainly when creating relationships between tables. */
 		unsigned sel_order;
+
+		QString curr_hash_code;
 
 		//! \brief This item display the current object position on the scene
 		TextPolygonItem *pos_info_item;
@@ -106,7 +106,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void configurePlaceholder();
 
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 		void setSelectionOrder(bool selected);
 
@@ -141,13 +141,13 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		unsigned getSelectionOrder();
 
 		//! \brief Controls the changes during the object's selection and moving
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
 
 		//! \brief Returns the objects bounding rect in local coordination
-		QRectF boundingRect(void) const;
+		virtual QRectF boundingRect() const override;
 
 		//! \brief Returns the fill style in a form of gradient for the specified element id
 		static QLinearGradient getFillStyle(const QString &id);

@@ -17,6 +17,7 @@
 */
 
 #include "rulewidget.h"
+#include "guiutilsns.h"
 
 RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Rule)
 {

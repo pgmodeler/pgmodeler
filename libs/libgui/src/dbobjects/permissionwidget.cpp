@@ -17,6 +17,7 @@
 */
 
 #include "permissionwidget.h"
+#include "guiutilsns.h"
 
 PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Permission)
 {
@@ -150,6 +151,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
 			privileges_tbw->setRowHidden(priv, !Permission::acceptsPermission(object->getObjectType(), priv));
 		}
+
+		privileges_tbw->resizeColumnsToContents();
 
 		listPermissions();
 		permissions_tab->blockSignals(true);

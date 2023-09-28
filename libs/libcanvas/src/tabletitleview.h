@@ -25,10 +25,7 @@
 #ifndef TABLE_TITLE_VIEW_H
 #define TABLE_TITLE_VIEW_H
 
-#include "view.h"
-#include "table.h"
 #include "baseobjectview.h"
-#include "textboxview.h"
 #include "roundedrectitem.h"
 
 class __libcanvas TableTitleView: public BaseObjectView {

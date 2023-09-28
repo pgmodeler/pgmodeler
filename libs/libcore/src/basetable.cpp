@@ -17,6 +17,9 @@
 */
 
 #include "basetable.h"
+#include "utilsns.h"
+#include "coreutilsns.h"
+#include "column.h"
 
 BaseTable::BaseTable()
 {
@@ -32,6 +35,12 @@ BaseTable::BaseTable()
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	resetCurrentPages();
+}
+
+void BaseTable::setCodeInvalidated(bool value)
+{
+	BaseGraphicObject::setCodeInvalidated(value);
+	resetHashCode();
 }
 
 void BaseTable::resetCurrentPages()
@@ -112,6 +121,35 @@ unsigned BaseTable::getCurrentPage(TableSection section_id)
 	return curr_page[section_id];
 }
 
+void BaseTable::generateHashCode()
+{
+	if(!isModified())
+		return;
+
+	QString buf;
+	buf.append(obj_name);
+
+	for(auto &obj : getObjects())
+		buf.append(dynamic_cast<TableObject *>(obj)->getHashCode());
+
+	buf.append(tag ? tag->getName() : "");
+	buf.append(schema ? schema->getName() : "");
+	buf.append(QString::number(sql_disabled));
+	buf.append(QString::number(collapse_mode));
+	buf.append(QString::number(static_cast<int>(pagination_enabled)));
+	buf.append(QString::number(curr_page[0]));
+	buf.append(QString::number(curr_page[1]));
+	buf.append(QString::number(getPosition().x()));
+	buf.append(QString::number(getPosition().y()));
+
+	hash_code = UtilsNs::getStringHash(buf);
+}
+
+void BaseTable::resetHashCode()
+{
+	hash_code = "";
+}
+
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
 {
 	setCodeInvalidated(collapse_mode != coll_mode);
@@ -122,4 +160,62 @@ void BaseTable::setZValue(int z_value)
 {
 	setCodeInvalidated(this->z_value != z_value);
 	BaseGraphicObject::setZValue(z_value);
+}
+
+QString BaseTable::getHashCode()
+{
+	return hash_code;
+}
+
+void BaseTable::setModified(bool value)
+{
+	BaseGraphicObject::setModified(value);
+	generateHashCode();
+}
+
+void BaseTable::setPosition(const QPointF &pos)
+{
+	BaseGraphicObject::setPosition(pos);
+	resetHashCode();
+}
+
+std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, const std::vector<ObjectType> &excl_types, bool rem_duplicates)
+{
+	if(inc_indirect_deps)
+	{
+		std::vector<BaseObject *> ind_deps = BaseObject::getDependencies(true);
+
+		for(auto &obj : getObjects())
+			BaseObject::__getLinkedObjects(ObjDependencies, obj->getDependencies(), ind_deps);
+
+		if(!excl_types.empty())
+			ind_deps = CoreUtilsNs::filterObjectsByType(ind_deps, excl_types);
+
+		if(rem_duplicates)
+		{
+			std::sort(ind_deps.begin(), ind_deps.end());
+			auto end = std::unique(ind_deps.begin(), ind_deps.end());
+			ind_deps.erase(end, ind_deps.end());
+		}
+
+		return ind_deps;
+	}
+
+	return BaseObject::getDependencies(false, excl_types, rem_duplicates);
+}
+
+void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)
+{
+	std::vector<BaseObject *> aux_deps = { tag	};
+	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
+
+	for(auto &obj : aux_deps)
+	{
+		if(!obj)
+			continue;
+
+		setDependency(obj);
+	}
+
+	BaseObject::updateDependencies(deps);
 }

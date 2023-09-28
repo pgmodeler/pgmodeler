@@ -19,7 +19,6 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "utilsns.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 

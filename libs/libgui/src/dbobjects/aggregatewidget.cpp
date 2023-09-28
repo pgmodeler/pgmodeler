@@ -17,6 +17,7 @@
 */
 
 #include "aggregatewidget.h"
+#include "guiutilsns.h"
 
 AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Aggregate)
 {

@@ -29,10 +29,7 @@
 #include <QtWidgets>
 #include <map>
 #include <vector>
-#include "exception.h"
 #include "xmlparser.h"
-#include "globalattributes.h"
-#include "attributes.h"
 #include <algorithm>
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {

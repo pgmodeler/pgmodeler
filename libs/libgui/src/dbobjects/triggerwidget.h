@@ -29,6 +29,7 @@
 #include "ui_triggerwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "dbobjects/columnpickerwidget.h"
+#include "utils/syntaxhighlighter.h"
 
 class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 	private:

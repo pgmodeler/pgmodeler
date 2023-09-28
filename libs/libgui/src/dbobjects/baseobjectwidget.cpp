@@ -22,6 +22,8 @@
 #include "baseform.h"
 #include "settings/generalconfigwidget.h"
 #include "utilsns.h"
+#include "dbobjects/pgsqltypewidget.h"
+#include "guiutilsns.h"
 
 BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {
@@ -47,8 +49,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
 		object_protected = false;
-
-		//GuiUtilsNs::configureWidgetFont(protected_obj_lbl, GuiUtilsNs::MediumFontFactor);
 
 		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
 		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
@@ -178,29 +178,24 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, B
 
 void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
 {
-	std::vector<BaseObject *> refs;
-	TableObject *tab_obj=nullptr;
+	TableObject *tab_obj = nullptr;
 
-	model->getObjectReferences(object, refs);
-
-	while(!refs.empty())
+	for(auto &obj : object->getReferences())
 	{
-		tab_obj=dynamic_cast<TableObject *>(refs.back());
+		tab_obj = dynamic_cast<TableObject *>(obj);
 
 		//If the object is a relationship added does not do anything since the relationship itself will be disabled
 		if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
 		{
-			refs.back()->setSQLDisabled(disable_sql_chk->isChecked());
+			obj->setSQLDisabled(disable_sql_chk->isChecked());
 
 			//Update the parent table graphical representation to show the disabled child object
 			if(tab_obj)
 				tab_obj->getParentTable()->setModified(true);
 
 			//Disable the references of the current object too
-			disableReferencesSQL(refs.back());
+			disableReferencesSQL(obj);
 		}
-
-		refs.pop_back();
 	}
 }
 
@@ -399,23 +394,21 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
-	bool show_comment;
-	QObjectList chld_list;
-	QWidget *wgt=nullptr;
-
-
-	if(grid)
+	if(!grid)
+		setLayout(baseobject_grid);
+	else
 	{
-		QLayoutItem *item=nullptr;
-		int lin, col, col_span,row_span, item_id, item_count;
+		QLayoutItem *item = nullptr;
+		int lin = 0, col = 0, col_span = 0,
+				row_span = 0, item_id = 0, item_count = 0;
 
 		/* Move all the widgets of the passed grid layout one row down,
 		 permiting the insertion of the 'baseobject_grid' at the top
 		 of the items */
-		item_count=grid->count();
-		for(item_id=item_count-1; item_id >= 0; item_id--)
+		item_count = grid->count();
+		for(item_id = item_count-1; item_id >= 0; item_id--)
 		{
-			item=grid->itemAt(item_id);
+			item = grid->itemAt(item_id);
 			grid->getItemPosition(item_id, &lin, &col, &row_span, &col_span);
 			grid->removeItem(item);
 			grid->addItem(item, lin+1, col, row_span, col_span);
@@ -429,12 +422,18 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 		//Adding the base layout on the top
 		grid->addLayout(baseobject_grid, 0,0,1,0);
-		baseobject_grid=grid;
+		baseobject_grid = grid;
 	}
-	else
-		this->setLayout(baseobject_grid);
 
 	baseobject_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	configureFormFields(obj_type);
+}
+
+void BaseObjectWidget::configureFormFields(ObjectType obj_type)
+{
+	QObjectList chld_list;
+	QWidget *wgt = nullptr;
+
 	disable_sql_chk->setVisible(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::Permission &&
 															obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Tag &&
 															obj_type!=ObjectType::Parameter);
@@ -457,11 +456,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
-	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
-							 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
-							 obj_type!=ObjectType::Permission;
-	comment_lbl->setVisible(show_comment);
-	comment_edt->setVisible(show_comment);
+	comment_lbl->setVisible(BaseObject::acceptsComment(obj_type));
+	comment_edt->setVisible(BaseObject::acceptsComment(obj_type));
 
 	if(obj_type!=ObjectType::BaseObject)
 	{
@@ -469,7 +465,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
 		if(obj_type != ObjectType::Permission && obj_type != ObjectType::Cast &&
-			 obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
+				obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
@@ -745,27 +741,27 @@ void BaseObjectWidget::applyConfiguration()
 				object->setName(name_edt->text().trimmed().toUtf8());
 			}
 
-			if(alias_edt->isVisible())
+			if(object->acceptsAlias())
 				object->setAlias(alias_edt->text().trimmed());
 
 			//Sets the object's comment
-			if(comment_edt->isVisible())
+			if(object->acceptsComment())
 				object->setComment(comment_edt->toPlainText().toUtf8());
 
 			//Sets the object's tablespace
-			if(tablespace_sel->isVisible())
+			if(object->acceptsTablespace())
 				object->setTablespace(tablespace_sel->getSelectedObject());
 
 			//Sets the object's owner
-			if(owner_sel->isVisible())
+			if(object->acceptsOwner())
 				object->setOwner(owner_sel->getSelectedObject());
 
 			//Sets the object's collation
-			if(collation_sel->isVisible())
+			if(object->acceptsCollation())
 				object->setCollation(collation_sel->getSelectedObject());
 
-			//Sets the object's schema
-			if(schema_sel->isVisible())
+			//Sets the object's schema			
+			if(object->acceptsSchema())
 			{
 				Schema *esquema=dynamic_cast<Schema *>(schema_sel->getSelectedObject());
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
@@ -821,12 +817,11 @@ void BaseObjectWidget::finishConfiguration()
 					this->object->getSourceCode(SchemaParser::SqlCode);
 			}
 
-			model->getObjectReferences(object, ref_objs);
-			for(auto &obj : ref_objs)
+			for(auto &obj : object->getReferences())
 			{
 				obj->setCodeInvalidated(true);
 
-				if(obj->getObjectType()==ObjectType::Column)
+				if(obj->getObjectType() == ObjectType::Column)
 					dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 			}
 
@@ -860,6 +855,9 @@ void BaseObjectWidget::finishConfiguration()
 				if(prev_schema && object->getSchema()!=prev_schema)
 					prev_schema->setModified(true);
 			}
+
+			object->clearDependencies();
+			object->updateDependencies();
 
 			emit s_objectManipulated();
 			emit s_closeRequested();

@@ -28,7 +28,6 @@ This class is the basis for the reverse engineering feature.
 
 #include "connection.h"
 #include "baseobject.h"
-#include "tableobject.h"
 #include <QTextStream>
 #include <QApplication>
 

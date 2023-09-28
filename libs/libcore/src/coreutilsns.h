@@ -26,13 +26,19 @@
 #define CORE_UTILS_NS_H
 
 #include "baseobject.h"
-#include "tableobject.h"
-#include <QCryptographicHash>
+#include "utilsns.h"
 
 namespace CoreUtilsNs {
 	/*! \brief Holds the check mark character for use in data dictionary
 	 *  to indicate constraints applied to the column */
 	const QString DataDictCheckMark("&#10003;");
+
+	/*! \brief Filters a list of objects by excluding the elements by their type.
+	 * If the current object type is in the excl_types list then the object will not be present
+	 * in the returned list.
+	 * NOTE: This function returns a new list of objects letting the input object list unchanged. */
+	extern __libcore std::vector<BaseObject *> filterObjectsByType(const std::vector<BaseObject *> &list,
+																																	const std::vector<ObjectType> &excl_types);
 
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
@@ -66,8 +72,6 @@ namespace CoreUtilsNs {
 		typename std::vector<Class *>::iterator itr=obj_vector.begin(), itr_end=obj_vector.end();
 		QChar oper_uniq_chr='?'; //Char appended at end of operator names in order to resolve conflicts
 		ObjectType obj_type;
-		QCryptographicHash hash(QCryptographicHash::Md5);
-		QByteArray buffer;
 
 		if(!obj)
 			return("");
@@ -82,8 +86,7 @@ namespace CoreUtilsNs {
 			obj_name += suffix;
 
 		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
-		buffer.append(obj_name.toUtf8());
-		id = hash.result().toHex().mid(0,6);
+		id = UtilsNs::getStringHash(obj_name).mid(0,6);
 		len = obj_name.size() + id.size();
 
 		//If the name length exceeds the maximum size

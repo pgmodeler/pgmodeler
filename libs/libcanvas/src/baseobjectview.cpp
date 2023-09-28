@@ -390,7 +390,7 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
 		pos_info_item->setFont(fnt);
-		pos_info_item->setTextBrush(font_config[Attributes::PositionInfo].foreground());
+		pos_info_item->setTextColor(font_config[Attributes::PositionInfo].foreground().color());
 
 		pos_info_item->setText(QString(" x:%1 y:%2 ").arg(round(pos.x())).arg(round(pos.y())));
 		pos_info_item->setPolygon(QPolygonF(pos_info_item->getTextBoundingRect()));
@@ -415,7 +415,7 @@ void BaseObjectView::configureSQLDisabledInfo()
 
 			sql_disabled_item->setFont(char_fmt.font());
 			sql_disabled_item->setText(tr("SQL off"));
-			sql_disabled_item->setTextBrush(char_fmt.foreground());
+			sql_disabled_item->setTextColor(char_fmt.foreground().color());
 
 			sql_disabled_item->setPolygon(QRectF(QPointF(0,0), sql_disabled_item->getTextBoundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));
 			sql_disabled_item->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
@@ -529,15 +529,9 @@ void BaseObjectView::togglePlaceholder(bool visible)
 			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 			placeholder->setPen(pen);
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
-			placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-		}
-		else
-		{
-			placeholder->setRect(QRectF());
-			placeholder->setPos(0, 0);
 		}
 
-		placeholder->setFlag(QGraphicsItem::ItemHasNoContents, !visible);
+		placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
 		placeholder->setVisible(visible);
 	}
 }

@@ -27,14 +27,16 @@ namespace PgSqlVersions {
 	PgSqlVersion130("13.0"),
 	PgSqlVersion140("14.0"),
 	PgSqlVersion150("15.0"),
-	DefaulVersion = PgSqlVersion150,
+	PgSqlVersion160("16.0"),
+	DefaulVersion = PgSqlVersion160,
 	MinimumVersion = PgSqlVersion100;
 
 	const QStringList
 	AllVersions = {
-		PgSqlVersion150, PgSqlVersion140,
-		PgSqlVersion130, PgSqlVersion120,
-		PgSqlVersion110, PgSqlVersion100
+		PgSqlVersion160, PgSqlVersion150,
+		PgSqlVersion140, PgSqlVersion130,
+		PgSqlVersion120, PgSqlVersion110,
+		PgSqlVersion100
 	};
 
 	QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver)

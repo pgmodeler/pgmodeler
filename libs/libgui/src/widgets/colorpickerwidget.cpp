@@ -18,6 +18,7 @@
 
 #include "colorpickerwidget.h"
 #include <QToolTip>
+#include "exception.h"
 
 ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidget(parent)
 {

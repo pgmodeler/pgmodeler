@@ -513,3 +513,8 @@ QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
+
+void Sequence::updateDependencies()
+{
+	BaseObject::updateDependencies({ owner_col });
+}

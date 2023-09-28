@@ -28,7 +28,8 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	std::random_device rand_seed;
 	rand_num_engine.seed(rand_seed());
 
-	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=rand_rel_colors=update_fk_rels=false;
+	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
+	comments_as_aliases=rand_rel_colors=update_fk_rels=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::ListAllObjects | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 	xmlparser=nullptr;
@@ -125,26 +126,28 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const std::m
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_rels)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors,
+																						bool debug_mode, bool rand_rel_colors, bool update_rels, bool comments_as_aliases)
 {
-	this->import_sys_objs=import_sys_objs;
-	this->import_ext_objs=import_ext_objs;
-	this->auto_resolve_deps=auto_resolve_deps;
-	this->ignore_errors=ignore_errors;
-	this->debug_mode=debug_mode;
-	this->rand_rel_colors=rand_rel_colors;
-	this->update_fk_rels=update_rels;
+	this->import_sys_objs = import_sys_objs;
+	this->import_ext_objs = import_ext_objs;
+	this->auto_resolve_deps = auto_resolve_deps;
+	this->ignore_errors = ignore_errors;
+	this->debug_mode = debug_mode;
+	this->rand_rel_colors = rand_rel_colors;
+	this->update_fk_rels = update_rels;
+	this->comments_as_aliases = comments_as_aliases;
 
 	Connection::setPrintSQL(debug_mode);
 
 	if(!import_sys_objs && import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclSystemObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclSystemObjs;
 	else if(import_sys_objs && !import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs;
 	else if(import_sys_objs && import_ext_objs)
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes;
 	else
-		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
+		import_filter = Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 }
 
 unsigned DatabaseImportHelper::getLastSystemOID()
@@ -602,7 +605,7 @@ void DatabaseImportHelper::importDatabase()
 		if(!dbmodel)
 			throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		dbmodel->setLoadingModel(true);
+		BaseGraphicObject::setUpdatesEnabled(false);
 		dbmodel->setObjectListsCapacity(creation_order.size());
 
 		cached_names.clear();
@@ -623,9 +626,11 @@ void DatabaseImportHelper::importDatabase()
 		if(!inherited_cols.empty())
 		{
 			emit s_progressUpdated(100, tr("Validating relationships..."), ObjectType::Relationship);
-			dbmodel->setLoadingModel(false);
 			dbmodel->validateRelationships();
 		}
+
+		BaseGraphicObject::setUpdatesEnabled(true);
+		dbmodel->setObjectsModified();
 
 		if(!import_canceled)
 		{
@@ -721,13 +726,35 @@ void DatabaseImportHelper::cancelImport()
 
 void DatabaseImportHelper::createObject(attribs_map &attribs)
 {
-	unsigned oid=attribs[Attributes::Oid].toUInt();
-	ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
-	QString obj_name=getObjectName(attribs[Attributes::Oid], (obj_type==ObjectType::Function || obj_type==ObjectType::Operator));
+	unsigned oid = attribs[Attributes::Oid].toUInt();
+	ObjectType obj_type = static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
+	QString obj_name = getObjectName(attribs[Attributes::Oid], (obj_type==ObjectType::Function || obj_type==ObjectType::Operator));
 
-	//Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
+	// Avoiding the creation of pgModeler's temp objects created in database during the catalog reading
 	if(obj_name.contains(Catalog::PgModelerTempDbObj))
 		return;
+
+	/* If the current object is a system one and it is already exists in the database model we just
+	 * register the OID in the list of created objects to avoid creating it further.
+	 *
+	 * By system objects in this case we mean any object which OID is less than the last system oid
+	 * of the database:
+	 *
+	 * Schema: public, pg_catalog, information_schema
+	 * Role: postgres
+	 * Collation: C, POSIX, default
+	 * Languages: C, SQL, PlPgsql, Internal
+	 * Tablespaces: pg_global, pg_default */
+
+	if(catalog.isSystemObject(oid) &&
+			(obj_type == ObjectType::Schema || obj_type == ObjectType::Role ||
+			 obj_type == ObjectType::Collation || obj_type == ObjectType::Tablespace ||
+			 obj_type == ObjectType::Language) &&
+			dbmodel->getObjectIndex(obj_name, obj_type) >= 0)
+	{
+		created_objs.push_back(oid);
+		return;
+	}
 
 	try
 	{
@@ -738,6 +765,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 			//System objects will have the sql disabled by default
 			attribs[Attributes::SqlDisabled]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : "");
+
+			if(comments_as_aliases &&
+					(BaseGraphicObject::isGraphicObject(obj_type) || TableObject::isTableObject(obj_type)))
+				attribs[Attributes::Alias] = attribs[Attributes::Comment].mid(0, BaseObject::ObjectNameMaxLength - 1);
+
 			attribs[Attributes::Comment]=getComment(attribs);
 
 			if(attribs.count(Attributes::Owner))
@@ -845,22 +877,27 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 
 		if(!obj_attr.empty())
 		{
-			QString obj_name;
-
 			for(auto &itr : extra_attribs)
 				obj_attr[itr.first] = itr.second;
+
+
+
+
+			/* If the attributes of the dependency exists but it was not created yet,
+				 pgModeler will create it and it's dependencies recursively */
+			if(recursive_dep_res &&
+					obj_type != ObjectType::Database &&	!TableObject::isTableObject(obj_type) &&
+					std::find(created_objs.begin(), created_objs.end(), oid.toUInt()) == created_objs.end())
+			{
+				createObject(obj_attr);
+			}
+
+			QString obj_name;
 
 			if(use_signature)
 				obj_name = obj_attr[Attributes::Signature] = getObjectName(oid, true);
 			else
-				//obj_name = obj_attr[Attributes::Name] = getObjectName(oid);
 				obj_name = getObjectName(oid);
-
-			/* If the attributes of the dependency exists but it was not created on the model yet,
-				 pgModeler will create it and it's dependencies recursively */
-			if(recursive_dep_res && !TableObject::isTableObject(obj_type) &&
-					obj_type!=ObjectType::Database && dbmodel->getObjectIndex(obj_name, obj_type) < 0)
-				createObject(obj_attr);
 
 			if(generate_xml)
 			{
@@ -2450,106 +2487,121 @@ void DatabaseImportHelper::createTransform(attribs_map &attribs)
 void DatabaseImportHelper::createPermission(attribs_map &attribs)
 {
 	ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
-	Permission *perm=nullptr;
+
+	if(!Permission::acceptsPermission(obj_type))
+		return;
+
+	Permission *permission=nullptr;
 	QString sig;
+	QStringList perm_list;
+	std::vector<Permission::PrivilegeId> privs, gop_privs;
+	QString role_name;
+	Role *role=nullptr;
+	BaseObject *object=nullptr;
+	PhysicalTable *table=nullptr;
 
-	if(Permission::acceptsPermission(obj_type))
+	//Parses the permissions vector string
+	perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
+
+	if(!perm_list.isEmpty())
 	{
-		QStringList perm_list;
-		std::vector<Permission::PrivilegeId> privs, gop_privs;
-		QString role_name;
-		Role *role=nullptr;
-		BaseObject *object=nullptr;
-		PhysicalTable *table=nullptr;
-
-		//Parses the permissions vector string
-		perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
-
-		if(!perm_list.isEmpty())
+		if(obj_type!=ObjectType::Column)
 		{
-			if(obj_type!=ObjectType::Column)
-			{
-				if(obj_type==ObjectType::Database)
-					object=dbmodel;
-				else
-				{
-					sig = getObjectName(attribs[Attributes::Oid], true);
-					object = dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
-				}
-			}
+			if(obj_type==ObjectType::Database)
+				object=dbmodel;
 			else
 			{
-				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
-				table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), {ObjectType::Table, ObjectType::ForeignTable}));
-				object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
+				sig = getObjectName(attribs[Attributes::Oid], true);
+				object = dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
 			}
 		}
-
-		for(int i=0; i < perm_list.size(); i++)
+		else
 		{
-			//Parses the permission retrieving the role name as well the privileges over the object
-			role_name=Permission::parsePermissionString(perm_list[i], privs, gop_privs);
+			//If the object is column it's necessary to retrive the parent table to get the valid reference to column
+			table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), {ObjectType::Table, ObjectType::ForeignTable}));
+			object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
+		}
+	}
 
-			//Removing extra backslash from the role's names to avoid the role not to be found
-			role_name.remove(QChar('\\'));
+	//for(int i=0; i < perm_list.size(); i++)
+	for(auto perm_str : perm_list)
+	{
+		//Parses the permission retrieving the role name as well the privileges over the object
+		role_name=Permission::parsePermissionString(perm_str, privs, gop_privs);
 
-			if(!privs.empty() || gop_privs.empty())
+		//Removing extra backslash from the role's names to avoid the role not to be found
+		role_name.remove(QChar('\\'));
+
+		if(!privs.empty() || gop_privs.empty())
+		{
+			role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
+
+			if(auto_resolve_deps && !role_name.isEmpty() && !role)
 			{
-				role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
-
-				if(auto_resolve_deps && !role_name.isEmpty() && !role)
+				try
 				{
 					QString oid = catalog.getObjectOID(role_name, ObjectType::Role);
 					getDependencyObject(oid, ObjectType::Role);
-					role=dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
+					role = dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
 				}
-
-				/* If the role doesn't exists and there is a name defined, throws an error because
-				the roles wasn't found on the model */
-				if(!role && !role_name.isEmpty())
-					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-									.arg(QString("permission_%1").arg(perm_list[i])).arg(BaseObject::getTypeName(ObjectType::Permission))
-									.arg(role_name).arg(BaseObject::getTypeName(ObjectType::Role))
-									,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				else
+				catch(Exception &e)
 				{
-					try
+					throw Exception(Exception::getErrorMessage(ErrorCode::ObjectNotImported)
+													.arg(perm_str)
+													.arg(BaseObject::getTypeName(ObjectType::Permission))
+													.arg("n/d"),
+													ErrorCode::ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+													dumpObjectAttributes(attribs));
+				}
+			}
+
+			/* If the role doesn't exists and there is a name defined, throws an error because
+			the roles wasn't found on the model */
+			if(!role && !role_name.isEmpty())
+				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+								.arg(QString("%1").arg(perm_str)).arg(BaseObject::getTypeName(ObjectType::Permission))
+								.arg(role_name).arg(BaseObject::getTypeName(ObjectType::Role))
+								,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else
+			{
+				try
+				{
+					//Configuring the permisison
+					permission = new Permission(object);
+
+					if(role)
+						permission->addRole(role);
+
+					//Setting the ordinary privileges
+					while(!privs.empty())
 					{
-						//Configuring the permisison
-						perm=new Permission(object);
-
-						if(role)
-							perm->addRole(role);
-
-						//Setting the ordinary privileges
-						while(!privs.empty())
-						{
-							perm->setPrivilege(privs.back(), true, false);
-							privs.pop_back();
-						}
-
-						//Setting the grant option privileges
-						while(!gop_privs.empty())
-						{
-							perm->setPrivilege(gop_privs.back(), true, true);
-							gop_privs.pop_back();
-						}
-
-						dbmodel->addPermission(perm);
+						permission->setPrivilege(privs.back(), true, false);
+						privs.pop_back();
 					}
-					catch(Exception &e)
+
+					//Setting the grant option privileges
+					while(!gop_privs.empty())
 					{
-						if(perm) delete perm;
-
-						if(ignore_errors)
-							errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
-						else
-							throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						permission->setPrivilege(gop_privs.back(), true, true);
+						gop_privs.pop_back();
 					}
+
+					dbmodel->addPermission(permission);
+				}
+				catch(Exception &e)
+				{
+					if(permission)
+						delete permission;
+
+					if(ignore_errors)
+						errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
+					else
+						throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				}
 			}
 		}
 	}
+
 }
 
 void DatabaseImportHelper::createTableInheritances()
@@ -2635,7 +2687,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	//Destroying detached columns before create inheritances
 	for(Column *col : inherited_cols)
 	{
-		dbmodel->getObjectReferences(col, refs, true);
+		refs = col->getReferences();
 
 		if(refs.empty())
 		{
@@ -2658,7 +2710,6 @@ void DatabaseImportHelper::destroyDetachedColumns()
 
 	/* Force the validation and connection of inheritance relationships
 	 leading to the creation of inherited columns */
-	dbmodel->setLoadingModel(false);
 	dbmodel->validateRelationships();
 }
 
@@ -2756,6 +2807,9 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 		col.setType(PgSqlType::parseString(type_name));
 		col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
 		col.setComment(itr->second[Attributes::Comment]);
+
+		if(comments_as_aliases)
+			col.setAlias(col.getComment().mid(0, BaseObject::ObjectNameMaxLength - 1));
 
 		//Overriding the default value if the column is identity
 		if(!itr->second[Attributes::IdentityType].isEmpty())
@@ -2999,7 +3053,8 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 	if(!signature_form && cached_names.count(obj_oid))
 		return cached_names[obj_oid];
-	else if(signature_form && cached_signatures.count(obj_oid))
+
+	if(signature_form && cached_signatures.count(obj_oid))
 		return cached_signatures[obj_oid];
 
 	QString sch_name,
@@ -3072,9 +3127,14 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			obj_name+="(" + params.join(',') + ")";
 	}
 
-	if(signature_form)
+	/* If signature must be returned and the schema name couldn't be determined
+	 * above, we don't cache the object signature, instead, the entire above
+	 * routine is repeated until the schema name of the object is known */
+	if(signature_form &&
+			(!BaseObject::acceptsSchema(obj_type) ||
+			 (BaseObject::acceptsSchema(obj_type) && !sch_name.isEmpty())))
 		cached_signatures[obj_oid] = obj_name;
-	else
+	else if(!signature_form)
 		cached_names[obj_oid] = obj_name;
 
 	return obj_name;

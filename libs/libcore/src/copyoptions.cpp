@@ -17,7 +17,8 @@
 */
 
 #include "copyoptions.h"
-#include "baseobject.h"
+#include "exception.h"
+#include "enumtype.h"
 
 CopyOptions::CopyOptions()
 {

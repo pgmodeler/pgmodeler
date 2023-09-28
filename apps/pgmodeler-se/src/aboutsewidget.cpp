@@ -18,7 +18,6 @@
 
 #include "aboutsewidget.h"
 #include "guiutilsns.h"
-#include "baseobjectview.h"
 
 AboutSEWidget::AboutSEWidget(QWidget *parent) : QWidget(parent)
 {

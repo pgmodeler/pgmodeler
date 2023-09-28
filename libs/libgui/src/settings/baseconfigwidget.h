@@ -28,9 +28,8 @@
 #define BASE_CONF_WIDGET_H
 
 #include "guiglobal.h"
-#include "exception.h"
 #include "xmlparser.h"
-#include "attributes.h"
+#include "schemaparser.h"
 #include <algorithm>
 #include <QWidget>
 
@@ -82,9 +81,12 @@ class __libgui BaseConfigWidget: public QWidget {
 		 * The silent parameter indicates that the restoration should not emit a message box informing the restoration sucess */
 		void restoreDefaults(const QString &conf_id, bool silent);
 		
-		//! \brief Adds a parameter to the specified configuration parameters set
-		static void addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
+		//! \brief Set the configuration parameters to a configuration section
+		static void setConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params);
 		
+		//! \brief Appends/overwrites the configuration parameters of the provided section_id.
+		static void appendConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params);
+
 		void showEvent(QShowEvent *);
 
 	public:

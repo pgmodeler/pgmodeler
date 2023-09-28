@@ -27,8 +27,9 @@
 
 #include <QWidget>
 #include "ui_columnpickerwidget.h"
-#include "physicaltable.h"
 #include "objectstablewidget.h"
+#include "simplecolumn.h"
+#include "column.h"
 
 class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
 	private:

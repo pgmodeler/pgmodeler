@@ -28,6 +28,9 @@
 #include "../coreglobal.h"
 #include <QString>
 
+class BaseObject;
+class DatabaseModel;
+
 /*! \brief This class stores the user defined type configureation.
 	 When the user creates a Type, Sequence, Domain, even a Table,
 	 it can be used as a type on certain configurations so this
@@ -58,10 +61,12 @@ class __libcore UserTypeConfig {
 
 	protected:
 		//! \brief Pointer to the instance of the user defined type
-		void *ptype;
+		//void *ptype;
+		BaseObject *ptype;
 
 		//! \brief Pointer to the model that the type belongs to
-		void *pmodel;
+		//void *pmodel;
+		DatabaseModel *pmodel;
 
 		//! \brief Name of the type
 		QString name;

@@ -47,14 +47,13 @@ class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWi
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		virtual ~SwapObjectsIdsWidget();
 		void setModel(DatabaseModel *model);
 		void setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct);
 
 	private slots:
 		void showObjectId();
 		void filterObjects();
-		void selectItem(QTableWidgetItem *item);
+		void selectItem(const QModelIndex &index);
 		void clearSelectors();
 
 	public slots:

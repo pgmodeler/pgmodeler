@@ -24,6 +24,7 @@
 #include "settings/relationshipconfigwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "coreutilsns.h"
+#include "guiutilsns.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Relationship)
 {

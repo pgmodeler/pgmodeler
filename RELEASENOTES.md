@@ -1,33 +1,42 @@
-v1.1.0-alpha
+v1.1.0-alpha1
 ------
-<em>Release date: June 09, 2023</em><br/>
-<em>Changes since: <strong>v1.0.x</strong></em><br/>
+<em>Release date: September 29, 2023</em><br/>
+<em>Changes since: <strong>v1.1.0-alpha</strong></em><br/>
 
-<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-alpha causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
+<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-alpha1 causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
 
-After five months of development, the first alpha release for pgModeler 1.1.0 is finally ready and brings some important improvements compared to 1.0.x. Below, the key changes are briefly detailed:
+Here we are, after working for 4 months, bringing you the last alpha release of pgModeler 1.1.0. This version was mainly focused on improving performance on several parts of the tool. So I put a huge effort into refactoring lots of code to reach an amazing (almost unbelievable) result. Let's see below:
 
-**Improved code completion:** A long-awaited feature is finally arriving pgModeler, the code completion based on living database object names. From now on, in the SQL execution widget, will be possible to list column/table names in the middle of the INSERT/DELETE/TRUNCATE/UPDATE commands. This feature also considers table aliases and lists the correct columns. It is worth mentioning that this feature is still experimental despite the good results on different kinds of SQL commands. <br/>
+**Improved model loading, objects' searching, and validation speeds:** One of the most annoying things on pgModeler for me was the speed of the operations like objects' search, model validation, and, mainly, database model file loading. During the development of this version, I decided to face the challenge of improving these three operations, so I delved into the internals of the tool looking for the major bottlenecks. After selecting the problematic ones, I took the path of rewriting some mechanics instead of trying to fix them. The two main bottlenecks that degraded the speed of the mentioned operations were the objects' name validation/formatting as well as the retrieval of objects' dependencies and references. Those seemed simple operations that I even could imagine that they were making pgModeler struggle to handle big models. For the objects' name formatting and validation, I decided to create an internal name cache to avoid calling those procedures repeatedly. A simple solution that brought a surprisingly good result. For the objects' dependencies and references handling, I completely ditched the methods written for that purpose and created something infinitely simpler. Instead of calling every time a procedure that runs countless loops and recursive calls, I just made the objects store internally which other objects are their references and dependencies. Those changes made models that were loading/validating in several minutes to be processed in a few seconds. I still have some other bottlenecks to solve, but those two already removed, gave pgModeler an amazing performance.<br/>
 
-**Improved UI theme management:** In 1.0.x, pgModeler wasn't able to correctly follow the system's color set (dark/light). Now, in 1.1.0-alpha, selecting "System default" UI theme in Appearance settings makes pgModeler properly configure the UI color theme as well as the source code highlight settings to follow the system's color schema. <br/>
-
-**Several UI improvements:** As always, general UI improvements are made attending to the users' requests. This time pgModeler brought a long list of enhancements, but the following ones are worth mentioning: <br/>
-* pgModeler now supports the drag & drop of .dbm files selected in the file manager directly into the tool's main window to load models.<br/>
-* Database object shadows can be now deactivated in the general settings. This feature improves the rendering speed since fewer objects per scene need to be handled.<br/>
-* The SQL command results in the SQL execution widget and data manipulation form can be now exported to CSV format besides the classic plain text format.<br/>
-* When pasting SQL code coming from external IDEs in SQL execution using Ctrl+Shift+V, pgModeler will try to remove unneeded string concatenation characters (e.g. " ' + .) in the clipboard text before inserting it in the input field. This is useful for testing SQL code written in other languages' source code using concatenated strings.<br/>
-* Enclosing characters (),[],{} are now highlighted in any field where it's possible to type SQL code, being helpful to keep the balance of those characters avoiding syntax errors when running the typed commands.<br/>
-* In order to display large data (e.g. bytea data) in the results grid without degrading the performance an option was added to general settings that toggle the truncation of column data that exceeds a certain limit. The truncated data can be fully visualized by double click the desired cell in the result grid.<br/>
-* Now the SQL result grid header will display an icon according to the data type of each column.<br/>
-* In data manipulation form when editing a single element with column data edit dialog, the form will display the current column's value.<br/>
+**Several other improvements:** general improvements were made all over the tool and some of them are described below.<br/>
+* Added support for inksaver color theme which uses only black and white colors for models that are used for printing.<br/>
+* Added support for using object comments as aliases in database import.<br/>
+* pgModeler now asks the user about closing SQL execution tabs that are not empty (with typed commands).<br/>
+* Add support for remembering decisions on the alerts regarding unsaved models/open SQL tabs.<br/>
+* Added an option in GeneralConfigWidget to reset the exit alert display status.<br/>
+* Added a basic form to inspect changelog XML code.<br/>
+* Added missing multirange types.<br/>
+* Improved the relationship point addition and selection via mouse clicks.<br/>
+* The "dot" grid mode is now the default in the appearance.conf file due to better drawing performance.<br/>
+* Improved the scene background (grid, delimiter, limits) drawing speed for big models.<br/>
+* Improving the objects' filtering in reverse engineering by introducing an "any" filter type.<br/>
+* Data manipulation form now shows a confirmation message before closing when items are pending save.<br/>
 
 **Bug fixes:** Also, as part of the constant search for the overall tool's stability and reliability, almost twenty bugs were fixed, and below we highlight some key ones:<br/>
-* Fixed a critical bug in pgmodeler-cli that was causing the generation of empty models when the input file had no roles configured.<br/>
-* Fixed a bug in the database model that could lead to an "unknown exception caught" error.<br/>
-* Fixed a bug in the CSV generation that was causing the creation of malformed CSV in some circumstances causing the initial table data corruption.<br/>
-* Fixed some problems with comments when importing a database having the same OIDs for different types of objects.<br/>
-* Fixed the diff process performed on legacy database versions.<br/>
+* Minor fix in the object finder widget to avoid disconnecting a null selection which could lead to crashes.<br/>
+* Minor fix in the database model widget to hide the new object overlay when moving a selection of objects in the design area.<br/>
+* Minor fix in the object removal routine in a model widget that was not erasing an object in case it shared the same name of other objects in the same schema.<br/>
+* Minor fix in the object addition routine to validate the layer of the object being added. If one or more layers are invalid the object will be moved to the default layer 0.<br/>
+* Minor fix in pgmodeler-cli when extracting the objects' XML code during model file structure repair in order to restore correctly the layers name/count.<br/>
+* Fixed a bug in partial reverse engineering that was not correctly importing functions in some specific conditions.<br/>
+* Fixed a bug in partial reverse engineering that was not importing some objects' dependencies correctly.<br/>
+* Fixed a bug in the appearance configuration widget that was not updating the example model colors when changing the UI theme.<br/>
+* Fixed a crash when double-clicking the overview widget.<br/>
+* Fixed the data dictionary schema files for tables and views.<br/>
+* Fixed a bug in the database model that was causing FK relationships of a hidden layer to be displayed after loading the model.<br/>
+* Fixed a bug in the scene move action that was causing the grid to not be displayed after a panning/wheel move.<br/>
 
-**Backup utility plugin:** This version introduces the backup utility plugin, available in the paid version of the tool, which implements a user-friendly interface for the commands _pg_dump_, _pg_dumpall_, _pg_restore_ and _psql_ commands. This extra feature was developed mainly focused on attending to those users less comfortable with command-line tools, being possible to dump and restore databases without leaving pgModeler's GUI. Of course, advanced users are welcome to use the plugin and help to improve it! In a nutshell, besides configuring the backup tools parameters with a simple form, it allows the creation of presets per backup tool for different needs, it also has some facilities that automate the backup file name generation by using a default backup folder and name patterns.<br/>
+**SQL session plugin:** This version introduces the SQL session plugin, available in the paid version of the tool, which implements simple routines to save the current opened SQL command execution sessions in a specific configuration file which can be restored in the next pgModeler execution by clicking the action "Restore SQL session", close to the connections combo box, in the Manage view.<br/>
 
 Finally, for more detailed information about this release's changelog, please, refer to the CHANGELOG.md file.

@@ -26,6 +26,16 @@ TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 
 void TableView::configureObject()
 {
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
+
+	if(!BaseGraphicObject::isUpdatesEnabled() ||
+			(!pending_geom_update &&
+			 !curr_hash_code.isEmpty() &&
+			 (curr_hash_code == table->getHashCode())))
+		return;
+
+	curr_hash_code = table->getHashCode();
+
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
 	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
@@ -35,7 +45,6 @@ void TableView::configureObject()
 		return;
 	}
 
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;

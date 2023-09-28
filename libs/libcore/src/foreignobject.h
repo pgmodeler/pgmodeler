@@ -27,7 +27,6 @@
 
 #include "coreglobal.h"
 #include "attribsmap.h"
-#include "schemaparser.h"
 
 class __libcore ForeignObject {
 	protected:
@@ -42,6 +41,8 @@ class __libcore ForeignObject {
 		static const QString OptionValueSeparator;
 
 		ForeignObject();
+
+		virtual ~ForeignObject(){}
 
 		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);

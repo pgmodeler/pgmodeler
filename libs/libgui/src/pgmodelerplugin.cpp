@@ -17,6 +17,7 @@
 */
 
 #include "pgmodelerplugin.h"
+#include "guiutilsns.h"
 
 PgModelerPlugin::PgModelerPlugin()
 {

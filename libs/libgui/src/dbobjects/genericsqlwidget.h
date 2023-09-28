@@ -30,6 +30,7 @@
 #include "codecompletionwidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
+#include "widgets/numberedtexteditor.h"
 
 class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:

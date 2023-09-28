@@ -56,6 +56,7 @@ class __libcore OperatorClass: public BaseObject {
 
 	public:
 		OperatorClass();
+
 		virtual ~OperatorClass();
 
 		//! \brief Sets the data type that the operator class works on
@@ -89,6 +90,8 @@ class __libcore OperatorClass: public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getSignature(bool format=true) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

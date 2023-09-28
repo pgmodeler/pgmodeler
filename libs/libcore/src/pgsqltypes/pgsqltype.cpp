@@ -18,6 +18,7 @@
 
 #include "pgsqltype.h"
 #include "attributes.h"
+#include "../baseobject.h"
 
 std::vector<UserTypeConfig> PgSqlType::user_types;
 
@@ -55,12 +56,15 @@ QStringList PgSqlType::type_names =
 	"gidx", "spheroid", "valid_detail",
 
 	//Range-types
-	//offsets 83 to 88
+	//offsets 83 to 93
 	"int4range", "int8range", "numrange",
 	"tsrange","tstzrange","daterange",
+	"int4multirange","int8multirange",
+	"nummultirange", "tsmultirange",
+	"tstzmultirange",
 
 	//Object Identification type (OID)
-	//offsets 89 to 103
+	//offsets 94 to 108
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regrole", "regnamespace", "regtype",
@@ -68,10 +72,11 @@ QStringList PgSqlType::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 104 to 118
+	//offsets 109 to 124
 	"\"any\"","anyarray","anyelement","anyenum",
 	"anynonarray", "anyrange", "cstring","internal","language_handler",
-	"record","trigger","void","opaque", "fdw_handler", "event_trigger"
+	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
+	"anymultirange"
 };
 
 PgSqlType::PgSqlType()
@@ -85,12 +90,12 @@ PgSqlType::PgSqlType(const QString &type_name) : PgSqlType()
 	setType(type_name);
 }
 
-PgSqlType::PgSqlType(void *ptype) : PgSqlType()
+PgSqlType::PgSqlType(BaseObject *ptype) : PgSqlType()
 {
 	setUserType(ptype);
 }
 
-PgSqlType::PgSqlType(void *ptype, unsigned dimension, unsigned length, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
+PgSqlType::PgSqlType(BaseObject *ptype, unsigned dimension, unsigned length, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	setUserType(ptype);
 	setDimension(dimension);
@@ -337,20 +342,23 @@ unsigned PgSqlType::operator = (const QString &type_name)
 	return setType(type_name);
 }
 
-void *PgSqlType::getUserTypeReference()
+BaseObject *PgSqlType::getObject()
 {
 	if(this->isUserType())
-		return (user_types[this->type_idx - (PseudoEnd + 1)].ptype);
-	else
-		return nullptr;
+	{
+		return reinterpret_cast<BaseObject *>(
+				user_types[this->type_idx - (PseudoEnd + 1)].ptype);
+	}
+
+	return nullptr;
 }
 
 unsigned PgSqlType::getUserTypeConfig()
 {
 	if(this->isUserType())
 		return (user_types[this->type_idx - (PseudoEnd + 1)].type_conf);
-	else
-		return PgSqlType::Null;
+
+	return PgSqlType::Null;
 }
 
 unsigned PgSqlType::getTypeId()
@@ -440,12 +448,12 @@ QStringList PgSqlType::getTypes()
 	return TemplateType<PgSqlType>::getTypes(type_names);
 }
 
-bool PgSqlType::isRegistered(const QString &type, void *pmodel)
+bool PgSqlType::isRegistered(const QString &type, DatabaseModel *pmodel)
 {
 	if(getBaseTypeIndex(type)!=PgSqlType::Null)
 		return true;
-	else
-		return (getUserTypeIndex(type, nullptr, pmodel)!=PgSqlType::Null);
+
+	return (getUserTypeIndex(type, nullptr, pmodel)!=PgSqlType::Null);
 }
 
 bool PgSqlType::operator == (unsigned type_id)
@@ -478,7 +486,7 @@ bool PgSqlType::operator == (PgSqlType type)
 	return (type_idx == type.type_idx);
 }
 
-bool PgSqlType::operator == (void *ptype)
+bool PgSqlType::operator == (BaseObject *ptype)
 {
 	int idx = getUserTypeIndex("", ptype);
 	return (static_cast<int>(type_idx) == idx);
@@ -509,7 +517,7 @@ bool PgSqlType::isPseudoType()
 	return (type_idx>=PseudoStart && type_idx<=PseudoEnd);
 }
 
-unsigned PgSqlType::operator << (void *ptype)
+unsigned PgSqlType::operator << (BaseObject *ptype)
 {
 	return setUserType(ptype);
 }
@@ -544,7 +552,7 @@ unsigned PgSqlType::setUserType(unsigned type_id)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-unsigned PgSqlType::setUserType(void *ptype)
+unsigned PgSqlType::setUserType(BaseObject *ptype)
 {
 	int idx = getUserTypeIndex("", ptype);
 
@@ -555,7 +563,7 @@ unsigned PgSqlType::setUserType(void *ptype)
 	return type_idx;
 }
 
-void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel, UserTypeConfig::TypeConf type_conf)
+void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf)
 {
 	if(!type_name.isEmpty() && ptype && pmodel &&
 			/*(type_conf==UserTypeConfig::DomainType ||
@@ -578,7 +586,7 @@ void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 	}
 }
 
-void PgSqlType::removeUserType(const QString &type_name, void *ptype)
+void PgSqlType::removeUserType(const QString &type_name, BaseObject *ptype)
 {
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype)
@@ -603,7 +611,7 @@ void PgSqlType::removeUserType(const QString &type_name, void *ptype)
 	}
 }
 
-void PgSqlType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
+void PgSqlType::renameUserType(const QString &type_name, BaseObject *ptype, const QString &new_name)
 {
 	if(PgSqlType::user_types.size() > 0 &&
 			!type_name.isEmpty() && ptype && type_name!=new_name)
@@ -625,7 +633,7 @@ void PgSqlType::renameUserType(const QString &type_name, void *ptype,const QStri
 	}
 }
 
-void PgSqlType::removeUserTypes(void *pmodel)
+void PgSqlType::removeUserTypes(DatabaseModel *pmodel)
 {
 	if(pmodel)
 	{
@@ -659,7 +667,7 @@ unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 	return getType(aux_name, type_names);
 }
 
-unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
+unsigned PgSqlType::getUserTypeIndex(const QString &type_name, BaseObject* ptype, DatabaseModel* pmodel)
 {
 	if(user_types.size() > 0 && (!type_name.isEmpty() || ptype))
 	{
@@ -703,7 +711,7 @@ QString PgSqlType::getUserTypeName(unsigned type_id)
 		return "";
 }
 
-void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(QStringList &type_list, DatabaseModel *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx,total;
 
@@ -719,7 +727,7 @@ void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 	}
 }
 
-void PgSqlType::getUserTypes(std::vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(std::vector<BaseObject *> &ptypes, DatabaseModel *pmodel, unsigned inc_usr_types)
 {
 	unsigned idx, total;
 
@@ -810,7 +818,10 @@ bool PgSqlType::isRangeType()
 	return (!isUserType() &&
 					(curr_type=="int4range" || curr_type=="int8range" ||
 					 curr_type=="numrange" ||	curr_type=="tsrange" ||
-					 curr_type=="tstzrange" || curr_type=="daterange"));
+					 curr_type=="tstzrange" || curr_type=="daterange" ||
+					 curr_type=="int4multirange" || curr_type=="int8multirange" ||
+					 curr_type=="nummultirange" || curr_type=="tsmultirange" ||
+					 curr_type=="tstzmultirange"));
 }
 
 bool PgSqlType::isSerialType()

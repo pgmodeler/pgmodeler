@@ -17,6 +17,7 @@
 */
 
 #include "typewidget.h"
+#include "guiutilsns.h"
 
 TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Type)
 {

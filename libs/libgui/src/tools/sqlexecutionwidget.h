@@ -28,12 +28,10 @@
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
-#include "databaseimportform.h"
 #include "widgets/findreplacewidget.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "widgets/findreplacewidget.h"
-#include "utils/resultsetmodel.h"
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
@@ -110,6 +108,12 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		//! \brief Insert the provided sql commands in the input field. This method clears the current commands before adding new content
 		void setSQLCommand(const QString &sql);
+
+		//! \brief Returns true when there is a SQL command typed, otherwise, false is returned
+		bool hasSQLCommand();
+
+		//! \brief Returns the currently typed command
+		QString getSQLCommand();
 
 		/*! \brief Fills up the results grid based upon the specified result set.
 		 * The parameter store_data will make each item store the text as its data. */

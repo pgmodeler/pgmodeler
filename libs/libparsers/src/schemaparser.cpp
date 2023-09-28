@@ -19,7 +19,8 @@
 #include "schemaparser.h"
 #include "attributes.h"
 #include "utilsns.h"
-#include "xmlparser.h"
+#include "pgsqlversions.h"
+#include "exception.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';

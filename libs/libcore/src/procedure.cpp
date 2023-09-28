@@ -73,3 +73,8 @@ QString Procedure::getAlterCode(BaseObject *object)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
+
+void Procedure::updateDependencies()
+{
+	BaseFunction::updateDependencies({});
+}

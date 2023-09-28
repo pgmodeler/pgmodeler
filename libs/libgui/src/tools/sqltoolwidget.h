@@ -27,11 +27,6 @@
 
 #include "ui_sqltoolwidget.h"
 #include "utils/syntaxhighlighter.h"
-#include "connection.h"
-#include "databaseimportform.h"
-#include "datamanipulationform.h"
-#include "widgets/findreplacewidget.h"
-#include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "databaseexplorerwidget.h"
 #include "sqlexecutionwidget.h"
@@ -47,6 +42,8 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		NumberedTextEditor *sourcecode_txt;
 
 		SyntaxHighlighter *sourcecode_hl;
+
+		bool ignore_auto_browse_flag;
 
 		/*! \brief Controls the link between a database explorer instance and SQL execution widgets.
 		When a database explorer is closed all the SQL execution panes related to it are closed too.
@@ -68,12 +65,27 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Indicates if there is at least one database being browsed through explorer widget
 		bool hasDatabasesBrowsed();
 
+		//! \brief Indicates if there is at least one SQL execution panel with typed commands
+		bool hasSQLExecutionPanels();
+
+		//! \brief Returns the list of execution tabs associated to the specified database explorer widget
+		QWidgetList getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt);
+
+		/*! \brief Indicates if SQL tool must ignore the auto-browse flag of the connections.
+		 * This causes a selected connection with auto-browse=true to not open an instance of
+		 * the maintanance database. Also, it causes the selected database in database_cmb to not
+		 * create an empty SQL explorer tab */
+		void ignoreAutoBrowseFlag(bool value);
+
 	public slots:
 		void configureSnippets();
 		void clearDatabases();
 
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
 		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = "");
+
+		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
+		void closeDatabaseExplorer(int idx, bool confirm_close);
 
 	protected slots:
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
@@ -98,11 +110,8 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Show the provided code in the source panel
 		void showSourceCode(const QString &source);
 
-		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
-		void closeDatabaseExplorer(int idx);
-
 		//! \brief Close the SQL execution tab specified by its index
-		void closeSQLExecutionTab(int idx);
+		void closeSQLExecutionTab(int idx, bool confirm_close);
 
 		//! \brief Drops the database selected in the database combo
 		void dropDatabase(int database_idx);

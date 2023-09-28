@@ -34,6 +34,8 @@ class __libcore PartitionKey: public Element {
 	public:
 		PartitionKey();
 
+		virtual ~PartitionKey(){}
+
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);
 
@@ -42,6 +44,8 @@ class __libcore PartitionKey: public Element {
 
 		//! \brief Returns the SQL / XML code definition for the partition key
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the PartitionKey class as a Qt MetaType in order to make

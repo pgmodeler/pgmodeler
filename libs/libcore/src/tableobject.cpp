@@ -17,6 +17,7 @@
 */
 
 #include "tableobject.h"
+#include "utilsns.h"
 
 TableObject::TableObject()
 {
@@ -103,12 +104,26 @@ void TableObject::operator = (TableObject &object)
 	this->decl_in_table=object.decl_in_table;
 }
 
+void TableObject::generateHashCode()
+{
+	hash_code = UtilsNs::getStringHash(obj_name + QString::number(sql_disabled));
+}
+
+QString TableObject::getHashCode()
+{
+	return hash_code;
+}
+
 void TableObject::setCodeInvalidated(bool value)
 {
 	if(parent_table)
+	{
 		parent_table->BaseObject::setCodeInvalidated(value);
+		parent_table->resetHashCode();
+	}
 
 	BaseObject::setCodeInvalidated(value);
+	generateHashCode();
 }
 
 QString TableObject::getDropCode(bool cascade)

@@ -29,7 +29,6 @@
 #include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include "ui_aboutwidget.h"
-#include "globalattributes.h"
 
 class __libgui AboutWidget: public QWidget, public Ui::AboutWidget {
 	private:

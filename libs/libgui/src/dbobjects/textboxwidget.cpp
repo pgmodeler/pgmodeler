@@ -79,6 +79,9 @@ void TextboxWidget::applyConfiguration()
 		txtbox->setTextColor(color_select_tb->palette().color(QPalette::Button));
 		txtbox->setFontSize(font_size_sb->value());
 
+		if(txtbox->getTextWidth() <= 0)
+			txtbox->setTextWidth(text_txt->viewport()->width());
+
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}

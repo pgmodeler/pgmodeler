@@ -17,6 +17,7 @@
 */
 
 #include "policywidget.h"
+#include "guiutilsns.h"
 
 PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Policy)
 {

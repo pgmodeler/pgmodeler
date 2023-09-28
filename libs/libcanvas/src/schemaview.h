@@ -26,9 +26,7 @@
 #define SCHEMA_VIEW_H
 
 #include "schema.h"
-#include "databasemodel.h"
 #include "baseobjectview.h"
-#include "textboxview.h"
 #include "roundedrectitem.h"
 
 class __libcanvas SchemaView: public BaseObjectView {

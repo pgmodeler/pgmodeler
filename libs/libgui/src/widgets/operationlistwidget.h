@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_operationlistwidget.h"
 #include "modelwidget.h"
-#include "messagebox.h"
 
 class __libgui OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	private:

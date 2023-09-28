@@ -31,6 +31,14 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 
 void GraphicalView::configureObject()
 {
+	View *view = dynamic_cast<View *>(this->getUnderlyingObject());
+
+	if(!BaseGraphicObject::isUpdatesEnabled() ||
+			(!pending_geom_update && !curr_hash_code.isEmpty() && curr_hash_code == view->getHashCode()))
+		return;
+
+	curr_hash_code = view->getHashCode();
+
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
 	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
@@ -40,7 +48,6 @@ void GraphicalView::configureObject()
 		return;
 	}
 
-	View *view=dynamic_cast<View *>(this->getUnderlyingObject());
 	int i = 0, count = 0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;

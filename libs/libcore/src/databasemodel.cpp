@@ -22,6 +22,7 @@
 #include <QtDebug>
 #include <random>
 #include "utilsns.h"
+#include "doublenan.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -446,6 +447,25 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 			object->getSourceCode(SchemaParser::XmlCode);
 		else
 			object->getSourceCode(SchemaParser::SqlCode);
+
+		//#warning "Updating objects deps after adding to model"
+		object->updateDependencies();
+
+		BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
+
+		if(graph_obj)
+		{
+		/* Validating the object's layers. If one or more layers are invalid then the object will be
+		 * moved to the default layer (idx = 0) */
+			for(auto &layer_id : graph_obj->getLayers())
+			{
+				if(layer_id >= layers.size())
+				{
+					graph_obj->removeFromLayer(layer_id);
+					graph_obj->addToLayer(0);
+				}
+			}
+		}
 	}
 	catch(Exception &e)
 	{
@@ -494,7 +514,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 
 			//Get the table references
 			if(check_refs)
-				getObjectReferences(object, refs, true, true);
+				refs = object->getReferences();
 
 			//If there are objects referencing the table
 			if(!refs.empty())
@@ -540,6 +560,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 			}
 		}
 
+		object->clearAllDepsRefs();
 		object->setDatabase(nullptr);
 		emit s_objectRemoved(object);
 	}
@@ -760,6 +781,9 @@ void DatabaseModel::destroyObjects()
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
 
+	BaseObject::setClearDepsInDtor(false);
+	BaseGraphicObject::setUpdatesEnabled(false);
+
 	for(unsigned i=0; i < 5; i++)
 	{
 		for(auto &object : *this->getObjectList(graph_types[i]))
@@ -840,6 +864,9 @@ void DatabaseModel::destroyObjects()
 		for(auto type : rem_obj_types)
 			getObjectList(type)->clear();
 	}
+
+	BaseGraphicObject::setUpdatesEnabled(true);
+	BaseObject::setClearDepsInDtor(true);
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)
@@ -1356,19 +1383,19 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		BaseRelationship *rel=nullptr;
 		unsigned idx;
 		std::vector<Constraint *> fks;
-		std::vector<BaseObject *>::iterator itr1, itr1_end;
+				std::vector<BaseObject *>::iterator itr, itr_end;
 
 		table->getForeignKeys(fks);
 
 		/* First remove the invalid relationships (the foreign key that generates the
 			relationship no longer exists) */
-		itr1=base_relationships.begin();
-		itr1_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr1!=itr1_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr1);
+						rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
 					(rel->getTable(BaseRelationship::SrcTable)==table ||
@@ -1392,28 +1419,28 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					 (table->getObjectIndex(fk) < 0 && fk->getReferencedTable() == ref_tab))
 				{
 					removeRelationship(rel);
-					itr1=base_relationships.begin() + idx;
-					itr1_end=base_relationships.end();
+					itr=base_relationships.begin() + idx;
+					itr_end=base_relationships.end();
 				}
 				else
 				{
 					rel->setModified(!loading_model);
-					itr1++; idx++;
+					itr++; idx++;
 				}
 			}
 			else
 			{
-				itr1++; idx++;
+				itr++; idx++;
 			}
 		}
 
 		//Creating the relationships from the foreign keys
 		for(auto &fk : fks)
 		{
-			ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
+			ref_tab = dynamic_cast<Table *>(fk->getReferencedTable());
 
-			//Only creates the relationship if does'nt exist one between the tables
-			rel=getRelationship(table, ref_tab, fk);
+			//Only creates the relationship if doesn't exist one between the tables
+			rel = getRelationship(table, ref_tab, fk);
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
@@ -1455,12 +1482,30 @@ void DatabaseModel::updateTablesFKRelationships()
 	}
 }
 
+void DatabaseModel::restoreFKRelationshipLayers()
+{
+	BaseRelationship *rel = nullptr;
+
+	for(auto &obj : base_relationships)
+	{
+		rel = dynamic_cast<BaseRelationship *>(obj);
+
+		if(rel->getRelationshipType() != BaseRelationship::RelationshipFk ||
+			 !fk_rel_layers.count(rel->getName()))
+			continue;
+
+		rel->setLayers(fk_rel_layers.at(rel->getName()));
+	}
+
+	fk_rel_layers.clear();
+}
+
 void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
-	PhysicalTable *table=nullptr;
-	BaseRelationship *rel=nullptr;
+	PhysicalTable *table = nullptr;
+	BaseRelationship *rel = nullptr;
 	Reference ref;
-	unsigned i, ref_count, idx;
+	unsigned i = 0, ref_count = 0, idx = 0;
 	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::vector<PhysicalTable *> tables;
 
@@ -1470,16 +1515,16 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
-					rel->getTable(BaseRelationship::DstTable)==view)
+				 rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				removeRelationship(rel);
 				itr=base_relationships.begin() + idx;
@@ -1495,13 +1540,13 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	{
 		/* Remove the relationships between tables and the view
 		 when this latter doesn't reference the first */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
+		itr = base_relationships.begin();
+		itr_end = base_relationships.end();
 
-		idx=0;
-		while(itr!=itr_end)
+		idx = 0;
+		while(itr != itr_end)
 		{
-			rel=dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getTable(BaseRelationship::SrcTable)==view ||
 					rel->getTable(BaseRelationship::DstTable)==view)
@@ -1514,8 +1559,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 				if(!view->isReferencingTable(table))
 				{
 					removeRelationship(rel);
-					itr=base_relationships.begin() + idx;
-					itr_end=base_relationships.end();
+					itr = base_relationships.begin() + idx;
+					itr_end =base_relationships.end();
 				}
 				else
 				{
@@ -1530,8 +1575,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 
 		/* Creates the relationships from the view references
 		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count=view->getReferenceCount(Reference::SqlSelect);
-		for(i=0; i < ref_count; i++)
+		ref_count = view->getReferenceCount(Reference::SqlSelect);
+		for(i = 0; i < ref_count; i++)
 		{
 			table = view->getReference(i, Reference::SqlSelect).getTable();
 			if(table) tables.push_back(table);
@@ -1682,10 +1727,12 @@ void DatabaseModel::validateRelationships()
 	std::vector<Exception> errors;
 	std::map<Relationship *, Exception> rel_errors;
 	std::vector<Relationship *> failed_rels;
-	std::vector<BaseTable *> tabs;
 
 	if(!hasInvalidRelatioships())
 		return;
+
+	if(!loading_model)
+		BaseGraphicObject::setUpdatesEnabled(false);
 
 	//Stores the special objects definition if there is some invalidated relationships
 	if(!loading_model && xml_special_objs.empty())
@@ -1703,11 +1750,6 @@ void DatabaseModel::validateRelationships()
 			rel->blockSignals(true);
 			rel->connectRelationship();
 			rel->blockSignals(false);
-
-			/* Storing the tables here in an auxiliary list so we can
-			 * update their geometry and their parent schemas rectangles */
-			tabs.push_back(rel->getTable(Relationship::SrcTable));
-			tabs.push_back(rel->getTable(Relationship::DstTable));
 		}
 		catch(Exception &)
 		{
@@ -1756,30 +1798,6 @@ void DatabaseModel::validateRelationships()
 	//Recreating the special objects that depends on the columns created by relationshps
 	errors = createSpecialObjects();
 
-	if(!loading_model && !schemas.empty())
-	{
-		std::vector<Schema *> schs;
-
-		std::sort(tabs.begin(), tabs.end());
-		auto tab_end = std::unique(tabs.begin(), tabs.end());
-		tabs.erase(tab_end, tabs.end());
-
-		// Updating the tables to reflect their sizes due to the creationg of new columns/constraints
-		for(auto &tab : tabs)
-		{
-			tab->setModified(true);
-			schs.push_back(dynamic_cast<Schema *>(tab->getSchema()));
-		}
-
-		std::sort(schs.begin(), schs.end());
-		auto sch_end = std::unique(schs.begin(), schs.end());
-		schs.erase(sch_end, schs.end());
-
-		//Updates the schemas to ajdust its sizes due to the tables resizings
-		for(auto &sch : schs)
-			sch->setModified(true);
-	}
-
 	if(!loading_model)
 	{
 		for(auto &tab : tables)
@@ -1806,13 +1824,17 @@ void DatabaseModel::validateRelationships()
 			if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
 				this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable)));
 		}
-
-		//Set all the model objects as modified to force the redraw of the entire model
-		setObjectsModified();
-
-		//Redirects all the errors captured on the revalidation
-		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 	}
+
+	if(!loading_model)
+	{
+		//Set all the model objects as modified to force the redraw of the entire model
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified();
+	}
+
+	if(!errors.empty())
+		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -2079,7 +2101,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
 							removeRelationship(rel);
 							invalid_special_objs.push_back(rel);
-							//delete rel;
 						}
 					}
 				}
@@ -2092,12 +2113,10 @@ void DatabaseModel::storeSpecialObjectsXML()
 					xml_special_objs[obj->getObjectId()]=obj->getSourceCode(SchemaParser::XmlCode);
 					view->removeObject(obj);
 					invalid_special_objs.push_back(obj);
-					//delete obj;
 				}
 
 				removeView(view);
 				invalid_special_objs.push_back(view);
-				//delete view;
 			}
 		}
 
@@ -2972,6 +2991,7 @@ void DatabaseModel::addPermission(Permission *perm)
 
 		permissions.push_back(perm);
 		perm->setDatabase(this);
+		perm->updateDependencies();
 	}
 	catch(Exception &e)
 	{
@@ -3187,268 +3207,261 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 
 void DatabaseModel::loadModel(const QString &filename)
 {
-	if(!filename.isEmpty())
+	if(filename.isEmpty())
+		return;
+
+	BaseGraphicObject::setUpdatesEnabled(false);
+
+	QString dtd_file, str_aux, elem_name;
+	ObjectType obj_type;
+	attribs_map attribs;
+	BaseObject *object=nullptr;
+	bool protected_model=false;
+	QStringList pos_str;
+	std::map<ObjectType, QString> def_objs;
+
+	//Configuring the path to the base path for objects DTD
+	dtd_file=GlobalAttributes::getSchemasRootPath() +
+					 GlobalAttributes::DirSeparator +
+					 GlobalAttributes::XMLSchemaDir +
+					 GlobalAttributes::DirSeparator +
+					 GlobalAttributes::ObjectDTDDir +
+					 GlobalAttributes::DirSeparator;
+
+	try
 	{
-		QString dtd_file, str_aux, elem_name;
-		ObjectType obj_type;
-		attribs_map attribs;
-		BaseObject *object=nullptr;
-		bool protected_model=false; //, found_inh_rel = false;
-		QStringList pos_str;
-		std::map<ObjectType, QString> def_objs;
+		loading_model=true;
+		xmlparser.restartParser();
 
-		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::getSchemasRootPath() +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::XMLSchemaDir +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::ObjectDTDDir +
-						 GlobalAttributes::DirSeparator;
+		//Loads the root DTD
+		xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
+							 GlobalAttributes::ObjectDTDExt,
+							 GlobalAttributes::RootDTD);
 
-		try
+		//Loads the file validating it against the root DTD
+		xmlparser.loadXMLFile(filename);
+
+		//Gets the basic model information
+		xmlparser.getElementAttributes(attribs);
+
+		setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
+
+		this->author=attribs[Attributes::ModelAuthor];
+
+		pos_str=attribs[Attributes::LastPosition].split(',');
+
+		if(pos_str.size()>=2)
+			this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
+
+		this->last_zoom=attribs[Attributes::LastZoom].toDouble();
+		if(this->last_zoom <= 0) this->last_zoom=1;
+
+		this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
+		this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
+												 attribs[Attributes::AllowConns] == Attributes::True);
+
+		persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
+
+		/* Compatibility with models created prior the multiple layers features:
+		 * We need to replace semi-colon by comma in the attribute Layers in order to split the
+		 * string correctly, otherwise, the model will have only one layer no matter the amount of
+		 * layers created preivously (in an older version) */
+		layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
+		attribs[Attributes::ActiveLayers].replace(';',',');
+
+		layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
+		layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
+
+		is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
+		is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
+
+		/*  Compatibility with models created prior the layers features:
+		 * If the layer rect colors is empty (probably a model generated in an older version)
+		 * we create random colors as fallback */
+
+		// Forcing the creation of the default layer is not present
+		if(layers.isEmpty())
+			layers.push_back(tr("Default layer"));
+
+		if(layer_rect_colors.size() != layers.size())
 		{
-			loading_model=true;
-			xmlparser.restartParser();
+			std::random_device rand_seed;
+			std::default_random_engine rand_num_engine;
+			std::uniform_int_distribution<unsigned> dist(0,255);
 
-			//Loads the root DTD
-			xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
-								 GlobalAttributes::ObjectDTDExt,
-								 GlobalAttributes::RootDTD);
+			layer_name_colors.clear();
+			layer_rect_colors.clear();
+			rand_num_engine.seed(rand_seed());
 
-			//Loads the file validating it against the root DTD
-			xmlparser.loadXMLFile(filename);
-
-			//Gets the basic model information
-			xmlparser.getElementAttributes(attribs);
-
-			setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
-
-			this->author=attribs[Attributes::ModelAuthor];
-
-			pos_str=attribs[Attributes::LastPosition].split(',');
-
-			if(pos_str.size()>=2)
-				this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
-
-			this->last_zoom=attribs[Attributes::LastZoom].toDouble();
-			if(this->last_zoom <= 0) this->last_zoom=1;
-
-			this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
-			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
-													 attribs[Attributes::AllowConns] == Attributes::True);
-
-			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-
-			/* Compatibility with models created prior the multiple layers features:
-			 * We need to replace semi-colon by comma in the attribute Layers in order to split the
-			 * string correctly, otherwise, the model will have only one layer no matter the amount of
-			 * layers created preivously (in an older version) */
-			layers = attribs[Attributes::Layers].replace(';',',').split(',', Qt::SkipEmptyParts);
-			attribs[Attributes::ActiveLayers].replace(';',',');
-
-			layer_name_colors = attribs[Attributes::LayerNameColors].split(',', Qt::SkipEmptyParts);
-			layer_rect_colors = attribs[Attributes::LayerRectColors].split(',', Qt::SkipEmptyParts);
-
-			is_layer_names_visible = attribs[Attributes::ShowLayerNames] == Attributes::True;
-			is_layer_rects_visible = attribs[Attributes::ShowLayerRects] == Attributes::True;
-
-			/*  Compatibility with models created prior the layers features:
-			 * If the layer rect colors is empty (probably a model generated in an older version)
-			 * we create random colors as fallback */
-
-			// Forcing the creation of the default layer is not present
-			if(layers.isEmpty())
-				layers.push_back(tr("Default layer"));
-
-			if(layer_rect_colors.size() != layers.size())
+			for(int i = 0; i < layers.size(); i++)
 			{
-				std::random_device rand_seed;
-				std::default_random_engine rand_num_engine;
-				std::uniform_int_distribution<unsigned> dist(0,255);
+				layer_rect_colors.append(QColor(dist(rand_num_engine),
+																				dist(rand_num_engine),
+																				dist(rand_num_engine)).name());
 
-				layer_name_colors.clear();
-				layer_rect_colors.clear();
-				rand_num_engine.seed(rand_seed());
-
-				for(int i = 0; i < layers.size(); i++)
-				{
-					layer_rect_colors.append(QColor(dist(rand_num_engine),
-																					dist(rand_num_engine),
-																					dist(rand_num_engine)).name());
-
-					layer_name_colors.append(QColor(0,0,0).name());
-				}
+				layer_name_colors.append(QColor(0,0,0).name());
 			}
+		}
 
-			/* Compatibility with models created prior the layers features:
-			 * If the "active-layers" is absent we make the default layer always visible */
-			active_layers.clear();
+		/* Compatibility with models created prior the layers features:
+		 * If the "active-layers" is absent we make the default layer always visible */
+		active_layers.clear();
 
-			for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
+		for(auto &layer_id : attribs[Attributes::ActiveLayers].split(',', Qt::SkipEmptyParts))
+		{
+			if(layer_id.toInt() >= layers.size())
+				continue;
+
+			active_layers.push_back(layer_id.toInt());
+		}
+
+		if(active_layers.isEmpty())
+			active_layers.push_back(0);
+
+		/* Perfoming size validations between the layer color lists and the layers lists
+		 * The excessive items from both list are removed until their sizes matches
+		 * the layers list */
+		while(layer_name_colors.size() > layers.size())
+			layer_name_colors.removeLast();
+
+		while(layer_rect_colors.size() > layers.size())
+			layer_rect_colors.removeLast();
+
+		protected_model=(attribs[Attributes::Protected]==Attributes::True);
+
+		def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
+		def_objs[ObjectType::Role]=attribs[Attributes::DefaultOwner];
+		def_objs[ObjectType::Collation]=attribs[Attributes::DefaultCollation];
+		def_objs[ObjectType::Tablespace]=attribs[Attributes::DefaultTablespace];
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
 			{
-				if(layer_id.toInt() >= layers.size())
-					continue;
-
-				active_layers.push_back(layer_id.toInt());
-			}
-
-			if(active_layers.isEmpty())
-				active_layers.push_back(0);
-
-			/* Perfoming size validations between the layer color lists and the layers lists
-			 * The excessive items from both list are removed until their sizes matches
-			 * the layers list */
-			while(layer_name_colors.size() > layers.size())
-				layer_name_colors.removeLast();
-
-			while(layer_rect_colors.size() > layers.size())
-				layer_rect_colors.removeLast();
-
-			protected_model=(attribs[Attributes::Protected]==Attributes::True);
-
-			def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
-			def_objs[ObjectType::Role]=attribs[Attributes::DefaultOwner];
-			def_objs[ObjectType::Collation]=attribs[Attributes::DefaultCollation];
-			def_objs[ObjectType::Tablespace]=attribs[Attributes::DefaultTablespace];
-
-			if(xmlparser.accessElement(XmlParser::ChildElement))
-			{
-				do
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+					elem_name=xmlparser.getElementName();
+
+					//Indentifies the object type to be load according to the current element on the parser
+					obj_type=getObjectType(elem_name);
+
+					if(elem_name == Attributes::Changelog)
 					{
-						elem_name=xmlparser.getElementName();
+						attribs_map entry_attr;
+						xmlparser.savePosition();
 
-						//Indentifies the object type to be load according to the current element on the parser
-						obj_type=getObjectType(elem_name);
-
-						if(elem_name == Attributes::Changelog)
+						if(xmlparser.accessElement(XmlParser::ChildElement))
 						{
-							attribs_map entry_attr;
-							xmlparser.savePosition();
-
-							if(xmlparser.accessElement(XmlParser::ChildElement))
+							do
 							{
-								do
-								{
-									xmlparser.getElementAttributes(entry_attr);
-									addChangelogEntry(entry_attr[Attributes::Signature], entry_attr[Attributes::Type],
-																		entry_attr[Attributes::Action], entry_attr[Attributes::Date]);
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
+								xmlparser.getElementAttributes(entry_attr);
+								addChangelogEntry(entry_attr[Attributes::Signature], entry_attr[Attributes::Type],
+																	entry_attr[Attributes::Action], entry_attr[Attributes::Date]);
+							}
+							while(xmlparser.accessElement(XmlParser::NextElement));
+						}
+
+						xmlparser.restorePosition();
+					}
+					else if(obj_type==ObjectType::Database)
+					{
+						xmlparser.getElementAttributes(attribs);
+						configureDatabase(attribs);
+					}
+					else
+					{
+						try
+						{
+							//Saves the current position of the parser before create any object
+							xmlparser.savePosition();
+							object=createObject(obj_type);
+
+							if(object)
+							{
+								if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
+									addObject(object);
+
+								emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
+													tr("Loading: `%1' (%2)")
+													.arg(object->getName())
+													.arg(object->getTypeName()),
+													enum_t(obj_type));
 							}
 
 							xmlparser.restorePosition();
 						}
-						else if(obj_type==ObjectType::Database)
+						catch(Exception &e)
 						{
-							xmlparser.getElementAttributes(attribs);
-							configureDatabase(attribs);
-						}
-						else
-						{
-							try
-							{
-								//Saves the current position of the parser before create any object
-								xmlparser.savePosition();
-								object=createObject(obj_type);
-
-								if(object)
-								{
-									if(!dynamic_cast<TableObject *>(object) && obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
-										addObject(object);
-
-									/* If there is at least one inheritance relationship we need to flag this situation
-									 in order to do an addtional rel. validation in the end of loading */
-									/* if(!found_inh_rel && object->getObjectType()==ObjectType::Relationship &&
-											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
-										found_inh_rel=true; */
-
-									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-														tr("Loading: `%1' (%2)")
-														.arg(object->getName())
-														.arg(object->getTypeName()),
-														enum_t(obj_type));
-								}
-
-								xmlparser.restorePosition();
-							}
-							catch(Exception &e)
-							{
-								QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
-								throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
-							}
+							QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+							throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 						}
 					}
 				}
-				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
-
-			this->BaseObject::setProtected(protected_model);
-
-			//Validating default objects
-			for(auto &itr : def_objs)
-			{
-				if(!itr.second.isEmpty())
-				{
-					object=this->getObject(itr.second, itr.first);
-
-					if(!object)
-						throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-										.arg(this->getName())
-										.arg(this->getTypeName())
-										.arg(itr.second)
-										.arg(BaseObject::getTypeName(itr.first)),
-										ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-					this->setDefaultObject(object);
-				}
-				else
-					this->setDefaultObject(nullptr, itr.first);
-			}
-
-			loading_model=false;
-
-			//If there are relationship make a relationship validation to recreate any special object left behind
-			if(!relationships.empty())
-			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
-				storeSpecialObjectsXML();
-				disconnectRelationships();
-				validateRelationships();
-			}
-
-			this->setInvalidated(false);
-			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
-
-			//Doing another relationship validation when there are inheritances to avoid incomplete tables
-			/* if(found_inh_rel)
-			{
-				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
-				validateRelationships();
-			} */
-
-			updateTablesFKRelationships();
-			emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
-			this->setObjectsModified();
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
-		catch(Exception &e)
+
+		this->BaseObject::setProtected(protected_model);
+
+		//Validating default objects
+		for(auto &itr : def_objs)
 		{
-			QString extra_info;
-			loading_model=false;
-
-			if(xmlparser.getCurrentElement())
-				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
-
-			if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
-				 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+			if(!itr.second.isEmpty())
 			{
-				str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
-				throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+				object=this->getObject(itr.second, itr.first);
+
+				if(!object)
+					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+									.arg(this->getName())
+									.arg(this->getTypeName())
+									.arg(itr.second)
+									.arg(BaseObject::getTypeName(itr.first)),
+									ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+				this->setDefaultObject(object);
 			}
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+				this->setDefaultObject(nullptr, itr.first);
 		}
+
+		loading_model=false;
+
+		//If there are relationship make a relationship validation to recreate any special object left behind
+		if(!relationships.empty())
+		{
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
+			storeSpecialObjectsXML();
+			disconnectRelationships();
+			validateRelationships();
+		}
+
+		this->updateDependencies();
+		this->setInvalidated(false);
+		emit s_objectLoaded(100, tr("Validating relationships..."), enum_t(ObjectType::Relationship));
+
+		updateTablesFKRelationships();
+		restoreFKRelationshipLayers();
+
+		BaseGraphicObject::setUpdatesEnabled(true);
+		setObjectsModified();
+		emit s_objectLoaded(100, tr("Rendering database model..."), enum_t(ObjectType::BaseObject));
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+		loading_model=false;
+
+		if(xmlparser.getCurrentElement())
+			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+
+		if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
+			 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+		{
+			str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
+			throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 }
 
@@ -3634,10 +3647,10 @@ QString DatabaseModel::getErrorExtraInfo()
 	return extra_info;
 }
 
-void DatabaseModel::setLoadingModel(bool value)
+/*void DatabaseModel::setLoadingModel(bool value)
 {
 	loading_model = value;
-}
+}*/
 
 void DatabaseModel::setCancelSaving(bool value)
 {
@@ -4245,7 +4258,7 @@ PgSqlType DatabaseModel::createPgSQLType()
 	unsigned length=1, dimension=0, type_idx=0;
 	int precision=-1;
 	QString name;
-	void *ptype=nullptr;
+	BaseObject *ptype=nullptr;
 	bool with_timezone;
 	IntervalType interv_type;
 	SpatialType spatial_type;
@@ -6857,6 +6870,8 @@ Textbox *DatabaseModel::createTextbox()
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
 
+		txtbox->setTextWidth(attribs[Attributes::Width].toDouble());
+
 		if(!attribs[Attributes::Color].isEmpty())
 			txtbox->setTextColor(QColor(attribs[Attributes::Color]));
 
@@ -6955,6 +6970,14 @@ BaseRelationship *DatabaseModel::createRelationship()
 				base_rel->setName(attribs[Attributes::Name]);
 				base_rel->setAlias(attribs[Attributes::Alias]);
 				addRelationship(base_rel);
+
+				/* Workaround: in very specific cases when the FK relationship is generated from a FK that references
+				 * columns created by a relationship in the referenced table, we have to save the layers information
+				 * of that relatinship because that one can be destroyed and recreated at the end of the loading process
+				 * leading to the loss of the original layer configuration. This way, we store the layers in a special
+				 * map which is read at DatabaseModel::restoreFKRelationshipLayer (called at the end of DatabaseModel::loadModel) */
+				if(loading_model)
+					fk_rel_layers[attribs[Attributes::Name]] = layers;
 
 				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
 				is being created before the fk that represents it or the fk is invalid (inconsistence!). In this case an error is raised. */
@@ -7331,24 +7354,6 @@ Permission *DatabaseModel::createPermission()
 	}
 
 	return perm;
-}
-
-void DatabaseModel::validateColumnRemoval(Column *column)
-{
-	if(column && column->getParentTable())
-	{
-		std::vector<BaseObject *> refs;
-		getObjectReferences(column, refs);
-
-		//Raises an error if there are objects referencing the column
-		if(!refs.empty())
-			throw Exception(Exception::getErrorMessage(ErrorCode::RemDirectReference)
-							.arg(column->getParentTable()->getName(true) + "." + column->getName(true))
-							.arg(column->getTypeName())
-							.arg(refs[0]->getName(true))
-				.arg(refs[0]->getTypeName()),
-				ErrorCode::RemDirectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
 }
 
 void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab)
@@ -7964,7 +7969,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 }
 
 
-void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs)
+/* void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs)
 {
 	std::vector<BaseObject *> dep_objs, chld_objs;
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
@@ -8022,8 +8027,8 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<Base
 			{
 				constr=dynamic_cast<Constraint *>(child);
 
-				/* Columns are discarded but constraint included only if they are included by relationship
-		   or foreign keys in which referenced table resides in the same schema as their parent tables */
+				/// Columns are discarded but constraint included only if they are included by relationship
+			 //or foreign keys in which referenced table resides in the same schema as their parent tables
 				if((!constr && child->getObjectType()!=ObjectType::Column) ||
 						(constr &&
 						 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
@@ -8044,7 +8049,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<Base
 		end=std::unique(objs.begin(), objs.end());
 		objs.erase(end, objs.end());
 	}
-}
+} */
 
 std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
 {
@@ -8052,17 +8057,18 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 		return std::vector<BaseObject *>();
 
 	std::map<unsigned, BaseObject *> objs_map;
-	std::vector<BaseObject *> objs, children;
+	std::vector<BaseObject *> created_objs, children;
 	std::vector<Permission *> perms_aux, perms;
 	std::vector<Role *> roles;
 	PhysicalTable *table=nullptr;
 	Relationship *rel=nullptr;
 	ObjectType obj_type=object->getObjectType();
+	std::vector<BaseObject *> objs_aux;
 
 	if(only_children)
-		objs.push_back(object);
+		created_objs.push_back(object);
 	else
-		__getObjectDependencies(object, objs);
+		created_objs = object->getDependencies();
 
 	/* Include tables generated by many-to-many relationships if their schemas are the same
 	 as the 'object' when this one is a schema too */
@@ -8071,10 +8077,10 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 		if(only_children)
 		{
 			children=getObjects(object);
-			objs.insert(objs.end(), children.begin(), children.end());
+			created_objs.insert(created_objs.end(), children.begin(), children.end());
 		}
 
-		for(BaseObject *obj : relationships)
+		for(auto &obj : relationships)
 		{
 			rel=dynamic_cast<Relationship *>(obj);
 
@@ -8083,9 +8089,12 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 					rel->getGeneratedTable()->getSchema()==object)
 			{
 				if(only_children)
-					objs.push_back(rel->getGeneratedTable());
+					created_objs.push_back(rel->getGeneratedTable());
 				else
-					__getObjectDependencies(rel->getGeneratedTable(), objs);
+				{
+					objs_aux = rel->getGeneratedTable()->getDependencies();
+					created_objs.insert(created_objs.end(), objs_aux.begin(), objs_aux.end());
+				}
 			}
 		}
 	}
@@ -8094,9 +8103,8 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 	{
 		BaseTable *table=nullptr;
 		Constraint *constr=nullptr;
-		std::vector<BaseObject *> objs_aux;
 
-		for(BaseObject *obj : objs)
+		for(auto &obj : created_objs)
 		{
 			table=dynamic_cast<BaseTable *>(obj);
 
@@ -8104,7 +8112,7 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 			{
 				children=table->getObjects();
 
-				for(BaseObject *child : children)
+				for(auto &child : children)
 				{
 					constr=dynamic_cast<Constraint *>(child);
 
@@ -8121,12 +8129,12 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 			}
 		}
 
-		objs.insert(objs.end(), objs_aux.begin(), objs_aux.end());
+		created_objs.insert(created_objs.end(), objs_aux.begin(), objs_aux.end());
 	}
 	else
 	{
 		//Retrieving all permission related to the gathered objects
-		for(BaseObject *obj : objs)
+		for(auto &obj : created_objs)
 		{
 			getPermissions(obj, perms_aux);
 			perms.insert(perms.end(), perms_aux.begin(), perms_aux.end());
@@ -8136,7 +8144,7 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 
 			if(table)
 			{
-				for(BaseObject *col : *table->getObjectList(ObjectType::Column))
+				for(auto &col : *table->getObjectList(ObjectType::Column))
 				{
 					getPermissions(col, perms_aux);
 					perms.insert(perms.end(), perms_aux.begin(), perms_aux.end());
@@ -8145,35 +8153,38 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 		}
 
 		/* Retrieving all additional roles (reference by permissions) that are not in the
-	 main object list (used as creation order) */
-		for(Permission *perm : perms)
+		 * main object list (used as creation order) */
+		for(auto &perm : perms)
 		{
 			roles=perm->getRoles();
 
-			for(Role *role : roles)
+			for(auto &role : roles)
 			{
-				if(std::find(objs.begin(), objs.end(), role)==objs.end())
-					getObjectDependecies(role, objs, true);
+				if(std::find(created_objs.begin(), created_objs.end(), role)==created_objs.end())
+				{
+					objs_aux = role->getDependencies();
+					created_objs.insert(created_objs.end(), objs_aux.begin(), objs_aux.end());
+				}
 			}
 		}
 	}
 
-	if(objs.size() > 1 || !perms.empty())
+	if(created_objs.size() > 1 || !perms.empty())
 	{
 		//Putting all objects in a map ordering them by ID
-		for(BaseObject *obj : objs)
+		for(auto &obj : created_objs)
 			objs_map[obj->getObjectId()]=obj;
 
 		//Recreationg the object list now with objects ordered properly
-		objs.clear();
+		created_objs.clear();
 		for(auto &itr : objs_map)
-			objs.push_back(itr.second);
+			created_objs.push_back(itr.second);
 
 		//Appending permissions at the end of the creation order list
-		objs.insert(objs.end(), perms.begin(), perms.end());
+		created_objs.insert(created_objs.end(), perms.begin(), perms.end());
 	}
 
-	return objs;
+	return created_objs;
 }
 
 void DatabaseModel::saveModel(const QString &filename, SchemaParser::CodeType def_type)
@@ -8381,2044 +8392,6 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 	}
 }
 
-void DatabaseModel::getOpClassDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
-	BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
-	unsigned i, cnt;
-	OperatorClassElement elem;
-
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	if(opclass->getFamily())
-		getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
-
-	cnt=opclass->getElementCount();
-
-	for(i=0; i < cnt; i++)
-	{
-		elem=opclass->getElement(i);
-
-		if(elem.getFunction())
-			getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
-
-		if(elem.getOperator())
-			getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
-
-		if(elem.getOperatorFamily())
-			getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
-
-		if(elem.getStorage().isUserType())
-		{
-			usr_type=getObjectPgSQLType(elem.getStorage());
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-		}
-	}
-}
-
-void DatabaseModel::getDomainDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
-
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getCastDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Cast *cast=dynamic_cast<Cast *>(object);
-	BaseObject *usr_type=nullptr;
-
-	for(unsigned i = Cast::SrcType; i <= Cast::DstType; i++)
-	{
-		usr_type=getObjectPgSQLType(cast->getDataType(static_cast<Cast::DataTypeId>(i)));
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-
-	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getProcedureDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	BaseFunction *base_func = dynamic_cast<BaseFunction *>(object);
-	BaseObject *usr_type = nullptr;
-	unsigned count = 0, i = 0;
-
-	if(!base_func->isSystemObject())
-		getObjectDependecies(base_func->getLanguage(), deps, inc_indirect_deps);
-
-	count = base_func->getParameterCount();
-	for(i = 0; i < count; i++)
-	{
-		usr_type = getObjectPgSQLType(base_func->getParameter(i).getType());
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-
-	for(auto &type : base_func->getTransformTypes())
-	{
-		usr_type = getObjectPgSQLType(type);
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getFunctionDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Function *func=dynamic_cast<Function *>(object);
-	BaseObject *usr_type = getObjectPgSQLType(func->getReturnType());
-	unsigned count = 0, i = 0;
-
-	getProcedureDependencies(object, deps, inc_indirect_deps);
-
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	count = func->getReturnedTableColumnCount();
-	for(i=0; i < count; i++)
-	{
-		usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getAggregateDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
-	BaseObject *usr_type=nullptr;
-
-	for(unsigned i = Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
-		getObjectDependecies(aggreg->getFunction(static_cast<Aggregate::FunctionId>(i)), deps, inc_indirect_deps);
-
-	usr_type=getObjectPgSQLType(aggreg->getStateType());
-
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	if(aggreg->getSortOperator())
-		getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
-
-	unsigned count=aggreg->getDataTypeCount();
-	for(unsigned i=0; i < count; i++)
-	{
-		usr_type=getObjectPgSQLType(aggreg->getDataType(i));
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getLanguageDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Language *lang=dynamic_cast<Language *>(object);
-
-	for(unsigned i = Language::ValidatorFunc; i <= Language::InlineFunc; i++)
-	{
-		if(lang->getFunction(static_cast<Language::FunctionId>(i)))
-			getObjectDependecies(lang->getFunction(static_cast<Language::FunctionId>(i)), deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getOperatorDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Operator *oper=dynamic_cast<Operator *>(object);
-	BaseObject *usr_type=nullptr;
-	unsigned i;
-
-	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-	{
-		if(oper->getFunction(static_cast<Operator::FunctionId>(i)))
-			getObjectDependecies(oper->getFunction(static_cast<Operator::FunctionId>(i)), deps, inc_indirect_deps);
-	}
-
-	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
-	{
-		usr_type=getObjectPgSQLType(oper->getArgumentType(static_cast<Operator::ArgumentId>(i)));
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-
-	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
-	{
-		if(oper->getOperator(static_cast<Operator::OperatorId>(i)))
-			getObjectDependecies(oper->getOperator(static_cast<Operator::OperatorId>(i)), deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getRoleDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Role *role=dynamic_cast<Role *>(object);
-
-	for(auto rl_type : { Role::MemberRole, Role::AdminRole })
-	{
-		for(unsigned idx=0; idx < role->getRoleCount(rl_type); idx++)
-			getObjectDependecies(role->getRole(rl_type, idx), deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Relationship *rel=dynamic_cast<Relationship *>(object);
-	BaseObject *usr_type=nullptr;
-	Constraint *constr=nullptr;
-	unsigned i, count;
-
-	getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
-	getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
-
-	count=rel->getAttributeCount();
-	for(i=0; i < count; i++)
-	{
-		usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
-
-		if(usr_type)
-			getObjectDependecies(usr_type, deps, inc_indirect_deps);
-	}
-
-	count=rel->getConstraintCount();
-	for(i=0; i < count; i++)
-	{
-		constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
-
-		if(constr->getTablespace())
-			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Sequence *seq=dynamic_cast<Sequence *>(object);
-	if(seq->getOwnerColumn())
-		getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Column *col=dynamic_cast<Column *>(object);
-	BaseObject *usr_type=getObjectPgSQLType(col->getType()),
-			*sequence=col->getSequence();
-
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	if(sequence)
-		getObjectDependecies(sequence, deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Trigger *trig=dynamic_cast<Trigger *>(object);
-
-	if(trig->getReferencedTable())
-		getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-	if(trig->getFunction())
-		getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Index *index=dynamic_cast<Index *>(object);
-	//BaseObject *usr_type=nullptr;
-	unsigned i, count=index->getIndexElementCount();
-
-	for(i=0; i < count; i++)
-	{
-		if(index->getIndexElement(i).getOperatorClass())
-			getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
-
-		if(index->getIndexElement(i).getColumn())
-			getObjectDependecies(index->getIndexElement(i).getColumn(), deps, inc_indirect_deps);
-
-		if(index->getIndexElement(i).getCollation())
-			getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
-	}
-
-	for(auto &col : index->getColumns())
-		getObjectDependecies(col, deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Policy *pol=dynamic_cast<Policy *>(object);
-
-	for(auto role : pol->getRoles())
-		getObjectDependecies(role, deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
-	Table *aux_tab = dynamic_cast<Table *>(object);
-	ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
-	BaseObject *usr_type=nullptr,  *seq=nullptr;
-	Constraint *constr=nullptr;
-	Trigger *trig=nullptr;
-	Index *index=nullptr;
-	Column *col=nullptr;
-	Policy *pol=nullptr;
-	unsigned count, i, count1, i1;
-
-	count=tab->getColumnCount();
-	for(i=0; i < count; i++)
-	{
-		col=tab->getColumn(i);
-		usr_type=getObjectPgSQLType(col->getType());
-		seq=col->getSequence();
-
-		if(!col->isAddedByLinking())
-		{
-			if(usr_type)
-				getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-			if(seq)
-				getObjectDependecies(seq, deps, inc_indirect_deps);
-		}
-	}
-
-	count=tab->getConstraintCount();
-	for(i=0; i < count; i++)
-	{
-		constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
-		count1=constr->getExcludeElementCount();
-
-		for(i1=0; i1 < count1; i1++)
-		{
-			if(constr->getExcludeElement(i1).getOperator())
-				getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
-
-			if(constr->getExcludeElement(i1).getOperatorClass())
-				getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-		}
-
-		if(inc_indirect_deps &&
-				!constr->isAddedByLinking() &&
-				constr->getConstraintType()==ConstraintType::ForeignKey)
-			getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
-
-		if(!constr->isAddedByLinking() && constr->getTablespace())
-			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-	}
-
-	count=tab->getTriggerCount();
-	for(i=0; i < count; i++)
-	{
-		trig=dynamic_cast<Trigger *>(tab->getTrigger(i));
-		if(trig->getReferencedTable())
-			getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-		if(trig->getFunction())
-			getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-	}
-
-	if(ftable)
-	{
-		getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
-	}
-
-	if(aux_tab)
-	{
-		count=aux_tab->getIndexCount();
-		for(i=0; i < count; i++)
-		{
-			index=dynamic_cast<Index *>(aux_tab->getIndex(i));
-			count1=index->getIndexElementCount();
-
-			for(i1=0; i1 < count1; i1++)
-			{
-				if(index->getIndexElement(i1).getOperatorClass())
-					getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-
-				if(index->getIndexElement(i1).getColumn())
-				{
-					usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				if(index->getIndexElement(i1).getCollation())
-					getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
-			}
-		}
-
-		count=aux_tab->getPolicyCount();
-		for(i=0; i < count; i++)
-		{
-			pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
-
-			for(auto role : pol->getRoles())
-				getObjectDependecies(role, deps, inc_indirect_deps);
-		}
-	}
-}
-
-void DatabaseModel::getTypeDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Type *usr_type=dynamic_cast<Type *>(object);
-	BaseObject *aux_type=nullptr;
-	unsigned count, i;
-
-	if(usr_type->getConfiguration()==Type::BaseType)
-	{
-		aux_type=getObjectPgSQLType(usr_type->getLikeType());
-
-		if(aux_type)
-			getObjectDependecies(aux_type, deps, inc_indirect_deps);
-
-		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-			getObjectDependecies(usr_type->getFunction(static_cast<Type::FunctionId>(i)), deps, inc_indirect_deps);
-	}
-	else if(usr_type->getConfiguration()==Type::CompositeType)
-	{
-		count=usr_type->getAttributeCount();
-		for(i=0; i < count; i++)
-		{
-			aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
-
-			if(aux_type)
-				getObjectDependecies(aux_type, deps, inc_indirect_deps);
-		}
-	}
-}
-
-void DatabaseModel::getViewDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	View *view=dynamic_cast<View *>(object);
-	unsigned i, count;
-
-	count=view->getReferenceCount();
-	for(i=0; i < count; i++)
-	{
-		if(view->getReference(i).getTable())
-			getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
-	}
-
-	for(i=0; i < view->getTriggerCount(); i++)
-		getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
-
-	for(i=0; i < view->getTriggerCount(); i++)
-	{
-		if(view->getTrigger(i)->getReferencedTable())
-			getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getGenericSQLDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
-	std::vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
-	for(auto &obj : ref_objs)
-		getObjectDependecies(obj, deps, inc_indirect_deps);
-}
-
-void DatabaseModel::getTransformDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	Transform *transf = dynamic_cast<Transform *>(object);
-
-	getObjectDependecies(transf->getLanguage(), deps, inc_indirect_deps);
-
-	for(auto func_id : { Transform::FromSqlFunc, Transform::ToSqlFunc })
-		getObjectDependecies(transf->getFunction(func_id), deps, inc_indirect_deps);
-
-	if(transf->getType().isUserType())
-	{
-		Type *type = reinterpret_cast<Type *>(transf->getType().getUserTypeReference());
-		getObjectDependecies(type, deps, inc_indirect_deps);
-	}
-}
-
-void DatabaseModel::getObjectDependecies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps)
-{
-	//Case the object is allocated and is not included in the dependecies list
-	if(object && std::find(deps.begin(), deps.end(), object)==deps.end())
-	{
-		deps.push_back(object);
-
-		if((deps.size()==1 && !inc_indirect_deps) || inc_indirect_deps)
-		{
-			ObjectType obj_type=object->getObjectType();
-
-			if(object->getSchema())
-				getObjectDependecies(object->getSchema(), deps, inc_indirect_deps);
-
-			if(object->getTablespace())
-				getObjectDependecies(object->getTablespace(), deps, inc_indirect_deps);
-
-			if(object->getOwner())
-				getObjectDependecies(object->getOwner(), deps, inc_indirect_deps);
-
-			if(object->getCollation())
-				getObjectDependecies(object->getCollation(), deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::OpClass)
-				getOpClassDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Domain)
-				getDomainDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Conversion)
-				getObjectDependecies(dynamic_cast<Conversion *>(object)->getConversionFunction(), deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Cast)
-				getCastDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::EventTrigger)
-				getObjectDependecies(dynamic_cast<EventTrigger *>(object)->getFunction(), deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Function)
-				getFunctionDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Aggregate)
-				getAggregateDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Language)
-				getLanguageDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Operator)
-				getOperatorDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Role)
-				getRoleDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Relationship)
-				getRelationshipDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Sequence)
-				getSequenceDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Column)
-				getColumnDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Trigger)
-				getTriggerDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Index)
-				getIndexDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Policy)
-				getPolicyDependencies(object, deps, inc_indirect_deps);
-
-			if(PhysicalTable::isPhysicalTable(obj_type))
-				getPhysicalTableDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Type)
-				getTypeDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::View)
-			 getViewDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type == ObjectType::ForeignDataWrapper)
-			{
-				ForeignDataWrapper *fdw = dynamic_cast<ForeignDataWrapper *>(object);
-				getObjectDependecies(fdw->getHandlerFunction(), deps, inc_indirect_deps);
-				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
-			}
-
-			if(obj_type == ObjectType::ForeignServer)
-				getObjectDependecies(dynamic_cast<ForeignServer *>(object)->getForeignDataWrapper(), deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::GenericSql)
-				getGenericSQLDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::UserMapping)
-				getObjectDependecies(dynamic_cast<UserMapping *>(object)->getForeignServer(), deps, inc_indirect_deps);
-
-			if(BaseTable::isBaseTable(obj_type))
-			{
-				BaseTable *tab = dynamic_cast<BaseTable *>(object);
-
-				if(tab->getTag())
-					deps.push_back(tab->getTag());
-			}
-
-			if(obj_type==ObjectType::Transform)
-				getTransformDependencies(object, deps, inc_indirect_deps);
-
-			if(obj_type==ObjectType::Procedure)
-				getProcedureDependencies(object, deps, inc_indirect_deps);
-		}
-	}
-}
-
-void DatabaseModel::getViewReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode)
-{
-	View *view=dynamic_cast<View *>(object);
-	std::vector<BaseObject *> tab_objs=view->getObjects();
-	refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
-
-	if(!exclusion_mode)
-	{
-		std::vector<BaseRelationship *> base_rels=getRelationships(view);
-		while(!base_rels.empty())
-		{
-			refs.push_back(base_rels.back());
-			base_rels.pop_back();
-		}
-	}
-}
-
-void DatabaseModel::getPhysicalTableReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
-	ObjectType obj_type = object->getObjectType();
-	Sequence *seq=nullptr;
-	Constraint *constr=nullptr;
-	PhysicalTable *tab=nullptr;
-	Trigger *gat=nullptr;
-	BaseRelationship *base_rel=nullptr;
-	View *view=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<TableObject *> *tab_objs;
-	unsigned i, count;
-	std::vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	std::vector<BaseObject *> tabs;
-
-	for(auto &type : tab_obj_types)
-	{
-		if(obj_type == ObjectType::ForeignTable && type != ObjectType::Trigger)
-			continue;
-
-		tab_objs=table->getObjectList(type);
-		refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
-	}
-
-	itr=relationships.begin();
-	itr_end=relationships.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		base_rel=dynamic_cast<BaseRelationship *>(*itr);
-		if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-				base_rel->getTable(BaseRelationship::DstTable)==table)
-		{
-			refer=true;
-			refs.push_back(base_rel);
-		}
-		itr++;
-	}
-
-	itr=base_relationships.begin();
-	itr_end=base_relationships.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		base_rel=dynamic_cast<BaseRelationship *>(*itr);
-		if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
-				(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-				 base_rel->getTable(BaseRelationship::DstTable)==table))
-		{
-			refer=true;
-			refs.push_back(base_rel);
-		}
-		itr++;
-	}
-
-	itr=sequences.begin();
-	itr_end=sequences.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		seq=dynamic_cast<Sequence *>(*itr);
-		if(seq->getOwnerColumn() &&
-				seq->getOwnerColumn()->getParentTable()==table)
-		{
-			refer=true;
-			refs.push_back(seq);
-		}
-
-		itr++;
-	}
-
-	tabs = tables;
-	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-	itr= tabs.begin();
-	itr_end = tabs.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		tab = dynamic_cast<PhysicalTable *>(*itr);
-
-		count=tab->getConstraintCount();
-		for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			constr=tab->getConstraint(i);
-			//If a constraint references its own parent table it'll not be included on the references list
-			if(constr->getConstraintType()==ConstraintType::ForeignKey &&
-					constr->getParentTable()!=constr->getReferencedTable() &&
-					constr->getReferencedTable()==table)
-			{
-				refer=true;
-				refs.push_back(constr);
-			}
-		}
-
-		count=tab->getTriggerCount();
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			gat=tab->getTrigger(i);
-			if(gat->getReferencedTable()==table)
-			{
-				refer=true;
-				refs.push_back(gat);
-			}
-		}
-
-		itr++;
-	}
-
-	itr=views.begin();
-	itr_end=views.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		view=dynamic_cast<View *>(*itr);
-
-		if(view->isReferencingTable(table))
-		{
-			refer=true;
-			refs.push_back(view);
-		}
-
-		itr++;
-	}
-
-	/* As base relationship are created automatically by the model they aren't considered
-	as a reference to the table in exclusion mode */
-	itr=base_relationships.begin();
-	itr_end=base_relationships.end();
-
-	while(itr!=itr_end && !exclusion_mode)// || (exclusion_mode && !refer)))
-	{
-		base_rel=dynamic_cast<BaseRelationship *>(*itr);
-
-		if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-				base_rel->getTable(BaseRelationship::DstTable)==table)
-		{
-			refer=true;
-			refs.push_back(base_rel);
-		}
-		itr++;
-	}
-}
-
-void DatabaseModel::getFunctionReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	Function *func=dynamic_cast<Function *>(object);
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
-													ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
-													ObjectType::Table, ObjectType::Type, ObjectType::Language,
-													ObjectType::ForeignDataWrapper, ObjectType::ForeignTable,
-													ObjectType::Transform };
-	unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
-	PhysicalTable *tab=nullptr;
-	Aggregate *aggreg=nullptr;
-	Operator *oper=nullptr;
-	Trigger *trig=nullptr;
-	Type *type=nullptr;
-	Language *lang=nullptr;
-	OperatorClass *opclass=nullptr;
-	ForeignDataWrapper *fdw=nullptr;
-
-	for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		if(obj_types[i]==ObjectType::Cast)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::EventTrigger)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<EventTrigger *>(*itr)->getFunction()==func)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::Conversion)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<Conversion *>(*itr)->getConversionFunction()==func)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::Aggregate)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				aggreg=dynamic_cast<Aggregate *>(*itr);
-
-				if(aggreg->getFunction(Aggregate::FinalFunc)==func ||
-						aggreg->getFunction(Aggregate::TransitionFunc)==func)
-				{
-					refer=true;
-					refs.push_back(aggreg);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::Operator)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				oper=dynamic_cast<Operator *>(*itr);
-
-				if(oper->getFunction(Operator::FuncOperator)==func ||
-						oper->getFunction(Operator::FuncJoin)==func  ||
-						oper->getFunction(Operator::FuncRestrict)==func)
-				{
-					refer=true;
-					refs.push_back(oper);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::OpClass)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				opclass=dynamic_cast<OperatorClass *>(*itr);
-				count=opclass->getElementCount();
-
-				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					if(opclass->getElement(i1).getFunction()==func)
-					{
-						refer=true;
-						refs.push_back(opclass);
-					}
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::Table ||
-						obj_types[i]==ObjectType::ForeignTable)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				tab=dynamic_cast<PhysicalTable *>(*itr);
-				itr++;
-				count=tab->getTriggerCount();
-
-				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					trig=tab->getTrigger(i1);
-
-					if(trig->getFunction()==func)
-					{
-						refer=true;
-						refs.push_back(trig);
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Type)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				type=dynamic_cast<Type *>(*itr);
-				itr++;
-
-				for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					if(type->getFunction(static_cast<Type::FunctionId>(i1))==func)
-					{
-						refer=true;
-						refs.push_back(type);
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Language)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				lang=dynamic_cast<Language *>(*itr);
-				itr++;
-
-				if(lang->getFunction(Language::HandlerFunc)==func ||
-						lang->getFunction(Language::ValidatorFunc)==func ||
-						lang->getFunction(Language::InlineFunc)==func)
-				{
-					refer=true;
-					refs.push_back(lang);
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::ForeignDataWrapper)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				fdw=dynamic_cast<ForeignDataWrapper *>(*itr);
-				itr++;
-
-				if(fdw->getHandlerFunction() == func || fdw->getValidatorFunction() == func)
-				{
-					refer=true;
-					refs.push_back(fdw);
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Transform)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<Transform *>(*itr)->getFunction(Transform::FromSqlFunc) == func ||
-					 dynamic_cast<Transform *>(*itr)->getFunction(Transform::ToSqlFunc) == func)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-	}
-}
-
-void DatabaseModel::getSchemaReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	ObjectType obj_types[12]={ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
-														ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
-														ObjectType::Sequence, ObjectType::Conversion,
-														ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
-	unsigned i;
-
-	for(i=0; i < 12 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if((*itr)->getSchema()==object)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
-}
-
-void DatabaseModel::getUserDefTypesReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<ObjectType> obj_types={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
-																ObjectType::Cast,	ObjectType::Domain, ObjectType::Function,
-																ObjectType::Aggregate, ObjectType::Procedure,
-																ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
-	unsigned i, i1, count, tp_count = obj_types.size();
-	OperatorClass *op_class=nullptr;
-	OperatorClassElement elem;
-	PhysicalTable *tab=nullptr;
-	Column *col=nullptr;
-	Cast *cast=nullptr;
-	Domain *dom=nullptr;
-	Function *func=nullptr;
-	Aggregate *aggreg=nullptr;
-	Operator *oper=nullptr;
-	Type *type=nullptr;
-	Relationship *rel=nullptr;
-	void *ptr_pgsqltype=nullptr;
-	ObjectType obj_type = object->getObjectType();
-	bool check_gis_type = false;
-
-	if(obj_type == ObjectType::Type)
-		ptr_pgsqltype = dynamic_cast<Type*>(object);
-	else if(obj_type == ObjectType::Domain)
-		ptr_pgsqltype = dynamic_cast<Domain*>(object);
-	else if(obj_type == ObjectType::Sequence)
-		ptr_pgsqltype = dynamic_cast<Sequence*>(object);
-	else if(obj_type == ObjectType::View)
-		ptr_pgsqltype = dynamic_cast<View*>(object);
-	else if(obj_type == ObjectType::ForeignTable)
-		ptr_pgsqltype = dynamic_cast<ForeignTable*>(object);
-	else if(obj_type == ObjectType::Extension)
-	{
-		ptr_pgsqltype = dynamic_cast<Extension*>(object);
-
-		/* Special case for postgis extension:
-		 *
-		 * pgModeler uses postgis data types as built-in
-		 * so when checking the references to the extension postgis
-		 * we need to verify if one or more objects (and their children) are
-		 * referencing PostGiS data types. So the flag below forces
-		 * this checking only in non exclusion mode. This way, in the validation
-		 * process pgModeler can check if the extension object is missing or
-		 * is being created after its references */
-		check_gis_type = object->getName() == "postgis";
-	}
-	else
-		ptr_pgsqltype = dynamic_cast<Table*>(object);
-
-	for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		if(obj_types[i]==ObjectType::Relationship)
-		{
-			bool added;
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				added=false;
-				rel=dynamic_cast<Relationship *>(*itr);
-				itr++;
-
-				count=rel->getAttributeCount();
-				for(i1=0; i1 < count && !added; i1++)
-				{
-					col=rel->getAttribute(i1);
-
-					if(col->getType() == ptr_pgsqltype ||
-						 (!exclusion_mode && check_gis_type && col->getType().isPostGiSType()))
-					{
-						added=refer=true;
-						refs.push_back(rel);
-					}
-				}
-			}
-		}
-		else if(PhysicalTable::isPhysicalTable(obj_types[i]))
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				tab=dynamic_cast<PhysicalTable *>(*itr);
-				itr++;
-
-				count=tab->getColumnCount();
-				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					col=tab->getColumn(i1);
-
-					if(!col->isAddedByRelationship() &&
-						 (col->getType() == ptr_pgsqltype ||
-							(!exclusion_mode && check_gis_type && col->getType().isPostGiSType())))
-					{
-						refer=true;
-						refs.push_back(col);
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::OpClass)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				op_class=dynamic_cast<OperatorClass *>(*itr);
-				itr++;
-
-				if(op_class->getDataType() == ptr_pgsqltype ||
-					 (!exclusion_mode && check_gis_type && op_class->getDataType().isPostGiSType()))
-				{
-					refer=true;
-					refs.push_back(op_class);
-				}
-
-				for(i1=0; i1 < op_class->getElementCount() && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					elem=op_class->getElement(i1);
-					if(elem.getStorage() == ptr_pgsqltype ||
-							(!exclusion_mode && check_gis_type && elem.getStorage().isPostGiSType()))
-					{
-						refer=true;
-						refs.push_back(op_class);
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Domain)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				dom=dynamic_cast<Domain *>(*itr);
-				itr++;
-
-				if(dom->getType() == ptr_pgsqltype ||
-					 (!exclusion_mode && check_gis_type && dom->getType().isPostGiSType()))
-				{
-					refer=true;
-					refs.push_back(dom);
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Type)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				type=dynamic_cast<Type *>(*itr);
-				itr++;
-
-				if((type->getAlignment() == ptr_pgsqltype || type->getElement() == ptr_pgsqltype ||
-						type->getLikeType() == ptr_pgsqltype || type->getSubtype() == ptr_pgsqltype) ||
-
-					 (!exclusion_mode && check_gis_type &&
-						(type->getAlignment().isPostGiSType() || type->getElement().isPostGiSType() ||
-						 type->getLikeType().isPostGiSType() ||	 type->getSubtype().isPostGiSType())))
-				{
-					refer=true;
-					refs.push_back(type);
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Aggregate)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				aggreg=dynamic_cast<Aggregate *>(*itr);
-				itr++;
-
-				count=aggreg->getDataTypeCount();
-				for(i1=0; i1 < count  && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					if(aggreg->getDataType(i1) == ptr_pgsqltype ||
-						 (!exclusion_mode && check_gis_type && aggreg->getDataType(i1).isPostGiSType()))
-					{
-						refer=true;
-						refs.push_back(aggreg);
-					}
-				}
-			}
-		}
-		else if(obj_types[i] == ObjectType::Function ||
-						obj_types[i] == ObjectType::Procedure)
-		{
-			BaseFunction *base_func = nullptr;
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				base_func = dynamic_cast<BaseFunction *>(*itr);
-				func = dynamic_cast<Function *>(*itr);
-				itr++;
-
-				if(func &&
-					 (func->getReturnType() == ptr_pgsqltype ||
-						(!exclusion_mode && check_gis_type && func->getReturnType().isPostGiSType())))
-				{
-					refer = true;
-					refs.push_back(func);
-				}
-				else
-				{
-					count = base_func->getParameterCount();
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(base_func->getParameter(i1).getType() == ptr_pgsqltype ||
-							 (!exclusion_mode && check_gis_type && base_func->getParameter(i1).getType().isPostGiSType()))
-						{
-							refer = true;
-							refs.push_back(base_func);
-						}
-					}
-
-					for(auto &type : base_func->getTransformTypes())
-					{
-						if(type == ptr_pgsqltype ||
-							 (!exclusion_mode && check_gis_type && type.isPostGiSType()))
-						{
-							refer = true;
-							refs.push_back(base_func);
-						}
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Operator)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				oper=dynamic_cast<Operator *>(*itr);
-				itr++;
-
-				if((oper->getArgumentType(Operator::LeftArg) == ptr_pgsqltype ||
-						oper->getArgumentType(Operator::RightArg) == ptr_pgsqltype) ||
-
-					 (!exclusion_mode && check_gis_type &&
-						(oper->getArgumentType(Operator::LeftArg).isPostGiSType() ||
-							oper->getArgumentType(Operator::RightArg).isPostGiSType())))
-				{
-					refer=true;
-					refs.push_back(oper);
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Cast)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				cast=dynamic_cast<Cast *>(*itr);
-				itr++;
-
-				if((cast->getDataType(Cast::SrcType) == ptr_pgsqltype ||
-						cast->getDataType(Cast::DstType) == ptr_pgsqltype) ||
-
-					 (!exclusion_mode && check_gis_type &&
-						(cast->getDataType(Cast::SrcType).isPostGiSType() ||
-						 cast->getDataType(Cast::DstType).isPostGiSType())))
-				{
-					refer=true;
-					refs.push_back(cast);
-				}
-			}
-		}
-	}
-}
-
-void DatabaseModel::getRoleReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<ObjectType> obj_types = {
-								ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::Domain,
-								ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
-								ObjectType::Sequence, ObjectType::Conversion,
-								ObjectType::Language, ObjectType::Tablespace,
-								ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
-								ObjectType::UserMapping };
-	std::vector<ObjectType>::iterator itr_tp, itr_tp_end;
-	Role *role_aux=nullptr;
-	Role *role=dynamic_cast<Role *>(object);
-	Permission *perm=nullptr;
-
-	//Check if the role is being referencend by permissions
-	itr=permissions.begin();
-	itr_end=permissions.end();
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		perm=dynamic_cast<Permission *>(*itr);
-		itr++;
-
-		if(perm->isRoleExists(role))
-		{
-			refer=true;
-			refs.push_back(perm);
-		}
-	}
-
-	//Check if the role is being referenced in other roles
-	itr=roles.begin();
-	itr_end=roles.end();
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		role_aux=dynamic_cast<Role *>(*itr);
-		itr++;
-
-		for(unsigned rl_type = Role::MemberRole; rl_type <= Role::AdminRole && (!exclusion_mode || (exclusion_mode && !refer)); rl_type++)
-		{
-			for(unsigned i = 0; i < role_aux->getRoleCount(static_cast<Role::RoleType>(rl_type)) && !refer; i++)
-			{
-				if(role_aux->getRole(static_cast<Role::RoleType>(rl_type), i)==role)
-				{
-					refer=true;
-					refs.push_back(role_aux);
-				}
-			}
-		}
-	}
-
-	itr_tp = obj_types.begin();
-	itr_tp_end = obj_types.end();
-
-	while(itr_tp != itr_tp_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		obj_list=getObjectList(*itr_tp);
-		itr_tp++;
-
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if((*itr)->getOwner()==role)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-
-			if((*itr)->getObjectType() == ObjectType::Table)
-			{
-				for(auto obj : *(dynamic_cast<Table *>(*itr))->getObjectList(ObjectType::Policy))
-				{
-					if(dynamic_cast<Policy *>(obj)->isRoleExists(role))
-					{
-						refer=true;
-						refs.push_back(obj);
-					}
-				}
-			}
-
-			itr++;
-		}
-	}
-
-	//Special case: check if the role to be removed is the owner of the database
-	if((!exclusion_mode || (exclusion_mode && !refer)) && this->getOwner()==role)
-	{
-		refer=true;
-		refs.push_back(this);
-	}
-}
-
-void DatabaseModel::getTablespaceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	unsigned i, count;
-	Table *tab=nullptr;
-	Index *ind=nullptr;
-	Constraint *rest=nullptr;
-
-	itr=tables.begin();
-	itr_end=tables.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		tab=dynamic_cast<Table *>(*itr);
-
-		if(tab->getTablespace()==object)
-		{
-			refer=true;
-			refs.push_back(tab);
-		}
-
-		count=tab->getIndexCount();
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			ind=tab->getIndex(i);
-			if(ind->getTablespace()==object)
-			{
-				refer=true;
-				refs.push_back(ind);
-			}
-		}
-
-		count=tab->getConstraintCount();
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			rest=tab->getConstraint(i);
-			if(rest->getTablespace()==object)
-			{
-				refer=true;
-				refs.push_back(rest);
-			}
-		}
-
-		itr++;
-	}
-
-	if((!exclusion_mode || (exclusion_mode && !refer)) && this->BaseObject::getTablespace()==object)
-	{
-		refer=true;
-		refs.push_back(this);
-	}
-}
-
-void DatabaseModel::getLanguageReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	Function *func=nullptr;
-	Transform *transf = nullptr;
-
-	itr=functions.begin();
-	itr_end=functions.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		func=dynamic_cast<Function *>(*itr);
-		if(func->getLanguage()==object)
-		{
-			refer=true;
-			refs.push_back(func);
-		}
-		itr++;
-	}
-
-	itr=transforms.begin();
-	itr_end=transforms.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		transf = dynamic_cast<Transform *>(*itr);
-		if(transf->getLanguage()==object)
-		{
-			refer=true;
-			refs.push_back(transf);
-		}
-		itr++;
-	}
-
-}
-
-void DatabaseModel::getOpClassReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	Type *usertype=nullptr;
-	Index *ind=nullptr;
-	Constraint *constr=nullptr;
-	Table *table=nullptr;
-	ForeignTable *ftable=nullptr;
-
-	itr=types.begin();
-	itr_end=types.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		usertype=dynamic_cast<Type *>(*itr);
-
-		if(usertype->getSubtypeOpClass()==object)
-		{
-			refer=true;
-			refs.push_back(usertype);
-		}
-		itr++;
-	}
-
-	itr=tables.begin();
-	itr_end=tables.end();
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		table=dynamic_cast<Table *>(*itr);
-
-		//Checking if the indexes are referencing the operator class
-		for(unsigned idx=0; idx < table->getIndexCount() &&
-			(!exclusion_mode || (exclusion_mode && !refer)); idx++)
-		{
-			ind=table->getIndex(idx);
-
-			for(unsigned id_elem=0; id_elem < ind->getIndexElementCount() &&
-				(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
-			{
-				if(ind->getIndexElement(id_elem).getOperatorClass()==object)
-				{
-					refer=true;
-					refs.push_back(ind);
-				}
-			}
-		}
-
-		//Checking if the constraints are referencing the operator class
-		for(unsigned idx=0; idx < table->getConstraintCount() &&
-			(!exclusion_mode || (exclusion_mode && !refer)); idx++)
-		{
-			constr=table->getConstraint(idx);
-
-			for(unsigned id_elem=0; id_elem < constr->getExcludeElementCount() &&
-				(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
-			{
-				if(constr->getExcludeElement(id_elem).getOperatorClass()==object)
-				{
-					refer=true;
-					refs.push_back(constr);
-				}
-			}
-		}
-
-		//Checking if the partition keys are referencing the operator class
-		for(auto &part_key : table->getPartitionKeys())
-		{
-			if(part_key.getOperatorClass() == object)
-			{
-				refer = true;
-				refs.push_back(table);
-				break;
-			}
-		}
-
-		itr++;
-	}
-
-
-	itr=foreign_tables.begin();
-	itr_end=foreign_tables.end();
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		ftable=dynamic_cast<ForeignTable *>(*itr);
-
-		//Checking if the partition keys are referencing the operator class
-		for(auto &part_key : ftable->getPartitionKeys())
-		{
-			if(part_key.getOperatorClass() == object)
-			{
-				refer = true;
-				refs.push_back(ftable);
-				break;
-			}
-		}
-
-		itr++;
-	}
-}
-
-void DatabaseModel::getOperatorReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	ObjectType obj_types[]={ObjectType::OpClass,
-													ObjectType::Aggregate,
-													ObjectType::Operator,
-													ObjectType::Table };
-	unsigned i, i1, count;
-	OperatorClass *op_class=nullptr;
-	Operator *oper_aux=nullptr, *oper=dynamic_cast<Operator *>(object);
-	Table *table=nullptr;
-	Constraint *constr=nullptr;
-
-	for(i=0; i < 4 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		if(obj_types[i]==ObjectType::OpClass)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				op_class=dynamic_cast<OperatorClass *>(*itr);
-				itr++;
-
-				count=op_class->getElementCount();
-				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					if(op_class->getElement(i1).getOperator()==oper)
-					{
-						refer=true;
-						refs.push_back(op_class);
-					}
-				}
-			}
-		}
-		else if(obj_types[i]==ObjectType::Aggregate)
-		{
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<Aggregate *>(*itr)->getSortOperator()==oper)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-		else if(obj_types[i]==ObjectType::Operator)
-		{
-			while(itr!=itr_end && !refer)
-			{
-				oper_aux=dynamic_cast<Operator *>(*itr);
-				itr++;
-
-				for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
-					(!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					if(oper_aux->getOperator(static_cast<Operator::OperatorId>(i1))==oper)
-					{
-						refer=true;
-						refs.push_back(oper_aux);
-					}
-				}
-			}
-		}
-		else
-		{
-			while(itr!=itr_end && !refer)
-			{
-				table=dynamic_cast<Table *>(*itr);
-				itr++;
-
-				count=table->getConstraintCount();
-				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-				{
-					constr=table->getConstraint(i1);
-
-					if(constr->getConstraintType()==ConstraintType::Exclude)
-					{
-						for(auto &elem : constr->getExcludeElements())
-						{
-							if(elem.getOperator()==oper)
-							{
-								refer=true;
-								refs.push_back(constr);
-								if(exclusion_mode) break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-void DatabaseModel::getCollationReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	ObjectType  obj_types[]={ ObjectType::Domain, ObjectType::Collation, ObjectType::Type },
-			tab_obj_types[]={ ObjectType::Column, ObjectType::Index };
-	unsigned i, count;
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<TableObject *> *tab_obj_list=nullptr;
-	std::vector<TableObject *>::iterator tab_itr, tab_itr_end;
-	TableObject *tab_obj=nullptr;
-	PhysicalTable *table = nullptr;
-
-	count=sizeof(obj_types)/sizeof(ObjectType);
-	for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if((*itr)->getCollation()==object)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-
-			itr++;
-		}
-	}
-
-	count=sizeof(tab_obj_types)/sizeof(ObjectType);
-	std::vector<BaseObject *> tabs;
-
-	tabs.insert(tabs.end(), tables.begin(), tables.end());
-	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-	itr=tabs.begin();
-	itr_end=tabs.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		table = dynamic_cast<PhysicalTable *>(*itr);
-
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			tab_obj_list = table->getObjectList(tab_obj_types[i]);
-			if(!tab_obj_list) continue;
-
-			tab_itr=tab_obj_list->begin();
-			tab_itr_end=tab_obj_list->end();
-
-			while(tab_itr!=tab_itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				tab_obj=(*tab_itr);
-				if((tab_obj->getObjectType()==ObjectType::Column && tab_obj->getCollation()==object) ||
-						(tab_obj->getObjectType()==ObjectType::Index &&
-						 dynamic_cast<Index *>(tab_obj)->isReferCollation(dynamic_cast<Collation *>(object))))
-				{
-					refer=true;
-					refs.push_back(*tab_itr);
-				}
-				tab_itr++;
-			}
-		}
-
-		//Checking if the partition keys are referencing the operator class
-		for(auto &part_key : table->getPartitionKeys())
-		{
-			if(part_key.getCollation() == object)
-			{
-				refer = true;
-				refs.push_back(table);
-				break;
-			}
-		}
-
-		itr++;
-	}
-}
-
-void DatabaseModel::getOpFamilyReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
-
-	itr=op_classes.begin();
-	itr_end=op_classes.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<OperatorClass *>(*itr)->getFamily()==op_family)
-		{
-			refer=true;
-			refs.push_back(*itr);
-		}
-		itr++;
-	}
-}
-
-void DatabaseModel::getColumnReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	Column *column=dynamic_cast<Column *>(object);
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table,
-														ObjectType::ForeignTable, ObjectType::Relationship };
-	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
-
-	for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		obj_list=getObjectList(obj_types[i]);
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if((obj_types[i]==ObjectType::Sequence && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==column) ||
-					(obj_types[i]==ObjectType::View && dynamic_cast<View *>(*itr)->isReferencingColumn(column)))
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			else if(obj_types[i]==ObjectType::Table || obj_types[i]==ObjectType::ForeignTable)
-			{
-				PhysicalTable *tab=dynamic_cast<PhysicalTable *>(*itr);
-				Table *aux_tab = dynamic_cast<Table *>(tab);
-				unsigned count, idx, count1, i1;
-				Trigger *trig=nullptr;
-				Index *index=nullptr;
-				Constraint *constr=nullptr;
-				std::vector<PartitionKey> part_keys;
-
-				count=tab->getConstraintCount();
-				for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-				{
-					constr=tab->getConstraint(idx);
-					if(constr->isColumnReferenced(column))
-					{
-						refer=true;
-						refs.push_back(constr);
-					}
-				}
-
-				if(aux_tab)
-				{
-					count=aux_tab->getIndexCount();
-					for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-					{
-						index=aux_tab->getIndex(idx);
-						if(index->isReferColumn(column))
-						{
-							refer=true;
-							refs.push_back(index);
-						}
-					}
-				}
-
-				count=tab->getTriggerCount();
-				for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-				{
-					trig=tab->getTrigger(idx);
-					count1=trig->getColumnCount();
-
-					for(i1=0; i1 < count1 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(trig->getColumn(i1)==column)
-						{
-							refer=true;
-							refs.push_back(trig);
-						}
-					}
-				}
-
-				part_keys = tab->getPartitionKeys();
-				for(auto &part_key : part_keys)
-				{
-					if(part_key.getColumn() == column)
-					{
-						refer = true;
-						refs.push_back(tab);
-						break;
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Relationship)
-			{
-				Relationship *rel=dynamic_cast<Relationship *>(*itr);
-				unsigned constr_cnt, idx;
-
-				constr_cnt=rel->getConstraintCount();
-				for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-				{
-					if(rel->getConstraint(idx)->isColumnReferenced(column))
-					{
-						refer=true;
-						refs.push_back(rel);
-					}
-				}
-			}
-
-			itr++;
-		}
-	}
-}
-
-void DatabaseModel::getTagReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> list;
-	Tag *tag=dynamic_cast<Tag *>(object);
-
-	list.assign(tables.begin(), tables.end());
-	list.insert(list.end(), foreign_tables.begin(), foreign_tables.end());
-	list.insert(list.end(), views.begin(), views.end());
-
-	itr=list.begin();
-	itr_end=list.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<BaseTable *>(*itr)->getTag()==tag)
-		{
-			refer=true;
-			refs.push_back(*itr);
-		}
-		itr++;
-	}
-}
-
-void DatabaseModel::getSequenceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	PhysicalTable *table=nullptr;
-	std::vector<TableObject *> *cols=nullptr;
-	std::vector<TableObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> tabs;
-	unsigned i = 0, cnt = 0;
-
-	tabs = tables;
-	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-	cnt = tabs.size();
-
-	for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-	{
-		table=dynamic_cast<PhysicalTable *>(tabs[i]);
-		cols=table->getObjectList(ObjectType::Column);
-		itr=cols->begin();
-		itr_end=cols->end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<Column *>(*itr)->getSequence()==object)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
-}
-
-void DatabaseModel::getFdwReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> list;
-	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
-
-	itr=foreign_servers.begin();
-	itr_end=foreign_servers.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
-		{
-			refer=true;
-			refs.push_back(*itr);
-		}
-		itr++;
-	}
-}
-
-void DatabaseModel::getServerReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
-{
-	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> list;
-	ForeignServer *srv=dynamic_cast<ForeignServer *>(object);
-
-	itr=usermappings.begin();
-	itr_end=usermappings.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<UserMapping *>(*itr)->getForeignServer() == srv)
-		{
-			refer=true;
-			refs.push_back(*itr);
-		}
-		itr++;
-	}
-
-	itr=foreign_tables.begin();
-	itr_end=foreign_tables.end();
-
-	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<ForeignTable *>(*itr)->getForeignServer() == srv)
-		{
-			refer=true;
-			refs.push_back(*itr);
-		}
-		itr++;
-	}
-}
-
-void DatabaseModel::getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode, bool exclude_perms)
-{
-	refs.clear();
-
-	if(!object)
-		return;
-
-	std::vector<BaseObject *>::iterator itr_perm, itr_perm_end;
-	ObjectType obj_type=object->getObjectType();
-	bool refer=false;
-	Permission *perm=nullptr;
-
-	if(!exclude_perms)
-	{
-		//Get the permissions thata references the object
-		itr_perm=permissions.begin();
-		itr_perm_end=permissions.end();
-
-		while(itr_perm!=itr_perm_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			perm=dynamic_cast<Permission *>(*itr_perm);
-			if(perm->getObject()==object)
-			{
-				refer=true;
-				refs.push_back(perm);
-			}
-			itr_perm++;
-		}
-	}
-
-	if(exclusion_mode && !refer && default_objs.count(obj_type) && default_objs[obj_type]==object)
-	{
-		refer=true;
-		refs.push_back(this);
-	}
-
-	if(obj_type==ObjectType::View && (!exclusion_mode || (exclusion_mode && !refer)))
-		getViewReferences(object, refs, exclusion_mode);
-
-	if(PhysicalTable::isPhysicalTable(obj_type) && (!exclusion_mode || (exclusion_mode && !refer)))
-		getPhysicalTableReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Function && (!exclusion_mode || (exclusion_mode && !refer)))
-		getFunctionReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Schema && (!exclusion_mode || (exclusion_mode && !refer)))
-		getSchemaReferences(object, refs, refer, exclusion_mode);
-
-	if((obj_type==ObjectType::Type || obj_type==ObjectType::Domain || obj_type==ObjectType::Sequence ||
-			obj_type==ObjectType::Extension || BaseTable::isBaseTable(obj_type))
-			&& (!exclusion_mode || (exclusion_mode && !refer)))
-		getUserDefTypesReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Role && (!exclusion_mode || (exclusion_mode && !refer)))
-		getRoleReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Tablespace && (!exclusion_mode || (exclusion_mode && !refer)))
-		getTablespaceReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Language && (!exclusion_mode || (exclusion_mode && !refer)))
-		getLanguageReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::OpClass && (!exclusion_mode || (exclusion_mode && !refer)))
-		getOpClassReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Operator && (!exclusion_mode || (exclusion_mode && !refer)))
-		getOperatorReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::OpFamily && (!exclusion_mode || (exclusion_mode && !refer)))
-		getOpFamilyReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Collation && (!exclusion_mode || (exclusion_mode && !refer)))
-		getCollationReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Column && (!exclusion_mode || (exclusion_mode && !refer)))
-		getColumnReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Tag && (!exclusion_mode || (exclusion_mode && !refer)))
-		getTagReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::Sequence && (!exclusion_mode || (exclusion_mode && !refer)))
-		getSequenceReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::ForeignDataWrapper && (!exclusion_mode || (exclusion_mode && !refer)))
-		getFdwReferences(object, refs, refer, exclusion_mode);
-
-	if(obj_type==ObjectType::ForeignServer && (!exclusion_mode || (exclusion_mode && !refer)))
-		getServerReferences(object, refs, refer, exclusion_mode);
-
-	// Checking if any generic SQL object is referencing the object passed
-	std::vector<BaseObject *>::iterator itr = genericsqls.begin(),
-			itr_end = genericsqls.end();
-
-	while(itr != itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		if(dynamic_cast<GenericSQL *>(*itr)->isObjectReferenced(object))
-		{
-			refer = true;
-			refs.push_back(*itr);
-		}
-
-		itr++;
-	}
-}
-
-void DatabaseModel::__getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclude_perms)
-{
-	std::vector<BaseObject *> refs_aux;
-	std::vector<BaseObject *>::iterator end;
-
-	getObjectReferences(object, refs_aux, exclude_perms);
-
-	if(!refs_aux.empty())
-	{
-		refs.insert(refs.end(), refs_aux.begin(), refs_aux.end());
-		std::sort(refs.begin(), refs.end());
-		end=std::unique(refs.begin(), refs.end());
-		refs.erase(end, refs.end());
-
-		for(BaseObject *obj : refs_aux)
-			__getObjectReferences(obj, refs, exclude_perms);
-	}
-}
-
 void DatabaseModel::setObjectsModified(std::vector<BaseObject *> &objects)
 {
 	for(auto &obj : objects)
@@ -10434,25 +8407,36 @@ void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
 	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<BaseObject *> *obj_list=nullptr;
-	Textbox *label=nullptr;
-	BaseRelationship *rel=nullptr;
-	unsigned i, i1, count=sizeof(obj_types)/sizeof(ObjectType);
+	std::vector<BaseObject *> *obj_list = nullptr;
+	Textbox *label = nullptr;
+	BaseRelationship *rel = nullptr;
+	BaseGraphicObject *graph_obj = nullptr;
+	unsigned i1 = 0;
 
-	for(i=0; i < count; i++)
+	for(auto &obj_type : obj_types)
 	{
-		if(types.empty() || find(types.begin(), types.end(), obj_types[i])!=types.end())
+		if(types.empty() || std::find(types.begin(), types.end(), obj_type) != types.end())
 		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
+			obj_list = getObjectList(obj_type);
+			itr = obj_list->begin();
+			itr_end = obj_list->end();
 
-			while(itr!=itr_end)
+			while(itr != itr_end)
 			{
-				dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
+				graph_obj = dynamic_cast<BaseGraphicObject *>(*itr);
+
+				if(BaseTable::isBaseTable(obj_type))
+				{
+					/* We call the BaseTable::resetHashCode version to force
+					 * to force table to be redrawn by overriding the
+					 * hash validation in TableView::configureObject */
+					dynamic_cast<BaseTable *>(graph_obj)->resetHashCode();
+				}
+
+				graph_obj->setModified(true);
 
 				//For relationships is needed to set the labels as modified too
-				if(obj_types[i]==ObjectType::Relationship || obj_types[i]==ObjectType::BaseRelationship)
+				if(obj_type == ObjectType::Relationship || obj_type == ObjectType::BaseRelationship)
 				{
 					rel=dynamic_cast<BaseRelationship *>(*itr);
 					for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
@@ -10528,9 +8512,11 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_sch_name)
 {
 	std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
-															 ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
+																		ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
 	std::vector<BaseObject *> list, sch_objs, refs;
-	QString prev_name;
+	QString prev_name,
+			fmt_prev_sch_name = BaseObject::formatName(prev_sch_name, false),
+			obj_sig;
 
 	//Raise an error if the schema is not allocated
 	if(!schema)
@@ -10546,30 +8532,20 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 	for(auto &obj : sch_objs)
 	{
 		//Configures the previous type name
-		prev_name=BaseObject::formatName(prev_sch_name) + "." +
-							BaseObject::formatName(obj->getName(), false);
+		prev_name = fmt_prev_sch_name + "." +	obj->getName();
+		obj_sig = obj->getSignature();
 
-		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
-		the correct reference to table */
-		if(obj->getObjectType() == ObjectType::Table)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
-		else if(obj->getObjectType() == ObjectType::View)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj->getName(true));
-		else if(obj->getObjectType() == ObjectType::ForeignTable)
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj->getName(true));
-		else
-			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
-
-		getObjectReferences(obj, refs);
+		PgSqlType::renameUserType(prev_name, obj, obj_sig);
+		refs = obj->getReferences();
 
 		//For graphical objects set them as modified to redraw them
 		if(BaseTable::isBaseTable(obj->getObjectType()))
-			dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+			dynamic_cast<BaseTable *>(obj)->setModified(true);
 
 		for(auto &ref_obj : refs)
 		{
 			if(BaseTable::isBaseTable(ref_obj->getObjectType()))
-				dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
+				dynamic_cast<BaseTable *>(ref_obj)->setModified(true);
 			else if(TableObject::isTableObject(ref_obj->getObjectType()))
 			{
 				BaseTable *tab = dynamic_cast<TableObject *>(ref_obj)->getParentTable();
@@ -10648,7 +8624,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	addTablespace(tbspace);
 
 	postgres=new Role;
-	postgres->setName("postgres");
+	postgres->setName(QString("postgres"));
 	postgres->setOption(Role::OpSuperuser, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
@@ -10657,13 +8633,14 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	setDefaultObject(getObject("public", ObjectType::Schema), ObjectType::Schema);
 }
 
-std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
+std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr, bool any_incl_cols)
 {
 	std::vector<BaseObject *> objects, aux_objs;
 	QString pattern, mode;
 	QStringList values, modes = { UtilsNs::FilterWildcard, UtilsNs::FilterRegExp };
 	ObjectType obj_type;
 	bool exact_match = false;
+	std::vector<ObjectType> types;
 
 	for(auto &filter : filters)
 	{
@@ -10682,13 +8659,34 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters,
 		exact_match = (mode == UtilsNs::FilterWildcard && !pattern.contains(UtilsNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
-		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+		if((values[0] != Attributes::Any && obj_type == ObjectType::BaseObject) ||
+				pattern.isEmpty() || !modes.contains(mode))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == UtilsNs::FilterRegExp, exact_match, search_attr);
+		// If we use the "any" filter key word all object types will be retrieved
+		types.clear();
+
+		if(obj_type == ObjectType::BaseObject)
+		{
+			std::vector<ObjectType> excl_types = {
+				ObjectType::BaseRelationship, ObjectType::Textbox,
+				ObjectType::Tag, ObjectType::GenericSql, ObjectType::Database
+			};
+
+			// Including Columns to the excluded type if the "any" filter doen't include columns
+			if(!any_incl_cols)
+				excl_types.push_back(ObjectType::Column);
+
+			types = BaseObject::getObjectTypes(true, excl_types);
+		}
+		else
+			types.push_back(obj_type);
+
+		aux_objs = findObjects(pattern, types, false,
+													 mode == UtilsNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 
@@ -11633,15 +9631,13 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, Operation::OperType op
 	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
 		return;
 
-	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
+	std::map<Operation::OperType, QString> actions = {
+		{ Operation::ObjCreated, Attributes::Created },
+		{ Operation::ObjRemoved, Attributes::Deleted },
+		{ Operation::ObjModified, Attributes::Updated }	};
 
-	if(op_type == Operation::ObjCreated)
-		action = Attributes::Created;
-	else if(op_type == Operation::ObjRemoved)
-		action = Attributes::Deleted;
-	else
-		action = Attributes::Updated;
+	QString action = actions[op_type], obj_signature;
 
 	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
 	{
@@ -11744,9 +9740,26 @@ QDateTime DatabaseModel::getFirstChangelogDate()
 				 QDateTime() : std::get<LogDate>(changelog.front());
 }
 
-unsigned DatabaseModel::getChangelogLength()
+unsigned DatabaseModel::getChangelogLength(Operation::OperType op_type)
 {
-	return changelog.size();
+	if(op_type == Operation::NoOperation || op_type == Operation::ObjMoved)
+		return changelog.size();
+
+	unsigned cnt = 0;
+	std::map<Operation::OperType, QString> actions = {
+		{ Operation::ObjCreated, Attributes::Created },
+		{ Operation::ObjRemoved, Attributes::Deleted },
+		{ Operation::ObjModified, Attributes::Updated }	};
+
+	QString act = actions[op_type];
+
+	for(auto &entry : changelog)
+	{
+		if(std::get<LogAction>(entry) == act)
+			cnt++;
+	}
+
+	return cnt;
 }
 
 template<class TableClass>
@@ -12080,35 +10093,43 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	}
 }
 
-QString DatabaseModel::getChangelogDefinition()
+QString DatabaseModel::getChangelogDefinition(bool csv_format)
 {
 	if(!persist_changelog)
 		return "";
 
 	try
 	{
-		QDateTime date;
-		QString signature, action, xml_code;
-		ObjectType type;
+		QString date, type, signature, action,
+				buffer, tmpl_line("\"%1\";\"%2\";\"%3\";\"%4\"\n");
 		attribs_map attribs;
 
 		for(auto &entry : changelog)
 		{
-			date = std::get<LogDate>(entry);
+			date = std::get<LogDate>(entry).toString(Qt::ISODate);
 			signature = std::get<LogSinature>(entry);
-			type = std::get<LogObjectType>(entry);
+			type = BaseObject::getSchemaName(std::get<LogObjectType>(entry));
 			action = std::get<LogAction>(entry);
 
-			attribs[Attributes::Date] = date.toString(Qt::ISODate);
-			attribs[Attributes::Signature] = signature;
-			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
-			attribs[Attributes::Action] = action;
-
-			xml_code += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
+			if(csv_format)
+			{
+				buffer += tmpl_line.arg(date, signature, type, action);
+			}
+			else
+			{
+				attribs[Attributes::Date] = date;
+				attribs[Attributes::Signature] = signature;
+				attribs[Attributes::Type] = type;
+				attribs[Attributes::Action] = action;
+				buffer += schparser.getSourceCode(Attributes::Entry, attribs, SchemaParser::XmlCode);
+			}
 		}
 
+		if(csv_format)
+			return buffer;
+
 		attribs.clear();
-		attribs[Attributes::Entry] = xml_code;
+		attribs[Attributes::Entry] = buffer;
 		schparser.ignoreEmptyAttributes(true);
 		return schparser.getSourceCode(Attributes::Changelog, attribs, SchemaParser::XmlCode);
 	}

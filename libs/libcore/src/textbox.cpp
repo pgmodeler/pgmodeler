@@ -21,7 +21,8 @@
 Textbox::Textbox()
 {
 	obj_type=ObjectType::Textbox;
-	font_size=9.0;
+	font_size = 11.0;
+	text_width = 0;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[Attributes::Italic]="";
 	attributes[Attributes::Bold]="";
@@ -34,32 +35,32 @@ QString Textbox::getSourceCode(SchemaParser::CodeType def_type)
 {
 	if(def_type==SchemaParser::SqlCode)
 		return "";
-	else
-	{
-		QString code_def=getCachedCode(def_type, false);
-		if(!code_def.isEmpty()) return code_def;
 
-		setPositionAttribute();
-		setFadedOutAttribute();
-		setLayersAttribute();
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return code_def;
 
-		if(text_attributes[ItalicText])
-			attributes[Attributes::Italic]=Attributes::True;
+	setPositionAttribute();
+	setFadedOutAttribute();
+	setLayersAttribute();
 
-		if(text_attributes[BoldText])
-			attributes[Attributes::Bold]=Attributes::True;
+	if(text_attributes[ItalicText])
+		attributes[Attributes::Italic]=Attributes::True;
 
-		if(text_attributes[UnderlineText])
-			attributes[Attributes::Underline]=Attributes::True;
+	if(text_attributes[BoldText])
+		attributes[Attributes::Bold]=Attributes::True;
 
-		if(text_color.name()!="#000000")
-			attributes[Attributes::Color]=text_color.name();
+	if(text_attributes[UnderlineText])
+		attributes[Attributes::Underline]=Attributes::True;
 
-		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
-		attributes[Attributes::ZValue]=QString::number(z_value);
+	if(text_color.name()!="#000000")
+		attributes[Attributes::Color]=text_color.name();
 
-		return this->BaseObject::__getSourceCode(SchemaParser::XmlCode);
-	}
+	attributes[Attributes::FontSize]=QString("%1").arg(font_size);
+	attributes[Attributes::ZValue]=QString::number(z_value);
+	attributes[Attributes::Width]=QString::number(text_width);
+
+	return this->BaseObject::__getSourceCode(SchemaParser::XmlCode);
+
 }
 
 void Textbox::operator = (Textbox &txtbox)
@@ -102,12 +103,26 @@ bool Textbox::getTextAttribute(TextAttrib attrib)
 
 void Textbox::setFontSize(double size)
 {
-	font_size=(size <= 0 ? 1 : size);
+	font_size = (size <= 0 ? 1 : size);
+}
+
+void Textbox::setTextWidth(double width)
+{
+	setCodeInvalidated(text_width != width);
+	text_width = width;
+
+	if(text_width < 0)
+		text_width = 0;
 }
 
 double Textbox::getFontSize()
 {
 	return font_size;
+}
+
+double Textbox::getTextWidth()
+{
+	return text_width;
 }
 
 void Textbox::setZValue(int z_value)

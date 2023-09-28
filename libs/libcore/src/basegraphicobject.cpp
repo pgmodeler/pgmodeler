@@ -18,6 +18,8 @@
 
 #include "basegraphicobject.h"
 
+bool BaseGraphicObject::updates_enabled = true;
+
 BaseGraphicObject::BaseGraphicObject()
 {
 	is_modified=true;
@@ -48,18 +50,18 @@ void BaseGraphicObject::setModified(bool value)
 {
 	is_modified=value;
 
-	if(is_modified)
+	if(is_modified && updates_enabled)
 		emit s_objectModified();
 }
 
 void BaseGraphicObject::setSQLDisabled(bool value)
 {
-	bool curr_val=sql_disabled;
+	//bool curr_val=sql_disabled;
 
 	BaseObject::setSQLDisabled(value);
 
-	if(value != curr_val)
-		emit s_objectModified();
+	//if(value != curr_val && updates_enabled)
+	//	emit s_objectModified();
 }
 
 void BaseGraphicObject::setFadedOut(bool value)
@@ -100,7 +102,7 @@ void BaseGraphicObject::setPositionAttribute()
 	attributes[Attributes::Position]=schparser.getSourceCode(Attributes::Position, attributes, SchemaParser::XmlCode);
 }
 
-void  BaseGraphicObject::setPosition(QPointF pos)
+void  BaseGraphicObject::setPosition(const QPointF &pos)
 {
 	setCodeInvalidated(position != pos);
 	position=pos;
@@ -205,4 +207,14 @@ void BaseGraphicObject::setZValue(int z_value)
 int BaseGraphicObject::getZValue()
 {
 	return z_value;
+}
+
+void BaseGraphicObject::setUpdatesEnabled(bool value)
+{
+	updates_enabled = value;
+}
+
+bool BaseGraphicObject::isUpdatesEnabled()
+{
+	return updates_enabled;
 }

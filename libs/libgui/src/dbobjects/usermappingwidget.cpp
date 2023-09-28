@@ -17,6 +17,7 @@
 */
 
 #include "usermappingwidget.h"
+#include "guiutilsns.h"
 
 UserMappingWidget::UserMappingWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::UserMapping)
 {
