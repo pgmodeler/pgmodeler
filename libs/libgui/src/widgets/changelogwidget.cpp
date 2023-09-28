@@ -53,8 +53,8 @@ void ChangelogWidget::setVisible(bool value)
 
 void ChangelogWidget::updateChangelogInfo()
 {
-	QString last_change_text = tr("Last modified: <strong>%1</strong>"),
-			first_change_text = tr("First modified: <strong>%1</strong>");
+	QString last_change_text = tr("Last change: <strong>%1</strong>"),
+			first_change_text = tr("First change: <strong>%1</strong>");
 	unsigned total_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
 
 	if(total_len == 0)
@@ -142,12 +142,45 @@ void ChangelogWidget::inspectChangelog()
 			h_model->setHeaderData(section, Qt::Horizontal, QIcon(icons[section]), Qt::DecorationRole);
 		}
 
+		ObjectType obj_type;
+		QFont fnt;
+		QString action;
+		QMap<QString, QString> actions_i18n = {
+			{	Attributes::Created, tr("Created") },
+			{ Attributes::Deleted, tr("Deleted") },
+			{ Attributes::Updated, tr("Updated") }
+		},
+
+		actions_icons = {
+			{	Attributes::Created, "created" },
+			{ Attributes::Deleted, "removed" },
+			{ Attributes::Updated, "modified" }
+		};
+
+		data_tbw->setUpdatesEnabled(false);
+
+		for(int row = 0; row < data_tbw->rowCount(); row++)
+		{
+			obj_type = BaseObject::getObjectType(data_tbw->item(row, 2)->text());
+			action = data_tbw->item(row, 3)->text();
+
+			data_tbw->item(row, 1)->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+			data_tbw->item(row, 2)->setText(BaseObject::getTypeName(obj_type));
+			data_tbw->item(row, 3)->setText(actions_i18n[action]);
+			data_tbw->item(row, 3)->setIcon(QIcon(GuiUtilsNs::getIconPath(actions_icons[action])));
+
+			fnt = data_tbw->item(row, 2)->font();
+			fnt.setItalic(true);
+			data_tbw->item(row, 2)->setFont(fnt);
+		}
+
 		header->swapSections(0, 1);
 		header->swapSections(1, 2);
 		header->setStretchLastSection(true);
 		data_tbw->setSortingEnabled(true);
 		data_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
 		data_tbw->setAlternatingRowColors(true);
+		data_tbw->setUpdatesEnabled(true);
 	}
 	catch(Exception &e)
 	{
