@@ -455,7 +455,6 @@ Do you really want to proceed?"),
 
 		import_btn->setEnabled(hasObjectsToImport());
 		buttons_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0);
-		buttons_wgt->setVisible(db_objects_stw->currentIndex() == 0);
 	}
 	catch(Exception &e)
 	{
