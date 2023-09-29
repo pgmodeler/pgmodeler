@@ -108,10 +108,12 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		
 		//! \brief Database model used to store the example base objects
 		DatabaseModel *model;
-		
+
 		//! \brief Stores the element configuration items
 		std::vector<AppearanceConfigItem> conf_items;
 		
+		bool show_grid, show_delimiters;
+
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel();
 		
@@ -139,9 +141,13 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 
 		virtual ~AppearanceConfigWidget();
 		
-		void saveConfiguration();
+		virtual void showEvent(QShowEvent *) override;
 
-		void loadConfiguration();
+		virtual void hideEvent(QHideEvent *) override;
+
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
 
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
@@ -159,16 +165,17 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		void enableConfigElement();
 		void applyElementFontStyle();
 		void applyElementColor(unsigned color_idx, QColor color);
-		void applyConfiguration(void);
 		void previewCodeFontStyle();
 		void previewCanvasColors();
 		void applySyntaxHighlightTheme();
+
+		virtual void applyConfiguration() override;
 
 		//! \brief Applies temporarily all the settings related to the UI
 		void previewUiSettings();
 
 	public slots:
-		void restoreDefaults();
+		virtual void restoreDefaults() override;
 };
 
 #endif

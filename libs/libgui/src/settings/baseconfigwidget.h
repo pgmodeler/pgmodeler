@@ -87,7 +87,7 @@ class __libgui BaseConfigWidget: public QWidget {
 		//! \brief Appends/overwrites the configuration parameters of the provided section_id.
 		static void appendConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params);
 
-		void showEvent(QShowEvent *);
+		virtual void showEvent(QShowEvent *) override;
 
 	public:
 		BaseConfigWidget(QWidget *parent = nullptr);

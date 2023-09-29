@@ -117,6 +117,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 {
 	setupUi(this);
 	storeSystemUiColors();
+	show_grid = show_delimiters = false;
 
 	QStringList conf_ids={
 	/* 00 */	Attributes::Global,
@@ -350,6 +351,21 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 	delete viewp;
 	delete scene;
 	delete model;
+}
+
+void AppearanceConfigWidget::showEvent(QShowEvent *)
+{
+	// Store the current state of grid/delimiters display
+	show_grid = ObjectsScene::isShowGrid();
+	show_delimiters = ObjectsScene::isShowPageDelimiters();
+	previewCanvasColors();
+}
+
+void AppearanceConfigWidget::hideEvent(QHideEvent *)
+{
+	// Restore the original state of grid/delimiters display
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delimiters);
 }
 
 std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
@@ -869,12 +885,17 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 
 void AppearanceConfigWidget::previewCanvasColors()
 {
+	ObjectsScene::setShowGrid(true);
+	ObjectsScene::setShowPageDelimiters(true);
+
 	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
 	ObjectsScene::setGridPattern(grid_pattern_cmb->currentIndex() == 0 ?
 																 ObjectsScene::SquarePattern : ObjectsScene::DotPattern);
+
 	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
-	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
+	ObjectsScene::setPageDelimitersColor(delimiters_color_cp->getColor(0));
 	ObjectsScene::setGridSize(grid_size_spb->value());
+
 	scene->update();
 	setConfigurationChanged(true);
 }

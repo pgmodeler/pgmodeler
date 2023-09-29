@@ -45,16 +45,17 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn, bool is_update);
 
-		void hideEvent(QHideEvent *);
-		void showEvent(QShowEvent *);
+		virtual void hideEvent(QHideEvent *) override;
+		virtual void showEvent(QShowEvent *) override;
 		void updateConnectionsCombo();
 		
 	public:
 		ConnectionsConfigWidget(QWidget * parent = nullptr);
 		virtual ~ConnectionsConfigWidget();
 		
-		void saveConfiguration();
-		void loadConfiguration();
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
 		
 		static std::map<QString, attribs_map> getConfigurationParams();
 		
@@ -77,7 +78,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		void destroyConnections();
 		
 	public slots:
-		void restoreDefaults();
+		virtual void restoreDefaults() override;
 		
 	private slots:
 		void newConnection();
@@ -88,7 +89,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		void removeConnection();
 		void enableCertificates();
 		void enableConnectionTest();
-		void applyConfiguration(void){}
+		virtual void applyConfiguration(void) override {}
 		
 		friend class ConfigurationForm;
 };

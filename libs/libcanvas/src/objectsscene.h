@@ -341,8 +341,8 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static void setCanvasColor(const QColor &value);
 		static QColor getCanvasColor();
 
-		static void setDelimitersColor(const QColor &value);
-		static QColor getDelimitersColor();
+		static void setPageDelimitersColor(const QColor &value);
+		static QColor getPageDelimitersColor();
 
 		bool isLayerRectsVisible();
 		bool isLayerNamesVisible();

@@ -44,9 +44,9 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		FileSelectorWidget *root_dir_sel;
 
 		/* Disabled methods */
-		void applyConfiguration(void){}
-		void saveConfiguration(void){}
-		void restoreDefaults(void){}
+		virtual void applyConfiguration() override {}
+		virtual void saveConfiguration() override {}
+		virtual void restoreDefaults() override {}
 		void addConfigurationParam(const QString &, const attribs_map &){}
 
 	public:
@@ -55,7 +55,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
-		void loadConfiguration();
+		virtual void loadConfiguration() override;
 
 		/*! \brief Installs the plugins's configuration action in the provided menu.
 		 *  Additionally, it fills a list of actions that is meant to be placed in a toolbar,

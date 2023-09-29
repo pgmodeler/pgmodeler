@@ -1126,12 +1126,12 @@ QColor ObjectsScene::getCanvasColor()
 	return canvas_color;
 }
 
-void ObjectsScene::setDelimitersColor(const QColor &value)
+void ObjectsScene::setPageDelimitersColor(const QColor &value)
 {
 	delimiters_color = value;
 }
 
-QColor ObjectsScene::getDelimitersColor()
+QColor ObjectsScene::getPageDelimitersColor()
 {
 	return delimiters_color;
 }
