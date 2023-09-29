@@ -107,11 +107,11 @@ void TextboxView::__configureObject()
 	text_item->setPos(0, 0);
 	text_item->setPolygon(polygon);
 
-	protected_icon->setPos(text_item->boundingRect().width() + 2 * HorizSpacing,
-												 text_item->boundingRect().height() * 0.70);
-
 	this->bounding_rect.setTopLeft(text_item->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(text_item->boundingRect().bottomRight());
+
+	protected_icon->setPos(text_item->boundingRect().width(),
+												 text_item->boundingRect().height());
 
 	this->setZValue(dynamic_cast<Textbox *>(getUnderlyingObject())->getZValue());
 	BaseObjectView::__configureObject();
