@@ -26,6 +26,7 @@
 #define EXTENSION_H
 
 #include "baseobject.h"
+#include "type.h"
 
 class __libcore Extension: public BaseObject {
 	private:
@@ -39,6 +40,10 @@ class __libcore Extension: public BaseObject {
 		is being updated */
 		QString versions[2];
 
+		std::vector<Type *> types;
+
+		bool isTypesReferenced();
+
 	public:
 		enum VersionId: unsigned {
 			CurVersion,
@@ -47,22 +52,26 @@ class __libcore Extension: public BaseObject {
 
 		Extension();
 
-		virtual ~Extension(){}
+		virtual ~Extension();
 
 		virtual void setName(const QString &name) override;
 
 		virtual void setSchema(BaseObject *schema) override;
 
+		void setTypes(const QStringList &type_names);
+
+		std::vector<Type *> getTypes();
+
 		/*! \brief Defines if the extension handles a datatype. When setting to true
 		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when
 		the extension was already inserted on the model. */
-		void setHandlesType(bool value);
+		[[deprecated]] void setHandlesType(bool value);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);
 
 		//! \brief Returns if the extension handles a datatype
-		bool handlesType();
+		[[deprecated]] bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(VersionId ver);

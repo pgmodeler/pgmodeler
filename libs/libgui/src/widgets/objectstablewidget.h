@@ -141,6 +141,16 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		//! \brief Returns the specified cell text
 		QString getCellText(unsigned row_idx, unsigned col_idx);
 
+		/*! \brief Returns the specified cell texts.
+		 * The section_idx parameter indicates the section (row/column) in which the texts must be retrieved.
+		 *
+		 * If the orientation is Qt::Horizontal then section_idx will refer to the row and the returned
+		 * list will contain the texts of all columns (cells) in that row.
+		 *
+		 * If the orientation is Qt::Vertical then section_idx will refer to the column and the returned
+		 * list will contain the texts of all rows in that column. */
+		QStringList getCellTexts(unsigned section_idx, Qt::Orientation orientation = Qt::Horizontal);
+
 		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
 
 		void setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state);

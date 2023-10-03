@@ -986,8 +986,11 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	{
 		__addObject(extension, obj_idx);
 
-		if(extension->handlesType())
-			PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
+		for(auto &type : extension->getTypes())
+			addType(type);
+
+		//if(extension->handlesType())
+		//	PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
 	}
 	catch(Exception &e)
 	{
@@ -1319,10 +1322,26 @@ void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
 	try
 	{
-		if(extension->handlesType())
-			removeUserType(extension, obj_idx);
-		else
-			__removeObject(extension, obj_idx);
+		//if(extension->handlesType())
+		//	removeUserType(extension, obj_idx);
+		//else
+		//	__removeObject(extension, obj_idx);
+
+		for(auto &type : extension->getTypes())
+		{
+			if(type->isReferenced())
+			{
+				BaseObject *ref_obj = type->getReferences().at(0);
+				throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
+												.arg(extension->getSignature(), type->getName(), type->getTypeName(),
+														 ref_obj->getSignature(), ref_obj->getTypeName()),
+												ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			removeType(type);
+		}
+
+		__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
 	{

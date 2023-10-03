@@ -634,6 +634,16 @@ class __libcore BaseObject {
 		//! \brief Clears both dependencies and references
 		void clearAllDepsRefs();
 
+		/*! \brief Returns true when the object has at least one object referencing it
+		 *  This method is useful to know if the object is being referenced wihtout the
+		 *  need to get the references themselves like getReference() */
+		bool isReferenced();
+
+		/*! \brief Returns true when the object has at least one dependency to another object
+		 *  This method is useful to know if the object has dependencies wihtout the
+		 *  need to get the dependencies themselves like getDependencies() */
+		bool hasDependencies();
+
 		/*! \brief Updates the dependencies list based upon the current relationship between
 		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific
 		 *  points of the code (currently only in the operator = due to the need in OperationList class )

@@ -1584,6 +1584,16 @@ void BaseObject::clearAllDepsRefs()
 	clearReferences();
 }
 
+bool BaseObject::isReferenced()
+{
+	return !object_refs.empty();
+}
+
+bool BaseObject::hasDependencies()
+{
+	return !object_deps.empty();
+}
+
 void BaseObject::updateDependencies()
 {
 	updateDependencies({});
