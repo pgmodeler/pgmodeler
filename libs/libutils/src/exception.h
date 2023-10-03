@@ -299,12 +299,13 @@ enum class ErrorCode: unsigned {
 	MalformedCsvMissingDelim,
 	RefInvCsvDocumentValue,
 	ModelFileSaveFailure,
-	RemExtRefChildObject
+	RemExtRefChildObject,
+	AddExtDupChildObject
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=266;
+		static constexpr unsigned ErrorCount=267;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

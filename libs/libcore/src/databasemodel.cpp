@@ -982,15 +982,27 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 
 void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 {
+	if(!extension)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	try
 	{
+		/* Before inserting the extension, if it has child objects, we
+		 * need to check if there are object with the same name in the model */
+		for(auto &type : extension->getTypes())
+		{
+			if(getObjectIndex(type->getSignature(), type->getObjectType()) >= 0)
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
+														 .arg(extension->getSignature(), type->getName(), type->getTypeName()),
+												 ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+		}
+
 		__addObject(extension, obj_idx);
 
 		for(auto &type : extension->getTypes())
 			addType(type);
-
-		//if(extension->handlesType())
-		//	PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
 	}
 	catch(Exception &e)
 	{
@@ -1320,13 +1332,13 @@ void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
-	try
-	{
-		//if(extension->handlesType())
-		//	removeUserType(extension, obj_idx);
-		//else
-		//	__removeObject(extension, obj_idx);
+	if(!extension)
+		throw Exception(ErrorCode::RemNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	try
+	{		
+		/* We raise an error if the user tries to remove an extension that
+		 * has one or more children being referenced in the model */
 		for(auto &type : extension->getTypes())
 		{
 			if(type->isReferenced())

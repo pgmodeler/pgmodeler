@@ -286,6 +286,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefInvCsvDocumentValue", QT_TR_NOOP("Trying to get a value from the CSV document in an invalid position: row `%1', column `%2'!")},
 	{"ModelFileSaveFailure", QT_TR_NOOP("Failed to save the database model to file `%1'! In order to avoid data loss, the backup file `%2' was restored. Note that the backup file will not be erased automatically, the user must delete it manually or, if preferred, copy it to a safe place to have an extra security copy!")},
 	{"RemExtRefChildObject", QT_TR_NOOP("The extension `%1' can't be removed because its child object `%2' (%3) is being referenced by `%4' (%5)!")},
+	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
 };
 
 Exception::Exception()
