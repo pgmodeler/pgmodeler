@@ -1187,7 +1187,7 @@ void PgModelerCliApp::recreateObjects()
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 	std::vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
-	attribs_map attribs, fmt_ext_names;
+	attribs_map attribs;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
@@ -1215,11 +1215,6 @@ void PgModelerCliApp::recreateObjects()
 			objs_xml.pop_front();
 			fixObjectAttributes(xml_def);
 		}
-
-		/* Replacing the tags [<type name="extension_type"] by [<type name="schema.extension_type"]
-		 * in order to avoid reference breaking when loading the model in pgModeler 0.9.4-alpha1 or above. */
-		for(auto &ext_name : fmt_ext_names)
-			xml_def.replace(type_tag.arg(ext_name.first), type_tag.arg(ext_name.second));
 
 		try
 		{
@@ -1265,17 +1260,6 @@ void PgModelerCliApp::recreateObjects()
 												 .arg(tr("Object recreated: `%1' (%2)"))
 												 .arg(object->getName(true))
 												 .arg(object->getTypeName()));
-
-						/* Special case for extensions:
-						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
-						 * registered in the PgSqlType as user-defined data type without their schemas names prepended. This
-						 * was causing lot of troubles importing databases in which extension data types were being used. The
-						 * solution was to adjust the extension type names in such a way to prepend schema names. So here we
-						 * store the schema-qualified extension name in a special map where the key is the name of the extension
-						 * without the schema name, this way search the tags [<type name="extension"] and replace by [<type name="schema.extension"] */
-						#warning "TODO: append <type> tag if the extension has handles-type attribute"
-						//if(object->getObjectType() == ObjectType::Extension && dynamic_cast<Extension *>(object)->handlesType())
-						//	fmt_ext_names[object->getName()] = object->getName(true, true);
 					}
 
 					//For each sucessful created object the method will try to create a failed one
@@ -1649,6 +1633,24 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	{
 		obj_xml.replace(QString("%1=\"false\"").arg(Attributes::HideExtAttribs), QString("%1=\"0\"").arg(Attributes::CollapseMode));
 		obj_xml.replace(QString("%1=\"true\"").arg(Attributes::HideExtAttribs), QString("%1=\"1\"").arg(Attributes::CollapseMode));
+	}
+
+	//Replacing attribute handles-type in extension by the tag <type name="extension-name"...
+	QRegularExpression handle_type_rx = QRegularExpression(AttributeExpr.arg("handles-type"));
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension))) &&
+			obj_xml.contains(handle_type_rx))
+	{
+		int end_sch_idx = -1, start_idx = -1, end_idx = -1;
+		QString name_attr="name=\"", ext_name;
+
+		//Extracting the extension's name
+		start_idx=obj_xml.indexOf(name_attr);
+		end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
+		ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+
+		obj_xml.remove(handle_type_rx);
+		end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
+		obj_xml.insert(end_sch_idx, QString("\n<type name=\"%1\"/>\n").arg(ext_name));
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
