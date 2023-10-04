@@ -158,7 +158,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvGroupDeclarationNotDefined", QT_TR_NOOP("The group `%1' has been declared but not built!")},
 	{"RefColObjectTabInvalidIndex", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"RefRowObjectTabInvalidIndex", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
-	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!")},
+	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is a protected object which is present in the database model only to be used as dependency of other objects!")},
 	{"InvFuncConfigInvalidatesObject", QT_TR_NOOP("The new configuration of the function invalidates the object `%1' (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!")},
 	{"InvSQLScopeViewReference", QT_TR_NOOP("A view reference should be used in at least one of these SQL scopes: View Definition, SELECT, FROM, WHERE or GROUP/HAVING!")},
 	{"InvConstratintNoColumns", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
@@ -219,7 +219,6 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidOpClassObject", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
 	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions must be between %2 and %3.")},
 	{"ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
-	{"ExtensionHandlingTypeImmutable", QT_TR_NOOP("The extension `%1' can't have its data types changed because one or more of them are being referenced in the database model! Undo the references to the current types before changing them.")},
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"RefInvalidNamePatternId", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
@@ -287,6 +286,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"ModelFileSaveFailure", QT_TR_NOOP("Failed to save the database model to file `%1'! In order to avoid data loss, the backup file `%2' was restored. Note that the backup file will not be erased automatically, the user must delete it manually or, if preferred, copy it to a safe place to have an extra security copy!")},
 	{"RemExtRefChildObject", QT_TR_NOOP("The extension `%1' can't be removed because its child object `%2' (%3) is being referenced by `%4' (%5)!")},
 	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
+	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
 };
 
 Exception::Exception()

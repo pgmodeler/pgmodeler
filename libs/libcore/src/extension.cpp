@@ -5,38 +5,9 @@ Extension::Extension()
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
-	attributes[Attributes::HandlesType]="";
 	attributes[Attributes::CurVersion]="";
 	attributes[Attributes::OldVersion]="";
-}
-
-Extension::~Extension()
-{
-	/* We destroy the children types only if the extension isn't installed in the database model
-	 * otherwise the database model takes care of destroying the types */
-	if(!getDatabase())
-	{
-		for(auto & type : types)
-			delete type;
-	}
-}
-
-void Extension::setName(const QString &name)
-{
-	if(!handles_type)
-		BaseObject::setName(name);
-	else
-	{
-		QString prev_name, new_name;
-
-		prev_name = getName(true, true);
-		BaseObject::setName(name);
-		new_name = getName(true, true);
-
-		#warning "Can be removed!"
-		//Renames the PostgreSQL type represented by the extension
-		//PgSqlType::renameUserType(prev_name, this, new_name);
-	}
+	attributes[Attributes::Types]="";
 }
 
 void Extension::setSchema(BaseObject *schema)
@@ -45,86 +16,38 @@ void Extension::setSchema(BaseObject *schema)
 		this->schema = schema;
 	else
 	{
-		QString prev_name = getName(true, true);
-		BaseObject::setSchema(schema);
-
-		#warning "Rename types!"
-		//Renames the PostgreSQL type represented by the extension
-		if(handles_type)
-			PgSqlType::renameUserType(prev_name, this, getName(true, true));
-	}
-}
-
-void Extension::setTypes(const QStringList &type_names)
-{
-	std::vector<Type *> new_types;
-
-	if(type_names.isEmpty())
-		return;
-
-	if(!type_names.isEmpty() && isTypesReferenced())
-	{
-		/* Raises an error if the extension is already registered with children data types and
-		 * the user tries to change them. This cannot be done to avoid cascade reference breaking
-		 * on table columns/functions or any other objects that references PgSQLType */
-		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable).arg(getSignature()),
-										 ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-
-	try
-	{
-		Type *type = nullptr;
+		QString new_type_name;
 
 		for(auto &tp_name : type_names)
 		{
-			type = new Type;
-			type->setName(tp_name);
-			type->setSchema(schema);
-			type->setSystemObject(true);
-			type->setConfiguration(Type::EnumerationType);
-			type->getSourceCode(SchemaParser::SqlCode);
-			new_types.push_back(type);
+			new_type_name = QString("%1.%2").arg(schema->getName(true, false), tp_name);
+
+			if(PgSqlType::getUserTypeIndex(new_type_name, nullptr, getDatabase()) != PgSqlType::Null)
+			{
+				PgSqlType user_type(new_type_name);
+
+				if(!user_type.getObject()->isDependingOn(this))
+				{
+					throw Exception(Exception::getErrorMessage(ErrorCode::AsgSchExtTypeConflict)
+															 .arg(schema->getName(), obj_name, tp_name, BaseObject::getTypeName(ObjectType::Type)),
+													 ErrorCode::AsgSchExtTypeConflict, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+				}
+			}
 		}
 
-		types = new_types;
-	}
-	catch(Exception &e)
-	{
-		// Destroy all the new types created
-		for(auto &type : new_types)
-			delete type;
-
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		BaseObject::setSchema(schema);
 	}
 }
 
-std::vector<Type *> Extension::getTypes()
+void Extension::setTypeNames(const QStringList &tp_names)
 {
-	return types;
+	type_names = tp_names;
+	setCodeInvalidated(type_names != tp_names);
 }
 
-bool Extension::isTypesReferenced()
+QStringList Extension::getTypeNames()
 {
-	for(auto &type : types)
-	{
-		if(type->isReferenced())
-			return true;
-	}
-
-	return false;
-}
-
-void Extension::setHandlesType(bool value)
-{
-	/* Raises an error if the extension is already registered as a data type and the
-	try to change the attribute value. This cannot be done to avoid cascade reference breaking
-	on table columns/functions or any other objects that references PgSQLType */
-	if(!value && PgSqlType::getUserTypeIndex(getName(true, true), this) != PgSqlType::Null)
-		throw Exception(Exception::getErrorMessage(ErrorCode::ExtensionHandlingTypeImmutable)
-						.arg(getName(true)),
-						ErrorCode::ExtensionHandlingTypeImmutable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	this->handles_type=value;
+	return type_names;
 }
 
 void Extension::setVersion(VersionId ver, const QString &value)
@@ -134,11 +57,6 @@ void Extension::setVersion(VersionId ver, const QString &value)
 
 	setCodeInvalidated(versions[ver] != value);
 	versions[ver]=value;
-}
-
-bool Extension::handlesType()
-{
-	return handles_type;
 }
 
 QString Extension::getVersion(VersionId ver)
@@ -154,10 +72,24 @@ QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Name]=getName(def_type==SchemaParser::SqlCode, false);
-	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : "");
-	attributes[Attributes::CurVersion]=versions[CurVersion];
-	attributes[Attributes::OldVersion]=versions[OldVersion];
+	attributes[Attributes::Name] = getName(def_type==SchemaParser::SqlCode, false);
+	attributes[Attributes::CurVersion] = versions[CurVersion];
+	attributes[Attributes::OldVersion] = versions[OldVersion];
+	attributes[Attributes::Types] = "";
+
+	if(def_type == SchemaParser::XmlCode && !type_names.isEmpty())
+	{
+		attribs_map type_attr;
+
+		for(auto &tp_name : type_names)
+		{
+			type_attr[Attributes::Name] = tp_name;
+
+			schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreEmptyAttributes(true);
+			attributes[Attributes::Types] += schparser.getSourceCode(Attributes::PgSqlBaseType, type_attr, def_type);
+		}
+	}
 
 	return BaseObject::__getSourceCode(def_type);
 }
@@ -200,17 +132,4 @@ QString Extension::getSignature(bool format)
 QString Extension::getName(bool format, bool prepend_schema)
 {
 	return BaseObject::getName(format, prepend_schema);
-}
-
-void Extension::operator = (Extension &ext)
-{
-	QString prev_name=getName(true, true);
-
-	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
-	this->versions[CurVersion]=ext.versions[CurVersion];
-	this->versions[OldVersion]=ext.versions[OldVersion];
-	this->handles_type=ext.handles_type;
-
-	if(this->handles_type)
-		PgSqlType::renameUserType(prev_name, this, getName(true, true));
 }

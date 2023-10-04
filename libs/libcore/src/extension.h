@@ -40,9 +40,8 @@ class __libcore Extension: public BaseObject {
 		is being updated */
 		QString versions[2];
 
-		std::vector<Type *> types;
-
-		bool isTypesReferenced();
+		//! \brief Store the type names that are created when installing the extension
+		QStringList type_names;
 
 	public:
 		enum VersionId: unsigned {
@@ -52,26 +51,14 @@ class __libcore Extension: public BaseObject {
 
 		Extension();
 
-		virtual ~Extension();
-
-		virtual void setName(const QString &name) override;
-
 		virtual void setSchema(BaseObject *schema) override;
 
-		void setTypes(const QStringList &type_names);
+		void setTypeNames(const QStringList &tp_names);
 
-		std::vector<Type *> getTypes();
-
-		/*! \brief Defines if the extension handles a datatype. When setting to true
-		the extension will be registered as a datatype on DatabaseModel class. This method has no effect when
-		the extension was already inserted on the model. */
-		[[deprecated]] void setHandlesType(bool value);
+		QStringList getTypeNames();
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);
-
-		//! \brief Returns if the extension handles a datatype
-		[[deprecated]] bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(VersionId ver);
@@ -89,8 +76,6 @@ class __libcore Extension: public BaseObject {
 		 * to be false by default (instead of true in BaseObject::getName) so the SQL code definition of the
 		 * extension can be created correctly since the CREATE EXTENSION does not allow the schema name appended to the object's name */
 		virtual QString getName(bool format = false, bool prepend_schema = false) final;
-
-		void operator = (Extension &ext);
 };
 
 #endif

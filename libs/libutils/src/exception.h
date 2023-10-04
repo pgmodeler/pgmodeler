@@ -233,7 +233,6 @@ enum class ErrorCode: unsigned {
 	AsgInvalidOpClassObject,
 	InvPostgreSQLVersion,
 	ValidationFailure,
-	ExtensionHandlingTypeImmutable,
 	InvAllocationFKRelationship,
 	AsgInvalidNamePattern,
 	RefInvalidNamePatternId,
@@ -300,7 +299,8 @@ enum class ErrorCode: unsigned {
 	RefInvCsvDocumentValue,
 	ModelFileSaveFailure,
 	RemExtRefChildObject,
-	AddExtDupChildObject
+	AddExtDupChildObject,
+	AsgSchExtTypeConflict
 };
 
 class __libutils Exception {

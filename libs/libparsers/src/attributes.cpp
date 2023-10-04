@@ -278,7 +278,6 @@ namespace Attributes {
 	GridPattern("grid-pattern"),
 	Group("group"),
 	HandlerFunc("handler"),
-	HandlesType("handles-type"),
 	HasChanges("has-changes"),
 	Hashes("hashes"),
 	HbaFile("hba-file"),

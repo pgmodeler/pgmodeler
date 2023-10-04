@@ -47,22 +47,6 @@
       <property name="spacing">
        <number>5</number>
       </property>
-      <item row="2" column="0" colspan="2">
-       <widget class="QCheckBox" name="handles_type_chk">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>This attribute cannot be changed once the object is created.</string>
-        </property>
-        <property name="text">
-         <string>Handles data type</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="cur_ver_edt">
         <property name="sizePolicy">
@@ -82,19 +66,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="old_ver_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Old:</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="cur_ver_lbl">
         <property name="sizePolicy">
@@ -105,6 +76,19 @@
         </property>
         <property name="text">
          <string>Current:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="old_ver_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Old:</string>
         </property>
        </widget>
       </item>

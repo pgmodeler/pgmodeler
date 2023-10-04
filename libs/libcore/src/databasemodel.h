@@ -231,22 +231,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Removes an user defined type (domain or type)
 		void removeUserType(BaseObject *object, int obj_idx);
 
-		/*! \brief Returns the object on the model that represents the base pgsql type. The possible
-		 returned object can be: table, sequence, domain or type */
-		BaseObject *getObjectPgSQLType(PgSqlType type);
-
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
 		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo();
-
-		/*! \brief This method forces the indication that the model is being loaded or not by setting the attribute loading_model.
-		 * The attribute loading_model causes the model perform certain operations only when model starts/ends the loading process,
-		 * for instance, if loading_model = true graphical objects will be rendered only when the loading process finishes (loading_model =false)
-		 * otherwise the objects are rendered as they are added to the model. The drawback of this approach is, depending on the operation being used after
-		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
-		//void setLoadingModel(bool value);
 
 		/*! \brief This method forces the breaking of the code generation/saving in the methods getSourceCode, saveModel and saveSplitModel.
 		 *  This method is used only by the export helper in such a way to allow the user to abort any export to file in a threaded operation. */
@@ -315,6 +304,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
 		void setBasicFunctionAttributes(BaseFunction *func);
 
+		//! \brief Updates (creating/removing) in the model the extension data types
+		bool updateExtensionTypes(Extension *ext);
+
+		void removeExtensionTypes(Extension *ext);
 	public:
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
@@ -876,6 +869,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 	friend class PgModelerCliApp;
 	friend class OperationList;
 	friend class PermissionWidget;
+	friend class ExtensionWidget;
 };
 
 #endif

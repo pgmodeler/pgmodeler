@@ -1273,8 +1273,9 @@ void PgModelerCliApp::recreateObjects()
 						 * solution was to adjust the extension type names in such a way to prepend schema names. So here we
 						 * store the schema-qualified extension name in a special map where the key is the name of the extension
 						 * without the schema name, this way search the tags [<type name="extension"] and replace by [<type name="schema.extension"] */
-						if(object->getObjectType() == ObjectType::Extension && dynamic_cast<Extension *>(object)->handlesType())
-							fmt_ext_names[object->getName()] = object->getName(true, true);
+						#warning "TODO: append <type> tag if the extension has handles-type attribute"
+						//if(object->getObjectType() == ObjectType::Extension && dynamic_cast<Extension *>(object)->handlesType())
+						//	fmt_ext_names[object->getName()] = object->getName(true, true);
 					}
 
 					//For each sucessful created object the method will try to create a failed one

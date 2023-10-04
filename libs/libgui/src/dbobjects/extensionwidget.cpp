@@ -18,7 +18,7 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, Ob
 													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	configureFormLayout(extension_grid, ObjectType::Extension);
-	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk, types_tab });
+	configureTabOrder({ cur_ver_edt, old_ver_edt, types_tab });
 
 	setMinimumSize(500, 500);
 }
@@ -32,8 +32,11 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		cur_ver_edt->setText(ext->getVersion(Extension::CurVersion));
 		old_ver_edt->setText(ext->getVersion(Extension::OldVersion));
 
-		handles_type_chk->setEnabled(false);
-		handles_type_chk->setChecked(ext->handlesType());
+		for(auto &tp_name : ext->getTypeNames())
+		{
+			types_tab->addRow();
+			types_tab->setCellText(tp_name, types_tab->getRowCount() - 1, 0);
+		}
 	}
 }
 
@@ -41,26 +44,26 @@ void ExtensionWidget::applyConfiguration()
 {
 	try
 	{
-		Extension *extension = nullptr;
-
 		startConfiguration<Extension>();
-		extension = dynamic_cast<Extension *>(this->object);
+
+		bool update_types = !new_object;
+		Extension *extension = dynamic_cast<Extension *>(this->object);
+
 		BaseObjectWidget::applyConfiguration();
-		extension->setHandlesType(handles_type_chk->isChecked());
+
 		extension->setVersion(Extension::CurVersion, cur_ver_edt->text());
 		extension->setVersion(Extension::OldVersion, old_ver_edt->text());
 
-//		std::vector<Type *> curr_types = extension->getTypes();
 		QStringList type_names = types_tab->getCellTexts(0, Qt::Vertical);
-		extension->setTypes(type_names);
-
-		/* for(auto &type : curr_types)
-			model->removeType(type);
-
-		for(auto &type : extension->getTypes())
-			model->addType(type); */
-
+		extension->setTypeNames(type_names);
 		finishConfiguration();
+
+		if(update_types && !model->updateExtensionTypes(extension))
+		{
+			Messagebox msgbox;
+			msgbox.show(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."),
+									Messagebox::AlertIcon);
+		}
 	}
 	catch(Exception &e)
 	{

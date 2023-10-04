@@ -29,7 +29,6 @@
 #include <QString>
 
 class BaseObject;
-class DatabaseModel;
 
 /*! \brief This class stores the user defined type configureation.
 	 When the user creates a Type, Sequence, Domain, even a Table,
@@ -43,11 +42,10 @@ class __libcore UserTypeConfig {
 			TableType=4, //! \brief The type refers to a table
 			SequenceType=8, //! \brief The type refers to a sequence
 			ViewType=16, //! \brief The type refers to a view
-			ExtensionType=32, //! \brief The type refers to a extension used as datatype
-			ForeignTableType=64, //! \brief The type refers to a extension used as datatype
+			ForeignTableType=32, //! \brief The type refers to a extension used as datatype
 
 			//! \brief This constant refers to all types above and must be used only on type searches
-			AllUserTypes=127
+			AllUserTypes=63
 		};
 
 		UserTypeConfig(void)
@@ -61,12 +59,10 @@ class __libcore UserTypeConfig {
 
 	protected:
 		//! \brief Pointer to the instance of the user defined type
-		//void *ptype;
 		BaseObject *ptype;
 
 		//! \brief Pointer to the model that the type belongs to
-		//void *pmodel;
-		DatabaseModel *pmodel;
+		BaseObject *pmodel;
 
 		//! \brief Name of the type
 		QString name;

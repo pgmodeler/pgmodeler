@@ -29,6 +29,10 @@
 	{schema}
 %end
 
+%if {types} %then
+	{types}
+%end
+
 %if {comment} %then {comment} %end
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end

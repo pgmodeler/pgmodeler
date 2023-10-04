@@ -639,10 +639,16 @@ class __libcore BaseObject {
 		 *  need to get the references themselves like getReference() */
 		bool isReferenced();
 
+		//! \brief Returns true when the provided object is a referrer of the "this" object
+		bool isReferencedBy(BaseObject *ref_obj);
+
 		/*! \brief Returns true when the object has at least one dependency to another object
 		 *  This method is useful to know if the object has dependencies wihtout the
 		 *  need to get the dependencies themselves like getDependencies() */
 		bool hasDependencies();
+
+		//! \brief Returns true when the provided object is one of the dependencies of the "this" object
+		bool isDependingOn(BaseObject *dep_obj);
 
 		/*! \brief Updates the dependencies list based upon the current relationship between
 		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific
