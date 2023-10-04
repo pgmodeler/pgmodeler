@@ -41,6 +41,15 @@ void Extension::setSchema(BaseObject *schema)
 
 void Extension::setTypeNames(const QStringList &tp_names)
 {
+	for(auto &tp_name : tp_names)
+	{
+		if(!BaseObject::isValidName(tp_name))
+		{
+			throw Exception(ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+											 QString(QT_TR_NOOP("Invalid type name: %1")).arg(tp_name));
+		}
+	}
+
 	type_names = tp_names;
 	setCodeInvalidated(type_names != tp_names);
 }

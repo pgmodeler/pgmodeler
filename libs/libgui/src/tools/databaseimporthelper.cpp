@@ -1108,12 +1108,25 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 
 void DatabaseImportHelper::createExtension(attribs_map &attribs)
 {
-	Extension *ext=nullptr;
+	Extension *ext = nullptr;
 
 	try
 	{
+		QStringList type_names = 	Catalog::parseArrayValues(attribs[Attributes::Types]);
+		attribs_map aux_attrs;
+
+		attribs[Attributes::Types].clear();
+
+		for(auto &tp_name : type_names)
+		{
+			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
+			aux_attrs[Attributes::Name] = tp_name;
+			attribs[Attributes::Types] += schparser.getSourceCode(Attributes::PgSqlBaseType, aux_attrs, SchemaParser::XmlCode);
+		}
+
 		loadObjectXML(ObjectType::Extension, attribs);
-		ext=dbmodel->createExtension();
+		ext = dbmodel->createExtension();
 		dbmodel->addExtension(ext);
 	}
 	catch(Exception &e)
