@@ -72,11 +72,13 @@ QStringList PgSqlType::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 109 to 124
-	"\"any\"","anyarray","anyelement","anyenum",
-	"anynonarray", "anyrange", "cstring","internal","language_handler",
-	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
-	"anymultirange"
+	//offsets 109 to 133
+	"\"any\"", "anyelement", "anyarray", "anynonarray", "anyenum",
+	"anyrange", "anymultirange", "anycompatible", "anycompatiblearray",
+	"anycompatiblenonarray", "anycompatiblerange", "anycompatiblemultirange",
+	"cstring", "internal", "language_handler", "fdw_handler", "table_am_handler",
+	"index_am_handler", "tsm_handler", "record", "trigger", "event_trigger",
+	"pg_ddl_command", "void", "unknown"
 };
 
 PgSqlType::PgSqlType()
