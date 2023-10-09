@@ -37,6 +37,8 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 			types_tab->addRow();
 			types_tab->setCellText(tp_name, types_tab->getRowCount() - 1, 0);
 		}
+
+		types_tab->clearSelection();
 	}
 }
 
