@@ -1,14 +1,26 @@
 #include "extensionwidget.h"
+#include "guiutilsns.h"
 
 ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, ObjectType::Extension)
 {
 	Ui_ExtensionWidget::setupUi(this);
+
+	types_tab = new ObjectsTableWidget(ObjectsTableWidget::AddButton |
+																		 ObjectsTableWidget::RemoveButton |
+																		 ObjectsTableWidget::RemoveAllButton, true, this);
+	types_tab->setCellsEditable(true);
+	types_tab->setColumnCount(1);
+	types_tab->setHeaderLabel(tr("Name"), 0);
+
+	QVBoxLayout *vbox = new QVBoxLayout(types_gb);
+	vbox->addWidget(types_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+
 	configureFormLayout(extension_grid, ObjectType::Extension);
+	configureTabOrder({ cur_ver_edt, old_ver_edt, types_tab });
 
-	extension_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), extension_grid->count()+1, 0, 1, 0);
-	configureTabOrder({ cur_ver_edt, old_ver_edt, handles_type_chk });
-
-	setMinimumSize(500, 180);
+	setMinimumSize(500, 500);
 }
 
 void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext)
@@ -20,8 +32,11 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		cur_ver_edt->setText(ext->getVersion(Extension::CurVersion));
 		old_ver_edt->setText(ext->getVersion(Extension::OldVersion));
 
-		handles_type_chk->setEnabled(false);
-		handles_type_chk->setChecked(ext->handlesType());
+		for(auto &tp_name : ext->getTypeNames())
+		{
+			types_tab->addRow();
+			types_tab->setCellText(tp_name, types_tab->getRowCount() - 1, 0);
+		}
 	}
 }
 
@@ -29,16 +44,26 @@ void ExtensionWidget::applyConfiguration()
 {
 	try
 	{
-		Extension *extension=nullptr;
-
 		startConfiguration<Extension>();
-		extension=dynamic_cast<Extension *>(this->object);
+
+		bool update_types = !new_object;
+		Extension *extension = dynamic_cast<Extension *>(this->object);
+
 		BaseObjectWidget::applyConfiguration();
-		extension->setHandlesType(handles_type_chk->isChecked());
+
 		extension->setVersion(Extension::CurVersion, cur_ver_edt->text());
 		extension->setVersion(Extension::OldVersion, old_ver_edt->text());
 
+		QStringList type_names = types_tab->getCellTexts(0, Qt::Vertical);
+		extension->setTypeNames(type_names);
 		finishConfiguration();
+
+		if(update_types && !model->updateExtensionTypes(extension))
+		{
+			Messagebox msgbox;
+			msgbox.show(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."),
+									Messagebox::AlertIcon);
+		}
 	}
 	catch(Exception &e)
 	{

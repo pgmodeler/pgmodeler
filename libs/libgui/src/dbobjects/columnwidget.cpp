@@ -130,7 +130,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	data_type->setAttributes(type, model, true,
 													 UserTypeConfig::BaseType | UserTypeConfig::TableType |
 													 UserTypeConfig::ViewType | UserTypeConfig::ForeignTableType |
-													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true, false);
+													 UserTypeConfig::DomainType, true, false);
 }
 
 void ColumnWidget::editSequenceAttributes()

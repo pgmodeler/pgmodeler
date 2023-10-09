@@ -45,7 +45,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		//! \brief Offset for pseudo types
 		static constexpr unsigned PseudoStart = 109,
-		PseudoEnd = 124;
+		PseudoEnd = 133;
 
 		//! \brief Configuration for user defined types
 		static std::vector<UserTypeConfig> user_types;
@@ -70,7 +70,8 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 	protected:
 		//! \brief Adds a new reference to the user defined type
-		static void addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf);
+		//static void addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf);
+		static void addUserType(const QString &type_name, BaseObject *ptype, UserTypeConfig::TypeConf type_conf);
 
 		//! \brief Removes a reference to the user defined type
 		static void removeUserType(const QString &type_name, BaseObject *ptype);
@@ -81,7 +82,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		/*! \brief Removes all registered types for the specified database model. Caution:
 		This method must be called only when destroying the model. Calling it in any other
 		situation can cause unexpected results */
-		static void removeUserTypes(DatabaseModel *pmodel);
+		static void removeUserTypes(BaseObject *pmodel);
 
 		//! \brief Returns the name of the type using its id
 		static QString getUserTypeName(unsigned type_id);
@@ -172,15 +173,20 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		try to return the correct type. The method will raise errors if the type could not be configured */
 		static PgSqlType parseString(const QString &str);
 
-		static unsigned getUserTypeIndex(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel = nullptr);
+		/*! \brief Returns the index of a user-defined type.
+		 *  It's is possible to search by type name (type_name) or by the type's reference (ptype).
+		 * Also, if a reference to a database model is provided the search is limited only to the types of that database model,
+		 * otherwise the searching occurs on all types registered for all database models. */
+		static unsigned getUserTypeIndex(const QString &type_name, BaseObject *ptype, BaseObject *pmodel = nullptr);
+
 		static unsigned getBaseTypeIndex(const QString &type_name);
 
 		/*! \brief Returns if the type is registered in the list of valid types (built-in one and user defined).
 		The optional parameter 'pmodel' is used to filter user defined type of a specific database model */
-		static bool isRegistered(const QString &type, DatabaseModel *pmodel = nullptr);
+		static bool isRegistered(const QString &type, BaseObject *pmodel = nullptr);
 
-		static void getUserTypes(QStringList &type_list, DatabaseModel *pmodel, unsigned inc_usr_types);
-		static void getUserTypes(std::vector<BaseObject *> &ptypes, DatabaseModel *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(QStringList &type_list, BaseObject *pmodel, unsigned inc_usr_types);
+		static void getUserTypes(std::vector<BaseObject *> &ptypes, BaseObject *pmodel, unsigned inc_usr_types);
 		static QStringList getTypes(bool oids = true, bool pseudos = true);
 
 		void setDimension(unsigned dim);

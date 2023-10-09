@@ -691,7 +691,7 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 	for(auto &item : items)
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
-		graph_obj = dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
+		graph_obj = !obj_view ? nullptr : dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
 
 		if(!obj_view || !obj_view->isVisible() || !graph_obj)
 			continue;

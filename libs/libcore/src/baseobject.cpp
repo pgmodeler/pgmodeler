@@ -1584,6 +1584,26 @@ void BaseObject::clearAllDepsRefs()
 	clearReferences();
 }
 
+bool BaseObject::isReferenced()
+{
+	return !object_refs.empty();
+}
+
+bool BaseObject::isReferencedBy(BaseObject *ref_obj)
+{
+	return std::find(object_refs.begin(), object_refs.end(), ref_obj) != object_refs.end();
+}
+
+bool BaseObject::hasDependencies()
+{
+	return !object_deps.empty();
+}
+
+bool BaseObject::isDependingOn(BaseObject *dep_obj)
+{
+	return std::find(object_deps.begin(), object_deps.end(), dep_obj) != object_deps.end();
+}
+
 void BaseObject::updateDependencies()
 {
 	updateDependencies({});

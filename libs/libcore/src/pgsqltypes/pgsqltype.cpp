@@ -72,11 +72,13 @@ QStringList PgSqlType::type_names =
 	"tid", "oidvector",
 
 	//Pseudo-types
-	//offsets 109 to 124
-	"\"any\"","anyarray","anyelement","anyenum",
-	"anynonarray", "anyrange", "cstring","internal","language_handler",
-	"record","trigger","void","opaque", "fdw_handler", "event_trigger",
-	"anymultirange"
+	//offsets 109 to 133
+	"\"any\"", "anyelement", "anyarray", "anynonarray", "anyenum",
+	"anyrange", "anymultirange", "anycompatible", "anycompatiblearray",
+	"anycompatiblenonarray", "anycompatiblerange", "anycompatiblemultirange",
+	"cstring", "internal", "language_handler", "fdw_handler", "table_am_handler",
+	"index_am_handler", "tsm_handler", "record", "trigger", "event_trigger",
+	"pg_ddl_command", "void", "unknown"
 };
 
 PgSqlType::PgSqlType()
@@ -448,12 +450,12 @@ QStringList PgSqlType::getTypes()
 	return TemplateType<PgSqlType>::getTypes(type_names);
 }
 
-bool PgSqlType::isRegistered(const QString &type, DatabaseModel *pmodel)
+bool PgSqlType::isRegistered(const QString &type, BaseObject *pmodel)
 {
-	if(getBaseTypeIndex(type)!=PgSqlType::Null)
+	if(getBaseTypeIndex(type) != PgSqlType::Null)
 		return true;
 
-	return (getUserTypeIndex(type, nullptr, pmodel)!=PgSqlType::Null);
+	return (getUserTypeIndex(type, nullptr, pmodel) != PgSqlType::Null);
 }
 
 bool PgSqlType::operator == (unsigned type_id)
@@ -563,25 +565,20 @@ unsigned PgSqlType::setUserType(BaseObject *ptype)
 	return type_idx;
 }
 
-void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf)
+//void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf)
+void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, UserTypeConfig::TypeConf type_conf)
 {
-	if(!type_name.isEmpty() && ptype && pmodel &&
-			/*(type_conf==UserTypeConfig::DomainType ||
-			 type_conf==UserTypeConfig::SequenceType ||
-			 type_conf==UserTypeConfig::TableType ||
-			 type_conf==UserTypeConfig::ViewType ||
-			 type_conf==UserTypeConfig::ExtensionType ||
-			 type_conf==UserTypeConfig::ForeignTableType ||
-			 type_conf==UserTypeConfig::BaseType)*/
+	if(!type_name.isEmpty() && ptype && ptype->getDatabase() &&
 			type_conf != UserTypeConfig::AllUserTypes &&
-			getUserTypeIndex(type_name,ptype,pmodel)==0)
+			getUserTypeIndex(type_name, ptype, ptype->getDatabase()) == Null)
 	{
 		UserTypeConfig cfg;
 
-		cfg.name=type_name;
-		cfg.ptype=ptype;
-		cfg.pmodel=pmodel;
-		cfg.type_conf=type_conf;
+		cfg.name = type_name;
+		cfg.ptype = ptype;
+		//cfg.pmodel=pmodel;
+		cfg.pmodel = ptype->getDatabase();
+		cfg.type_conf = type_conf;
 		PgSqlType::user_types.push_back(cfg);
 	}
 }
@@ -633,26 +630,26 @@ void PgSqlType::renameUserType(const QString &type_name, BaseObject *ptype, cons
 	}
 }
 
-void PgSqlType::removeUserTypes(DatabaseModel *pmodel)
+void PgSqlType::removeUserTypes(BaseObject *pmodel)
 {
-	if(pmodel)
-	{
-		std::vector<UserTypeConfig>::iterator itr;
-		unsigned idx=0;
+	if(!pmodel)
+		return;
 
-		itr=user_types.begin();
-		while(itr!=user_types.end())
+	std::vector<UserTypeConfig>::iterator itr;
+	unsigned idx=0;
+
+	itr=user_types.begin();
+	while(itr!=user_types.end())
+	{
+		if(itr->pmodel==pmodel)
 		{
-			if(itr->pmodel==pmodel)
-			{
-				user_types.erase(itr);
-				itr=user_types.begin() + idx;
-			}
-			else
-			{
-				idx++;
-				itr++;
-			}
+			user_types.erase(itr);
+			itr=user_types.begin() + idx;
+		}
+		else
+		{
+			idx++;
+			itr++;
 		}
 	}
 }
@@ -667,33 +664,32 @@ unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 	return getType(aux_name, type_names);
 }
 
-unsigned PgSqlType::getUserTypeIndex(const QString &type_name, BaseObject* ptype, DatabaseModel* pmodel)
+unsigned PgSqlType::getUserTypeIndex(const QString &type_name, BaseObject* ptype, BaseObject *pmodel)
 {
-	if(user_types.size() > 0 && (!type_name.isEmpty() || ptype))
+	if(user_types.size() == 0 || (type_name.isEmpty() && !ptype))
+		return PgSqlType::Null;
+
+	std::vector<UserTypeConfig>::iterator itr, itr_end;
+	int idx=0;
+
+	itr=user_types.begin();
+	itr_end=user_types.end();
+
+	while(itr!=itr_end)
 	{
-		std::vector<UserTypeConfig>::iterator itr, itr_end;
-		int idx=0;
+		if(!itr->invalidated &&
+				(((!type_name.isEmpty() && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
+				 ((pmodel && itr->pmodel==pmodel) || !pmodel)))
+			break;
 
-		itr=user_types.begin();
-		itr_end=user_types.end();
-
-		while(itr!=itr_end)
-		{
-			if(!itr->invalidated &&
-					(((!type_name.isEmpty() && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
-					 ((pmodel && itr->pmodel==pmodel) || !pmodel)))
-				break;
-
-			idx++;
-			itr++;
-		}
-
-		if(itr!=itr_end)
-			return (PseudoEnd + 1 + idx);
-		else
-			return PgSqlType::Null;
+		idx++;
+		itr++;
 	}
-	else return PgSqlType::Null;
+
+	if(itr != itr_end)
+		return (PseudoEnd + 1 + idx);
+
+	return PgSqlType::Null;
 }
 
 QString PgSqlType::getUserTypeName(unsigned type_id)
@@ -703,43 +699,36 @@ QString PgSqlType::getUserTypeName(unsigned type_id)
 	lim1=PseudoEnd + 1;
 	lim2=lim1 + user_types.size();
 
-
 	if(user_types.size() > 0 &&
 			(type_id >= lim1 && type_id < lim2))
 		return (user_types[type_id - lim1].name);
-	else
-		return "";
+
+	return "";
 }
 
-void PgSqlType::getUserTypes(QStringList &type_list, DatabaseModel *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(QStringList &type_list, BaseObject *pmodel, unsigned inc_usr_types)
 {
-	unsigned idx,total;
-
 	type_list.clear();
-	total=user_types.size();
 
-	for(idx=0; idx < total; idx++)
+	for(auto &cfg : user_types)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
-				((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
-			type_list.push_back(user_types[idx].name);
+		if(!cfg.invalidated && cfg.pmodel==pmodel &&
+				((inc_usr_types & cfg.type_conf) == cfg.type_conf))
+			type_list.push_back(cfg.name);
 	}
 }
 
-void PgSqlType::getUserTypes(std::vector<BaseObject *> &ptypes, DatabaseModel *pmodel, unsigned inc_usr_types)
+void PgSqlType::getUserTypes(std::vector<BaseObject *> &ptypes, BaseObject *pmodel, unsigned inc_usr_types)
 {
-	unsigned idx, total;
-
 	ptypes.clear();
-	total=user_types.size();
 
-	for(idx=0; idx < total; idx++)
+	for(auto &cfg : user_types)
 	{
 		//Only the user defined types of the specified model are retrieved
-		if(!user_types[idx].invalidated && user_types[idx].pmodel==pmodel &&
-				((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
-			ptypes.push_back(user_types[idx].ptype);
+		if(!cfg.invalidated && cfg.pmodel == pmodel &&
+				((inc_usr_types & cfg.type_conf) == cfg.type_conf))
+			ptypes.push_back(cfg.ptype);
 	}
 }
 

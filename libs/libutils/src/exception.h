@@ -233,7 +233,6 @@ enum class ErrorCode: unsigned {
 	AsgInvalidOpClassObject,
 	InvPostgreSQLVersion,
 	ValidationFailure,
-	ExtensionHandlingTypeImmutable,
 	InvAllocationFKRelationship,
 	AsgInvalidNamePattern,
 	RefInvalidNamePatternId,
@@ -298,12 +297,15 @@ enum class ErrorCode: unsigned {
 	MalformedCsvInvalidCols,
 	MalformedCsvMissingDelim,
 	RefInvCsvDocumentValue,
-	ModelFileSaveFailure
+	ModelFileSaveFailure,
+	RemExtRefChildObject,
+	AddExtDupChildObject,
+	AsgSchExtTypeConflict
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=265;
+		static constexpr unsigned ErrorCount=267;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

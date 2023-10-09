@@ -53,7 +53,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::ExecutionCost, QT_TR_NOOP("Exec. cost")},	{Attributes::Expression, QT_TR_NOOP("Expression")},
 	{Attributes::Family, QT_TR_NOOP("Op. family")},	{Attributes::FinalFunc, QT_TR_NOOP("Final func.")},
 	{Attributes::Function, QT_TR_NOOP("Function")},	{Attributes::FunctionType, QT_TR_NOOP("Func. type")},
-	{Attributes::HandlerFunc, QT_TR_NOOP("Handler func.")},	{Attributes::HandlesType, QT_TR_NOOP("Handles type")},
+	{Attributes::HandlerFunc, QT_TR_NOOP("Handler func.")},
 	{Attributes::Hashes, QT_TR_NOOP("Hashes")},	{Attributes::IndexType, QT_TR_NOOP("Index type")},
 	{Attributes::Inherit, QT_TR_NOOP("Inherit")},	{Attributes::InitialCond, QT_TR_NOOP("Ini. condition")},
 	{Attributes::InlineFunc, QT_TR_NOOP("Inline func.")},	{Attributes::InputFunc, QT_TR_NOOP("Input func.")},
@@ -522,7 +522,8 @@ void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatExtensionAttribs(attribs_map &attribs)
 {
-	formatBooleanAttribs(attribs, { Attributes::HandlesType });
+	#warning "TODO: List children types?"
+	//formatBooleanAttribs(attribs, { Attributes::HandlesType });
 }
 
 void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)

@@ -875,7 +875,8 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
 	{
 		__addObject(table, obj_idx);
 
-		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::TableType);
+		//PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::TableType);
+		PgSqlType::addUserType(table->getName(true), table, UserTypeConfig::TableType);
 
 		updateTableFKRelationships(table);
 
@@ -916,7 +917,8 @@ void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
 	try
 	{
 		__addObject(sequence, obj_idx);
-		PgSqlType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SequenceType);
+		//PgSqlType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SequenceType);
+		PgSqlType::addUserType(sequence->getName(true), sequence, UserTypeConfig::SequenceType);
 	}
 	catch(Exception &e)
 	{
@@ -985,13 +987,115 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	try
 	{
 		__addObject(extension, obj_idx);
-
-		if(extension->handlesType())
-			PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
+		updateExtensionTypes(extension);
 	}
 	catch(Exception &e)
 	{
+		removeExtensionTypes(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::removeExtensionTypes(Extension *ext)
+{
+	if(!ext)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	/* We raise an error if the user tries to remove an extension that
+	 * has one or more children being referenced in the model */
+	for(auto &obj : ext->getReferences())
+	{
+		if(obj->isReferenced())
+		{
+			BaseObject *ref_obj = obj->getReferences().at(0);
+			throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
+													 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+																ref_obj->getSignature(), ref_obj->getTypeName()),
+											 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		removeObject(obj);
+	}
+}
+
+bool DatabaseModel::updateExtensionTypes(Extension *ext)
+{
+	if(!ext)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	std::vector<Type *> new_types;
+
+	try
+	{
+		/* Before inserting the extension, if it has child objects, we
+		 * need to check if there are object with the same name in the model */
+		QString tp_signature;
+		Type *type = nullptr;
+		QStringList type_names = ext->getTypeNames();
+		bool types_removed = true;
+
+		for(auto &tp_name : type_names)
+		{
+			/* Checking if the extension child type has a conflicting name with another type in the model
+			 * For that purpose, we get the first type that contains the extension type signature */
+			tp_signature = ext->getSchema()->getName(true) + "." + tp_name;
+			type = dynamic_cast<Type *>(getObject(tp_signature, ObjectType::Type));
+
+			if(type)
+			{
+				/* If the type exist and is not one that is linked to the current extension it means
+				 * that if we try to create the type it'll be duplicated in the model, which is prohibited */
+				if(!type->isDependingOn(ext))
+				{
+					throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
+															 .arg(ext->getSignature(), tp_name, type->getTypeName()),
+													 ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+
+				// If the retrieved type is one of the extension's child types we just skip it
+				continue;
+			}
+
+			// Creating a new extension child type
+			type = new Type;
+			type->setName(tp_name);
+			type->setSchema(ext->getSchema());
+			type->setSystemObject(true);
+			type->setSQLDisabled(true);
+			type->setConfiguration(Type::EnumerationType);
+			type->getSourceCode(SchemaParser::SqlCode);
+			type->setDependency(ext);
+
+			new_types.push_back(type);
+			addType(type);
+		}
+
+		for(auto &type : ext->getReferences())
+		{
+			if(!type_names.contains(type->getName()))
+			{
+				if(!type->isReferenced())
+					removeObject(type);
+				else
+				{
+					type_names.append(type->getName());
+					ext->setTypeNames(type_names);
+					types_removed = false;
+				}
+			}
+		}
+
+		return types_removed;
+	}
+	catch(Exception &e)
+	{
+		for(auto &tp : new_types)
+		{
+			removeType(tp);
+			delete tp;
+		}
+
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -1215,7 +1319,8 @@ void DatabaseModel::addForeignTable(ForeignTable *table, int obj_idx)
 	{
 		__addObject(table, obj_idx);
 
-		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::ForeignTableType);
+//		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::ForeignTableType);
+		PgSqlType::addUserType(table->getName(true), table, UserTypeConfig::ForeignTableType);
 		dynamic_cast<Schema *>(table->getSchema())->setModified(true);
 	}
 	catch(Exception &e)
@@ -1317,12 +1422,13 @@ void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
+	if(!extension)
+		throw Exception(ErrorCode::RemNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	try
 	{
-		if(extension->handlesType())
-			removeUserType(extension, obj_idx);
-		else
-			__removeObject(extension, obj_idx);
+		removeExtensionTypes(extension);
+		__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
 	{
@@ -1335,7 +1441,8 @@ void DatabaseModel::addView(View *view, int obj_idx)
 	try
 	{
 		__addObject(view, obj_idx);
-		PgSqlType::addUserType(view->getName(true), view, this, UserTypeConfig::ViewType);
+		//PgSqlType::addUserType(view->getName(true), view, this, UserTypeConfig::ViewType);
+		PgSqlType::addUserType(view->getName(true), view, UserTypeConfig::ViewType);
 
 		updateViewRelationships(view);
 		dynamic_cast<Schema *>(view->getSchema())->setModified(true);
@@ -2722,7 +2829,8 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 			__addObject(domain, obj_idx);
 
 			//When added to the model the domain is inserted on the pgsql base type list to be used as a column type
-			PgSqlType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DomainType);
+//			PgSqlType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DomainType);
+			PgSqlType::addUserType(domain->getName(true), domain, UserTypeConfig::DomainType);
 		}
 		catch(Exception &e)
 		{
@@ -2888,7 +2996,8 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 			__addObject(type, obj_idx);
 
 			//When added to the model the user type is inserted on the pgsql base type list to be used as a column type
-			PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
+			//PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
+			PgSqlType::addUserType(type->getName(true), type, UserTypeConfig::BaseType);
 		}
 		catch(Exception &e)
 		{
@@ -4301,10 +4410,10 @@ PgSqlType DatabaseModel::createPgSQLType()
 	else
 	{
 		//Raises an error if the referenced type name doesn't exists
-		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == PgSqlType::Null)
+		if(PgSqlType::getUserTypeIndex(name, nullptr, this) == PgSqlType::Null)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
+		type_idx = PgSqlType::getUserTypeIndex(name, ptype, this);
 		return PgSqlType(type_idx, dimension, length, precision, with_timezone, interv_type, spatial_type);
 	}
 }
@@ -6794,16 +6903,36 @@ Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
+	QStringList types;
 
 	try
 	{
-		extension=new Extension;
+		extension = new Extension;
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
-		extension->setHandlesType(attribs[Attributes::HandlesType]==Attributes::True);
 		extension->setVersion(Extension::CurVersion, attribs[Attributes::CurVersion]);
 		extension->setVersion(Extension::OldVersion, attribs[Attributes::OldVersion]);
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			attribs.clear();
+
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					if(xmlparser.getElementName() == Attributes::Type)
+					{
+						xmlparser.getElementAttributes(attribs);
+						types.append(attribs[Attributes::Name]);
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		extension->setTypeNames(types);
 	}
 	catch(Exception &e)
 	{
@@ -8479,33 +8608,6 @@ void DatabaseModel::setCodesInvalidated(std::vector<ObjectType> types)
 			for(auto &obj : *list)
 				obj->setCodeInvalidated(true);
 		}
-	}
-}
-
-BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
-{
-	switch(type.getUserTypeConfig())
-	{
-		case UserTypeConfig::BaseType:
-		return this->getObject(*type, ObjectType::Type);
-
-		case UserTypeConfig::DomainType:
-		return this->getObject(*type, ObjectType::Domain);
-
-		case UserTypeConfig::TableType:
-		return this->getObject(*type, ObjectType::Table);
-
-		case UserTypeConfig::ViewType:
-		return this->getObject(*type, ObjectType::View);
-
-		case UserTypeConfig::SequenceType:
-		return this->getObject(*type, ObjectType::Sequence);
-
-		case UserTypeConfig::ExtensionType:
-		return this->getObject(*type, ObjectType::Extension);
-
-		default:
-		return nullptr;
 	}
 }
 
