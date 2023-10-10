@@ -80,11 +80,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	});
 
 	connect(paste_tb, &QToolButton::clicked, this, [this](){
-		csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
-																	CsvDocument::Separator,
-																	CsvDocument::TextDelimiter,
-																	true);
-		populateDataGrid(csv_load_wgt->getCsvDocument());
+		CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
+																													CsvDocument::Separator,
+																													CsvDocument::TextDelimiter,
+																													true);
+		populateDataGrid(csv_doc);
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});

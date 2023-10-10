@@ -125,6 +125,9 @@
        <height>25</height>
       </size>
      </property>
+     <property name="shortcut">
+      <string>Ctrl+C</string>
+     </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
      </property>
@@ -196,7 +199,7 @@
       </size>
      </property>
      <property name="shortcut">
-      <string>Del</string>
+      <string>Ctrl+Del</string>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonIconOnly</enum>
