@@ -6,6 +6,11 @@
 	%set {alter-table} [ALTER TABLE ] {table} [ ALTER COLUMN ] {name}
 	%set {ddl-end} [;] $br [-- ddl-end --] $br
 
+	%if ({identity-type} == "unset") %then
+		{alter-table} [ DROP IDENTITY]
+		{ddl-end}
+	%end
+
 	%if {type} %then
 		{alter-table}
 		[ TYPE ] {type}
@@ -74,7 +79,6 @@
 	%end
 
 	%if {cur-identity-type} %and {cycle} %then
-
 		{alter-table}
 		[ SET GENERATED ] {cur-identity-type} [ SET]
 
@@ -85,17 +89,13 @@
 		{ddl-end}
 	%end
 
-	%if {identity-type} %or {new-identity-type} %then
+	%if {new-identity-type} %or {identity-type} %and ({identity-type} != "unset") %then
 		{alter-table}
 
-		%if ({identity-type}=="unset") %then
-			[ DROP IDENTITY]
-		%else
-			%if {new-identity-type} %then
-				[ SET GENERATED ] {new-identity-type}
-			%else
-				[ ADD GENERATED ] {identity-type} [ AS IDENTITY]
-			%end
+		%if {new-identity-type} %then
+			[ SET GENERATED ] {new-identity-type}
+		%else 
+			[ ADD GENERATED ] {identity-type} [ AS IDENTITY]
 		%end
 
 		{ddl-end}
