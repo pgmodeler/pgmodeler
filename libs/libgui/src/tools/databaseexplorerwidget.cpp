@@ -522,8 +522,7 @@ void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatExtensionAttribs(attribs_map &attribs)
 {
-	#warning "TODO: List children types?"
-	//formatBooleanAttribs(attribs, { Attributes::HandlesType });
+	attribs[Attributes::Types] = Catalog::parseArrayValues(attribs[Attributes::Types]).join(UtilsNs::DataSeparator);
 }
 
 void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)
