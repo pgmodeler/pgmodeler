@@ -1069,10 +1069,14 @@ void MainWindow::loadModelFromAction()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
+
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			{
+				Messagebox msgbox;
+				msgbox.show(e);
+			}
 		}
 	}
 }
