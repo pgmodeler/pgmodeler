@@ -38,6 +38,7 @@ namespace PgSqlVersions {
 	PgSqlVersion140,
 	PgSqlVersion150,
 	PgSqlVersion160,
+	MinimumVersion,
 	DefaulVersion;
 
 	extern __libutils const QStringList AllVersions;

@@ -42,14 +42,14 @@ namespace PgSqlVersions {
 	QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver)
 	{
 		unsigned curr_ver = QString(pgsql_ver).remove('.').toUInt(),
-				minor_ver = QString(PgSqlVersion100).remove('.').toUInt(),
+				minor_ver = QString(MinimumVersion).remove('.').toUInt(),
 				default_ver = QString(DefaulVersion).remove('.').toUInt();
 
 		if(!ignore_legacy_ver && curr_ver != 0 && (curr_ver < minor_ver))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvPostgreSQLVersion)
 							.arg(pgsql_ver)
-							.arg(PgSqlVersions::PgSqlVersion100)
+							.arg(PgSqlVersions::MinimumVersion)
 							.arg(PgSqlVersions::DefaulVersion),
 							ErrorCode::InvPostgreSQLVersion,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
