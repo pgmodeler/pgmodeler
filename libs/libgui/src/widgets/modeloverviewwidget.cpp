@@ -280,11 +280,6 @@ void ModelOverviewWidget::updateZoomFactor(double zoom)
 	this->resizeWindowFrame();
 }
 
-void ModelOverviewWidget::mouseDoubleClickEvent(QMouseEvent *)
-{
-	this->close();
-}
-
 void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	if(!frame->isEnabled())

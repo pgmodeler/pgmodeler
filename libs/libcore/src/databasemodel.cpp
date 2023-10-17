@@ -3399,7 +3399,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			if(xmlparser.getCurrentElement())
 				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
-			if(e.getErrorCode()>=ErrorCode::InvalidSyntax)
+			if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed && e.getErrorCode() >= ErrorCode::InvalidSyntax)
 			{
 				str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
 				throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);

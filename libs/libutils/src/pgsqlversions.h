@@ -36,6 +36,9 @@ namespace PgSqlVersions {
 	PgSqlVersion120,
 	PgSqlVersion130,
 	PgSqlVersion140,
+	PgSqlVersion150,
+	PgSqlVersion160,
+	MinimumVersion,
 	DefaulVersion;
 
 	extern __libutils const QStringList AllVersions;
@@ -43,7 +46,7 @@ namespace PgSqlVersions {
 	/*! \brief Parses and checks a string contaning a PostgreSQL version in the form [major.minor]
 	 * When the flag ignore_legacy_ver is true, this method will raise an error if an invalid version
 	 * is provided. An invalid version is considered any string in incorrect format or a valid string
-	 * but that is for a obsolete version (< 9.0). If an invalid major version is proveded then the function
+	 * but refers to an obsolete version (< 10.0). If an invalid major version is proveded then the function
 	 * will return the DefaultVersion as a fallback. */
 	extern __libutils QString parseString(const QString &pgsql_ver, bool ignore_legacy_ver);
 }
