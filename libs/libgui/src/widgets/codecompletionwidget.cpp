@@ -24,7 +24,11 @@
 #include "utils/textblockinfo.h"
 
 const QStringList CodeCompletionWidget::dml_keywords = {
-	/* Insert here the keywords that need have their position determined
+	/* ATTENTION: the key words in this list MUST have a counter part in
+	 * DmlKeywordId. Also, the list MUST follow the same item order
+	 * in DmlKeywordId.
+	 *
+	 * Insert here the keywords that need have their position determined
 	 * in order to call retriveColumnNames() and retrieveObjectsName().
 	 * New keywords here need a new entry in DmlKeywordId enum */
 	"select", "insert", "update", "delete",
@@ -32,8 +36,9 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	"set", "table", "only", "where",
 
 	/* Insert new keywords after this point if their position in the SQL command
-	 * is not important but they are need to do some extra checkings */
-	"inner", "outer", "left", "right",	"full"
+	 * is not important but if they are need to do some extra checkings */
+	"inner", "outer", "left", "right",
+	"full", "union", "all"
 };
 
 const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
