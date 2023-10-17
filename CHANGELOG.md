@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+v1.0.6
+------
+* [New] Added version descriptor for PostgreSQL 16.
+* [Fix] Fixed a crash when trying to load an invalid model from recents models menu.
+* [Fix] Fixed a bug in generation of diff commands for identity columns.
+* [Fix] Minor fix in PgModelerCliApp::extractObjectXML to restore correctly the layers names and count.
+* [Fix] Fixed a crash when double-clicking the overview widget.
+
 v1.0.5
 ------
 <em>Release date: July 26, 2023</em><br/>
