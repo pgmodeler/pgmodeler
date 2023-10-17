@@ -3331,11 +3331,11 @@ void DatabaseModel::loadModel(const QString &filename)
 
 	//Configuring the path to the base path for objects DTD
 	dtd_file=GlobalAttributes::getSchemasRootPath() +
-					 GlobalAttributes::DirSeparator +
-					 GlobalAttributes::XMLSchemaDir +
-					 GlobalAttributes::DirSeparator +
-					 GlobalAttributes::ObjectDTDDir +
-					 GlobalAttributes::DirSeparator;
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::XMLSchemaDir +
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::ObjectDTDDir +
+						 GlobalAttributes::DirSeparator;
 
 	try
 	{
@@ -3344,8 +3344,8 @@ void DatabaseModel::loadModel(const QString &filename)
 
 		//Loads the root DTD
 		xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
-							 GlobalAttributes::ObjectDTDExt,
-							 GlobalAttributes::RootDTD);
+														 GlobalAttributes::ObjectDTDExt,
+												 GlobalAttributes::RootDTD);
 
 		//Loads the file validating it against the root DTD
 		xmlparser.loadXMLFile(filename);
@@ -3491,10 +3491,10 @@ void DatabaseModel::loadModel(const QString &filename)
 									addObject(object);
 
 								emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-													tr("Loading: `%1' (%2)")
-													.arg(object->getName())
-													.arg(object->getTypeName()),
-													enum_t(obj_type));
+																		tr("Loading: `%1' (%2)")
+																				.arg(object->getName())
+																				.arg(object->getTypeName()),
+																		enum_t(obj_type));
 							}
 
 							xmlparser.restorePosition();
@@ -3521,11 +3521,11 @@ void DatabaseModel::loadModel(const QString &filename)
 
 				if(!object)
 					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-									.arg(this->getName())
-									.arg(this->getTypeName())
-									.arg(itr.second)
-									.arg(BaseObject::getTypeName(itr.first)),
-									ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+															.arg(this->getName())
+															.arg(this->getTypeName())
+															.arg(itr.second)
+															.arg(BaseObject::getTypeName(itr.first)),
+													ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->setDefaultObject(object);
 			}
@@ -3564,7 +3564,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 		if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
-			 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+				e.getErrorCode() >= ErrorCode::InvalidSyntax)
 		{
 			str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
 			throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
