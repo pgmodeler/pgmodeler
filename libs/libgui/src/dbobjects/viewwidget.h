@@ -36,12 +36,12 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT
 
-		ObjectSelectorWidget *tag_sel;
+			ObjectSelectorWidget *tag_sel, *ref_object_sel;
 
-		NumberedTextEditor *code_txt;
+		NumberedTextEditor *sql_preview_txt, *sql_definition_txt;
 
 		//! \brief Stores all the view references
-		ObjectsTableWidget *references_tab;
+		ObjectsTableWidget *references_tab, *ref_objects_tab;
 
 		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 

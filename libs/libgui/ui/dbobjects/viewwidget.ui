@@ -29,7 +29,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
-      <number>6</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -179,7 +179,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="sql_definition_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
@@ -195,6 +195,129 @@
       </attribute>
       <attribute name="title">
        <string>&amp;References</string>
+      </attribute>
+      <layout class="QGridLayout" name="view_refs_grid">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="object_lbl">
+           <property name="text">
+            <string>Object:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="sel_obj_icon_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="ref_name_lbl">
+         <property name="text">
+          <string>Ref. name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLineEdit" name="ref_name_edt">
+           <property name="toolTip">
+            <string>&lt;p&gt;The name of the reference to an object. All occurences of the reference enclosed by &lt;strong&gt;{}&lt;/strong&gt; are replaced by the referenced object's name or signature in the generic SQL object's code.&lt;/p&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="use_signature_chk">
+           <property name="toolTip">
+            <string>&lt;p&gt;Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.&lt;/p&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Use signature</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="format_name_chk">
+           <property name="toolTip">
+            <string>&lt;p&gt;The referenced object's name or signature will be automatically quoted when special characters are found. Additionally, for schema qualified objects, the name of the parent schema is prepended to the referenced object's name or signature. This will avoid common SQL syntax errors or loss of semantics.&lt;/p&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Format name</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="old_view_refs_tab">
+      <attribute name="title">
+       <string>Old references</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
@@ -224,7 +347,7 @@
        <string>&amp;Indexes</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="code_prev_tab">
+     <widget class="QWidget" name="sql_preview_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>

@@ -36,13 +36,40 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 		Ui_ViewWidget::setupUi(this);
 
-		code_txt=new NumberedTextEditor(this);
-		code_txt->setReadOnly(true);
-		code_hl=new SyntaxHighlighter(code_txt);
-		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		vbox=new QVBoxLayout(code_prev_tab);
+		sql_definition_txt = new NumberedTextEditor(this, true);
+		vbox = new QVBoxLayout(sql_definition_tab);
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(code_txt);
+		vbox->addWidget(sql_definition_txt);
+
+		ref_object_sel = new ObjectSelectorWidget({ ObjectType::Schema, ObjectType::Column,
+																								ObjectType::Table, ObjectType::ForeignTable,
+																								ObjectType::View } , this);
+
+		ref_objects_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
+		view_refs_grid->addWidget(ref_object_sel, 0, 1, 1, 1);
+		view_refs_grid->addWidget(ref_objects_tab, 2, 0, 1, 2);
+
+		ref_objects_tab->setColumnCount(5);
+		ref_objects_tab->setHeaderLabel(tr("Ref. name"), 0);
+		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
+
+		ref_objects_tab->setHeaderLabel(tr("Object"), 1);
+		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
+
+		ref_objects_tab->setHeaderLabel(tr("Type"), 2);
+		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
+
+		ref_objects_tab->setHeaderLabel(tr("Signature"), 3);
+		ref_objects_tab->setHeaderLabel(tr("Format name"), 4);
+
+		sql_preview_txt=new NumberedTextEditor(this);
+		sql_preview_txt->setReadOnly(true);
+		code_hl=new SyntaxHighlighter(sql_preview_txt);
+		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
+		vbox = new QVBoxLayout(sql_preview_tab);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		vbox->addWidget(sql_preview_txt);
 
 		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
@@ -55,12 +82,12 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		references_tab->setHeaderLabel(tr("Flags: SF FW AW EX VD"), 3);
 		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
-		vbox=new QVBoxLayout(attributes_tbw->widget(2));
+		vbox=new QVBoxLayout(attributes_tbw->widget(3));
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(references_tab);
 
 		//Configuring the table objects that stores the triggers and rules
-		unsigned tab_id = 3;
+		unsigned tab_id = 4;
 
 		for(auto &type : types)
 		{
@@ -574,7 +601,7 @@ void ViewWidget::updateCodePreview()
 				}
 			}
 
-			code_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
+			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
 		}
 	}
 	catch(Exception &e)
@@ -582,7 +609,7 @@ void ViewWidget::updateCodePreview()
 		//In case of error no code is outputed, showing a error message in the code preview widget
 		QString str_aux=tr("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
-		code_txt->setPlainText(str_aux);
+		sql_preview_txt->setPlainText(str_aux);
 	}
 }
 
@@ -604,6 +631,8 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	}
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
+
+	ref_object_sel->setModel(this->model);
 
 	materialized_rb->setChecked(view->isMaterialized());
 	recursive_rb->setChecked(view->isRecursive());
