@@ -106,16 +106,6 @@ bool GenericSQL::isReferRelationshipAddedObject()
 	return found;
 }
 
-std::vector<BaseObject *> GenericSQL::getReferencedObjects()
-{
-	std::vector<BaseObject *> ref_objs;
-
-	for(auto &ref : objects_refs)
-		ref_objs.push_back(ref.object);
-
-	return ref_objs;
-}
-
 void GenericSQL::validateObjectReference(ObjectRefConfig ref, bool ignore_duplic)
 {
 	if(!ref.object)

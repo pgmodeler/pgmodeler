@@ -83,12 +83,6 @@ class __libcore GenericSQL: public BaseObject{
 		 * connections and disconnections of relationships */
 		bool isReferRelationshipAddedObject();
 
-		/*! \brief Returns a list of objectes being referenced by the generic object.
-		 * For performance reasons this method doesn't eliminate duplicated values in
-		 * the retunring list*/
-		[[deprecated("Replaced by GenericSQL::getDependencies()")]]
-		std::vector<BaseObject *> getReferencedObjects();
-
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
 
 		virtual void updateDependencies() override;
