@@ -504,9 +504,9 @@ void View::setDefinitionAttribute()
 			QString keywords[4]={"SELECT\n", "\nFROM\n", "\nWHERE\n", "\n"};
 			unsigned i, cnt, idx;
 			Reference::SqlType sql_type[4]={ Reference::SqlSelect,
-																						Reference::SqlFrom,
-																						Reference::SqlWhere,
-																						Reference::SqlEndExpr };
+																			 Reference::SqlFrom,
+																			 Reference::SqlWhere,
+																			 Reference::SqlEndExpr };
 
 			for(i=0; i < 4; i++)
 			{
@@ -545,47 +545,39 @@ void View::setDefinitionAttribute()
 
 void View::setReferencesAttribute()
 {
-	QString str_aux;
 	QString attribs[]={ Attributes::SelectExp,
 											Attributes::FromExp,
 											Attributes::SimpleExp,
 											Attributes::EndExp};
-	std::vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
-	int cnt, i, i1;
+	std::vector<unsigned> *vect_exp[]={ &exp_select, &exp_from, &exp_where, &exp_end };
 
-	cnt=references.size();
-	for(i=0; i < cnt; i++)
-		str_aux+=references[i].getXMLDefinition();
-	attributes[Attributes::References]=str_aux;
+	attributes[Attributes::References] = "";
 
-	for(i=0; i < 4; i++)
+	for(auto &ref : references)
+		attributes[Attributes::References] += ref.getXMLDefinition();
+
+	QStringList exp_list;
+	unsigned idx = 0;
+
+	for(auto &v_exp : vect_exp)
 	{
-		str_aux="";
-		cnt=vect_exp[i]->size();
-		for(i1=0; i1 < cnt; i1++)
-		{
-			str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
-			if(i1 < cnt-1) str_aux+=",";
-		}
-		attributes[attribs[i]]=str_aux;
+		for(auto &ref_id : *v_exp)
+			exp_list.append(QString::number(ref_id));
+
+		attributes[attribs[idx++]] = exp_list.join(',');
+		exp_list.clear();
 	}
 }
 
 bool View::isReferRelationshipAddedColumn()
 {
-	Column *column=nullptr;
-	unsigned count, i;
-	bool found=false;
-
-	count=references.size();
-
-	for(i=0; i < count && !found; i++)
+	for(auto &ref : references)
 	{
-		column=references[i].getColumn();
-		found=(column && column->isAddedByRelationship());
+		if(ref.getColumn() && ref.getColumn()->isAddedByRelationship())
+			return true;
 	}
 
-	return found;
+	return false;
 }
 
 std::vector<Column *> View::getRelationshipAddedColumns()
@@ -662,9 +654,6 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	if(recursive && !hasDefinitionExpression())
 	{
 		QStringList fmt_names;
-
-		//for(auto &name : col_names)
-		//	fmt_names.push_back(formatName(name));
 
 		for(auto &col : columns)
 			fmt_names.push_back(formatName(col.name));

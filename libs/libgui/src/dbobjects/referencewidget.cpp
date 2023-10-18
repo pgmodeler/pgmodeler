@@ -37,7 +37,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 
 	QGridLayout *grid = dynamic_cast<QGridLayout *>(properties_tbw->widget(0)->layout());
-	grid->addWidget(ref_object_sel, 2, 1, 1, 3);
+	grid->addWidget(ref_object_sel, 2, 1, 1, 4);
 	grid->addWidget(expression_txt, 4, 1, 1, 4);
 
 	properties_tbw->setTabEnabled(1, false);

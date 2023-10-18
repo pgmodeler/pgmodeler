@@ -298,7 +298,6 @@ QString Reference::getXMLDefinition()
 	attribs_map attribs, aux_attribs;
 	SchemaParser schparser;
 	Column col_aux;
-	QStringList ref_tab_names;
 
 	attribs[Attributes::Table]="";
 	attribs[Attributes::Column]="";
