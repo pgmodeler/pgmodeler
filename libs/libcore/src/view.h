@@ -29,9 +29,13 @@
 #include "basetable.h"
 #include "rule.h"
 #include "index.h"
+#include "genericsql.h"
 
 class __libcore View: public BaseTable {
 	private:
+		//! \brief This generic SQL object stores the view definition itself (SELECT ...)
+		GenericSQL view_def_obj;
+
 		//! \brief Stores the references to expressions and objects
 		std::vector<Reference> references;
 
@@ -79,6 +83,8 @@ class __libcore View: public BaseTable {
 
 		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
 		QString getUniqueColumnName(const QString &name);
+
+		void setViewDefinitionObject(GenericSQL gen_obj);
 
 	public:
 		View();

@@ -44,13 +44,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(code_txt);
 
-		cte_expression_txt=new NumberedTextEditor(this, true);
-		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		vbox=new QVBoxLayout(cte_tab);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(cte_expression_txt);
-
 		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
@@ -62,14 +55,12 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		references_tab->setHeaderLabel(tr("Flags: SF FW AW EX VD"), 3);
 		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
-		vbox=new QVBoxLayout(attributes_tbw->widget(1));
+		vbox=new QVBoxLayout(attributes_tbw->widget(2));
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(references_tab);
 
-		cte_expression_cp=new CodeCompletionWidget(cte_expression_txt, true);
-
 		//Configuring the table objects that stores the triggers and rules
-		unsigned tab_id = 2;
+		unsigned tab_id = 3;
 
 		for(auto &type : types)
 		{
@@ -564,7 +555,6 @@ void ViewWidget::updateCodePreview()
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
 			aux_view.setTablespace(tablespace_sel->getSelectedObject());
 
-			aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 			aux_view.setMaterialized(materialized_rb->isChecked());
 			aux_view.setRecursive(recursive_rb->isChecked());
 			aux_view.setWithNoData(with_no_data_chk->isChecked());
@@ -619,15 +609,11 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	recursive_rb->setChecked(view->isRecursive());
 	with_no_data_chk->setChecked(view->isWithNoData());
 
-	cte_expression_cp->configureCompletion(model, cte_expression_hl);
-
 	op_list->startOperationChain();
 	operation_count=op_list->getCurrentSize();
 
 	tag_sel->setModel(this->model);
 	tag_sel->setSelectedObject(view->getTag());
-
-	cte_expression_txt->setPlainText(view->getCommomTableExpression());
 
 	count=view->getReferenceCount();
 	references_tab->blockSignals(true);
@@ -692,7 +678,6 @@ void ViewWidget::applyConfiguration()
 		view->setMaterialized(materialized_rb->isChecked());
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());
-		view->setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 		view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		for(unsigned i=0; i < references_tab->getRowCount(); i++)

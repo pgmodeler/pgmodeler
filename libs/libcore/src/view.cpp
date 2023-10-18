@@ -708,6 +708,12 @@ QString View::getUniqueColumnName(const QString &name)
 	return fmt_name;
 }
 
+void View::setViewDefinitionObject(GenericSQL gen_obj)
+{
+	view_def_obj = gen_obj;
+	setCodeInvalidated(true);
+}
+
 void View::setObjectListsCapacity(unsigned capacity)
 {
   if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)

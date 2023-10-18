@@ -38,16 +38,14 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		ObjectSelectorWidget *tag_sel;
 
-		NumberedTextEditor *cte_expression_txt, *code_txt;
+		NumberedTextEditor *code_txt;
 
 		//! \brief Stores all the view references
 		ObjectsTableWidget *references_tab;
 
 		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
-		SyntaxHighlighter *code_hl,	*cte_expression_hl;
-
-		CodeCompletionWidget *cte_expression_cp;
+		SyntaxHighlighter *code_hl;
 
 		//! \brief Shows the reference at the reference's table
 		void showReferenceData(Reference refer, unsigned ref_flags, unsigned row);
