@@ -5,6 +5,7 @@
 *.exe
 *.so.*
 *.so
+*.dylib
 *.pro.user
 *.directory
 *.run
