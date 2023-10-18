@@ -9,6 +9,7 @@ $tb [<object name=] "&{name}"
 %if {parent} %then [ parent=] "&{parent}" %end
 %if {type} %then [ type=] "{type}" %end
 %if {ref-name} %then [ ref-name=] "&{ref-name}" %end
+%if {ref-alias} %then [ ref-alias=] "&{ref-alias}" %end
 %if {use-signature} %then [ use-signature=] "true" %end
 %if {format-name} %then [ format-name=] "true" %end
 

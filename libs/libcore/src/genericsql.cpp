@@ -37,7 +37,7 @@ QString GenericSQL::getDefinition()
 	return definition;
 }
 
-std::vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
+std::vector<GenericSQL::ObjectReference> GenericSQL::getObjectsReferences()
 {
 	return objects_refs;
 }
@@ -45,7 +45,7 @@ std::vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
 	int idx = -1;
-	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectReference>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(ref_name.isEmpty())
@@ -69,7 +69,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
 	BaseObject *ref_obj = nullptr;
-	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectReference>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(!object)
@@ -92,7 +92,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 bool GenericSQL::isReferRelationshipAddedObject()
 {
 	bool found = false;
-	std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+	std::vector<ObjectReference>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 	TableObject *tab_obj = nullptr;
 
@@ -106,7 +106,7 @@ bool GenericSQL::isReferRelationshipAddedObject()
 	return found;
 }
 
-void GenericSQL::validateObjectReference(ObjectRefConfig ref, bool ignore_duplic)
+void GenericSQL::validateObjectReference(ObjectReference ref, bool ignore_duplic)
 {
 	if(!ref.object)
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -119,11 +119,10 @@ void GenericSQL::validateObjectReference(ObjectRefConfig ref, bool ignore_duplic
 										ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
+void GenericSQL::addObjectReference(const GenericSQL::ObjectReference &ref)
 {
 	try
 	{
-		ObjectRefConfig ref = ObjectRefConfig(ref_name, object, use_signature, format_name);
 		validateObjectReference(ref, false);
 		objects_refs.push_back(ref);
 		setCodeInvalidated(true);
@@ -134,7 +133,23 @@ void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name,
 	}
 }
 
-void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature, bool format_name)
+void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature,
+																		bool format_name, const QString &ref_alias)
+{
+	try
+	{
+		ObjectReference ref = ObjectReference(ref_name, object, use_signature, format_name, ref_alias);
+		validateObjectReference(ref, false);
+		objects_refs.push_back(ref);
+		setCodeInvalidated(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void GenericSQL::updateObjectReference(const QString &ref_name, const GenericSQL::ObjectReference &new_ref)
 {
 	int idx = getObjectRefNameIndex(ref_name);
 
@@ -143,8 +158,39 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 
 	try
 	{
-		ObjectRefConfig ref = ObjectRefConfig(new_ref_name, object, use_signature, format_name);
-		std::vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
+		std::vector<ObjectReference>::iterator itr = objects_refs.begin() + idx;
+		int idx_aux = getObjectRefNameIndex(new_ref.ref_name);
+
+		if(idx_aux >= 0 && idx_aux != idx)
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(new_ref.ref_name),
+											 ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		validateObjectReference(new_ref, true);
+		(*itr) = new_ref;
+		setCodeInvalidated(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+
+void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature,
+																				bool format_name, const QString &ref_alias)
+{
+	int idx = getObjectRefNameIndex(ref_name);
+
+	if(idx < 0)
+		return;
+
+	try
+	{
+		ObjectReference ref = ObjectReference(new_ref_name, object, use_signature, format_name, ref_alias);
+
+		std::vector<ObjectReference>::iterator itr = objects_refs.begin() + idx;
 		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
 		if(idx_aux >= 0 && idx_aux != idx)
@@ -199,6 +245,7 @@ QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 				obj_attrs[Attributes::Name] = ref.object->getSignature();
 				obj_attrs[Attributes::Type] = ref.object->getSchemaName();
 				obj_attrs[Attributes::RefName] = ref.ref_name;
+				obj_attrs[Attributes::RefAlias] = ref.ref_alias;
 				obj_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : "";
 				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
 
