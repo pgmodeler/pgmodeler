@@ -45,7 +45,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 			Truncate, From, Join, Into,
 			As, Set, Table, Only,
 			Where, Inner, Outer, Left,
-			Right, Full, Union, All
+			Right, Full, Union,
+			Intersect, Except,
+			Distinct, All
 		};
 
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.

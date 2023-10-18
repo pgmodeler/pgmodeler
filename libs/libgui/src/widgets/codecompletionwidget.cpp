@@ -38,7 +38,8 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
 	"inner", "outer", "left", "right",
-	"full", "union", "all"
+	"full", "union", "intersect",
+	"except","distinct", "all"
 };
 
 const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
