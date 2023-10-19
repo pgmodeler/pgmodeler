@@ -32,6 +32,7 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 	object_sel = new ObjectSelectorWidget(types, this);
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 																								 ObjectsTableWidget::DuplicateButton, true, this);
+
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);
 	references_grid->addWidget(objects_refs_tab, 3, 0, 1, 2);
 
@@ -62,6 +63,14 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &ObjectReferencesWidget::handleObjectReference);
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &ObjectReferencesWidget::editObjectReference);
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &ObjectReferencesWidget::handleObjectReference);
+
+	connect(ref_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
+		objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !txt.isEmpty() && object_sel->getSelectedObject());
+	});
+
+	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool obj_selected){
+		objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !ref_name_edt->text().isEmpty() && obj_selected);
+	});
 }
 
 void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::ObjectReference> &refs)
@@ -79,6 +88,7 @@ void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vect
 	objects_refs_tab->clearSelection();
 	objects_refs_tab->blockSignals(false);
 	object_sel->setModel(model);
+	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
 std::vector<GenericSQL::ObjectReference> ObjectReferencesWidget::getObjectReferences()
@@ -121,6 +131,7 @@ void ObjectReferencesWidget::clearObjectReferenceForm()
 	use_signature_chk->setChecked(false);
 	format_name_chk->setChecked(false);
 	objects_refs_tab->clearSelection();
+	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
 void ObjectReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, const QString &ref_alias)

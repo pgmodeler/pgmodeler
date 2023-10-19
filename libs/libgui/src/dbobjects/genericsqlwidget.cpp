@@ -68,14 +68,16 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)
 {
 	BaseObjectWidget::setAttributes(model, op_list, genericsql);
+	std::vector<GenericSQL::ObjectReference> refs;
 
 	if(genericsql)
 	{
 		dummy_gsql = *genericsql;
-		definition_txt->setPlainText(genericsql->getDefinition());		
-		obj_refs_wgt->setAttributes(this->model, genericsql->getObjectsReferences());
+		definition_txt->setPlainText(genericsql->getDefinition());
+		refs = genericsql->getObjectsReferences();
 	}
 
+	obj_refs_wgt->setAttributes(this->model, refs);
 	definition_cp->configureCompletion(model, definition_hl);
 }
 
