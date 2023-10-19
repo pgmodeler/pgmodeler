@@ -125,6 +125,18 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
+void View::setObjectReferences(const std::vector<GenericSQL::ObjectReference> &obj_refs)
+{
+	this->view_obj_refs = obj_refs;
+	setCodeInvalidated(true);
+}
+
+void View::setSqlDefinition(const QString &sql_def)
+{
+	setCodeInvalidated(sql_def != sql_definition);
+	sql_definition = sql_def;
+}
+
 SimpleColumn View::getColumn(const QString &name)
 {
 	for(auto &col : columns)
@@ -273,6 +285,11 @@ void View::generateColumns()
 std::vector<SimpleColumn> View::getColumns()
 {
 	return columns;
+}
+
+std::vector<GenericSQL::ObjectReference> View::getObjectReferences()
+{
+	return view_obj_refs;
 }
 
 void View::addReference(Reference &refer, Reference::SqlType sql_type, int expr_id)
@@ -665,7 +682,22 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
 	if(def_type==SchemaParser::SqlCode)
-		setDefinitionAttribute();
+	{
+		GenericSQL view_def_obj;
+
+		//setDefinitionAttribute();
+		try
+		{
+			#warning "test!"
+			view_def_obj.setDefinition(sql_definition);
+			view_def_obj.addObjectReferences(view_obj_refs);
+			attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
+		}
+		catch(Exception &e)
+		{
+			attributes[Attributes::Definition] = "foo";
+		}
+	}
 	else
 	{
 		setPositionAttribute();
@@ -708,12 +740,6 @@ QString View::getUniqueColumnName(const QString &name)
 	return fmt_name;
 }
 
-void View::setViewDefinitionObject(GenericSQL gen_obj)
-{
-	view_def_obj = gen_obj;
-	setCodeInvalidated(true);
-}
-
 void View::setObjectListsCapacity(unsigned capacity)
 {
   if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)
@@ -744,7 +770,6 @@ QString View::getDropCode(bool cascade)
 	setSQLObjectAttribute();
 	return BaseObject::getDropCode(cascade);
 }
-
 
 int View::getObjectIndex(BaseObject *obj)
 {
@@ -983,7 +1008,6 @@ TableObject *View::getObject(unsigned obj_idx, ObjectType obj_type)
 	return obj_list->at(obj_idx);
 }
 
-
 TableObject *View::getObject(const QString &name, ObjectType obj_type)
 {
 	try
@@ -1109,6 +1133,7 @@ void View::operator = (View &view)
 	this->materialized=view.materialized;
 	this->recursive=view.recursive;
 	this->with_no_data=view.with_no_data;
+	this->view_obj_refs=view.view_obj_refs;
 
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
@@ -1218,11 +1243,14 @@ void View::updateDependencies()
 {
 	std::vector<BaseObject *> deps, aux_deps;
 
-	for(auto &ref : references)
+	/* for(auto &ref : references)
 	{
 		aux_deps = ref.getDependencies(false);
 		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
-	}
+	} */
+
+	for(auto &ref : view_obj_refs)
+		deps.push_back(ref.object);
 
 	BaseTable::updateDependencies(deps);
 }

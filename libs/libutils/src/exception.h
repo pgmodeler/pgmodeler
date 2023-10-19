@@ -300,12 +300,13 @@ enum class ErrorCode: unsigned {
 	ModelFileSaveFailure,
 	RemExtRefChildObject,
 	AddExtDupChildObject,
-	AsgSchExtTypeConflict
+	AsgSchExtTypeConflict,
+	MalformedViewDefObject
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=267;
+		static constexpr unsigned ErrorCount=268;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

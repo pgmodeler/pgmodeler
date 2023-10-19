@@ -39,9 +39,9 @@ $br
 [AS ] $br
 
 #Commom table expression (CTE)
-%if {cte-exp} %then
-	[WITH ] {cte-exp}
-%end
+#%if {cte-exp} %then
+#	[WITH ] {cte-exp}
+#%end
 
 $br {definition}
 

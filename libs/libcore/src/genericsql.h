@@ -120,6 +120,8 @@ class __libcore GenericSQL: public BaseObject{
 		//! \brief Returns a copy of the objects references list
 		std::vector<ObjectReference> getObjectsReferences();
 
+		void validateObjectReferences(bool ignore_duplic);
+
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
 
 		virtual void updateDependencies() override;

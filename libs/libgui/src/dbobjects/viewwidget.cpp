@@ -620,6 +620,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
 
+	obj_refs_wgt->setAttributes(this->model, view->getObjectReferences());
 	materialized_rb->setChecked(view->isMaterialized());
 	recursive_rb->setChecked(view->isRecursive());
 	with_no_data_chk->setChecked(view->isWithNoData());
@@ -694,6 +695,9 @@ void ViewWidget::applyConfiguration()
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());
 		view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
+
+		view->setSqlDefinition(sql_definition_txt->toPlainText());
+		view->setObjectReferences(obj_refs_wgt->getObjectReferences());
 
 		for(unsigned i=0; i < references_tab->getRowCount(); i++)
 		{

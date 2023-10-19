@@ -42,6 +42,19 @@ std::vector<GenericSQL::ObjectReference> GenericSQL::getObjectsReferences()
 	return objects_refs;
 }
 
+void GenericSQL::validateObjectReferences(bool ignore_duplic)
+{
+	try
+	{
+		for(auto &ref : objects_refs)
+			validateObjectReference(ref, ignore_duplic);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
 	int idx = -1;

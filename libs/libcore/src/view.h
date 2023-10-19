@@ -33,9 +33,6 @@
 
 class __libcore View: public BaseTable {
 	private:
-		//! \brief This generic SQL object stores the view definition itself (SELECT ...)
-		GenericSQL view_def_obj;
-
 		//! \brief Stores the references to expressions and objects
 		std::vector<Reference> references;
 
@@ -52,10 +49,14 @@ class __libcore View: public BaseTable {
 
 		std::vector<SimpleColumn> columns;
 
+		std::vector<GenericSQL::ObjectReference> view_obj_refs;
+
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
-		QString cte_expression;
+		QString cte_expression,
+
+		sql_definition;
 
 		//! \brief Indicates that the view is a materialized one. This setting is auto exclusive with 'recursive'
 		bool materialized,
@@ -64,9 +65,10 @@ class __libcore View: public BaseTable {
 		with_no_data,
 
 		//! \brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
-		recursive;
+				recursive;
 
 		//! \brief Sets the definition attribute used by the SchemaParser
+		[[deprecated]]
 		void setDefinitionAttribute();
 
 		//! \brief Sets the references attribute used by the SchemaParser
@@ -84,8 +86,6 @@ class __libcore View: public BaseTable {
 		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
 		QString getUniqueColumnName(const QString &name);
 
-		void setViewDefinitionObject(GenericSQL gen_obj);
-
 	public:
 		View();
 
@@ -102,6 +102,10 @@ class __libcore View: public BaseTable {
 		bool isMaterialized();
 		bool isRecursive();
 		bool isWithNoData();
+
+		void setObjectReferences(const std::vector<GenericSQL::ObjectReference> &obj_refs);
+
+		void setSqlDefinition(const QString &sql_def);
 
 		/*! \brief Returns a simple column by searching by the name
 		 *  This method will return an invalid SimpleColumn instance if there's
@@ -260,6 +264,8 @@ class __libcore View: public BaseTable {
 
 		//! \brief Returns the deduced columns of the view
 		std::vector<SimpleColumn> getColumns();
+
+		std::vector<GenericSQL::ObjectReference> getObjectReferences();
 
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
 
