@@ -37,18 +37,12 @@ View::View() : BaseTable()
 
 View::~View()
 {
-	ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-	std::vector<TableObject *> *list=nullptr;
+	for(auto &obj : getObjects())
+		delete obj;
 
-	for(unsigned i=0; i < 3; i++)
-	{
-		list = getObjectList(types[i]);
-		while(!list->empty())
-		{
-			delete list->back();
-			list->pop_back();
-		}
-	}
+	indexes.clear();
+	triggers.clear();
+	rules.clear();
 }
 
 void View::setName(const QString &name)
@@ -67,24 +61,9 @@ void View::setSchema(BaseObject *schema)
 
 void View::setProtected(bool value)
 {
-	ObjectType obj_types[]={ ObjectType::Rule, ObjectType::Trigger };
-	unsigned i;
-	std::vector<TableObject *>::iterator itr, itr_end;
-	std::vector<TableObject *> *list=nullptr;
-
 	//Protected the table child objects
-	for(i=0; i < sizeof(obj_types)/sizeof(ObjectType); i++)
-	{
-		list=getObjectList(obj_types[i]);
-		itr=list->begin();
-		itr_end=list->end();
-
-		while(itr!=itr_end)
-		{
-			(*itr)->setProtected(value);
-			itr++;
-		}
-	}
+	for(auto &obj : getObjects())
+		obj->setProtected(value);
 
 	//Protects the view itself
 	BaseGraphicObject::setProtected(value);
@@ -135,6 +114,11 @@ void View::setSqlDefinition(const QString &sql_def)
 {
 	setCodeInvalidated(sql_def != sql_definition);
 	sql_definition = sql_def;
+}
+
+QString View::getSqlDefinition()
+{
+	return sql_definition;
 }
 
 SimpleColumn View::getColumn(const QString &name)
@@ -290,6 +274,21 @@ std::vector<SimpleColumn> View::getColumns()
 std::vector<GenericSQL::Reference> View::getObjectReferences()
 {
 	return view_obj_refs;
+}
+
+std::vector<BaseTable *> View::getReferencedTables()
+{
+	std::vector<BaseTable *> tables;
+
+	for(auto &obj : getDependencies(false, {}, true))
+	{
+		if(BaseTable::isBaseTable(obj->getObjectType()))
+			tables.push_back(dynamic_cast<BaseTable *>(obj));
+		else if(obj->getObjectType() == ObjectType::Column)
+			tables.push_back(dynamic_cast<TableObject *>(obj)->getParentTable());
+	}
+
+	return tables;
 }
 
 void View::addReference(Reference &refer, Reference::SqlType sql_type, int expr_id)
@@ -564,23 +563,6 @@ void View::setReferencesAttribute()
 {
 	attribs_map ref_attrs;
 
-	attributes[Attributes::References] = "";
-
-	/*for(auto &ref : view_obj_refs)
-	{
-		ref_attrs[Attributes::Name] = ref.object->getSignature();
-		ref_attrs[Attributes::Type] = ref.object->getSchemaName();
-		ref_attrs[Attributes::RefName] = ref.ref_name;
-		ref_attrs[Attributes::RefAlias] = ref.ref_alias;
-		ref_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : "";
-		ref_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
-
-		schparser.ignoreUnkownAttributes(true);
-		attributes[Attributes::References] +=
-				schparser.getSourceCode(Attributes::Object, ref_attrs, SchemaParser::XmlCode);
-	}*/
-
-
 	/*QString attribs[]={ Attributes::SelectExp,
 											Attributes::FromExp,
 											Attributes::SimpleExp,
@@ -631,9 +613,9 @@ std::vector<Column *> View::getRelationshipAddedColumns()
 	return cols;
 }
 
-bool View::isReferencingTable(PhysicalTable *tab)
+bool View::isReferencingTable(BaseTable *tab)
 {
-	PhysicalTable *aux_tab=nullptr;
+	/* PhysicalTable *aux_tab=nullptr;
 	unsigned count, i;
 	bool found=false;
 
@@ -650,7 +632,15 @@ bool View::isReferencingTable(PhysicalTable *tab)
 		}
 	}
 
-	return found;
+	return found; */
+
+	for(auto &obj : getDependencies(false, {}, true))
+	{
+		if(dynamic_cast<BaseTable *>(obj) == tab)
+			return true;
+	}
+
+	return false;
 }
 
 bool View::isReferencingColumn(Column *col)
@@ -678,6 +668,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
 	attributes[Attributes::Columns]="";
 	attributes[Attributes::Tag]="";
+	attributes[Attributes::References] = "";
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
 	attributes[Attributes::CollapseMode]=QString::number(collapse_mode);
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
@@ -694,35 +685,29 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		for(auto &col : columns)
 			fmt_names.push_back(formatName(col.name));
 
-		attributes[Attributes::Columns]=fmt_names.join(',');
+		attributes[Attributes::Columns] = fmt_names.join(',');
 	}
 
-	if(tag && def_type==SchemaParser::XmlCode)
-		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
+	if(tag && def_type == SchemaParser::XmlCode)
+		attributes[Attributes::Tag] = tag->getSourceCode(def_type, true);
 
 	if(def_type==SchemaParser::SqlCode)
 	{
 		GenericSQL view_def_obj;
-
-		//setDefinitionAttribute();
-		try
-		{
-			#warning "test!"
-			view_def_obj.setHideDescription(true);
-			view_def_obj.setDefinition(sql_definition);
-			view_def_obj.addReferences(view_obj_refs);
-			attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
-		}
-		catch(Exception &e)
-		{
-			attributes[Attributes::Definition] = "foo";
-		}
+		view_def_obj.setHideDescription(true);
+		view_def_obj.setDefinition(sql_definition);
+		view_def_obj.setReferences(view_obj_refs);
+		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
 	}
 	else
 	{
+		for(auto &ref : view_obj_refs)
+			attributes[Attributes::References] += ref.getXmlCode();
+
 		setPositionAttribute();
 		setFadedOutAttribute();
-		setReferencesAttribute();
+
+		attributes[Attributes::Definition] = sql_definition;
 		attributes[Attributes::ZValue]=QString::number(z_value);
 		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
@@ -1261,16 +1246,14 @@ QString View::getAlterCode(BaseObject *object)
 
 void View::updateDependencies()
 {
-	std::vector<BaseObject *> deps, aux_deps;
-
-	/* for(auto &ref : references)
-	{
-		aux_deps = ref.getDependencies(false);
-		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
-	} */
+	std::vector<BaseObject *> deps;
 
 	for(auto &ref : view_obj_refs)
 		deps.push_back(ref.getObject());
+
+	std::sort(deps.begin(), deps.end());
+	auto end =std::unique(deps.begin(), deps.end());
+	deps.erase(end, deps.end());
 
 	BaseTable::updateDependencies(deps);
 }

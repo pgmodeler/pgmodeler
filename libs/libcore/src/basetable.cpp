@@ -204,7 +204,7 @@ std::vector<BaseObject *> BaseTable::getDependencies(bool inc_indirect_deps, con
 	return BaseObject::getDependencies(false, excl_types, rem_duplicates);
 }
 
-void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)
+void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps, const std::vector<BaseObject *> &old_deps)
 {
 	std::vector<BaseObject *> aux_deps = { tag	};
 	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
@@ -217,5 +217,5 @@ void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps)
 		setDependency(obj);
 	}
 
-	BaseObject::updateDependencies(deps);
+	BaseObject::updateDependencies(deps, old_deps);
 }

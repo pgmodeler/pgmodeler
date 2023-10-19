@@ -147,7 +147,7 @@ class __libcore GenericSQL: public BaseObject{
 														bool format_name, const QString &ref_alias = "");
 
 		void addReference(const GenericSQL::Reference &ref);
-		void addReferences(const std::vector<GenericSQL::Reference> &refs);
+		void setReferences(const std::vector<GenericSQL::Reference> &refs);
 
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();

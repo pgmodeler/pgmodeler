@@ -72,13 +72,16 @@ class __libcore View: public BaseTable {
 		void setDefinitionAttribute();
 
 		//! \brief Sets the references attribute used by the SchemaParser
+		[[deprecated]]
 		void setReferencesAttribute();
 
 		/*! \brief Returns the reference index on the view. When it doesn't exists,
 		 the method returns -1 */
+		[[deprecated]]
 		int getReferenceIndex(Reference &refer);
 
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
+		[[deprecated]]
 		std::vector<unsigned> *getExpressionList(Reference::SqlType sql_type);
 
 		void setSQLObjectAttribute();
@@ -107,6 +110,8 @@ class __libcore View: public BaseTable {
 
 		void setSqlDefinition(const QString &sql_def);
 
+		QString getSqlDefinition();
+
 		/*! \brief Returns a simple column by searching by the name
 		 *  This method will return an invalid SimpleColumn instance if there's
 		 *  no matching column in the view */
@@ -116,6 +121,7 @@ class __libcore View: public BaseTable {
 		 (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
 		 index where the reference must be inserted. By defaul the method always adds
 		 new references at the end of the list */
+		[[deprecated]]
 		void addReference(Reference &refer, Reference::SqlType sql_type, int expr_id=-1);
 
 		/*! \brief Adds a trigger or rule into the view. If the index is specified ( obj_idx >= 0)
@@ -205,24 +211,30 @@ class __libcore View: public BaseTable {
 		//void removeReference(unsigned expr_id, Reference::SqlType sql_type);
 
 		//! \brief Returns the commom table expression
+		[[deprecated]]
 		QString getCommomTableExpression();
 
 		//! \brief Returns the reference count from view
+		[[deprecated]]
 		unsigned getReferenceCount();
 
 		/*! \brief Returns the element count on the specified SQL expression type list (sql_type).
 		 It possible to filter the reference type via 'ref_type' which must be filled
 		 with the Reference::REFER_??? constants */
+		[[deprecated]]
 		unsigned getReferenceCount(Reference::SqlType sql_type, int ref_type = -1);
 
 		//! \brief Returs one reference using its index
+		[[deprecated]]
 		Reference getReference(unsigned ref_id);
 
 		/*! \brief Retuns one reference in the specified position (ref_id) on the
 		 specified expression list (sql_type) */
+		[[deprecated]]
 		Reference getReference(unsigned ref_id, Reference::SqlType sql_type);
 
 		//! \brief Returns the specified reference index on the specified expression list
+		[[deprecated]]
 		int getReferenceIndex(Reference &ref, Reference::SqlType sql_type);
 
 		//! \brief Returns the SQL / XML definition for the view
@@ -244,7 +256,7 @@ class __libcore View: public BaseTable {
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if the view is referencing the specified table
-		bool isReferencingTable(PhysicalTable *tab);
+		bool isReferencingTable(BaseTable *tab);
 
 		//! \brief Returns if the view is referencing the specified column
 		bool isReferencingColumn(Column *col);
@@ -266,6 +278,8 @@ class __libcore View: public BaseTable {
 		std::vector<SimpleColumn> getColumns();
 
 		std::vector<GenericSQL::Reference> getObjectReferences();
+
+		std::vector<BaseTable *> getReferencedTables();
 
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
 

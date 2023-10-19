@@ -130,7 +130,7 @@ void GenericSQL::addReference(const GenericSQL::Reference &ref)
 	}
 }
 
-void GenericSQL::addReferences(const std::vector<Reference> &refs)
+void GenericSQL::setReferences(const std::vector<Reference> &refs)
 {
 	try
 	{

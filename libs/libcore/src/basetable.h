@@ -161,7 +161,7 @@ class __libcore BaseTable: public BaseGraphicObject {
 																											 const std::vector<ObjectType> &excl_types = {},
 																											 bool rem_duplcates = false) override;
 
-		void updateDependencies(const std::vector<BaseObject *> &deps);
+		void updateDependencies(const std::vector<BaseObject *> &deps, const std::vector<BaseObject *> &old_deps = {});
 
 		friend class DatabaseModel;
 };

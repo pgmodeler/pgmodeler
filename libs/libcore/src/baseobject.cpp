@@ -1508,12 +1508,8 @@ void BaseObject::__getLinkedObjects(ObjLinkType lnk_type, const std::vector<Base
 	}
 }
 
-void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)
+void BaseObject::setDependency(BaseObject* dep_obj)
 {
-	// If we are replacing a dependency we first need to undo the previous dependency
-	if(prev_dep_obj)
-		unsetDependency(prev_dep_obj);
-
 	if(!dep_obj)
 		return;
 
@@ -1609,8 +1605,11 @@ void BaseObject::updateDependencies()
 	updateDependencies({});
 }
 
-void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
+void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs, const std::vector<BaseObject *> &old_deps)
 {
+	for(auto &old_dep : old_deps)
+		unsetDependency(old_dep);
+
 	std::vector<BaseObject *> aux_deps = {
 		schema, tablespace, owner, collation
 	};

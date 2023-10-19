@@ -51,6 +51,7 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		SyntaxHighlighter *sql_preview_hl, *sql_definition_hl;
 
 		//! \brief Shows the reference at the reference's table
+		[[deprecated]]
 		void showReferenceData(Reference refer, unsigned ref_flags, unsigned row);
 
 		//! \brief Returns the object table according with the child type
@@ -67,8 +68,10 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
+		[[deprecated]]
 		int openReferenceForm(Reference ref, int row, bool update);
 
+		[[deprecated]]
 		unsigned getReferenceFlag(int row);
 
 	public:
@@ -78,6 +81,7 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 	private slots:
 		//! \brief Edits the selected reference
+		[[deprecated]]
 		void editReference(int ref_idx);
 
 		//! \brief Updates the sql code field of the view form
@@ -96,9 +100,11 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		void removeObjects();
 
 		//! \brief Opens the reference form when a new row is added in the references grid
+		[[deprecated]]
 		void addReference(int row);
 
 		//! \brief Duplicate the current selected reference
+		[[deprecated]]
 		void duplicateReference(int orig_row, int new_row);
 
 	public slots:

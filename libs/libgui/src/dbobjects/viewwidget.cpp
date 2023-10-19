@@ -580,21 +580,6 @@ void ViewWidget::updateCodePreview()
 			aux_view.setRecursive(recursive_rb->isChecked());
 			aux_view.setWithNoData(with_no_data_chk->isChecked());
 
-			/*count=references_tab->getRowCount();
-			for(i=0; i < count; i++)
-			{
-				refer=references_tab->getRowData(i).value<Reference>();
-
-				//Get the SQL application string for the current reference
-				str_aux=references_tab->getCellText(i,3);
-
-				for(i1=0; i1 < 5; i1++)
-				{
-					if(str_aux[i1]=='1')
-						aux_view.addReference(refer, expr_type[i1]);
-				}
-			}*/
-
 			#warning "Test!"
 			//sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
 
@@ -631,6 +616,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
 
+	sql_definition_txt->setPlainText(view->getSqlDefinition());
 	obj_refs_wgt->setAttributes(this->model, view->getObjectReferences());
 	materialized_rb->setChecked(view->isMaterialized());
 	recursive_rb->setChecked(view->isRecursive());
@@ -684,13 +670,6 @@ void ViewWidget::applyConfiguration()
 	{
 		View *view=nullptr;
 		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-		Reference::SqlType expr_type[]={ Reference::SqlSelect,
-																		 Reference::SqlFrom,
-																		 Reference::SqlWhere,
-																		 Reference::SqlEndExpr,
-																		 Reference::SqlViewDef};
-		Reference refer;
-		QString str_aux;
 
 		if(!this->new_object)
 			op_list->registerObject(this->object, Operation::ObjModified);
@@ -710,29 +689,17 @@ void ViewWidget::applyConfiguration()
 		view->setSqlDefinition(sql_definition_txt->toPlainText());
 		view->setObjectReferences(obj_refs_wgt->getObjectReferences());
 
-		for(unsigned i=0; i < references_tab->getRowCount(); i++)
-		{
-			refer=references_tab->getRowData(i).value<Reference>();
-
-			//Get the SQL application string for the current reference
-			str_aux=references_tab->getCellText(i, 3);
-			for(unsigned i=0; i < sizeof(expr_type)/sizeof(unsigned); i++)
-			{
-				if(str_aux[i]=='1')
-					view->addReference(refer, expr_type[i]);
-			}
-		}
-
 		//Adds the auxiliary view objects into configured view
-		for(unsigned type_id=0; type_id < sizeof(types)/sizeof(ObjectType); type_id++)
+		for(auto &type : types)
 		{
-			for(unsigned i=0; i < objects_tab_map[types[type_id]]->getRowCount(); i++)
-				view->addObject(reinterpret_cast<TableObject *>(objects_tab_map[types[type_id]]->getRowData(i).value<void *>()));
+			for(unsigned i=0; i < objects_tab_map[type]->getRowCount(); i++)
+				view->addObject(reinterpret_cast<TableObject *>(objects_tab_map[type]->getRowData(i).value<void *>()));
 		}
 
 		op_list->finishOperationChain();
-		this->model->updateViewRelationships(view);
 		finishConfiguration();
+
+		this->model->updateViewRelationships(view);
 	}
 	catch(Exception &e)
 	{
