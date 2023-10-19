@@ -595,7 +595,12 @@ void ViewWidget::updateCodePreview()
 				}
 			}*/
 
-			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
+			#warning "Test!"
+			//sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
+
+			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode)
+																		+ "\n\n----\n\n" +
+																		aux_view.getSourceCode(SchemaParser::XmlCode));
 		}
 	}
 	catch(Exception &e)

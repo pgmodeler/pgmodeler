@@ -8,6 +8,8 @@
 %basetype;
 <!ENTITY % object SYSTEM "object.dtd">
 %object;
+<!ENTITY % reference SYSTEM "reference.dtd">
+%reference;
 <!ENTITY % role SYSTEM "role.dtd">
 %role;
 <!ENTITY % tablespace SYSTEM "tablespace.dtd">

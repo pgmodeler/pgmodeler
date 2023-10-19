@@ -6116,12 +6116,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 						genericsql->setDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem == Attributes::Object)
+					else if(elem == Attributes::Reference)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
-						obj_name = attribs[Attributes::Name];
+						obj_name = attribs[Attributes::Object];
 
 						//If the object is a column its needed to get the parent table
 						if(obj_type == ObjectType::Column)
@@ -6151,9 +6151,9 @@ GenericSQL *DatabaseModel::createGenericSQL()
 															.arg(BaseObject::getTypeName(obj_type)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						genericsql->addObjectReference(object, attribs[Attributes::RefName],
-																					 attribs[Attributes::UseSignature] == Attributes::True,
-																					 attribs[Attributes::FormatName] == Attributes::True);
+						genericsql->addReference(object, attribs[Attributes::RefName],
+																		 attribs[Attributes::UseSignature] == Attributes::True,
+																		 attribs[Attributes::FormatName] == Attributes::True);
 					}
 				}
 			}

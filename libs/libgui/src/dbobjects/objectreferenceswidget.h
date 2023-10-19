@@ -29,6 +29,7 @@
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 
+#warning "Rename to ReferencesWidget once View does not use classic Referece class"
 class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidget {
 	private:
 		Q_OBJECT
@@ -48,9 +49,9 @@ class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidge
 	public:
 		ObjectReferencesWidget(const std::vector<ObjectType> &types, bool use_ref_alias, QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, const std::vector<GenericSQL::ObjectReference> &refs);
+		void setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs);
 
-		std::vector<GenericSQL::ObjectReference> getObjectReferences();
+		std::vector<GenericSQL::Reference> getObjectReferences();
 
 	private slots:
 		void handleObjectReference(int row);

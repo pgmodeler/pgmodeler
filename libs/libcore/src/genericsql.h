@@ -32,7 +32,7 @@ class __libcore GenericSQL: public BaseObject{
 	public:
 
 		//! \brief This is a internal structure used to hold object references configuration
-		struct ObjectReference {
+		class Reference {
 			// Name of the reference (in SQL it be used between {} in order to be parsed)
 			QString ref_name;
 
@@ -48,20 +48,66 @@ class __libcore GenericSQL: public BaseObject{
 			// An optional alias for the reference (used only in View code definition)
 			QString	ref_alias;
 
-			ObjectReference()
+		public:
+			Reference()
 			{
 				object = nullptr;
 				use_signature = format_name = false;
 			}
 
-			ObjectReference(const QString &_ref_name, BaseObject *_object, bool _use_signature,
-											bool _format_name, const QString &_ref_alias = "") :
-				ref_name(_ref_name), object(_object), use_signature(_use_signature),
-				format_name(_format_name), ref_alias(_ref_alias) {}
+			Reference(const QString &_ref_name, BaseObject *_object, bool _use_signature,
+											bool _format_name, const QString &_ref_alias = "")
+			{
+				ref_name = _ref_name;
+				object = _object;
+				use_signature = _use_signature;
+				format_name = _format_name;
+				ref_alias = _ref_alias;
+			}
+
+			BaseObject *getObject() const
+			{
+				return object;
+			}
+
+			QString getRefName() const
+			{
+				return ref_name;
+			}
+
+			QString getRefAlias() const
+			{
+				return ref_name;
+			}
+
+			bool isUseSignature() const
+			{
+				return use_signature;
+			}
+
+			bool isFormatName() const
+			{
+				return format_name;
+			}
 
 			bool isValid() const
 			{
 				return object && !ref_name.isEmpty();
+			}
+
+			QString getXmlCode()
+			{
+				SchemaParser schparser;
+				attribs_map ref_attrs;
+
+				ref_attrs[Attributes::Object] = object->getSignature();
+				ref_attrs[Attributes::Type] = object->getSchemaName();
+				ref_attrs[Attributes::RefName] = ref_name;
+				ref_attrs[Attributes::RefAlias] = ref_alias;
+				ref_attrs[Attributes::FormatName] = format_name ? Attributes::True : "";
+				ref_attrs[Attributes::UseSignature] = use_signature ? Attributes::True : "";
+
+				return schparser.getSourceCode(Attributes::Reference, ref_attrs, SchemaParser::XmlCode);
 			}
 		};
 
@@ -74,7 +120,7 @@ class __libcore GenericSQL: public BaseObject{
 		bool hide_description;
 
 		//! \brief The list of references to other object in the model
-		std::vector<ObjectReference> objects_refs;
+		std::vector<Reference> objects_refs;
 
 		/*! \brief Returns the index of a object reference searching by its name.
 		 * A negative return value indicates the reference doens't exist */
@@ -83,7 +129,7 @@ class __libcore GenericSQL: public BaseObject{
 		/*! \brief Check if the provided object reference is correclty configured.
 		 * The method will raise exceptions if any validation rule is broken.
 		 * The parameter ignore_duplic makes the method ignore duplicated references names */
-		void validateObjectReference(ObjectReference ref, bool ignore_duplic);
+		void validateReference(Reference ref, bool ignore_duplic);
 
 	public:
 		GenericSQL();
@@ -96,27 +142,15 @@ class __libcore GenericSQL: public BaseObject{
 
 		void setHideDescription(bool value);
 
-		[[deprecated("Use addObjectReference(ObjectRerence) instead.")]]
-		void addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature,
+		[[deprecated("Use addReference(Rerence) instead.")]]
+		void addReference(BaseObject *object, const QString &ref_name, bool use_signature,
 														bool format_name, const QString &ref_alias = "");
 
-		void addObjectReference(const GenericSQL::ObjectReference &ref);
-
-		void addObjectReferences(const std::vector<GenericSQL::ObjectReference> &refs);
-
-		[[deprecated]]
-		void updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature,
-															 bool format_name, const QString &ref_alias = "");
-
-		[[deprecated]]
-		void updateObjectReference(const QString &ref_name, const GenericSQL::ObjectReference &new_ref);
+		void addReference(const GenericSQL::Reference &ref);
+		void addReferences(const std::vector<GenericSQL::Reference> &refs);
 
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();
-
-		[[deprecated]]
-		//! \brief Returns true when the provided object is being referenced by the generic SQL object
-		bool isObjectReferenced(BaseObject *object);
 
 		/*! \brief Returns whether the object references columns or constraints added
 		 * by relationship to their parent tables. This method is used as auxiliary
@@ -126,9 +160,9 @@ class __libcore GenericSQL: public BaseObject{
 		bool isReferRelationshipAddedObject();
 
 		//! \brief Returns a copy of the objects references list
-		std::vector<ObjectReference> getObjectsReferences();
+		std::vector<Reference> getObjectsReferences();
 
-		void validateObjectReferences(bool ignore_duplic);
+		void validateReferences(bool ignore_duplic);
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
 
@@ -137,9 +171,9 @@ class __libcore GenericSQL: public BaseObject{
 		friend class GenericSQLWidget;
 };
 
-/* Registering the GenericSQL::ObjectRefConfig struct as a Qt MetaType in order to make
+/* Registering the GenericSQL::Reference struct as a Qt MetaType in order to make
  * it liable to be sent through signal parameters as well as to be
  * to be used by QVariant */
-Q_DECLARE_METATYPE(GenericSQL::ObjectReference)
+Q_DECLARE_METATYPE(GenericSQL::Reference)
 
 #endif

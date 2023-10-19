@@ -73,7 +73,7 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 	});
 }
 
-void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::ObjectReference> &refs)
+void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs)
 {
 	objects_refs_tab->blockSignals(true);
 
@@ -81,8 +81,8 @@ void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vect
 	{
 		objects_refs_tab->addRow();
 		showObjectReferenceData(objects_refs_tab->getRowCount() - 1,
-														ref.object, ref.ref_name, ref.use_signature,
-														ref.format_name, ref.ref_alias);
+														 ref.getObject(), ref.getRefName(), ref.isUseSignature(),
+														 ref.isFormatName(), ref.getRefAlias());
 	}
 
 	objects_refs_tab->clearSelection();
@@ -91,12 +91,12 @@ void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vect
 	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-std::vector<GenericSQL::ObjectReference> ObjectReferencesWidget::getObjectReferences()
+std::vector<GenericSQL::Reference> ObjectReferencesWidget::getObjectReferences()
 {
-	std::vector<GenericSQL::ObjectReference> refs;
+	std::vector<GenericSQL::Reference> refs;
 
 	for(unsigned row = 0; row < objects_refs_tab->getRowCount(); row++)
-		refs.push_back(objects_refs_tab->getRowData(row).value<GenericSQL::ObjectReference>());
+		refs.push_back(objects_refs_tab->getRowData(row).value<GenericSQL::Reference>());
 
 	return refs;
 }
@@ -114,13 +114,13 @@ void ObjectReferencesWidget::handleObjectReference(int row)
 
 void ObjectReferencesWidget::editObjectReference(int row)
 {
-	GenericSQL::ObjectReference ref = objects_refs_tab->getRowData(row).value<GenericSQL::ObjectReference>();
+	GenericSQL::Reference ref = objects_refs_tab->getRowData(row).value<GenericSQL::Reference>();
 
-	ref_name_edt->setText(ref.ref_name);
-	ref_alias_edt->setText(ref.ref_alias);
-	use_signature_chk->setChecked(ref.use_signature);
-	format_name_chk->setChecked(ref.format_name);
-	object_sel->setSelectedObject(ref.object);
+	ref_name_edt->setText(ref.getRefName());
+	ref_alias_edt->setText(ref.getRefAlias());
+	use_signature_chk->setChecked(ref.isUseSignature());
+	format_name_chk->setChecked(ref.isFormatName());
+	object_sel->setSelectedObject(ref.getObject());
 }
 
 void ObjectReferencesWidget::clearObjectReferenceForm()
@@ -136,14 +136,14 @@ void ObjectReferencesWidget::clearObjectReferenceForm()
 
 void ObjectReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, const QString &ref_alias)
 {
-	GenericSQL::ObjectReference ref = GenericSQL::ObjectReference(ref_name, object, use_signature, format_name, ref_alias);
+	GenericSQL::Reference ref = GenericSQL::Reference(ref_name, object, use_signature, format_name, ref_alias);
 
 	objects_refs_tab->setCellText(ref_name, row, 0);
 	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
 	objects_refs_tab->setCellText(object->getTypeName(), row, 2);
 	objects_refs_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 3);
 	objects_refs_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 4);
-	objects_refs_tab->setRowData(QVariant::fromValue<GenericSQL::ObjectReference>(ref), row);
+	objects_refs_tab->setRowData(QVariant::fromValue<GenericSQL::Reference>(ref), row);
 
 	if(use_ref_alias)
 		objects_refs_tab->setCellText(ref_alias, row, 5);

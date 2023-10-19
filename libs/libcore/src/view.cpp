@@ -125,7 +125,7 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
-void View::setObjectReferences(const std::vector<GenericSQL::ObjectReference> &obj_refs)
+void View::setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
 {
 	this->view_obj_refs = obj_refs;
 	setCodeInvalidated(true);
@@ -287,7 +287,7 @@ std::vector<SimpleColumn> View::getColumns()
 	return columns;
 }
 
-std::vector<GenericSQL::ObjectReference> View::getObjectReferences()
+std::vector<GenericSQL::Reference> View::getObjectReferences()
 {
 	return view_obj_refs;
 }
@@ -562,7 +562,26 @@ void View::setDefinitionAttribute()
 
 void View::setReferencesAttribute()
 {
-	QString attribs[]={ Attributes::SelectExp,
+	attribs_map ref_attrs;
+
+	attributes[Attributes::References] = "";
+
+	/*for(auto &ref : view_obj_refs)
+	{
+		ref_attrs[Attributes::Name] = ref.object->getSignature();
+		ref_attrs[Attributes::Type] = ref.object->getSchemaName();
+		ref_attrs[Attributes::RefName] = ref.ref_name;
+		ref_attrs[Attributes::RefAlias] = ref.ref_alias;
+		ref_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : "";
+		ref_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
+
+		schparser.ignoreUnkownAttributes(true);
+		attributes[Attributes::References] +=
+				schparser.getSourceCode(Attributes::Object, ref_attrs, SchemaParser::XmlCode);
+	}*/
+
+
+	/*QString attribs[]={ Attributes::SelectExp,
 											Attributes::FromExp,
 											Attributes::SimpleExp,
 											Attributes::EndExp};
@@ -583,7 +602,7 @@ void View::setReferencesAttribute()
 
 		attributes[attribs[idx++]] = exp_list.join(',');
 		exp_list.clear();
-	}
+	} */
 }
 
 bool View::isReferRelationshipAddedColumn()
@@ -691,7 +710,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 			#warning "test!"
 			view_def_obj.setHideDescription(true);
 			view_def_obj.setDefinition(sql_definition);
-			view_def_obj.addObjectReferences(view_obj_refs);
+			view_def_obj.addReferences(view_obj_refs);
 			attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
 		}
 		catch(Exception &e)
@@ -1251,7 +1270,7 @@ void View::updateDependencies()
 	} */
 
 	for(auto &ref : view_obj_refs)
-		deps.push_back(ref.object);
+		deps.push_back(ref.getObject());
 
 	BaseTable::updateDependencies(deps);
 }

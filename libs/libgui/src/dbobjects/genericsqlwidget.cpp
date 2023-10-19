@@ -68,7 +68,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)
 {
 	BaseObjectWidget::setAttributes(model, op_list, genericsql);
-	std::vector<GenericSQL::ObjectReference> refs;
+	std::vector<GenericSQL::Reference> refs;
 
 	if(genericsql)
 	{
@@ -91,7 +91,7 @@ void GenericSQLWidget::updateCodePreview()
 				dummy_gsql.setName(name_edt->text());
 
 			dummy_gsql.removeObjectReferences();
-			dummy_gsql.addObjectReferences(obj_refs_wgt->getObjectReferences());
+			dummy_gsql.addReferences(obj_refs_wgt->getObjectReferences());
 			dummy_gsql.setDefinition(definition_txt->toPlainText());
 			dummy_gsql.setCodeInvalidated(true);
 			preview_txt->setPlainText(dummy_gsql.getSourceCode(SchemaParser::SqlCode));
@@ -115,7 +115,7 @@ void GenericSQLWidget::applyConfiguration()
 		genericsql=dynamic_cast<GenericSQL *>(this->object);
 		dummy_gsql.setDefinition(definition_txt->toPlainText());
 		dummy_gsql.removeObjectReferences();
-		dummy_gsql.addObjectReferences(obj_refs_wgt->getObjectReferences());
+		dummy_gsql.addReferences(obj_refs_wgt->getObjectReferences());
 		*genericsql = dummy_gsql;
 
 		BaseObjectWidget::applyConfiguration();

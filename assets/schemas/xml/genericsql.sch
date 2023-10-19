@@ -15,6 +15,6 @@
 
 $tb <definition> $sp <! $ob CDATA $ob {definition} $cb $cb > $sp </definition> $br
 
-%if {objects} %then {objects} %end
+%if {references} %then {references} %end
 
 </genericsql> $br $br

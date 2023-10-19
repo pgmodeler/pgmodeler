@@ -49,7 +49,7 @@ class __libcore View: public BaseTable {
 
 		std::vector<SimpleColumn> columns;
 
-		std::vector<GenericSQL::ObjectReference> view_obj_refs;
+		std::vector<GenericSQL::Reference> view_obj_refs;
 
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
@@ -103,7 +103,7 @@ class __libcore View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
-		void setObjectReferences(const std::vector<GenericSQL::ObjectReference> &obj_refs);
+		void setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
 
 		void setSqlDefinition(const QString &sql_def);
 
@@ -265,7 +265,7 @@ class __libcore View: public BaseTable {
 		//! \brief Returns the deduced columns of the view
 		std::vector<SimpleColumn> getColumns();
 
-		std::vector<GenericSQL::ObjectReference> getObjectReferences();
+		std::vector<GenericSQL::Reference> getObjectReferences();
 
 		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
 
