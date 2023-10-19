@@ -69,6 +69,10 @@ class __libcore GenericSQL: public BaseObject{
 		//! \brief The SQL definition of the generic object
 		QString definition;
 
+		/*! \brief Indicate whether the SQL comment description (-- object: ... type: ...)
+		 * of the generic object must be displayed in the SQL code generation */
+		bool hide_description;
+
 		//! \brief The list of references to other object in the model
 		std::vector<ObjectReference> objects_refs;
 
@@ -87,7 +91,10 @@ class __libcore GenericSQL: public BaseObject{
 		virtual ~GenericSQL(){}
 
 		void setDefinition(const QString &def);
+
 		QString getDefinition();
+
+		void setHideDescription(bool value);
 
 		[[deprecated("Use addObjectReference(ObjectRerence) instead.")]]
 		void addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature,
@@ -107,6 +114,7 @@ class __libcore GenericSQL: public BaseObject{
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();
 
+		[[deprecated]]
 		//! \brief Returns true when the provided object is being referenced by the generic SQL object
 		bool isObjectReferenced(BaseObject *object);
 
@@ -127,7 +135,6 @@ class __libcore GenericSQL: public BaseObject{
 		virtual void updateDependencies() override;
 
 		friend class GenericSQLWidget;
-		friend class ViewWidget;
 };
 
 /* Registering the GenericSQL::ObjectRefConfig struct as a Qt MetaType in order to make

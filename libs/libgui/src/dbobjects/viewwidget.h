@@ -48,7 +48,7 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
-		SyntaxHighlighter *code_hl;
+		SyntaxHighlighter *sql_preview_hl, *sql_definition_hl;
 
 		//! \brief Shows the reference at the reference's table
 		void showReferenceData(Reference refer, unsigned ref_flags, unsigned row);

@@ -37,6 +37,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		Ui_ViewWidget::setupUi(this);
 
 		sql_definition_txt = new NumberedTextEditor(this, true);
+		sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
+		sql_definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
 		vbox = new QVBoxLayout(sql_definition_tab);
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(sql_definition_txt);
@@ -52,8 +55,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 		sql_preview_txt=new NumberedTextEditor(this);
 		sql_preview_txt->setReadOnly(true);
-		code_hl=new SyntaxHighlighter(sql_preview_txt);
-		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		sql_preview_hl=new SyntaxHighlighter(sql_preview_txt);
+		sql_preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		vbox = new QVBoxLayout(sql_preview_tab);
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
@@ -570,11 +573,14 @@ void ViewWidget::updateCodePreview()
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
 			aux_view.setTablespace(tablespace_sel->getSelectedObject());
 
+			aux_view.setSqlDefinition(sql_definition_txt->toPlainText());
+			aux_view.setObjectReferences(obj_refs_wgt->getObjectReferences());
+
 			aux_view.setMaterialized(materialized_rb->isChecked());
 			aux_view.setRecursive(recursive_rb->isChecked());
 			aux_view.setWithNoData(with_no_data_chk->isChecked());
 
-			count=references_tab->getRowCount();
+			/*count=references_tab->getRowCount();
 			for(i=0; i < count; i++)
 			{
 				refer=references_tab->getRowData(i).value<Reference>();
@@ -587,7 +593,7 @@ void ViewWidget::updateCodePreview()
 					if(str_aux[i1]=='1')
 						aux_view.addReference(refer, expr_type[i1]);
 				}
-			}
+			}*/
 
 			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
 		}

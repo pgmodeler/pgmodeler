@@ -689,6 +689,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		try
 		{
 			#warning "test!"
+			view_def_obj.setHideDescription(true);
 			view_def_obj.setDefinition(sql_definition);
 			view_def_obj.addObjectReferences(view_obj_refs);
 			attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);

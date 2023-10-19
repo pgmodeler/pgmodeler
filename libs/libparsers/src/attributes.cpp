@@ -282,6 +282,7 @@ namespace Attributes {
 	Hashes("hashes"),
 	HbaFile("hba-file"),
 	Height("height"),
+	HideDescription("hide-description"),
 	HideExtAttribs("hide-ext-attribs"),
 	HideObjShadows("hide-obj-shadows"),
 	HideRelName("hide-rel-name"),

@@ -24,6 +24,8 @@ GenericSQL::GenericSQL()
 	obj_type = ObjectType::GenericSql;
 	attributes[Attributes::Definition] = "";
 	attributes[Attributes::Objects] = "";
+	attributes[Attributes::HideDescription] = "";
+	hide_description = false;
 }
 
 void GenericSQL::setDefinition(const QString &def)
@@ -35,6 +37,12 @@ void GenericSQL::setDefinition(const QString &def)
 QString GenericSQL::getDefinition()
 {
 	return definition;
+}
+
+void GenericSQL::setHideDescription(bool value)
+{
+	setCodeInvalidated(value != hide_description);
+	hide_description = value;
 }
 
 std::vector<GenericSQL::ObjectReference> GenericSQL::getObjectsReferences()
