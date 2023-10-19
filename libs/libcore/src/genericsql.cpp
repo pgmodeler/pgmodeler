@@ -133,6 +133,21 @@ void GenericSQL::addObjectReference(const GenericSQL::ObjectReference &ref)
 	}
 }
 
+void GenericSQL::addObjectReferences(const std::vector<ObjectReference> &refs)
+{
+	try
+	{
+		for(auto &ref : refs)
+			addObjectReference(ref);
+
+		setCodeInvalidated(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
 void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature,
 																		bool format_name, const QString &ref_alias)
 {

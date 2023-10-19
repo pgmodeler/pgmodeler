@@ -31,17 +31,20 @@
 #include "widgets/objectstablewidget.h"
 #include "codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
+#include "dbobjects/objectreferenceswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT
 
-			ObjectSelectorWidget *tag_sel, *ref_object_sel;
+		ObjectReferencesWidget *obj_refs_wgt;
+
+		ObjectSelectorWidget *tag_sel;
 
 		NumberedTextEditor *sql_preview_txt, *sql_definition_txt;
 
 		//! \brief Stores all the view references
-		ObjectsTableWidget *references_tab, *ref_objects_tab;
+		ObjectsTableWidget *references_tab;
 
 		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 

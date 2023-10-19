@@ -95,12 +95,14 @@ class __libcore GenericSQL: public BaseObject{
 
 		void addObjectReference(const GenericSQL::ObjectReference &ref);
 
-		[[deprecated("Use updateObjectReference(QString,ObjectRerence) instead.")]]
+		void addObjectReferences(const std::vector<GenericSQL::ObjectReference> &refs);
+
+		[[deprecated]]
 		void updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature,
 															 bool format_name, const QString &ref_alias = "");
 
+		[[deprecated]]
 		void updateObjectReference(const QString &ref_name, const GenericSQL::ObjectReference &new_ref);
-
 
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();

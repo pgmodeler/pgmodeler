@@ -41,26 +41,14 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(sql_definition_txt);
 
-		ref_object_sel = new ObjectSelectorWidget({ ObjectType::Schema, ObjectType::Column,
+		obj_refs_wgt = new ObjectReferencesWidget({ ObjectType::Schema, ObjectType::Column,
 																								ObjectType::Table, ObjectType::ForeignTable,
-																								ObjectType::View } , this);
+																								ObjectType::View } , true, this);
 
-		ref_objects_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
-		view_refs_grid->addWidget(ref_object_sel, 0, 1, 1, 1);
-		view_refs_grid->addWidget(ref_objects_tab, 2, 0, 1, 2);
-
-		ref_objects_tab->setColumnCount(5);
-		ref_objects_tab->setHeaderLabel(tr("Ref. name"), 0);
-		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
-
-		ref_objects_tab->setHeaderLabel(tr("Object"), 1);
-		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
-
-		ref_objects_tab->setHeaderLabel(tr("Type"), 2);
-		ref_objects_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
-
-		ref_objects_tab->setHeaderLabel(tr("Signature"), 3);
-		ref_objects_tab->setHeaderLabel(tr("Format name"), 4);
+		vbox = new QVBoxLayout(view_refs_tab);
+		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		vbox->addWidget(obj_refs_wgt);
+		vbox->addWidget(obj_refs_wgt);
 
 		sql_preview_txt=new NumberedTextEditor(this);
 		sql_preview_txt->setReadOnly(true);
@@ -631,8 +619,6 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	}
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
-
-	ref_object_sel->setModel(this->model);
 
 	materialized_rb->setChecked(view->isMaterialized());
 	recursive_rb->setChecked(view->isRecursive());

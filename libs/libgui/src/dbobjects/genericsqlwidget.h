@@ -28,6 +28,7 @@
 #include "ui_genericsqlwidget.h"
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
+#include "dbobjects/objectreferenceswidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "widgets/numberedtexteditor.h"
@@ -36,27 +37,21 @@ class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLW
 	private:
 		Q_OBJECT
 
+		ObjectReferencesWidget *obj_refs_wgt;
+
 		NumberedTextEditor *definition_txt, *preview_txt;
 
 		SyntaxHighlighter *definition_hl, *preview_hl;
 
 		CodeCompletionWidget *definition_cp;
 
-		ObjectsTableWidget *objects_refs_tab;
-
-		ObjectSelectorWidget *object_sel;
-
 		/*! \brief This dummy object is used to generated the code preview while the user changes the fields
 		 * in form. Once the dummy is configure it is copied to the real object being handled by the form (this->object) */
 		GenericSQL dummy_gsql;
 
-		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
-		static const QRegularExpression AttrDelimRegexp;
-
-		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
-
 	public:
 		GenericSQLWidget(QWidget * parent = nullptr);
+
 		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
 
 	public slots:
@@ -64,10 +59,6 @@ class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLW
 
 	private slots:
 		void updateCodePreview();
-		void addObjectReference(int row);
-		void editObjectReference(int row);
-		void updateObjectReference(int row);
-		void clearObjectReferenceForm();
 };
 
 #endif
