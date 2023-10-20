@@ -218,14 +218,18 @@ void View::generateColumns()
 		{
 			col = dynamic_cast<Column *>(ref_obj);
 
-			columns.push_back(SimpleColumn(col->getName(), *col->getType(), ref.getRefName()));
+			columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
+																		 *col->getType(), ref.getRefName()));
 		}
 		else if(ref_obj_type == ObjectType::View)
 		{
 			view = dynamic_cast<View *>(ref_obj);
 
 			for(auto &col : view->getColumns())
-				columns.push_back(col);
+			{
+				columns.push_back(SimpleColumn(getUniqueColumnName(col.name),
+																			 col.type, col.alias));
+			}
 		}
 		else if(PhysicalTable::isPhysicalTable(ref_obj_type))
 		{
@@ -234,7 +238,8 @@ void View::generateColumns()
 			for(auto &obj : *tab->getObjectList(ObjectType::Column))
 			{
 				col = dynamic_cast<Column *>(obj);
-				columns.push_back(SimpleColumn(col->getName(), *col->getType(), ""));
+				columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
+																			 *col->getType(), ""));
 			}
 		}
 	}

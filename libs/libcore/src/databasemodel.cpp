@@ -6928,7 +6928,13 @@ BaseRelationship *DatabaseModel::createRelationship()
 			/* If the relationship is between a view and a table and the table is not found
 			 * we try to find a foreign table instead */
 			if(table_types[i] == ObjectType::Table && !tables[i])
+			{
 				tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::ForeignTable));
+
+				// In case of table-view relationship, as a last resort, we try to find a view matching the table name
+				if(!tables[i] && attribs[Attributes::Type] == Attributes::RelationshipTabView)
+					tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::View));
+			}
 
 			//Raises an error if some table doesn't exists
 			if(!tables[i])
