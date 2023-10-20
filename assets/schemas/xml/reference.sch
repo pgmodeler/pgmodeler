@@ -7,8 +7,8 @@ $tb <reference
 [ type=] "{type}"
 [ ref-name=] "&{ref-name}"
 
-%if {ref-alias} %then [ ref-alias=] "&{ref-alias}" %end
 %if {use-signature} %then [ use-signature=] "true" %end
 %if {format-name} %then [ format-name=] "true" %end
+%if {use-columns} %then [ use-columns=] "true" %end
 
 /> $br

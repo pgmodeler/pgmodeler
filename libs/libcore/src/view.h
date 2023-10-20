@@ -106,7 +106,7 @@ class __libcore View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
-		void setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
+		void addObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
 
 		void setSqlDefinition(const QString &sql_def);
 
@@ -259,9 +259,11 @@ class __libcore View: public BaseTable {
 		bool isReferencingTable(BaseTable *tab);
 
 		//! \brief Returns if the view is referencing the specified column
+		[[deprecated]]
 		bool isReferencingColumn(Column *col);
 
 		//! \brief Returns if the view has an reference expression that is used as view definition
+		[[deprecated]]
 		bool hasDefinitionExpression();
 
 		virtual void setObjectListsCapacity(unsigned capacity) override;

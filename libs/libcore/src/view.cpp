@@ -104,9 +104,10 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
-void View::setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
+void View::addObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
 {
 	this->view_obj_refs = obj_refs;
+	generateColumns();
 	setCodeInvalidated(true);
 }
 
@@ -197,70 +198,43 @@ std::vector<unsigned> *View::getExpressionList(Reference::SqlType sql_type)
 
 void View::generateColumns()
 {
-	unsigned col_id = 0, col_count = 0, expr_idx = 0;
 	PhysicalTable *tab = nullptr;
-	Reference ref;
+	View *view = nullptr;
+	ObjectType ref_obj_type;
+	BaseObject *ref_obj = nullptr;
 	Column *col = nullptr;
-	QString name, alias;
 
 	columns.clear();
 
-	if(hasDefinitionExpression())
+	for(auto &ref : view_obj_refs)
 	{
-		std::vector<SimpleColumn> ref_cols = references[0].getColumns();
+		if(!ref.isUseColumns())
+			continue;
 
-		if(ref_cols.empty())
-			columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
-																		 Attributes::Expression,
-																		 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : ""));
-		else
-			columns = ref_cols;
-	}
-	else
-	{
-		for(auto ref_id : exp_select)
+		ref_obj_type = ref.getObject()->getObjectType();
+		ref_obj = ref.getObject();
+
+		if(ref_obj_type == ObjectType::Column)
 		{
-			ref = references[ref_id];
+			col = dynamic_cast<Column *>(ref_obj);
 
-			if(!ref.getExpression().isEmpty())
+			columns.push_back(SimpleColumn(col->getName(), *col->getType(), ref.getRefName()));
+		}
+		else if(ref_obj_type == ObjectType::View)
+		{
+			view = dynamic_cast<View *>(ref_obj);
+
+			for(auto &col : view->getColumns())
+				columns.push_back(col);
+		}
+		else if(PhysicalTable::isPhysicalTable(ref_obj_type))
+		{
+			tab = dynamic_cast<PhysicalTable *>(ref_obj);
+
+			for(auto &obj : *tab->getObjectList(ObjectType::Column))
 			{
-				if(!ref.getAlias().isEmpty())
-					name = ref.getAlias();
-				else
-					name = QString("_expr%1_").arg(expr_idx++);
-
-				name = getUniqueColumnName(name);
-				columns.push_back(SimpleColumn(name,  Attributes::Expression,
-																			 !ref.getReferenceAlias().isEmpty() ? ref.getReferenceAlias() : name));
-			}
-			else if(!ref.getColumn())
-			{
-				tab=ref.getTable();
-				col_count=tab->getColumnCount();
-
-				for(col_id=0; col_id < col_count; col_id++)
-				{
-					col = tab->getColumn(col_id);
-					name = getUniqueColumnName(col->getName());
-					columns.push_back(SimpleColumn(name, *col->getType(),
-																				 !col->getAlias().isEmpty() ? col->getAlias() : col->getName()));
-				}
-			}
-			else
-			{
-				col = ref.getColumn();
-
-				if(!ref.getColumnAlias().isEmpty())
-					name = getUniqueColumnName(ref.getColumnAlias());
-				else
-					name = getUniqueColumnName(col->getName());
-
-				if(!ref.getReferenceAlias().isEmpty())
-					alias = ref.getReferenceAlias();
-				else
-					alias = !col->getAlias().isEmpty() ? col->getAlias() : col->getName();
-
-				columns.push_back(SimpleColumn(name, *col->getType(), alias));
+				col = dynamic_cast<Column *>(obj);
+				columns.push_back(SimpleColumn(col->getName(), *col->getType(), ""));
 			}
 		}
 	}
@@ -696,7 +670,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		GenericSQL view_def_obj;
 		view_def_obj.setHideDescription(true);
 		view_def_obj.setDefinition(sql_definition);
-		view_def_obj.setReferences(view_obj_refs);
+		view_def_obj.addReferences(view_obj_refs);
 		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
 	}
 	else

@@ -574,7 +574,7 @@ void ViewWidget::updateCodePreview()
 			aux_view.setTablespace(tablespace_sel->getSelectedObject());
 
 			aux_view.setSqlDefinition(sql_definition_txt->toPlainText());
-			aux_view.setObjectReferences(obj_refs_wgt->getObjectReferences());
+			aux_view.addObjectReferences(obj_refs_wgt->getObjectReferences());
 
 			aux_view.setMaterialized(materialized_rb->isChecked());
 			aux_view.setRecursive(recursive_rb->isChecked());
@@ -687,7 +687,7 @@ void ViewWidget::applyConfiguration()
 		view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		view->setSqlDefinition(sql_definition_txt->toPlainText());
-		view->setObjectReferences(obj_refs_wgt->getObjectReferences());
+		view->addObjectReferences(obj_refs_wgt->getObjectReferences());
 
 		//Adds the auxiliary view objects into configured view
 		for(auto &type : types)

@@ -688,6 +688,7 @@ namespace Attributes {
 	UqPattern("uq-pattern"),
 	UsagePriv("usage"),
 	UseChangelog("use-changelog"),
+	UseColumns("use-columns"),
 	UseCurvedLines("use-curved-lines"),
 	UsePlaceholders("use-placeholders"),
 	UseSignature("use-signature"),

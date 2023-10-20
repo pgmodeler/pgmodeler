@@ -26,7 +26,6 @@
 #define GENERIC_SQL_H
 
 #include "baseobject.h"
-#include <unordered_map>
 
 class __libcore GenericSQL: public BaseObject{
 	public:
@@ -39,30 +38,29 @@ class __libcore GenericSQL: public BaseObject{
 			// The object being referenced
 			BaseObject *object;
 
-			// Indicates that the signature of the object should be used instead of the name
+			// Indicates that the signature of the object must be used instead of the name
 			bool use_signature,
+
+			// Indicates that the columns of the object (for table-like objects) must be used as view's columns
+			use_columns,
 
 			// Indicates that the name of the object need to be automatically quoted or the schema name appended
 			format_name;
-
-			// An optional alias for the reference (used only in View code definition)
-			QString	ref_alias;
 
 		public:
 			Reference()
 			{
 				object = nullptr;
-				use_signature = format_name = false;
+				use_signature = format_name = use_columns = false;
 			}
 
-			Reference(const QString &_ref_name, BaseObject *_object, bool _use_signature,
-											bool _format_name, const QString &_ref_alias = "")
+			Reference(const QString &_ref_name, BaseObject *_object, bool _use_signature, bool _format_name, bool _use_columns)
 			{
 				ref_name = _ref_name;
 				object = _object;
 				use_signature = _use_signature;
 				format_name = _format_name;
-				ref_alias = _ref_alias;
+				use_columns = _use_columns;
 			}
 
 			BaseObject *getObject() const
@@ -75,11 +73,6 @@ class __libcore GenericSQL: public BaseObject{
 				return ref_name;
 			}
 
-			QString getRefAlias() const
-			{
-				return ref_name;
-			}
-
 			bool isUseSignature() const
 			{
 				return use_signature;
@@ -88,6 +81,11 @@ class __libcore GenericSQL: public BaseObject{
 			bool isFormatName() const
 			{
 				return format_name;
+			}
+
+			bool isUseColumns() const
+			{
+				return use_columns;
 			}
 
 			bool isValid() const
@@ -103,9 +101,9 @@ class __libcore GenericSQL: public BaseObject{
 				ref_attrs[Attributes::Object] = object->getSignature();
 				ref_attrs[Attributes::Type] = object->getSchemaName();
 				ref_attrs[Attributes::RefName] = ref_name;
-				ref_attrs[Attributes::RefAlias] = ref_alias;
 				ref_attrs[Attributes::FormatName] = format_name ? Attributes::True : "";
 				ref_attrs[Attributes::UseSignature] = use_signature ? Attributes::True : "";
+				ref_attrs[Attributes::UseColumns] = use_columns ? Attributes::True : "";
 
 				return schparser.getSourceCode(Attributes::Reference, ref_attrs, SchemaParser::XmlCode);
 			}
@@ -143,11 +141,9 @@ class __libcore GenericSQL: public BaseObject{
 		void setHideDescription(bool value);
 
 		[[deprecated("Use addReference(Rerence) instead.")]]
-		void addReference(BaseObject *object, const QString &ref_name, bool use_signature,
-														bool format_name, const QString &ref_alias = "");
-
+		void addReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns);
 		void addReference(const GenericSQL::Reference &ref);
-		void setReferences(const std::vector<GenericSQL::Reference> &refs);
+		void addReferences(const std::vector<GenericSQL::Reference> &refs);
 
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();

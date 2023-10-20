@@ -704,6 +704,7 @@ namespace Attributes {
 	UqPattern,
 	UsagePriv,
 	UseChangelog,
+	UseColumns,
 	UseCurvedLines,
 	UsePlaceholders,
 	UseSignature,

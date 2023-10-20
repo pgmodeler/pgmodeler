@@ -130,7 +130,7 @@ void GenericSQL::addReference(const GenericSQL::Reference &ref)
 	}
 }
 
-void GenericSQL::setReferences(const std::vector<Reference> &refs)
+void GenericSQL::addReferences(const std::vector<Reference> &refs)
 {
 	try
 	{
@@ -145,12 +145,11 @@ void GenericSQL::setReferences(const std::vector<Reference> &refs)
 	}
 }
 
-void GenericSQL::addReference(BaseObject *object, const QString &ref_name, bool use_signature,
-																		bool format_name, const QString &ref_alias)
+void GenericSQL::addReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns)
 {
 	try
 	{
-		Reference ref = Reference(ref_name, object, use_signature, format_name, ref_alias);
+		Reference ref = Reference(ref_name, object, use_signature, format_name, use_columns);
 		validateReference(ref, false);
 		objects_refs.push_back(ref);
 		setCodeInvalidated(true);

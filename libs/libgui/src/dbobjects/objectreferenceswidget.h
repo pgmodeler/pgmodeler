@@ -38,16 +38,15 @@ class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidge
 
 		ObjectSelectorWidget *object_sel;
 
-		bool use_ref_alias;
+		bool conf_view_refs;
 
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
 		static const QRegularExpression AttrDelimRegexp;
 
-		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature,
-																	bool format_name, const QString &ref_alias);
+		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns);
 
 	public:
-		ObjectReferencesWidget(const std::vector<ObjectType> &types, bool use_ref_alias, QWidget * parent = nullptr);
+		ObjectReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs);
 

@@ -6135,7 +6135,8 @@ GenericSQL *DatabaseModel::createGenericSQL()
 
 						genericsql->addReference(object, attribs[Attributes::RefName],
 																		 attribs[Attributes::UseSignature] == Attributes::True,
-																		 attribs[Attributes::FormatName] == Attributes::True);
+																		 attribs[Attributes::FormatName] == Attributes::True,
+																		 attribs[Attributes::UseColumns] == Attributes::True);
 					}
 				}
 			}
@@ -6659,7 +6660,7 @@ View *DatabaseModel::createView()
 						view_refs.push_back(GenericSQL::Reference(attribs[Attributes::RefName], ref_object,
 																											attribs[Attributes::UseSignature] == Attributes::True,
 																											attribs[Attributes::FormatName] == Attributes::True,
-																											attribs[Attributes::RefAlias]));
+																											attribs[Attributes::UseColumns] == Attributes::True));
 					}
 					else if(elem == BaseObject::getSchemaName(ObjectType::Tag))
 					{
@@ -6683,7 +6684,7 @@ View *DatabaseModel::createView()
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		view->setObjectReferences(view_refs);
+		view->addObjectReferences(view_refs);
 	}
 	catch(Exception &e)
 	{

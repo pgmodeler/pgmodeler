@@ -84,6 +84,7 @@ class __libcanvas TableObjectView: public BaseObjectView {
 		virtual ~TableObjectView();
 
 		//! \brief Configures the object as a view reference
+		[[deprecated]]
 		void configureObject(Reference reference);
 
 		//! \brief Configures a item from a SimpleColumn instance
