@@ -33,7 +33,10 @@ class __libcore GenericSQL: public BaseObject{
 		//! \brief This is a internal structure used to hold object references configuration
 		class Reference {
 			// Name of the reference (in SQL it be used between {} in order to be parsed)
-			QString ref_name;
+			QString ref_name,
+
+					// The alias of the reference (in SQL it be used between @{} in order to be parsed)
+					ref_alias;
 
 			// The object being referenced
 			BaseObject *object;
@@ -54,9 +57,11 @@ class __libcore GenericSQL: public BaseObject{
 				use_signature = format_name = use_columns = false;
 			}
 
-			Reference(const QString &_ref_name, BaseObject *_object, bool _use_signature, bool _format_name, bool _use_columns)
+			Reference(BaseObject *_object, const QString &_ref_name, const QString &_ref_alias,
+								bool _use_signature, bool _format_name, bool _use_columns)
 			{
 				ref_name = _ref_name;
+				ref_alias = _ref_alias;
 				object = _object;
 				use_signature = _use_signature;
 				format_name = _format_name;
@@ -71,6 +76,11 @@ class __libcore GenericSQL: public BaseObject{
 			QString getRefName() const
 			{
 				return ref_name;
+			}
+
+			QString getRefAlias() const
+			{
+				return ref_alias;
 			}
 
 			bool isUseSignature() const
@@ -101,6 +111,7 @@ class __libcore GenericSQL: public BaseObject{
 				ref_attrs[Attributes::Object] = object->getSignature();
 				ref_attrs[Attributes::Type] = object->getSchemaName();
 				ref_attrs[Attributes::RefName] = ref_name;
+				ref_attrs[Attributes::RefAlias] = ref_alias;
 				ref_attrs[Attributes::FormatName] = format_name ? Attributes::True : "";
 				ref_attrs[Attributes::UseSignature] = use_signature ? Attributes::True : "";
 				ref_attrs[Attributes::UseColumns] = use_columns ? Attributes::True : "";
@@ -141,7 +152,7 @@ class __libcore GenericSQL: public BaseObject{
 		void setHideDescription(bool value);
 
 		[[deprecated("Use addReference(Rerence) instead.")]]
-		void addReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns);
+		void addReference(BaseObject *object, const QString &ref_name, const QString &ref_alias, bool use_signature, bool format_name, bool use_columns);
 		void addReference(const GenericSQL::Reference &ref);
 		void addReferences(const std::vector<GenericSQL::Reference> &refs);
 

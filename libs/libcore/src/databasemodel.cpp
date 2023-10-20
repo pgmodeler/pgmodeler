@@ -6133,7 +6133,9 @@ GenericSQL *DatabaseModel::createGenericSQL()
 															.arg(BaseObject::getTypeName(obj_type)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						genericsql->addReference(object, attribs[Attributes::RefName],
+						genericsql->addReference(object,
+																		 attribs[Attributes::RefName],
+																		 attribs[Attributes::RefAlias],
 																		 attribs[Attributes::UseSignature] == Attributes::True,
 																		 attribs[Attributes::FormatName] == Attributes::True,
 																		 attribs[Attributes::UseColumns] == Attributes::True);
@@ -6657,7 +6659,9 @@ View *DatabaseModel::createView()
 															 ErrorCode::RefObjectInexistsModel, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 						}
 
-						view_refs.push_back(GenericSQL::Reference(attribs[Attributes::RefName], ref_object,
+						view_refs.push_back(GenericSQL::Reference(ref_object,
+																											attribs[Attributes::RefName],
+																											attribs[Attributes::RefAlias],
 																											attribs[Attributes::UseSignature] == Attributes::True,
 																											attribs[Attributes::FormatName] == Attributes::True,
 																											attribs[Attributes::UseColumns] == Attributes::True));

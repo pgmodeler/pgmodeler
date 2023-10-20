@@ -36,21 +36,24 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);
 	references_grid->addWidget(objects_refs_tab, 3, 0, 1, 2);
 
-	objects_refs_tab->setColumnCount(conf_view_refs ? 6 : 5);
+	objects_refs_tab->setColumnCount(conf_view_refs ? 7 : 6);
+
 	objects_refs_tab->setHeaderLabel(tr("Ref. name"), 0);
 	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
 
-	objects_refs_tab->setHeaderLabel(tr("Object"), 1);
-	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
+	objects_refs_tab->setHeaderLabel(tr("Ref. alias"), 1);
 
-	objects_refs_tab->setHeaderLabel(tr("Type"), 2);
-	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
+	objects_refs_tab->setHeaderLabel(tr("Object"), 2);
+	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("objects")), 2);
 
-	objects_refs_tab->setHeaderLabel(tr("Signature"), 3);
-	objects_refs_tab->setHeaderLabel(tr("Format name"), 4);
+	objects_refs_tab->setHeaderLabel(tr("Type"), 3);
+	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 3);
+
+	objects_refs_tab->setHeaderLabel(tr("Use signature"), 4);
+	objects_refs_tab->setHeaderLabel(tr("Format name"), 5);
 
 	if(conf_view_refs)
-		objects_refs_tab->setHeaderLabel(tr("Use column(s)"), 5);
+		objects_refs_tab->setHeaderLabel(tr("Use column(s)"), 6);
 
 	use_columns_chk->setVisible(conf_view_refs);
 
@@ -86,8 +89,8 @@ void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vect
 	{
 		objects_refs_tab->addRow();
 		showObjectReferenceData(objects_refs_tab->getRowCount() - 1,
-														 ref.getObject(), ref.getRefName(), ref.isUseSignature(),
-														 ref.isFormatName(), ref.isUseColumns());
+														 ref.getObject(), ref.getRefName(), ref.getRefAlias(),
+														 ref.isUseSignature(), ref.isFormatName(), ref.isUseColumns());
 	}
 
 	objects_refs_tab->clearSelection();
@@ -111,6 +114,7 @@ void ObjectReferencesWidget::handleObjectReference(int row)
 	showObjectReferenceData(row,
 													object_sel->getSelectedObject(),
 													ref_name_edt->text().remove(AttrDelimRegexp),
+													ref_alias_edt->text().remove(AttrDelimRegexp),
 													use_signature_chk->isChecked(),
 													format_name_chk->isChecked(),
 													use_columns_chk->isChecked());
@@ -122,8 +126,10 @@ void ObjectReferencesWidget::editObjectReference(int row)
 	GenericSQL::Reference ref = objects_refs_tab->getRowData(row).value<GenericSQL::Reference>();
 
 	ref_name_edt->setText(ref.getRefName());
+	ref_alias_edt->setText(ref.getRefAlias());
 	use_signature_chk->setChecked(ref.isUseSignature());
 	format_name_chk->setChecked(ref.isFormatName());
+	use_columns_chk->setChecked(ref.isUseColumns() && conf_view_refs);
 	object_sel->setSelectedObject(ref.getObject());
 }
 
@@ -131,24 +137,27 @@ void ObjectReferencesWidget::clearObjectReferenceForm()
 {
 	object_sel->clearSelector();
 	ref_name_edt->clear();
+	ref_alias_edt->clear();
 	use_signature_chk->setChecked(false);
 	format_name_chk->setChecked(false);
 	objects_refs_tab->clearSelection();
 	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-void ObjectReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns)
+void ObjectReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
+																										 bool use_signature, bool format_name, bool use_columns)
 {
-	GenericSQL::Reference ref = GenericSQL::Reference(ref_name, object, use_signature, format_name, use_columns);
+	GenericSQL::Reference ref = GenericSQL::Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);
 
 	objects_refs_tab->setCellText(ref_name, row, 0);
-	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
-	objects_refs_tab->setCellText(object->getTypeName(), row, 2);
-	objects_refs_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 3);
-	objects_refs_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 4);
+	objects_refs_tab->setCellText(ref_alias, row, 1);
+	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 2);
+	objects_refs_tab->setCellText(object->getTypeName(), row, 3);
+	objects_refs_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 4);
+	objects_refs_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 5);
 
 	if(conf_view_refs)
-		objects_refs_tab->setCellText(use_columns ? tr("Yes") : tr("No"), row, 5);
+		objects_refs_tab->setCellText(use_columns ? tr("Yes") : tr("No"), row, 6);
 
 	objects_refs_tab->setRowData(QVariant::fromValue<GenericSQL::Reference>(ref), row);
 }

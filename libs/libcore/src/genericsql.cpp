@@ -108,7 +108,8 @@ void GenericSQL::validateReference(Reference ref, bool ignore_duplic)
 	if(!ref.getObject())
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!BaseObject::isValidName(ref.getRefName()))
+	if(!BaseObject::isValidName(ref.getRefName()) ||
+		 !BaseObject::isValidName(ref.getRefName()))
 		throw Exception(ErrorCode::AsgInvalidNameObjReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!ignore_duplic && getObjectRefNameIndex(ref.getRefName()) >= 0)
@@ -145,11 +146,11 @@ void GenericSQL::addReferences(const std::vector<Reference> &refs)
 	}
 }
 
-void GenericSQL::addReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns)
+void GenericSQL::addReference(BaseObject *object, const QString &ref_name, const QString &ref_alias, bool use_signature, bool format_name, bool use_columns)
 {
 	try
 	{
-		Reference ref = Reference(ref_name, object, use_signature, format_name, use_columns);
+		Reference ref = Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);
 		validateReference(ref, false);
 		objects_refs.push_back(ref);
 		setCodeInvalidated(true);
@@ -188,8 +189,7 @@ QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 
 	if(!objects_refs.empty())
 	{
-		QString ref_name, ref_value;
-		attribs_map obj_attrs;
+		QString ref_name, ref_value, ref_alias;
 
 		for(auto &ref : objects_refs)
 		{
@@ -199,16 +199,26 @@ QString GenericSQL::getSourceCode(SchemaParser::CodeType def_type)
 			}
 			else
 			{
-				/* In order to use a reference name in the object's SQL code, the reference should be writter in the for
-				 * {ref_name} so it can be replaced by the corresponding value in the SQL code */
+				/* In order to use a reference name in the object's SQL code, the reference should be written in the for
+				 * {ref_name} so it can be replaced by the corresponding value in the SQL code.
+				 *
+				 * By the same analogy, to use the alias of a reference, we need to write @{ref_name}. */
 				ref_name = QString("%1%2%3").arg(SchemaParser::CharStartAttribute)
-									 .arg(ref.getRefName())
-									 .arg(SchemaParser::CharEndAttribute);
+																		.arg(ref.getRefName())
+																		.arg(SchemaParser::CharEndAttribute);
+
+				ref_alias = QString("%1%2").arg(SchemaParser::CharValueOf).arg(ref_name);
+
+				// Replacing the @{} tokens by the reference alias
+				fmt_definition = fmt_definition.replace(ref_alias,
+																								 ref.isFormatName() ?
+																										 BaseObject::formatName(ref.getRefAlias()) :
+																										 ref.getRefAlias());
 
 				// Configuring the value of the reference
 				ref_value = ref.isUseSignature() ?
 										ref.getObject()->getSignature(ref.isFormatName()) :
-												ref.getObject()->getName(ref.isFormatName());
+										ref.getObject()->getName(ref.isFormatName());
 
 				fmt_definition = fmt_definition.replace(ref_name, ref_value);
 			}

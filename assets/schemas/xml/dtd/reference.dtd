@@ -6,6 +6,7 @@
 <!ATTLIST reference object CDATA #REQUIRED>
 <!ATTLIST reference type CDATA #REQUIRED>
 <!ATTLIST reference ref-name CDATA #REQUIRED>
+<!ATTLIST reference ref-alias CDATA #IMPLIED>
 <!ATTLIST reference use-signature (true|false) "false">
 <!ATTLIST reference format-name (true|false) "false">
 <!ATTLIST reference use-columns (true|false) "false">

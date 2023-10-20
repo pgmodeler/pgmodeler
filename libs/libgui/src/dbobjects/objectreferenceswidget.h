@@ -43,7 +43,8 @@ class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidge
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
 		static const QRegularExpression AttrDelimRegexp;
 
-		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name, bool use_columns);
+		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
+																 bool use_signature, bool format_name, bool use_columns);
 
 	public:
 		ObjectReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
