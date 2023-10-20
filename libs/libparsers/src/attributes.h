@@ -601,6 +601,7 @@ namespace Attributes {
 	ShowPageDelimiters,
 	ShowSourcePane,
 	Signature,
+	SimpleCol,
 	SimpleExp,
 	SimplifiedObjCreation,
 	SinglePkColumn,

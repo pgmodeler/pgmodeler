@@ -31,6 +31,8 @@
 
 %if {references} %then {references} %end
 
+%if {columns} %then {columns} %end
+
 %if {definition} %then 
 	$tb <definition> $sp <! $ob CDATA $ob {definition} $cb $cb > $sp </definition> $br
 %end

@@ -36,19 +36,13 @@ $br
 	TABLESPACE $sp {tablespace} $br
 %end
 
-[AS ] $br
-
-#Commom table expression (CTE)
-#%if {cte-exp} %then
-#	[WITH ] {cte-exp}
-#%end
-
-$br {definition}
+[AS ] $br {definition}
 
 %if {materialized} %and {with-no-data} %then
 	$br [WITH NO DATA;]
+%else
+	[;]
 %end
-
 
 {ddl-end}
 

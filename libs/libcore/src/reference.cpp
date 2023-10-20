@@ -129,7 +129,7 @@ void Reference::addColumn(const QString &name, PgSqlType type, const QString &al
 	// Checking if the column already exists
 	for(auto &col : columns)
 	{
-		if(col.name == name)
+		if(col.getName() == name)
 			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -317,9 +317,9 @@ QString Reference::getXMLDefinition()
 
 	for(auto &col : columns)
 	{
-		col_aux.setName(col.name);
-		col_aux.setType(PgSqlType::parseString(col.type));
-		col_aux.setAlias(col.alias);
+		col_aux.setName(col.getName());
+		col_aux.setType(PgSqlType::parseString(col.getType()));
+		col_aux.setAlias(col.getAlias());
 		attribs[Attributes::Columns]+=col_aux.getSourceCode(SchemaParser::XmlCode);
 	}
 

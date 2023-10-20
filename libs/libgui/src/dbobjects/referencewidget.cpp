@@ -163,10 +163,10 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 		for(auto &col : ref.getColumns())
 		{
 			columns_tab->addRow();
-			columns_tab->setCellText(col.name, row, 0);
-			columns_tab->setCellText(col.type, row, 1);
-			columns_tab->setCellText(col.alias, row, 2);
-			columns_tab->setRowData(QVariant::fromValue<PgSqlType>(PgSqlType::parseString(col.type)), row);
+			columns_tab->setCellText(col.getName(), row, 0);
+			columns_tab->setCellText(col.getType(), row, 1);
+			columns_tab->setCellText(col.getAlias(), row, 2);
+			columns_tab->setRowData(QVariant::fromValue<PgSqlType>(PgSqlType::parseString(col.getType())), row);
 			row++;
 		}
 

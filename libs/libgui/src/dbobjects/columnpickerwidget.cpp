@@ -157,7 +157,7 @@ void ColumnPickerWidget::updateColumnsCombo()
 			{
 				//If the column does not exists on the column's table, adds it
 				if(columns_tab->getRowIndex(QVariant::fromValue<SimpleColumn>(col)) < 0)
-					columns_cmb->addItem(QString("%1 (%2)").arg(col.name, col.type), QVariant::fromValue<SimpleColumn>(col));
+					columns_cmb->addItem(QString("%1 (%2)").arg(col.getName(), col.getType()), QVariant::fromValue<SimpleColumn>(col));
 			}
 		}
 
@@ -230,11 +230,11 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 
 void ColumnPickerWidget::addColumn(const SimpleColumn &column, int row)
 {
-	if(column.name.isEmpty() || row < 0)
+	if(column.getName().isEmpty() || row < 0)
 		return;
 
-	columns_tab->setCellText(column.name, row, 0);
-	columns_tab->setCellText(column.type, row, 1);
+	columns_tab->setCellText(column.getName(), row, 0);
+	columns_tab->setCellText(column.getType(), row, 1);
 	columns_tab->setRowData(QVariant::fromValue<SimpleColumn>(column), row);
 }
 

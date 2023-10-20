@@ -47,7 +47,7 @@ class __libcore View: public BaseTable {
 		std::vector<TableObject *> rules;
 		std::vector<TableObject *> indexes;
 
-		std::vector<SimpleColumn> columns;
+		std::vector<SimpleColumn> gen_columns, custom_cols;
 
 		std::vector<GenericSQL::Reference> view_obj_refs;
 
@@ -106,7 +106,9 @@ class __libcore View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
-		void addObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
+		void setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
+
+		void setCustomColumns(const std::vector<SimpleColumn> &cols);
 
 		void setSqlDefinition(const QString &sql_def);
 
@@ -198,6 +200,7 @@ class __libcore View: public BaseTable {
 		std::vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		//! \brief Sets the commom table expression for the view
+		[[deprecated]]
 		void setCommomTableExpression(const QString &expr);
 
 		/*! \brief Remove the reference from the view using its index, removing all the elements
@@ -252,7 +255,7 @@ class __libcore View: public BaseTable {
 		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
-	added by relationship */
+	added by relationship */		
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if the view is referencing the specified table

@@ -533,24 +533,24 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 
 	fmt = font_config[Attributes::Column];
 
-	if(compact_view && !col.alias.isEmpty())
-		lables[0]->setText(col.alias);
+	if(compact_view && !col.getAlias().isEmpty())
+		lables[0]->setText(col.getAlias());
 	else
-		lables[0]->setText(col.name);
+		lables[0]->setText(col.getName());
 
 	lables[0]->setFont(fmt.font());
 	lables[0]->setBrush(fmt.foreground());
 	lables[0]->setPos(px, 0);
 	px+=lables[0]->boundingRect().width() + (4 * HorizSpacing);
 
-	if(!compact_view && !col.type.isEmpty())
+	if(!compact_view && !col.getType().isEmpty())
 	{
 		fmt=font_config[Attributes::ObjectType];
 
-		if(col.type == Attributes::Expression)
-			lables[1]->setText(col.type);
+		if(col.getType() == Attributes::Expression)
+			lables[1]->setText(col.getType());
 		else
-			lables[1]->setText(formatUserTypeName(PgSqlType::parseString(col.type)));
+			lables[1]->setText(formatUserTypeName(PgSqlType::parseString(col.getType())));
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());

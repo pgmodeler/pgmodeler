@@ -120,6 +120,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \
 	    src/procedure.cpp \
+	src/simplecolumn.cpp \
 	    src/transform.cpp \
 	    src/trigger.cpp \
 	    src/basegraphicobject.cpp \

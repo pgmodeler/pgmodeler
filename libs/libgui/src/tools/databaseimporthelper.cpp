@@ -1908,14 +1908,13 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 void DatabaseImportHelper::createView(attribs_map &attribs)
 {
-	View *view=nullptr;
-	Reference ref;
-	Column col;
+	View *view = nullptr;
 	unsigned type_oid = 0;
-	QString type_name, type_def, unknown_obj_xml, sch_name;
+	QString type_name, sch_name, col_name;
 	bool is_type_registered = false;
-	QStringList ref_tab_oids;
-	PhysicalTable *ref_tab = nullptr;
+	std::vector<GenericSQL::Reference> references;
+	std::vector<SimpleColumn> custom_cols;
+	BaseTable *ref_tab = nullptr;
 
 	try
 	{
@@ -1923,18 +1922,14 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 														{ Attributes::YPos, "0" }};
 
 		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
-
-		ref=Reference(attribs[Attributes::Definition], "");
-		ref.setDefinitionExpression(true);	
-
 		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
 
 		//Creating columns
 		for(auto &itr : columns[attribs[Attributes::Oid].toUInt()])
 		{
-			col.setName(itr.second[Attributes::Name]);
-			type_oid=itr.second[Attributes::TypeOid].toUInt();
+			col_name = itr.second[Attributes::Name];
+			type_oid = itr.second[Attributes::TypeOid].toUInt();
 
 			/* If the type has an entry on the types map and its OID is greater than system object oids,
 			 * means that it's a user defined type, thus, there is the need to check if the type
@@ -1972,8 +1967,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 				// Try to create the missing data type
 				getType(itr.second[Attributes::TypeOid], false);
 
-			col.setType(PgSqlType::parseString(type_name));
-			ref.addColumn(&col);
+			custom_cols.push_back(SimpleColumn(col_name, *PgSqlType::parseString(type_name), ""));
 		}
 
 		// Configuring the reference tables
@@ -1981,14 +1975,24 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		{
 			ref_tab = dbmodel->getTable(getDependencyObject(tab_oid, ObjectType::Table, true, true, false));
 
-			// If we couldn't get a table from tab_oid we try to get a foreign table
+			// If we couldn't get a table from tab_oid we try to get a foreign table or a view
 			if(!ref_tab)
+			{
 				ref_tab = dbmodel->getForeignTable(getDependencyObject(tab_oid, ObjectType::ForeignTable, true, true, false));
 
-			ref.addReferencedTable(ref_tab);
+				if(!ref_tab)
+					ref_tab = dbmodel->getForeignTable(getDependencyObject(tab_oid, ObjectType::View, true, true, false));
+			}
+
+			if(ref_tab)
+				references.push_back(GenericSQL::Reference(ref_tab, ref_tab->getName(), "", false, false, false));
 		}
 
-		attribs[Attributes::References]=ref.getXMLDefinition();
+		for(auto &ref : references)
+			attribs[Attributes::References] += ref.getXmlCode();
+
+		for(auto &col : custom_cols)
+			attribs[Attributes::Columns] += col.getXmlCode();
 
 		loadObjectXML(ObjectType::View, attribs);
 		view = dbmodel->createView();

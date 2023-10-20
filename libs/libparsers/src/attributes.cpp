@@ -585,6 +585,7 @@ namespace Attributes {
 	ShowPageDelimiters("show-page-delimiters"),
 	ShowSourcePane("show-source-pane"),
 	Signature("signature"),
+	SimpleCol("simplecol"),
 	SimpleExp("simple-exp"),
 	SimplifiedObjCreation("simplified-obj-creation"),
 	SinglePkColumn("single-pk-col"),

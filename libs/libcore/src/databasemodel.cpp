@@ -6605,6 +6605,7 @@ View *DatabaseModel::createView()
 	View *view = nullptr;
 	BaseObject *tag = nullptr;
 	std::vector<GenericSQL::Reference> view_refs;
+	std::vector<SimpleColumn> custom_cols;
 	QString elem;
 
 	try
@@ -6638,6 +6639,13 @@ View *DatabaseModel::createView()
 						xmlparser.accessElement(XmlParser::ChildElement);
 						view->setSqlDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
+					}
+					else if(elem == Attributes::SimpleCol)
+					{
+						xmlparser.getElementAttributes(attribs);
+						custom_cols.push_back(SimpleColumn(attribs[Attributes::Name],
+																							 attribs[Attributes::Type],
+																							 attribs[Attributes::Alias]));
 					}
 					else if(elem == Attributes::Reference)
 					{
@@ -6688,7 +6696,8 @@ View *DatabaseModel::createView()
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		view->addObjectReferences(view_refs);
+		view->setObjectReferences(view_refs);
+		view->setCustomColumns(custom_cols);
 	}
 	catch(Exception &e)
 	{

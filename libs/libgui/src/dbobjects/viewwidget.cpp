@@ -574,18 +574,13 @@ void ViewWidget::updateCodePreview()
 			aux_view.setTablespace(tablespace_sel->getSelectedObject());
 
 			aux_view.setSqlDefinition(sql_definition_txt->toPlainText());
-			aux_view.addObjectReferences(obj_refs_wgt->getObjectReferences());
+			aux_view.setObjectReferences(obj_refs_wgt->getObjectReferences());
 
 			aux_view.setMaterialized(materialized_rb->isChecked());
 			aux_view.setRecursive(recursive_rb->isChecked());
 			aux_view.setWithNoData(with_no_data_chk->isChecked());
 
-			#warning "Test!"
-			//sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
-
-			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode)
-																		+ "\n\n----\n\n" +
-																		aux_view.getSourceCode(SchemaParser::XmlCode));
+			sql_preview_txt->setPlainText(aux_view.getSourceCode(SchemaParser::SqlCode));
 		}
 	}
 	catch(Exception &e)
@@ -687,7 +682,7 @@ void ViewWidget::applyConfiguration()
 		view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		view->setSqlDefinition(sql_definition_txt->toPlainText());
-		view->addObjectReferences(obj_refs_wgt->getObjectReferences());
+		view->setObjectReferences(obj_refs_wgt->getObjectReferences());
 
 		//Adds the auxiliary view objects into configured view
 		for(auto &type : types)

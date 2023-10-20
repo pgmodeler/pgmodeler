@@ -104,9 +104,16 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
-void View::addObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
+void View::setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
 {
 	this->view_obj_refs = obj_refs;
+	generateColumns();
+	setCodeInvalidated(true);
+}
+
+void View::setCustomColumns(const std::vector<SimpleColumn> &cols)
+{
+	custom_cols = cols;
 	generateColumns();
 	setCodeInvalidated(true);
 }
@@ -124,9 +131,9 @@ QString View::getSqlDefinition()
 
 SimpleColumn View::getColumn(const QString &name)
 {
-	for(auto &col : columns)
+	for(auto &col : gen_columns)
 	{
-		if(col.name == name)
+		if(col.getName() == name)
 			return col;
 	}
 
@@ -204,7 +211,7 @@ void View::generateColumns()
 	BaseObject *ref_obj = nullptr;
 	Column *col = nullptr;
 
-	columns.clear();
+	gen_columns.clear();
 
 	for(auto &ref : view_obj_refs)
 	{
@@ -218,7 +225,7 @@ void View::generateColumns()
 		{
 			col = dynamic_cast<Column *>(ref_obj);
 
-			columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
+			gen_columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
 																		 *col->getType(), ref.getRefName()));
 		}
 		else if(ref_obj_type == ObjectType::View)
@@ -227,8 +234,8 @@ void View::generateColumns()
 
 			for(auto &col : view->getColumns())
 			{
-				columns.push_back(SimpleColumn(getUniqueColumnName(col.name),
-																			 col.type, col.alias));
+				gen_columns.push_back(SimpleColumn(getUniqueColumnName(col.getName()),
+																						 col.getType(), col.getAlias()));
 			}
 		}
 		else if(PhysicalTable::isPhysicalTable(ref_obj_type))
@@ -238,16 +245,18 @@ void View::generateColumns()
 			for(auto &obj : *tab->getObjectList(ObjectType::Column))
 			{
 				col = dynamic_cast<Column *>(obj);
-				columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
+				gen_columns.push_back(SimpleColumn(getUniqueColumnName(col->getName()),
 																			 *col->getType(), ""));
 			}
 		}
 	}
+
+	gen_columns.insert(gen_columns.end(), custom_cols.begin(), custom_cols.end());
 }
 
 std::vector<SimpleColumn> View::getColumns()
 {
-	return columns;
+	return gen_columns;
 }
 
 std::vector<GenericSQL::Reference> View::getObjectReferences()
@@ -435,7 +444,7 @@ void View::removeReferences()
 	exp_from.clear();
 	exp_where.clear();
 	exp_end.clear();
-	columns.clear();
+	gen_columns.clear();
 	setCodeInvalidated(true);
 }
 
@@ -594,25 +603,6 @@ std::vector<Column *> View::getRelationshipAddedColumns()
 
 bool View::isReferencingTable(BaseTable *tab)
 {
-	/* PhysicalTable *aux_tab=nullptr;
-	unsigned count, i;
-	bool found=false;
-
-	count=references.size();
-
-	for(i=0; i < count && !found; i++)
-	{
-		if(references[i].isDefinitionExpression())
-			found = references[i].getReferencedTableIndex(tab) >= 0;
-		else
-		{
-			aux_tab = references[i].getTable();
-			found = (aux_tab && (aux_tab == tab));
-		}
-	}
-
-	return found; */
-
 	for(auto &obj : getDependencies(false, {}, true))
 	{
 		if(dynamic_cast<BaseTable *>(obj) == tab)
@@ -661,8 +651,8 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	{
 		QStringList fmt_names;
 
-		for(auto &col : columns)
-			fmt_names.push_back(formatName(col.name));
+		for(auto &col : gen_columns)
+			fmt_names.push_back(formatName(col.getName()));
 
 		attributes[Attributes::Columns] = fmt_names.join(',');
 	}
@@ -676,12 +666,15 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		view_def_obj.setHideDescription(true);
 		view_def_obj.setDefinition(sql_definition);
 		view_def_obj.addReferences(view_obj_refs);
-		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type);
+		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type).trimmed();
 	}
 	else
 	{
 		for(auto &ref : view_obj_refs)
 			attributes[Attributes::References] += ref.getXmlCode();
+
+		for(auto &col : custom_cols)
+			attributes[Attributes::Columns] += col.getXmlCode();
 
 		setPositionAttribute();
 		setFadedOutAttribute();
@@ -706,16 +699,16 @@ QString View::getUniqueColumnName(const QString &name)
 	QString fmt_name = name;
 	std::vector<SimpleColumn>::iterator itr, itr_end;
 
-	itr = columns.begin();
-	itr_end = columns.end();
+	itr = gen_columns.begin();
+	itr_end = gen_columns.end();
 
 	while(itr != itr_end)
 	{
-		if(itr->name == fmt_name)
+		if(itr->getName() == fmt_name)
 		{
 			fmt_name = name + QString::number(idx);
 			idx++;
-			itr = columns.begin();
+			itr = gen_columns.begin();
 		}
 		else
 			itr++;
@@ -1176,11 +1169,11 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 		attribs[Attributes::References] = tab_names.join(", ");
 		aux_attrs.clear();
 
-		for(auto &col : columns)
+		for(auto &col : gen_columns)
 		{
 			aux_attrs[Attributes::Parent] = getSchemaName();
-			aux_attrs[Attributes::Name] = col.name;
-			aux_attrs[Attributes::Type] = col.type;
+			aux_attrs[Attributes::Name] = col.getName();
+			aux_attrs[Attributes::Type] = col.getType();
 
 			schparser.ignoreUnkownAttributes(true);
 			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,

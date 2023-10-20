@@ -444,7 +444,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 		incl_cols.append(col->getName(true));
 
 	for(auto &col : incl_simple_cols)
-		incl_cols.append(BaseObject::formatName(col.name));
+		incl_cols.append(BaseObject::formatName(col.getName()));
 
 	attributes[Attributes::IncludedCols] = incl_cols.join(',');
 
@@ -533,7 +533,7 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 			if(elem.getColumn())
 				col_names.append(elem.getColumn()->getName());
 			else if(elem.getSimpleColumn().isValid())
-				col_names.append(elem.getSimpleColumn().name);
+				col_names.append(elem.getSimpleColumn().getName());
 			else
 				exprs.append(elem.getExpression());
 		}
