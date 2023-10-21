@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "objectreferenceswidget.h"
+#include "referenceswidget.h"
 #include "guiutilsns.h"
 
 const QRegularExpression ReferencesWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")

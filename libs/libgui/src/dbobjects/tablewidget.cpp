@@ -216,7 +216,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	dynamic_cast<QGridLayout*>(attributes_tbw->widget(0)->layout())->addLayout(baseobject_grid, 0, 0, 1, 3);
 
 	configureTabOrder({ tag_sel });
-	setMinimumSize(660, 630);
+	setMinimumSize(700, 650);
 }
 
 template<class Class, class WidgetClass>

@@ -140,7 +140,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		dynamic_cast<QVBoxLayout*>(attributes_tbw->widget(0)->layout())->insertLayout(0, baseobject_grid);
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, attributes_tbw });
-		setMinimumSize(660, 650);
+		setMinimumSize(700, 650);
 	}
 	catch(Exception &e)
 	{

@@ -28,7 +28,7 @@
 #include "ui_genericsqlwidget.h"
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
-#include "dbobjects/objectreferenceswidget.h"
+#include "dbobjects/referenceswidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "widgets/numberedtexteditor.h"

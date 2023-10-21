@@ -31,7 +31,7 @@
 #include "widgets/objectstablewidget.h"
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
-#include "dbobjects/objectreferenceswidget.h"
+#include "dbobjects/referenceswidget.h"
 #include "dbobjects/simplecolumnswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {

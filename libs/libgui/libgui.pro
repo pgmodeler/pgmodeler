@@ -10,7 +10,7 @@ windows:DESTDIR = $$PWD
 DEFINES += GUI_SYMBOLS
 
 SOURCES += src/baseform.cpp \
-	src/dbobjects/objectreferenceswidget.cpp \
+	src/dbobjects/referenceswidget.cpp \
 	src/dbobjects/simplecolumnswidget.cpp \
 src/guiutilsns.cpp \
 src/mainwindow.cpp \
@@ -131,7 +131,7 @@ src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
 src/baseform.h \
-	src/dbobjects/objectreferenceswidget.h \
+	src/dbobjects/referenceswidget.h \
 	src/dbobjects/simplecolumnswidget.h \
 src/guiutilsns.h \
 src/mainwindow.h \
