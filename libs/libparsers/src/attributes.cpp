@@ -329,6 +329,7 @@ namespace Attributes {
 	IntervalType("interval-type"),
 	InvertRangeSelTrigger("invert-rangesel-trigger"),
 	IoCast("io-cast"),
+	IsExtType("is-ext-type"),
 	IsPartitioned("is-partitioned"),
 	IsTemplate("is-template"),
 	Italic("italic"),

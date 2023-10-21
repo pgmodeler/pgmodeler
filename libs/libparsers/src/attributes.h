@@ -345,6 +345,7 @@ namespace Attributes {
 	IntervalType,
 	InvertRangeSelTrigger,
 	IoCast,
+	IsExtType,
 	IsPartitioned,
 	IsTemplate,
 	Italic,

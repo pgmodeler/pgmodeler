@@ -1704,7 +1704,12 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 
 void DatabaseImportHelper::createType(attribs_map &attribs)
 {
-	Type *type=nullptr;
+	/* Types that are children of any extension are discarded
+	 * and not created in the database model */
+	if(attribs[Attributes::IsExtType] == Attributes::True)
+		return;
+
+	Type *type = nullptr;
 	attribs_map aux_attribs;
 
 	try
