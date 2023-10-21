@@ -26,10 +26,11 @@
 #ifndef SIMPLE_COLUMN_H
 #define SIMPLE_COLUMN_H
 
+#include "coreglobal.h"
 #include <QString>
 #include <qmetatype.h>
 
-class SimpleColumn {
+class __libcore SimpleColumn {
 	private:
 		QString name, type, alias;
 

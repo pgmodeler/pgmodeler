@@ -27,7 +27,7 @@
 
 #include "baseobject.h"
 
-class Reference {
+class __libcore Reference {
 	// Name of the reference (in SQL it be used between {} in order to be parsed)
 	QString ref_name,
 
