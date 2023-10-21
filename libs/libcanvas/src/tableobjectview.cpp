@@ -19,7 +19,10 @@
 #include "tableobjectview.h"
 #include "rule.h"
 #include "index.h"
+#include "trigger.h"
+#include "constraint.h"
 #include "policy.h"
+#include "physicaltable.h"
 
 bool TableObjectView::hide_sch_name_usr_type = false;
 const QString TableObjectView::TypeSeparator(" ");
@@ -436,90 +439,6 @@ void TableObjectView::configureObject()
 		calculateBoundingRect();
 		this->setToolTip(tooltip + atribs_tip);
 	}
-}
-
-void TableObjectView::configureObject(Reference reference)
-{
-	QTextCharFormat fmt;
-	double px;
-	QString str_aux;
-
-	configureDescriptor();
-	descriptor->setPos(HorizSpacing * 3, 0);
-	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
-
-	if(reference.getReferenceType()==Reference::ReferColumn)
-	{
-		//Configures the name label as: [table].[column]
-		fmt=font_config[Attributes::RefTable];
-
-		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[0]->setText(reference.getReferenceAlias());
-		else
-			lables[0]->setText(reference.getTable()->getName() + ".");
-
-		lables[0]->setFont(fmt.font());
-		lables[0]->setBrush(fmt.foreground());
-		lables[0]->setPos(px, 0);
-		px+=lables[0]->boundingRect().width();
-
-		fmt=font_config[Attributes::RefColumn];
-		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText("");
-		else
-		{
-			if(reference.getColumn())
-				lables[1]->setText(reference.getColumn()->getName());
-			else
-				lables[1]->setText("*");
-		}
-
-		lables[1]->setFont(fmt.font());
-		lables[1]->setBrush(fmt.foreground());
-		lables[1]->setPos(px, 0);
-		px+=lables[1]->boundingRect().width();
-	}
-	else
-	{
-		fmt=font_config[Attributes::RefTable];
-		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : "";
-
-		if(str_aux.isEmpty())
-		{
-			str_aux=reference.getExpression().simplified().mid(0,25);
-			if(reference.getExpression().size() > 25) str_aux+="...";
-			str_aux.replace("\n", " ");
-		}
-
-		lables[0]->setText(str_aux);
-		lables[0]->setFont(fmt.font());
-		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText("");
-		lables[0]->setPos(px, 0);
-		px+=lables[0]->boundingRect().width();
-	}
-
-	//Configures a label for the alias (if there is one)
-	if(!compact_view &&
-		 ((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
-			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::ReferExpression)))
-	{
-		if(reference.getReferenceType()==Reference::ReferExpression)
-			str_aux=reference.getAlias();
-		else
-			str_aux=reference.getColumnAlias();
-
-		str_aux=" (" + str_aux + ") ";
-		fmt=font_config[Attributes::Alias];
-		lables[2]->setText(str_aux);
-		lables[2]->setFont(fmt.font());
-		lables[2]->setBrush(fmt.foreground());
-		lables[2]->setPos(px, 0);
-	}
-	else
-		lables[2]->setText("");
-
-	calculateBoundingRect();
 }
 
 void TableObjectView::configureObject(const SimpleColumn &col)

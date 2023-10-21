@@ -2035,7 +2035,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 	View *view=nullptr;
 	BaseRelationship *rel=nullptr;
 	GenericSQL *generic_sql=nullptr;
-	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
 	std::vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
@@ -2168,34 +2167,25 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(view->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[view->getObjectId()]=view->getSourceCode(SchemaParser::XmlCode);
+				xml_special_objs[view->getObjectId()] = view->getSourceCode(SchemaParser::XmlCode);
 
 				/* Relationships linking the view and the referenced tables are considered as
-			 special objects in this case only to be recreated more easely latter */
-
-				count=view->getReferenceCount(Reference::SqlSelect);
-
-				for(i=0; i < count; i++)
+				 * special objects in this case only to be recreated more easely latter */
+				for(auto &table : view->getReferencedTables())
 				{
-					ref=view->getReference(i, Reference::SqlSelect);
-					table=ref.getTable();
+					//Get the relationship between the view and the referenced table
+					rel = getRelationship(view, table);
 
-					if(table)
+					if(rel)
 					{
-						//Get the relationship between the view and the referenced table
-						rel=getRelationship(view, table);
-
-						if(rel)
-						{
-							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
-							removeRelationship(rel);
-							invalid_special_objs.push_back(rel);
-						}
+						xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
+						removeRelationship(rel);
+						invalid_special_objs.push_back(rel);
 					}
 				}
 
 				/* Removing child objects from view and including them in the list of objects to be recreated,
-		   this will avoid errors when removing the view from model */
+				 * this will avoid errors when removing the view from model */
 				objects=view->getObjects();
 				for(auto &obj : objects)
 				{

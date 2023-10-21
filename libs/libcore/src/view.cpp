@@ -17,6 +17,7 @@
 */
 
 #include "view.h"
+#include "physicaltable.h"
 
 View::View() : BaseTable()
 {
@@ -140,69 +141,6 @@ SimpleColumn View::getColumn(const QString &name)
 	return SimpleColumn();
 }
 
-void View::setCommomTableExpression(const QString &expr)
-{
-	setCodeInvalidated(cte_expression != expr);
-	cte_expression=expr;
-}
-
-bool View::hasDefinitionExpression()
-{
-	std::vector<Reference>::iterator itr;
-	bool found=false;
-
-	itr=references.begin();
-	while(itr!=references.end() && !found)
-	{
-		found=((*itr).isDefinitionExpression());
-		itr++;
-	}
-
-	return found;
-}
-
-QString View::getCommomTableExpression()
-{
-	return cte_expression;
-}
-
-int View::getReferenceIndex(Reference &refer)
-{
-	std::vector<Reference>::iterator itr, itr_end;
-	bool found=false;
-	int idx=-1;
-
-	itr=references.begin();
-	itr_end=references.end();
-
-	while(itr!=itr_end && !found)
-	{
-		found=((*itr)==refer);
-		itr++;
-		idx++;
-	}
-
-	if(!found) idx=-1;
-	return idx;
-}
-
-std::vector<unsigned> *View::getExpressionList(Reference::SqlType sql_type)
-{
-	if(sql_type==Reference::SqlSelect)
-		return &exp_select;
-
-	if(sql_type==Reference::SqlFrom)
-		return &exp_from;
-
-	if(sql_type==Reference::SqlWhere)
-		return &exp_where;
-
-	if(sql_type==Reference::SqlEndExpr)
-		return &exp_end;
-
-	return nullptr;
-}
-
 void View::generateColumns()
 {
 	PhysicalTable *tab = nullptr;
@@ -279,307 +217,15 @@ std::vector<BaseTable *> View::getReferencedTables()
 	return tables;
 }
 
-void View::addReference(Reference &refer, Reference::SqlType sql_type, int expr_id)
-{
-	int idx;
-	std::vector<unsigned> *expr_list=nullptr;
-	Column *col=nullptr;
-
-	//Specific tests for expressions used as view definition
-	if(sql_type==Reference::SqlViewDef)
-	{
-		//Raises an error if the expression is empty
-		if(refer.getExpression().isEmpty())
-			throw Exception(ErrorCode::AsgInvalidViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		//Raises an error if already exists a definition expression
-		else if(hasDefinitionExpression())
-			throw Exception(ErrorCode::AsgSecondViewDefExpression,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		//Raises an error if the user try to add a definition expression when already exists another references
-		else if(!references.empty())
-			throw Exception(ErrorCode::MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-	//Raises an error if the user try to add a ordinary reference when there is a reference used as definition expression
-	else if(hasDefinitionExpression())
-		throw Exception(ErrorCode::MixingViewDefExprsReferences,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	//Checks if the reference already exists
-	idx=getReferenceIndex(refer);
-
-	//If not exists
-	if(idx < 0)
-	{
-		//Inserts the reference on the view
-		refer.setDefinitionExpression(sql_type==Reference::SqlViewDef);
-		references.push_back(refer);
-		idx=references.size()-1;
-	}
-
-	if(sql_type!=Reference::SqlViewDef)
-	{
-		//Gets the expression list
-		expr_list=getExpressionList(sql_type);
-
-		//Avoiding the insertion of a duplicated reference in the expression list
-		if(std::find(expr_list->begin(), expr_list->end(), idx) != expr_list->end())
-			return;
-
-		//Inserts the reference id on the expression list
-		if(expr_id >= 0 && expr_id < static_cast<int>(expr_list->size()))
-			expr_list->insert(expr_list->begin() + expr_id, static_cast<unsigned>(idx));
-		//Raises an error if the expression id is invalid
-		else if(expr_id >= 0 && expr_id >= static_cast<int>(expr_list->size()))
-			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		else
-			expr_list->push_back(static_cast<unsigned>(idx));
-
-		col=refer.getColumn();
-		if(col && col->isAddedByRelationship() &&
-				col->getObjectId() > this->object_id)
-			this->object_id=BaseObject::getGlobalId();
-	}
-
-	generateColumns();
-	setCodeInvalidated(true);
-}
-
-unsigned View::getReferenceCount()
-{
-	return references.size();
-}
-
-unsigned View::getReferenceCount(Reference::SqlType sql_type, int ref_type)
-{
-	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
-
-	if(!vect_idref)
-	{
-		if(sql_type==Reference::SqlViewDef)
-			return references.size();
-
-		return 0;
-	}
-	else
-	{
-		if(ref_type < 0)
-			return vect_idref->size();
-
-		unsigned count=0;
-
-		for(auto &ref : *vect_idref)
-		{
-			if(references[ref].getReferenceType()== static_cast<Reference::ReferType>(ref_type))
-				count++;
-		}
-
-		return count;
-	}
-}
-
-Reference View::getReference(unsigned ref_id)
-{
-	//Raises an error if the reference id is out of bound
-	if(ref_id >= references.size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	return references[ref_id];
-}
-
-Reference View::getReference(unsigned ref_id, Reference::SqlType sql_type)
-{
-	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
-
-	//Raises an error if the reference id is out of bound
-	if(ref_id >= references.size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(sql_type==Reference::SqlViewDef || vect_idref)
-		return references[ref_id];
-	else
-		return references[vect_idref->at(ref_id)];
-}
-
-/* void View::removeReference(unsigned ref_id)
-{
-	std::vector<unsigned> *vect_idref[4]={&exp_select, &exp_from, &exp_where, &exp_end};
-	std::vector<unsigned>::iterator itr, itr_end;
-	unsigned i;
-
-	//Raises an error if the reference id is out of bound
-	if(ref_id >= references.size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	for(i=0; i < 3; i++)
-	{
-		itr=vect_idref[i]->begin();
-		itr_end=vect_idref[i]->end();
-
-		while(itr!=itr_end && !vect_idref[i]->empty())
-		{
-			//Removes the reference id from the expression list
-			if(references[*itr]==references[ref_id])
-				itr = vect_idref[i]->erase(itr);
-			else
-				itr++;
-		}
-	}
-
-	//Removes the reference from the view
-	references.erase(references.begin() + ref_id);
-	generateColumns();
-	setCodeInvalidated(true);
-} */
-
-void View::removeReferences()
-{
-	/* for(auto &ref : references)
-	{
-		if(ref.getColumn())
-			unsetReference(ref.getColumn());
-		else if(ref.getTable())
-			unsetReference(ref.getTable());
-	} */
-
-	references.clear();
-	exp_select.clear();
-	exp_from.clear();
-	exp_where.clear();
-	exp_end.clear();
-	gen_columns.clear();
-	setCodeInvalidated(true);
-}
-
-/* void View::removeReference(unsigned expr_id, Reference::SqlType sql_type)
-{
-	std::vector<unsigned> *vect_idref=getExpressionList(sql_type);
-
-	if(expr_id >= vect_idref->size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	vect_idref->erase(vect_idref->begin() + expr_id);
-	setCodeInvalidated(true);
-} */
-
-int View::getReferenceIndex(Reference &ref, Reference::SqlType sql_type)
-{
-	std::vector<unsigned> *vet_idref=getExpressionList(sql_type);
-	std::vector<unsigned>::iterator itr, itr_end;
-	int idx_ref;
-	bool found=false;
-
-	idx_ref=getReferenceIndex(ref);
-
-	if(sql_type==Reference::SqlViewDef &&
-			idx_ref >=0 && ref.isDefinitionExpression())
-		return idx_ref;
-	else if(sql_type!=Reference::SqlViewDef)
-	{
-		itr=vet_idref->begin();
-		itr_end=vet_idref->end();
-
-		while(itr!=itr_end && !found)
-		{
-			found=(static_cast<int>(*itr)==idx_ref);
-			if(!found) itr++;
-		}
-
-		if(!found)
-			return -1;
-		else
-			return (itr-vet_idref->begin());
-	}
-	else
-		return -1;
-}
-
-void View::setDefinitionAttribute()
-{
-	QString decl;
-
-	if(!references.empty())
-	{
-		if(exp_select.empty())
-		{
-			decl=references[0].getExpression();
-		}
-		else
-		{
-			std::vector<unsigned> *refs_vect[4]={&exp_select, &exp_from, &exp_where, &exp_end};
-			std::vector<unsigned>::iterator itr, itr_end;
-			QString keywords[4]={"SELECT\n", "\nFROM\n", "\nWHERE\n", "\n"};
-			unsigned i, cnt, idx;
-			Reference::SqlType sql_type[4]={ Reference::SqlSelect,
-																			 Reference::SqlFrom,
-																			 Reference::SqlWhere,
-																			 Reference::SqlEndExpr };
-
-			for(i=0; i < 4; i++)
-			{
-				if(refs_vect[i]->size() > 0)
-				{
-					decl+=keywords[i];
-
-					itr=refs_vect[i]->begin();
-					itr_end=refs_vect[i]->end();
-					while(itr!=itr_end)
-					{
-						idx=(*itr);
-						decl+=references[idx].getSQLDefinition(sql_type[i]);
-						itr++;
-					}
-
-					if(sql_type[i]==Reference::SqlSelect ||
-							sql_type[i]==Reference::SqlFrom)
-					{
-						//Removing the final comma from SELECT / FROM declarations
-						cnt=decl.size();
-						if(decl[cnt-2]==',')
-							decl.remove(cnt-2,2);
-					}
-				}
-			}
-		}
-	}
-
-	decl=decl.trimmed();
-	if(!decl.isEmpty() && !decl.endsWith(QChar(';')) && !with_no_data)
-		decl.append(QChar(';'));
-
-	attributes[Attributes::Definition]=decl;
-}
-
-void View::setReferencesAttribute()
-{
-	attribs_map ref_attrs;
-
-	/*QString attribs[]={ Attributes::SelectExp,
-											Attributes::FromExp,
-											Attributes::SimpleExp,
-											Attributes::EndExp};
-	std::vector<unsigned> *vect_exp[]={ &exp_select, &exp_from, &exp_where, &exp_end };
-
-	attributes[Attributes::References] = "";
-
-	for(auto &ref : references)
-		attributes[Attributes::References] += ref.getXMLDefinition();
-
-	QStringList exp_list;
-	unsigned idx = 0;
-
-	for(auto &v_exp : vect_exp)
-	{
-		for(auto &ref_id : *v_exp)
-			exp_list.append(QString::number(ref_id));
-
-		attributes[attribs[idx++]] = exp_list.join(',');
-		exp_list.clear();
-	} */
-}
-
 bool View::isReferRelationshipAddedColumn()
 {
-	for(auto &ref : references)
+	Column *col = nullptr;
+
+	for(auto &ref : view_obj_refs)
 	{
-		if(ref.getColumn() && ref.getColumn()->isAddedByRelationship())
+		col = dynamic_cast<Column *>(ref.getObject());
+
+		if(col && col->isAddedByRelationship())
 			return true;
 	}
 
@@ -589,11 +235,12 @@ bool View::isReferRelationshipAddedColumn()
 std::vector<Column *> View::getRelationshipAddedColumns()
 {
 	std::vector<Column *> cols;
-	Column *col=nullptr;
+	Column *col = nullptr;
 
-	for(auto &ref : references)
+	for(auto &ref : view_obj_refs)
 	{
-		col=ref.getColumn();
+		col = dynamic_cast<Column *>(ref.getObject());
+
 		if(col && col->isAddedByRelationship())
 			cols.push_back(col);
 	}
@@ -612,26 +259,11 @@ bool View::isReferencingTable(BaseTable *tab)
 	return false;
 }
 
-bool View::isReferencingColumn(Column *col)
-{
-	unsigned count, i;
-	bool found=false;
-
-	if(col)
-	{
-		count=references.size();
-		for(i=0; i < count && !found; i++)
-			found=(col==references[i].getColumn());
-	}
-	return found;
-}
-
 QString View::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::CteExpression]=cte_expression;
 	attributes[Attributes::Materialized]=(materialized ? Attributes::True : "");
 	attributes[Attributes::Recursive]=(recursive ? Attributes::True : "");
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
@@ -646,8 +278,7 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	setSQLObjectAttribute();
 	setLayersAttribute();
 
-	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDef)
-	if(recursive && !hasDefinitionExpression())
+	if(recursive)
 	{
 		QStringList fmt_names;
 
@@ -720,17 +351,17 @@ QString View::getUniqueColumnName(const QString &name)
 void View::setObjectListsCapacity(unsigned capacity)
 {
   if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)
-	capacity = DefMaxObjectCount;
+		capacity = DefMaxObjectCount;
 
-  references.reserve(capacity);
-  indexes.reserve(capacity/2);
-  rules.reserve(capacity/2);
-  triggers.reserve(capacity/2);
+	view_obj_refs.reserve(capacity);
+	indexes.reserve(capacity/2);
+	rules.reserve(capacity/2);
+	triggers.reserve(capacity/2);
 }
 
 unsigned View::getMaxObjectCount()
 {
-  unsigned count = 0, max = references.size();
+	unsigned count = 0, max = view_obj_refs.size();
   std::vector<ObjectType> types = { ObjectType::Index, ObjectType::Rule, ObjectType::Trigger };
 
   for(auto type : types)
@@ -1102,11 +733,6 @@ void View::operator = (View &view)
 
 	this->pagination_enabled = view.pagination_enabled;
 	this->layers = view.layers;
-	this->references=view.references;
-	this->exp_select=view.exp_select;
-	this->exp_from=view.exp_from;
-	this->exp_where=view.exp_where;
-	this->cte_expression=view.cte_expression;
 	this->materialized=view.materialized;
 	this->recursive=view.recursive;
 	this->with_no_data=view.with_no_data;
@@ -1150,17 +776,15 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 
 	try
 	{
-		for(auto &ref : references)
+		for(auto &ref : view_obj_refs)
 		{
-			if(ref.getTable())
+			if(ref.getObject())
 			{
-				aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
-				tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
-			}
+				Column *col = dynamic_cast<Column *>(ref.getObject());
+				BaseTable *tab = dynamic_cast<BaseTable *>(ref.getObject());
 
-			for(auto &tab : ref.getReferencedTables())
-			{
-				aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+				aux_attrs[Attributes::Name] = col ? col->getParentTable()->getSignature() : tab->getSignature();
+				aux_attrs[Attributes::Name].remove('"');
 				tab_names.push_back(schparser.getSourceCode(link_dict_file, aux_attrs));
 			}
 		}

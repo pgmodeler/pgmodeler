@@ -72,7 +72,6 @@ HEADERS += src/coreglobal.h \
 	   src/operatorclass.h \
 	   src/operationlist.h \
 	   src/tableobject.h \
-	   src/reference.h \
 	   src/collation.h \
 	   src/excludeelement.h \
 	   src/element.h \
@@ -154,7 +153,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/operatorclass.cpp \
 	    src/operationlist.cpp \
 	    src/tableobject.cpp \
-	    src/reference.cpp \
 	    src/collation.cpp \
 	    src/excludeelement.cpp \
 	    src/element.cpp \

@@ -19,7 +19,6 @@ src/pgmodelerplugin.cpp \
 src/dbobjects/aggregatewidget.cpp \
 src/dbobjects/domainwidget.cpp \
 src/dbobjects/languagewidget.cpp \
-src/dbobjects/referencewidget.cpp \
 src/dbobjects/textboxwidget.cpp \
 src/dbobjects/basefunctionwidget.cpp \
 src/dbobjects/elementwidget.cpp \
@@ -141,7 +140,6 @@ src/pgmodelerplugin.h \
 src/dbobjects/aggregatewidget.h \
 src/dbobjects/domainwidget.h \
 src/dbobjects/languagewidget.h \
-src/dbobjects/referencewidget.h \
 src/dbobjects/textboxwidget.h \
 src/dbobjects/basefunctionwidget.h \
 src/dbobjects/elementwidget.h \

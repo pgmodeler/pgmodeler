@@ -21,7 +21,6 @@
 #include "triggerwidget.h"
 #include "indexwidget.h"
 #include "baseform.h"
-#include "referencewidget.h"
 #include "coreutilsns.h"
 #include "guiutilsns.h"
 
@@ -504,7 +503,6 @@ void ViewWidget::applyConfiguration()
 
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
-		view->removeReferences();
 		view->setMaterialized(materialized_rb->isChecked());
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());
