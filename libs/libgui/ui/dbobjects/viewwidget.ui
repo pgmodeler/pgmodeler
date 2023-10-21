@@ -197,9 +197,13 @@
        <string>&amp;References</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="old_view_refs_tab">
+     <widget class="QWidget" name="columns_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
       <attribute name="title">
-       <string>Old references</string>
+       <string>Columns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
