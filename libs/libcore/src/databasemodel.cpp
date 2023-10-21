@@ -6645,7 +6645,23 @@ View *DatabaseModel::createView()
 						xmlparser.getElementAttributes(attribs);
 
 						ref_obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
-						ref_object = getObject(attribs[Attributes::Object], ref_obj_type);
+
+						if(ref_obj_type == ObjectType::Column)
+						{
+							QStringList name_list = attribs[Attributes::Object].split('.');
+							PhysicalTable *tab = nullptr;
+
+							if(name_list.size() == 3)
+							{
+								QString tab_name = QString("%1.%2").arg(name_list[0], name_list[1]);
+								tab = dynamic_cast<PhysicalTable *>(getObject(tab_name, { ObjectType::Table, ObjectType::ForeignTable }));
+
+								if(tab)
+									ref_object = tab->getObject(name_list[2], ref_obj_type);
+							}
+						}
+						else
+							ref_object = getObject(attribs[Attributes::Object], ref_obj_type);
 
 						if(!ref_object)
 						{
@@ -6686,7 +6702,7 @@ View *DatabaseModel::createView()
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		view->setObjectReferences(view_refs);
+		view->setReferences(view_refs);
 		view->setCustomColumns(custom_cols);
 	}
 	catch(Exception &e)

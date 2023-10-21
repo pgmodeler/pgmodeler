@@ -64,10 +64,7 @@ void SimpleColumnsWidget::setAttributes(DatabaseModel *model, const std::vector<
 	for(auto &col : cols)
 	{
 		columns_tab->addRow();
-		columns_tab->setCellText(col.getName(), row, 0);
-		columns_tab->setCellText(col.getType(), row, 1);
-		columns_tab->setCellText(col.getAlias(), row, 2);
-		columns_tab->setRowData(QVariant::fromValue<PgSqlType>(PgSqlType::parseString(col.getType())), row);
+		showColumnData(row, col.getName(), col.getType(), col.getAlias());
 		row++;
 	}
 
@@ -75,13 +72,29 @@ void SimpleColumnsWidget::setAttributes(DatabaseModel *model, const std::vector<
 	columns_tab->blockSignals(false);
 }
 
+std::vector<SimpleColumn> SimpleColumnsWidget::getColumns()
+{
+	std::vector<SimpleColumn> cols;
+
+	for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
+		cols.push_back(columns_tab->getRowData(row).value<SimpleColumn>());
+
+	return cols;
+}
+
+void SimpleColumnsWidget::showColumnData(int row, const QString &name, const QString &type, const QString &alias)
+{
+	columns_tab->setCellText(name, row, 0);
+	columns_tab->setCellText(type, row, 1);
+	columns_tab->setCellText(alias, row, 2);
+	columns_tab->setRowData(QVariant::fromValue<SimpleColumn>(SimpleColumn(name, type, alias)), row);
+}
+
 void SimpleColumnsWidget::handleColumn(int row)
 {
 	PgSqlType type = pgsqltype_wgt->getPgSQLType();
-	columns_tab->setCellText(name_edt->text(), row, 0);
-	columns_tab->setCellText(*type, row, 1);
-	columns_tab->setCellText(alias_edt->text(), row, 2);
-	columns_tab->setRowData(QVariant::fromValue<PgSqlType>(type), row);
+	showColumnData(row, name_edt->text(), *type, alias_edt->text());
+
 	name_edt->clear();
 	alias_edt->clear();
 	name_edt->setFocus();
@@ -103,9 +116,11 @@ void SimpleColumnsWidget::updateColumn(int row)
 
 void SimpleColumnsWidget::editColumn(int row)
 {
-	name_edt->setText(columns_tab->getCellText(row, 0));
-	alias_edt->setText(columns_tab->getCellText(row, 2));
-	pgsqltype_wgt->setAttributes(columns_tab->getRowData(row).value<PgSqlType>(), model, true,
+	SimpleColumn col = columns_tab->getRowData(row).value<SimpleColumn>();
+
+	name_edt->setText(col.getName());
+	alias_edt->setText(col.getAlias());
+	pgsqltype_wgt->setAttributes(PgSqlType::parseString(col.getType()), model, true,
 															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
 }
 

@@ -35,11 +35,14 @@ class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
 		DatabaseModel *model;
 
 		void handleColumn(int row);
+		void showColumnData(int row, const QString &name, const QString &type, const QString &alias);
 
 	public:
 		explicit SimpleColumnsWidget(QWidget *parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, const std::vector<SimpleColumn> &cols);
+
+		std::vector<SimpleColumn> getColumns();
 
 	private slots:
 		void addColumn(int row);

@@ -38,7 +38,7 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT
 
-		SimpleColumnsWidget *simple_cols_wgt;
+		SimpleColumnsWidget *custom_cols_wgt;
 
 		ReferencesWidget *obj_refs_wgt;
 

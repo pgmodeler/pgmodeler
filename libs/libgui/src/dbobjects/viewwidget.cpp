@@ -64,10 +64,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
-		simple_cols_wgt = new SimpleColumnsWidget(this);
+		custom_cols_wgt = new SimpleColumnsWidget(this);
 		vbox = new QVBoxLayout(columns_tab);
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(simple_cols_wgt);
+		vbox->addWidget(custom_cols_wgt);
 
 		//Configuring the table objects that stores the triggers and rules
 		unsigned tab_id = 4;
@@ -435,7 +435,7 @@ void ViewWidget::updateCodePreview()
 		aux_view.setTablespace(tablespace_sel->getSelectedObject());
 
 		aux_view.setSqlDefinition(sql_definition_txt->toPlainText());
-		aux_view.setObjectReferences(obj_refs_wgt->getObjectReferences());
+		aux_view.setReferences(obj_refs_wgt->getObjectReferences());
 
 		aux_view.setMaterialized(materialized_rb->isChecked());
 		aux_view.setRecursive(recursive_rb->isChecked());
@@ -480,7 +480,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	tag_sel->setModel(this->model);
 	tag_sel->setSelectedObject(view->getTag());
 
-	simple_cols_wgt->setAttributes(this->model, view->getColumns());
+	custom_cols_wgt->setAttributes(this->model, view->getCustomColumns());
 
 	listObjects(ObjectType::Trigger);
 	listObjects(ObjectType::Rule);
@@ -509,7 +509,8 @@ void ViewWidget::applyConfiguration()
 		view->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		view->setSqlDefinition(sql_definition_txt->toPlainText());
-		view->setObjectReferences(obj_refs_wgt->getObjectReferences());
+		view->setReferences(obj_refs_wgt->getObjectReferences());
+		view->setCustomColumns(custom_cols_wgt->getColumns());
 
 		//Adds the auxiliary view objects into configured view
 		for(auto &type : types)

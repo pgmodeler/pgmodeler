@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.0-alpha1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
+<dbmodel pgmodeler-ver="1.1.0-beta" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -230,28 +230,28 @@ END;]]> </definition>
 		<function signature="schema_b.dummy_trig_func()"/>
 </trigger>
 
-<view name="view_test" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<view name="view_test" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="schema_b"/>
 	<role name="postgres"/>
-	<position x="620" y="400"/>
-	<reference table="schema_a.table_d" column="id_a_table_a" alias="td" column-alias="id"/>
-	<reference table="public.table_a" alias="ta"/>
-	<reference alias="_expr">
-		<expression> <![CDATA[(SELECT random())]]> </expression>
-	</reference>
-	<expression type="select-exp">0,1,2</expression>
-	<expression type="from-exp">0,1</expression>
+	<position x="620" y="360"/>
+	<reference object="public.table_a" type="table" ref-name="ta" ref-alias="_ta" use-signature="true" format-name="true" use-columns="true"/>
+	<reference object="schema_a.table_d" type="table" ref-name="td" ref-alias="_td" use-columns="true"/>
+	<simplecol name="expr" type="double precision"/>
+	<definition> <![CDATA[SELECT @{ta}.*, @{td}.*, (SELECT random()) AS expr 
+FROM
+	{ta} AS @{ta}, 
+	{td} AS @{td}]]> </definition>
 </view>
-
-<relationship name="rel_view_test_table_d" type="reltv" layers="0"
-	 src-table="schema_b.view_test"
-	 dst-table="schema_a.table_d"
-	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_view_test_table_a" type="reltv" layers="0"
 	 custom-color="#8a114b"
 	 src-table="schema_b.view_test"
 	 dst-table="public.table_a"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_view_test_table_d" type="reltv" layers="0"
+	 src-table="schema_b.view_test"
+	 dst-table="schema_a.table_d"
 	 src-required="false" dst-required="false"/>
 
 <textbox name="pagila_desc" layers="0" z-value="0" width="495.844" font-size="11">
@@ -261,9 +261,9 @@ END;]]> </definition>
 This database model demonstrate some features when designing database models. It does not represent any specific context but can be exported to the database since it generates well formed SQL syntax.]]> </comment>
 </textbox>
 
-<textbox name="view_test_txt" layers="0" z-value="0" width="187.203" font-size="10">
-	<position x="800" y="400"/>
-	<comment> <![CDATA[Views can be constructed from references to tables or using  SQL expressions.]]> </comment>
+<textbox name="view_test_txt" layers="0" z-value="0" width="213.547" font-size="10">
+	<position x="880" y="360"/>
+	<comment> <![CDATA[Views can be constructed from references to tables, foreign tables and views. Alternatively, one can define the full view's definition SQL command without working with references.]]> </comment>
 </textbox>
 
 <textbox name="tag_txt" layers="0" z-value="0" width="306.719" font-size="10">
@@ -281,7 +281,7 @@ For instance, the "table_c" is linked to "table_f" through the column "id_f_tabl
 the relationship that connects them. Ahead, the "table_e" inherits "table_c", and, as a result, all columns of the latter are copied to the first, including the column "id_f_table_f" product of another relationship.]]> </comment>
 </textbox>
 
-<textbox name="fk_rel_txt" layers="0" z-value="0" width="285.906" font-size="10">
+<textbox name="fk_rel_txt" layers="0" z-value="0" width="298.953" font-size="10">
 	<position x="2040" y="1240"/>
 	<comment> <![CDATA[User is not obligated to use the relationships to generate the foreign keys. You can manually create your own foreign keys on the desired tables and pgModeler will automatically create the relationships to graphically represent the link between them.
 

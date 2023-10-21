@@ -105,9 +105,9 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
-void View::setObjectReferences(const std::vector<Reference> &obj_refs)
+void View::setReferences(const std::vector<Reference> &obj_refs)
 {
-	this->view_obj_refs = obj_refs;
+	this->references = obj_refs;
 	generateColumns();
 	setCodeInvalidated(true);
 }
@@ -151,7 +151,7 @@ void View::generateColumns()
 
 	gen_columns.clear();
 
-	for(auto &ref : view_obj_refs)
+	for(auto &ref : references)
 	{
 		if(!ref.isUseColumns())
 			continue;
@@ -197,9 +197,14 @@ std::vector<SimpleColumn> View::getColumns()
 	return gen_columns;
 }
 
+std::vector<SimpleColumn> View::getCustomColumns()
+{
+	return custom_cols;
+}
+
 std::vector<Reference> View::getObjectReferences()
 {
-	return view_obj_refs;
+	return references;
 }
 
 std::vector<BaseTable *> View::getReferencedTables()
@@ -221,7 +226,7 @@ bool View::isReferRelationshipAddedColumn()
 {
 	Column *col = nullptr;
 
-	for(auto &ref : view_obj_refs)
+	for(auto &ref : references)
 	{
 		col = dynamic_cast<Column *>(ref.getObject());
 
@@ -237,7 +242,7 @@ std::vector<Column *> View::getRelationshipAddedColumns()
 	std::vector<Column *> cols;
 	Column *col = nullptr;
 
-	for(auto &ref : view_obj_refs)
+	for(auto &ref : references)
 	{
 		col = dynamic_cast<Column *>(ref.getObject());
 
@@ -296,12 +301,12 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		GenericSQL view_def_obj;
 		view_def_obj.setHideDescription(true);
 		view_def_obj.setDefinition(sql_definition);
-		view_def_obj.addReferences(view_obj_refs);
+		view_def_obj.addReferences(references);
 		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type).trimmed();
 	}
 	else
 	{
-		for(auto &ref : view_obj_refs)
+		for(auto &ref : references)
 			attributes[Attributes::References] += ref.getXmlCode();
 
 		for(auto &col : custom_cols)
@@ -353,7 +358,7 @@ void View::setObjectListsCapacity(unsigned capacity)
   if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)
 		capacity = DefMaxObjectCount;
 
-	view_obj_refs.reserve(capacity);
+	references.reserve(capacity);
 	indexes.reserve(capacity/2);
 	rules.reserve(capacity/2);
 	triggers.reserve(capacity/2);
@@ -361,7 +366,7 @@ void View::setObjectListsCapacity(unsigned capacity)
 
 unsigned View::getMaxObjectCount()
 {
-	unsigned count = 0, max = view_obj_refs.size();
+	unsigned count = 0, max = references.size();
   std::vector<ObjectType> types = { ObjectType::Index, ObjectType::Rule, ObjectType::Trigger };
 
   for(auto type : types)
@@ -736,7 +741,8 @@ void View::operator = (View &view)
 	this->materialized=view.materialized;
 	this->recursive=view.recursive;
 	this->with_no_data=view.with_no_data;
-	this->view_obj_refs=view.view_obj_refs;
+	this->references=view.references;
+	this->custom_cols=view.custom_cols;
 
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
@@ -776,7 +782,7 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 
 	try
 	{
-		for(auto &ref : view_obj_refs)
+		for(auto &ref : references)
 		{
 			if(ref.getObject())
 			{
@@ -844,7 +850,7 @@ void View::updateDependencies()
 {
 	std::vector<BaseObject *> deps;
 
-	for(auto &ref : view_obj_refs)
+	for(auto &ref : references)
 		deps.push_back(ref.getObject());
 
 	std::sort(deps.begin(), deps.end());

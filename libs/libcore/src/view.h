@@ -39,7 +39,7 @@ class __libcore View: public BaseTable {
 
 		std::vector<SimpleColumn> gen_columns, custom_cols;
 
-		std::vector<Reference> view_obj_refs;
+		std::vector<Reference> references;
 
 		QString sql_definition;
 
@@ -50,7 +50,7 @@ class __libcore View: public BaseTable {
 		with_no_data,
 
 		//! \brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
-				recursive;
+		recursive;
 
 		void setSQLObjectAttribute();
 
@@ -74,7 +74,7 @@ class __libcore View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
-		void setObjectReferences(const std::vector<Reference> &obj_refs);
+		void setReferences(const std::vector<Reference> &obj_refs);
 
 		void setCustomColumns(const std::vector<SimpleColumn> &cols);
 
@@ -193,6 +193,9 @@ class __libcore View: public BaseTable {
 
 		//! \brief Returns the deduced columns of the view
 		std::vector<SimpleColumn> getColumns();
+
+		//! \brief Returns the user-defined columns of the view
+		std::vector<SimpleColumn> getCustomColumns();
 
 		std::vector<Reference> getObjectReferences();
 
