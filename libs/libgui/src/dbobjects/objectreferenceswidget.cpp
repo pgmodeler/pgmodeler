@@ -19,13 +19,13 @@
 #include "objectreferenceswidget.h"
 #include "guiutilsns.h"
 
-const QRegularExpression ObjectReferencesWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
+const QRegularExpression ReferencesWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
 																																	.arg(SchemaParser::CharStartAttribute)
 																																	.arg(SchemaParser::CharEndAttribute));
 
-ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget *parent): QWidget(parent)
+ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget *parent): QWidget(parent)
 {
-	Ui_ObjectReferencesWidget::setupUi(this);
+	Ui_ReferencesWidget::setupUi(this);
 
 	object_sel = new ObjectSelectorWidget(types, this);
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -62,9 +62,9 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &ObjectReferencesWidget::handleObjectReference);
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &ObjectReferencesWidget::editObjectReference);
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &ObjectReferencesWidget::handleObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferencesWidget::handleObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferencesWidget::editObjectReference);
+	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferencesWidget::handleObjectReference);
 
 	connect(ref_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
 		objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !txt.isEmpty() && object_sel->getSelectedObject());
@@ -81,7 +81,7 @@ ObjectReferencesWidget::ObjectReferencesWidget(const std::vector<ObjectType> &ty
 	});
 }
 
-void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs)
+void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs)
 {
 	objects_refs_tab->blockSignals(true);
 
@@ -99,7 +99,7 @@ void ObjectReferencesWidget::setAttributes(DatabaseModel *model, const std::vect
 	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-std::vector<GenericSQL::Reference> ObjectReferencesWidget::getObjectReferences()
+std::vector<GenericSQL::Reference> ReferencesWidget::getObjectReferences()
 {
 	std::vector<GenericSQL::Reference> refs;
 
@@ -109,7 +109,7 @@ std::vector<GenericSQL::Reference> ObjectReferencesWidget::getObjectReferences()
 	return refs;
 }
 
-void ObjectReferencesWidget::handleObjectReference(int row)
+void ReferencesWidget::handleObjectReference(int row)
 {
 	showObjectReferenceData(row,
 													object_sel->getSelectedObject(),
@@ -121,7 +121,7 @@ void ObjectReferencesWidget::handleObjectReference(int row)
 	clearObjectReferenceForm();
 }
 
-void ObjectReferencesWidget::editObjectReference(int row)
+void ReferencesWidget::editObjectReference(int row)
 {
 	GenericSQL::Reference ref = objects_refs_tab->getRowData(row).value<GenericSQL::Reference>();
 
@@ -133,7 +133,7 @@ void ObjectReferencesWidget::editObjectReference(int row)
 	object_sel->setSelectedObject(ref.getObject());
 }
 
-void ObjectReferencesWidget::clearObjectReferenceForm()
+void ReferencesWidget::clearObjectReferenceForm()
 {
 	object_sel->clearSelector();
 	ref_name_edt->clear();
@@ -144,7 +144,7 @@ void ObjectReferencesWidget::clearObjectReferenceForm()
 	objects_refs_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-void ObjectReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
+void ReferencesWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
 																										 bool use_signature, bool format_name, bool use_columns)
 {
 	GenericSQL::Reference ref = GenericSQL::Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);

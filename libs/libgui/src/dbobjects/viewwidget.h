@@ -40,7 +40,7 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		SimpleColumnsWidget *simple_cols_wgt;
 
-		ObjectReferencesWidget *obj_refs_wgt;
+		ReferencesWidget *obj_refs_wgt;
 
 		ObjectSelectorWidget *tag_sel;
 

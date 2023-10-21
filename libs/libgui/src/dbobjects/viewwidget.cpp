@@ -43,7 +43,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(sql_definition_txt);
 
-		obj_refs_wgt = new ObjectReferencesWidget({ ObjectType::Schema, ObjectType::Column,
+		obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
 																								ObjectType::Table, ObjectType::ForeignTable,
 																								ObjectType::View } , true, this);
 

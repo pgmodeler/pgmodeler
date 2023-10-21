@@ -31,7 +31,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 																							 ObjectType::Permission, ObjectType::Relationship,
 																							 ObjectType::Tag, ObjectType::Textbox });
 	types.push_back(ObjectType::Column);
-	obj_refs_wgt = new ObjectReferencesWidget(types, false, this);
+	obj_refs_wgt = new ReferencesWidget(types, false, this);
 
 	QVBoxLayout *vbox = new QVBoxLayout(references_tab);
 	vbox->addWidget(obj_refs_wgt);

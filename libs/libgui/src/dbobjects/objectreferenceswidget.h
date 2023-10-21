@@ -18,19 +18,18 @@
 
 /**
 \ingroup libgui
-\class ObjectReferencesWidget
+\class ReferencesWidget
 \brief Implements the operations to create/edit generic sql object references via form.
 */
 
-#ifndef OBJECT_REFERENCES_WIDGET_H
-#define OBJECT_REFERENCES_WIDGET_H
+#ifndef REFERENCES_WIDGET_H
+#define REFERENCES_WIDGET_H
 
-#include "ui_objectreferenceswidget.h"
+#include "ui_referenceswidget.h"
 #include "widgets/objectstablewidget.h"
 #include "widgets/objectselectorwidget.h"
 
-#warning "Rename to ReferencesWidget once View does not use classic Referece class"
-class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidget {
+class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 	private:
 		Q_OBJECT
 
@@ -47,7 +46,7 @@ class __libgui ObjectReferencesWidget: public QWidget, Ui::ObjectReferencesWidge
 																 bool use_signature, bool format_name, bool use_columns);
 
 	public:
-		ObjectReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
+		ReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs);
 

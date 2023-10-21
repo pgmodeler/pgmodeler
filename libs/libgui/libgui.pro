@@ -252,7 +252,7 @@ src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
 ui/dbobjects/columnpickerwidget.ui \
-	ui/dbobjects/objectreferenceswidget.ui \
+	ui/dbobjects/referenceswidget.ui \
 	ui/dbobjects/simplecolumnswidget.ui \
 ui/mainwindow.ui \
 ui/messagebox.ui \
@@ -295,7 +295,6 @@ ui/dbobjects/policywidget.ui \
 ui/dbobjects/tagwidget.ui \
 ui/dbobjects/databasewidget.ui \
 ui/dbobjects/indexwidget.ui \
-ui/dbobjects/referencewidget.ui \
 ui/dbobjects/textboxwidget.ui \
 ui/settings/appearanceconfigwidget.ui \
 ui/settings/connectionsconfigwidget.ui \

@@ -37,7 +37,7 @@ class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLW
 	private:
 		Q_OBJECT
 
-		ObjectReferencesWidget *obj_refs_wgt;
+		ReferencesWidget *obj_refs_wgt;
 
 		NumberedTextEditor *definition_txt, *preview_txt;
 
