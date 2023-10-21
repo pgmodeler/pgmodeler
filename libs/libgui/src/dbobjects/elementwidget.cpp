@@ -105,7 +105,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 			if(column)
 				column_cmb->setCurrentIndex(column_cmb->findText(column->getName()));
 			else if(simple_col.isValid())
-				column_cmb->setCurrentIndex(column_cmb->findText(simple_col.name));
+				column_cmb->setCurrentIndex(column_cmb->findText(simple_col.getName()));
 		}
 		else
 		{
@@ -232,7 +232,7 @@ void ElementWidget::updateColumnsCombo()
 		else if(view)
 		{
 			for(auto &col : view->getColumns())
-				column_cmb->addItem(col.name, QVariant::fromValue<SimpleColumn>(col));
+				column_cmb->addItem(col.getName(), QVariant::fromValue<SimpleColumn>(col));
 		}
 		else if(rel)
 		{

@@ -167,7 +167,7 @@ class __libcore BaseFunction: public BaseObject {
 
 		virtual void updateDependencies() = 0 ;
 
-		void updateDependencies(const std::vector<BaseObject *> &deps);
+		void updateDependencies(const std::vector<BaseObject *> &deps, const std::vector<BaseObject *> &old_deps = {});
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;

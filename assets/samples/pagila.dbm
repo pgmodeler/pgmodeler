@@ -215,12 +215,20 @@ END
 	</constraint>
 </table>
 
-<view name="actor_info" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="actor_info" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3140" y="1700"/>
-	<reference>
-		<expression> <![CDATA[ SELECT a.actor_id,
+	<reference object="public.actor" type="table" ref-name="actor"/>
+	<reference object="public.category" type="table" ref-name="category"/>
+	<reference object="public.film" type="table" ref-name="film"/>
+	<reference object="public.film_actor" type="table" ref-name="film_actor"/>
+	<reference object="public.film_category" type="table" ref-name="film_category"/>
+	<simplecol name="actor_id" type="integer"/>
+	<simplecol name="first_name" type="character varying(45)"/>
+	<simplecol name="last_name" type="character varying(45)"/>
+	<simplecol name="film_info" type="text"/>
+	<definition> <![CDATA[ SELECT a.actor_id,
     a.first_name,
     a.last_name,
     group_concat(DISTINCT (((c.name)::text || ': '::text) || ( SELECT group_concat((f.title)::text) AS group_concat
@@ -233,8 +241,7 @@ END
      LEFT JOIN film_actor fa ON ((a.actor_id = fa.actor_id)))
      LEFT JOIN film_category fc ON ((fa.film_id = fc.film_id)))
      LEFT JOIN category c ON ((fc.category_id = c.category_id)))
-  GROUP BY a.actor_id, a.first_name, a.last_name;]]> </expression>
-	</reference>
+  GROUP BY a.actor_id, a.first_name, a.last_name;]]> </definition>
 </view>
 
 <sequence name="address_address_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="9223372036854775807" cache="1">
@@ -368,12 +375,24 @@ END
 	</constraint>
 </table>
 
-<view name="customer_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+<view name="customer_list" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480" y="1860"/>
-	<reference>
-		<expression> <![CDATA[ SELECT cu.customer_id AS id,
+	<reference object="public.address" type="table" ref-name="address"/>
+	<reference object="public.city" type="table" ref-name="city"/>
+	<reference object="public.country" type="table" ref-name="country"/>
+	<reference object="public.customer" type="table" ref-name="customer"/>
+	<simplecol name="id" type="integer"/>
+	<simplecol name="name" type="text"/>
+	<simplecol name="address" type="character varying(50)"/>
+	<simplecol name="zip code" type="character varying(10)"/>
+	<simplecol name="phone" type="character varying(20)"/>
+	<simplecol name="city" type="character varying(50)"/>
+	<simplecol name="country" type="character varying(50)"/>
+	<simplecol name="notes" type="text"/>
+	<simplecol name="sid" type="smallint"/>
+	<definition> <![CDATA[ SELECT cu.customer_id AS id,
     (((cu.first_name)::text || ' '::text) || (cu.last_name)::text) AS name,
     a.address,
     a.postal_code AS "zip code",
@@ -388,16 +407,27 @@ END
    FROM (((customer cu
      JOIN address a ON ((cu.address_id = a.address_id)))
      JOIN city ON ((a.city_id = city.city_id)))
-     JOIN country ON ((city.country_id = country.country_id)));]]> </expression>
-	</reference>
+     JOIN country ON ((city.country_id = country.country_id)));]]> </definition>
 </view>
 
 <view name="film_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3160" y="1840"/>
-	<reference>
-		<expression> <![CDATA[ SELECT film.film_id AS fid,
+	<reference object="public.actor" type="table" ref-name="actor"/>
+	<reference object="public.category" type="table" ref-name="category"/>
+	<reference object="public.film" type="table" ref-name="film"/>
+	<reference object="public.film_actor" type="table" ref-name="film_actor"/>
+	<reference object="public.film_category" type="table" ref-name="film_category"/>
+	<simplecol name="fid" type="integer"/>
+	<simplecol name="title" type="character varying(255)"/>
+	<simplecol name="description" type="text"/>
+	<simplecol name="category" type="character varying(25)"/>
+	<simplecol name="price" type="numeric(4,2)"/>
+	<simplecol name="length" type="smallint"/>
+	<simplecol name="rating" type="public.mpaa_rating"/>
+	<simplecol name="actors" type="text"/>
+	<definition> <![CDATA[ SELECT film.film_id AS fid,
     film.title,
     film.description,
     category.name AS category,
@@ -410,8 +440,7 @@ END
      LEFT JOIN film ON ((film_category.film_id = film.film_id)))
      JOIN film_actor ON ((film.film_id = film_actor.film_id)))
      JOIN actor ON ((film_actor.actor_id = actor.actor_id)))
-  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;]]> </expression>
-	</reference>
+  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;]]> </definition>
 </view>
 
 <sequence name="inventory_inventory_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="9223372036854775807" cache="1">
@@ -470,8 +499,20 @@ END
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480" y="1960"/>
-	<reference>
-		<expression> <![CDATA[ SELECT film.film_id AS fid,
+	<reference object="public.actor" type="table" ref-name="actor"/>
+	<reference object="public.category" type="table" ref-name="category"/>
+	<reference object="public.film" type="table" ref-name="film"/>
+	<reference object="public.film_actor" type="table" ref-name="film_actor"/>
+	<reference object="public.film_category" type="table" ref-name="film_category"/>
+	<simplecol name="fid" type="integer"/>
+	<simplecol name="title" type="character varying(255)"/>
+	<simplecol name="description" type="text"/>
+	<simplecol name="category" type="character varying(25)"/>
+	<simplecol name="price" type="numeric(4,2)"/>
+	<simplecol name="length" type="smallint"/>
+	<simplecol name="rating" type="public.mpaa_rating"/>
+	<simplecol name="actors" type="text"/>
+	<definition> <![CDATA[ SELECT film.film_id AS fid,
     film.title,
     film.description,
     category.name AS category,
@@ -484,8 +525,7 @@ END
      LEFT JOIN film ON ((film_category.film_id = film.film_id)))
      JOIN film_actor ON ((film.film_id = film_actor.film_id)))
      JOIN actor ON ((film_actor.actor_id = actor.actor_id)))
-  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;]]> </expression>
-	</reference>
+  GROUP BY film.film_id, film.title, film.description, category.name, film.rental_rate, film.length, film.rating;]]> </definition>
 </view>
 
 <sequence name="payment_payment_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="9223372036854775807" cache="1">
@@ -720,9 +760,16 @@ END
 <view name="sales_by_film_category" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3480" y="2100"/>
-	<reference>
-		<expression> <![CDATA[ SELECT c.name AS category,
+	<position x="60" y="2560"/>
+	<reference object="public.category" type="table" ref-name="category"/>
+	<reference object="public.film" type="table" ref-name="film"/>
+	<reference object="public.film_category" type="table" ref-name="film_category"/>
+	<reference object="public.inventory" type="table" ref-name="inventory"/>
+	<reference object="public.payment" type="table" ref-name="payment"/>
+	<reference object="public.rental" type="table" ref-name="rental"/>
+	<simplecol name="category" type="character varying(25)"/>
+	<simplecol name="total_sales" type="numeric"/>
+	<definition> <![CDATA[ SELECT c.name AS category,
     sum(p.amount) AS total_sales
    FROM (((((payment p
      JOIN rental r ON ((p.rental_id = r.rental_id)))
@@ -731,8 +778,7 @@ END
      JOIN film_category fc ON ((f.film_id = fc.film_id)))
      JOIN category c ON ((fc.category_id = c.category_id)))
   GROUP BY c.name
-  ORDER BY sum(p.amount) DESC;]]> </expression>
-	</reference>
+  ORDER BY (sum(p.amount)) DESC;]]> </definition>
 </view>
 
 <sequence name="staff_staff_id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="9223372036854775807" cache="1">
@@ -811,9 +857,19 @@ END
 <view name="sales_by_store" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3160" y="1960"/>
-	<reference>
-		<expression> <![CDATA[ SELECT (((c.city)::text || ','::text) || (cy.country)::text) AS store,
+	<position x="400" y="2560"/>
+	<reference object="public.address" type="table" ref-name="address"/>
+	<reference object="public.city" type="table" ref-name="city"/>
+	<reference object="public.country" type="table" ref-name="country"/>
+	<reference object="public.inventory" type="table" ref-name="inventory"/>
+	<reference object="public.payment" type="table" ref-name="payment"/>
+	<reference object="public.rental" type="table" ref-name="rental"/>
+	<reference object="public.staff" type="table" ref-name="staff"/>
+	<reference object="public.store" type="table" ref-name="store"/>
+	<simplecol name="store" type="text"/>
+	<simplecol name="manager" type="text"/>
+	<simplecol name="total_sales" type="numeric"/>
+	<definition> <![CDATA[ SELECT (((c.city)::text || ','::text) || (cy.country)::text) AS store,
     (((m.first_name)::text || ' '::text) || (m.last_name)::text) AS manager,
     sum(p.amount) AS total_sales
    FROM (((((((payment p
@@ -825,16 +881,26 @@ END
      JOIN country cy ON ((c.country_id = cy.country_id)))
      JOIN staff m ON ((s.manager_staff_id = m.staff_id)))
   GROUP BY cy.country, c.city, s.store_id, m.first_name, m.last_name
-  ORDER BY cy.country, c.city;]]> </expression>
-	</reference>
+  ORDER BY cy.country, c.city;]]> </definition>
 </view>
 
 <view name="staff_list" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3160" y="2100"/>
-	<reference>
-		<expression> <![CDATA[ SELECT s.staff_id AS id,
+	<position x="640" y="2560"/>
+	<reference object="public.address" type="table" ref-name="address"/>
+	<reference object="public.city" type="table" ref-name="city"/>
+	<reference object="public.country" type="table" ref-name="country"/>
+	<reference object="public.staff" type="table" ref-name="staff"/>
+	<simplecol name="id" type="integer"/>
+	<simplecol name="name" type="text"/>
+	<simplecol name="address" type="character varying(50)"/>
+	<simplecol name="zip code" type="character varying(10)"/>
+	<simplecol name="phone" type="character varying(20)"/>
+	<simplecol name="city" type="character varying(50)"/>
+	<simplecol name="country" type="character varying(50)"/>
+	<simplecol name="sid" type="smallint"/>
+	<definition> <![CDATA[ SELECT s.staff_id AS id,
     (((s.first_name)::text || ' '::text) || (s.last_name)::text) AS name,
     a.address,
     a.postal_code AS "zip code",
@@ -845,8 +911,7 @@ END
    FROM (((staff s
      JOIN address a ON ((s.address_id = a.address_id)))
      JOIN city ON ((a.city_id = city.city_id)))
-     JOIN country ON ((city.country_id = country.country_id)));]]> </expression>
-	</reference>
+     JOIN country ON ((city.country_id = country.country_id)));]]> </definition>
 </view>
 
 <function name="film_in_stock"

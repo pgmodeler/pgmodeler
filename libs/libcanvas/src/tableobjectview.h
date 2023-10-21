@@ -26,7 +26,8 @@
 #define TABLE_OBJECT_VIEW_H
 
 #include "baseobjectview.h"
-#include "reference.h"
+#include "column.h"
+#include "simplecolumn.h"
 #include "pgsqltypes/constrainttype.h"
 #include "pgsqltypes/pgsqltype.h"
 
@@ -81,10 +82,8 @@ class __libcanvas TableObjectView: public BaseObjectView {
 		};
 
 		TableObjectView(TableObject *object=nullptr);
-		virtual ~TableObjectView();
 
-		//! \brief Configures the object as a view reference
-		void configureObject(Reference reference);
+		virtual ~TableObjectView();
 
 		//! \brief Configures a item from a SimpleColumn instance
 		void configureObject(const SimpleColumn &col);

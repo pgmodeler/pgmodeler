@@ -81,7 +81,7 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 	}
 	else if(elem->getSimpleColumn().isValid())
 	{
-		elements_tab->setCellText(elem->getSimpleColumn().name, elem_idx, 0);
+		elements_tab->setCellText(elem->getSimpleColumn().getName(), elem_idx, 0);
 		elements_tab->setCellText(BaseObject::getTypeName(ObjectType::Column), elem_idx, 1);
 	}
 	else

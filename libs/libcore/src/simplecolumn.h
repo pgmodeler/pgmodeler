@@ -19,7 +19,8 @@
 /**
 \ingroup libcore
 \class SimpleColumn
-\brief This simple struct simulate view columns.
+\brief This class acts like a rudimentary column used by Reference and Views to represent columns
+			 Note that, as intended, the class expects that all received values are validated since they are immutable
 */
 
 #ifndef SIMPLE_COLUMN_H
@@ -28,39 +29,26 @@
 #include <QString>
 #include <qmetatype.h>
 
-/*! \brief This simple struct acts like a rudimentary column used by Reference and Views to represent columns
- * Note that, as intended, the struct expects that all received values are validated since they are immutable */
-struct SimpleColumn {
+class SimpleColumn {
+	private:
 		QString name, type, alias;
 
-		SimpleColumn(){}
+	public:
+		SimpleColumn();
 
-		SimpleColumn(const SimpleColumn &col) : SimpleColumn(col.name, col.type, col.alias) {}
+		SimpleColumn(const SimpleColumn &col);
 
-		SimpleColumn(const QString &_name, const QString &_type, const QString &_alias)
-		{
-			name = _name;
-			type = _type;
-			alias = _alias;
-		}
+		SimpleColumn(const QString &_name, const QString &_type, const QString &_alias);
 
-		bool operator == (const SimpleColumn &col) const
-		{
-			return name == col.name && type == col.type && alias == col.alias;
-		}
+		QString getName() const;
+		QString getType() const;
+		QString getAlias() const;
 
-		SimpleColumn & operator = (const SimpleColumn &col)
-		{
-			this->name = col.name;
-			this->type = col.type;
-			this->alias = col.alias;
-			return *this;
-		}
+		bool operator == (const SimpleColumn &col) const;
+		SimpleColumn & operator = (const SimpleColumn &col);
 
-		bool isValid() const
-		{
-			return !name.isEmpty() && !type.isEmpty();
-		}
+		bool isValid() const;
+		QString getXmlCode() const;
 };
 
 /* Registering the SimpleColumn class as a Qt MetaType in order to make

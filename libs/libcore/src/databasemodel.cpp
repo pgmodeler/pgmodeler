@@ -448,7 +448,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		else
 			object->getSourceCode(SchemaParser::SqlCode);
 
-		//#warning "Updating objects deps after adding to model"
 		object->updateDependencies();
 
 		BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
@@ -1611,10 +1610,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
 	PhysicalTable *table = nullptr;
 	BaseRelationship *rel = nullptr;
-	Reference ref;
-	unsigned i = 0, ref_count = 0, idx = 0;
+	unsigned idx = 0;
 	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<PhysicalTable *> tables;
 
 	if(!view)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1680,23 +1677,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			}
 		}
 
-		/* Creates the relationships from the view references
-		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count = view->getReferenceCount(Reference::SqlSelect);
-		for(i = 0; i < ref_count; i++)
-		{
-			table = view->getReference(i, Reference::SqlSelect).getTable();
-			if(table) tables.push_back(table);
-		}
-
-		/* If the view does have tables referenced from SELECT portion we check if
-		 * the table was constructed from a single reference (Reference::SqlViewDef). In
-		 * that case we use the list of referenced tables configured in that view reference object */
-		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDef) > 0)
-			tables = view->getReference(0, Reference::SqlViewDef).getReferencedTables();
-
 		// Effectively creating the relationships
-		for(auto &tab : tables)
+		for(auto &tab : view->getReferencedTables())
 		{
 			rel = getRelationship(view, tab);
 
@@ -2053,7 +2035,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 	View *view=nullptr;
 	BaseRelationship *rel=nullptr;
 	GenericSQL *generic_sql=nullptr;
-	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
 	std::vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
@@ -2186,34 +2167,25 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(view->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[view->getObjectId()]=view->getSourceCode(SchemaParser::XmlCode);
+				xml_special_objs[view->getObjectId()] = view->getSourceCode(SchemaParser::XmlCode);
 
 				/* Relationships linking the view and the referenced tables are considered as
-			 special objects in this case only to be recreated more easely latter */
-
-				count=view->getReferenceCount(Reference::SqlSelect);
-
-				for(i=0; i < count; i++)
+				 * special objects in this case only to be recreated more easely latter */
+				for(auto &table : view->getReferencedTables())
 				{
-					ref=view->getReference(i, Reference::SqlSelect);
-					table=ref.getTable();
+					//Get the relationship between the view and the referenced table
+					rel = getRelationship(view, table);
 
-					if(table)
+					if(rel)
 					{
-						//Get the relationship between the view and the referenced table
-						rel=getRelationship(view, table);
-
-						if(rel)
-						{
-							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
-							removeRelationship(rel);
-							invalid_special_objs.push_back(rel);
-						}
+						xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
+						removeRelationship(rel);
+						invalid_special_objs.push_back(rel);
 					}
 				}
 
 				/* Removing child objects from view and including them in the list of objects to be recreated,
-		   this will avoid errors when removing the view from model */
+				 * this will avoid errors when removing the view from model */
 				objects=view->getObjects();
 				for(auto &obj : objects)
 				{
@@ -6116,12 +6088,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 						genericsql->setDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem == Attributes::Object)
+					else if(elem == Attributes::Reference)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
-						obj_name = attribs[Attributes::Name];
+						obj_name = attribs[Attributes::Object];
 
 						//If the object is a column its needed to get the parent table
 						if(obj_type == ObjectType::Column)
@@ -6151,9 +6123,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 															.arg(BaseObject::getTypeName(obj_type)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						genericsql->addObjectReference(object, attribs[Attributes::RefName],
-																					 attribs[Attributes::UseSignature] == Attributes::True,
-																					 attribs[Attributes::FormatName] == Attributes::True);
+						genericsql->addReference(Reference(object,
+																								attribs[Attributes::RefName],
+																								attribs[Attributes::RefAlias],
+																								attribs[Attributes::UseSignature] == Attributes::True,
+																								attribs[Attributes::FormatName] == Attributes::True,
+																								attribs[Attributes::UseColumns] == Attributes::True));
 					}
 				}
 			}
@@ -6617,17 +6592,11 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 View *DatabaseModel::createView()
 {
 	attribs_map attribs, aux_attribs;
-	View *view=nullptr;
-	Column *column=nullptr;
-	PhysicalTable *table=nullptr;
-	QString elem, str_aux;
-	QStringList list_aux;
-	std::vector<Reference> refs;
-	BaseObject *tag=nullptr;
-	Reference::SqlType sql_type;
-	int ref_idx, i, count;
-	bool refs_in_expr=false;
-	Reference reference;
+	View *view = nullptr;
+	BaseObject *tag = nullptr;
+	std::vector<Reference> view_refs;
+	std::vector<SimpleColumn> custom_cols;
+	QString elem;
 
 	try
 	{
@@ -6650,143 +6619,68 @@ View *DatabaseModel::createView()
 		{
 			do
 			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
 				{
-					elem=xmlparser.getElementName();
+					elem = xmlparser.getElementName();
 
-					if(elem==Attributes::Reference)
-					{
-						xmlparser.getElementAttributes(attribs);
-
-						//If the table name is specified tries to create a reference to a table/column
-						if(!attribs[Attributes::Table].isEmpty())
-						{
-							column=nullptr;
-							table=dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], {ObjectType::Table, ObjectType::ForeignTable}));
-
-							//Raises an error if the table doesn't exists
-							if(!table)
-							{
-								str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-										.arg(view->getName())
-										.arg(BaseObject::getTypeName(ObjectType::View))
-										.arg(attribs[Attributes::Table])
-										.arg(BaseObject::getTypeName(ObjectType::Table));
-
-								throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-
-							if(!attribs[Attributes::Column].isEmpty())
-							{
-								column=table->getColumn(attribs[Attributes::Column]);
-
-								if(!column)
-									column=table->getColumn(attribs[Attributes::Column], true);
-
-								//Raises an error if the view references an inexistant column
-								if(!column)
-								{
-									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(view->getName())
-											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[Attributes::Table] + "." +
-											attribs[Attributes::Column])
-											.arg(BaseObject::getTypeName(ObjectType::Column));
-
-									throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-							}
-
-							//Adds the configured reference to a temporarily list
-							reference = Reference(table, column,
-																		attribs[Attributes::Alias],
-																		attribs[Attributes::ColumnAlias]);
-							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
-							refs.push_back(reference);
-						}
-						else
-						{
-							xmlparser.savePosition();
-							str_aux=attribs[Attributes::Alias];
-
-							// Retrieving the reference expression
-							xmlparser.accessElement(XmlParser::ChildElement);
-							xmlparser.savePosition();
-							xmlparser.accessElement(XmlParser::ChildElement);
-							reference = Reference(xmlparser.getElementContent(), str_aux);
-							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
-							xmlparser.restorePosition();
-
-							// Creating the columns related to the expression
-							if(xmlparser.accessElement(XmlParser::NextElement))
-							{
-								do
-								{
-									elem = xmlparser.getElementName();
-									xmlparser.savePosition();
-
-									if(elem == Attributes::Column)
-									{
-										column = createColumn();
-										reference.addColumn(column);
-										delete column;
-									}
-									else if(elem == Attributes::RefTableTag)
-									{
-										xmlparser.getElementAttributes(aux_attribs);
-										table = getTable(aux_attribs[Attributes::Name]);
-
-										if(!table)
-											table = getForeignTable(aux_attribs[Attributes::Name]);
-
-										reference.addReferencedTable(table);
-									}
-
-									xmlparser.restorePosition();
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
-							}
-
-							refs.push_back(reference);
-							xmlparser.restorePosition();
-						}
-					}
-					else if(elem==Attributes::Expression)
+					if(elem == Attributes::Definition)
 					{
 						xmlparser.savePosition();
-						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XmlParser::ChildElement);
-
-						if(attribs[Attributes::Type]==Attributes::CteExpression)
-							view->setCommomTableExpression(xmlparser.getElementContent());
-						else
-						{
-							if(attribs[Attributes::Type]==Attributes::SelectExp)
-								sql_type=Reference::SqlSelect;
-							else if(attribs[Attributes::Type]==Attributes::FromExp)
-								sql_type=Reference::SqlFrom;
-							else if(attribs[Attributes::Type]==Attributes::SimpleExp)
-								sql_type=Reference::SqlWhere;
-							else
-								sql_type=Reference::SqlEndExpr;
-
-							list_aux=xmlparser.getElementContent().split(',');
-							count=list_aux.size();
-
-							//Indicates that some of the references were used in the expressions
-							if(count > 0 && !refs_in_expr)
-								refs_in_expr=true;
-
-							for(i=0; i < count; i++)
-							{
-								ref_idx=list_aux[i].toInt();
-								view->addReference(refs[ref_idx],sql_type);
-							}
-						}
-
+						view->setSqlDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem==BaseObject::getSchemaName(ObjectType::Tag))
+					else if(elem == Attributes::SimpleCol)
+					{
+						xmlparser.getElementAttributes(attribs);
+						custom_cols.push_back(SimpleColumn(attribs[Attributes::Name],
+																							 attribs[Attributes::Type],
+																							 attribs[Attributes::Alias]));
+					}
+					else if(elem == Attributes::Reference)
+					{
+						BaseObject *ref_object = nullptr;
+						ObjectType ref_obj_type;
+
+						xmlparser.getElementAttributes(attribs);
+
+						ref_obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
+
+						if(ref_obj_type == ObjectType::Column)
+						{
+							QStringList name_list = attribs[Attributes::Object].split('.');
+							PhysicalTable *tab = nullptr;
+
+							if(name_list.size() == 3)
+							{
+								QString tab_name = QString("%1.%2").arg(name_list[0], name_list[1]);
+								tab = dynamic_cast<PhysicalTable *>(getObject(tab_name, { ObjectType::Table, ObjectType::ForeignTable }));
+
+								if(tab)
+									ref_object = tab->getObject(name_list[2], ref_obj_type);
+							}
+						}
+						else
+							ref_object = getObject(attribs[Attributes::Object], ref_obj_type);
+
+						if(!ref_object)
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(view->getSignature(),
+																	 BaseObject::getTypeName(ObjectType::View),
+																	 attribs[Attributes::Object],
+																	 BaseObject::getTypeName(ref_obj_type)),
+															 ErrorCode::RefObjectInexistsModel, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+						}
+
+						view_refs.push_back(Reference(ref_object,
+																											attribs[Attributes::RefName],
+																											attribs[Attributes::RefAlias],
+																											attribs[Attributes::UseSignature] == Attributes::True,
+																											attribs[Attributes::FormatName] == Attributes::True,
+																											attribs[Attributes::UseColumns] == Attributes::True));
+					}
+					else if(elem == BaseObject::getSchemaName(ObjectType::Tag))
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						tag=getObject(aux_attribs[Attributes::Name] ,ObjectType::Tag);
@@ -6794,10 +6688,10 @@ View *DatabaseModel::createView()
 						if(!tag)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[Attributes::Name])
-									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[Attributes::Table])
-									.arg(BaseObject::getTypeName(ObjectType::Tag))
+										.arg(attribs[Attributes::Name],
+												 BaseObject::getTypeName(ObjectType::Table),
+												 aux_attribs[Attributes::Table],
+												BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
@@ -6808,27 +6702,8 @@ View *DatabaseModel::createView()
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		/** Special case for refereces used as view definition **
-
-			If the flag 'refs_in_expr' isn't set indicates that the user defined a reference
-	  but has no used to define the view declaration, this way pgModeler will consider these
-	  references as View definition expressions and will force the insertion of them as
-			Reference::SQL_VIEW_DEFINITION.
-
-		This process can raise errors because if the user defined more than one reference the view
-		cannot accept the two as it's SQL definition, also the defined references MUST be expressions in
-		order to be used as view definition */
-		if(!refs.empty() && !refs_in_expr)
-		{
-			std::vector<Reference>::iterator itr;
-
-			itr=refs.begin();
-			while(itr!=refs.end())
-			{
-				view->addReference(*itr, Reference::SqlViewDef);
-				itr++;
-			}
-		}
+		view->setReferences(view_refs);
+		view->setCustomColumns(custom_cols);
 	}
 	catch(Exception &e)
 	{
@@ -7072,7 +6947,13 @@ BaseRelationship *DatabaseModel::createRelationship()
 			/* If the relationship is between a view and a table and the table is not found
 			 * we try to find a foreign table instead */
 			if(table_types[i] == ObjectType::Table && !tables[i])
+			{
 				tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::ForeignTable));
+
+				// In case of table-view relationship, as a last resort, we try to find a view matching the table name
+				if(!tables[i] && attribs[Attributes::Type] == Attributes::RelationshipTabView)
+					tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::View));
+			}
 
 			//Raises an error if some table doesn't exists
 			if(!tables[i])

@@ -260,7 +260,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidColumnPartitionKey", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
 	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
 	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")},
-	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
+	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name or alias to the object reference!")},
 	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
 	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
 	{"ModelFileInvalidSize", QT_TR_NOOP("An empty file was detected after saving the database model to `%1'. In order to avoid data loss, the original contents of the file prior to the last saving was saved to `%2'!")},
@@ -287,6 +287,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RemExtRefChildObject", QT_TR_NOOP("The extension `%1' can't be removed because its child object `%2' (%3) is being referenced by `%4' (%5)!")},
 	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
 	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
+	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
 };
 
 Exception::Exception()
