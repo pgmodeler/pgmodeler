@@ -33,7 +33,7 @@ class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *objects_refs_tab;
+		ObjectsTableWidget *references_tab;
 
 		ObjectSelectorWidget *object_sel;
 
@@ -42,8 +42,8 @@ class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
 		static const QRegularExpression AttrDelimRegexp;
 
-		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
-																 bool use_signature, bool format_name, bool use_columns);
+		void showReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
+													bool use_signature, bool format_name, bool use_columns);
 
 	public:
 		ReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
@@ -53,9 +53,9 @@ class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 		std::vector<GenericSQL::Reference> getObjectReferences();
 
 	private slots:
-		void handleObjectReference(int row);
-		void editObjectReference(int row);
-		void clearObjectReferenceForm();
+		void handleReference(int row);
+		void editReference(int row);
+		void clearReferenceForm();
 };
 
 #endif
