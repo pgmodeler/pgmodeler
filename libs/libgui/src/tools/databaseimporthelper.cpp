@@ -1912,7 +1912,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	unsigned type_oid = 0;
 	QString type_name, sch_name, col_name;
 	bool is_type_registered = false;
-	std::vector<GenericSQL::Reference> references;
+	std::vector<Reference> references;
 	std::vector<SimpleColumn> custom_cols;
 	BaseTable *ref_tab = nullptr;
 
@@ -1985,7 +1985,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 			}
 
 			if(ref_tab)
-				references.push_back(GenericSQL::Reference(ref_tab, ref_tab->getName(), "", false, false, false));
+				references.push_back(Reference(ref_tab, ref_tab->getName(), "", false, false, false));
 		}
 
 		for(auto &ref : references)

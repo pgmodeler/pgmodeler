@@ -39,7 +39,7 @@ class __libcore View: public BaseTable {
 
 		std::vector<SimpleColumn> gen_columns, custom_cols;
 
-		std::vector<GenericSQL::Reference> view_obj_refs;
+		std::vector<Reference> view_obj_refs;
 
 		QString sql_definition;
 
@@ -74,7 +74,7 @@ class __libcore View: public BaseTable {
 		bool isRecursive();
 		bool isWithNoData();
 
-		void setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs);
+		void setObjectReferences(const std::vector<Reference> &obj_refs);
 
 		void setCustomColumns(const std::vector<SimpleColumn> &cols);
 
@@ -194,7 +194,7 @@ class __libcore View: public BaseTable {
 		//! \brief Returns the deduced columns of the view
 		std::vector<SimpleColumn> getColumns();
 
-		std::vector<GenericSQL::Reference> getObjectReferences();
+		std::vector<Reference> getObjectReferences();
 
 		std::vector<BaseTable *> getReferencedTables();
 

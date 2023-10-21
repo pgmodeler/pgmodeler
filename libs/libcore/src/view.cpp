@@ -105,7 +105,7 @@ bool View::isWithNoData()
 	return with_no_data;
 }
 
-void View::setObjectReferences(const std::vector<GenericSQL::Reference> &obj_refs)
+void View::setObjectReferences(const std::vector<Reference> &obj_refs)
 {
 	this->view_obj_refs = obj_refs;
 	generateColumns();
@@ -197,7 +197,7 @@ std::vector<SimpleColumn> View::getColumns()
 	return gen_columns;
 }
 
-std::vector<GenericSQL::Reference> View::getObjectReferences()
+std::vector<Reference> View::getObjectReferences()
 {
 	return view_obj_refs;
 }

@@ -81,7 +81,7 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 	});
 }
 
-void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs)
+void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<Reference> &refs)
 {
 	references_tab->blockSignals(true);
 
@@ -99,12 +99,12 @@ void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<Gen
 	references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-std::vector<GenericSQL::Reference> ReferencesWidget::getObjectReferences()
+std::vector<Reference> ReferencesWidget::getObjectReferences()
 {
-	std::vector<GenericSQL::Reference> refs;
+	std::vector<Reference> refs;
 
 	for(unsigned row = 0; row < references_tab->getRowCount(); row++)
-		refs.push_back(references_tab->getRowData(row).value<GenericSQL::Reference>());
+		refs.push_back(references_tab->getRowData(row).value<Reference>());
 
 	return refs;
 }
@@ -123,7 +123,7 @@ void ReferencesWidget::handleReference(int row)
 
 void ReferencesWidget::editReference(int row)
 {
-	GenericSQL::Reference ref = references_tab->getRowData(row).value<GenericSQL::Reference>();
+	Reference ref = references_tab->getRowData(row).value<Reference>();
 
 	ref_name_edt->setText(ref.getRefName());
 	ref_alias_edt->setText(ref.getRefAlias());
@@ -147,7 +147,7 @@ void ReferencesWidget::clearReferenceForm()
 void ReferencesWidget::showReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
 																										 bool use_signature, bool format_name, bool use_columns)
 {
-	GenericSQL::Reference ref = GenericSQL::Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);
+	Reference ref = Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);
 
 	references_tab->setCellText(ref_name, row, 0);
 	references_tab->setCellText(ref_alias, row, 1);
@@ -159,5 +159,5 @@ void ReferencesWidget::showReferenceData(int row, BaseObject *object, const QStr
 	if(conf_view_refs)
 		references_tab->setCellText(use_columns ? tr("Yes") : tr("No"), row, 6);
 
-	references_tab->setRowData(QVariant::fromValue<GenericSQL::Reference>(ref), row);
+	references_tab->setRowData(QVariant::fromValue<Reference>(ref), row);
 }

@@ -8,6 +8,7 @@ windows: DESTDIR = $$PWD
 DEFINES += CORE_SYMBOLS
 
 HEADERS += src/coreglobal.h \
+	src/reference.h \
 	   src/textbox.h \
 	   src/basefunction.h \
 	   src/cast.h \
@@ -119,6 +120,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \
 	    src/procedure.cpp \
+	src/reference.cpp \
 	src/simplecolumn.cpp \
 	    src/transform.cpp \
 	    src/trigger.cpp \

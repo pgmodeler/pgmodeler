@@ -45,7 +45,7 @@ void GenericSQL::setHideDescription(bool value)
 	hide_description = value;
 }
 
-std::vector<GenericSQL::Reference> GenericSQL::getObjectsReferences()
+std::vector<Reference> GenericSQL::getObjectsReferences()
 {
 	return objects_refs;
 }
@@ -103,7 +103,7 @@ bool GenericSQL::isReferRelationshipAddedObject()
 	return found;
 }
 
-void GenericSQL::validateReference(Reference ref, bool ignore_duplic)
+void GenericSQL::validateReference(const Reference &ref, bool ignore_duplic)
 {
 	if(!ref.getObject())
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -117,7 +117,7 @@ void GenericSQL::validateReference(Reference ref, bool ignore_duplic)
 										ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void GenericSQL::addReference(const GenericSQL::Reference &ref)
+void GenericSQL::addReference(const Reference &ref)
 {
 	try
 	{
@@ -138,21 +138,6 @@ void GenericSQL::addReferences(const std::vector<Reference> &refs)
 		for(auto &ref : refs)
 			addReference(ref);
 
-		setCodeInvalidated(true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}
-
-void GenericSQL::addReference(BaseObject *object, const QString &ref_name, const QString &ref_alias, bool use_signature, bool format_name, bool use_columns)
-{
-	try
-	{
-		Reference ref = Reference(object, ref_name, ref_alias, use_signature, format_name, use_columns);
-		validateReference(ref, false);
-		objects_refs.push_back(ref);
 		setCodeInvalidated(true);
 	}
 	catch(Exception &e)

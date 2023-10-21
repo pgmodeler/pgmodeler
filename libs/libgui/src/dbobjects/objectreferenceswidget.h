@@ -48,9 +48,9 @@ class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 	public:
 		ReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, const std::vector<GenericSQL::Reference> &refs);
+		void setAttributes(DatabaseModel *model, const std::vector<Reference> &refs);
 
-		std::vector<GenericSQL::Reference> getObjectReferences();
+		std::vector<Reference> getObjectReferences();
 
 	private slots:
 		void handleReference(int row);

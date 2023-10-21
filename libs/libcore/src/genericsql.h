@@ -25,101 +25,9 @@
 #ifndef GENERIC_SQL_H
 #define GENERIC_SQL_H
 
-#include "baseobject.h"
+#include "reference.h"
 
 class __libcore GenericSQL: public BaseObject{
-	public:
-
-		//! \brief This is a internal structure used to hold object references configuration
-		class Reference {
-			// Name of the reference (in SQL it be used between {} in order to be parsed)
-			QString ref_name,
-
-					// The alias of the reference (in SQL it be used between @{} in order to be parsed)
-					ref_alias;
-
-			// The object being referenced
-			BaseObject *object;
-
-			// Indicates that the signature of the object must be used instead of the name
-			bool use_signature,
-
-			// Indicates that the columns of the object (for table-like objects) must be used as view's columns
-			use_columns,
-
-			// Indicates that the name of the object need to be automatically quoted or the schema name appended
-			format_name;
-
-		public:
-			Reference()
-			{
-				object = nullptr;
-				use_signature = format_name = use_columns = false;
-			}
-
-			Reference(BaseObject *_object, const QString &_ref_name, const QString &_ref_alias,
-								bool _use_signature, bool _format_name, bool _use_columns)
-			{
-				ref_name = _ref_name;
-				ref_alias = _ref_alias;
-				object = _object;
-				use_signature = _use_signature;
-				format_name = _format_name;
-				use_columns = _use_columns;
-			}
-
-			BaseObject *getObject() const
-			{
-				return object;
-			}
-
-			QString getRefName() const
-			{
-				return ref_name;
-			}
-
-			QString getRefAlias() const
-			{
-				return ref_alias;
-			}
-
-			bool isUseSignature() const
-			{
-				return use_signature;
-			}
-
-			bool isFormatName() const
-			{
-				return format_name;
-			}
-
-			bool isUseColumns() const
-			{
-				return use_columns;
-			}
-
-			bool isValid() const
-			{
-				return object && !ref_name.isEmpty();
-			}
-
-			QString getXmlCode()
-			{
-				SchemaParser schparser;
-				attribs_map ref_attrs;
-
-				ref_attrs[Attributes::Object] = object->getSignature();
-				ref_attrs[Attributes::Type] = object->getSchemaName();
-				ref_attrs[Attributes::RefName] = ref_name;
-				ref_attrs[Attributes::RefAlias] = ref_alias;
-				ref_attrs[Attributes::FormatName] = format_name ? Attributes::True : "";
-				ref_attrs[Attributes::UseSignature] = use_signature ? Attributes::True : "";
-				ref_attrs[Attributes::UseColumns] = use_columns ? Attributes::True : "";
-
-				return schparser.getSourceCode(Attributes::Reference, ref_attrs, SchemaParser::XmlCode);
-			}
-		};
-
 	private:
 		//! \brief The SQL definition of the generic object
 		QString definition;
@@ -138,7 +46,7 @@ class __libcore GenericSQL: public BaseObject{
 		/*! \brief Check if the provided object reference is correclty configured.
 		 * The method will raise exceptions if any validation rule is broken.
 		 * The parameter ignore_duplic makes the method ignore duplicated references names */
-		void validateReference(Reference ref, bool ignore_duplic);
+		void validateReference(const Reference &ref, bool ignore_duplic);
 
 	public:
 		GenericSQL();
@@ -151,10 +59,8 @@ class __libcore GenericSQL: public BaseObject{
 
 		void setHideDescription(bool value);
 
-		[[deprecated("Use addReference(Rerence) instead.")]]
-		void addReference(BaseObject *object, const QString &ref_name, const QString &ref_alias, bool use_signature, bool format_name, bool use_columns);
-		void addReference(const GenericSQL::Reference &ref);
-		void addReferences(const std::vector<GenericSQL::Reference> &refs);
+		void addReference(const Reference &ref);
+		void addReferences(const std::vector<Reference> &refs);
 
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences();
@@ -178,9 +84,9 @@ class __libcore GenericSQL: public BaseObject{
 		friend class GenericSQLWidget;
 };
 
-/* Registering the GenericSQL::Reference struct as a Qt MetaType in order to make
+/* Registering the Reference struct as a Qt MetaType in order to make
  * it liable to be sent through signal parameters as well as to be
  * to be used by QVariant */
-Q_DECLARE_METATYPE(GenericSQL::Reference)
+Q_DECLARE_METATYPE(Reference)
 
 #endif

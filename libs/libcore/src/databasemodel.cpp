@@ -6123,12 +6123,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 															.arg(BaseObject::getTypeName(obj_type)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						genericsql->addReference(object,
-																		 attribs[Attributes::RefName],
-																		 attribs[Attributes::RefAlias],
-																		 attribs[Attributes::UseSignature] == Attributes::True,
-																		 attribs[Attributes::FormatName] == Attributes::True,
-																		 attribs[Attributes::UseColumns] == Attributes::True);
+						genericsql->addReference(Reference(object,
+																								attribs[Attributes::RefName],
+																								attribs[Attributes::RefAlias],
+																								attribs[Attributes::UseSignature] == Attributes::True,
+																								attribs[Attributes::FormatName] == Attributes::True,
+																								attribs[Attributes::UseColumns] == Attributes::True));
 					}
 				}
 			}
@@ -6594,7 +6594,7 @@ View *DatabaseModel::createView()
 	attribs_map attribs, aux_attribs;
 	View *view = nullptr;
 	BaseObject *tag = nullptr;
-	std::vector<GenericSQL::Reference> view_refs;
+	std::vector<Reference> view_refs;
 	std::vector<SimpleColumn> custom_cols;
 	QString elem;
 
@@ -6657,7 +6657,7 @@ View *DatabaseModel::createView()
 															 ErrorCode::RefObjectInexistsModel, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 						}
 
-						view_refs.push_back(GenericSQL::Reference(ref_object,
+						view_refs.push_back(Reference(ref_object,
 																											attribs[Attributes::RefName],
 																											attribs[Attributes::RefAlias],
 																											attribs[Attributes::UseSignature] == Attributes::True,
