@@ -3,11 +3,11 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4-alpha" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6"
+<dbmodel pgmodeler-ver="1.1.0-beta" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6"
 	 layers="Default layer"
 	 active-layers="0"
 	 layer-name-colors="#000000"
-	 layer-rect-colors="#6c849e"
+	 layer-rect-colors="#1b81b4"
 	 show-layer-names="false" show-layer-rects="false">
 <role name="roletest"
       inherit="true">
@@ -133,14 +133,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <view name="view" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<position x="40" y="600"/>
-	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
-	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
-	<reference alias="expr">
-		<expression><![CDATA[extract(month from now())]]></expression>
-	</reference>
-	<reference table="public.table1" alias="t3" column-alias="col3"/>
-	<expression type="select-exp">0,1,2,3</expression>
-	<expression type="from-exp">3,0</expression>
+	<reference object="public.&quot;table&quot;.column1" type="column" ref-name="c1" ref-alias="col1" use-columns="true"/>
+	<reference object="public.table1.column2" ref-name="c2" type="column" ref-alias="col2" use-columns="true"/>
+	<reference object="public.table1" type="table" ref-name="t3" use-columns="true"/>
+	<definition> <![CDATA[ select 1+1 ]]> </definition>
 </view>
 
 <relationship name="rel_view_table" type="reltv" layers="0"
