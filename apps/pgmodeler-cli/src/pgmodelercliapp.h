@@ -143,6 +143,7 @@ class PgModelerCliApp: public Application {
 		ShowGrid,
 		ShowDelimiters,
 		PageByPage,
+		OverrideBgColor,
 		IgnoreDuplicates,
 		IgnoreErrorCodes,
 		ConnAlias,

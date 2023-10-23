@@ -54,6 +54,7 @@ const QString PgModelerCliApp::Help("--help");
 const QString PgModelerCliApp::ShowGrid("--show-grid");
 const QString PgModelerCliApp::ShowDelimiters("--show-delimiters");
 const QString PgModelerCliApp::PageByPage("--page-by-page");
+const QString PgModelerCliApp::OverrideBgColor("--override-bg-color");
 const QString PgModelerCliApp::IgnoreDuplicates("--ignore-duplicates");
 const QString PgModelerCliApp::IgnoreErrorCodes("--ignore-error-codes");
 const QString PgModelerCliApp::ConnAlias("--conn-alias");
@@ -117,7 +118,8 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
 	{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
 	{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
-	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },	{ IgnoreDuplicates, "-ir" },
+	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },
+	{ IgnoreDuplicates, "-ir" }, { OverrideBgColor, "-oc" },
 	{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
 	{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
 	{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
@@ -143,8 +145,8 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
 	{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
 	{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
-	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ IgnoreErrorCodes, true },
-	{ ConnAlias, true },	{ Host, true },	{ Port, true },
+	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ OverrideBgColor, false },
+	{ IgnoreErrorCodes, true }, { ConnAlias, true },	{ Host, true },	{ Port, true },
 	{ User, true },	{ Passwd, true },	{ InitialDb, true },
 	{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
 	{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
@@ -165,7 +167,7 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
 	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
@@ -455,6 +457,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid));
 	printText(tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters));
 	printText(tr("  %1, %2\t\t    Each page will be exported in a separated image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage));
+	printText(tr("  %1, %2\t    Don't use the original canvas color in the exported image, instead, a white background is used. (Only for PNG images)").arg(short_opts[OverrideBgColor]).arg(OverrideBgColor));
 	printText(tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to an image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100));
 	printText();
 
@@ -1832,7 +1835,8 @@ void PgModelerCliApp::exportModel()
 		export_hlp->exportToPNG(scene, parsed_opts[Output], zoom,
 								 parsed_opts.count(ShowGrid) > 0,
 								 parsed_opts.count(ShowDelimiters) > 0,
-								 parsed_opts.count(PageByPage) > 0);
+								 parsed_opts.count(PageByPage) > 0,
+								 parsed_opts.count(OverrideBgColor) > 0);
 	}
 	//Export to SVG
 	else if(parsed_opts.count(ExportToSvg))

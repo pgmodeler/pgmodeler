@@ -500,7 +500,7 @@ namespace GuiUtilsNs {
 		wgt->setGraphicsEffect(shadow);
 	}
 
-	void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state)
+	void handleFileDialogState(QFileDialog *file_dlg, bool save_state)
 	{
 		if(!file_dlg)
 			return;
@@ -531,12 +531,12 @@ namespace GuiUtilsNs {
 
 	void saveFileDialogState(QFileDialog *file_dlg)
 	{
-		handleFileDialogSatate(file_dlg, true);
+		handleFileDialogState(file_dlg, true);
 	}
 
 	void restoreFileDialogState(QFileDialog *file_dlg)
 	{
-		handleFileDialogSatate(file_dlg, false);
+		handleFileDialogState(file_dlg, false);
 	}
 
 	void populateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)

@@ -104,7 +104,7 @@ namespace GuiUtilsNs {
 	/*! \brief Handles the currently provided file dialog state to file.
 	 * If save_state is true, then the dialog's state is saved to file
 	 * otherwise is restored */
-	extern __libgui void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state);
+	extern __libgui void handleFileDialogState(QFileDialog *file_dlg, bool save_state);
 
 	//! \brief Saves the currently provided file dialog state to file
 	extern  __libgui void saveFileDialogState(QFileDialog *file_dlg);

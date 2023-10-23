@@ -2030,7 +2030,10 @@ void MainWindow::loadModels(const QStringList &files)
 		if( files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
 		else
-			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		{
+			Messagebox msgbox;
+			msgbox.show(e);
+		}
 	}
 }
 
@@ -2457,6 +2460,11 @@ void MainWindow::arrangeObjects()
 void MainWindow::toggleCompactView()
 {
 	ModelWidget *model_wgt = nullptr;
+	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+	std::map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
+
+	attribs[Attributes::Configuration][Attributes::CompactView] = action_compact_view->isChecked() ? Attributes::True : Attributes::False;
+	conf_wgt->setConfigurationSection(Attributes::Configuration, attribs[Attributes::Configuration]);
 
 	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
 	qApp->setOverrideCursor(Qt::WaitCursor);

@@ -74,6 +74,9 @@ class __libgui ModelExportHelper: public QObject {
 		//! \brief Indicates if the page delimiters should be displayed during exporting to graphical format
 		show_delim,
 
+		//! \brief Indicates if the original background (canvas) color should be used in the graphics file
+		override_bg_color,
+
 		//! \brief Indicates if the export to png should be done pageby page
 		page_by_page,
 
@@ -168,7 +171,7 @@ class __libgui ModelExportHelper: public QObject {
 		and the method will use it instead of allocate a local one. This is a workaround to error raised by QCoreApplication::sendPostedEvents
 		when running the helper in a thread */
 		void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim,
-										 bool page_by_page, QGraphicsView *viewp=nullptr);
+										 bool page_by_page, bool override_bg_color, QGraphicsView *viewp=nullptr);
 
 		//! \brief Exports the model to a named SVG file.
 		void exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
@@ -202,7 +205,7 @@ class __libgui ModelExportHelper: public QObject {
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
 		void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
-															bool show_grid, bool show_delim, bool page_by_page);
+															bool show_grid, bool show_delim, bool use_orig_bg_color, bool page_by_page);
 
 		/*! \brief Configures the SVG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, the output filename, grid options. */

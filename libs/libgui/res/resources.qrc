@@ -271,12 +271,8 @@
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
         <file>images/crashhandler.png</file>
-        <file>images/crows_foot_notation.png</file>
         <file>images/pgmodeler_name.png</file>
         <file>images/pgmodeler_splash.png</file>
-        <file>images/rel_center_pnts.png</file>
-        <file>images/rel_fk_to_pk.png</file>
-        <file>images/rel_tab_edges.png</file>
         <file>images/schemafile.png</file>
         <file>images/exporttosql.png</file>
         <file>images/exporttodatadict.png</file>
@@ -285,5 +281,13 @@
         <file>images/checkmark_white.png</file>
         <file>images/checkmark_black.png</file>
         <file>images/checkmark_disabled.png</file>
+        <file>images/rel_tab_edges_light.png</file>
+        <file>images/rel_tab_edges_dark.png</file>
+        <file>images/rel_fk_to_pk_light.png</file>
+        <file>images/rel_fk_to_pk_dark.png</file>
+        <file>images/rel_crows_foot_light.png</file>
+        <file>images/rel_crows_foot_dark.png</file>
+        <file>images/rel_center_pnts_light.png</file>
+        <file>images/rel_center_pnts_dark.png</file>
     </qresource>
 </RCC>

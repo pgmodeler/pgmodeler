@@ -697,6 +697,7 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 			continue;
 
 		obj_type = graph_obj->getObjectType();
+		rect = obj_view->boundingRect();
 		rect = obj_view->mapRectToScene(obj_view->boundingRect());
 
 		if(graph_obj && incl_layer_rects && is_layer_rects_visible &&
