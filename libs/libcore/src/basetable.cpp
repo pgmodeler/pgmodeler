@@ -208,14 +208,5 @@ void BaseTable::updateDependencies(const std::vector<BaseObject *> &deps, const 
 {
 	std::vector<BaseObject *> aux_deps = { tag	};
 	aux_deps.insert(aux_deps.end(), deps.begin(), deps.end());
-
-	for(auto &obj : aux_deps)
-	{
-		if(!obj)
-			continue;
-
-		setDependency(obj);
-	}
-
-	BaseObject::updateDependencies(deps, old_deps);
+	BaseObject::updateDependencies(aux_deps, old_deps);
 }
