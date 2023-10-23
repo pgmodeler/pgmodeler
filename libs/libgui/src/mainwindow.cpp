@@ -1510,6 +1510,11 @@ void MainWindow::setGridOptions()
 		current_model->update();
 	}
 
+	attribs[Attributes::Configuration][Attributes::ShowCanvasGrid] = action_show_grid->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::ShowPageDelimiters] = action_show_delimiters->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::LockPageDelimResize] = action_lock_delim->isChecked() ? Attributes::True : Attributes::False;
+
 	conf_wgt->setConfigurationSection(Attributes::Configuration, attribs[Attributes::Configuration]);
 }
 
