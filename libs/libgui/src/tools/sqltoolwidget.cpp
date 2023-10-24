@@ -469,7 +469,7 @@ void SQLToolWidget::showSnippet(const QString &snip)
 	}
 }
 
-void SQLToolWidget::showSourceCode(const QString &source)
+void SQLToolWidget::showSourceCode(const QString &source, bool force_display)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
@@ -483,7 +483,8 @@ void SQLToolWidget::showSourceCode(const QString &source)
 	sourcecode_txt->setPlainText(source);
 #endif
 
-	source_pane_tb->setChecked(true);
+	if(force_display && !source_pane_tb->isChecked())
+		source_pane_tb->setChecked(true);
 }
 
 bool SQLToolWidget::hasDatabasesBrowsed()

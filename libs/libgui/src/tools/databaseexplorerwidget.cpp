@@ -302,7 +302,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 			else if(k_event->key()==Qt::Key_F2)
 				startObjectRename(objects_trw->currentItem());
 			else if(k_event->key()==Qt::Key_F7)
-				loadObjectSource();
+				loadObjectSource(true);
 			else if(k_event->key()==Qt::Key_Escape)
 				cancelObjectRename();
 			else if(k_event->key()==Qt::Key_Enter ||
@@ -1016,8 +1016,7 @@ void DatabaseExplorerWidget::clearObjectProperties()
 {
 	properties_tbw->clearContents();
 	properties_tbw->setRowCount(0);
-
-	emit s_sourceCodeShowRequested("");
+	emit s_sourceCodeShowRequested("", false);
 }
 
 void DatabaseExplorerWidget::listObjects()
@@ -1102,7 +1101,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 	}
 	else if(QApplication::mouseButtons()==Qt::MiddleButton && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() >= 0)
 	{
-		loadObjectSource();
+		loadObjectSource(true);
 	}
 	else if(QApplication::mouseButtons()==Qt::RightButton && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() >= 0)
 	{
@@ -1159,7 +1158,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		else if(exec_action==properties_action)
 			showObjectProperties(true);
 		else if(exec_action==source_action)
-			loadObjectSource();
+			loadObjectSource(true);
 		else if(exec_action==handle_data_action)
 		{
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
@@ -1880,7 +1879,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 				}
 			}
 
-			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
+			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString(), false);
 
 			properties_tbw->setSortingEnabled(true);
 			properties_tbw->sortByColumn(0, Qt::AscendingOrder);
@@ -1962,7 +1961,7 @@ void DatabaseExplorerWidget::cancelObjectRename()
 	}
 }
 
-void DatabaseExplorerWidget::loadObjectSource()
+void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 {
 	QTreeWidgetItem *item=objects_trw->currentItem();
 
@@ -1970,8 +1969,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 	{
 		if(item == objects_trw->topLevelItem(0))
 		{
-			//QString n = item->text(0);
-			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
+			emit s_sourceCodeShowRequested(item->data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString(), show_code);
 		}
 		else if(item)
 		{
@@ -1979,7 +1977,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 
 			if(source!=DefaultSourceCode)
 			{
-				emit s_sourceCodeShowRequested(source);
+				emit s_sourceCodeShowRequested(source, show_code);
 			}
 			else
 			{
@@ -2036,7 +2034,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 					 (oid <= sys_oid || attribs[Attributes::Configuration]==Attributes::BaseType))
 				{
 					source=QString("-- %1 --").arg(tr("Source code genaration for built-in and base types currently unavailable."));
-					emit s_sourceCodeShowRequested(source);
+					emit s_sourceCodeShowRequested(source, show_code);
 				}
 				else
 				{
@@ -2119,14 +2117,14 @@ void DatabaseExplorerWidget::loadObjectSource()
 					objects_trw->verticalScrollBar()->setValue(sbar_value);
 
 				qApp->restoreOverrideCursor();
-				emit s_sourceCodeShowRequested(source);
+				emit s_sourceCodeShowRequested(source, show_code);
 			}
 		}
 	}
 	catch (Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()));
+		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()), show_code);
 	}
 }
 

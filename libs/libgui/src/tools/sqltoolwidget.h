@@ -108,7 +108,7 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void showSnippet(const QString &snip);
 
 		//! \brief Show the provided code in the source panel
-		void showSourceCode(const QString &source);
+		void showSourceCode(const QString &source, bool force_display);
 
 		//! \brief Close the SQL execution tab specified by its index
 		void closeSQLExecutionTab(int idx, bool confirm_close);

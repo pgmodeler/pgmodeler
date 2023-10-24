@@ -208,7 +208,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		//! \brief Show the widget to handle data in tables
 		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
-		void loadObjectSource();
+		void loadObjectSource(bool show_code);
 
 		void filterObjects();
 
@@ -223,7 +223,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		void s_snippetShowRequested(QString snippet);
 
 		//! \brief This signal is emmited containing the source code to be shown in an input field
-		void s_sourceCodeShowRequested(QString source);
+		void s_sourceCodeShowRequested(QString source, bool force_display);
 
 	friend class SQLToolWidget;
 };
