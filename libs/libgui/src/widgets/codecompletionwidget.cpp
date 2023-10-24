@@ -56,14 +56,13 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	completion_wgt->setMinimumSize(200, 200);
-	completion_wgt->setMaximumHeight(300);
+	completion_wgt->setMaximumHeight(350);
 
 	always_on_top_chk=new QCheckBox(completion_wgt);
 	always_on_top_chk->setText(tr("&Always on top"));
-	always_on_top_chk->setToolTip(tr("The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget."));
+	always_on_top_chk->setToolTip(tr("<p>The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget.</p>"));
 	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
 
 	name_list=new QListWidget(completion_wgt);
@@ -223,9 +222,6 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				return true;
 			}
 		}
-
-		name_list->adjustSize();
-		adjustSize();
 	}
 
 	return QWidget::eventFilter(object, event);
@@ -362,7 +358,7 @@ void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
 	updateList();
-	completion_wgt->show();	
+	completion_wgt->show();
 	popup_timer.stop();
 	completion_wgt->adjustSize();
 	adjustSize();
@@ -467,7 +463,10 @@ bool CodeCompletionWidget::retrieveColumnNames()
 			 (dml_kwords_pos[Select] >= 0 &&
 				dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
 		{
-			tab_names = getTableNames(dml_kwords_pos[From], -1);
+			/* We get the table names until the next SELECT to avoid including table names that is
+			 * out of the context of the current SELECT/FROM */
+			int next_select = code_field_txt->toPlainText().indexOf("select", cur_pos, Qt::CaseInsensitive);
+			tab_names = getTableNames(dml_kwords_pos[From], next_select);
 		}
 		// Retrieving the table name after DELETE FROM ...
 		else if((dml_kwords_pos[Delete] >= 0 && dml_kwords_pos[From] >= 0 &&
@@ -531,18 +530,17 @@ bool CodeCompletionWidget::retrieveColumnNames()
 												 .arg(BaseObject::getTypeName(ObjectType::Column),
 															QString("<strong>%1</strong>.%2").arg(sch_name, tab_name)));
 
-				key = QString("%1_%2.%3").arg(tab_pos).arg(tab_name, attr.second);
+				key = QString("%1_%2.%3").arg(QString::number(tab_pos).rightJustified(4, '0'),
+																			tab_name,
+																			attr.second);
 				items[key] = item;
-				//name_list->addItem(item);
 			}
 		}
 	}
 
 	for(auto [key, item] : items.asKeyValueRange())
-	{
 		name_list->addItem(item);
-	}
-	//name_list->sortItems();
+
 	return cols_added;
 }
 
