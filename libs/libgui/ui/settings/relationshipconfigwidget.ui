@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
+    <width>727</width>
     <height>793</height>
    </rect>
   </property>
@@ -102,6 +102,34 @@
             <property name="spacing">
              <number>5</number>
             </property>
+            <item row="0" column="0" colspan="2">
+             <widget class="QRadioButton" name="crows_foot_rb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;p&gt;This mode renders the relationships in crow's foot notation which has a better semantics and readability. It also determines the optimal point where the relationship is connected on the tables' edges taking their position into account.&lt;/p&gt;</string>
+              </property>
+              <property name="statusTip">
+               <string/>
+              </property>
+              <property name="text">
+               <string>Crow's foot notation</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <property name="autoRepeat">
+               <bool>true</bool>
+              </property>
+              <property name="autoExclusive">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="0" colspan="2">
              <widget class="QLabel" name="crows_foot_lbl">
               <property name="enabled">
@@ -139,34 +167,6 @@
               </property>
               <property name="textInteractionFlags">
                <set>Qt::NoTextInteraction</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="crows_foot_rb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;p&gt;This mode renders the relationships in crow's foot notation which has a better semantics and readability. It also determines the optimal point where the relationship is connected on the tables' edges taking their position into account.&lt;/p&gt;</string>
-              </property>
-              <property name="statusTip">
-               <string/>
-              </property>
-              <property name="text">
-               <string>Crow's foot notation</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <property name="autoRepeat">
-               <bool>true</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
