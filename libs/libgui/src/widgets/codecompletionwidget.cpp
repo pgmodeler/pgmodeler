@@ -56,7 +56,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMinimumSize(200, 200);
 	completion_wgt->setMaximumHeight(300);
@@ -467,8 +467,6 @@ bool CodeCompletionWidget::retrieveColumnNames()
 			 (dml_kwords_pos[Select] >= 0 &&
 				dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
 		{
-			/* tab_names = getTableNames(dml_kwords_pos[From],
-																dml_kwords_pos[Join] >= 0 ? dml_kwords_pos[Join] : dml_kwords_pos[Where]); */
 			tab_names = getTableNames(dml_kwords_pos[From], -1);
 		}
 		// Retrieving the table name after DELETE FROM ...
@@ -488,14 +486,17 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	QStringList aux_names, aliases;
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
-	QString sch_name, tab_name;
+	QString sch_name, tab_name, key;
 	bool cols_added = false;
+	int tab_pos = -1;
+	QMap<QString, QListWidgetItem *> items;
 
 	for(auto &name : tab_names)
 	{
 		if(!found_alias && curr_word.isEmpty())
 			aliases = getTableAliases(name);
 
+		tab_pos = getTablePosition(name);
 		aux_names = name.split(completion_trigger);
 		sch_name = aux_names[0].trimmed();
 		tab_name = aux_names[1].trimmed();
@@ -530,12 +531,18 @@ bool CodeCompletionWidget::retrieveColumnNames()
 												 .arg(BaseObject::getTypeName(ObjectType::Column),
 															QString("<strong>%1</strong>.%2").arg(sch_name, tab_name)));
 
-				name_list->addItem(item);
+				key = QString("%1_%2.%3").arg(tab_pos).arg(tab_name, attr.second);
+				items[key] = item;
+				//name_list->addItem(item);
 			}
 		}
 	}
 
-	name_list->sortItems();
+	for(auto [key, item] : items.asKeyValueRange())
+	{
+		name_list->addItem(item);
+	}
+	//name_list->sortItems();
 	return cols_added;
 }
 
@@ -738,6 +745,20 @@ QStringList CodeCompletionWidget::getTableNames(int start_pos, int stop_pos)
 
 	names.removeDuplicates();
 	return names;
+}
+
+int CodeCompletionWidget::getTablePosition(const QString &name)
+{
+	if(name.isEmpty())
+		return -1;
+
+	for(auto &itr : tab_names_pos)
+	{
+		if(itr.second == name)
+			return itr.first;
+	}
+
+	return -1;
 }
 
 QStringList CodeCompletionWidget::getTableAliases(const QString &name)

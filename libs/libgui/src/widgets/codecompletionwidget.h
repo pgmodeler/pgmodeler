@@ -160,6 +160,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		 *  exceeds the specified value */
 		QStringList getTableNames(int start_pos, int stop_pos);
 
+		int getTablePosition(const QString &name);
+
 		QStringList getTableAliases(const QString &name);
 		
 	public:
