@@ -658,6 +658,7 @@ void CodeCompletionWidget::extractTableNames()
 	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false;
+	TextBlockInfo *blk_info = nullptr;
 
 	curr_code = code;
 	tab_aliases.clear();
@@ -669,7 +670,22 @@ void CodeCompletionWidget::extractTableNames()
 		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 		curr_word.remove('"');
+		blk_info = dynamic_cast<TextBlockInfo *>(tc.block().userData());
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+
+		/* If the current block doesn't allow completion (e.g. comment block)
+		 * we just skip the table name/alias extraction */
+		if(blk_info && !blk_info->isCompletionAllowed())
+			continue;
+
+		/* Every time we find a new SELECT keyword we reset name/alias
+		 * extraction control variables and wait until a new FROM
+		 * is found so a new table name/alias can be extracted */
+		if(curr_word.compare("select", Qt::CaseInsensitive) == 0)
+		{
+			curr_word.clear();
+			extract_alias = false;
+		}
 
 		if(!curr_word.isEmpty() &&
 			 (curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
