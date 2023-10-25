@@ -54,41 +54,55 @@ QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QString text=index.data().toString();
+	static QRect rect;
+	static QColor bg_color;
+	static QIcon ico;
+	static QString text;
+	static QSize ico_sz;
+
+	text = index.data().toString();
+	ico = index.data(Qt::DecorationRole).value<QIcon>();
+	rect = option.rect;
+	ico_sz = option.decorationSize;
+
+	//Painting the correct background color according to the item state
+	if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
+		//Selected
+		bg_color = option.palette.color(QPalette::Highlight);
+	else if(option.features == QStyleOptionViewItem::Alternate)
+		//Alternate color
+		bg_color = option.palette.color(QPalette::AlternateBase);
+	else
+		//Base color
+		bg_color = option.palette.color(QPalette::Base);
 
 	painter->save();
-	QStyledItemDelegate::paint(painter, option, index);
 
-	if(text.contains(TagRegExp))
+	//Repaint the text area
+	painter->fillRect(rect, bg_color);
+	ico.paint(painter, QRect(rect.topLeft() + QPoint(1, 1),  ico_sz));
+
+	if(!text.contains(TagRegExp))
+	{
+		if((option.state & QStyle::State_Enabled) == QStyle::State_Enabled)
+			painter->setPen(option.palette.color(QPalette::Active, QPalette::Text));
+		else
+			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
+
+		rect.translate(ico_sz.width() + 5, 0);
+		painter->drawText(rect, text);
+	}
+	else
 	{
 		static QTextDocument doc;
-		static QRect rect;
-		static QColor bg_color;
 		static int dy = 0;
 
-		text.replace("\n", "<br/>");
-		rect.setTop(option.rect.top());
-		rect.setLeft(option.rect.left() + option.decorationSize.width() + 5);
-		rect.setSize(option.rect.size());
-
-		//Painting the correct background color according to the item state
-		if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
-			//Selected
-			bg_color=option.palette.color(QPalette::Highlight);
-		else if(option.features==QStyleOptionViewItem::Alternate)
-			//Alternate color
-			bg_color=option.palette.color(QPalette::AlternateBase);
-		else
-			//Base color
-			bg_color=option.palette.color(QPalette::Base);
-
-		//Repaint the text area
-		painter->fillRect(rect, bg_color);
-
 		//Set the text to a html document instance and draw it to the painter
+		dy = abs(rect.height() - ico_sz.height());
+		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy * 2);
+
+		text.replace("\n", "<br/>");
 		doc.setHtml(text);
-		dy = abs(option.rect.height() - option.decorationSize.height());
-		painter->translate(rect.topLeft() - QPoint(0, dy));
 		doc.drawContents(painter);
 	}
 

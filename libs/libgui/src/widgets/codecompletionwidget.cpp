@@ -64,6 +64,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	always_on_top_chk->setText(tr("&Always on top"));
 	always_on_top_chk->setToolTip(tr("<p>The widget will be always displayed while typing. It can be closable only by ESC key or when focus changes to another widget.</p>"));
 	always_on_top_chk->setFocusPolicy(Qt::NoFocus);
+	always_on_top_chk->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	name_list=new QListWidget(completion_wgt);
 	name_list->setSpacing(2);
@@ -92,7 +93,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setQualifyingLevel(nullptr);
 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
-	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);	
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
 	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListWidth);
 
 	connect(&popup_timer, &QTimer::timeout, this, [this](){
@@ -1120,6 +1121,7 @@ void CodeCompletionWidget::showItemTooltip()
 
 	if(item)
 	{
+		QToolTip::hideText();
 		QPoint pos = name_list->mapToGlobal(QPoint(name_list->width(), name_list->geometry().top()));
 		QToolTip::showText(pos, item->toolTip());
 	}
@@ -1128,12 +1130,15 @@ void CodeCompletionWidget::showItemTooltip()
 void CodeCompletionWidget::adjustNameListWidth()
 {
 	QRect rect = name_list->viewport()->contentsRect();
-	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() + QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
-			*last_item = name_list->itemAt(rect.bottomLeft() + QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
+	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() + QPoint(2, 2)),
+			*last_item = name_list->itemAt(rect.bottomLeft() + QPoint(2, -2));
 	int first_row = name_list->row(first_item),
 			last_row = name_list->row(last_item),
 			list_w = 0, item_w = 0;
 	QFontMetrics fm(name_list->font());
+
+	if(first_row >= 0 && last_row < 0)
+		last_row = name_list->count() - 1;
 
 	for(int row = first_row; row <= last_row; row++)
 	{
@@ -1147,7 +1152,8 @@ void CodeCompletionWidget::adjustNameListWidth()
 			list_w = item_w;
 	}
 
-	name_list->setFixedWidth(list_w);
+	name_list->setFixedWidth(list_w < always_on_top_chk->width() ?
+														always_on_top_chk->width() : list_w);
 	completion_wgt->adjustSize();
 	adjustSize();
 }
