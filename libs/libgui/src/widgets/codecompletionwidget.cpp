@@ -493,7 +493,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	QString sch_name, tab_name, key;
 	bool cols_added = false;
 	int tab_pos = -1;
-	QMap<QString, QListWidgetItem *> items;
+	std::map<QString, QListWidgetItem *> items;
 
 	for(auto &name : tab_names)
 	{
@@ -543,8 +543,8 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		}
 	}
 
-	for(auto [key, item] : items.asKeyValueRange())
-		name_list->addItem(item);
+	for(auto &itr : items)
+		name_list->addItem(itr.second);
 
 	return cols_added;
 }
