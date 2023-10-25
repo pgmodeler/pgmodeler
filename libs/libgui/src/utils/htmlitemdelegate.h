@@ -38,9 +38,9 @@ class __libgui HtmlItemDelegate : public PlainTextItemDelegate {
 		 *  determining the size hint of the item. See sizeHint() */
 		bool ignore_tags_sz_hint;
 
+	public:
 		static const QRegularExpression TagRegExp;
 
-	public:
 		HtmlItemDelegate(QObject * parent = nullptr, bool ignore_tags_sz_hint = false);
 
 		virtual ~HtmlItemDelegate();

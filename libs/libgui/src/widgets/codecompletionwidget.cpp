@@ -71,6 +71,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setSortingEnabled(false);
 	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
 	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	name_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	name_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	name_list->setMaximumHeight(completion_wgt->maximumHeight() - always_on_top_chk->height() - GuiUtilsNs::LtSpacing);
 	name_list->setItemDelegate(new HtmlItemDelegate(name_list, true));
 
@@ -90,7 +92,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setQualifyingLevel(nullptr);
 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
-	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);	
+	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListWidth);
 
 	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
@@ -357,11 +360,12 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
+
 	updateList();
 	completion_wgt->show();
+	adjustNameListWidth();
+
 	popup_timer.stop();
-	completion_wgt->adjustSize();
-	adjustSize();
 
 	QTimer::singleShot(500, this, [this](){
 		showItemTooltip();
@@ -1119,6 +1123,33 @@ void CodeCompletionWidget::showItemTooltip()
 		QPoint pos = name_list->mapToGlobal(QPoint(name_list->width(), name_list->geometry().top()));
 		QToolTip::showText(pos, item->toolTip());
 	}
+}
+
+void CodeCompletionWidget::adjustNameListWidth()
+{
+	QRect rect = name_list->viewport()->contentsRect();
+	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() + QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
+			*last_item = name_list->itemAt(rect.bottomLeft() + QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
+	int first_row = name_list->row(first_item),
+			last_row = name_list->row(last_item),
+			list_w = 0, item_w = 0;
+	QFontMetrics fm(name_list->font());
+
+	for(int row = first_row; row <= last_row; row++)
+	{
+		item_w = fm.boundingRect(name_list->item(row)->text().
+															remove(HtmlItemDelegate::TagRegExp)).width();
+
+		item_w += name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 5) +
+							name_list->verticalScrollBar()->width();
+
+		if(item_w > list_w)
+			list_w = item_w;
+	}
+
+	name_list->setFixedWidth(list_w);
+	completion_wgt->adjustSize();
+	adjustSize();
 }
 
 void CodeCompletionWidget::close()

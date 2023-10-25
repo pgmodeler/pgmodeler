@@ -34,10 +34,11 @@ HtmlItemDelegate::~HtmlItemDelegate()
 
 QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	QSize sz = PlainTextItemDelegate::sizeHint(option, index);
+
 	if(ignore_tags_sz_hint)
 	{
 		QString text = index.data().toString();
-		QSize sz = PlainTextItemDelegate::sizeHint(option, index);
 
 		if(text.contains(TagRegExp))
 		{
@@ -46,11 +47,9 @@ QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 			text.remove(TagRegExp);
 			sz.setWidth(option.fontMetrics.boundingRect(text).width() + option.decorationSize.width() * 2);
 		}
-
-		return sz;
 	}
 
-	return PlainTextItemDelegate::sizeHint(option, index);
+	return sz;
 }
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
