@@ -26,7 +26,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	if(!arguments().contains("-style"))
 		setStyle(GlobalAttributes::DefaultQtStyle);
 
-	GlobalAttributes::setSearchPath(this->applicationDirPath());
+	//GlobalAttributes::setSearchPath(this->applicationDirPath());
 }
 
 bool Application::loadTranslation(const QString &lang_id, const QString &directory)

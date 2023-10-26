@@ -28,12 +28,14 @@
 #define GLOBAL_ATTRIBUTES_H
 
 #include "utilsglobal.h"
+#include "attribsmap.h"
 #include <QString>
 #include <QStandardPaths>
 
 class __libutils GlobalAttributes {
 	private:
 		/*! \brief Environment variables used to reference the pgModeler directories.
+		 * These environment variables can be referenced in code using Env*Path constants.
 
 		 PGMODELER_SCHEMAS_PATH   --> full path to the "schemas" folder  (SQL/XML generation schema files)
 		 PGMODELER_CONF_PATH      --> full path to the "conf" folder    (user's own settings for pgModeler)
@@ -49,7 +51,7 @@ class __libutils GlobalAttributes {
 		 PGMODELER_CH_PATH  --> Full path to pgmodeler-ch executable
 		 PGMODELER_CLI_PATH --> Full path to pgmodeler-cli executable
 		 PGMODELER_SE_PATH  --> Full path to pgmodeler-se executable
-		 PGMDOELER_PATH     --> Full path to pgmodeler executable */
+		 PGMODELER_PATH     --> Full path to pgmodeler executable */
 
 		static QString
 		SchemasRootPath,
@@ -68,16 +70,26 @@ class __libutils GlobalAttributes {
 		PgModelerAppPath,
 		PgModelerSchemaEditorPath;
 
-		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
-			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
-			values does not exists the the fallback value is returned even if it not exists in the filesystem */
-		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val="");
+		//! \brief Stores the custom paths retrieved either from pgmpaths.conf or from environment variables
+		static attribs_map CustomPaths;
 
-		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
-		static void setSearchPath(const QString &search_path);
+		/*! \brief Returns the current value for an environment variable that points to one of the assets/executables.
+		 *  These variables can be defined either in the file pgmpaths.conf (key=value file) or from system's environment variables.
+		 *
+		 * If the current value points to an inexstent path then the function will return 'default_value' if it exists.
+		 * Finally, if both current value and default values don't exist then the fallback value is returned even if it not
+		 * exists in the filesystem.
+		 *
+		 * The precedence of value retriaval is the following:
+		 *	pgmpaths.conf -> system's env vars -> default_value -> fallback_val */
+		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val="");
 
 		//! \brief Sets the config files paths variables that doesn't depend on a search path.
 		static void setConfigFilesPaths();
+
+		/*! \brief Configures the assets/executables paths loading from pgmpaths.conf or from environment variables.
+		 * The search_path is from where the pgmpaths.conf must be loaded. */
+		static void setCustomPaths(const QString &search_path);
 
 	public:
 		static const QString
@@ -92,6 +104,19 @@ class __libutils GlobalAttributes {
 		PgModelerDonateURL,
 		PgModelerUpdateCheckURL,
 
+		EnvSchemasPath,
+		EnvConfPath,
+		EnvTmplConfPath,
+		EnvLangPath,
+		EnvPluginsPath,
+		EnvTmpPath,
+		EnvSamplesPath,
+		EnvPgModelerChPath,
+		EnvPgModelerCliPath,
+		EnvPgModelerSePath,
+		EnvPgModelerPath,
+
+		PgmPathsConfFile, //! \brief An ini-like (key=value) file that holds custom values for the pgModeler's enviroment variables
 		BugReportEmail,
 		BugReportFile,
 		StacktraceFile,
@@ -226,6 +251,9 @@ class __libutils GlobalAttributes {
 		 *  from the file appearance.conf. This method should be called before the instantiation of
 		 *  any QCoreApplication-based class otherwise the environment variable will be ignored */
 		static void setCustomUiScaleFactor();
+
+		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
+		static void setSearchPath(const QString &search_path);
 
 		friend class Application;
 		friend class PgModelerUnitTest;

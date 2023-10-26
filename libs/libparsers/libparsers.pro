@@ -12,7 +12,6 @@ src/schemaparser.h \
 src/csvdocument.h \
 src/csvparser.h \
 src/xmlparser.h \
-src/attribsmap.h \
 src/attributes.h
 
 SOURCES += src/schemaparser.cpp \
