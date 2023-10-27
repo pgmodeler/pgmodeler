@@ -43,6 +43,7 @@ int main(int argc, char **argv)
 				qputenv("QT_QPA_PLATFORM", "offscreen");
 		#endif
 
+		GlobalAttributes::init(argv[0], false);
 		PgModelerCliApp pgmodeler_cli(argc, argv);
 		pgmodeler_cli.loadTranslation(QLocale::system().name());
 

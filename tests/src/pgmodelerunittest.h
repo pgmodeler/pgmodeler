@@ -30,10 +30,10 @@ they must inherit from this class.
 #include "globalattributes.h"
 
 class PgModelerUnitTest {
-    public:
-	    PgModelerUnitTest(const QString &search_path){
-			GlobalAttributes::setSearchPath(search_path);
-	};
+	public:
+		PgModelerUnitTest(const QString &search_path){
+			GlobalAttributes::init(search_path, false);
+	}
 };
 
 #endif

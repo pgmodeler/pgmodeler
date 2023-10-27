@@ -27,8 +27,7 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		GlobalAttributes::setSearchPath(QFileInfo(argv[0]).absolutePath());
-		GlobalAttributes::setCustomUiScaleFactor();
+		GlobalAttributes::init(argv[0], true);
 		PgModelerApp app(argc,argv);
 		QStringList args = app.arguments();
 		SchemaEditorForm syntaxchk;

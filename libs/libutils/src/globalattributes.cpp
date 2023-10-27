@@ -248,8 +248,6 @@ QString GlobalAttributes::getPgModelerSchemaEditorPath()
 
 QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, const QString &conf_file)
 {
-	//setConfigFilesPaths();
-
 	QString filename = getConfigurationFilePath(conf_file);
 	QFile input;
 	QString attr_val;
@@ -321,6 +319,9 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 
 void GlobalAttributes::setSearchPath(const QString &search_path)
 {
+	QTextStream out(stdout);
+	out << search_path << Qt::endl;
+
 	setCustomPaths(search_path);
 	setConfigFilesPaths();
 
@@ -347,13 +348,18 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 		PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1\\pgmodeler-cli.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-cli.exe").arg(search_path));
 		PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
 		PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
-	#endif
+#endif
 }
 
-void GlobalAttributes::setCustomUiScaleFactor()
+void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 {
-	QString scale = GlobalAttributes::getConfigParamFromFile("custom-scale", GlobalAttributes::AppearanceConf);
+	GlobalAttributes::setSearchPath(QFileInfo(search_path).absolutePath());
 
-	if(scale.toDouble() > 0)
-		qputenv("QT_SCALE_FACTOR", scale.toUtf8());
+	if(apply_ui_factor)
+	{
+		QString scale = GlobalAttributes::getConfigParamFromFile("custom-scale", GlobalAttributes::AppearanceConf);
+
+		if(scale.toDouble() > 0)
+			qputenv("QT_SCALE_FACTOR", scale.toUtf8());
+	}
 }

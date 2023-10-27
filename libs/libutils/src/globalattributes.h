@@ -91,6 +91,9 @@ class __libutils GlobalAttributes {
 		 * The search_path is from where the pgmpaths.conf must be loaded. */
 		static void setCustomPaths(const QString &search_path);
 
+		 //! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
+		static void setSearchPath(const QString &search_path);
+
 	public:
 		static const QString
 		PgModelerAppName,
@@ -180,6 +183,16 @@ class __libutils GlobalAttributes {
 			static constexpr unsigned MaxObjectCount = 15;
 		#endif
 
+		/*! \brief Performs the initialization of the global attributes by setting the
+		 * application's search path (and all assets/executable paths based upon search_path).
+		 *
+		 * The apply_ui_factor setup the QT_SCALE_FACTOR enviroment variable by getting the custom ui factor
+		 * from the file appearance.conf.
+		 *
+		 * ATTENTION: this method MUST be called before the instantiation of the Application
+		 * class otherwise the paths will not be configured correctly. */
+		static void init(const QString &search_path, bool apply_ui_factor);
+
 		//! \brief Returns the path to the "schemas" folder
 		static QString getSchemasRootPath();
 
@@ -246,17 +259,6 @@ class __libutils GlobalAttributes {
 		/*! \brief Returns the param_name value in the specified configuration file.
 		 *  Returns empty string when the config parameter or the file does not exist. */
 		static QString getConfigParamFromFile(const QString &param_name, const QString &conf_file);
-
-		/*! \brief Sets up the QT_SCALE_FACTOR enviroment variable by getting the custom ui factor
-		 *  from the file appearance.conf. This method should be called before the instantiation of
-		 *  any QCoreApplication-based class otherwise the environment variable will be ignored */
-		static void setCustomUiScaleFactor();
-
-		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
-		static void setSearchPath(const QString &search_path);
-
-		friend class Application;
-		friend class PgModelerUnitTest;
 };
 
 #endif

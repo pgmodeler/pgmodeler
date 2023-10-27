@@ -89,8 +89,7 @@ int main(int argc, char **argv)
 		signal(SIGSEGV, startCrashHandler);
 		signal(SIGABRT, startCrashHandler);
 
-		GlobalAttributes::setSearchPath(QFileInfo(argv[0]).absolutePath());
-		GlobalAttributes::setCustomUiScaleFactor();
+		GlobalAttributes::init(argv[0], true);
 		PgModelerApp app(argc,argv);
 		int res=0;
 
