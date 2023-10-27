@@ -319,9 +319,6 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 
 void GlobalAttributes::setSearchPath(const QString &search_path)
 {
-	QTextStream out(stdout);
-	out << search_path << Qt::endl;
-
 	setCustomPaths(search_path);
 	setConfigFilesPaths();
 
