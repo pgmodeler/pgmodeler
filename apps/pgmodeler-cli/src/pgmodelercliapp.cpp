@@ -1402,6 +1402,7 @@ void PgModelerCliApp::recreateObjects()
 	if(!changelog.isEmpty())
 	{
 		model->setPersistedChangelog(true);
+		xmlparser->restartParser();
 		xmlparser->loadXMLBuffer(changelog);
 
 		if(xmlparser->accessElement(XmlParser::ChildElement))
