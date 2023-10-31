@@ -40,7 +40,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_exec_corner_btn = new QToolButton(sql_exec_tbw);
 	sql_exec_corner_btn->setObjectName("sql_exec_corner_btn");
 	sql_exec_corner_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("newtab")));
-	sql_exec_corner_btn->setIconSize(disconnect_tb->iconSize());
+	//sql_exec_corner_btn->setIconSize(disconnect_tb->iconSize());
 	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 
 	corner_wgt = new QWidget(sql_exec_tbw);
@@ -111,6 +111,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 		}
 
 		disconnect_tb->setEnabled(databases_tbw->count() > 0);
+		setCornerButtonPos();
 	});
 }
 
@@ -164,16 +165,21 @@ void SQLToolWidget::setCornerButtonPos()
 	{
 		int idx = tab_bar->count() - 1,	px = 0, py = 0;
 
-		QWidget *left_btn = tab_bar->findChild<QWidget *>("ScrollLftButton"),
+		QWidget *left_btn = tab_bar->findChild<QWidget *>("ScrollLeftButton"),
 					*right_btn = tab_bar->findChild<QWidget *>("ScrollRightButton");
 
-		if((left_btn && left_btn->isVisible()) ||
-				(right_btn && right_btn->isVisible()))
-			px = corner_wgt->geometry().left() + 2;
-		else
-			px = tab_bar->tabRect(idx).right() + 2;
+		if(left_btn)
+		{
+			left_btn->move(left_btn->pos().x(), tab_bar->height() - left_btn->height() - 2);
+			right_btn->move(right_btn->pos().x(), tab_bar->height() - right_btn->height() - 2);
+		}
 
-		py = tab_bar->tabRect(idx).bottom() - sql_exec_corner_btn->height() - 2;
+		if(left_btn && left_btn->isVisible())
+			px = corner_wgt->geometry().left() + 1;
+		else
+			px = tab_bar->tabRect(idx).right() + 1;
+
+		py = tab_bar->height() - sql_exec_corner_btn->height() - 2;
 
 		sql_exec_corner_btn->raise();
 		sql_exec_corner_btn->move(px, py);
