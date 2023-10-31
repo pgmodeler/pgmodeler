@@ -35,6 +35,8 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
+		QVBoxLayout *corner_wgt_lt;
+
 		QList<QToolButton *> plugins_btns;
 
 		QToolButton *sql_exec_corner_btn;
@@ -42,6 +44,8 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		NumberedTextEditor *sourcecode_txt;
 
 		SyntaxHighlighter *sourcecode_hl;
+
+		QWidget *corner_wgt;
 
 		bool ignore_auto_browse_flag;
 
@@ -55,7 +59,11 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	protected:
 		void setPluginsButtons(const QList<QToolButton *> &list);
 
-	public:
+		void resizeEvent(QResizeEvent *);
+
+		void setCornerButtonPos();
+
+public:
 		SQLToolWidget(QWidget * parent = nullptr);
 		virtual ~SQLToolWidget();
 
