@@ -57,7 +57,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
 
@@ -655,17 +655,34 @@ void CodeCompletionWidget::extractTableNames()
 	 * perform a new name/alias extraction */
 	static QString curr_code;
 	QString code = code_field_txt->toPlainText();
+	QTextCursor tc = code_field_txt->textCursor();
 	int upd_idx = code.indexOf("update", 0, Qt::CaseInsensitive),
 			from_idx = code.indexOf("from", 0, Qt::CaseInsensitive),
 			into_idx = code.indexOf("into", 0, Qt::CaseInsensitive),
-			pos = std::max(from_idx, std::max(into_idx, upd_idx));
+			pos = std::max(from_idx, std::max(into_idx, upd_idx)),
+			ins_cols_ini = -1, ins_cols_end = -1;
+
+	/* If we have an INTO clause may be an indication that
+	 * we have an INSERT INTO command. In that case we need to
+	 * check if the cursor is in the () VALUES clause. In positive case
+	 * we need to show the column names instead of capture the alias of the table */
+	if(into_idx > 0)
+	{
+		ins_cols_ini = code.lastIndexOf("(", tc.position());
+		ins_cols_end = code.indexOf("values", tc.position() , Qt::CaseInsensitive);
+
+		/* Invalidating the control variables if the "(" position is greater than the "values",
+		 * or if one of the variables is positive and the other not */
+		if(ins_cols_ini < 0 || ins_cols_end < 0 ||
+			 (ins_cols_ini > ins_cols_end))
+			ins_cols_ini = ins_cols_end = -1;
+	}
 
 	code = code.mid(pos < 0 ? 0 : pos);
 
 	if(curr_code == code)
 		return;
 
-	QTextCursor tc = code_field_txt->textCursor();
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false;
 	TextBlockInfo *blk_info = nullptr;
@@ -741,8 +758,16 @@ void CodeCompletionWidget::extractTableNames()
 				else
 				{
 					// Register the alias only if it does not exist and a table name is fully specified
-					if(extract_alias &&	 !special_chars.contains(curr_word) && !tab_aliases.count(curr_word) &&
-						 !tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0)
+					if(extract_alias &&
+						 !special_chars.contains(curr_word) && !tab_aliases.count(curr_word) &&
+						 !tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
+
+							/* Special case of INSERT command: if the cursor is between the "( ) VALUES"
+							 * of the command we discard the current word to avoid associating it as a
+							 * table alias */
+							((ins_cols_ini < 0) ||
+								((ins_cols_ini >= 0) &&
+									((tc.position() < ins_cols_ini) || (tc.position() > ins_cols_end)))))
 					{
 						alias.append(curr_word);
 						tab_aliases[alias] = tab_name;
