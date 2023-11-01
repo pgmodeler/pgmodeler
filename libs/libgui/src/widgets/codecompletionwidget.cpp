@@ -39,7 +39,8 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	 * is not important but if they are need to do some extra checkings */
 	"inner", "outer", "left", "right",
 	"full", "union", "intersect",
-	"except","distinct", "all"
+	"except","distinct", "values",
+	"all"
 };
 
 const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
@@ -485,6 +486,14 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		{
 			tab_names = getTableNames(dml_kwords_pos[Update], dml_kwords_pos[Set]);
 		}
+		// Retrieving the table name between INSERT INTO ... VALUES
+		else if((dml_kwords_pos[Insert] >= 0 &&
+							dml_kwords_pos[Into] >= 0 &&
+							dml_kwords_pos[Values] >= 0 &&
+							cur_pos < dml_kwords_pos[Values]))
+		{
+			tab_names = getTableNames(dml_kwords_pos[Into], dml_kwords_pos[Values]);
+		}
 	}
 
 	QStringList aux_names, aliases;
@@ -634,6 +643,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		}
 	}
 
+	name_list->sortItems();
 	return retrieved;
 }
 
