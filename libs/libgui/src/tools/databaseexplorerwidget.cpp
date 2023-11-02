@@ -135,7 +135,11 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")},
 	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}, {Attributes::FromSqlFunc, QT_TR_NOOP("From SQL Func.")},
 	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")} , {Attributes::TransformTypes, QT_TR_NOOP("Transform types")},
-	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters")}
+	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters") }, {Attributes::IsTemplate, QT_TR_NOOP("Is template")},
+	{Attributes::TemplateDb, QT_TR_NOOP("Template DB") }, {Attributes::AllowConns, QT_TR_NOOP("Allows connection")},
+	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE Modifier")},
+	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE Modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
+	{Attributes::IsExtType, QT_TR_NOOP("Is extension type")}, {Attributes::RefTables, QT_TR_NOOP("Referenced tables")},
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -363,6 +367,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case ObjectType::ForeignServer: formatServerAttribs(attribs); break;
 			case ObjectType::UserMapping: formatUserMappingAttribs(attribs); break;
 			case ObjectType::Procedure: formatProcedureAttribs(attribs); break;
+			case ObjectType::Database: formatDatabaseAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -421,7 +426,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs)
 {
-	for(QString attr : bool_attrs)
+	for(auto &attr : bool_attrs)
 		attribs[attr]=(attribs[attr].isEmpty() ?
 							 attribs_i18n.at(Attributes::False) :
 							 attribs_i18n.at(Attributes::True));
@@ -431,19 +436,31 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 {
 	try
 	{
+		formatOidAttribs(attribs, oid_attrs, std::vector<ObjectType>{ obj_type }, is_oid_array);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, const std::vector<ObjectType> &obj_types, bool is_oid_array)
+{
+	try
+	{
 		if(!is_oid_array)
 		{
-			for(QString attr : oid_attrs)
-				attribs[attr]=getObjectName(obj_type, attribs[attr]);
+			for(auto &attr : oid_attrs)
+				attribs[attr] = getObjectName(obj_types, attribs[attr]);
 		}
 		else
 		{
 			QStringList names;
 
-			for(QString attr : oid_attrs)
+			for(auto &attr : oid_attrs)
 			{
-				names=getObjectsNames(obj_type, Catalog::parseArrayValues(attribs[attr]));
-				attribs[attr]=names.join(UtilsNs::DataSeparator);
+				names = getObjectsNames(obj_types, Catalog::parseArrayValues(attribs[attr]));
+				attribs[attr]= names.join(UtilsNs::DataSeparator);
 			}
 		}
 	}
@@ -451,6 +468,11 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void DatabaseExplorerWidget::formatDatabaseAttribs(attribs_map &attribs)
+{
+	formatBooleanAttribs(attribs, { Attributes::IsTemplate });
 }
 
 void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
@@ -650,6 +672,9 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatViewAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { Attributes::Materialized });
+
+	formatOidAttribs(attribs, { Attributes::RefTables },
+										{ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable }, true);
 }
 
 void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
@@ -657,9 +682,9 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 	QStringList range_attr=Catalog::parseArrayValues(attribs[Attributes::RangeAttribs]),
 			type_attr=Catalog::parseArrayValues(attribs[Attributes::TypeAttribute]);
 
-	formatBooleanAttribs(attribs, { Attributes::ByValue,
-									Attributes::Collatable,
-									Attributes::Preferred });
+	formatBooleanAttribs(attribs, { Attributes::ByValue, Attributes::Collatable,
+																	Attributes::Preferred, Attributes::IsExtType });
+
 	formatOidAttribs(attribs, { Attributes::AnalyzeFunc,
 								Attributes::InputFunc,
 								Attributes::OutputFunc,
@@ -667,6 +692,7 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 								Attributes::SendFunc,
 								Attributes::TpmodInFunc,
 								Attributes::TpmodOutFunc }, ObjectType::Function, false);
+
 	attribs[Attributes::Element]=getObjectName(ObjectType::Type, attribs[Attributes::Element]);
 
 	if(attribs[Attributes::Labels].isEmpty())
@@ -688,7 +714,7 @@ void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
 	{
 		QStringList list, fmt_attribs;
 
-		for(QString attr : type_attr)
+		for(auto &attr : type_attr)
 		{
 			list=attr.split(':');
 			list.removeAt(2);
@@ -927,7 +953,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 				QString type_name;
 				std::vector<QString> attrib_ids={ Attributes::LeftType, Attributes::RightType };
 
-				for(QString attr : attrib_ids)
+				for(auto &attr : attrib_ids)
 				{
 					names=getObjectName(ObjectType::Type, attribs[attr]).split('.');
 					type_name=names[names.size()-1];
@@ -952,6 +978,18 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 {
 	try
 	{
+		return getObjectsNames(std::vector<ObjectType>{ obj_type }, oids, sch_name, tab_name);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+QStringList DatabaseExplorerWidget::getObjectsNames(const std::vector<ObjectType> &types, const QStringList &oids, const QString &sch_name, const QString tab_name)
+{
+	try
+	{
 		if(oids.isEmpty())
 			return QStringList{ DepNotDefined };
 		else
@@ -962,16 +1000,20 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 			QStringList names;
 
 			//Converting the oids to unsigned in order to filter them on Catalog
-			for(QString oid : oids)
+			for(auto &oid : oids)
 				oids_vect.push_back(oid.toUInt());
 
 			//Retrieve all the objects by their oids and put them on a auxiliary map in which key is their oids
-			attribs_vect=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
-			for(attribs_map attr : attribs_vect)
-				attrs_map[attr[Attributes::Oid]]=attr;
+			for(auto &type : types)
+			{
+				attribs_vect = catalog.getObjectsAttributes(type, sch_name, tab_name, oids_vect);
+
+				for(auto & attr : attribs_vect)
+					attrs_map[attr[Attributes::Oid]] = attr;
+			}
 
 			//Retreving the names from the auxiliary map using the provided oids
-			for(QString oid : oids)
+			for(auto &oid : oids)
 				names.push_back(formatObjectName(attrs_map[oid]));
 
 			return names;
@@ -987,12 +1029,35 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 {
 	try
 	{
+		return getObjectName(std::vector<ObjectType>{ obj_type }, oid, sch_name, tab_name);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+QString DatabaseExplorerWidget::getObjectName(const std::vector<ObjectType> &types, const QString &oid, const QString &sch_name, const QString tab_name)
+{
+	try
+	{
 		if(oid=="0" || oid.isEmpty())
 			return DepNotDefined;
 		else
 		{
-			attribs_map attribs=catalog.getObjectAttributes(obj_type, oid.toUInt(), sch_name, tab_name);
-			return formatObjectName(attribs);
+			attribs_map attribs;
+			QString name;
+
+			for(auto &type : types)
+			{
+				attribs = catalog.getObjectAttributes(type, oid.toUInt(), sch_name, tab_name);
+				name = formatObjectName(attribs);
+
+				if(!name.isEmpty())
+					return name;
+			}
+
+			return DepNotDefined;
 		}
 	}
 	catch(Exception &e)
@@ -1868,7 +1933,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 															.arg(attribs_i18n.at(Attributes::Referrers))
 															.arg(ref_tab_names.length()));
 
-					for(QString tab_name : ref_tab_names)
+					for(auto &tab_name : ref_tab_names)
 					{
 						tab_item=new QTreeWidgetItem(refs_item);
 						tab_item->setData(DatabaseImportForm::ObjectId, Qt::UserRole, QVariant::fromValue<int>(-1));

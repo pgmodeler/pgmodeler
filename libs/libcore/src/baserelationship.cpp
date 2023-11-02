@@ -163,11 +163,17 @@ void BaseRelationship::configureRelationship()
 
 BaseRelationship::~BaseRelationship()
 {
-	disconnectRelationship();
+	//disconnectRelationship();
 
 	//Unallocates the labels
-	for(unsigned i=0; i<3; i++)
-		if(lables[i]) delete lables[i];
+	for(unsigned i = 0; i < 3; i++)
+	{
+		if(lables[i])
+		{
+			delete lables[i];
+			lables[i] = nullptr;
+		}
+	}
 }
 
 void BaseRelationship::setName(const QString &name)

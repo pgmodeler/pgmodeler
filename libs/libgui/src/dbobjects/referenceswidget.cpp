@@ -151,7 +151,7 @@ void ReferencesWidget::showReferenceData(int row, BaseObject *object, const QStr
 
 	references_tab->setCellText(ref_name, row, 0);
 	references_tab->setCellText(ref_alias, row, 1);
-	references_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 2);
+	references_tab->setCellText(object->getSignature(), row, 2);
 	references_tab->setCellText(object->getTypeName(), row, 3);
 	references_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 4);
 	references_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 5);

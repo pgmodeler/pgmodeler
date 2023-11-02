@@ -1986,11 +1986,11 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 				ref_tab = dbmodel->getForeignTable(getDependencyObject(tab_oid, ObjectType::ForeignTable, true, true, false));
 
 				if(!ref_tab)
-					ref_tab = dbmodel->getForeignTable(getDependencyObject(tab_oid, ObjectType::View, true, true, false));
+					ref_tab = dbmodel->getView(getDependencyObject(tab_oid, ObjectType::View, true, true, false));
 			}
 
 			if(ref_tab)
-				references.push_back(Reference(ref_tab, ref_tab->getName(), "", false, false, false));
+				references.push_back(Reference(ref_tab, ref_tab->getName(), "", true, false, false));
 		}
 
 		for(auto &ref : references)

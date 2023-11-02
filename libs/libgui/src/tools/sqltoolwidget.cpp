@@ -284,6 +284,7 @@ void SQLToolWidget::disconnectFromDatabases()
 			connections_cmb->setCurrentIndex(0);
 			disconnect_tb->setEnabled(false);
 			sourcecode_txt->clear();
+			setCornerButtonPos();
 		}
 	}
 	catch(Exception &e)
