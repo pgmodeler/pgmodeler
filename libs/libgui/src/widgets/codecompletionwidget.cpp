@@ -57,7 +57,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
 
@@ -75,7 +75,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	name_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	name_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	name_list->setMaximumHeight(completion_wgt->maximumHeight() - always_on_top_chk->height() - GuiUtilsNs::LtSpacing);
+	name_list->setMaximumHeight(completion_wgt->maximumHeight());
 	name_list->setItemDelegate(new HtmlItemDelegate(name_list, true));
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
@@ -95,6 +95,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
 	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::adjustNameListWidth);
 	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListWidth);
 
 	connect(&popup_timer, &QTimer::timeout, this, [this](){
@@ -128,7 +129,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 	if(k_event && k_event->type()==QEvent::KeyPress)
 	{
-		if(object==code_field_txt)
+		if(object == code_field_txt)
 		{
 			TextBlockInfo *blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
 
@@ -152,13 +153,14 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				popup_timer.stop();
 
 				//Filters the Crtl+Space to trigger the code completion
-				if(k_event->key()==Qt::Key_Space && (k_event->modifiers()==Qt::ControlModifier || k_event->modifiers()==Qt::MetaModifier))
+				if(k_event->key() == Qt::Key_Space &&
+						(k_event->modifiers() == Qt::ControlModifier || k_event->modifiers() == Qt::MetaModifier))
 				{
 					setQualifyingLevel(nullptr);
 					this->show();
 					return true;
 				}
-				else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
+				else if(k_event->key() == Qt::Key_Space || k_event->key() == Qt::Key_Backspace || k_event->key() == Qt::Key_Delete)
 				{
 					QTextCursor tc=code_field_txt->textCursor();
 					tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
@@ -166,13 +168,13 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 					/* Avoiding deleting text using backspace or delete if the current char is the completion trigger (.).
 						 This will block the cursor and cause the list to stay in the current qualifying level */
 					if(completion_wgt->isVisible() &&
-						 (k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete) &&
+						 (k_event->key() == Qt::Key_Backspace || k_event->key() == Qt::Key_Delete) &&
 						 tc.selectedText().contains(completion_trigger))
 					{
 						event->ignore();
 						return true;
 					}
-					else if(k_event->key()==Qt::Key_Space)
+					else if(k_event->key() == Qt::Key_Space)
 					{
 						setQualifyingLevel(nullptr);
 
@@ -185,7 +187,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				}
 			}
 		}
-		else if(object==name_list)
+		else if(object == name_list)
 		{
 			if(k_event->key()==Qt::Key_Escape)
 			{
@@ -193,14 +195,14 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				return true;
 			}
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
-			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
+			else if(k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return)
 			{
 				if(!always_on_top_chk->isChecked())
 					this->selectItem();
 				else
 				{
 					//Forcing the line break on the code field when holding Control key and hit return/enter
-					if(k_event->modifiers()==Qt::ControlModifier)
+					if(k_event->modifiers() == Qt::ControlModifier)
 					{
 						QTextCursor cursor=code_field_txt->textCursor();
 						code_field_txt->insertPlainText(QChar(QChar::LineFeed));
@@ -216,14 +218,13 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				return true;
 			}
 			//Filters other key press and redirects to the code input field
-			else if(k_event->key()!=Qt::Key_Up && k_event->key()!=Qt::Key_Down &&
-					k_event->key()!=Qt::Key_PageUp && k_event->key()!=Qt::Key_PageDown &&
-					k_event->key()!=Qt::Key_Home && k_event->key()!=Qt::Key_End &&
-					k_event->modifiers()!=Qt::AltModifier)
+			else if(k_event->key() != Qt::Key_Up && k_event->key() != Qt::Key_Down &&
+							k_event->key() != Qt::Key_PageUp && k_event->key() != Qt::Key_PageDown &&
+							k_event->key() != Qt::Key_Home && k_event->key() != Qt::Key_End &&
+							k_event->modifiers() != Qt::AltModifier)
 			{
-
 				QCoreApplication::sendEvent(code_field_txt, k_event);
-				this->updateList();
+				updateList();
 				return true;
 			}
 		}
@@ -362,11 +363,12 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
-
 	updateList();
-	completion_wgt->show();
-	adjustNameListWidth();
 
+	if(name_list->count() == 0)
+		return;
+
+	completion_wgt->show();
 	popup_timer.stop();
 
 	QTimer::singleShot(500, this, [this](){
@@ -398,13 +400,14 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 
 void CodeCompletionWidget::resetKeywordsPos()
 {
-	for(unsigned id = Select; id <= Where; id++)
+	for(unsigned id = Select; id <= All; id++)
 		dml_kwords_pos[id] = -1;
 }
 
 bool CodeCompletionWidget::retrieveColumnNames()
 {
-	QTextCursor tc = code_field_txt->textCursor();
+	QTextCursor tc = code_field_txt->textCursor(),
+			orig_tc = tc;
 	int cur_pos = tc.position();
 	QStringList tab_names;
 	QString curr_word;
@@ -486,13 +489,27 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		{
 			tab_names = getTableNames(dml_kwords_pos[Update], dml_kwords_pos[Set]);
 		}
-		// Retrieving the table name between INSERT INTO ... VALUES
-		else if((dml_kwords_pos[Insert] >= 0 &&
-							dml_kwords_pos[Into] >= 0 &&
-							dml_kwords_pos[Values] >= 0 &&
-							cur_pos < dml_kwords_pos[Values]))
+		// Retrieving the table name between INSERT INTO ...
+		else if(dml_kwords_pos[Insert] >= 0 &&	dml_kwords_pos[Into] >= 0)
 		{
-			tab_names = getTableNames(dml_kwords_pos[Into], dml_kwords_pos[Values]);
+			// First case: the cursor is between () VALUES
+			if(dml_kwords_pos[Values] >= 0 && cur_pos < dml_kwords_pos[Values])
+				tab_names = getTableNames(dml_kwords_pos[Into], dml_kwords_pos[Values]);
+			else
+			{
+				// Second case: the cursor is after ( but the keyword VALUES is absent
+				int end_pos = -1;
+				code_field_txt->setTextCursor(orig_tc);
+
+				if(code_field_txt->find("(", QTextDocument::FindBackward))
+				{
+					end_pos = code_field_txt->textCursor().position();
+					code_field_txt->setTextCursor(orig_tc);
+				}
+
+				if(end_pos >=0 && dml_kwords_pos[Into] < end_pos && cur_pos > end_pos)
+					tab_names = getTableNames(dml_kwords_pos[Into], end_pos);
+			}
 		}
 	}
 
@@ -649,17 +666,9 @@ bool CodeCompletionWidget::retrieveObjectNames()
 
 void CodeCompletionWidget::extractTableNames()
 {
-	/* Before parsing the SQL command in searching of table names and aliases
-	 * we check if the code have changed compared to a previous call to this
-	 * method. If it not changed, we just skip the extraction otherwise we
-	 * perform a new name/alias extraction */
-	static QString curr_code;
 	QString code = code_field_txt->toPlainText();
 	QTextCursor tc = code_field_txt->textCursor();
-	int upd_idx = code.indexOf("update", 0, Qt::CaseInsensitive),
-			from_idx = code.indexOf("from", 0, Qt::CaseInsensitive),
-			into_idx = code.indexOf("into", 0, Qt::CaseInsensitive),
-			pos = std::max(from_idx, std::max(into_idx, upd_idx)),
+	int into_idx = dml_kwords_pos[Into],
 			ins_cols_ini = -1, ins_cols_end = -1;
 
 	/* If we have an INTO clause may be an indication that
@@ -669,25 +678,19 @@ void CodeCompletionWidget::extractTableNames()
 	if(into_idx > 0)
 	{
 		ins_cols_ini = code.lastIndexOf("(", tc.position());
-		ins_cols_end = code.indexOf("values", tc.position() , Qt::CaseInsensitive);
+		ins_cols_end = dml_kwords_pos[Values];
 
 		/* Invalidating the control variables if the "(" position is greater than the "values",
 		 * or if one of the variables is positive and the other not */
-		if(ins_cols_ini < 0 || ins_cols_end < 0 ||
-			 (ins_cols_ini > ins_cols_end))
+		if(ins_cols_ini < 0 || //ins_cols_end < 0
+				(ins_cols_end >= 0 && ins_cols_ini > ins_cols_end))
 			ins_cols_ini = ins_cols_end = -1;
 	}
-
-	code = code.mid(pos < 0 ? 0 : pos);
-
-	if(curr_code == code)
-		return;
 
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false;
 	TextBlockInfo *blk_info = nullptr;
 
-	curr_code = code;
 	tab_aliases.clear();
 	tab_names_pos.clear();
 	tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
@@ -765,9 +768,10 @@ void CodeCompletionWidget::extractTableNames()
 							/* Special case of INSERT command: if the cursor is between the "( ) VALUES"
 							 * of the command we discard the current word to avoid associating it as a
 							 * table alias */
-							((ins_cols_ini < 0) ||
-								((ins_cols_ini >= 0) &&
-									((tc.position() < ins_cols_ini) || (tc.position() > ins_cols_end)))))
+							(into_idx < 0 || ins_cols_ini < 0 ||
+							 (into_idx >= 0 &&
+								((tc.position() < ins_cols_ini) ||
+									(ins_cols_end >= 0 && tc.position() > ins_cols_end)))))
 					{
 						alias.append(curr_word);
 						tab_aliases[alias] = tab_name;
@@ -831,7 +835,7 @@ QStringList CodeCompletionWidget::getTableAliases(const QString &name)
 bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
-	QStringList dml_cmds,	dml_clauses;
+	QStringList dml_cmds;
 	unsigned kw_id = Select;
 	int found_kw_id = -1;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
@@ -839,57 +843,38 @@ bool CodeCompletionWidget::updateObjectsList()
 																						 QTextDocument::FindWholeWords };
 
 	dml_cmds = dml_keywords.mid(Select, 5);
-	dml_clauses = dml_keywords.mid(From);
 	orig_tc = tc = code_field_txt->textCursor();
+	resetKeywordsPos();
 
-	for(auto &cmd : dml_cmds)
+	for(auto &kw : dml_keywords)
 	{
-		/* Finding the postion of the DML command start (SELECT, INSERT, UPDATE, DELETE, TRUNCATE).
-		 * This will be the starting point of the search for the other keywords */
 		for(auto &flag : find_flags)
 		{
 			code_field_txt->setTextCursor(tc);
 
-			if(code_field_txt->find(cmd, flag))
+			if(dml_kwords_pos[kw_id] >= 0)
+				break;
+
+			if(code_field_txt->find(kw, flag))
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
-				found_kw_id = kw_id;
+
+				if(found_kw_id < 0 && dml_cmds.contains(kw))
+					found_kw_id = kw_id;
 			}
 			else
 				dml_kwords_pos[kw_id] = -1;
-
-			if(dml_kwords_pos[kw_id] >= 0)
-				break;
 		}
 
 		code_field_txt->setTextCursor(tc);
 		kw_id++;
 	}
 
-	// If none of the dml command start are found, abort the completion
-	if(found_kw_id < 0)
-		return false;
-
-	// Move the cursor right after the select keyword
-	tc.setPosition(dml_kwords_pos[found_kw_id] + 1);
-	code_field_txt->setTextCursor(tc);
-	kw_id = From;
-
-	// Finding the position of the FROM/JOIN/WHERE keywords
-	for(auto &kw : dml_clauses)
-	{
-		if(code_field_txt->find(kw, QTextDocument::FindWholeWords))
-			dml_kwords_pos[kw_id++] = code_field_txt->textCursor().position();
-		else
-			dml_kwords_pos[kw_id++] = -1;
-
-		code_field_txt->setTextCursor(tc);
-	}
-
 	int cur_pos = orig_tc.position();
 	code_field_txt->setTextCursor(orig_tc);
 
-	if(cur_pos < 0)
+	// If none of the dml command is found, abort the completion
+	if(found_kw_id < 0 || cur_pos < 0)
 		return false;
 
 	try
@@ -1064,11 +1049,7 @@ void CodeCompletionWidget::updateList()
 	}
 
 	if(name_list->count()==0)
-	{
-		name_list->addItem(tr("(no items found)"));
-		name_list->item(0)->setFlags(Qt::NoItemFlags);
 		QToolTip::hideText();
-	}
 	else
 		name_list->item(0)->setSelected(true);
 
@@ -1076,6 +1057,7 @@ void CodeCompletionWidget::updateList()
 	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
 	name_list->scrollToTop();
 	name_list->setFocus();
+	adjustNameListWidth();
 }
 
 void CodeCompletionWidget::selectItem()
@@ -1190,6 +1172,8 @@ void CodeCompletionWidget::adjustNameListWidth()
 
 	if(first_row >= 0 && last_row < 0)
 		last_row = name_list->count() - 1;
+	else if(first_row < 0 && last_row < 0)
+		return;
 
 	for(int row = first_row; row <= last_row; row++)
 	{
