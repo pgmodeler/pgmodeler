@@ -599,6 +599,12 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		});
 
 		obj_name.prepend(curr_word);
+
+		/* If we reached the start of the code, we just break to avoid
+		 * repeatedly extracting the first word */
+		if(tc.position() == 0)
+			break;
+
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
 	}
 
@@ -838,6 +844,8 @@ bool CodeCompletionWidget::updateObjectsList()
 	QStringList dml_cmds;
 	unsigned kw_id = Select;
 	int found_kw_id = -1;
+	bool cursor_after_kw = false, kw_found = false;
+	TextBlockInfo *blk_info = nullptr;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
 																							QTextDocument::FindBackward),
 																						 QTextDocument::FindWholeWords };
@@ -855,12 +863,19 @@ bool CodeCompletionWidget::updateObjectsList()
 			if(dml_kwords_pos[kw_id] >= 0)
 				break;
 
-			if(code_field_txt->find(kw, flag))
+			kw_found = code_field_txt->find(kw, flag);
+			blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+
+			// Avoiding using the position of a found keyword that is in a commented block
+			if(kw_found && blk_info && blk_info->isCompletionAllowed())
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
 
 				if(found_kw_id < 0 && dml_cmds.contains(kw))
 					found_kw_id = kw_id;
+
+				if(!cursor_after_kw && orig_tc.position() >= dml_kwords_pos[kw_id])
+					cursor_after_kw = true;
 			}
 			else
 				dml_kwords_pos[kw_id] = -1;
@@ -870,11 +885,10 @@ bool CodeCompletionWidget::updateObjectsList()
 		kw_id++;
 	}
 
-	int cur_pos = orig_tc.position();
 	code_field_txt->setTextCursor(orig_tc);
 
 	// If none of the dml command is found, abort the completion
-	if(found_kw_id < 0 || cur_pos < 0)
+	if(found_kw_id < 0 || orig_tc.position() == 0 || !cursor_after_kw)
 		return false;
 
 	try
