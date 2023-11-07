@@ -57,7 +57,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
 
@@ -364,12 +364,12 @@ void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
 	updateList();
+	popup_timer.stop();
 
 	if(name_list->count() == 0)
 		return;
 
 	completion_wgt->show();
-	popup_timer.stop();
 
 	QTimer::singleShot(500, this, [this](){
 		showItemTooltip();
@@ -411,7 +411,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	int cur_pos = tc.position();
 	QStringList tab_names;
 	QString curr_word;
-	bool found_alias = false;
+	bool found_alias = false, allow_tab_alias = true;
 
 	// If a table alias is being referenced we use the name of the table aliased
 	if(word == completion_trigger)
@@ -495,20 +495,60 @@ bool CodeCompletionWidget::retrieveColumnNames()
 			// First case: the cursor is between () VALUES
 			if(dml_kwords_pos[Values] >= 0 && cur_pos < dml_kwords_pos[Values])
 				tab_names = getTableNames(dml_kwords_pos[Into], dml_kwords_pos[Values]);
-			else
+			else if(dml_kwords_pos[Values] < 0)
 			{
 				// Second case: the cursor is after ( but the keyword VALUES is absent
-				int end_pos = -1;
-				code_field_txt->setTextCursor(orig_tc);
+				int open_par = -1, close_par = -1;
+				QTextCursor tc = orig_tc;
 
-				if(code_field_txt->find("(", QTextDocument::FindBackward))
+				tc.setPosition(dml_kwords_pos[Into]);
+				code_field_txt->setTextCursor(tc);
+
+				/* If we find the open parenthesis may indicate that the cursor is
+				 * in the columns list section of the command */
+				if(code_field_txt->find("("))
 				{
-					end_pos = code_field_txt->textCursor().position();
+					QString curr_word;
+
+					open_par = code_field_txt->textCursor().position();
+					tc = code_field_txt->textCursor();
+					tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+
+					/* Now, we have to navigate through the next words and try to find the closing parenthesis
+					 * that indicates the end of columns list in the insert command */
+					while(!tc.atEnd())
+					{
+						tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+						curr_word = tc.selectedText();
+						tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+
+						/* If we find the closing parathesis, or if the columns list is not closed yet
+						 * and another opening parenthesis is found or even a DML keyword, we stop to
+						 * navigate through the words and assume that the column list end position is
+						 * the current cursor position */
+						if(curr_word.contains(")") || curr_word.contains("(") || dml_keywords.contains(curr_word))
+						{
+							close_par = tc.position();
+							break;
+						}
+					}
+
 					code_field_txt->setTextCursor(orig_tc);
 				}
 
-				if(end_pos >=0 && dml_kwords_pos[Into] < end_pos && cur_pos > end_pos)
-					tab_names = getTableNames(dml_kwords_pos[Into], end_pos);
+				/* If the cursor is betwen the () on the INSERT INTO ... () command
+				 * we get the table name that is between the INTO ... ) */
+				if(open_par >=0 && close_par >=0 &&
+						dml_kwords_pos[Into] < close_par &&
+						cur_pos >= open_par && cur_pos <= close_par)
+				{
+					tab_names = getTableNames(dml_kwords_pos[Into], close_par);
+
+					/* This flag indicates that the table alias must not be prepended to the column names.
+					 * This because the columns list in INSERT INTO ... (col_list) does't accept the use
+					 * of table aliases */
+					allow_tab_alias = false;
+				}
 			}
 		}
 	}
@@ -547,12 +587,11 @@ bool CodeCompletionWidget::retrieveColumnNames()
 			for(auto &alias : aliases)
 			{
 				item = new QListWidgetItem(QIcon(GuiUtilsNs::getIconPath(ObjectType::Column)),
-																	 alias.isEmpty() ?
-																	 attr.second :
-																	QString("<strong><em>%1</em>.</strong>%2").arg(alias, attr.second));
+																	 alias.isEmpty() || !allow_tab_alias ?
+																	 attr.second : QString("<strong><em>%1</em>.</strong>%2").arg(alias, attr.second));
 
 				item->setData(Qt::UserRole,
-											alias.isEmpty() ?
+											alias.isEmpty() || !allow_tab_alias ?
 											BaseObject::formatName(attr.second) :
 											QString("%1.%2").arg(BaseObject::formatName(alias),
 																					 BaseObject::formatName(attr.second)));
@@ -562,8 +601,7 @@ bool CodeCompletionWidget::retrieveColumnNames()
 															QString("<strong>%1</strong>.%2").arg(sch_name, tab_name)));
 
 				key = QString("%1_%2.%3").arg(QString::number(tab_pos).rightJustified(4, '0'),
-																			tab_name,
-																			attr.second);
+																			tab_name,	attr.second);
 				items[key] = item;
 			}
 		}
@@ -602,7 +640,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 
 		/* If we reached the start of the code, we just break to avoid
 		 * repeatedly extracting the first word */
-		if(tc.position() == 0)
+		if(tc.atStart())
 			break;
 
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::MoveAnchor);
@@ -745,10 +783,13 @@ void CodeCompletionWidget::extractTableNames()
 				if(curr_word.isEmpty())
 					continue;
 
-				if(curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
-					 dml_keywords.contains(curr_word, Qt::CaseInsensitive))
+				// If we found a DML keyword or special char, we abort the table name/alias extraction
+				if(special_chars.contains(curr_word) ||
+					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
+						dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
 					break;
 
+				// If we find an AS keyword after extracting the table name we switch to alias extraction
 				if(!extract_alias && !curr_word.isEmpty() &&
 					 (curr_word.compare("as", Qt::CaseInsensitive) == 0 || tab_name_extracted))
 					extract_alias = true;
@@ -769,15 +810,15 @@ void CodeCompletionWidget::extractTableNames()
 					// Register the alias only if it does not exist and a table name is fully specified
 					if(extract_alias &&
 						 !special_chars.contains(curr_word) && !tab_aliases.count(curr_word) &&
-						 !tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
+							!tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0)// &&
 
 							/* Special case of INSERT command: if the cursor is between the "( ) VALUES"
 							 * of the command we discard the current word to avoid associating it as a
 							 * table alias */
-							(into_idx < 0 || ins_cols_ini < 0 ||
+							/*(into_idx < 0 || ins_cols_ini < 0 ||
 							 (into_idx >= 0 &&
 								((tc.position() < ins_cols_ini) ||
-									(ins_cols_end >= 0 && tc.position() > ins_cols_end)))))
+									(ins_cols_end >= 0 && tc.position() > ins_cols_end))))) */
 					{
 						alias.append(curr_word);
 						tab_aliases[alias] = tab_name;
@@ -893,8 +934,6 @@ bool CodeCompletionWidget::updateObjectsList()
 
 	try
 	{
-		qApp->setOverrideCursor(Qt::WaitCursor);
-
 		bool cols_retrieved = false, objs_retrieved = false;
 
 		name_list->clear();
@@ -904,13 +943,10 @@ bool CodeCompletionWidget::updateObjectsList()
 		if(!cols_retrieved)
 			objs_retrieved = retrieveObjectNames();
 
-		qApp->restoreOverrideCursor();
-
 		return cols_retrieved || objs_retrieved;
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
 		QTextStream out(stdout);
 		out << e.getExceptionsText() << Qt::endl;
 		return false;
@@ -926,6 +962,8 @@ void CodeCompletionWidget::updateList()
 																																			ObjectType::Relationship,
 																																			ObjectType::BaseRelationship });
 	QTextCursor tc;
+
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
 	name_list->clear();
 	word.clear();
@@ -1066,6 +1104,8 @@ void CodeCompletionWidget::updateList()
 		QToolTip::hideText();
 	else
 		name_list->item(0)->setSelected(true);
+
+	qApp->restoreOverrideCursor();
 
 	//Sets the list position right below of text cursor
 	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
