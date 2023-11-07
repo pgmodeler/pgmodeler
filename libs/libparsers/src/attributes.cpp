@@ -412,6 +412,7 @@ namespace Attributes {
 	NotExtObject("not-ext-object"),
 	NotNull("not-null"),
 	NullsFirst("nulls-first"),
+	NullsNotDistinct("nulls-not-distinct"),
 	Object("object"),
 	ObjectFinder("objectfinder"),
 	ObjectId("object-id"),

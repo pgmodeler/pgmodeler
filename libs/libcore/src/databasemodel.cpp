@@ -5271,6 +5271,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		{
 			constr->setIndexType(attribs[Attributes::IndexType]);
 		}
+		else if(constr_type==ConstraintType::Unique)
+			constr->setNullsNotDistinct(attribs[Attributes::NullsNotDistinct]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5611,6 +5613,7 @@ Index *DatabaseModel::createIndex()
 		index->setIndexAttribute(Index::Unique, attribs[Attributes::Unique]==Attributes::True);
 		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FastUpdate]==Attributes::True);
 		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
+		index->setIndexAttribute(Index::NullsNotDistinct, attribs[Attributes::NullsNotDistinct]==Attributes::True);
 		index->setIndexingType(attribs[Attributes::IndexType]);
 		index->setFillFactor(attribs[Attributes::Factor].toUInt());
 

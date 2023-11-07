@@ -71,6 +71,12 @@
 			[ id.indnatts AS elements_count, ]
 		%end
 
+		%if ({pgsql-ver} >=f "15.0") %then
+			[ id.indnullsnotdistinct AS nulls_not_distinct_bool, ]
+		%else
+			[ FALSE AS nulls_not_distinct_bool, ]
+		%end
+
 		({comment}) [ AS comment ]
 
 		[

@@ -100,6 +100,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FastUpdate));
 		unique_chk->setChecked(index->getIndexAttribute(Index::Unique));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::Buffering));
+		nulls_not_distinct_chk->setChecked(index->getIndexAttribute(Index::NullsNotDistinct));
 		predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
@@ -126,6 +127,7 @@ void IndexWidget::applyConfiguration()
 		index->setIndexAttribute(Index::Concurrent, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::Unique, unique_chk->isChecked());
 		index->setIndexAttribute(Index::Buffering, buffering_chk->isChecked());
+		index->setIndexAttribute(Index::NullsNotDistinct, nulls_not_distinct_chk->isChecked());
 		index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 

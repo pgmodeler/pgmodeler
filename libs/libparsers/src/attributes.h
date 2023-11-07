@@ -428,6 +428,7 @@ namespace Attributes {
 	NotExtObject,
 	NotNull,
 	NullsFirst,
+	NullsNotDistinct,
 	Object,
 	ObjectFinder,
 	ObjectId,

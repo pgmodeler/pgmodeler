@@ -13,6 +13,7 @@ $br $tb
 [ unique=] %if {unique} %then "true" %else "false" %end
 [ fast-update=] %if {fast-update} %then "true" %else "false" %end
 [ buffering=] %if {buffering} %then "true" %else "false" %end
+[ nulls-not-distinct=] %if {nulls-not-distinct} %then "true" %else "false" %end
 
 $br $tb
 [ index-type=] "{index-type}"

@@ -59,7 +59,10 @@ class __libcore Constraint: public TableObject{
 		bool deferrable,
 
 		//! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
-		no_inherit;
+		no_inherit,
+
+		//! \brief Indicates if null values must be distinct from each other (default is true, only for unique constraints)
+		nulls_not_distinct;
 
 		//! \brief Deferral type for the constraint (except for check contraints)
 		DeferralType deferral_type;
@@ -265,6 +268,10 @@ class __libcore Constraint: public TableObject{
 
 		//! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
 		void setColumnsNotNull(bool value);
+
+		void setNullsNotDistinct(bool value);
+
+		bool isNullsNotDistinct();
 
 		QString getDataDictionary(const attribs_map &extra_attribs);
 

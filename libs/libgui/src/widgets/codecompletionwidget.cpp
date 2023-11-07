@@ -494,7 +494,10 @@ bool CodeCompletionWidget::retrieveColumnNames()
 		{
 			// First case: the cursor is between () VALUES
 			if(dml_kwords_pos[Values] >= 0 && cur_pos < dml_kwords_pos[Values])
+			{
 				tab_names = getTableNames(dml_kwords_pos[Into], dml_kwords_pos[Values]);
+				allow_tab_alias = false;
+			}
 			else if(dml_kwords_pos[Values] < 0)
 			{
 				// Second case: the cursor is after ( but the keyword VALUES is absent

@@ -22,8 +22,10 @@
 Index::Index()
 {
 	obj_type=ObjectType::Index;
-	index_attribs[Unique]=index_attribs[Concurrent]=
-			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
+
+	for(unsigned idx = Unique; idx <= NullsNotDistinct; idx++)
+		index_attribs[idx] = false;
+
 	fill_factor=90;
 	attributes[Attributes::Unique]="";
 	attributes[Attributes::Concurrent]="";
@@ -42,6 +44,7 @@ Index::Index()
 	attributes[Attributes::Buffering]="";
 	attributes[Attributes::StorageParams]="";
 	attributes[Attributes::IncludedCols]="";
+	attributes[Attributes::NullsNotDistinct]="";
 }
 
 void Index::setIndexElementsAttribute(SchemaParser::CodeType def_type)
@@ -204,7 +207,7 @@ unsigned Index::getIndexElementCount()
 
 void Index::setIndexAttribute(IndexAttrib attrib_id, bool value)
 {
-	if(attrib_id > Buffering)
+	if(attrib_id > NullsNotDistinct)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(index_attribs[attrib_id] != value);
@@ -237,7 +240,7 @@ unsigned Index::getFillFactor()
 
 bool Index::getIndexAttribute(IndexAttrib attrib_id)
 {
-	if(attrib_id > Buffering)
+	if(attrib_id > NullsNotDistinct)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return index_attribs[attrib_id];
@@ -412,6 +415,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 	setIndexElementsAttribute(def_type);
 	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : "");
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : "");
+	attributes[Attributes::NullsNotDistinct]=(index_attribs[NullsNotDistinct] ? Attributes::True : "");
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Predicate]=predicate;
 	attributes[Attributes::StorageParams]="";

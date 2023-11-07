@@ -128,7 +128,13 @@
 			WHEN tb.relkind = 'f' THEN 'foreigntable'
 		END AS table_type, ]
 
-		({comment}) [ AS comment ]
+		({comment}) [ AS comment, ]
+
+		%if ({pgsql-ver} >=f "15.0") %then
+			[ id.indnullsnotdistinct AS nulls_not_distinct_bool ]
+		%else
+			[ FALSE AS nulls_not_distinct_bool ]
+		%end
 
 		[ FROM pg_constraint AS cs
 		LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
