@@ -202,7 +202,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		void showItemTooltip();
 
-		void adjustNameListWidth();
+		void adjustNameListSize();
 		
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.

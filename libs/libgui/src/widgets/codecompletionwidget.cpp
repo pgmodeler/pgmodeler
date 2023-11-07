@@ -60,6 +60,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
+	completion_wgt->setMinimumHeight(50);
 
 	always_on_top_chk=new QCheckBox(completion_wgt);
 	always_on_top_chk->setText(tr("&Always on top"));
@@ -72,10 +73,9 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setIconSize(QSize(22, 22));
 	name_list->setSortingEnabled(false);
 	name_list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	name_list->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	name_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	name_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	name_list->setMaximumHeight(completion_wgt->maximumHeight());
 	name_list->setItemDelegate(new HtmlItemDelegate(name_list, true));
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
@@ -95,8 +95,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
 	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
-	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::adjustNameListWidth);
-	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListWidth);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::adjustNameListSize);
+	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListSize);
 
 	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
@@ -1114,7 +1114,7 @@ void CodeCompletionWidget::updateList()
 	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
 	name_list->scrollToTop();
 	name_list->setFocus();
-	adjustNameListWidth();
+	adjustNameListSize();
 }
 
 void CodeCompletionWidget::selectItem()
@@ -1217,9 +1217,24 @@ void CodeCompletionWidget::showItemTooltip()
 	}
 }
 
-void CodeCompletionWidget::adjustNameListWidth()
+void CodeCompletionWidget::adjustNameListSize()
 {
-	QRect rect = name_list->viewport()->contentsRect();
+	int item_h = 0;
+	item_h = (name_list->iconSize().height() + GuiUtilsNs::LtMargin) * name_list->count();
+	item_h += 2.5 * GuiUtilsNs::LtMargin;
+
+	if(item_h < completion_wgt->minimumHeight())
+		item_h = completion_wgt->minimumHeight();
+	else if(item_h > completion_wgt->maximumHeight())
+	{
+		item_h = completion_wgt->maximumHeight() -
+						 always_on_top_chk->height() -
+						 (2 * GuiUtilsNs::LtMargin);
+	}
+
+	name_list->setMinimumHeight(item_h);
+
+	QRect rect = name_list->viewport()->contentsRect(), brect;
 	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() + QPoint(2, 2)),
 			*last_item = name_list->itemAt(rect.bottomLeft() + QPoint(2, -2));
 	int first_row = name_list->row(first_item),
@@ -1234,18 +1249,20 @@ void CodeCompletionWidget::adjustNameListWidth()
 
 	for(int row = first_row; row <= last_row; row++)
 	{
-		item_w = fm.boundingRect(name_list->item(row)->text().
-															remove(HtmlItemDelegate::TagRegExp)).width();
+		brect = fm.boundingRect(name_list->item(row)->text().
+														remove(HtmlItemDelegate::TagRegExp));
 
-		item_w += name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 5) +
-							name_list->verticalScrollBar()->width();
+		item_w = brect.width() +
+						 name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 5) +
+						 name_list->verticalScrollBar()->width();
 
 		if(item_w > list_w)
 			list_w = item_w;
 	}
 
 	name_list->setFixedWidth(list_w < always_on_top_chk->width() ?
-														always_on_top_chk->width() : list_w);
+													 always_on_top_chk->width() : list_w);
+
 	completion_wgt->adjustSize();
 	adjustSize();
 }
