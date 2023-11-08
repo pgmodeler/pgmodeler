@@ -140,6 +140,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE Modifier")},
 	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE Modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
 	{Attributes::IsExtType, QT_TR_NOOP("Is extension type")}, {Attributes::RefTables, QT_TR_NOOP("Referenced tables")},
+	{Attributes::NullsNotDistinct, QT_TR_NOOP("Nulls not distinct")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -809,21 +810,24 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 	QStringList names=getObjectName(ObjectType::Table, attribs[Attributes::Table]).split('.');
 
 	formatBooleanAttribs(attribs, { Attributes::Deferrable,
-									Attributes::NoInherit });
+																	Attributes::NoInherit });
+
 	attribs[Attributes::Type]=~types[attribs[Attributes::Type]];
+
 	attribs[Attributes::OpClasses]=getObjectsNames(ObjectType::OpClass,
-															 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(UtilsNs::DataSeparator);
+																									 Catalog::parseArrayValues(attribs[Attributes::OpClasses])).join(UtilsNs::DataSeparator);
+
 	attribs[Attributes::SrcColumns]=getObjectsNames(ObjectType::Column,
-															Catalog::parseArrayValues(attribs[Attributes::SrcColumns]),
-			names[0], names[1]).join(UtilsNs::DataSeparator);
+																										Catalog::parseArrayValues(attribs[Attributes::SrcColumns]),
+																										names[0], names[1]).join(UtilsNs::DataSeparator);
 
 	if(constr_type==ConstraintType::ForeignKey)
 	{
 		attribs[Attributes::RefTable]=getObjectName(ObjectType::Table, attribs[Attributes::RefTable]);
 		names=attribs[Attributes::RefTable].split('.');
 		attribs[Attributes::DstColumns]=getObjectsNames(ObjectType::Column,
-																Catalog::parseArrayValues(attribs[Attributes::DstColumns]),
-				names[0], names[1]).join(UtilsNs::DataSeparator);
+																											Catalog::parseArrayValues(attribs[Attributes::DstColumns]),
+																											names[0], names[1]).join(UtilsNs::DataSeparator);
 	}
 	else
 	{
@@ -833,6 +837,8 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 		attribs.erase(Attributes::DelAction);
 		attribs.erase(Attributes::ComparisonType);
 	}
+
+	attribs.erase(Attributes::TableType);
 
 	if(constr_type==ConstraintType::Check)
 	{
