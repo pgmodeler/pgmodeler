@@ -3,7 +3,7 @@ Changelog
 
 v1.1.0-beta
 ------
-<em>Release date: October 17, 2023</em><br/>
+<em>Release date: November 17, 2023</em><br/>
 
 * [New] Added support for handling object references in ViewWidget.
 * [New] Added support for NULLS NOT DISTINCT attribute in unique constraints and indexes.
