@@ -29,7 +29,6 @@ v1.1.0-beta
 * [New] The corner button in SQLToolWidget which adds a new SQL execution tab is now positioned aside from the last tab open.
 * [New] Validating the extension child types before adding the extension to the database model.
 * [Change] Adjusted objectdepsrefswidget.ui to make the "Display unique results" option checked by default.
-* [Change] Adjusted settings storing for the grid options in MainWindow.
 * [Change] Adjusted the class GenericSQL::Reference to use reference alias.
 * [Change] Adjusted the class ObjectReferencesWidget to use reference aliases.
 * [Change] Adjusted the CSV pasting in TableDataWidget.
@@ -66,6 +65,7 @@ v1.1.0-beta
 * [Change] Removed the const UserTypeConfig::ExtensionType.
 * [Change] Renamed ObjectReferencesWidget.(h|cpp) to ReferencesWidget.(h|cpp)
 * [Change] Updated View XML definition to store simple column's code.
+* [Fix] Fixed settings storing for the grid options in MainWindow.
 * [Fix] Fix a crash that happens only on Windows.
 * [Fix] Fixed a bug in the generation of diff commands for identity columns.
 * [Fix] Fixed a bug in HtmlItemDelegate::paint that was causing the rendering of artifacts.
