@@ -44,8 +44,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		vbox->addWidget(sql_definition_txt);
 
 		obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
-																								ObjectType::Table, ObjectType::ForeignTable,
-																								ObjectType::View } , true, this);
+																					ObjectType::Table, ObjectType::ForeignTable,
+																					ObjectType::View, ObjectType::Function,
+																					ObjectType::Procedure } , true, this);
 
 		vbox = new QVBoxLayout(view_refs_tab);
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);

@@ -998,7 +998,7 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;p&gt;By checking this option, pgModeler ignores the original canvas background color and the exported image background will be set to white so the file can be print-ready. The default behavior is to create an output image whose background follows the canvas background color. In some cases, this behavior may not be desirable mainly if the generated image is for printing. &lt;/p&gt;</string>
+                   <string>&lt;p&gt;By checking this option, pgModeler ignores the original canvas background color and the exported image background will be set to white so the file can be print-ready. The default behavior is to create an output image in which the background follows the canvas background color. In some cases, this behavior may not be desirable mainly if the generated image is for printing. &lt;/p&gt;</string>
                   </property>
                   <property name="text">
                    <string>Override background color</string>
