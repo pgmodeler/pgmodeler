@@ -24,7 +24,7 @@
 #include <QSettings>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion = QString("1.1.0-beta")
+const QString GlobalAttributes::PgModelerVersion = QString("1.1.0-beta1")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
@@ -350,7 +350,8 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 {
-	GlobalAttributes::setSearchPath(QFileInfo(search_path).absolutePath());
+	QFileInfo fi(search_path);
+	GlobalAttributes::setSearchPath(fi.isDir() ? search_path : fi.absolutePath());
 
 	if(apply_ui_factor)
 	{
