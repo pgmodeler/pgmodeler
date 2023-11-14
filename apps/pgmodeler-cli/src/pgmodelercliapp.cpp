@@ -26,6 +26,7 @@
 #include "styledtextboxview.h"
 #include "relationshipview.h"
 #include "pgsqlversions.h"
+#include "compat/compatns.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -1221,6 +1222,18 @@ void PgModelerCliApp::recreateObjects()
 
 		try
 		{
+			/* Converting views in the older format created in versions <= 1.1.0-alpha)
+			 * to the new format introduced by 1.1.0-beta */
+			if(model_version <= "1.1.0-alpha1" && xml_def.contains(start_tag.arg(BaseObject::getSchemaName(ObjectType::View))))
+			{
+				CompatNs::View * view = CompatNs::createView(xml_def, model);
+				xml_def = CompatNs::convertToNewView(view);
+
+				QTextStream out(stdout);
+				out << xml_def << Qt::endl;
+				out << "---" << Qt::endl;
+			}
+
 			xmlparser->restartParser();
 			xmlparser->loadXMLBuffer(xml_def);
 			obj_type=BaseObject::getObjectType(xmlparser->getElementName());
