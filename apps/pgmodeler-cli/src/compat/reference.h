@@ -17,10 +17,11 @@
 */
 
 /**
-\ingroup libcore
+\ingroup pgmodeler-cli
+\namespace CompatNs
 \class Reference
-\brief This auxiliary class is used to define SQL/XML for views
-\note <strong>Creation date:</strong> 05/09/2008
+\brief This is a minimal portion of the legacy class Reference (pgModeler 1.1.0-alpha1 and below) that is used to
+together with CompatNs::View to convert views in older models to the new format introduced by pgModeler 1.1.0-beta.
 */
 
 #ifndef COMPAT_REFERENCE_H

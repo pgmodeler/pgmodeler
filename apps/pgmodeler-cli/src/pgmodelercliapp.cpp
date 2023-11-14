@@ -1226,12 +1226,8 @@ void PgModelerCliApp::recreateObjects()
 			 * to the new format introduced by 1.1.0-beta */
 			if(model_version <= "1.1.0-alpha1" && xml_def.contains(start_tag.arg(BaseObject::getSchemaName(ObjectType::View))))
 			{
-				CompatNs::View * view = CompatNs::createView(xml_def, model);
+				CompatNs::View * view = CompatNs::createLegacyView(xml_def, model);
 				xml_def = CompatNs::convertToNewView(view);
-
-				QTextStream out(stdout);
-				out << xml_def << Qt::endl;
-				out << "---" << Qt::endl;
 			}
 
 			xmlparser->restartParser();
@@ -1609,9 +1605,11 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(EndTagExpr.arg("grant"), EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
 	}
 
-	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
-	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
-		 obj_xml.contains(TagExpr.arg(Attributes::Expression)))
+	/* If the domain doesn't have the tag <constraint> we need to replace the "constraint" attribute
+	 * and the tag <expression> by <constraint> tag in <domain> */
+	if(!obj_xml.contains(TagExpr.arg(Attributes::Constraint)) &&
+			obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
+			obj_xml.contains(TagExpr.arg(Attributes::Expression)))
 	{
 		int start_idx=-1, end_idx=-1;
 		QRegularExpression regexp = QRegularExpression(AttributeExpr.arg(Attributes::Constraint));

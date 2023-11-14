@@ -25,6 +25,14 @@
 #ifndef COMPAT_VIEW_H
 #define COMPAT_VIEW_H
 
+/**
+\ingroup pgmodeler-cli
+\namespace CompatNs
+\class View
+\brief This is a minimal portion of the legacy class View (pgModeler 1.1.0-alpha1 and below) that is used to
+convert views in older models to the new format introduced by pgModeler 1.1.0-beta.
+*/
+
 #include "reference.h"
 #include "basetable.h"
 #include "rule.h"
@@ -43,10 +51,6 @@ namespace CompatNs {
 			exp_from,
 			exp_where,
 			exp_end;
-
-			std::vector<TableObject *> triggers;
-			std::vector<TableObject *> rules;
-			std::vector<TableObject *> indexes;
 
 			std::vector<SimpleColumn> columns;
 
@@ -85,12 +89,6 @@ namespace CompatNs {
 		public:
 			View();
 
-			virtual ~View();
-
-			virtual void setName(const QString &name) override;
-			virtual void setSchema(BaseObject *schema) override;
-			virtual void setProtected(bool value) override;
-
 			void setMaterialized(bool value);
 			void setRecursive(bool value);
 			void setWithNoData(bool value);
@@ -112,89 +110,40 @@ namespace CompatNs {
 
 			/*! \brief Adds a trigger or rule into the view. If the index is specified ( obj_idx >= 0)
 			inserts the object at the position */
-			virtual void addObject(BaseObject *obj, int obj_idx=-1) override;
-
-			//! \brief Adds a trigger into the view
-			void addTrigger(Trigger *trig, int obj_idx=-1);
-
-			//! \brief Adds a rule into the view
-			void addRule(Rule *rule, int obj_idx=-1);
-
-			//! \brief Adds an index into the view
-			void addIndex(Index *index, int obj_idx=-1);
+			virtual void addObject(BaseObject *, int = -1) override {}
 
 			//! \brief Remove a object from view using its reference
-			virtual void removeObject(BaseObject *obj) override;
+			virtual void removeObject(BaseObject *) override {}
 
 			//! \brief Removes the object using the index and type
-			virtual void removeObject(unsigned obj_idx, ObjectType obj_type) override;
+			virtual void removeObject(unsigned, ObjectType) override {}
 
 			//! \brief Removes the object using the name and type
-			virtual void removeObject(const QString &name, ObjectType obj_type) override;
-
-			//! \brief Remove a trigger from view using its index
-			void removeTrigger(unsigned idx);
-
-			//! \brief Remove a rule from view using its index
-			void removeRule(unsigned idx);
-
-			//! \brief Remove an index from view using its index
-			void removeIndex(unsigned idx);
+			virtual void removeObject(const QString &, ObjectType) override {}
 
 			//! \brief Returns the object index searching by its reference
-			virtual	int getObjectIndex(BaseObject *obj) override;
+			virtual	int getObjectIndex(BaseObject *) override { return -1; }
 
 			//! \brief Returns the object index searching by its index and type
-			virtual int getObjectIndex(const QString &name, ObjectType obj_type) override;
+			virtual int getObjectIndex(const QString &, ObjectType ) override { return -1; }
 
 			//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
-			virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> &excl_types = {}) override;
+			virtual std::vector<BaseObject *> getObjects(const std::vector<ObjectType> & = {}) override { return {}; }
 
 			//! \brief Returns the view's child object using its index and type
-			virtual TableObject *getObject(unsigned obj_idx, ObjectType obj_type) override;
+			virtual TableObject *getObject(unsigned, ObjectType) override { return nullptr; }
 
 			//! \brief Returns the view's child object using its name and type
-			virtual TableObject *getObject(const QString &name, ObjectType obj_type) override;
-
-			//! \brief Returns a trigger searching by its index
-			Trigger *getTrigger(unsigned obj_idx);
-
-			//! \brief Returns a rule searching by its index
-			Rule *getRule(unsigned obj_idx);
-
-			//! \brief Returns a index searching by its index
-			Index *getIndex(unsigned obj_idx);
+			virtual TableObject *getObject(const QString &, ObjectType ) override { return nullptr; }
 
 			//! \brief Returns the view's child object count
-			virtual unsigned getObjectCount(ObjectType obj_type, bool=false) override;
-
-			//! \brief Returns the view's trigger count
-			unsigned getTriggerCount();
-
-			//! \brief Returns the view's rule count
-			unsigned getRuleCount();
-
-			//! \brief Returns the view's index count
-			unsigned getIndexCount();
-
-			//! \brief Removes all objects (triggers / roles) from view
-			void removeObjects();
-
-			//! \brief Returns the object list according to specified type
-			std::vector<TableObject *> *getObjectList(ObjectType obj_type);
+			virtual unsigned getObjectCount(ObjectType, bool=false) override { return 0; }
 
 			//! \brief Sets the commom table expression for the view
 			void setCommomTableExpression(const QString &expr);
 
-			/*! \brief Remove the reference from the view using its index, removing all the elements
-			 from the exp_??? vectors when they make use of the deleted reference. */
-			//void removeReference(unsigned ref_id);
-
 			//! \brief Removes all the references from the view
 			void removeReferences();
-
-			//! \brief Removes an element from the expression list specified by the 'sql_type' parameter
-			//void removeReference(unsigned expr_id, Reference::SqlType sql_type);
 
 			//! \brief Returns the commom table expression
 			QString getCommomTableExpression();
@@ -222,19 +171,6 @@ namespace CompatNs {
 
 			virtual QString getDropCode(bool cascade) final;
 
-			/*! \brief Returns whether the view references columns added
-			 by relationship. This method is used as auxiliary
-			 to control which view reference columns added by the
-			 relationship in order to avoid referece breaking due constants
-			 connections and disconnections of relationships */
-			bool isReferRelationshipAddedColumn();
-
-			/*! \brief Returns the list of all columns that is created by relationships.
-		This method is slower than isReferRelationshipAddedColumn() so it's not
-		recommended to use it only check if the object is referencing columns
-		added by relationship */
-			std::vector<Column *> getRelationshipAddedColumns();
-
 			//! \brief Returns if the view is referencing the specified table
 			bool isReferencingTable(PhysicalTable *tab);
 
@@ -244,9 +180,9 @@ namespace CompatNs {
 			//! \brief Returns if the view has an reference expression that is used as view definition
 			bool hasDefinitionExpression();
 
-			virtual void setObjectListsCapacity(unsigned capacity) override;
+			virtual void setObjectListsCapacity(unsigned) override {}
 
-			virtual unsigned getMaxObjectCount() override;
+			virtual unsigned getMaxObjectCount() override { return DefMaxObjectCount; }
 
 			/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
 			 *	The names are retrieved, first, from columns aliases and lastly from table's columns
@@ -259,14 +195,11 @@ namespace CompatNs {
 
 			std::vector<Reference> getViewReferences();
 
-			virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
+			virtual QString getDataDictionary(bool , const attribs_map & = {}) override { return ""; }
 
-			virtual QString getAlterCode(BaseObject *object) final;
+			virtual QString getAlterCode(BaseObject *) final { return ""; }
 
-			//! \brief Copy the attributes between two views
-			void operator = (View &visao);
-
-			virtual void updateDependencies() override;
+			virtual void updateDependencies() override {}
 	};
 }
 #endif

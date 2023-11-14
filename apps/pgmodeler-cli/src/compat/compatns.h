@@ -1,3 +1,21 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
 #ifndef COMPATNS_H
 #define COMPATNS_H
 
@@ -6,13 +24,14 @@
 #include "databasemodel.h"
 
 namespace CompatNs {
-	[[deprecated("Compatiblity code to be removed in 1.2.0!")]]
-	extern View *createView(const QString &xml_code, DatabaseModel *dbmodel);
+	//! \brief Create a view object taking as input the legacy XML code for views
+	extern View *createLegacyView(const QString &xml_code, DatabaseModel *dbmodel);
 
-	[[deprecated("Compatiblity code to be removed in 1.2.0!")]]
+	//! \brief Converts a legacy view object to the new one introduced by pgModeler 1.1.0-beta
 	extern QString convertToNewView(View *old_view);
 
-	[[deprecated("Compatiblity code to be removed in 1.2.0!")]]
+	/*! \brief Auxiliary method used by createLegacyView to fill basic attributes of the object
+	 *  by reading values from the XML code */
 	extern void setBasicAttributes(BaseObject *object, DatabaseModel *dbmodel);
 }
 
