@@ -40,7 +40,7 @@ convert views in older models to the new format introduced by pgModeler 1.1.0-be
 
 namespace CompatNs {
 
-	class __libcore View: public BaseTable {
+	class View: public BaseTable {
 		private:
 			//! \brief Stores the references to expressions and objects
 			std::vector<Reference> references;

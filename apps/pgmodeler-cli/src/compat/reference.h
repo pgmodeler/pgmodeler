@@ -33,7 +33,7 @@ together with CompatNs::View to convert views in older models to the new format 
 
 namespace CompatNs {
 
-	class __libcore Reference {
+	class Reference {
 		private:
 			//! \brief Stores the table used by the reference
 			PhysicalTable *table;
