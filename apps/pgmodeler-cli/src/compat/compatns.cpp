@@ -417,6 +417,8 @@ namespace CompatNs {
 		new_view->setLayers(old_view->getLayers());
 		new_view->setMaterialized(old_view->isMaterialized());
 		new_view->setWithNoData(old_view->isWithNoData());
+		new_view->setCollapseMode(old_view->getCollapseMode());
+		new_view->setPaginationEnabled(old_view->isPaginationEnabled());
 
 		QString sql_code = old_view->getSourceCode(SchemaParser::SqlCode);
 		sql_code.remove(0, sql_code.indexOf("\nAS") + 3);
@@ -425,7 +427,15 @@ namespace CompatNs {
 
 		std::vector<SimpleColumn> columns;
 		for(auto &col : old_view->getColumns())
-			columns.push_back(col);
+		{
+			/* Columns of the type "expression" are converted to "text"
+			 * since the type "expression" is not a valid PgSqlType. This
+			 * will avoid invalid type errors when trying to edit view columns
+			 * that came from the legacy structure */
+			columns.push_back(SimpleColumn(col.getName(),
+																		 col.getType() == Attributes::Expression ? "text" : col.getType(),
+																		 col.getAlias()));
+		}
 
 		new_view->setCustomColumns(columns);
 
