@@ -59,6 +59,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	static QIcon ico;
 	static QString text;
 	static QSize ico_sz;
+	static int dy = 0;
 
 	text = index.data().toString();
 	ico = index.data(Qt::DecorationRole).value<QIcon>();
@@ -82,24 +83,18 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->fillRect(rect, bg_color);
 	ico.paint(painter, QRect(rect.topLeft() + QPoint(1, 1),  ico_sz));
 
-	static int dy = 0;
-
 	if(!text.contains(TagRegExp))
 	{
+		static QSize txt_sz;
+
 		if((option.state & QStyle::State_Enabled) == QStyle::State_Enabled)
 			painter->setPen(option.palette.color(QPalette::Active, QPalette::Text));
 		else
 			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
 
-		dy = abs(rect.height() - ico_sz.height());
-
-		#if defined(Q_OS_MAC)
-			dy++;
-		#else
-			dy /= 2;
-		#endif
-
-		painter->translate(rect.left() + ico_sz.width() + 2, dy);
+		txt_sz = option.fontMetrics.boundingRect(text).size();
+		dy = abs(rect.height() - txt_sz.height()) / 2;
+		rect.translate(ico_sz.width() + 4, dy);
 		painter->drawText(rect, text);
 	}
 	else
