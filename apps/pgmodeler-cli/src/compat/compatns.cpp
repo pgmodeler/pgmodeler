@@ -411,6 +411,8 @@ namespace CompatNs {
 		new_view->setAlias(old_view->getAlias());
 		new_view->setPosition(old_view->getPosition());
 		new_view->setProtected(old_view->isProtected());
+		new_view->setSQLDisabled(old_view->isSQLDisabled());
+		new_view->setZValue(old_view->getZValue());
 		new_view->setSchema(old_view->getSchema());
 		new_view->setOwner(old_view->getOwner());
 		new_view->setTag(old_view->getTag());
@@ -419,6 +421,8 @@ namespace CompatNs {
 		new_view->setWithNoData(old_view->isWithNoData());
 		new_view->setCollapseMode(old_view->getCollapseMode());
 		new_view->setPaginationEnabled(old_view->isPaginationEnabled());
+		new_view->setAppendedSQL(old_view->getAppendedSQL());
+		new_view->setPrependedSQL(old_view->getPrependedSQL());
 
 		QString sql_code = old_view->getSourceCode(SchemaParser::SqlCode);
 		sql_code.remove(0, sql_code.indexOf("\nAS") + 3);
@@ -441,25 +445,32 @@ namespace CompatNs {
 
 		std::vector<::Reference> refs;
 		BaseObject *obj = nullptr;
-		QString ref_name;
+		QString ref_name, ref_alias;
+		unsigned col_idx = 1, tab_idx = 1;
 
 		for(auto &old_ref : old_view->getViewReferences())
 		{
+			obj = nullptr;
+
 			if(old_ref.getColumn())
 			{
 				obj = old_ref.getColumn();
-				ref_name = old_ref.getColumnAlias();
+				// Appending an incremented value to avoid reference name ambiguity
+				ref_name = obj->getName() + QString::number(col_idx++);
+				ref_alias = old_ref.getColumnAlias();
 			}
-			else
+			else if(old_ref.getTable())
 			{
 				obj = old_ref.getTable();
-				ref_name = old_ref.getAlias();
+				// Appending an incremented value to avoid reference name ambiguity
+				ref_name = obj->getName() + QString::number(tab_idx++);
+				ref_alias = old_ref.getAlias();
 			}
 
 			if(!obj)
 				continue;
 
-			refs.push_back(::Reference(obj, ref_name, "", true, true, false));
+			refs.push_back(::Reference(obj, ref_name, ref_alias, true, true, false));
 		}
 
 		new_view->setReferences(refs);
