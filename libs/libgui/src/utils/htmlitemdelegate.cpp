@@ -82,6 +82,8 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->fillRect(rect, bg_color);
 	ico.paint(painter, QRect(rect.topLeft() + QPoint(1, 1),  ico_sz));
 
+	static int dy = 0;
+
 	if(!text.contains(TagRegExp))
 	{
 		if((option.state & QStyle::State_Enabled) == QStyle::State_Enabled)
@@ -89,20 +91,20 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		else
 			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
 
-		rect.translate(ico_sz.width() + 5, 0);
+		dy = abs(rect.height() - ico_sz.height())/2;
+		rect.translate(ico_sz.width() + 5, dy);
 		painter->drawText(rect, text);
 	}
 	else
 	{
 		static QTextDocument doc;
-		static int dy = 0;
-
-		//Set the text to a html document instance and draw it to the painter
-		dy = abs(rect.height() - ico_sz.height());
-		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy * 2);
 
 		text.replace("\n", "<br/>");
 		doc.setHtml(text);
+
+		//Set the text to a html document instance and draw it to the painter
+		dy = abs(rect.height() - doc.size().height())/2;
+		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy);
 		doc.drawContents(painter);
 	}
 
