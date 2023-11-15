@@ -91,8 +91,15 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		else
 			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
 
-		dy = abs(rect.height() - ico_sz.height())/2;
-		rect.translate(ico_sz.width() + 5, dy);
+		dy = abs(rect.height() - ico_sz.height());
+
+		#if defined(Q_OS_MAC)
+			dy++;
+		#else
+			dy /= 2;
+		#endif
+
+		painter->translate(rect.left() + ico_sz.width() + 2, dy);
 		painter->drawText(rect, text);
 	}
 	else
