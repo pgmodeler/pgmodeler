@@ -59,6 +59,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	static QIcon ico;
 	static QString text;
 	static QSize ico_sz;
+	static int dy = 0;
 
 	text = index.data().toString();
 	ico = index.data(Qt::DecorationRole).value<QIcon>();
@@ -84,25 +85,28 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	if(!text.contains(TagRegExp))
 	{
+		static QSize txt_sz;
+
 		if((option.state & QStyle::State_Enabled) == QStyle::State_Enabled)
 			painter->setPen(option.palette.color(QPalette::Active, QPalette::Text));
 		else
 			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
 
-		rect.translate(ico_sz.width() + 5, 0);
+		txt_sz = option.fontMetrics.boundingRect(text).size();
+		dy = abs(rect.height() - txt_sz.height()) / 2;
+		rect.translate(ico_sz.width() + 4, dy);
 		painter->drawText(rect, text);
 	}
 	else
 	{
 		static QTextDocument doc;
-		static int dy = 0;
-
-		//Set the text to a html document instance and draw it to the painter
-		dy = abs(rect.height() - ico_sz.height());
-		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy * 2);
 
 		text.replace("\n", "<br/>");
 		doc.setHtml(text);
+
+		//Set the text to a html document instance and draw it to the painter
+		dy = abs(rect.height() - doc.size().height())/2;
+		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy);
 		doc.drawContents(painter);
 	}
 
