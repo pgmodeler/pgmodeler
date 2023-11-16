@@ -70,6 +70,16 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(export_btn, &QPushButton::clicked, this, &ModelExportForm::exportModel);
 	connect(drop_chk, &QCheckBox::toggled, drop_db_rb, &QRadioButton::setEnabled);
 	connect(drop_chk, &QCheckBox::toggled, drop_objs_rb, &QRadioButton::setEnabled);
+	connect(drop_db_rb, &QCheckBox::toggled, force_db_drop_chk, &QRadioButton::setEnabled);
+
+	connect(drop_chk, &QCheckBox::toggled, this, [this](bool toggled) {
+		force_db_drop_chk->setEnabled(toggled && drop_db_rb->isChecked());
+	});
+
+	connect(drop_objs_rb, &QCheckBox::toggled, this, [this](bool toggled){
+		if(toggled)
+			force_db_drop_chk->setChecked(false);
+	});
 
 	connect(export_thread, &QThread::started, &export_hlp, [this](){
 		output_trw->setUniformRowHeights(true);
@@ -249,9 +259,12 @@ void ModelExportForm::exportModel()
 				if(pgsqlvers1_cmb->isEnabled())
 					version=pgsqlvers1_cmb->currentText();
 
-				export_hlp.setExportToDBMSParams(model->db_model, conn, version, ignore_dup_chk->isChecked(),
-												 drop_chk->isChecked() && drop_db_rb->isChecked(),
-												 drop_chk->isChecked() && drop_objs_rb->isChecked());
+				export_hlp.setExportToDBMSParams(model->db_model, conn, version,
+																				 ignore_dup_chk->isChecked(),
+																				 drop_chk->isChecked() && drop_db_rb->isChecked(),
+																				 drop_chk->isChecked() && drop_objs_rb->isChecked(),
+																				 false, false,
+																				 drop_chk->isChecked() && force_db_drop_chk->isChecked());
 
 				if(ignore_error_codes_chk->isChecked())
 					export_hlp.setIgnoredErrors(error_codes_edt->text().simplified().split(' '));

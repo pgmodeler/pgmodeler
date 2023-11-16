@@ -78,6 +78,7 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		bool isCancelled();
 
 		void setCustomOptionText(const QString &text);
+		void setCustomOptionTooltip(const QString &tooltip);
 		bool isCustomOptionChecked();
 
 	private slots:

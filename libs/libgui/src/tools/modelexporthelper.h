@@ -84,7 +84,10 @@ class __libgui ModelExportHelper: public QObject {
 		split,
 
 		//! \brief Indicates if the data dictionary should be browsable (include an index)
-		browsable;
+		browsable,
+
+		//! \brief Indicates if the database must be dropped before the export
+		force_db_drop;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -181,7 +184,8 @@ class __libgui ModelExportHelper: public QObject {
 		make the helper to ignore object duplicity errors.
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
-											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
+											bool forced_db_drop = false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
 		 * respectively, that the data dictionary should have an object index and the dictionary should be split
@@ -192,7 +196,8 @@ class __libgui ModelExportHelper: public QObject {
 		This form receive a database model as input and the sql code to be exported will be generated from it.
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
-															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
+															 bool force_db_drop = false);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a previously generated sql buffer to be exported the the helper */

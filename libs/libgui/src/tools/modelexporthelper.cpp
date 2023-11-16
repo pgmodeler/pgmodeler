@@ -1,6 +1,7 @@
 #include "modelexporthelper.h"
 #include "utilsns.h"
 #include <QSvgGenerator>
+#include "pgsqlversions.h"
 
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
@@ -11,7 +12,7 @@ void ModelExportHelper::resetExportParams()
 {
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=false;
+	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=force_db_drop=false;
 	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 	db_model=nullptr;
 	connection=nullptr;
@@ -333,7 +334,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	emit s_exportFinished();
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names, bool forced_db_drop)
 {
 	int type_id = 0, pos = -1;
 	QString  version, sql_cmd, buf, sql_cmd_comment;
@@ -422,7 +423,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 			try
 			{
-				sql_cmd = QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true));
+				QString extra_drop_opt;
+
+				if(version >= PgSqlVersions::PgSqlVersion130 && forced_db_drop)
+					extra_drop_opt = "WITH (FORCE)";
+
+				sql_cmd = QString("DROP DATABASE IF EXISTS %1 %2;").arg(db_model->getName(true), extra_drop_opt);
 				conn.executeDDLCommand(sql_cmd);
 			}
 			catch(Exception &e)
@@ -1104,16 +1110,17 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender() == db_model);
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop)
 {
-	this->db_model=db_model;
-	this->connection=conn;
-	this->pgsql_ver=pgsql_ver;
-	this->ignore_dup=ignore_dup;
-	this->simulate=simulate;
-	this->drop_db=drop_db && !drop_objs;
-	this->drop_objs=drop_objs && !drop_db;
-	this->use_tmp_names=use_rand_names;
+	this->db_model = db_model;
+	this->connection = conn;
+	this->pgsql_ver = pgsql_ver;
+	this->ignore_dup = ignore_dup;
+	this->simulate = simulate;
+	this->drop_db = drop_db && !drop_objs;
+	this->drop_objs = drop_objs && !drop_db;
+	this->use_tmp_names = use_rand_names;
+	this->force_db_drop = drop_db && force_db_drop;
 	this->sql_buffer.clear();
 	this->db_name.clear();
 	this->errors.clear();
@@ -1121,13 +1128,13 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 
 void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
 {
-	this->sql_buffer=sql_buffer;
-	this->connection=conn;
-	this->db_name=db_name;
-	this->ignore_dup=ignore_dup;
-	this->simulate=false;
-	this->drop_db=false;
-	this->use_tmp_names=false;
+	this->sql_buffer = sql_buffer;
+	this->connection = conn;
+	this->db_name = db_name;
+	this->ignore_dup = ignore_dup;
+	this->simulate = false;
+	this->drop_db = false;
+	this->use_tmp_names = false;
 	this->errors.clear();
 }
 
@@ -1173,7 +1180,10 @@ void ModelExportHelper::exportToDBMS()
 	if(connection)
 	{
 		if(sql_buffer.isEmpty())
-			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, drop_objs, simulate, use_tmp_names);
+		{
+			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db,
+									 drop_objs, simulate, use_tmp_names, force_db_drop);
+		}
 		else
 		{
 			try

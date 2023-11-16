@@ -71,6 +71,11 @@ void Messagebox::setCustomOptionText(const QString &text)
 	custom_option_chk->setText(text);
 }
 
+void Messagebox::setCustomOptionTooltip(const QString &tooltip)
+{
+	custom_option_chk->setToolTip(tooltip);
+}
+
 bool Messagebox::isCustomOptionChecked()
 {
 	return custom_option_chk->isChecked();

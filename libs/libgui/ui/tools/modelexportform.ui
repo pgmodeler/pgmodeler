@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>812</width>
     <height>731</height>
    </rect>
   </property>
@@ -331,6 +331,19 @@
                     </property>
                     <property name="text">
                      <string>Ob&amp;jects</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="force_db_drop_chk">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;If the current user has the proper permissions, terminates all existing connections to the target database before dropping it.&lt;/p&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Force drop</string>
                     </property>
                    </widget>
                   </item>

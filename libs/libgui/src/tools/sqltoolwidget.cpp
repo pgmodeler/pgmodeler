@@ -22,6 +22,7 @@
 #include "utils/deletableitemdelegate.h"
 #include "utilsns.h"
 #include "tools/databaseimportform.h"
+#include "pgsqlversions.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -557,22 +558,37 @@ void SQLToolWidget::dropDatabase(int database_idx)
 		return;
 
 	Connection *tmpl_conn = reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-	Messagebox msg_box;
+	Connection conn = Connection(tmpl_conn->getConnectionParams());
 	QString dbname = database_cmb->itemText(database_idx),
 			maintanance_db = tmpl_conn->getConnectionParam(Connection::ParamDbName);
-	Connection conn = Connection(tmpl_conn->getConnectionParams());
 
-	msg_box.show(tr("Warning"),
-				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
-						.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
-				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	try
 	{
-		try
+		Messagebox msg_box;
+		bool allow_force_drop = false;
+
+		conn.connect();
+
+		if(conn.getPgSQLVersion() >= PgSqlVersions::PgSqlVersion130)
 		{
-			conn.connect();
-			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
+			allow_force_drop = true;
+			msg_box.setCustomOptionText(tr("Forced database drop"));
+			msg_box.setCustomOptionTooltip(tr("<p>If the current user has the proper permissions, terminates all existing connections to the target database before dropping it.</p>"));
+		}
+
+		msg_box.show(tr("Warning"),
+								 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+								.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+		if(msg_box.result() == QDialog::Accepted)
+		{
+			QString extra_opt;
+
+			if(allow_force_drop && msg_box.isCustomOptionChecked())
+				extra_opt = "WITH (FORCE)";
+
+			conn.executeDDLCommand(QString("DROP DATABASE \"%1\" %2;").arg(dbname, extra_opt));
 			conn.close();
 
 			//Closing tabs related to the database to be dropped
@@ -587,15 +603,17 @@ void SQLToolWidget::dropDatabase(int database_idx)
 
 			connectToServer();
 		}
-		catch(Exception &e)
+	}
+	catch(Exception &e)
+	{
+		if(conn.getConnectionParam(Connection::ParamDbName) == maintanance_db)
 		{
-			if(conn.getConnectionParam(Connection::ParamDbName) == maintanance_db)
-				throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
-												.arg(dbname).arg(conn.getConnectionParam(Connection::ParamAlias)),
-												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-			else
-				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
+											.arg(dbname, conn.getConnectionParam(Connection::ParamAlias)),
+											ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
+		else
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
