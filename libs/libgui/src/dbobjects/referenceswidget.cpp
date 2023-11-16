@@ -79,6 +79,8 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 		if(!use_columns_chk->isEnabled())
 			use_columns_chk->setChecked(false);
 	});
+
+	connect(format_name_chk, &QCheckBox::toggled, use_signature_chk, &QCheckBox::setEnabled);
 }
 
 void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<Reference> &refs)

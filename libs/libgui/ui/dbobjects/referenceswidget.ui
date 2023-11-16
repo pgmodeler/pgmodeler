@@ -161,25 +161,6 @@
    <item row="2" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QCheckBox" name="use_signature_chk">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;p&gt;Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.&lt;/p&gt;</string>
-       </property>
-       <property name="statusTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Use signature</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QCheckBox" name="format_name_chk">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -195,6 +176,28 @@
        </property>
        <property name="text">
         <string>Format name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="use_signature_chk">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;p&gt;Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.&lt;/p&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Use signature</string>
        </property>
       </widget>
      </item>
