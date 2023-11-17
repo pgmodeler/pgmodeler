@@ -173,7 +173,7 @@ std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-											 DropDatabase, DropObjects, Simulate, UseTmpNames }},
+											 DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
@@ -471,6 +471,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t    Ignores errors related to duplicate objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates));
 	printText(tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes));
 	printText(tr("  %1, %2\t\t    Drop the database before executing an export process.").arg(short_opts[DropDatabase]).arg(DropDatabase));
+	printText(tr("  %1, %2 \t\t\t    Forces the termination of all connections to the target database before dropping it. This option is ignored when exporting to PostgreSQL 12 or below.").arg(short_opts[Force]).arg(Force));
 	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to objects in which SQL code is enabled.").arg(short_opts[DropObjects]).arg(DropObjects));
 	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
 	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles, and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
@@ -714,6 +715,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
 			throw Exception(tr("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
+		if(opts.count(ExportToDbms) && opts.count(Force) && !opts.count(DropDatabase))
+			throw Exception(tr("The option `%1' must be used only with `%2' when exporting to DBMS!").arg(Force).arg(DropDatabase), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
@@ -1898,7 +1902,8 @@ void PgModelerCliApp::exportModel()
 								parsed_opts.count(DropDatabase) > 0,
 								parsed_opts.count(DropObjects) > 0,
 								parsed_opts.count(Simulate) > 0,
-								parsed_opts.count(UseTmpNames) > 0);
+								parsed_opts.count(UseTmpNames) > 0,
+								parsed_opts.count(Force) > 0);
 	}
 
 	printMessage(tr("Export successfully ended!\n"));

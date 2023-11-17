@@ -573,7 +573,7 @@ void SQLToolWidget::dropDatabase(int database_idx)
 		{
 			allow_force_drop = true;
 			msg_box.setCustomOptionText(tr("Forced database drop"));
-			msg_box.setCustomOptionTooltip(tr("<p>If the current user has the proper permissions, terminates all existing connections to the target database before dropping it.</p>"));
+			msg_box.setCustomOptionTooltip(tr("<p>If the current user has the proper permissions, this option causes the termination of all existing connections to the target database before dropping it.</p>"));
 		}
 
 		msg_box.show(tr("Warning"),
