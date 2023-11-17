@@ -11,7 +11,7 @@ void ModelExportHelper::resetExportParams()
 {
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=false;
+	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=false;
 	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 	db_model=nullptr;
 	connection=nullptr;
@@ -102,7 +102,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, QGraphicsView *viewp)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color, QGraphicsView *viewp)
 {
 	if(!scene)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -115,7 +115,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		QList<QRectF> pages;
 		unsigned v_cnt=0, h_cnt=0, page_idx=1;
 		QString tmpl_filename, file;
-		QColor bg_color = ObjectsScene::getCanvasColor();
+		QColor bg_color;
 
 		/* If an external view is specified it will be used instead of creating a local one,
 		 * this is a workaround to the error below when running the helper in a separated thread
@@ -134,7 +134,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		bg_color = ObjectsScene::getCanvasColor();
 
 		//Sets the options passed by the user
-		ObjectsScene::setCanvasColor(QColor(255,255,255));
+		if(override_bg_color)
+			ObjectsScene::setCanvasColor(QColor(255,255,255));
+
 		ObjectsScene::setShowGrid(show_grid);
 		ObjectsScene::setShowPageDelimiters(show_delim);
 		scene->setShowSceneLimits(false);
@@ -182,7 +184,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 			rect = view->mapFromScene(pg_rect).boundingRect();
 			pix = QPixmap(rect.size());
-			pix.fill();
+			pix.fill(ObjectsScene::getCanvasColor());
 
 			//Setting optimizations on the painter
 			painter.begin(&pix);
@@ -203,7 +205,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			if(!pix.save(file))
 			{
 				//Restoring the scene settings before throw error
-				ObjectsScene::setCanvasColor(bg_color);
+				if(override_bg_color)
+					ObjectsScene::setCanvasColor(bg_color);
+
 				ObjectsScene::setShowGrid(prev_show_grd);
 				ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 				scene->update();
@@ -214,7 +218,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		}
 
 		//Restoring the scene settings
-		ObjectsScene::setCanvasColor(bg_color);
+		if(override_bg_color)
+			ObjectsScene::setCanvasColor(bg_color);
+
 		ObjectsScene::setShowGrid(prev_show_grd);
 		ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 		scene->setShowSceneLimits(true);
@@ -1134,7 +1140,7 @@ void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QStr
 	this->code_gen_mode=code_gen_mode;
 }
 
-void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
+void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color)
 {
 	this->scene=scene;
 	this->viewp=viewp;
@@ -1143,6 +1149,7 @@ void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView 
 	this->show_grid=show_grid;
 	this->show_delim=show_delim;
 	this->page_by_page=page_by_page;
+	this->override_bg_color=override_bg_color;
 }
 
 void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
@@ -1191,7 +1198,7 @@ void ModelExportHelper::exportToPNG()
 {
 	try
 	{
-		exportToPNG(scene, filename, zoom, show_grid, show_delim, page_by_page, viewp);
+		exportToPNG(scene, filename, zoom, show_grid, show_delim, page_by_page, override_bg_color, viewp);
 		resetExportParams();
 	}
 	catch(Exception &e)

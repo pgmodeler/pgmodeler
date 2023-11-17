@@ -2046,8 +2046,8 @@ void RelationshipView::configureBoundingRect()
 	setFlag(QGraphicsItem::ItemClipsToShape);
 	prepareGeometryChange();
 
-	if(descriptor && descriptor->isVisible())
-		rel_shape.addPolygon(descriptor->polygon());
+	//if(descriptor && descriptor->isVisible())
+	//	rel_shape.addPolygon(descriptor->polygon());
 
 	for(int i = 0; i < 3; i++)
 	{

@@ -100,7 +100,8 @@ void ConstraintWidget::selectConstraintType()
 	expression_lbl->setVisible(constr_type==ConstraintType::Check || constr_type==ConstraintType::Exclude);
 	expression_txt->setVisible(constr_type==ConstraintType::Check || constr_type==ConstraintType::Exclude);
 	no_inherit_chk->setVisible(constr_type==ConstraintType::Check);
-	no_inherit_lbl->setVisible(constr_type==ConstraintType::Check);
+
+	nulls_not_distinct_chk->setVisible(constr_type==ConstraintType::Unique);
 
 	fill_factor_chk->setVisible(constr_type==ConstraintType::Unique ||
 								constr_type==ConstraintType::PrimaryKey ||
@@ -111,7 +112,6 @@ void ConstraintWidget::selectConstraintType()
 
 	info_frm->setVisible(constr_type==ConstraintType::PrimaryKey);
 
-	deferrable_lbl->setVisible(constr_type!=ConstraintType::Check);
 	deferrable_chk->setVisible(constr_type!=ConstraintType::Check);
 	deferral_cmb->setVisible(constr_type!=ConstraintType::Check);
 	deferral_lbl->setVisible(constr_type!=ConstraintType::Check);
@@ -174,6 +174,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		expression_txt->setPlainText(constr->getExpression());
 		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
+		nulls_not_distinct_chk->setChecked(constr->isNullsNotDistinct());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
 		on_delete_cmb->setCurrentIndex(on_delete_cmb->findText(~constr->getActionType(Constraint::DeleteAction)));
@@ -216,6 +217,7 @@ void ConstraintWidget::applyConfiguration()
 		constr->setActionType(ActionType(on_delete_cmb->currentText()),Constraint::DeleteAction);
 		constr->setActionType(ActionType(on_update_cmb->currentText()),Constraint::UpdateAction);
 		constr->setNoInherit(no_inherit_chk->isChecked());
+		constr->setNullsNotDistinct(nulls_not_distinct_chk->isChecked());
 
 		if(indexing_chk->isChecked())
 			constr->setIndexType(IndexingType(indexing_cmb->currentText()));

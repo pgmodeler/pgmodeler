@@ -26,6 +26,7 @@
 #include "styledtextboxview.h"
 #include "relationshipview.h"
 #include "pgsqlversions.h"
+#include "compat/compatns.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 
@@ -54,6 +55,7 @@ const QString PgModelerCliApp::Help("--help");
 const QString PgModelerCliApp::ShowGrid("--show-grid");
 const QString PgModelerCliApp::ShowDelimiters("--show-delimiters");
 const QString PgModelerCliApp::PageByPage("--page-by-page");
+const QString PgModelerCliApp::OverrideBgColor("--override-bg-color");
 const QString PgModelerCliApp::IgnoreDuplicates("--ignore-duplicates");
 const QString PgModelerCliApp::IgnoreErrorCodes("--ignore-error-codes");
 const QString PgModelerCliApp::ConnAlias("--conn-alias");
@@ -117,7 +119,8 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
 	{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
 	{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
-	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },	{ IgnoreDuplicates, "-ir" },
+	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },
+	{ IgnoreDuplicates, "-ir" }, { OverrideBgColor, "-oc" },
 	{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
 	{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
 	{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
@@ -143,8 +146,8 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
 	{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
 	{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
-	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ IgnoreErrorCodes, true },
-	{ ConnAlias, true },	{ Host, true },	{ Port, true },
+	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ OverrideBgColor, false },
+	{ IgnoreErrorCodes, true }, { ConnAlias, true },	{ Host, true },	{ Port, true },
 	{ User, true },	{ Passwd, true },	{ InitialDb, true },
 	{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
 	{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
@@ -165,7 +168,7 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
 	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
@@ -455,6 +458,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid));
 	printText(tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters));
 	printText(tr("  %1, %2\t\t    Each page will be exported in a separated image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage));
+	printText(tr("  %1, %2\t    Don't use the original canvas color in the exported image, instead, a white background is used. (Only for PNG images)").arg(short_opts[OverrideBgColor]).arg(OverrideBgColor));
 	printText(tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to an image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100));
 	printText();
 
@@ -1187,7 +1191,7 @@ void PgModelerCliApp::recreateObjects()
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 	std::vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
-	attribs_map attribs, fmt_ext_names;
+	attribs_map attribs;
 	bool use_fail_obj=false;
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
@@ -1216,13 +1220,16 @@ void PgModelerCliApp::recreateObjects()
 			fixObjectAttributes(xml_def);
 		}
 
-		/* Replacing the tags [<type name="extension_type"] by [<type name="schema.extension_type"]
-		 * in order to avoid reference breaking when loading the model in pgModeler 0.9.4-alpha1 or above. */
-		for(auto &ext_name : fmt_ext_names)
-			xml_def.replace(type_tag.arg(ext_name.first), type_tag.arg(ext_name.second));
-
 		try
 		{
+			/* Converting views in the older format created in versions <= 1.1.0-alpha)
+			 * to the new format introduced by 1.1.0-beta */
+			if(model_version <= "1.1.0-alpha1" && xml_def.contains(start_tag.arg(BaseObject::getSchemaName(ObjectType::View))))
+			{
+				CompatNs::View * view = CompatNs::createLegacyView(xml_def, model);
+				xml_def = CompatNs::convertToNewView(view);
+			}
+
 			xmlparser->restartParser();
 			xmlparser->loadXMLBuffer(xml_def);
 			obj_type=BaseObject::getObjectType(xmlparser->getElementName());
@@ -1265,16 +1272,6 @@ void PgModelerCliApp::recreateObjects()
 												 .arg(tr("Object recreated: `%1' (%2)"))
 												 .arg(object->getName(true))
 												 .arg(object->getTypeName()));
-
-						/* Special case for extensions:
-						 * Before pgModeler 0.9.4-alpha1 the types handled by extension (for example hstore, ltree, etc) were
-						 * registered in the PgSqlType as user-defined data type without their schemas names prepended. This
-						 * was causing lot of troubles importing databases in which extension data types were being used. The
-						 * solution was to adjust the extension type names in such a way to prepend schema names. So here we
-						 * store the schema-qualified extension name in a special map where the key is the name of the extension
-						 * without the schema name, this way search the tags [<type name="extension"] and replace by [<type name="schema.extension"] */
-						if(object->getObjectType() == ObjectType::Extension && dynamic_cast<Extension *>(object)->handlesType())
-							fmt_ext_names[object->getName()] = object->getName(true, true);
 					}
 
 					//For each sucessful created object the method will try to create a failed one
@@ -1414,6 +1411,7 @@ void PgModelerCliApp::recreateObjects()
 	if(!changelog.isEmpty())
 	{
 		model->setPersistedChangelog(true);
+		xmlparser->restartParser();
 		xmlparser->loadXMLBuffer(changelog);
 
 		if(xmlparser->accessElement(XmlParser::ChildElement))
@@ -1607,9 +1605,11 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(EndTagExpr.arg("grant"), EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Permission)));
 	}
 
-	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
-	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
-		 obj_xml.contains(TagExpr.arg(Attributes::Expression)))
+	/* If the domain doesn't have the tag <constraint> we need to replace the "constraint" attribute
+	 * and the tag <expression> by <constraint> tag in <domain> */
+	if(!obj_xml.contains(TagExpr.arg(Attributes::Constraint)) &&
+			obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
+			obj_xml.contains(TagExpr.arg(Attributes::Expression)))
 	{
 		int start_idx=-1, end_idx=-1;
 		QRegularExpression regexp = QRegularExpression(AttributeExpr.arg(Attributes::Constraint));
@@ -1648,6 +1648,24 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	{
 		obj_xml.replace(QString("%1=\"false\"").arg(Attributes::HideExtAttribs), QString("%1=\"0\"").arg(Attributes::CollapseMode));
 		obj_xml.replace(QString("%1=\"true\"").arg(Attributes::HideExtAttribs), QString("%1=\"1\"").arg(Attributes::CollapseMode));
+	}
+
+	//Replacing attribute handles-type in extension by the tag <type name="extension-name"...
+	QRegularExpression handle_type_rx = QRegularExpression(AttributeExpr.arg("handles-type"));
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension))) &&
+			obj_xml.contains(handle_type_rx))
+	{
+		int end_sch_idx = -1, start_idx = -1, end_idx = -1;
+		QString name_attr="name=\"", ext_name;
+
+		//Extracting the extension's name
+		start_idx=obj_xml.indexOf(name_attr);
+		end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
+		ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+
+		obj_xml.remove(handle_type_rx);
+		end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
+		obj_xml.insert(end_sch_idx, QString("\n<type name=\"%1\"/>\n").arg(ext_name));
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
@@ -1829,7 +1847,8 @@ void PgModelerCliApp::exportModel()
 		export_hlp->exportToPNG(scene, parsed_opts[Output], zoom,
 								 parsed_opts.count(ShowGrid) > 0,
 								 parsed_opts.count(ShowDelimiters) > 0,
-								 parsed_opts.count(PageByPage) > 0);
+								 parsed_opts.count(PageByPage) > 0,
+								 parsed_opts.count(OverrideBgColor) > 0);
 	}
 	//Export to SVG
 	else if(parsed_opts.count(ExportToSvg))

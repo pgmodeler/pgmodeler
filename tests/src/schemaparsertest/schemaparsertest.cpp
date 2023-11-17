@@ -25,6 +25,7 @@ class SchemaParserTest: public QObject {
 		Q_OBJECT
 
 	private slots:
+		void testSetAttributeWithLinebreak();
 		void testConvertAttribsToXmlEntitiesInCondExpr();
 		void testConvertAttribsToXmlEntitiesInQuotes();
 		void testConvertAttribsToXmlEntitiesInSet();
@@ -33,6 +34,27 @@ class SchemaParserTest: public QObject {
 		void testSetOperationInIf();
 		void testSetOperationUnderIfEvaluatedAsFalse();
 };
+
+
+void SchemaParserTest::testSetAttributeWithLinebreak()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {attr} [foo\n\t\t\t\tbar]\n";
+	buffer += "\n{attr}";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs) == "foo\n\t\t\t\tbar", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
 
 void SchemaParserTest::testExpressionEvaluationWithCasts()
 {

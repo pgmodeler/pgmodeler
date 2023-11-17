@@ -1,0 +1,8 @@
+<!--
+ CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT simplecol EMPTY>
+<!ATTLIST simplecol name CDATA #REQUIRED>
+<!ATTLIST simplecol type CDATA #REQUIRED>
+<!ATTLIST simplecol alias CDATA #IMPLIED>

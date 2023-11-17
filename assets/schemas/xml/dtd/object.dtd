@@ -7,6 +7,3 @@
 <!ATTLIST object parent CDATA #IMPLIED>
 <!ATTLIST object type CDATA #IMPLIED>
 <!ATTLIST object index CDATA #IMPLIED>  <!-- Used only by custom column / constraint indexes (see customidxs.dtd) -->
-<!ATTLIST object ref-name CDATA #IMPLIED>  <!-- Used only by generic sql objects to hold the name of a reference to an object -->
-<!ATTLIST object use-signature (false|true) "false"> <!-- Used only by generic sql objects -->
-<!ATTLIST object format-name (false|true) "false"> <!-- Used only by generic sql objects --> 

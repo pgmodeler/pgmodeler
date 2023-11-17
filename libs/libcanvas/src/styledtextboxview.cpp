@@ -27,7 +27,8 @@ StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : Tex
 
 void StyledTextboxView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(qApp->keyboardModifiers() == Qt::ShiftModifier)
+	if(qApp->keyboardModifiers() == Qt::ShiftModifier &&
+		 !this->getUnderlyingObject()->isProtected())
 	{
 		event->ignore();
 
@@ -108,6 +109,9 @@ void StyledTextboxView::configureObject()
 								QPointF(fold->boundingRect().width(), fold->boundingRect().height()));
 
 	bounding_rect = text_item->boundingRect();
+	protected_icon->setPos(fold->pos() +
+													QPointF(fold->boundingRect().width()/2,
+																	fold->boundingRect().height()/2));
 
 	configureObjectShadow();
 	configureObjectSelection();

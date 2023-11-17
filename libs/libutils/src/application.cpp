@@ -21,7 +21,12 @@
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
-	GlobalAttributes::setSearchPath(this->applicationDirPath());
+	/* Checking if the user specified another widget style using the -style param
+	 * If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler) */
+	if(!arguments().contains("-style"))
+		setStyle(GlobalAttributes::DefaultQtStyle);
+
+	//GlobalAttributes::setSearchPath(this->applicationDirPath());
 }
 
 bool Application::loadTranslation(const QString &lang_id, const QString &directory)

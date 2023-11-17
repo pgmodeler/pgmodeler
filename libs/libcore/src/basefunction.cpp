@@ -391,7 +391,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 	this->setCodeInvalidated(true);
 }
 
-void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps)
+void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps, const std::vector<BaseObject *> &old_deps)
 {
 	std::vector<BaseObject *> aux_deps = { language };
 
@@ -403,7 +403,7 @@ void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps)
 	for(auto &type : transform_types)
 		aux_deps.push_back(type.getObject());
 
-	BaseObject::updateDependencies(aux_deps);
+	BaseObject::updateDependencies(aux_deps, old_deps);
 }
 
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)

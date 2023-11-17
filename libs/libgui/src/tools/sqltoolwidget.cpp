@@ -37,20 +37,23 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	h_splitter->handle(1)->installEventFilter(this);
 	v_splitter->setSizes({1000, 400});
 
-	sql_exec_corner_btn = new QToolButton;
+	sql_exec_corner_btn = new QToolButton(sql_exec_tbw);
+	sql_exec_corner_btn->setObjectName("sql_exec_corner_btn");
 	sql_exec_corner_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("newtab")));
-	sql_exec_corner_btn->setIconSize(disconnect_tb->iconSize());
 	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 
-	QVBoxLayout *vbox = new QVBoxLayout;
-	QWidget *corner_wgt = new QWidget;
+	corner_wgt = new QWidget(sql_exec_tbw);
+	corner_wgt->setFixedSize(sql_exec_corner_btn->size());
+	corner_wgt->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+	sql_exec_tbw->setCornerWidget(corner_wgt);
 
-	vbox->addWidget(sql_exec_corner_btn);
-	vbox->setContentsMargins(GuiUtilsNs::LtMargin,0,0,GuiUtilsNs::LtMargin);
-	corner_wgt->setLayout(vbox);
-	sql_exec_tbw->setCornerWidget(corner_wgt, Qt::TopRightCorner);
+	corner_wgt_lt = new QVBoxLayout;
+	corner_wgt_lt->setContentsMargins(0, 0,
+																		corner_wgt->width() / 2,
+																		corner_wgt->height());
+	corner_wgt->setLayout(corner_wgt_lt);
 
-	vbox=new QVBoxLayout;
+	QVBoxLayout *vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
 	sourcecode_txt->setReadOnly(true);
 	sourcecode_txt->installEventFilter(this);
@@ -107,6 +110,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 		}
 
 		disconnect_tb->setEnabled(databases_tbw->count() > 0);
+		setCornerButtonPos();
 	});
 }
 
@@ -145,6 +149,43 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
 {
 	plugins_btns = list;
+}
+
+void SQLToolWidget::resizeEvent(QResizeEvent *)
+{
+	setCornerButtonPos();
+}
+
+void SQLToolWidget::setCornerButtonPos()
+{
+	QTabBar *tab_bar = sql_exec_tbw->tabBar();
+
+	if(tab_bar->count() > 0)
+	{
+		int idx = tab_bar->count() - 1,	px = 0, py = 0;
+
+		QWidget *left_btn = tab_bar->findChild<QWidget *>("ScrollLeftButton"),
+					*right_btn = tab_bar->findChild<QWidget *>("ScrollRightButton");
+
+		if(left_btn)
+		{
+			left_btn->move(left_btn->pos().x(), tab_bar->height() - left_btn->height() - 2);
+			right_btn->move(right_btn->pos().x(), tab_bar->height() - right_btn->height() - 2);
+		}
+
+		if(left_btn && left_btn->isVisible())
+			px = corner_wgt->geometry().left() + 1;
+		else
+			px = tab_bar->tabRect(idx).right() + 1;
+
+		py = tab_bar->height() - sql_exec_corner_btn->height() - 2;
+
+		sql_exec_corner_btn->raise();
+		sql_exec_corner_btn->move(px, py);
+		sql_exec_corner_btn->setVisible(true);
+	}
+	else
+		sql_exec_corner_btn->setVisible(false);
 }
 
 void SQLToolWidget::updateTabs()
@@ -243,6 +284,7 @@ void SQLToolWidget::disconnectFromDatabases()
 			connections_cmb->setCurrentIndex(0);
 			disconnect_tb->setEnabled(false);
 			sourcecode_txt->clear();
+			setCornerButtonPos();
 		}
 	}
 	catch(Exception &e)
@@ -320,6 +362,8 @@ SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		sql_exec_wgt->sql_cmd_txt->appendPlainText(sql_cmd);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
+
+		setCornerButtonPos();
 
 		return sql_exec_wgt;
 	}
@@ -445,6 +489,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)
 	}
 
 	sql_exec_tbw->removeTab(idx);
+	setCornerButtonPos();
 
 	if(sql_exec_wgt)
 		delete sql_exec_wgt;
@@ -469,7 +514,7 @@ void SQLToolWidget::showSnippet(const QString &snip)
 	}
 }
 
-void SQLToolWidget::showSourceCode(const QString &source)
+void SQLToolWidget::showSourceCode(const QString &source, bool force_display)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
@@ -483,7 +528,8 @@ void SQLToolWidget::showSourceCode(const QString &source)
 	sourcecode_txt->setPlainText(source);
 #endif
 
-	source_pane_tb->setChecked(true);
+	if(force_display && !source_pane_tb->isChecked())
+		source_pane_tb->setChecked(true);
 }
 
 bool SQLToolWidget::hasDatabasesBrowsed()

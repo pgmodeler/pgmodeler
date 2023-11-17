@@ -36,7 +36,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	img_file_sel = new FileSelectorWidget(this);
 	img_file_sel->setFileDialogTitle(tr("Export model to graphics file"));
 	img_file_sel->setAcceptMode(QFileDialog::AcceptSave);
-	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 2);
+	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
@@ -209,7 +209,7 @@ void ModelExportForm::exportModel()
 				export_hlp.setExportToPNGParams(model->scene, viewp, img_file_sel->getSelectedFile(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
 																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
-																				page_by_page_chk->isChecked());
+																				 page_by_page_chk->isChecked(), override_bg_color_chk->isChecked());
 			else
 				export_hlp.setExportToSVGParams(model->scene, img_file_sel->getSelectedFile(),
 																				show_grid_chk->isChecked(),
@@ -397,11 +397,13 @@ void ModelExportForm::selectImageFormat()
 	{
 		img_file_sel->setMimeTypeFilters({"image/png", "application/octet-stream"});
 		img_file_sel->setDefaultSuffix("png");
+		override_bg_color_chk->setEnabled(true);
 	}
 	else
 	{
 		img_file_sel->setMimeTypeFilters({"image/svg+xml", "application/octet-stream"});
 		img_file_sel->setDefaultSuffix("svg");
+		override_bg_color_chk->setEnabled(false);
 	}
 }
 

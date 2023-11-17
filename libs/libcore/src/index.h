@@ -51,7 +51,7 @@ class __libcore Index: public TableObject{
 		IndexingType indexing_type;
 
 		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE, BUFFERING)
-		bool index_attribs[4];
+		bool index_attribs[5];
 
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(SchemaParser::CodeType def_type);
@@ -65,7 +65,8 @@ class __libcore Index: public TableObject{
 			Unique,
 			Concurrent,
 			FastUpdate,
-			Buffering
+			Buffering,
+			NullsNotDistinct
 		};
 
 		Index();

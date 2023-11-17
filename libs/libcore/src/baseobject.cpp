@@ -1508,12 +1508,8 @@ void BaseObject::__getLinkedObjects(ObjLinkType lnk_type, const std::vector<Base
 	}
 }
 
-void BaseObject::setDependency(BaseObject* dep_obj, BaseObject *prev_dep_obj)
+void BaseObject::setDependency(BaseObject* dep_obj)
 {
-	// If we are replacing a dependency we first need to undo the previous dependency
-	if(prev_dep_obj)
-		unsetDependency(prev_dep_obj);
-
 	if(!dep_obj)
 		return;
 
@@ -1584,13 +1580,36 @@ void BaseObject::clearAllDepsRefs()
 	clearReferences();
 }
 
+bool BaseObject::isReferenced()
+{
+	return !object_refs.empty();
+}
+
+bool BaseObject::isReferencedBy(BaseObject *ref_obj)
+{
+	return std::find(object_refs.begin(), object_refs.end(), ref_obj) != object_refs.end();
+}
+
+bool BaseObject::hasDependencies()
+{
+	return !object_deps.empty();
+}
+
+bool BaseObject::isDependingOn(BaseObject *dep_obj)
+{
+	return std::find(object_deps.begin(), object_deps.end(), dep_obj) != object_deps.end();
+}
+
 void BaseObject::updateDependencies()
 {
 	updateDependencies({});
 }
 
-void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs)
+void BaseObject::updateDependencies(const std::vector<BaseObject *> &dep_objs, const std::vector<BaseObject *> &old_deps)
 {
+	for(auto &old_dep : old_deps)
+		unsetDependency(old_dep);
+
 	std::vector<BaseObject *> aux_deps = {
 		schema, tablespace, owner, collation
 	};

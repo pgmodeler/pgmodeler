@@ -35,25 +35,24 @@ class __libgui CodeCompletionWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		/*! \brief This enums is used to determine DML keywords
+		 * positions in the parsed SQL command. This one is used
+		 * together with dml_kwords_pos and dml_keywords, and the
+		 * order of the items in this enums MUST have the same order
+		 * of the elements in dml_keywords string list */
 		enum DmlKeywordId: unsigned{
-			Select,
-			Insert,
-			Update,
-			Delete,
-			Truncate,
-			From,
-			Join,
-			Into,
-			As,
-			Set,
-			Table,
-			Only,
-			Where,
+			Select, Insert, Update, Delete,
+			Truncate, From, Join, Into,
+			As, Set, Table, Only,
+			Where, Inner, Outer, Left,
+			Right, Full, Union,
+			Intersect, Except, Distinct,
+			Values, All
 		};
 
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
 		 *  This is used to help pgModeler retrieve columns/objects names from the database */
-		int dml_kwords_pos[Where + 1];
+		int dml_kwords_pos[All + 1];
 
 		/*! \brief Stores the extracted table aliases where the key is the alias and the
 		 * value the schema-qualified table name */
@@ -161,6 +160,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		 *  exceeds the specified value */
 		QStringList getTableNames(int start_pos, int stop_pos);
 
+		int getTablePosition(const QString &name);
+
 		QStringList getTableAliases(const QString &name);
 		
 	public:
@@ -200,6 +201,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		void selectItem();
 		
 		void showItemTooltip();
+
+		void adjustNameListSize();
 		
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.

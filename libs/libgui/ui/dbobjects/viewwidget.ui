@@ -179,6 +179,15 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="sql_definition_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/sqlcode.png</normaloff>:/icons/icons/sqlcode.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>SQL definition</string>
+      </attribute>
+     </widget>
      <widget class="QWidget" name="view_refs_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
@@ -186,6 +195,15 @@
       </attribute>
       <attribute name="title">
        <string>&amp;References</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="columns_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Columns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="triggers_tab">
@@ -215,16 +233,7 @@
        <string>&amp;Indexes</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="cte_tab">
-      <attribute name="icon">
-       <iconset resource="../../res/resources.qrc">
-        <normaloff>:/icons/icons/sourcecode.png</normaloff>:/icons/icons/sourcecode.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string>Table E&amp;xpression</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="code_prev_tab">
+     <widget class="QWidget" name="sql_preview_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/sqlpreview.png</normaloff>:/icons/icons/sqlpreview.png</iconset>

@@ -1,6 +1,96 @@
 Changelog
 ---------
 
+v1.1.0-beta
+------
+<em>Release date: November 17, 2023</em><br/>
+
+* [New] Added a compatibility code in pgmodeler-cli to enable the conversion of views in the legacy structure to the newer one.
+* [New] Added support for handling object references in ViewWidget.
+* [New] Added support for NULLS NOT DISTINCT attribute in unique constraints and indexes.
+* [New] Added support for overriding the bg color when exporting the model to PNG.
+* [New] Added a grid widget in ExtensionWidget to inform the child data type names.
+* [New] Added a new method for the application path relocation by using an auxiliary file pgmpaths.conf that holds the env variables that customize assets/executables paths in pgModeler.
+* [New] Added a SQL definition tab and a new References tab that will work like references in GenericSqlWidget in ViewWidget.
+* [New] Added a step in PgModelerCliApp::fixObjectAttributes to add a <type name="ext-name"> tag in <extension> that has the deprecated handle-type attribute.
+* [New] Added missing pseudo-types.
+* [New] Added the class SimpleColumnsWidget to handle the view's columns.
+* [New] Added the methods isReferenced and hasDependencies in BaseObject.
+* [New] Added the method BaseObject::isDependingOn and BaseObject::isReferencedBy.
+* [New] Added the method GenericSQL::addObjectReferences.
+* [New] Added the method GenericSQL::setHideDescription that toggles the SQL code comment that indicates the object name/type.
+* [New] Added the method ObjectsTableWidget::getCellTextss.
+* [New] Added version descriptor for PostgreSQL 16.
+* [New] Adding field ref_alias to GenericSQL::ObjectReference.
+* [New] Created the method GlobalAttributes::init and added a call to it on all executable subprojects.
+* [New] Created the widget ObjectReferencesWidget that handles GenericSQL references.
+* [New] DatabaseImportHelper now imports extensions with the child types attached.
+* [New] Extension object now stores the name of the child types.
+* [New] In DatabaseModel, extension data types are automatically added/removed as the parent extension is added/removed from the model.
+* [New] The corner button in SQLToolWidget which adds a new SQL execution tab is now positioned aside from the last tab open.
+* [New] Validating the extension child types before adding the extension to the database model.
+* [Change] Adjusted objectdepsrefswidget.ui to make the "Display unique results" option checked by default.
+* [Change] Adjusted the class GenericSQL::Reference to use reference alias.
+* [Change] Adjusted the class ObjectReferencesWidget to use reference aliases.
+* [Change] Adjusted the CSV pasting in TableDataWidget.
+* [Change] Adjusted the DatabaseExplorerWidget::formatExtensionAttribs to display types related to an extension.
+* [Change] Adjusted the DLL export symbols to Reference and SimpleColumn (windows only).
+* [Change] Adjusted the DTD and schema file for tag <object>
+* [Change] Adjusted the DTD files view.dtd, genericsql.dtd, dbmodel.dtd, object.dtd
+* [Change] Adjusted the methods formatOidAttribs, getObjectName, getObjectNames in DatabaseExplorerWidget to accept a list of types.
+* [Change] Adjusted the SCH files view.sch, genericsql.sch, reference.sch, object.sch.
+* [Change] Changed the struct SimpleColumn into a class due to the increase in the code complexity
+* [Change] CodeCompletionWidget now resizes according to the displayed items' width.
+* [Change] Code completion will not display a "no items found" popup if no element is found matching the word at the cursor's position.
+* [Change] DatabaseModel::updateViewRelationships now use the new view references to create relationships.
+* [Change] GenericSQL class now uses tags <reference> instead of <object> to store references in XML.
+* [Change] GenericSQL::ObjectReferece renamed to GenericSQL::Reference and turned into a class.
+* [Change] In relationshipconfigwidget.ui the images change with the selected theme.
+* [Change] Minor adjustment in icons-*.conf
+* [Change] Minor adjustment in ReferencesWidget to always display the signature of the object in the grid instead of the name.
+* [Change] Minor adjustment in the behavior of source code display in DatabaseExplorerWidget.
+* [Change] Minor adjustment in themes' appearance.conf
+* [Change] Minor adjustment on ui style conf files.
+* [Change] Minor change in reverse engineering to avoid importing extension child types into the model since the extension itself, when imported, already creates the types.
+* [Change] Minor default size adjustment in TableWidget and ViewWidget.
+* [Change] Minor refactor in DatabaseModel::createGenericSQL.
+* [Change] Minor refactor in GenericSQL, GenericSQLWidget, ObjectReferencesWidget to use getters of GenericSQL::Reference.
+* [Change] Minor refactor in ObjectReferencesWidget/GenericSQL::Referece to use a flag that indicates that view columns must be generated from the references.
+* [Change] Minor refactor on View, Reference, and ReferenceWidget classes.
+* [Change] Moved GenericSQL::Reference to dedicated source files.
+* [Change] Moved the code that set the Qt UI style to the Application class.
+* [Change] Refactored GenericSQLWidget in such a way to use ObjectReferencesWidget.
+* [Change] Refactored View::generateColumns to generate columns from the new reference object.
+* [Change] Removed CTE tab from ViewWidget.
+* [Change] Removed deprecated method GenericSQL::getReferencedObjects.
+* [Change] Removed the const UserTypeConfig::ExtensionType.
+* [Change] Renamed ObjectReferencesWidget.(h|cpp) to ReferencesWidget.(h|cpp)
+* [Change] Updated View XML definition to store simple column's code.
+* [Fix] Fixed settings storing for the grid options in MainWindow.
+* [Fix] Fix a crash that happens only on Windows.
+* [Fix] Fixed a bug in the generation of diff commands for identity columns.
+* [Fix] Fixed a bug in HtmlItemDelegate::paint that was causing the rendering of artifacts.
+* [Fix] Fixed a bug in pgmodeler-cli that was aborting the fix process during the parsing of the model changelog.
+* [Fix] Fixed a bug in SchemaParser that would cause an infinite loop when defining attributes via %set instruction combined with plain text operator []
+* [Fix] Fixed a crash when trying to load an invalid model from the recent model's menu.
+* [Fix] Fixed sample model structure to the new view's format.
+* [Fix] Fixed several bugs in CodeCompletionWidget when completing using live database object names.
+* [Fix] Fixed the method BaseTable::updateDependencies() to avoid duplicating dependencies.
+* [Fix] Fixed the method DatabaseImportHelper::createView in such a way as to create references to tables/views and the columns that the view owns.
+* [Fix] Minor fix in DatabaseImportHelper to correctly make a view reference another.
+* [Fix] Minor fix in MainWindow::loadModels.
+* [Fix] Minor fix on DatabaseModel::createRelationship to create a relationship between two views.
+
+v1.0.6
+------
+<em>Release date: October 17, 2023</em><br/>
+
+* [New] Added version descriptor for PostgreSQL 16.
+* [Fix] Fixed a crash when trying to load an invalid model from recents models menu.
+* [Fix] Fixed a bug in generation of diff commands for identity columns.
+* [Fix] Minor fix in PgModelerCliApp::extractObjectXML to restore correctly the layers names and count.
+* [Fix] Fixed a crash when double-clicking the overview widget.
+
 v1.1.0-alpha1
 ------
 <em>Release date: September 29, 2023</em><br/>

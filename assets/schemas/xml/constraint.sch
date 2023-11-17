@@ -26,6 +26,10 @@
 	[ defer-type=] "{defer-type}" $br
 %end
 
+%if {uq-constr} %and {nulls-not-distinct} %then
+	[ nulls-not-distinct="true"]
+%end
+
 %if {ck-constr} %and {no-inherit} %then
 	[ no-inherit="true"]
 %end

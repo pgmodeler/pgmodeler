@@ -16,62 +16,39 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#ifndef REFERENCE_WIDGET_H
-#define REFERENCE_WIDGET_H
+#ifndef SIMPLE_COLUMNS_WIDGET_H
+#define SIMPLE_COLUMNS_WIDGET_H
 
 #include <QWidget>
-#include "ui_referencewidget.h"
-#include "widgets/numberedtexteditor.h"
-#include "utils/syntaxhighlighter.h"
-#include "codecompletionwidget.h"
-#include "widgets/objectselectorwidget.h"
+#include "ui_simplecolumnswidget.h"
 #include "pgsqltypewidget.h"
 #include "widgets/objectstablewidget.h"
 
-class __libgui ReferenceWidget : public QWidget, Ui::ReferenceWidget {
+class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
 	private:
 		Q_OBJECT
 
-		NumberedTextEditor *expression_txt;
-
-		SyntaxHighlighter *expression_hl;
-
-		CodeCompletionWidget *expression_cp;
-
-		ObjectSelectorWidget *ref_object_sel, *ref_table_sel;
-
 		PgSQLTypeWidget *pgsqltype_wgt;
 
-		ObjectsTableWidget *columns_tab, *ref_tables_tab;
-
-		unsigned ref_flags;
-
-		Reference reference;
+		ObjectsTableWidget *columns_tab;
 
 		DatabaseModel *model;
 
 		void handleColumn(int row);
+		void showColumnData(int row, const QString &name, const QString &type, const QString &alias);
 
 	public:
-		explicit ReferenceWidget(QWidget *parent = nullptr);
+		explicit SimpleColumnsWidget(QWidget *parent = nullptr);
 
-		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
-		Reference getReference();
-		unsigned getReferenceFlags();
+		void setAttributes(DatabaseModel *model, const std::vector<SimpleColumn> &cols);
 
-	public slots:
-		void applyConfiguration();
+		std::vector<SimpleColumn> getColumns();
 
 	private slots:
-		void selectReferenceType();
 		void addColumn(int row);
-		void addRefTable(int row);
 		void updateColumn(int row);
 		void editColumn(int row);
 		void duplicateColumn(int src_row, int new_row);
-
-	signals:
-		void s_closeRequested();
 };
 
 #endif

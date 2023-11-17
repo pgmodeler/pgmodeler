@@ -281,22 +281,25 @@ class __libcore BaseObject {
 		QString getAlterCommentDefinition(BaseObject *object, attribs_map attributes);
 
 		/*! \brief This version, called inside updateDependencies(), just run through the provided
-		 *  object list and unsets the dependency link between the "this" object and the items
-		 *  ih the list. NOTE: this method must be called only in specific
-		 *  points of the code (currently only in the operator = due to the need in OperationList class )
+		 *  dep_objs list and sets the dependency link between the "this" object and the items
+		 *  in the list. Additionally, a list of dependencies that must be undone can be provided.
+		 *
+		 *  The dependency link breaking operation made using old_deps runs first before creating the
+		 *  dependency link using the objects in dep_objs.
+		 *
+		 *  NOTE: this method must be called only in specific points of the code (currently only in
+		 *  the operator = due to the need in OperationList class )
 		 *  because it can be expensive in terms of processing if lots of objects calls it */
-		void updateDependencies(const std::vector<BaseObject *> &dep_objs);
+		void updateDependencies(const std::vector<BaseObject *> &dep_objs, const std::vector<BaseObject *> &old_deps = {});
 
 		//! \brief Register an object as a reference to the "this" object
 		void setReference(BaseObject *ref_obj);
 
-					 //! \brief Unregister an object as a reference to the "this" object
+		//! \brief Unregister an object as a reference to the "this" object
 		void unsetReference(BaseObject *ref_obj);
 
-		/*! \brief Defines the dep_obj as a dependency of the "this" object.
-		 *  If prev_dep_obj is also set, this method will first unregister prev_dep_obj
-		 *  as a dependency of the "this" object and then set dep_obj as a dependency */
-		void setDependency(BaseObject *dep_obj, BaseObject *prev_dep_obj = nullptr);
+		//! \brief Defines the dep_obj as a dependency of the "this" object.
+		void setDependency(BaseObject *dep_obj);
 
 		/*! \brief Unregister the dep_obj as a dependency of the "this" object.
 		 *  This method also marks that the "this" object is not a reference to dep_obj anymore */
@@ -633,6 +636,22 @@ class __libcore BaseObject {
 
 		//! \brief Clears both dependencies and references
 		void clearAllDepsRefs();
+
+		/*! \brief Returns true when the object has at least one object referencing it
+		 *  This method is useful to know if the object is being referenced wihtout the
+		 *  need to get the references themselves like getReference() */
+		bool isReferenced();
+
+		//! \brief Returns true when the provided object is a referrer of the "this" object
+		bool isReferencedBy(BaseObject *ref_obj);
+
+		/*! \brief Returns true when the object has at least one dependency to another object
+		 *  This method is useful to know if the object has dependencies wihtout the
+		 *  need to get the dependencies themselves like getDependencies() */
+		bool hasDependencies();
+
+		//! \brief Returns true when the provided object is one of the dependencies of the "this" object
+		bool isDependingOn(BaseObject *dep_obj);
 
 		/*! \brief Updates the dependencies list based upon the current relationship between
 		 *  the "this" object and its dependencies. NOTE: this method must be called only in specific

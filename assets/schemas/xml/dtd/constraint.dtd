@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
@@ -8,6 +8,7 @@
 <!ATTLIST constraint type CDATA #REQUIRED>
 <!ATTLIST constraint deferrable (true | false) "false">
 <!ATTLIST constraint no-inherit (true | false) "false">
+<!ATTLIST constraint nulls-not-distinct (true | false) "false">
 <!ATTLIST constraint defer-type CDATA #IMPLIED>
 <!ATTLIST constraint index-type CDATA #IMPLIED>
 <!ATTLIST constraint comparison-type CDATA #IMPLIED>

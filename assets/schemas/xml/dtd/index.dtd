@@ -6,6 +6,7 @@
 <!ATTLIST index name CDATA #REQUIRED>
 <!ATTLIST index alias CDATA #IMPLIED>
 <!ATTLIST index unique (true | false) "false">
+<!ATTLIST index nulls-not-distinct (true | false) "false">
 <!ATTLIST index concurrent (true | false) "false">
 <!ATTLIST index fast-update (true | false) "false">
 <!ATTLIST index buffering (true | false) "false">

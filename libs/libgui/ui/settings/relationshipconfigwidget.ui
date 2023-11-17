@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
+    <width>727</width>
     <height>793</height>
    </rect>
   </property>
@@ -102,46 +102,6 @@
             <property name="spacing">
              <number>5</number>
             </property>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLabel" name="crows_foot_lbl">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>550</width>
-                <height>110</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="textFormat">
-               <enum>Qt::PlainText</enum>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../../res/resources.qrc">:/images/images/crows_foot_notation.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::NoTextInteraction</set>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0" colspan="2">
              <widget class="QRadioButton" name="crows_foot_rb">
               <property name="sizePolicy">
@@ -170,6 +130,46 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QLabel" name="crows_foot_lbl">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>580</width>
+                <height>135</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_crows_foot_dark.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::NoTextInteraction</set>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -190,8 +190,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>550</width>
-                <height>110</height>
+                <width>580</width>
+                <height>135</height>
                </size>
               </property>
               <property name="frameShape">
@@ -207,7 +207,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../../res/resources.qrc">:/images/images/rel_tab_edges.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_tab_edges_dark.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -259,8 +259,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>550</width>
-                <height>110</height>
+                <width>580</width>
+                <height>135</height>
                </size>
               </property>
               <property name="frameShape">
@@ -276,7 +276,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../../res/resources.qrc">:/images/images/rel_fk_to_pk.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_fk_to_pk_dark.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -331,8 +331,8 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>550</width>
-                <height>110</height>
+                <width>580</width>
+                <height>135</height>
                </size>
               </property>
               <property name="frameShape">
@@ -348,7 +348,7 @@
                <enum>Qt::PlainText</enum>
               </property>
               <property name="pixmap">
-               <pixmap resource="../../res/resources.qrc">:/images/images/rel_center_pnts.png</pixmap>
+               <pixmap resource="../../res/resources.qrc">:/images/images/rel_center_pnts_dark.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>

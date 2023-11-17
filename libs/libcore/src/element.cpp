@@ -123,9 +123,9 @@ void Element::configureAttributes(attribs_map &attributes, SchemaParser::CodeTyp
 	else if(simple_col.isValid())
 	{
 		if(def_type == SchemaParser::SqlCode)
-			attributes[Attributes::Column] = BaseObject::formatName(simple_col.name);
+			attributes[Attributes::Column] = BaseObject::formatName(simple_col.getName());
 		else
-			attributes[Attributes::Column] = simple_col.name;
+			attributes[Attributes::Column] = simple_col.getName();
 	}
 	else
 		attributes[Attributes::Expression]=expression;

@@ -22,7 +22,16 @@
 %end
 
 %if {pk-constr} %then [ PRIMARY KEY ] ({src-columns}) %end
-%if {uq-constr} %then [ UNIQUE ] ({src-columns}) %end
+
+%if {uq-constr} %then
+	[ UNIQUE ] 
+
+	%if ({pgsql-ver} >=f "15.0") %and {nulls-not-distinct} %then
+		[NULLS NOT DISTINCT ]
+	%end
+
+	({src-columns}) 
+%end
 
 %if {ex-constr} %then
 	[ EXCLUDE ] $br

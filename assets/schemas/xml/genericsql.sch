@@ -13,8 +13,8 @@
 
 > $br
 
-$tb <definition> $sp <! $ob CDATA $ob {definition} $cb $cb > $sp </definition> $br
+%if {references} %then {references} %end
 
-%if {objects} %then {objects} %end
+$tb <definition> $sp <! $ob CDATA $ob {definition} $cb $cb > $sp </definition> $br
 
 </genericsql> $br $br

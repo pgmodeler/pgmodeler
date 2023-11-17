@@ -64,8 +64,7 @@ CsvDocument CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, const QC
 
 		csv_parser.setSpecialChars(separator, text_delim, CsvDocument::LineBreak);
 		csv_parser.setColumnInFirstRow(cols_in_first_row);
-		csv_doc = csv_parser.parseBuffer(csv_buffer);
-		return csv_doc;
+		return csv_parser.parseBuffer(csv_buffer);
 	}
 	catch(Exception &e)
 	{

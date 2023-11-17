@@ -22,8 +22,7 @@ Constraint::Constraint()
 {
 	ref_table=nullptr;
 	obj_type=ObjectType::Constraint;
-	deferrable=false;
-	no_inherit=false;
+	deferrable=no_inherit=nulls_not_distinct = false;
 	fill_factor=0;
 	index_type=IndexingType::Null;
 
@@ -48,6 +47,7 @@ Constraint::Constraint()
 	attributes[Attributes::Factor]="";
 	attributes[Attributes::NoInherit]="";
 	attributes[Attributes::Elements]="";
+	attributes[Attributes::NullsNotDistinct]="";
 }
 
 Constraint::~Constraint()
@@ -569,6 +569,17 @@ void Constraint::setColumnsNotNull(bool value)
 	}
 }
 
+void Constraint::setNullsNotDistinct(bool value)
+{
+	setCodeInvalidated(nulls_not_distinct != value);
+	nulls_not_distinct = value;
+}
+
+bool Constraint::isNullsNotDistinct()
+{
+	return nulls_not_distinct;
+}
+
 ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
 {
 	if(elem_idx >= excl_elements.size())
@@ -693,6 +704,7 @@ QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_adde
 	attributes[Attributes::RefTable]=(ref_table ? ref_table->getName(true) : "");
 	attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : "");
 	attributes[Attributes::NoInherit]=(no_inherit ? Attributes::True : "");
+	attributes[Attributes::NullsNotDistinct]=(nulls_not_distinct ? Attributes::True : "");
 	attributes[Attributes::ComparisonType]=(~match_type);
 	attributes[Attributes::DeferType]=(~deferral_type);
 	attributes[Attributes::IndexType]=(~ index_type);

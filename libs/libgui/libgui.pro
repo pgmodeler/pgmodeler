@@ -10,6 +10,8 @@ windows:DESTDIR = $$PWD
 DEFINES += GUI_SYMBOLS
 
 SOURCES += src/baseform.cpp \
+	src/dbobjects/referenceswidget.cpp \
+	src/dbobjects/simplecolumnswidget.cpp \
 src/guiutilsns.cpp \
 src/mainwindow.cpp \
 src/messagebox.cpp \
@@ -17,7 +19,6 @@ src/pgmodelerplugin.cpp \
 src/dbobjects/aggregatewidget.cpp \
 src/dbobjects/domainwidget.cpp \
 src/dbobjects/languagewidget.cpp \
-src/dbobjects/referencewidget.cpp \
 src/dbobjects/textboxwidget.cpp \
 src/dbobjects/basefunctionwidget.cpp \
 src/dbobjects/elementwidget.cpp \
@@ -130,6 +131,8 @@ src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
 src/baseform.h \
+	src/dbobjects/referenceswidget.h \
+	src/dbobjects/simplecolumnswidget.h \
 src/guiutilsns.h \
 src/mainwindow.h \
 src/messagebox.h \
@@ -137,7 +140,6 @@ src/pgmodelerplugin.h \
 src/dbobjects/aggregatewidget.h \
 src/dbobjects/domainwidget.h \
 src/dbobjects/languagewidget.h \
-src/dbobjects/referencewidget.h \
 src/dbobjects/textboxwidget.h \
 src/dbobjects/basefunctionwidget.h \
 src/dbobjects/elementwidget.h \
@@ -250,6 +252,8 @@ src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
 ui/dbobjects/columnpickerwidget.ui \
+	ui/dbobjects/referenceswidget.ui \
+	ui/dbobjects/simplecolumnswidget.ui \
 ui/mainwindow.ui \
 ui/messagebox.ui \
 ui/dbobjects/aggregatewidget.ui \
@@ -291,7 +295,6 @@ ui/dbobjects/policywidget.ui \
 ui/dbobjects/tagwidget.ui \
 ui/dbobjects/databasewidget.ui \
 ui/dbobjects/indexwidget.ui \
-ui/dbobjects/referencewidget.ui \
 ui/dbobjects/textboxwidget.ui \
 ui/settings/appearanceconfigwidget.ui \
 ui/settings/connectionsconfigwidget.ui \

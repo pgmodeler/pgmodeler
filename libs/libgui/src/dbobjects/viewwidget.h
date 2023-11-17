@@ -29,28 +29,26 @@
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
 #include "widgets/objectstablewidget.h"
-#include "codecompletionwidget.h"
+#include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
+#include "dbobjects/referenceswidget.h"
+#include "dbobjects/simplecolumnswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT
 
+		SimpleColumnsWidget *custom_cols_wgt;
+
+		ReferencesWidget *obj_refs_wgt;
+
 		ObjectSelectorWidget *tag_sel;
 
-		NumberedTextEditor *cte_expression_txt, *code_txt;
-
-		//! \brief Stores all the view references
-		ObjectsTableWidget *references_tab;
+		NumberedTextEditor *sql_preview_txt, *sql_definition_txt;
 
 		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
-		SyntaxHighlighter *code_hl,	*cte_expression_hl;
-
-		CodeCompletionWidget *cte_expression_cp;
-
-		//! \brief Shows the reference at the reference's table
-		void showReferenceData(Reference refer, unsigned ref_flags, unsigned row);
+		SyntaxHighlighter *sql_preview_hl, *sql_definition_hl;
 
 		//! \brief Returns the object table according with the child type
 		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
@@ -66,19 +64,12 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
-		int openReferenceForm(Reference ref, int row, bool update);
-
-		unsigned getReferenceFlag(int row);
-
 	public:
 		ViewWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py);
 
 	private slots:
-		//! \brief Edits the selected reference
-		void editReference(int ref_idx);
-
 		//! \brief Updates the sql code field of the view form
 		void updateCodePreview();
 
@@ -93,12 +84,6 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Removes all objects from the table that calls the slot
 		void removeObjects();
-
-		//! \brief Opens the reference form when a new row is added in the references grid
-		void addReference(int row);
-
-		//! \brief Duplicate the current selected reference
-		void duplicateReference(int orig_row, int new_row);
 
 	public slots:
 		void applyConfiguration();

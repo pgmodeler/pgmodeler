@@ -448,7 +448,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		else
 			object->getSourceCode(SchemaParser::SqlCode);
 
-		//#warning "Updating objects deps after adding to model"
 		object->updateDependencies();
 
 		BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
@@ -875,7 +874,8 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
 	{
 		__addObject(table, obj_idx);
 
-		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::TableType);
+		//PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::TableType);
+		PgSqlType::addUserType(table->getName(true), table, UserTypeConfig::TableType);
 
 		updateTableFKRelationships(table);
 
@@ -916,7 +916,8 @@ void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
 	try
 	{
 		__addObject(sequence, obj_idx);
-		PgSqlType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SequenceType);
+		//PgSqlType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SequenceType);
+		PgSqlType::addUserType(sequence->getName(true), sequence, UserTypeConfig::SequenceType);
 	}
 	catch(Exception &e)
 	{
@@ -985,13 +986,115 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	try
 	{
 		__addObject(extension, obj_idx);
-
-		if(extension->handlesType())
-			PgSqlType::addUserType(extension->getName(true, true), extension, this, UserTypeConfig::ExtensionType);
+		updateExtensionTypes(extension);
 	}
 	catch(Exception &e)
 	{
+		removeExtensionTypes(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::removeExtensionTypes(Extension *ext)
+{
+	if(!ext)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	/* We raise an error if the user tries to remove an extension that
+	 * has one or more children being referenced in the model */
+	for(auto &obj : ext->getReferences())
+	{
+		if(obj->isReferenced())
+		{
+			BaseObject *ref_obj = obj->getReferences().at(0);
+			throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
+													 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+																ref_obj->getSignature(), ref_obj->getTypeName()),
+											 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		removeObject(obj);
+	}
+}
+
+bool DatabaseModel::updateExtensionTypes(Extension *ext)
+{
+	if(!ext)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	std::vector<Type *> new_types;
+
+	try
+	{
+		/* Before inserting the extension, if it has child objects, we
+		 * need to check if there are object with the same name in the model */
+		QString tp_signature;
+		Type *type = nullptr;
+		QStringList type_names = ext->getTypeNames();
+		bool types_removed = true;
+
+		for(auto &tp_name : type_names)
+		{
+			/* Checking if the extension child type has a conflicting name with another type in the model
+			 * For that purpose, we get the first type that contains the extension type signature */
+			tp_signature = ext->getSchema()->getName(true) + "." + tp_name;
+			type = dynamic_cast<Type *>(getObject(tp_signature, ObjectType::Type));
+
+			if(type)
+			{
+				/* If the type exist and is not one that is linked to the current extension it means
+				 * that if we try to create the type it'll be duplicated in the model, which is prohibited */
+				if(!type->isDependingOn(ext))
+				{
+					throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
+															 .arg(ext->getSignature(), tp_name, type->getTypeName()),
+													 ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+
+				// If the retrieved type is one of the extension's child types we just skip it
+				continue;
+			}
+
+			// Creating a new extension child type
+			type = new Type;
+			type->setName(tp_name);
+			type->setSchema(ext->getSchema());
+			type->setSystemObject(true);
+			type->setSQLDisabled(true);
+			type->setConfiguration(Type::EnumerationType);
+			type->getSourceCode(SchemaParser::SqlCode);
+			type->setDependency(ext);
+
+			new_types.push_back(type);
+			addType(type);
+		}
+
+		for(auto &type : ext->getReferences())
+		{
+			if(!type_names.contains(type->getName()))
+			{
+				if(!type->isReferenced())
+					removeObject(type);
+				else
+				{
+					type_names.append(type->getName());
+					ext->setTypeNames(type_names);
+					types_removed = false;
+				}
+			}
+		}
+
+		return types_removed;
+	}
+	catch(Exception &e)
+	{
+		for(auto &tp : new_types)
+		{
+			removeType(tp);
+			delete tp;
+		}
+
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -1215,7 +1318,8 @@ void DatabaseModel::addForeignTable(ForeignTable *table, int obj_idx)
 	{
 		__addObject(table, obj_idx);
 
-		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::ForeignTableType);
+//		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::ForeignTableType);
+		PgSqlType::addUserType(table->getName(true), table, UserTypeConfig::ForeignTableType);
 		dynamic_cast<Schema *>(table->getSchema())->setModified(true);
 	}
 	catch(Exception &e)
@@ -1317,12 +1421,13 @@ void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
+	if(!extension)
+		throw Exception(ErrorCode::RemNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
 	try
 	{
-		if(extension->handlesType())
-			removeUserType(extension, obj_idx);
-		else
-			__removeObject(extension, obj_idx);
+		removeExtensionTypes(extension);
+		__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
 	{
@@ -1335,7 +1440,8 @@ void DatabaseModel::addView(View *view, int obj_idx)
 	try
 	{
 		__addObject(view, obj_idx);
-		PgSqlType::addUserType(view->getName(true), view, this, UserTypeConfig::ViewType);
+		//PgSqlType::addUserType(view->getName(true), view, this, UserTypeConfig::ViewType);
+		PgSqlType::addUserType(view->getName(true), view, UserTypeConfig::ViewType);
 
 		updateViewRelationships(view);
 		dynamic_cast<Schema *>(view->getSchema())->setModified(true);
@@ -1504,10 +1610,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
 	PhysicalTable *table = nullptr;
 	BaseRelationship *rel = nullptr;
-	Reference ref;
-	unsigned i = 0, ref_count = 0, idx = 0;
+	unsigned idx = 0;
 	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::vector<PhysicalTable *> tables;
 
 	if(!view)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1573,23 +1677,8 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			}
 		}
 
-		/* Creates the relationships from the view references
-		 * First we try to create relationship from referecences in SELECT portion of view's definition */
-		ref_count = view->getReferenceCount(Reference::SqlSelect);
-		for(i = 0; i < ref_count; i++)
-		{
-			table = view->getReference(i, Reference::SqlSelect).getTable();
-			if(table) tables.push_back(table);
-		}
-
-		/* If the view does have tables referenced from SELECT portion we check if
-		 * the table was constructed from a single reference (Reference::SqlViewDef). In
-		 * that case we use the list of referenced tables configured in that view reference object */
-		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDef) > 0)
-			tables = view->getReference(0, Reference::SqlViewDef).getReferencedTables();
-
 		// Effectively creating the relationships
-		for(auto &tab : tables)
+		for(auto &tab : view->getReferencedTables())
 		{
 			rel = getRelationship(view, tab);
 
@@ -1946,7 +2035,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 	View *view=nullptr;
 	BaseRelationship *rel=nullptr;
 	GenericSQL *generic_sql=nullptr;
-	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
 	std::vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
@@ -2079,34 +2167,25 @@ void DatabaseModel::storeSpecialObjectsXML()
 
 			if(view->isReferRelationshipAddedColumn())
 			{
-				xml_special_objs[view->getObjectId()]=view->getSourceCode(SchemaParser::XmlCode);
+				xml_special_objs[view->getObjectId()] = view->getSourceCode(SchemaParser::XmlCode);
 
 				/* Relationships linking the view and the referenced tables are considered as
-			 special objects in this case only to be recreated more easely latter */
-
-				count=view->getReferenceCount(Reference::SqlSelect);
-
-				for(i=0; i < count; i++)
+				 * special objects in this case only to be recreated more easely latter */
+				for(auto &table : view->getReferencedTables())
 				{
-					ref=view->getReference(i, Reference::SqlSelect);
-					table=ref.getTable();
+					//Get the relationship between the view and the referenced table
+					rel = getRelationship(view, table);
 
-					if(table)
+					if(rel)
 					{
-						//Get the relationship between the view and the referenced table
-						rel=getRelationship(view, table);
-
-						if(rel)
-						{
-							xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
-							removeRelationship(rel);
-							invalid_special_objs.push_back(rel);
-						}
+						xml_special_objs[rel->getObjectId()]=rel->getSourceCode(SchemaParser::XmlCode);
+						removeRelationship(rel);
+						invalid_special_objs.push_back(rel);
 					}
 				}
 
 				/* Removing child objects from view and including them in the list of objects to be recreated,
-		   this will avoid errors when removing the view from model */
+				 * this will avoid errors when removing the view from model */
 				objects=view->getObjects();
 				for(auto &obj : objects)
 				{
@@ -2722,7 +2801,8 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 			__addObject(domain, obj_idx);
 
 			//When added to the model the domain is inserted on the pgsql base type list to be used as a column type
-			PgSqlType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DomainType);
+//			PgSqlType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DomainType);
+			PgSqlType::addUserType(domain->getName(true), domain, UserTypeConfig::DomainType);
 		}
 		catch(Exception &e)
 		{
@@ -2888,7 +2968,8 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 			__addObject(type, obj_idx);
 
 			//When added to the model the user type is inserted on the pgsql base type list to be used as a column type
-			PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
+			//PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
+			PgSqlType::addUserType(type->getName(true), type, UserTypeConfig::BaseType);
 		}
 		catch(Exception &e)
 		{
@@ -3222,11 +3303,11 @@ void DatabaseModel::loadModel(const QString &filename)
 
 	//Configuring the path to the base path for objects DTD
 	dtd_file=GlobalAttributes::getSchemasRootPath() +
-					 GlobalAttributes::DirSeparator +
-					 GlobalAttributes::XMLSchemaDir +
-					 GlobalAttributes::DirSeparator +
-					 GlobalAttributes::ObjectDTDDir +
-					 GlobalAttributes::DirSeparator;
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::XMLSchemaDir +
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::ObjectDTDDir +
+						 GlobalAttributes::DirSeparator;
 
 	try
 	{
@@ -3235,8 +3316,8 @@ void DatabaseModel::loadModel(const QString &filename)
 
 		//Loads the root DTD
 		xmlparser.setDTDFile(dtd_file + GlobalAttributes::RootDTD +
-							 GlobalAttributes::ObjectDTDExt,
-							 GlobalAttributes::RootDTD);
+														 GlobalAttributes::ObjectDTDExt,
+												 GlobalAttributes::RootDTD);
 
 		//Loads the file validating it against the root DTD
 		xmlparser.loadXMLFile(filename);
@@ -3382,10 +3463,10 @@ void DatabaseModel::loadModel(const QString &filename)
 									addObject(object);
 
 								emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-													tr("Loading: `%1' (%2)")
-													.arg(object->getName())
-													.arg(object->getTypeName()),
-													enum_t(obj_type));
+																		tr("Loading: `%1' (%2)")
+																				.arg(object->getName())
+																				.arg(object->getTypeName()),
+																		enum_t(obj_type));
 							}
 
 							xmlparser.restorePosition();
@@ -3412,11 +3493,11 @@ void DatabaseModel::loadModel(const QString &filename)
 
 				if(!object)
 					throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-									.arg(this->getName())
-									.arg(this->getTypeName())
-									.arg(itr.second)
-									.arg(BaseObject::getTypeName(itr.first)),
-									ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+															.arg(this->getName())
+															.arg(this->getTypeName())
+															.arg(itr.second)
+															.arg(BaseObject::getTypeName(itr.first)),
+													ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->setDefaultObject(object);
 			}
@@ -3455,7 +3536,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 		if(e.getErrorCode() != ErrorCode::FileDirectoryNotAccessed &&
-			 e.getErrorCode() >= ErrorCode::InvalidSyntax)
+				e.getErrorCode() >= ErrorCode::InvalidSyntax)
 		{
 			str_aux=Exception::getErrorMessage(ErrorCode::InvModelFileNotLoaded).arg(filename);
 			throw Exception(str_aux,ErrorCode::InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
@@ -4301,10 +4382,10 @@ PgSqlType DatabaseModel::createPgSQLType()
 	else
 	{
 		//Raises an error if the referenced type name doesn't exists
-		if(PgSqlType::getUserTypeIndex(name,nullptr,this) == PgSqlType::Null)
+		if(PgSqlType::getUserTypeIndex(name, nullptr, this) == PgSqlType::Null)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
+		type_idx = PgSqlType::getUserTypeIndex(name, ptype, this);
 		return PgSqlType(type_idx, dimension, length, precision, with_timezone, interv_type, spatial_type);
 	}
 }
@@ -5190,6 +5271,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		{
 			constr->setIndexType(attribs[Attributes::IndexType]);
 		}
+		else if(constr_type==ConstraintType::Unique)
+			constr->setNullsNotDistinct(attribs[Attributes::NullsNotDistinct]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5530,6 +5613,7 @@ Index *DatabaseModel::createIndex()
 		index->setIndexAttribute(Index::Unique, attribs[Attributes::Unique]==Attributes::True);
 		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FastUpdate]==Attributes::True);
 		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
+		index->setIndexAttribute(Index::NullsNotDistinct, attribs[Attributes::NullsNotDistinct]==Attributes::True);
 		index->setIndexingType(attribs[Attributes::IndexType]);
 		index->setFillFactor(attribs[Attributes::Factor].toUInt());
 
@@ -6007,12 +6091,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 						genericsql->setDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem == Attributes::Object)
+					else if(elem == Attributes::Reference)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
-						obj_name = attribs[Attributes::Name];
+						obj_name = attribs[Attributes::Object];
 
 						//If the object is a column its needed to get the parent table
 						if(obj_type == ObjectType::Column)
@@ -6042,9 +6126,12 @@ GenericSQL *DatabaseModel::createGenericSQL()
 															.arg(BaseObject::getTypeName(obj_type)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						genericsql->addObjectReference(object, attribs[Attributes::RefName],
-																					 attribs[Attributes::UseSignature] == Attributes::True,
-																					 attribs[Attributes::FormatName] == Attributes::True);
+						genericsql->addReference(Reference(object,
+																								attribs[Attributes::RefName],
+																								attribs[Attributes::RefAlias],
+																								attribs[Attributes::UseSignature] == Attributes::True,
+																								attribs[Attributes::FormatName] == Attributes::True,
+																								attribs[Attributes::UseColumns] == Attributes::True));
 					}
 				}
 			}
@@ -6508,17 +6595,11 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 View *DatabaseModel::createView()
 {
 	attribs_map attribs, aux_attribs;
-	View *view=nullptr;
-	Column *column=nullptr;
-	PhysicalTable *table=nullptr;
-	QString elem, str_aux;
-	QStringList list_aux;
-	std::vector<Reference> refs;
-	BaseObject *tag=nullptr;
-	Reference::SqlType sql_type;
-	int ref_idx, i, count;
-	bool refs_in_expr=false;
-	Reference reference;
+	View *view = nullptr;
+	BaseObject *tag = nullptr;
+	std::vector<Reference> view_refs;
+	std::vector<SimpleColumn> custom_cols;
+	QString elem;
 
 	try
 	{
@@ -6541,143 +6622,68 @@ View *DatabaseModel::createView()
 		{
 			do
 			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
 				{
-					elem=xmlparser.getElementName();
+					elem = xmlparser.getElementName();
 
-					if(elem==Attributes::Reference)
-					{
-						xmlparser.getElementAttributes(attribs);
-
-						//If the table name is specified tries to create a reference to a table/column
-						if(!attribs[Attributes::Table].isEmpty())
-						{
-							column=nullptr;
-							table=dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], {ObjectType::Table, ObjectType::ForeignTable}));
-
-							//Raises an error if the table doesn't exists
-							if(!table)
-							{
-								str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-										.arg(view->getName())
-										.arg(BaseObject::getTypeName(ObjectType::View))
-										.arg(attribs[Attributes::Table])
-										.arg(BaseObject::getTypeName(ObjectType::Table));
-
-								throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-
-							if(!attribs[Attributes::Column].isEmpty())
-							{
-								column=table->getColumn(attribs[Attributes::Column]);
-
-								if(!column)
-									column=table->getColumn(attribs[Attributes::Column], true);
-
-								//Raises an error if the view references an inexistant column
-								if(!column)
-								{
-									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(view->getName())
-											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[Attributes::Table] + "." +
-											attribs[Attributes::Column])
-											.arg(BaseObject::getTypeName(ObjectType::Column));
-
-									throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-							}
-
-							//Adds the configured reference to a temporarily list
-							reference = Reference(table, column,
-																		attribs[Attributes::Alias],
-																		attribs[Attributes::ColumnAlias]);
-							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
-							refs.push_back(reference);
-						}
-						else
-						{
-							xmlparser.savePosition();
-							str_aux=attribs[Attributes::Alias];
-
-							// Retrieving the reference expression
-							xmlparser.accessElement(XmlParser::ChildElement);
-							xmlparser.savePosition();
-							xmlparser.accessElement(XmlParser::ChildElement);
-							reference = Reference(xmlparser.getElementContent(), str_aux);
-							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
-							xmlparser.restorePosition();
-
-							// Creating the columns related to the expression
-							if(xmlparser.accessElement(XmlParser::NextElement))
-							{
-								do
-								{
-									elem = xmlparser.getElementName();
-									xmlparser.savePosition();
-
-									if(elem == Attributes::Column)
-									{
-										column = createColumn();
-										reference.addColumn(column);
-										delete column;
-									}
-									else if(elem == Attributes::RefTableTag)
-									{
-										xmlparser.getElementAttributes(aux_attribs);
-										table = getTable(aux_attribs[Attributes::Name]);
-
-										if(!table)
-											table = getForeignTable(aux_attribs[Attributes::Name]);
-
-										reference.addReferencedTable(table);
-									}
-
-									xmlparser.restorePosition();
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
-							}
-
-							refs.push_back(reference);
-							xmlparser.restorePosition();
-						}
-					}
-					else if(elem==Attributes::Expression)
+					if(elem == Attributes::Definition)
 					{
 						xmlparser.savePosition();
-						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XmlParser::ChildElement);
-
-						if(attribs[Attributes::Type]==Attributes::CteExpression)
-							view->setCommomTableExpression(xmlparser.getElementContent());
-						else
-						{
-							if(attribs[Attributes::Type]==Attributes::SelectExp)
-								sql_type=Reference::SqlSelect;
-							else if(attribs[Attributes::Type]==Attributes::FromExp)
-								sql_type=Reference::SqlFrom;
-							else if(attribs[Attributes::Type]==Attributes::SimpleExp)
-								sql_type=Reference::SqlWhere;
-							else
-								sql_type=Reference::SqlEndExpr;
-
-							list_aux=xmlparser.getElementContent().split(',');
-							count=list_aux.size();
-
-							//Indicates that some of the references were used in the expressions
-							if(count > 0 && !refs_in_expr)
-								refs_in_expr=true;
-
-							for(i=0; i < count; i++)
-							{
-								ref_idx=list_aux[i].toInt();
-								view->addReference(refs[ref_idx],sql_type);
-							}
-						}
-
+						view->setSqlDefinition(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem==BaseObject::getSchemaName(ObjectType::Tag))
+					else if(elem == Attributes::SimpleCol)
+					{
+						xmlparser.getElementAttributes(attribs);
+						custom_cols.push_back(SimpleColumn(attribs[Attributes::Name],
+																							 attribs[Attributes::Type],
+																							 attribs[Attributes::Alias]));
+					}
+					else if(elem == Attributes::Reference)
+					{
+						BaseObject *ref_object = nullptr;
+						ObjectType ref_obj_type;
+
+						xmlparser.getElementAttributes(attribs);
+
+						ref_obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
+
+						if(ref_obj_type == ObjectType::Column)
+						{
+							QStringList name_list = attribs[Attributes::Object].split('.');
+							PhysicalTable *tab = nullptr;
+
+							if(name_list.size() == 3)
+							{
+								QString tab_name = QString("%1.%2").arg(name_list[0], name_list[1]);
+								tab = dynamic_cast<PhysicalTable *>(getObject(tab_name, { ObjectType::Table, ObjectType::ForeignTable }));
+
+								if(tab)
+									ref_object = tab->getObject(name_list[2], ref_obj_type);
+							}
+						}
+						else
+							ref_object = getObject(attribs[Attributes::Object], ref_obj_type);
+
+						if(!ref_object)
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(view->getSignature(),
+																	 BaseObject::getTypeName(ObjectType::View),
+																	 attribs[Attributes::Object],
+																	 BaseObject::getTypeName(ref_obj_type)),
+															 ErrorCode::RefObjectInexistsModel, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+						}
+
+						view_refs.push_back(Reference(ref_object,
+																											attribs[Attributes::RefName],
+																											attribs[Attributes::RefAlias],
+																											attribs[Attributes::UseSignature] == Attributes::True,
+																											attribs[Attributes::FormatName] == Attributes::True,
+																											attribs[Attributes::UseColumns] == Attributes::True));
+					}
+					else if(elem == BaseObject::getSchemaName(ObjectType::Tag))
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						tag=getObject(aux_attribs[Attributes::Name] ,ObjectType::Tag);
@@ -6685,10 +6691,10 @@ View *DatabaseModel::createView()
 						if(!tag)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[Attributes::Name])
-									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[Attributes::Table])
-									.arg(BaseObject::getTypeName(ObjectType::Tag))
+										.arg(attribs[Attributes::Name],
+												 BaseObject::getTypeName(ObjectType::Table),
+												 aux_attribs[Attributes::Table],
+												BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
@@ -6699,27 +6705,8 @@ View *DatabaseModel::createView()
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		/** Special case for refereces used as view definition **
-
-			If the flag 'refs_in_expr' isn't set indicates that the user defined a reference
-	  but has no used to define the view declaration, this way pgModeler will consider these
-	  references as View definition expressions and will force the insertion of them as
-			Reference::SQL_VIEW_DEFINITION.
-
-		This process can raise errors because if the user defined more than one reference the view
-		cannot accept the two as it's SQL definition, also the defined references MUST be expressions in
-		order to be used as view definition */
-		if(!refs.empty() && !refs_in_expr)
-		{
-			std::vector<Reference>::iterator itr;
-
-			itr=refs.begin();
-			while(itr!=refs.end())
-			{
-				view->addReference(*itr, Reference::SqlViewDef);
-				itr++;
-			}
-		}
+		view->setReferences(view_refs);
+		view->setCustomColumns(custom_cols);
 	}
 	catch(Exception &e)
 	{
@@ -6794,16 +6781,36 @@ Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
+	QStringList types;
 
 	try
 	{
-		extension=new Extension;
+		extension = new Extension;
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
-		extension->setHandlesType(attribs[Attributes::HandlesType]==Attributes::True);
 		extension->setVersion(Extension::CurVersion, attribs[Attributes::CurVersion]);
 		extension->setVersion(Extension::OldVersion, attribs[Attributes::OldVersion]);
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			attribs.clear();
+
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					if(xmlparser.getElementName() == Attributes::Type)
+					{
+						xmlparser.getElementAttributes(attribs);
+						types.append(attribs[Attributes::Name]);
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		extension->setTypeNames(types);
 	}
 	catch(Exception &e)
 	{
@@ -6943,7 +6950,13 @@ BaseRelationship *DatabaseModel::createRelationship()
 			/* If the relationship is between a view and a table and the table is not found
 			 * we try to find a foreign table instead */
 			if(table_types[i] == ObjectType::Table && !tables[i])
+			{
 				tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::ForeignTable));
+
+				// In case of table-view relationship, as a last resort, we try to find a view matching the table name
+				if(!tables[i] && attribs[Attributes::Type] == Attributes::RelationshipTabView)
+					tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], ObjectType::View));
+			}
 
 			//Raises an error if some table doesn't exists
 			if(!tables[i])
@@ -8479,33 +8492,6 @@ void DatabaseModel::setCodesInvalidated(std::vector<ObjectType> types)
 			for(auto &obj : *list)
 				obj->setCodeInvalidated(true);
 		}
-	}
-}
-
-BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
-{
-	switch(type.getUserTypeConfig())
-	{
-		case UserTypeConfig::BaseType:
-		return this->getObject(*type, ObjectType::Type);
-
-		case UserTypeConfig::DomainType:
-		return this->getObject(*type, ObjectType::Domain);
-
-		case UserTypeConfig::TableType:
-		return this->getObject(*type, ObjectType::Table);
-
-		case UserTypeConfig::ViewType:
-		return this->getObject(*type, ObjectType::View);
-
-		case UserTypeConfig::SequenceType:
-		return this->getObject(*type, ObjectType::Sequence);
-
-		case UserTypeConfig::ExtensionType:
-		return this->getObject(*type, ObjectType::Extension);
-
-		default:
-		return nullptr;
 	}
 }
 

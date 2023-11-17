@@ -3,10 +3,6 @@
 # Code generation can be broken if incorrect changes are made.
 [<extension name=] "&{name}"
 
-%if {handles-type} %then
-	[ handles-type="true"]
-%end
-
 %if {cur-version} %then
 	[ cur-version=]"&{cur-version}"
 %end
@@ -30,6 +26,11 @@
 %end
 
 %if {comment} %then {comment} %end
+
+%if {types} %then
+	{types}
+%end
+
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 

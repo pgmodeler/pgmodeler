@@ -379,6 +379,9 @@
         <property name="expandsOnDoubleClick">
          <bool>false</bool>
         </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
         <column>
          <property name="text">
           <string>1</string>

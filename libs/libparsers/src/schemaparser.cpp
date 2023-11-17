@@ -617,13 +617,12 @@ bool SchemaParser::evaluateComparisonExpr()
 
 void SchemaParser::defineAttribute()
 {
-	QString curr_line, attrib, value, new_attrib;
+	QString curr_line = buffer[line], attrib, value, new_attrib;
 	bool error=false, end_def=false, use_val_as_name=false, to_xml_entity = false;
+	int curr_ln_idx = line;
 
 	try
 	{
-		curr_line=buffer[line];
-
 		while(!end_def && !error)
 		{
 			ignoreBlankChars(curr_line);
@@ -671,7 +670,13 @@ void SchemaParser::defineAttribute()
 				break;
 
 				case CharStartPlainText:
-					value+=getPlainText();
+					value += getPlainText();
+
+					/* If we finished the extraction of a plain text
+					 * in which contains multiple lines, we need to stop
+					 * parsing the current line and return the defined
+					 * attribute */
+					end_def = line != curr_ln_idx;
 				break;
 
 				case CharStartMetachar:

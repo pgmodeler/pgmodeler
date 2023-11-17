@@ -1143,10 +1143,14 @@ void MainWindow::loadModelFromAction()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
+
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			{
+				Messagebox msgbox;
+				msgbox.show(e);
+			}
 		}
 	}
 }
@@ -1505,6 +1509,11 @@ void MainWindow::setGridOptions()
 		//Redraw the scene to apply the new grid options
 		current_model->update();
 	}
+
+	attribs[Attributes::Configuration][Attributes::ShowCanvasGrid] = action_show_grid->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::ShowPageDelimiters] = action_show_delimiters->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False;
+	attribs[Attributes::Configuration][Attributes::LockPageDelimResize] = action_lock_delim->isChecked() ? Attributes::True : Attributes::False;
 
 	conf_wgt->setConfigurationSection(Attributes::Configuration, attribs[Attributes::Configuration]);
 }
@@ -2021,7 +2030,10 @@ void MainWindow::loadModels(const QStringList &files)
 		if( files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
 		else
-			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		{
+			Messagebox msgbox;
+			msgbox.show(e);
+		}
 	}
 }
 
@@ -2448,6 +2460,11 @@ void MainWindow::arrangeObjects()
 void MainWindow::toggleCompactView()
 {
 	ModelWidget *model_wgt = nullptr;
+	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+	std::map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
+
+	attribs[Attributes::Configuration][Attributes::CompactView] = action_compact_view->isChecked() ? Attributes::True : Attributes::False;
+	conf_wgt->setConfigurationSection(Attributes::Configuration, attribs[Attributes::Configuration]);
 
 	BaseObjectView::setCompactViewEnabled(action_compact_view->isChecked());
 	qApp->setOverrideCursor(Qt::WaitCursor);

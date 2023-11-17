@@ -276,7 +276,38 @@ QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
 
 QString ObjectsTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	return getItem(row_idx, col_idx)->text();
+	try
+	{
+		return getItem(row_idx, col_idx)->text();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QStringList ObjectsTableWidget::getCellTexts(unsigned int section_idx, Qt::Orientation orientation)
+{
+	QStringList texts;
+	bool use_cols = (orientation == Qt::Horizontal);
+	unsigned end_idx = (use_cols ? getColumnCount() : getRowCount());
+
+	try
+	{
+		for(unsigned idx = 0; idx < end_idx; idx++)
+		{
+			if(use_cols)
+				texts.append(getCellText(section_idx, idx));
+			else
+				texts.append(getCellText(idx, section_idx));
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	return texts;
 }
 
 Qt::CheckState ObjectsTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
