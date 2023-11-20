@@ -85,8 +85,6 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	completion_wgt->setLayout(vbox);
 
-	GuiUtilsNs::configureWidgetFont(name_list, GuiUtilsNs::MediumFontFactor);
-
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
 
@@ -665,7 +663,8 @@ bool CodeCompletionWidget::retrieveObjectNames()
 											 ObjectType::View,
 											 ObjectType::Aggregate,
 											 ObjectType::Function,
-											 ObjectType::Procedure });
+											 ObjectType::Procedure,
+											 ObjectType::Sequence });
 		sch_name = names[0];
 		obj_name = names[1];
 	}
