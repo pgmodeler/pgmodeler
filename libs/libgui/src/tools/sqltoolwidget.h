@@ -63,8 +63,9 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		void setCornerButtonPos();
 
-public:
+	public:
 		SQLToolWidget(QWidget * parent = nullptr);
+
 		virtual ~SQLToolWidget();
 
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
@@ -78,6 +79,10 @@ public:
 
 		//! \brief Returns the list of execution tabs associated to the specified database explorer widget
 		QWidgetList getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt);
+
+		/*! \brief Moves the execution widgets stored in the internal list of sql_exec_wgts related to the current database
+		 * explorer widget when the user moves the tabs. */
+		void moveExecutionTab(DatabaseExplorerWidget *db_expl_wgt, int from_idx, int to_idx);
 
 		/*! \brief Indicates if SQL tool must ignore the auto-browse flag of the connections.
 		 * This causes a selected connection with auto-browse=true to not open an instance of

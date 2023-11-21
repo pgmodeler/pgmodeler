@@ -629,3 +629,14 @@ QWidgetList SQLToolWidget::getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt)
 
 	return sql_exec_wgts.value(db_expl_wgt);
 }
+
+void SQLToolWidget::moveExecutionTab(DatabaseExplorerWidget *db_expl_wgt, int from_idx, int to_idx)
+{
+	if(!db_expl_wgt || !sql_exec_wgts.contains(db_expl_wgt) ||
+		 from_idx < 0 || to_idx < 0 ||
+		 from_idx >= sql_exec_wgts[db_expl_wgt].size() ||
+		 to_idx >= sql_exec_wgts[db_expl_wgt].size())
+		return;
+
+	sql_exec_wgts[db_expl_wgt].move(from_idx, to_idx);
+}
