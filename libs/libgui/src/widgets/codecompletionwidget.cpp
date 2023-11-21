@@ -1110,7 +1110,14 @@ void CodeCompletionWidget::updateList()
 	qApp->restoreOverrideCursor();
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
+	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
+	QSize screen_sz = completion_wgt->screen()->size();
+
+	// Adjust the position of the widget if it extrapolates the screen limits
+	if((pos.x() + completion_wgt->width()) > screen_sz.width())
+		pos.setX(pos.x() - completion_wgt->width());
+
+	completion_wgt->move(pos);
 	name_list->scrollToTop();
 	name_list->setFocus();
 	adjustNameListSize();
