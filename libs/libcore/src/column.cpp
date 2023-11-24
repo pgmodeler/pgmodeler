@@ -479,5 +479,5 @@ void Column::updateDependencies()
 void Column::generateHashCode()
 {
 	TableObject::generateHashCode();
-	hash_code = UtilsNs::getStringHash(hash_code + type.getSQLTypeName() + QString::number(not_null));
+	hash_code = UtilsNs::getStringHash(hash_code + type.getTypeSql() + QString::number(not_null));
 }
