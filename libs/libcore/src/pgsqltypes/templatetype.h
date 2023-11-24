@@ -75,13 +75,8 @@ class __libcore TemplateType {
 		virtual unsigned setType(const QString &type_name) = 0;
 		virtual QString getTypeName(unsigned type_id) = 0;
 
-		//! \brief Returns the name (without any qualifier) of the type using the current type_idx
-		virtual QString getTypeName();
-
 		virtual unsigned operator = (unsigned type_id);
 		virtual unsigned operator = (const QString &type_name);
-
-		//! \brief Returns the name (without any qualifier) of the type using the current type_idx
 		virtual QString operator ~();
 
 		//! \brief Returns the code (id) of the type
@@ -119,12 +114,6 @@ unsigned TemplateType<Class>::operator = (const QString &type_name)
 
 template<class Class>
 QString TemplateType<Class>::operator ~ ()
-{
-	return getTypeName(type_idx);
-}
-
-template<class Class>
-QString TemplateType<Class>::getTypeName()
 {
 	return getTypeName(type_idx);
 }

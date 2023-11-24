@@ -321,10 +321,7 @@ QString Column::getAlterCode(BaseObject *object)
 					(this->type.acceptsPrecision() &&
 					 col->type.getPrecision() > 0 &&
 					 this->type.getPrecision() != col->type.getPrecision()))))
-		{
 			attribs[Attributes::Type]=col->type.getSourceCode(SchemaParser::SqlCode);
-		}
-
 
 		if(col->sequence)
 			def_val=NextValFuncTmpl.arg(col->sequence->getSignature());
@@ -482,5 +479,5 @@ void Column::updateDependencies()
 void Column::generateHashCode()
 {
 	TableObject::generateHashCode();
-	hash_code = UtilsNs::getStringHash(hash_code + type.getTypeSql() + QString::number(not_null));
+	hash_code = UtilsNs::getStringHash(hash_code + type.getSQLTypeName() + QString::number(not_null));
 }

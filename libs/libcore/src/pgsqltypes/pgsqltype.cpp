@@ -368,31 +368,27 @@ unsigned PgSqlType::getTypeId()
 	return !(*this);
 }
 
-QString PgSqlType::getTypeName()
-{
-	return TemplateType<PgSqlType>::getTypeName();
-}
-
 QString PgSqlType::getTypeName(bool incl_dimension)
 {
 	if(incl_dimension)
 	{
 		QString type;
 
-		type = getTypeName();
+		type=~(*this);
 
-		if(type != "void" && dimension > 0)
-			type += QString("[]").repeated(dimension);
+		if(type!="void" && dimension > 0)
+			type+=QString("[]").repeated(dimension);
 
 		return type;
 	}
 
-	return getTypeName();
+	return ~(*this);
 }
 
-QString PgSqlType::getTypeSql()
+QString PgSqlType::getSQLTypeName()
 {
 	QString fmt_type, type, aux;
+	//unsigned idx;
 
 	type = ~(*this);
 	fmt_type = type;
@@ -441,7 +437,10 @@ QString PgSqlType::getTypeSql()
 
 
 	if(type!="void" && dimension > 0)
+	{
+		//for(idx=0; idx < dimension; idx++)
 		fmt_type+=QString("[]").repeated(dimension);
+	}
 
 	return fmt_type;
 }
@@ -884,7 +883,7 @@ bool PgSqlType::hasVariableLength()
 
 bool PgSqlType::isCharacterType()
 {
-	QString curr_type = getTypeName(false);
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return !isUserType() &&
 				 (curr_type=="\"char\"" || curr_type=="char" ||
@@ -894,7 +893,7 @@ bool PgSqlType::isCharacterType()
 
 bool PgSqlType::isPolymorphicType()
 {
-	QString curr_type = getTypeName(false);
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return !isUserType() &&
 				 (curr_type=="anyarray" || curr_type=="anyelement" ||
@@ -904,14 +903,14 @@ bool PgSqlType::isPolymorphicType()
 
 bool PgSqlType::isMonetaryType()
 {
-	QString curr_type = getTypeName(false);
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return !isUserType() && curr_type=="money";
 }
 
 bool PgSqlType::isBinaryType()
 {
-	QString curr_type = getTypeName(false);
+	QString curr_type = getTypeName(false); //(!isUserType() ? type_names[this->type_idx] : "");
 
 	return !isUserType() && curr_type=="bytea";
 }
@@ -1039,19 +1038,20 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 																		 "regtype","regconfig","regdictionary"},
 																		{"timestamptz","timestamp with time zone"},
 																		{"timestamp","timestamp without time zone"}};
+
 	//If the types are equal there is no need to perform further operations
-	if(this->getTypeSql() == type.getTypeSql())
+	if(*this==type)
 		return true;
 
 	//Getting the index which the this type is in
-	for(auto &list : types)
+	for(QStringList list : types)
 	{
 		if(list.contains(~(*this))) break;
 		this_idx++;
 	}
 
 	//Getting the index which 'type' is in
-	for(auto &list : types)
+	for(QStringList list : types)
 	{
 		if(list.contains(~type)) break;
 		type_idx++;
@@ -1147,7 +1147,7 @@ int PgSqlType::getPrecision()
 QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_type)
 {
 	if(def_type==SchemaParser::SqlCode)
-		return getTypeSql();
+		return getSQLTypeName();
 
 	attribs_map attribs;
 	SchemaParser schparser;
@@ -1189,5 +1189,5 @@ QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_ty
 
 QString PgSqlType::operator * ()
 {
-	return getTypeSql();
+	return getSQLTypeName();
 }
