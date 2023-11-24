@@ -68,6 +68,9 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		//! \brief Spatial type used by the PostGiS types
 		SpatialType spatial_type;
 
+		//! \brief Disabling this method version
+		QString getTypeName(unsigned) override { return ""; }
+
 	protected:
 		//! \brief Adds a new reference to the user defined type
 		//static void addUserType(const QString &type_name, BaseObject *ptype, DatabaseModel *pmodel, UserTypeConfig::TypeConf type_conf);
@@ -304,13 +307,13 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 		 * Other attributes of the type are discarded. */
 		QString getTypeName(bool incl_dimension);
 
-		/*! \brief Returns the name of the type in SQL form.
-		 * Includes the length, precision and other quantifiers of the type. */
-		QString getSQLTypeName();
+		/*! \brief Returns the type in complete SQL form.
+		* Includes the name, length, precision and other quantifiers of the type. */
+		QString getTypeSql();
 
 		static QStringList getTypes();
 
-		QString getTypeName(unsigned) override { return ""; }
+		QString getTypeName() override;
 
 		friend class Type;
 		friend class Domain;
