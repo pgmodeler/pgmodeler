@@ -53,7 +53,7 @@ class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWi
 	private:
 		Q_OBJECT
 
-		QString check_versions;
+		QString check_versions, blogpost;
 
 		//! \brief Object responsible to make request to server
 		QNetworkAccessManager update_chk_manager;

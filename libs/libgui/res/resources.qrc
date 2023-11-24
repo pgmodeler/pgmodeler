@@ -267,6 +267,7 @@
         <file>icons/selection.png</file>
         <file>icons/resetalerts.png</file>
         <file>icons/resetsizes.png</file>
+        <file>icons/blogpost.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

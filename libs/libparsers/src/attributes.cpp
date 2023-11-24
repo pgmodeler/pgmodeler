@@ -63,6 +63,7 @@ namespace Attributes {
 	Bold("bold"),
 	BorderColor("border-color"),
 	Bottom("bottom"),
+	BlogPost("blogpost"),
 	Buffering("buffering"),
 	BypassRls("bypassrls"),
 	ByValue("by-value"),
