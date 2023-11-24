@@ -95,7 +95,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 			font.setBold(false);
 
 		painter.setFont(font);
-		height = painter.fontMetrics().height() + 1;
+		height = painter.fontMetrics().height();
 
 		if(font.bold())
 		{
