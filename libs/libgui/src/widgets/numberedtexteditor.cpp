@@ -562,9 +562,15 @@ void NumberedTextEditor::updateLineNumbers()
 
 	QTextBlock block = firstVisibleBlock();
 	int block_number = block.blockNumber(),
+
 			//Calculates the first block postion (in widget coordinates)
 			top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
-			bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
+
+			/* We need to retrieve the minimal height for one line of the block. So, we divide the
+			 * total block height by the block line numbers (in case of the block has more than one line, e.g., the
+			 * line wrap mode is activated) */
+			height = static_cast<int>(blockBoundingRect(block).height()) / block.lineCount(),
+			bottom = top + height,
 			dy = top;
 	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
@@ -591,7 +597,7 @@ void NumberedTextEditor::updateLineNumbers()
 			break;
 	}
 
-	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
+	line_number_wgt->drawLineNumbers(first_line, line_count, dy, height);
 	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
