@@ -68,7 +68,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 
 	QTextCursor aux_cur;
 	QTextBlock block;
-	int blk_num = 0, prev_blk_num = -1, padding = (line_count == 1 ? -2 : 1);
+	int blk_num = 0, prev_blk_num = -1, padding = (line_count == 1 ? -3 : 1);
 	QString lin_str;
 
 	//Draw line numbers
@@ -106,7 +106,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 		else
 			painter.setPen(font_color);
 
-		painter.drawText(0, y, this->width(), block_height, Qt::AlignCenter, lin_str);
+		painter.drawText(0, y, this->width(), block_height, Qt::AlignHCenter, lin_str);
 		y += block_height;
 	}
 }
