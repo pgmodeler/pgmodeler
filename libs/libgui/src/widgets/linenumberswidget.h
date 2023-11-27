@@ -35,6 +35,8 @@ class __libgui LineNumbersWidget : public QWidget {
 
 		QPlainTextEdit *parent_edt;
 
+		qreal custom_fnt_size;
+
 		bool has_selection;
 
 		//! \brief The first line number that must be drawn

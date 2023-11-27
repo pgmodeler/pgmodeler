@@ -26,7 +26,7 @@
 QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
 const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
 
-SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -34,7 +34,8 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	code_field_txt = parent;
 	capt_nearby_separators = false;
 	this->setDocument(parent->document());
-	this->single_line_mode=single_line_mode;
+	this->single_line_mode = single_line_mode;
+	custom_font_size = custom_fnt_size;
 	configureAttributes();
 	parent->installEventFilter(this);
 
@@ -44,7 +45,8 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)
 	{
-		QFontMetrics fm = QFontMetrics(default_font);
+		QFont fnt(default_font.family(), getCurrentFontSize());
+		QFontMetrics fm = QFontMetrics(fnt);
 		int height=fm.height() + fm.lineSpacing()/2;
 		parent->setMinimumHeight(height);
 		parent->setMaximumHeight(height);
@@ -72,6 +74,9 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 
 	connect(&highlight_timer, &QTimer::timeout, this, [this](){
 		highlight_timer.stop();
+
+		if(this->single_line_mode)
+			return;
 
 		for(auto &cfg : enclosing_chrs)
 			highlightEnclosingChars(cfg);
@@ -505,7 +510,7 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		QList<QTextEdit::ExtraSelection> selections;
 		QTextEdit::ExtraSelection sel;
 
-		if(NumberedTextEditor::isHighlightLines())
+		if(NumberedTextEditor::isHighlightLines() && !single_line_mode)
 		{
 			sel.format.setBackground(NumberedTextEditor::getLineHighlightColor());
 			sel.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -545,6 +550,12 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 
 		code_txt->setExtraSelections(selections);
 	}
+}
+
+qreal SyntaxHighlighter::getCurrentFontSize()
+{
+	return custom_font_size > 0 ?
+					custom_font_size : default_font.pointSizeF();
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded()
@@ -835,7 +846,8 @@ void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
 {
 	QTextCharFormat format=formats[group];
 	format.setFontFamily(default_font.family());
-	format.setFontPointSize(default_font.pointSizeF());
+	//format.setFontPointSize(default_font.pointSizeF());
+	format.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(start, count, format);
 }
 

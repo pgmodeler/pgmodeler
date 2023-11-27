@@ -251,11 +251,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	font_preview_txt->setPlainText(
-"-- object: public.foo | type: TABLE --\n \
+"-- object: public.foo | type: TABLE --\n\
 CREATE TABLE public.table_b (\n \
 \tid serial NOT NULL,\n \
 \tsku integer NOT NULL,\n \
-\tCONSTRAINT foo_pk PRIMARY KEY (id)\n \
+\tCONSTRAINT foo_pk PRIMARY KEY (id)\n\
 );\n");
 
 	font_preview_hl = new SyntaxHighlighter(font_preview_txt, false, true);

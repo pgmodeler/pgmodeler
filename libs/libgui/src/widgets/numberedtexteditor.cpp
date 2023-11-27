@@ -37,12 +37,13 @@ double NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app="";
 QString NumberedTextEditor::src_editor_app_args="";
 
-NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
+NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, qreal custom_fnt_size) : QPlainTextEdit(parent)
 {
 	this->handle_ext_files = handle_ext_files;
 	line_number_wgt=new LineNumbersWidget(this);
 	top_widget = nullptr;
 	load_file_btn = clear_btn	 = nullptr;
+	this->custom_fnt_size = custom_fnt_size;
 
 	if(handle_ext_files)
 	{
@@ -557,8 +558,13 @@ void NumberedTextEditor::updateLineNumbers()
 	line_number_wgt->setVisible(line_nums_visible);
 	if(!line_nums_visible) return;
 
-	setFont(default_font);
-	line_number_wgt->setFont(default_font);
+	QFont fnt = default_font;
+
+	if(custom_fnt_size)
+		fnt.setPointSizeF(custom_fnt_size);
+
+	setFont(fnt);
+	line_number_wgt->setFont(fnt);
 
 	QTextBlock block = firstVisibleBlock();
 	int block_number = block.blockNumber(),

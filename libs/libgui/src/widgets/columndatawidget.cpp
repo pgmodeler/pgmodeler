@@ -31,7 +31,7 @@ ColumnDataWidget::ColumnDataWidget(bool use_syntax_hl, const QString &hl_conf, Q
 	{
 		try
 		{
-			SyntaxHighlighter *value_hl	= new SyntaxHighlighter(value_txt);
+			SyntaxHighlighter *value_hl	= new SyntaxHighlighter(value_txt, false, false, font().pointSizeF());
 			value_hl->loadConfiguration(hl_conf);
 		}
 		catch(Exception &e)

@@ -46,7 +46,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	}
 
 	table_oid=0;
-	filter_hl=new SyntaxHighlighter(filter_txt);
+	filter_hl=new SyntaxHighlighter(filter_txt, false, false, font().pointSizeF());
 	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);

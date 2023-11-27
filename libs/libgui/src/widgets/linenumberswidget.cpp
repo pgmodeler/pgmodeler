@@ -31,7 +31,7 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent_edt = qobject_cast<QPlainTextEdit *>(parent);
-	first_line=line_count=start_sel_pos=0;
+	first_line = line_count=start_sel_pos=0;
 	dy = block_height = 0;
 	has_selection = false;
 	start_sel_line = -1;
@@ -76,6 +76,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	{
 		aux_cur = parent_edt->cursorForPosition(QPoint(0, y));
 		block = aux_cur.block();
+
 		blk_num = block.blockNumber();
 
 		if(blk_num != prev_blk_num)

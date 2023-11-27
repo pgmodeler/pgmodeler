@@ -33,9 +33,9 @@
 
 namespace GuiUtilsNs {
 
-	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
+	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files, qreal custom_fnt_size)
 	{
-		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files);
+		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files, custom_fnt_size);
 
 		if(parent && !parent->layout())
 		{

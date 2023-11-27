@@ -52,7 +52,7 @@ namespace GuiUtilsNs {
 		This method will create a layout if 'parent' doesn't has one. If parent has a layout
 		the method will do nothing. If parent is null creates an orphan object which means the
 		user must take care of the destruction of the object */
-	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false);
+	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false, qreal custom_fnt_size = 0);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
 		The new item is automatically inserted on the QTreeWidget object.
