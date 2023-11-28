@@ -1211,9 +1211,10 @@ void MainWindow::addModel(const QString &filename)
 
 				//Get the "public" schema and set as system object
 				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", ObjectType::Schema));
-				if(public_sch)	public_sch->setSystemObject(true);
 
-				model_tab->db_model->setInvalidated(false);
+				if(public_sch)
+					public_sch->setSystemObject(true);
+
 				model_tab->restoreLastCanvasPosition();
 
 				//Making a copy of the loaded database model file as the first version of the temp. model
@@ -1249,6 +1250,7 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_tab->setModified(false);
+		model_tab->db_model->setInvalidated(false);
 		action_save_model->setEnabled(false);
 
 		if(action_alin_objs_grade->isChecked())
