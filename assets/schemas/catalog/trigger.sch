@@ -11,7 +11,7 @@
 
 	[SELECT tg.oid, tgname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type, NULL AS extra_info
 	FROM pg_trigger AS tg
-	LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v','m','f')
+	LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v','m','f','p')
 	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace ]
 
 	%if {schema} %then
@@ -26,7 +26,7 @@
 		[ WHERE ]
 	%end
 
-	[ tgisinternal IS FALSE ]
+	[ tgisinternal IS FALSE AND tgparentid = 0 ]
 
 	%if {last-sys-oid} %then
 		[ AND tg.oid ] {oid-filter-op} $sp {last-sys-oid}
@@ -60,6 +60,7 @@
 		WHEN tb.relkind = 'f' THEN 'foreigntable'
 		WHEN tb.relkind = 'v' THEN 'view'
 		WHEN tb.relkind = 'm' THEN 'view'
+		WHEN tb.relkind = 'p' THEN 'table'
 		END AS table_type,
 
 		#Convert the arguments from bytea to a string array. The last element is always empty and can be discarded
@@ -107,7 +108,7 @@
 		it.trigger_schema=ns.nspname AND
 		it.trigger_name=tg.tgname AND
 		it.event_object_table=tb.relname
-		WHERE tg.tgisinternal IS FALSE ]
+		WHERE tg.tgisinternal IS FALSE AND tgparentid = 0 ]
 
 		%if {schema} %then
 			[ AND ns.nspname= ] '{schema}'
