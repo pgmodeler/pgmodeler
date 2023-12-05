@@ -20,7 +20,7 @@
 		[ WHERE nspname= ] '{schema}'
 
 		%if {table} %then
-			[ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
+			[ AND ((tb.relkind = 'r' OR tb.relkind = 'm' OR tb.relkind = 'p') AND tb.relname = ] '{table}' [)]
 		%end
 	%end
 
@@ -40,8 +40,10 @@
 		[ AND ]
 	%end
 
-	[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
-	 ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+	# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+	[ cl.relispartition IS FALSE
+	  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) 
+      AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 	%if {not-ext-object} %then
 		[ AND ]( {not-ext-object} )
@@ -91,7 +93,7 @@
 			WHERE ns.nspname= ] '{schema}'
 
 			%if {table} %then
-				[ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
+				[ AND ((tb.relkind = 'r' OR tb.relkind = 'm' OR tb.relkind = 'p') AND tb.relname = ] '{table}' [)]
 			%end
 		%end
 
@@ -121,7 +123,9 @@
 			[ AND ]
 		%end
 
-		[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
+		# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+		[ cl.relispartition IS FALSE
+		  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
 		  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 		%if {not-ext-object} %then
