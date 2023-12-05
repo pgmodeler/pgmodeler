@@ -61,19 +61,32 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		Messagebox(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		/*! \brief Shows the message box defining the icons and available buttons.
-	User can specify custom button labels as well custom icons. The icons can be a path to a local file
-	or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
+		User can specify custom button labels as well custom icons. The icons can be a path to a local file
+		or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
 		void show(const QString &title, const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton,
-				  const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-				  const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+							const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
+							const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
 		//! \brief Shows the message box using an excpetion as message
 		void show(Exception e, const QString &msg="", IconType icon_type=ErrorIcon, ButtonsId buttons=OkButton,
-				  const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
-				  const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
+							const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
+							const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
 		//! \brief Shows a simple message box with the title automatically defined by the icon type
 		void show(const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton);
+
+		/*! \brief Shows a message box in which massage and stacktrace is retrived from the provided exception.
+			*  Also, it uses an error icon and only OK button */
+		static void error(Exception e);
+
+		//! \brief Shows message box with the provided message, an error icon and only OK button
+		static void error(const QString &msg);
+
+		//! \brief Shows message box with the provided message, an alert icon and only OK button
+		static void alert(const QString &msg);
+
+		//! \brief Shows message box with the provided message, an info icon and only OK button
+		static void info(const QString &msg);
 
 		bool isCancelled();
 
