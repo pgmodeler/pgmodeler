@@ -569,6 +569,12 @@ bool CodeCompletionWidget::retrieveColumnNames()
 
 		tab_pos = getTablePosition(name);
 		aux_names = name.split(completion_trigger);
+
+		/* If the table name is not schema qualified or
+		 * have extra qualifications (dots) we discard it */
+		if(aux_names.size() != 2)
+			continue;
+
 		sch_name = aux_names[0].trimmed();
 		tab_name = aux_names[1].trimmed();
 		catalog.setQueryFilter(Catalog::ListAllObjects);
