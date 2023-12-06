@@ -19,6 +19,7 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include "qtconnectmacros.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
@@ -100,14 +101,18 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
-	connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
-	connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
-	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
-	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
+	//connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
+	__connect_sn(input_sel, &FileSelectorWidget::s_fileSelected, this, CrashHandlerForm::loadReport);
 
-	connect(model_txt, &QPlainTextEdit::textChanged, this, [this](){
-			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
+	//connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
+	__connect_s0(save_tb, &QToolButton::clicked, this, CrashHandlerForm::saveModel);
+
+	q_connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
+	q_connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
+	q_connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
+
+	q_connect(model_txt, &QPlainTextEdit::textChanged, this, [this](){
+		save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
 	});
 }
 
