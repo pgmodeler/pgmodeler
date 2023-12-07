@@ -2002,22 +2002,26 @@ QString ModelWidget::getTempFilename()
 	return this->tmp_filename;
 }
 
-int ModelWidget::openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf)
+template<class WidgetClass>
+int ModelWidget::openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf)
 {
 	BaseForm editing_form(this);
-	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
 	QString class_name = widget->metaObject()->className();
 	int res = 0;
 
-	if(base_obj_wgt)
+	/* If the widget specified can be converted to BaseObjectWidget
+	 * means that we are handling a database object widget so
+	 * we use the BaseObjectWidget version of BaseForm::setMainWidget */
+	if(qobject_cast<BaseObjectWidget *>(widget))
 	{
-		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(base_obj_wgt->getHandledObject());
-		editing_form.setMainWidget(base_obj_wgt);
+		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(widget->getHandledObject());
+		editing_form.setMainWidget(widget);
 
 		if(rel)
 			class_name.prepend(rel->getRelationshipTypeName().replace(QRegularExpression("( )+|(\\-)+"), ""));
 	}
 	else
+		// Use the QWidget version of BaseForm::setMainWidget
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);

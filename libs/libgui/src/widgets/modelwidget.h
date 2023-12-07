@@ -373,7 +373,8 @@ class __libgui ModelWidget: public QWidget {
 		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
+		template<class WidgetClass>
+		int openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
