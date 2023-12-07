@@ -89,10 +89,7 @@ class __libcore Operation {
 		std::vector<Permission *> permissions;
 
 		//! \brief Generate an unique id for the operation based upon the memory addresses of objects held by it
-		QString generateOperationId();
-
-	public:
-		Operation();
+		QString generateOperationId() const;
 
 		void setObjectIndex(int idx);
 		void setChainType(ChainType type);
@@ -111,7 +108,34 @@ class __libcore Operation {
 		BaseObject *getParentObject();
 		std::vector<Permission *> getPermissions();
 		QString getXMLDefinition();
-		bool isOperationValid();
+
+		bool isOperationValid() const;
+
+	public:
+		struct OperationInfo {
+			QString obj_name;
+			ObjectType obj_type;
+			OperType oper_type;
+			int index;
+
+			OperationInfo()
+			{
+				obj_type = ObjectType::BaseObject;
+				oper_type = OperType::NoOperation;
+			}
+
+			OperationInfo(const QString &_obj_name, ObjectType _obj_type, OperType _oper_type)
+			{
+				obj_name = _obj_name;
+				obj_type = _obj_type;
+				oper_type = _oper_type;
+			}
+		};
+
+		Operation();
+		OperationInfo getOperationInfo() const;
+
+		friend class OperationList;
 };
 
 #endif
