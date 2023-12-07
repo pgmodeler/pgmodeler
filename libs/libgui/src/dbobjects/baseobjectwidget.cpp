@@ -50,8 +50,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=nullptr;
 		object_protected = false;
 
-		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
-		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
+		q_connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
+		q_connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
 
 		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
 		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
