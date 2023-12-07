@@ -89,17 +89,17 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	behavior_cmb->addItems(BehaviorType::getTypes());
 	parallel_cmb->addItems(ParallelType::getTypes());
 
-	connect(simple_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
-	connect(set_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
-	connect(table_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	q_connect(simple_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	q_connect(set_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
+	q_connect(table_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
 
-	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
-	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
-	connect(parameters_tab,  &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
+	q_connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	q_connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	q_connect(parameters_tab,  &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
-	connect(return_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
-	connect(return_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
-	connect(return_tab, &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
+	q_connect(return_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	q_connect(return_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	q_connect(return_tab, &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
 	setRequiredField(ret_method_lbl);
 	configureTabOrder();
