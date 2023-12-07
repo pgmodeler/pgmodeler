@@ -18,6 +18,7 @@
 
 #include "baseform.h"
 #include "guiutilsns.h"
+#include "qtconnectmacros.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -146,10 +147,13 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkCancelButtons);
 
-	connect(cancel_btn, &QPushButton::clicked, widget, &BaseObjectWidget::cancelConfiguration);
-	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
-	connect(apply_ok_btn, &QPushButton::clicked, widget, &BaseObjectWidget::applyConfiguration);
-	connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
+	//connect(cancel_btn, &QPushButton::clicked, widget, &BaseObjectWidget::cancelConfiguration);
+	__connect_s0(cancel_btn, &QPushButton::clicked, widget, BaseObjectWidget::cancelConfiguration);
+	q_connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+
+	//connect(apply_ok_btn, &QPushButton::clicked, widget, &BaseObjectWidget::applyConfiguration);
+	__connect_s0(apply_ok_btn, &QPushButton::clicked, widget, BaseObjectWidget::applyConfiguration);
+	q_connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 }
 
 void BaseForm::setMainWidget(QWidget *widget)
@@ -160,6 +164,6 @@ void BaseForm::setMainWidget(QWidget *widget)
 	setWindowIcon(widget->windowIcon());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
-	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
-	connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
+	q_connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	q_connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
 }

@@ -76,7 +76,7 @@ void BaseForm::setMainWidget(Class *widget, Slot accept_slot)
 
 	setMainWidget(widget);
 	disconnect(apply_ok_btn, nullptr, widget, nullptr);
-	connect(apply_ok_btn, &QPushButton::clicked, widget, accept_slot);
+	q_connect(apply_ok_btn, &QPushButton::clicked, widget, accept_slot);
 }
 
 #endif
