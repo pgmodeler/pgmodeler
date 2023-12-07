@@ -526,7 +526,7 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 		if(!filename.isEmpty())
 			editor_wgt->loadFile(filename);
 
-		connect(editor_wgt, &SourceEditorWidget::s_editorModified, this, &SchemaEditorForm::setTabModified);
+		q_connect(editor_wgt, &SourceEditorWidget::s_editorModified, this, &SchemaEditorForm::setTabModified);
 	}
 	catch(Exception &e)
 	{

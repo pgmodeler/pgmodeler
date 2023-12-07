@@ -53,14 +53,14 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(false);
 
-	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
-	connect(find_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
-	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
-	connect(indent_tb, &QToolButton::clicked, this, &SourceEditorWidget::applyIndentation);
-	connect(editor_txt, &NumberedTextEditor::modificationChanged, this, &SourceEditorWidget::restoreEditorPalette);
-	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
-	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
-	connect(find_tb, &QToolButton::toggled, find_parent, &QWidget::setVisible);
+	q_connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
+	q_connect(find_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	q_connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
+	q_connect(indent_tb, &QToolButton::clicked, this, &SourceEditorWidget::applyIndentation);
+	q_connect(editor_txt, &NumberedTextEditor::modificationChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	q_connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
+	q_connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
+	q_connect(find_tb, &QToolButton::toggled, find_parent, &QWidget::setVisible);
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)
