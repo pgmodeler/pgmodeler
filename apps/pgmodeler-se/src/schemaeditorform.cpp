@@ -26,6 +26,7 @@
 #include "aboutsewidget.h"
 #include "baseform.h"
 #include "utilsns.h"
+#include "qtconnectmacros.h"
 
 const QString SchemaEditorForm::UntitledFile = QT_TR_NOOP("(untitled)");
 
@@ -108,37 +109,59 @@ subcontrol-position: right center; }");
 
 	syntax_cfg_menu.installEventFilter(this);
 
-	connect(apply_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::applySyntaxConfig);
-	connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
-	connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
+	//connect(apply_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::applySyntaxConfig);
+	__connect_s0(apply_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::applySyntaxConfig);
 
-	connect(new_tb, &QToolButton::clicked, this, [this](){
+	//connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
+	__connect_s0(save_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::saveSyntaxConfig);
+
+	//connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
+	__connect_s0(reload_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::loadSyntaxConfig);
+
+	/* connect(new_tb, &QToolButton::clicked, this, [this](){
+		addEditorTab();
+	}); */
+	__connect_l0(new_tb, &QToolButton::clicked, this, [this](){
 		addEditorTab();
 	});
 
-	connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
-	connect(exit_tb, &QToolButton::clicked, this, &SchemaEditorForm::close);
-	connect(save_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveFile);
-	connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
-	connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
-	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
+	//connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
+	__connect_s0(load_tb, &QToolButton::clicked, this, SchemaEditorForm::loadFile);
 
-	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
+	q_connect(exit_tb, &QToolButton::clicked, this, &SchemaEditorForm::close);
+
+	//connect(save_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveFile);
+	__connect_s0(save_tb, &QToolButton::clicked, this, SchemaEditorForm::saveFile);
+
+	q_connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
+
+	//connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
+	__connect_s0(save_all_tb, &QToolButton::clicked, this, SchemaEditorForm::saveAll);
+
+	q_connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
+
+	q_connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
 		closeEditorTab(idx);
 	});
 
-	connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
-	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
+	//connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
+	__connect_s0(editors_tbw, &QTabWidget::currentChanged, this, SchemaEditorForm::loadSyntaxFromCurrentTab);
 
-	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
+	//connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
+	__connect_s0(use_tmpl_file_chk, &QCheckBox::toggled, this, SchemaEditorForm::loadSyntaxConfig);
+
+	q_connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
 		alert_frm->setVisible(true);
 	});
 
-	connect(save_as_tb, &QToolButton::clicked, this, [this](){
+	/* connect(save_as_tb, &QToolButton::clicked, this, [this](){
+		saveFile(true);
+	}); */
+	__connect_l0(save_as_tb, &QToolButton::clicked, this, [this](){
 		saveFile(true);
 	});
 
-	connect(about_tb, &QToolButton::clicked, this, [](){
+	q_connect(about_tb, &QToolButton::clicked, this, [](){
 		AboutSEWidget *info_wgt = new AboutSEWidget;
 		BaseForm base_frm;
 		base_frm.setMainWidget(info_wgt);
