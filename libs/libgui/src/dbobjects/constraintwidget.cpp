@@ -65,13 +65,17 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
-		connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
-		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
-		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
-		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
-		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
+		q_connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
+		q_connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		q_connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+		q_connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
+		q_connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
+
+		//connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
+		__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, ConstraintWidget::selectReferencedTable);
+
+		//connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
+		__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, ConstraintWidget::selectReferencedTable);
 
 		selectConstraintType();
 		configureTabOrder();

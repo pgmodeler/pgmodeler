@@ -20,12 +20,10 @@
 #include <QGraphicsDropShadowEffect>
 #include "guiutilsns.h"
 #include "messagebox.h"
-#include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
 #include "widgets/columndatawidget.h"
 #include "utilsns.h"
-#include "objectstablewidget.h"
 #include "generalconfigwidget.h"
 #include "appearanceconfigwidget.h"
 #include "objectslistmodel.h"
