@@ -48,9 +48,9 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
 		grid->addWidget(constr_tab, 2, 0, 1, 2);
 
-		connect(constr_tab, &ObjectsTableWidget::s_rowAdded, this, &DomainWidget::handleConstraint);
-		connect(constr_tab, &ObjectsTableWidget::s_rowUpdated, this, &DomainWidget::handleConstraint);
-		connect(constr_tab, &ObjectsTableWidget::s_rowEdited, this, &DomainWidget::editConstraint);
+		q_connect(constr_tab, &ObjectsTableWidget::s_rowAdded, this, &DomainWidget::handleConstraint);
+		q_connect(constr_tab, &ObjectsTableWidget::s_rowUpdated, this, &DomainWidget::handleConstraint);
+		q_connect(constr_tab, &ObjectsTableWidget::s_rowEdited, this, &DomainWidget::editConstraint);
 
 		configureFormLayout(domain_grid, ObjectType::Domain);
 		setRequiredField(data_type);
