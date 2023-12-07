@@ -37,7 +37,8 @@ try \
 } \
 catch(Exception &e) \
 { \
-	Messagebox::error(e); \
+	Messagebox::error(Exception(e.getErrorMessage(), e.getErrorCode(),\
+										__PRETTY_FUNCTION__, __FILE__, __LINE__, &e)); \
 }
 
 /*! \brief This macro expands to a QObject::connect call that takes
