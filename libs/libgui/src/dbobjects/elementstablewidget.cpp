@@ -54,8 +54,8 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		vbox->addWidget(elements_tab);
 
-		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
-		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
+		q_connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
+		q_connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
 	}
 	catch(Exception &e)
 	{
