@@ -97,14 +97,12 @@ bool PgModelerApp::notify(QObject *receiver, QEvent *event)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e);
 		return false;
 	}
 	catch(...)
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
+		Messagebox::error(tr("Unknown exception caught!"));
 		return false;
 	}
 }
