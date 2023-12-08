@@ -82,7 +82,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
 		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
-		connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
+		q_connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
@@ -149,45 +149,55 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		part_bound_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+		q_connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+		q_connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 
-		connect(identifier_chk, &QCheckBox::toggled, this, [this](){
+		q_connect(identifier_chk, &QCheckBox::toggled, this, [this](){
 			table1_mand_chk->setDisabled(identifier_chk->isChecked());
 			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
 																	this->object &&
 																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 		});
 
-		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		//connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		//connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		//connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		//connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		//connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		__connect_s0(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, RelationshipWidget::removeObjects);
+		__connect_s0(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, RelationshipWidget::addObject);
+		__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, RelationshipWidget::editObject);
+		__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, RelationshipWidget::removeObject);
+		__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, RelationshipWidget::duplicateObject);
 
-		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		//connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
+		//connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
+		//connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
+		//connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
+		//connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		__connect_s0(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, RelationshipWidget::removeObjects);
+		__connect_s0(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, RelationshipWidget::addObject);
+		__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, RelationshipWidget::editObject);
+		__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, RelationshipWidget::removeObject);
+		__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, RelationshipWidget::duplicateObject);
 
-		connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+		q_connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
 
-		connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
+		q_connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
 
-		connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
-		connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
-		connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
-		connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
+		q_connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
+		q_connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
+		q_connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
+		q_connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
 
 		setMinimumSize(600, 380);
 	}
@@ -669,52 +679,59 @@ void RelationshipWidget::listAdvancedObjects()
 
 void RelationshipWidget::showAdvancedObject(int row)
 {
-	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
-	Table *tab=nullptr;
-	Constraint *constr=nullptr;
-	Column *col=nullptr;
-	ObjectType obj_type=object->getObjectType();
-	bool is_protected = false;
-
-	if(obj_type==ObjectType::Column)
+	try
 	{
-		col=dynamic_cast<Column *>(object);
-		is_protected = col->isProtected();
-		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
-	}
-	else if(obj_type==ObjectType::Constraint)
-	{
-		constr=dynamic_cast<Constraint *>(object);
+		BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
+		Table *tab=nullptr;
+		Constraint *constr=nullptr;
+		Column *col=nullptr;
+		ObjectType obj_type=object->getObjectType();
+		bool is_protected = false;
 
-		if(!constr->isAddedByRelationship())
+		if(obj_type==ObjectType::Column)
 		{
-			is_protected = constr->isProtected();
-			constr->setProtected(true);
+			col=dynamic_cast<Column *>(object);
+			is_protected = col->isProtected();
+			openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 		}
+		else if(obj_type==ObjectType::Constraint)
+		{
+			constr=dynamic_cast<Constraint *>(object);
 
-		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+			if(!constr->isAddedByRelationship())
+			{
+				is_protected = constr->isProtected();
+				constr->setProtected(true);
+			}
 
-		if(!constr->isAddedByRelationship())
-			constr->setProtected(is_protected);
+			openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+
+			if(!constr->isAddedByRelationship())
+				constr->setProtected(is_protected);
+		}
+		else
+		{
+			TableWidget *table_wgt=new TableWidget;
+			BaseForm editing_form(this);
+
+			tab=dynamic_cast<Table *>(object);
+			tab->setProtected(true);
+
+			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+																tab,	tab->getPosition().x(), tab->getPosition().y());
+
+			editing_form.setMainWidget(table_wgt);
+
+			GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+			editing_form.exec();
+			GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+
+			tab->setProtected(false);
+		}
 	}
-	else
+	catch(Exception &e)
 	{
-		TableWidget *table_wgt=new TableWidget;
-		BaseForm editing_form(this);
-
-		tab=dynamic_cast<Table *>(object);
-		tab->setProtected(true);
-
-		table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-														 tab,	tab->getPosition().x(), tab->getPosition().y());
-
-		editing_form.setMainWidget(table_wgt);
-
-		GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-		editing_form.exec();
-		GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-
-		tab->setProtected(false);
+		Messagebox::error(e);
 	}
 }
 
@@ -899,7 +916,6 @@ void RelationshipWidget::removeObjects()
 			obj_type=ObjectType::Constraint;
 			count=rel->getConstraintCount();
 		}
-
 
 		op_count=op_list->getCurrentSize();
 
