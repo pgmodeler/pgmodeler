@@ -59,7 +59,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	setMinimumSize(700, 500);
 
-	connect(attribs_tbw, &QTabWidget::currentChanged, this, [this](int idx){
+	q_connect(attribs_tbw, &QTabWidget::currentChanged, this, [this](int idx){
 		if(idx == attribs_tbw->count() - 1)
 			updateCodePreview();
 	});
