@@ -142,27 +142,34 @@ void BaseFunctionWidget::showParameterForm(ObjectsTableWidget *params_tab, bool 
 {
 	if(!params_tab) return;
 
-	Parameter aux_param;
-	int row_idx;
-	ParameterWidget *parameter_wgt = new ParameterWidget;
-	BaseForm parent_form;
+	try
+	{
+		Parameter aux_param;
+		int row_idx;
+		ParameterWidget *parameter_wgt = new ParameterWidget;
+		BaseForm parent_form;
 
-	parameter_wgt->param_in_chk->setEnabled(enable_param_modes);
-	parameter_wgt->param_out_chk->setEnabled(enable_param_modes);
-	parameter_wgt->param_variadic_chk->setEnabled(enable_param_modes);
-	parameter_wgt->default_value_edt->setEnabled(enable_param_modes);
+		parameter_wgt->param_in_chk->setEnabled(enable_param_modes);
+		parameter_wgt->param_out_chk->setEnabled(enable_param_modes);
+		parameter_wgt->param_variadic_chk->setEnabled(enable_param_modes);
+		parameter_wgt->default_value_edt->setEnabled(enable_param_modes);
 
-	row_idx=params_tab->getSelectedRow();
+		row_idx=params_tab->getSelectedRow();
 
-	if(row_idx >= 0 && !params_tab->getCellText(row_idx, 0).isEmpty())
-		aux_param = getParameter(params_tab, row_idx, enable_param_modes);
+		if(row_idx >= 0 && !params_tab->getCellText(row_idx, 0).isEmpty())
+			aux_param = getParameter(params_tab, row_idx, enable_param_modes);
 
-	parameter_wgt->setAttributes(aux_param, model);
-	parent_form.setMainWidget(parameter_wgt);
-	parent_form.exec();
+		parameter_wgt->setAttributes(aux_param, model);
+		parent_form.setMainWidget(parameter_wgt);
+		parent_form.exec();
 
-	aux_param = parameter_wgt->getParameter();
-	handleParameter(params_tab, aux_param, parent_form.result(), enable_param_modes);
+		aux_param = parameter_wgt->getParameter();
+		handleParameter(params_tab, aux_param, parent_form.result(), enable_param_modes);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes)
