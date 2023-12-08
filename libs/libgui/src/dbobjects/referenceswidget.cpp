@@ -57,20 +57,20 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 
 	use_columns_chk->setVisible(conf_view_refs);
 
-	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
-			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
-			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
+	q_connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
+		sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
+		sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferencesWidget::handleReference);
-	connect(references_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferencesWidget::editReference);
-	connect(references_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferencesWidget::handleReference);
+	q_connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferencesWidget::handleReference);
+	q_connect(references_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferencesWidget::editReference);
+	q_connect(references_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferencesWidget::handleReference);
 
-	connect(ref_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
+	q_connect(ref_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
 		references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !txt.isEmpty() && object_sel->getSelectedObject());
 	});
 
-	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool obj_selected){
+	q_connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool obj_selected){
 		references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !ref_name_edt->text().isEmpty() && obj_selected);
 		use_columns_chk->setEnabled(obj_selected &&
 																(BaseTable::isBaseTable(object_sel->getSelectedObject()->getObjectType()) ||
@@ -80,7 +80,7 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 			use_columns_chk->setChecked(false);
 	});
 
-	connect(format_name_chk, &QCheckBox::toggled, use_signature_chk, &QCheckBox::setEnabled);
+	q_connect(format_name_chk, &QCheckBox::toggled, use_signature_chk, &QCheckBox::setEnabled);
 }
 
 void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<Reference> &refs)
@@ -114,12 +114,12 @@ std::vector<Reference> ReferencesWidget::getObjectReferences()
 void ReferencesWidget::handleReference(int row)
 {
 	showReferenceData(row,
-													object_sel->getSelectedObject(),
-													ref_name_edt->text().remove(AttrDelimRegexp),
-													ref_alias_edt->text().remove(AttrDelimRegexp),
-													use_signature_chk->isChecked(),
-													format_name_chk->isChecked(),
-													use_columns_chk->isChecked());
+										object_sel->getSelectedObject(),
+										ref_name_edt->text().remove(AttrDelimRegexp),
+										ref_alias_edt->text().remove(AttrDelimRegexp),
+										use_signature_chk->isChecked(),
+										format_name_chk->isChecked(),
+										use_columns_chk->isChecked());
 	clearReferenceForm();
 }
 
