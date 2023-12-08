@@ -39,8 +39,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	connect(validity_chk, &QCheckBox::toggled, validity_dte, &QDateTimeEdit::setEnabled);
-	connect(members_twg, &QTabWidget::currentChanged, this, &RoleWidget::configureRoleSelection);
+	q_connect(validity_chk, &QCheckBox::toggled, validity_dte, &QDateTimeEdit::setEnabled);
+	q_connect(members_twg, &QTabWidget::currentChanged, this, &RoleWidget::configureRoleSelection);
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -69,7 +69,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
+	//connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
+	q_connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
 
 	setMinimumSize(580, 550);
 }
@@ -86,8 +87,8 @@ void RoleWidget::configureRoleSelection()
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
-	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
+	q_connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
+	q_connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
 }
 
 void RoleWidget::selectMemberRole()
@@ -176,38 +177,44 @@ void RoleWidget::fillMembersTable()
 
 void RoleWidget::showSelectedRoleData()
 {
-	unsigned idx_tab;
-	int lin, idx_lin=-1;
-	BaseObject *obj_sel=nullptr;
-	Messagebox msg_box;
-
-	//Get the selected role
-	obj_sel=object_selection_wgt->getSelectedObject();
-
-	//Gets the index of the table where the role data is displayed
-	idx_tab=members_twg->currentIndex();
-	lin=members_tab[idx_tab]->getSelectedRow();
-
-	if(obj_sel)
-		idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
-
-	if(obj_sel && idx_lin < 0)
-		showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
-	else
+	try
 	{
-		/* If the current row does not has a value indicates that it is recently added and does not have
-			 data, in this case it will be removed */
-		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
-			members_tab[idx_tab]->removeRow(lin);
+		unsigned idx_tab = 0;
+		int lin = 0, idx_lin = -1;
+		BaseObject *obj_sel=nullptr;
 
-		//Raises an error if the role already is in the table
-		if(obj_sel && idx_lin >= 0)
+					 //Get the selected role
+		obj_sel=object_selection_wgt->getSelectedObject();
+
+					 //Gets the index of the table where the role data is displayed
+		idx_tab=members_twg->currentIndex();
+		lin=members_tab[idx_tab]->getSelectedRow();
+
+		if(obj_sel)
+			idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
+
+		if(obj_sel && idx_lin < 0)
+			showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
+		else
 		{
-			msg_box.show( Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
-															.arg(obj_sel->getName())
-															.arg(name_edt->text()),
-															ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			/* If the current row does not has a value indicates that it is recently added and does not have
+				 data, in this case it will be removed */
+			if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
+				members_tab[idx_tab]->removeRow(lin);
+
+						 //Raises an error if the role already is in the table
+			if(obj_sel && idx_lin >= 0)
+			{
+				Messagebox::error(Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
+													.arg(obj_sel->getName())
+													.arg(name_edt->text()),
+													ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			}
 		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e);
 	}
 }
 
@@ -258,7 +265,8 @@ void RoleWidget::applyConfiguration()
 			 * its permanet protection status. May be changed in future releases */
 			if(aux_role->isSystemObject())
 			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject).arg(role->getName(), role->getTypeName()),
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+												.arg(aux_role->getName(), aux_role->getTypeName()),
 												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
