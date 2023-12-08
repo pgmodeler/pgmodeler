@@ -53,17 +53,17 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		type_cmb->completer()->setFilterMode(Qt::MatchContains);
 		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
-		connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+		q_connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
 	}
 	catch(Exception &e)
 	{
