@@ -164,17 +164,19 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	act = toggle_disp_menu.addAction(tr("Show objects filter"));
 	act->setCheckable(true);
-	connect(act, &QAction::toggled, filter_parent, &QWidget::setVisible);
+	q_connect(act, &QAction::toggled, filter_parent, &QWidget::setVisible);
 
 	toggle_disp_menu.addSeparator();
 
 	show_sys_objs = toggle_disp_menu.addAction(tr("Show system objects"));
 	show_sys_objs->setCheckable(true);
-	connect(show_sys_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
+	//connect(show_sys_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
+	__connect_s0(show_sys_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
 
 	show_ext_objs = toggle_disp_menu.addAction(tr("Show extension objects"));
 	show_ext_objs->setCheckable(true);
-	connect(show_ext_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
+	//connect(show_ext_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
+	__connect_s0(show_ext_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -205,49 +207,71 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	objects_trw->installEventFilter(this);
 
-	connect(refresh_tb, &QToolButton::clicked, this, &DatabaseExplorerWidget::listObjects);
-	connect(objects_trw, &QTreeWidget::itemPressed, this, &DatabaseExplorerWidget::handleObject);
-	connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::showObjectProperties);
-	connect(raw_attrib_names_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::showObjectProperties);
+	//connect(refresh_tb, &QToolButton::clicked, this, &DatabaseExplorerWidget::listObjects);
+	__connect_s0(refresh_tb, &QToolButton::clicked, this, DatabaseExplorerWidget::listObjects);
 
-	connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::cancelObjectRename);
-	connect(objects_trw, &QTreeWidget::itemCollapsed, this, [this](){
+	//connect(objects_trw, &QTreeWidget::itemPressed, this, &DatabaseExplorerWidget::handleObject);
+	__connect_sn(objects_trw, &QTreeWidget::itemPressed, this, DatabaseExplorerWidget::handleObject);
+
+	//connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::showObjectProperties);
+	//connect(raw_attrib_names_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::showObjectProperties);
+	__connect_s0(objects_trw, &QTreeWidget::currentItemChanged, this, DatabaseExplorerWidget::showObjectProperties);
+	__connect_s0(raw_attrib_names_chk, &QCheckBox::toggled, this, DatabaseExplorerWidget::showObjectProperties);
+
+	q_connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::cancelObjectRename);
+
+	q_connect(objects_trw, &QTreeWidget::itemCollapsed, this, [this](){
 		objects_trw->resizeColumnToContents(0);
 		cancelObjectRename();
 	});
 
-	connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](){
+	q_connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](){
 		objects_trw->resizeColumnToContents(0);
 		cancelObjectRename();
 	});
 
-	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
+	/* connect(data_grid_tb, &QToolButton::clicked, this, [this](){
+		openDataGrid();
+	}); */
+	__connect_l0(data_grid_tb, &QToolButton::clicked, this, [this](){
 		openDataGrid();
 	});
 
-	connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
-	connect(by_oid_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::filterObjects);
-	connect(filter_edt, &QLineEdit::textChanged, this, &DatabaseExplorerWidget::filterObjects);
+	q_connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
+	q_connect(by_oid_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::filterObjects);
+	q_connect(filter_edt, &QLineEdit::textChanged, this, &DatabaseExplorerWidget::filterObjects);
 
-	connect(drop_db_tb,  &QToolButton::clicked, this, [this]() {
+	q_connect(drop_db_tb,  &QToolButton::clicked, this, [this]() {
 		emit s_databaseDropRequested(connection.getConnectionParam(Connection::ParamDbName));
 	});
 
-	connect(runsql_tb, &QToolButton::clicked, this, [this]() {
+	q_connect(runsql_tb, &QToolButton::clicked, this, [this]() {
 		emit s_sqlExecutionRequested();
 	});
 
-	connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
+	/* connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
+		SQLExecutionWidget::copySelection(properties_tbw, true);
+	}); */
+	__connect_l0(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
 		SQLExecutionWidget::copySelection(properties_tbw, true);
 	});
 
-	connect(expand_all_tb, &QToolButton::clicked, this, [this](){
+	q_connect(expand_all_tb, &QToolButton::clicked, this, [this](){
 		objects_trw->blockSignals(true);
 		objects_trw->expandAll();
 		objects_trw->blockSignals(false);
 	});
 
-	connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
+	/* connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
+		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
+		unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
+
+		if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
+		{
+			updateItem(item, false);
+		}
+	}); */
+	__connect_ln(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 		unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 
@@ -257,7 +281,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 		}
 	});
 
-	connect(sort_by_name_tb, &QToolButton::clicked, this, [this]() {
+	q_connect(sort_by_name_tb, &QToolButton::clicked, this, [this]() {
 			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::ObjectId;
 			objects_trw->sortByColumn(sort_column, Qt::AscendingOrder);
 	});
@@ -1583,7 +1607,7 @@ void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
-	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+	q_connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
 		btn->setProperty(Attributes::Connection.toStdString().c_str(),
 										 connection.getConnectionId());
 
@@ -1593,7 +1617,7 @@ void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 		emit btn->clicked(checked);
 	});
 
-	connect(plugin_btn, &QToolButton::triggered, this, [this, btn](QAction *act){
+	q_connect(plugin_btn, &QToolButton::triggered, this, [this, btn](QAction *act){
 		btn->setProperty(Attributes::Connection.toStdString().c_str(),
 										 connection.getConnectionId());
 
