@@ -36,9 +36,13 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	for(auto &wgt : wgt_list)
 		confs_stw->addWidget(wgt);
 
-	connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
-	connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
-	connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
+	// connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
+	// connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
+	// connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
+
+	__connect_s0(cancel_btn, &QPushButton::clicked, this, ConfigurationForm::reject);
+	__connect_s0(apply_btn,  &QPushButton::clicked, this, ConfigurationForm::applyConfiguration);
+	__connect_s0(defaults_btn,  &QPushButton::clicked, this, ConfigurationForm::restoreDefaults);
 
 	setMinimumSize(890, 740);
 
@@ -54,7 +58,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 		btn->setFont(fnt);
 		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
 		btn->setProperty(Attributes::ObjectId.toStdString().c_str(), view_idx++);
-		connect(btn, &QToolButton::toggled, this, &ConfigurationForm::changeCurrentView);
+		q_connect(btn, &QToolButton::toggled, this, &ConfigurationForm::changeCurrentView);
 	}
 }
 
