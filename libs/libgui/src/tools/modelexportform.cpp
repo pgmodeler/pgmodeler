@@ -53,35 +53,35 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
 	export_to_img_gb->setFocusProxy(export_to_img_rb);
 
-	connect(sql_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
-	connect(sql_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
-	connect(img_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
-	connect(img_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
-	connect(dict_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
-	connect(dict_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+	q_connect(sql_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	q_connect(sql_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+	q_connect(img_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	q_connect(img_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+	q_connect(dict_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
+	q_connect(dict_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
 
-	connect(export_to_file_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
-	connect(export_to_dbms_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
-	connect(export_to_img_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
-	connect(export_to_dict_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	q_connect(export_to_file_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	q_connect(export_to_dbms_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	q_connect(export_to_img_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
+	q_connect(export_to_dict_rb, &QRadioButton::clicked, this, &ModelExportForm::selectExportMode);
 
-	connect(pgsqlvers_chk, &QCheckBox::toggled, pgsqlvers1_cmb, &QComboBox::setEnabled);
-	connect(close_btn, &QPushButton::clicked, this, &ModelExportForm::close);
-	connect(export_btn, &QPushButton::clicked, this, &ModelExportForm::exportModel);
-	connect(drop_chk, &QCheckBox::toggled, drop_db_rb, &QRadioButton::setEnabled);
-	connect(drop_chk, &QCheckBox::toggled, drop_objs_rb, &QRadioButton::setEnabled);
-	connect(drop_db_rb, &QCheckBox::toggled, force_db_drop_chk, &QRadioButton::setEnabled);
+	q_connect(pgsqlvers_chk, &QCheckBox::toggled, pgsqlvers1_cmb, &QComboBox::setEnabled);
+	q_connect(close_btn, &QPushButton::clicked, this, &ModelExportForm::close);
+	q_connect(export_btn, &QPushButton::clicked, this, &ModelExportForm::exportModel);
+	q_connect(drop_chk, &QCheckBox::toggled, drop_db_rb, &QRadioButton::setEnabled);
+	q_connect(drop_chk, &QCheckBox::toggled, drop_objs_rb, &QRadioButton::setEnabled);
+	q_connect(drop_db_rb, &QCheckBox::toggled, force_db_drop_chk, &QRadioButton::setEnabled);
 
-	connect(drop_chk, &QCheckBox::toggled, this, [this](bool toggled) {
+	q_connect(drop_chk, &QCheckBox::toggled, this, [this](bool toggled) {
 		force_db_drop_chk->setEnabled(toggled && drop_db_rb->isChecked());
 	});
 
-	connect(drop_objs_rb, &QCheckBox::toggled, this, [this](bool toggled){
+	q_connect(drop_objs_rb, &QCheckBox::toggled, this, [this](bool toggled){
 		if(toggled)
 			force_db_drop_chk->setChecked(false);
 	});
 
-	connect(export_thread, &QThread::started, &export_hlp, [this](){
+	q_connect(export_thread, &QThread::started, &export_hlp, [this](){
 		output_trw->setUniformRowHeights(true);
 
 		if(export_to_dbms_rb->isChecked())
@@ -99,31 +99,31 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToSQL();
 	});
 
-	connect(export_thread, &QThread::finished, &export_hlp, [this](){
+	q_connect(export_thread, &QThread::finished, &export_hlp, [this](){
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(&export_hlp, &ModelExportHelper::s_progressUpdated, this, &ModelExportForm::updateProgress, Qt::BlockingQueuedConnection);
-	connect(&export_hlp, &ModelExportHelper::s_exportFinished, this, &ModelExportForm::handleExportFinished);
-	connect(&export_hlp, &ModelExportHelper::s_exportCanceled, this, &ModelExportForm::handleExportCanceled);
-	connect(&export_hlp, &ModelExportHelper::s_errorIgnored, this, &ModelExportForm::handleErrorIgnored);
-	connect(&export_hlp, &ModelExportHelper::s_exportAborted, this, &ModelExportForm::captureThreadError);
+	q_connect(&export_hlp, &ModelExportHelper::s_progressUpdated, this, &ModelExportForm::updateProgress, Qt::BlockingQueuedConnection);
+	q_connect(&export_hlp, &ModelExportHelper::s_exportFinished, this, &ModelExportForm::handleExportFinished);
+	q_connect(&export_hlp, &ModelExportHelper::s_exportCanceled, this, &ModelExportForm::handleExportCanceled);
+	q_connect(&export_hlp, &ModelExportHelper::s_errorIgnored, this, &ModelExportForm::handleErrorIgnored);
+	q_connect(&export_hlp, &ModelExportHelper::s_exportAborted, this, &ModelExportForm::captureThreadError);
 
-	connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
-	connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
+	q_connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
+	q_connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
 
-	connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
-	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	q_connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
+	q_connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
+	q_connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
+	q_connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	q_connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
 
-	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
-	connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
-	connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
-	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
-	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
-	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
+	q_connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
+	q_connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	q_connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	q_connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
+	q_connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
+	q_connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
 
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
 	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
@@ -275,10 +275,8 @@ void ModelExportForm::exportModel()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-
 		finishExport(tr("Exporting process aborted!"));
-		msg_box.show(e);
+		Messagebox::error(e);
 	}
 }
 
@@ -310,7 +308,8 @@ void ModelExportForm::captureThreadError(Exception e)
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 	finishExport(tr("Exporting process aborted!"));
 
-	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	Messagebox::error(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 }
 
 void ModelExportForm::cancelExport()
@@ -389,8 +388,7 @@ void ModelExportForm::editConnections()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e);
 	}
 
 	enableExport();

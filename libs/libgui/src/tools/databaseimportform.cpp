@@ -577,7 +577,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	database_cmb->setCurrentIndex(0);
 
 	//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	Messagebox::error(e);
+	Messagebox::error(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 }
 
 void DatabaseImportForm::filterObjects()
