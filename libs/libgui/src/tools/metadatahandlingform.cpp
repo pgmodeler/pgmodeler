@@ -36,23 +36,25 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	backup_file_sel->setWindowTitle(tr("Select backup file"));
 	settings_grid->addWidget(backup_file_sel, 6, 2);
 
-	connect(close_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
-	connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
+	q_connect(close_btn, &QPushButton::clicked, this, &MetadataHandlingForm::reject);
 
-	connect(extract_from_cmb, &QComboBox::currentTextChanged, [this](){
+	//connect(apply_btn, &QPushButton::clicked, this, &MetadataHandlingForm::handleObjectsMetada);
+	__connect_s0(apply_btn, &QPushButton::clicked, this, MetadataHandlingForm::handleObjectsMetada);
+
+	q_connect(extract_from_cmb, &QComboBox::currentTextChanged, this, [this](){
 		apply_btn->setDisabled(extract_from_cmb->count() == 0);
 	});
 
-	connect(extract_from_cmb, &QComboBox::currentIndexChanged, this, &MetadataHandlingForm::enableMetadataHandling);
-	connect(backup_file_sel, &FileSelectorWidget::s_selectorChanged, this, &MetadataHandlingForm::enableMetadataHandling);
-	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
-	connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
-	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
-	connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
-	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
-	connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
-	connect(select_all_btn, &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
-	connect(clear_all_btn,  &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
+	q_connect(extract_from_cmb, &QComboBox::currentIndexChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	q_connect(backup_file_sel, &FileSelectorWidget::s_selectorChanged, this, &MetadataHandlingForm::enableMetadataHandling);
+	q_connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	q_connect(restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	q_connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	q_connect(extract_restore_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	q_connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::configureSelector);
+	q_connect(extract_only_rb, &QRadioButton::toggled, this, &MetadataHandlingForm::enableMetadataHandling);
+	q_connect(select_all_btn, &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
+	q_connect(clear_all_btn,  &QPushButton::clicked, this, &MetadataHandlingForm::selectAllOptions);
 
 	configureSelector();
 }
