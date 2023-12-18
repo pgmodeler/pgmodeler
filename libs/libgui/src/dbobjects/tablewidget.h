@@ -91,6 +91,8 @@ class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		//! \brief Swap the index between two rows of the table that calls the slot
 		void swapObjects(int idx1, int idx2);
 
+		void togglePKColumn(int row, int col);
+
 		void editData();
 
 	public slots:

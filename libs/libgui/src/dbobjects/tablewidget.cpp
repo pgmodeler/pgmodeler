@@ -52,7 +52,8 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
-	connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
+	//connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
+	__connect_s0(edt_data_tb, &QPushButton::clicked, this, TableWidget::editData);
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
@@ -112,12 +113,19 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i + 1)->setLayout(grid);
 
-		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
-		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
-		connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
-		connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
-		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
-		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
+		//connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
+		//connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
+		//connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
+		//connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
+		//connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
+		//connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
+
+		__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, TableWidget::removeObjects);
+		__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, TableWidget::removeObject);
+		__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, TableWidget::handleObject);
+		__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, TableWidget::handleObject);
+		__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, TableWidget::duplicateObject);
+		__connect_sn(tab, &ObjectsTableWidget::s_rowsMoved, this, TableWidget::swapObjects);
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
@@ -132,17 +140,16 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col){
+	q_connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col) {
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
-			Messagebox msg_box;
 			PhysicalTable *table = dynamic_cast<Table *>(this->object);
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
-				msg_box.show(tr("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				Messagebox::alert(tr("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."));
 			else
-				msg_box.show(tr("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				Messagebox::alert(tr("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."));
 		}
 	});
 
@@ -204,7 +211,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	part_types.push_front(tr("None"));
 	partitioning_type_cmb->addItems(part_types);
 
-	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, this, [this](){
+	q_connect(partitioning_type_cmb, &QComboBox::currentTextChanged, this, [this](){
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
@@ -753,6 +760,8 @@ void TableWidget::removeObjects()
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+
 		if(op_count < op_list->getCurrentSize())
 		{
 			count=op_list->getCurrentSize()-op_count;
@@ -766,8 +775,6 @@ void TableWidget::removeObjects()
 
 			op_list->ignoreOperationChain(false);
 		}
-
-		listObjects(obj_type);
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
