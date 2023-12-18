@@ -86,11 +86,17 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			attributes_tbw->widget(tab_id)->setLayout(grid);
 			tab_id++;
 
-			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
-			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
-			connect(tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::handleObject);
-			connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
-			connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
+			// connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
+			// connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
+			// connect(tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::handleObject);
+			// connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
+			// connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
+
+			__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, ViewWidget::removeObjects);
+			__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, ViewWidget::removeObject);
+			__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, ViewWidget::handleObject);
+			__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, ViewWidget::handleObject);
+			__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, ViewWidget::duplicateObject);
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
@@ -122,19 +128,19 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
 
-		connect(attributes_tbw, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
+		q_connect(attributes_tbw, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
 
-		connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
-		connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
-		connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
+		q_connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
+		q_connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
+		q_connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
 
-		connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
-		connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
-		connect(with_no_data_chk, &QCheckBox::toggled, this, &ViewWidget::updateCodePreview);
-		connect(tablespace_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
-		connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
-		connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
-		connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+		q_connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
+		q_connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
+		q_connect(with_no_data_chk, &QCheckBox::toggled, this, &ViewWidget::updateCodePreview);
+		q_connect(tablespace_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+		q_connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+		q_connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+		q_connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
 
 		configureFormFields(ObjectType::View);
 		baseobject_grid->setContentsMargins(0, 0, 0, 0);
