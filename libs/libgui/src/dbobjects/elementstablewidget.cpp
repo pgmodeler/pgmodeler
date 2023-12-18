@@ -31,7 +31,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		element_wgt = new ElementWidget;
 		element_form.setMainWidget(element_wgt);
 		element_form.setButtonConfiguration();
-		connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
+		q_connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
