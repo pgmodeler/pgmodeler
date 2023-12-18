@@ -151,7 +151,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 		options|=(objs_layers_config_chk->isChecked() ? DatabaseModel::MetaObjsLayersConfig : DatabaseModel::MetaNoOpts);
 		options|=(merge_dup_objs_chk->isChecked() ? DatabaseModel::MetaMergeDuplicatedObjs : DatabaseModel::MetaNoOpts);
 
-		connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
+		q_connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 		if(extract_restore_rb->isChecked() || extract_only_rb->isChecked())
 		{
@@ -171,7 +171,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 				tmp_file.close();
 			}
 
-			connect(extract_model, &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
+			q_connect(extract_model, &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
 																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
