@@ -45,7 +45,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, false, font().pointSizeF());
 		pattern_hl->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 
-		connect(pattern_fields[i], &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
+		q_connect(pattern_fields[i], &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
 	}
 
 	deferral_cmb->addItems(DeferralType::getTypes());
@@ -61,26 +61,26 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	settings_twg->widget(0)->setFocusProxy(crows_foot_rb);
 	foreign_key_gb->setFocusProxy(deferrable_chk);
 
-	connect(crows_foot_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
-	connect(fk_to_pk_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
-	connect(center_pnts_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
-	connect(tab_edges_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	q_connect(crows_foot_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	q_connect(fk_to_pk_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	q_connect(center_pnts_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
+	q_connect(tab_edges_rb, &QRadioButton::toggled, this, &RelationshipConfigWidget::enableConnModePreview);
 
-	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
-	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-	connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
+	q_connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+	q_connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+	q_connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
 
-	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
+	q_connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
 
-	connect(del_action_cmb, &QComboBox::currentTextChanged, this, [this](){
+	q_connect(del_action_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [this](){
+	q_connect(upd_action_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [this](){
+	q_connect(deferral_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }
