@@ -67,29 +67,29 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	enableEditMode(false);
 
-	connect(new_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::resetForm);
-	connect(edit_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::editSnippet);
-	connect(remove_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeSnippet);
-	connect(remove_all_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeAllSnippets);
+	q_connect(new_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::resetForm);
+	q_connect(edit_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::editSnippet);
+	q_connect(remove_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeSnippet);
+	q_connect(remove_all_tb, &QToolButton::clicked, this, &SnippetsConfigWidget::removeAllSnippets);
 
-	connect(cancel_tb, &QToolButton::clicked, this, [this](){
+	q_connect(cancel_tb, &QToolButton::clicked, this, [this](){
 		enableEditMode(false);
 	});
 
-	connect(snippets_cmb, &QComboBox::currentTextChanged, this, [this](){
+	q_connect(snippets_cmb, &QComboBox::currentTextChanged, this, [this](){
 		enableEditMode(false);
 	});
 
-	connect(id_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
-	connect(label_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
-	connect(snippet_txt, &NumberedTextEditor::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
-	connect(parsable_chk, &QCheckBox::toggled, this, &SnippetsConfigWidget::enableSaveButtons);
-	connect(filter_cmb, &QComboBox::currentIndexChanged, this, &SnippetsConfigWidget::filterSnippets);
-	connect(update_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
-	connect(add_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
-	connect(parse_tb, &QPushButton::clicked, this, qOverload<>(&SnippetsConfigWidget::parseSnippet));
+	q_connect(id_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	q_connect(label_edt, &QLineEdit::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	q_connect(snippet_txt, &NumberedTextEditor::textChanged, this, &SnippetsConfigWidget::enableSaveButtons);
+	q_connect(parsable_chk, &QCheckBox::toggled, this, &SnippetsConfigWidget::enableSaveButtons);
+	q_connect(filter_cmb, &QComboBox::currentIndexChanged, this, &SnippetsConfigWidget::filterSnippets);
+	q_connect(update_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	q_connect(add_tb, &QPushButton::clicked, this, &SnippetsConfigWidget::handleSnippet);
+	q_connect(parse_tb, &QPushButton::clicked, this, qOverload<>(&SnippetsConfigWidget::parseSnippet));
 
-	connect(parsable_chk, &QCheckBox::toggled, placeholders_chk, &QCheckBox::setEnabled);
+	q_connect(parsable_chk, &QCheckBox::toggled, placeholders_chk, &QCheckBox::setEnabled);
 }
 
 std::map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
@@ -430,16 +430,14 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 
 void SnippetsConfigWidget::parseSnippet()
 {
-	Messagebox msg_box;
-
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(tr("No syntax errors found in the snippet."), Messagebox::InfoIcon);
+		Messagebox::info(tr("No syntax errors found in the code snippet."));
 	}
 	catch(Exception &e)
 	{
-		msg_box.show(e);
+		Messagebox::error(e);
 	}
 }
 
