@@ -731,7 +731,7 @@ void RelationshipWidget::showAdvancedObject(int row)
 	}
 	catch(Exception &e)
 	{
-		Messagebox::error(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

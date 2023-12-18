@@ -202,19 +202,17 @@ void RoleWidget::showSelectedRoleData()
 			if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
 				members_tab[idx_tab]->removeRow(lin);
 
-						 //Raises an error if the role already is in the table
+			//Raises an error if the role already is in the table
 			if(obj_sel && idx_lin >= 0)
 			{
-				Messagebox::error(Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
-													.arg(obj_sel->getName())
-													.arg(name_edt->text()),
-													ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+				Messagebox::error(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole).arg(obj_sel->getName(), name_edt->text()),
+													ErrorCode::InsDuplicatedRole, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 		}
 	}
 	catch(Exception &e)
 	{
-		Messagebox::error(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

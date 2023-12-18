@@ -75,17 +75,22 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		//! \brief Shows a simple message box with the title automatically defined by the icon type
 		void show(const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton);
 
-		/*! \brief Shows a message box in which massage and stacktrace is retrived from the provided exception.
-			*  Also, it uses an error icon and only OK button */
-		static void error(Exception e);
+		/*! \brief Shows an error message box in which can an error code and exact local of the code is specified.
+		 *  Additionally, a reference to a captured exception can be specified and will be used to fill up the stack trace.
+		 * Also, it uses an error icon and only OK button */
+		static void error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e = nullptr);
 
-		//! \brief Shows message box with the provided message, an error icon and only OK button
+		/*! \brief Shows an error message box in which massage and stacktrace is retrived from the provided exception.
+		 * Also, it uses an error icon and only OK button */
+		static void error(Exception &e, const QString &method, const QString &file, int line);
+
+		//! \brief Shows an error message box with the provided message, an error icon and only OK button
 		static void error(const QString &msg);
 
-		//! \brief Shows message box with the provided message, an alert icon and only OK button
+		//! \brief Shows an alert message box with the provided message, an alert icon and only OK button
 		static void alert(const QString &msg);
 
-		//! \brief Shows message box with the provided message, an info icon and only OK button
+		//! \brief Shows an info message box with the provided message, an info icon and only OK button
 		static void info(const QString &msg);
 
 		bool isCancelled();

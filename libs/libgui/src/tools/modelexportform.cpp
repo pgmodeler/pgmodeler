@@ -276,7 +276,7 @@ void ModelExportForm::exportModel()
 	catch(Exception &e)
 	{
 		finishExport(tr("Exporting process aborted!"));
-		Messagebox::error(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -309,7 +309,7 @@ void ModelExportForm::captureThreadError(Exception e)
 	finishExport(tr("Exporting process aborted!"));
 
 	//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	Messagebox::error(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
 void ModelExportForm::cancelExport()
@@ -388,7 +388,7 @@ void ModelExportForm::editConnections()
 	}
 	catch(Exception &e)
 	{
-		Messagebox::error(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	enableExport();
