@@ -28,23 +28,27 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
 
-	connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
+	q_connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
 
-	connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
-	connect(cancel_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
-	connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
-	connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
-	connect(edit_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::editConnection);
-	connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
+	q_connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
+	q_connect(cancel_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
 
-	connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
-	connect(add_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
+	//connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
+	//connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
+	__connect_s0(duplicate_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::duplicateConnection);
+	__connect_s0(update_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::handleConnection);
 
-	connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
-	connect(host_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
-	connect(user_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
-	connect(passwd_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
-	connect(conn_db_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	q_connect(edit_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::editConnection);
+	q_connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
+
+	q_connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
+	__connect_s0(add_tb, &QPushButton::clicked, this, ConnectionsConfigWidget::handleConnection);
+
+	q_connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	q_connect(host_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	q_connect(user_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	q_connect(passwd_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
+	q_connect(conn_db_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
 
 	update_tb->setVisible(false);
 	cancel_tb->setVisible(false);
@@ -427,7 +431,7 @@ void ConnectionsConfigWidget::testConnection()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e);
 	}
 }
 
@@ -602,13 +606,24 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
-		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
+		/* connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
+			conn_cfg_wgt.loadConfiguration();
+		}); */
+
+		__connect_l0(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
 			conn_cfg_wgt.loadConfiguration();
 		});
 
-		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
+		/* connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
 			conn_cfg_wgt.saveConfiguration();
 			parent_form.accept();
+		}); */
+
+		q_connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
+			__trycatch(
+				conn_cfg_wgt.saveConfiguration();
+				parent_form.accept();
+			)
 		});
 
 		parent_form.setMainWidget(&conn_cfg_wgt);
