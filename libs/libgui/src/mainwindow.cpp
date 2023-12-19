@@ -56,12 +56,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	try
-	{
-		SQLExecutionWidget::loadSQLHistory();
-	}
-	catch(Exception &){}
-
+	SQLExecutionWidget::loadSQLHistory();
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	std::map<QString, attribs_map >confs = conf_wgt->getConfigurationParams();
 

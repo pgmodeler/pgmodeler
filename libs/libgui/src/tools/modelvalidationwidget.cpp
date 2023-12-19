@@ -472,7 +472,7 @@ void ModelValidationWidget::applyFixes()
 	validation_helper->switchToFixMode(true);
 	disconnect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 	validation_thread->start();
-	connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
+	q_connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)

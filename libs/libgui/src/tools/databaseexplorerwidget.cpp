@@ -252,7 +252,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	/* connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
 		SQLExecutionWidget::copySelection(properties_tbw, true);
 	}); */
-	__connect_l0(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
+	q_connect(properties_tbw, &QTableWidget::itemPressed, this, [this]() {
 		SQLExecutionWidget::copySelection(properties_tbw, true);
 	});
 
