@@ -378,17 +378,10 @@ void ModelExportForm::closeEvent(QCloseEvent *event)
 
 void ModelExportForm::editConnections()
 {
-	try
+	if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 	{
-		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
-		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-			emit s_connectionsUpdateRequest();
-		}
-	}
-	catch(Exception &e)
-	{
-		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
+		emit s_connectionsUpdateRequest();
 	}
 
 	enableExport();

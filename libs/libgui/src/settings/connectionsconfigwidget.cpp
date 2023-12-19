@@ -636,7 +636,9 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	catch(Exception &e)
 	{
 		combo->setCurrentIndex(0);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return false;
 	}
 
 	return parent_form.result() == QDialog::Accepted;
