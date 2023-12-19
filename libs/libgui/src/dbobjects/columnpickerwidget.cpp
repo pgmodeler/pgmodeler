@@ -45,22 +45,22 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 	/* connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
 		addColumn(idx);
 	}); */
-	__connect_ln(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
-		addColumn(idx);
+	q_connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
+		__trycatch( addColumn(idx); )
 	});
 
 	/* connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
 		updateColumnsCombo();
 	}); */
-	__connect_ln(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
-		updateColumnsCombo();
+	q_connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
+		__trycatch( updateColumnsCombo(); )
 	});
 
 	/* connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
 		updateColumnsCombo();
 	}); */
-	__connect_l0(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
-		updateColumnsCombo();
+	q_connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
+		__trycatch( updateColumnsCombo(); )
 	});
 
 	setParentObject(nullptr);

@@ -121,8 +121,8 @@ subcontrol-position: right center; }");
 	/* connect(new_tb, &QToolButton::clicked, this, [this](){
 		addEditorTab();
 	}); */
-	__connect_l0(new_tb, &QToolButton::clicked, this, [this](){
-		addEditorTab();
+	q_connect(new_tb, &QToolButton::clicked, this, [this](){
+		__trycatch( addEditorTab(); )
 	});
 
 	//connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
@@ -157,8 +157,8 @@ subcontrol-position: right center; }");
 	/* connect(save_as_tb, &QToolButton::clicked, this, [this](){
 		saveFile(true);
 	}); */
-	__connect_l0(save_as_tb, &QToolButton::clicked, this, [this](){
-		saveFile(true);
+	q_connect(save_as_tb, &QToolButton::clicked, this, [this](){
+		__trycatch( saveFile(true); )
 	});
 
 	q_connect(about_tb, &QToolButton::clicked, this, [](){

@@ -54,20 +54,20 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	// connect(import_sys_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
 	// connect(import_ext_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
 
-	__connect_l0(connections_cmb, &QComboBox::activated, this, [this](){
-		listDatabases();
+	q_connect(connections_cmb, &QComboBox::activated, this, [this](){
+		__trycatch( listDatabases(); )
 	});
 
-	__connect_l0(database_cmb, &QComboBox::activated, this, [this](){
-		listObjects();
+	q_connect(database_cmb, &QComboBox::activated, this, [this](){
+		__trycatch( listObjects(); )
 	});
 
-	__connect_l0(import_sys_objs_chk, &QCheckBox::clicked, this, [this](){
-		listObjects();
+	q_connect(import_sys_objs_chk, &QCheckBox::clicked, this, [this](){
+		__trycatch( listObjects(); )
 	});
 
-	__connect_l0(import_ext_objs_chk, &QCheckBox::clicked, this, [this](){
-		listObjects();
+	q_connect(import_ext_objs_chk, &QCheckBox::clicked, this, [this](){
+		__trycatch( listObjects(); )
 	});
 
 	q_connect(db_objects_tw, &QTreeWidget::itemChanged, this, qOverload<QTreeWidgetItem *, int>(&DatabaseImportForm::setItemCheckState));
@@ -80,8 +80,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	__connect_s0(import_btn, &QPushButton::clicked, this, DatabaseImportForm::importDatabase);
 
 	// connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
-	__connect_l0(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, [this](){
-		listObjects();
+	q_connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, [this](){
+		__trycatch( listObjects(); )
 	});
 
 	q_connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
@@ -109,8 +109,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	/* connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		listObjects();
 	}); */
-	__connect_l0(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
-		listObjects();
+	q_connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
+		__trycatch( listObjects(); )
 	});
 
 	q_connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){

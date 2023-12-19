@@ -610,8 +610,8 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			conn_cfg_wgt.loadConfiguration();
 		}); */
 
-		__connect_l0(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
-			conn_cfg_wgt.loadConfiguration();
+		q_connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
+			__trycatch( conn_cfg_wgt.loadConfiguration(); )
 		});
 
 		/* connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){

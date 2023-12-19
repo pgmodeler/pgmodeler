@@ -233,8 +233,8 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	/* connect(data_grid_tb, &QToolButton::clicked, this, [this](){
 		openDataGrid();
 	}); */
-	__connect_l0(data_grid_tb, &QToolButton::clicked, this, [this](){
-		openDataGrid();
+	q_connect(data_grid_tb, &QToolButton::clicked, this, [this](){
+		__trycatch( openDataGrid(); )
 	});
 
 	q_connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
@@ -271,14 +271,16 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 			updateItem(item, false);
 		}
 	}); */
-	__connect_ln(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item){
-		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-		unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
+	q_connect(objects_trw, &QTreeWidget::itemExpanded, this, [this](QTreeWidgetItem *item) {
+		__trycatch (
+			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
+			unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 
-		if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
-		{
-			updateItem(item, false);
-		}
+			if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
+			{
+				updateItem(item, false);
+			}
+		)
 	});
 
 	q_connect(sort_by_name_tb, &QToolButton::clicked, this, [this]() {

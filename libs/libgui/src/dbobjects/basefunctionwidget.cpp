@@ -88,8 +88,8 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		/* connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
 			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
 		}); */
-		__connect_ln(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
-			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
+		q_connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
+			__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
 		});
 
 		setRequiredField(language_lbl);
