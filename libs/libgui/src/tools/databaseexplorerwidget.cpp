@@ -171,12 +171,14 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	show_sys_objs = toggle_disp_menu.addAction(tr("Show system objects"));
 	show_sys_objs->setCheckable(true);
 	//connect(show_sys_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
-	__connect_s0(show_sys_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
+	//__connect_s0(show_sys_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
+	q_connect(show_sys_objs, &QAction::toggled, this, __slot(this, DatabaseExplorerWidget::listObjects));
 
 	show_ext_objs = toggle_disp_menu.addAction(tr("Show extension objects"));
 	show_ext_objs->setCheckable(true);
 	//connect(show_ext_objs, &QAction::toggled, this, &DatabaseExplorerWidget::listObjects);
-	__connect_s0(show_ext_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
+	//__connect_s0(show_ext_objs, &QAction::toggled, this, DatabaseExplorerWidget::listObjects);
+	q_connect(show_ext_objs, &QAction::toggled, this, __slot(this, DatabaseExplorerWidget::listObjects));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -208,15 +210,19 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	objects_trw->installEventFilter(this);
 
 	//connect(refresh_tb, &QToolButton::clicked, this, &DatabaseExplorerWidget::listObjects);
-	__connect_s0(refresh_tb, &QToolButton::clicked, this, DatabaseExplorerWidget::listObjects);
+	//__connect_s0(refresh_tb, &QToolButton::clicked, this, DatabaseExplorerWidget::listObjects);
+	q_connect(refresh_tb, &QToolButton::clicked, this, __slot(this, DatabaseExplorerWidget::listObjects));
 
 	//connect(objects_trw, &QTreeWidget::itemPressed, this, &DatabaseExplorerWidget::handleObject);
-	__connect_sn(objects_trw, &QTreeWidget::itemPressed, this, DatabaseExplorerWidget::handleObject);
+	//__connect_sn(objects_trw, &QTreeWidget::itemPressed, this, DatabaseExplorerWidget::handleObject);
+	q_connect(objects_trw, &QTreeWidget::itemPressed, this, __slot_n(this, DatabaseExplorerWidget::handleObject));
 
 	//connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::showObjectProperties);
 	//connect(raw_attrib_names_chk, &QCheckBox::toggled, this, &DatabaseExplorerWidget::showObjectProperties);
-	__connect_s0(objects_trw, &QTreeWidget::currentItemChanged, this, DatabaseExplorerWidget::showObjectProperties);
-	__connect_s0(raw_attrib_names_chk, &QCheckBox::toggled, this, DatabaseExplorerWidget::showObjectProperties);
+	//__connect_s0(objects_trw, &QTreeWidget::currentItemChanged, this, DatabaseExplorerWidget::showObjectProperties);
+	//__connect_s0(raw_attrib_names_chk, &QCheckBox::toggled, this, DatabaseExplorerWidget::showObjectProperties);
+	q_connect(objects_trw, &QTreeWidget::currentItemChanged, this, __slot(this, DatabaseExplorerWidget::showObjectProperties));
+	q_connect(raw_attrib_names_chk, &QCheckBox::toggled, this, __slot(this, DatabaseExplorerWidget::showObjectProperties));
 
 	q_connect(objects_trw, &QTreeWidget::currentItemChanged, this, &DatabaseExplorerWidget::cancelObjectRename);
 

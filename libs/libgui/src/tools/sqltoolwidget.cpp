@@ -67,13 +67,16 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sourcecode_gb->setLayout(vbox);
 
 	//connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
-	__connect_s0(connections_cmb, &QComboBox::activated, this, SQLToolWidget::connectToServer);
+	//__connect_s0(connections_cmb, &QComboBox::activated, this, SQLToolWidget::connectToServer);
+	q_connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
 
 	//connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
-	__connect_s0(refresh_tb, &QToolButton::clicked, this, SQLToolWidget::connectToServer);
+	//__connect_s0(refresh_tb, &QToolButton::clicked, this, SQLToolWidget::connectToServer);
+	q_connect(refresh_tb, &QToolButton::clicked, this, __slot(this, SQLToolWidget::connectToServer));
 
 	//connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
-	__connect_s0(database_cmb, &QComboBox::activated, this, SQLToolWidget::browseDatabase);
+	//__connect_s0(database_cmb, &QComboBox::activated, this, SQLToolWidget::browseDatabase);
+	q_connect(database_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::browseDatabase));
 
 	q_connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	q_connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
@@ -89,7 +92,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	/*connect(sql_exec_corner_btn, &QToolButton::clicked, this, [this](){
 		addSQLExecutionTab();
 	});*/
-	__connect_s0(sql_exec_corner_btn, &QToolButton::clicked, this, SQLToolWidget::addSQLExecutionTab);
+	//__connect_s0(sql_exec_corner_btn, &QToolButton::clicked, this, SQLToolWidget::addSQLExecutionTab);
+	q_connect(sql_exec_corner_btn, &QToolButton::clicked, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 
 	q_connect(databases_tbw, &QTabWidget::currentChanged,	this, [this](){
 		DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
@@ -330,7 +334,8 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			/* connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, [this](){
 				addSQLExecutionTab();
 			}); */
-			__connect_s0(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, SQLToolWidget::addSQLExecutionTab);
+			//__connect_s0(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, SQLToolWidget::addSQLExecutionTab);
+			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 
 			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_snippetShowRequested, this, &SQLToolWidget::showSnippet);
 			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sourceCodeShowRequested, this, &SQLToolWidget::showSourceCode);

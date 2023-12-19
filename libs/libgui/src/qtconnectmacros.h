@@ -29,7 +29,7 @@ unexpected behavior and crashes.
 
 #include <QObject>
 
-//! \brief This macro expands to a block of code inside a try/catch block
+//! \brief This macro expands to a block of code inside a try/catch blockz
 #define __trycatch(body) \
 try \
 { \
@@ -40,16 +40,15 @@ catch(Exception &e) \
 	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__); \
 }
 
-/*! \brief This macro expands to a QObject::connect call that takes
- * the sender object, the signal emitted by the sender, the receiver object,
- * and the slot method that TAKES NO ARGUMENTS * and the slot method that ONE OR MORE ARGUMENTS
- * hence the "_s0" suffix.
+/*! \brief This macro expands to a slot method call to be used with QObject::connect method.
+ * The macro takes as arguments the receiver object, and the method to be executed that is
+ * owned by the receiver object (slot). Only slots that TAKE NO ARGUMENTS are accepted.
  *
- * The expanded macro encloses the slot in a try/catch block inside a
+ * The expanded macro encloses the slot call in a try/catch block inside a
  * lambda function in order to self-contain all exceptions that eventually go
  * outside the slot scope, avoiding undefined behavior and crashes.
  *
- * NOTE: different from the original Qt's connect function, the slot passed
+ * NOTE: differently from the original Qt's signal/slot connection, the slot passed
  * to the macro MUST NOT be the reference (address) of the receiver's method.
  *
  * Usage:
@@ -58,22 +57,22 @@ catch(Exception &e) \
  *		connect(sender, &SenderClass::s_someSignal, receiver, &ReceiverClass::someMethod)
  *
  * > Macro (note the absence of & in slot specification)
- *		__connect_s0(sender, &SenderClass::s_someSignal, receiver, ReceiverClass::someMethod)
+ *		connect(sender, &SenderClass::s_someSignal, context, __slot(receiver, ReceiverClass::someMethod))
  */
-#define __connect_s0(sender, signal, receiver, slot, ...) \
-connect(sender, signal, receiver, [receiver]() { \
-	__trycatch( receiver->slot(); ) \
-}, ##__VA_ARGS__);
+#define __slot(receiver, method) \
+[&]() { \
+	__trycatch( (receiver)->method(); ) \
+}
 
-/*! \brief This macro expands to a QObject::connect call that takes
- * the sender object, the signal emitted by the sender, the receiver object,
- * and the slot method that ONE OR MORE ARGUMENTS hence the "_sn" suffix.
+/*! \brief This macro expands to a slot method call to be used with QObject::connect method.
+ * The macro takes as arguments the receiver object, and the method to be executed that is
+ * owned by the receiver object (slot). Only slots that TAKE ONE OR MORE ARGUMENTS are accepted.
  *
- * The expanded macro encloses the slot in a try/catch block inside a
+ * The expanded macro encloses the slot call in a try/catch block inside a
  * lambda function in order to self-contain all exceptions that eventually go
  * outside the slot scope, avoiding undefined behavior and crashes.
  *
- * NOTE: different from the original Qt's connect function, the slot passed
+ * NOTE: differently from the original Qt's signal/slot connection, the slot passed
  * to the macro MUST NOT be the reference (address) of the receiver's method.
  *
  * Usage:
@@ -82,12 +81,12 @@ connect(sender, signal, receiver, [receiver]() { \
  *		connect(sender, &SenderClass::s_someSignal, receiver, &ReceiverClass::someMethod)
  *
  * > Macro (note the absence of & in slot specification)
- *		__connect_sn(sender, &SenderClass::s_someSignal, receiver, ReceiverClass::someMethod)
+ *		connect(sender, &SenderClass::s_someSignal, context, __slot_n(receiver, ReceiverClass::someMethod))
  */
-#define __connect_sn(sender, signal, receiver, slot, ...) \
-connect(sender, signal, receiver, [receiver](auto... sig_args) { \
-	__trycatch( receiver->slot(sig_args...); ) \
-}, ##__VA_ARGS__);
+#define __slot_n(receiver, method) \
+[&](auto... sig_args) { \
+	__trycatch( (receiver)->method(sig_args...); ) \
+}
 
 /*! \brief This macro is just a placeholder for the original QObject::connect call.
  * It acts just to flag where a original QObject connect is happening.

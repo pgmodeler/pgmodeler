@@ -318,8 +318,10 @@ CREATE TABLE public.table_b (\n \
 
 	//connect(ui_theme_cmb, &QComboBox::activated, this, &AppearanceConfigWidget::previewUiSettings);
 	//connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
-	__connect_s0(ui_theme_cmb, &QComboBox::activated, this, AppearanceConfigWidget::previewUiSettings);
-	__connect_s0(icons_size_cmb, &QComboBox::currentTextChanged, this, AppearanceConfigWidget::previewUiSettings);
+	//__connect_s0(ui_theme_cmb, &QComboBox::activated, this, AppearanceConfigWidget::previewUiSettings);
+	//__connect_s0(icons_size_cmb, &QComboBox::currentTextChanged, this, AppearanceConfigWidget::previewUiSettings);
+	q_connect(ui_theme_cmb, &QComboBox::activated, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
+	q_connect(icons_size_cmb, &QComboBox::currentTextChanged, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
 
 	q_connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);

@@ -40,9 +40,13 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	// connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
 	// connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
 
-	__connect_s0(cancel_btn, &QPushButton::clicked, this, ConfigurationForm::reject);
-	__connect_s0(apply_btn,  &QPushButton::clicked, this, ConfigurationForm::applyConfiguration);
-	__connect_s0(defaults_btn,  &QPushButton::clicked, this, ConfigurationForm::restoreDefaults);
+	//__connect_s0(cancel_btn, &QPushButton::clicked, this, ConfigurationForm::reject);
+	//__connect_s0(apply_btn,  &QPushButton::clicked, this, ConfigurationForm::applyConfiguration);
+	//__connect_s0(defaults_btn,  &QPushButton::clicked, this, ConfigurationForm::restoreDefaults);
+
+	q_connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
+	q_connect(apply_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::applyConfiguration));
+	q_connect(defaults_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::restoreDefaults));
 
 	setMinimumSize(890, 740);
 

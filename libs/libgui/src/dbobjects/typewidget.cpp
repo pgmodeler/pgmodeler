@@ -113,8 +113,11 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		q_connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
 		q_connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
 		q_connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
-		__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, TypeWidget::handleAttribute);
-		__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, TypeWidget::handleAttribute);
+
+		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, TypeWidget::handleAttribute);
+		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, TypeWidget::handleAttribute);
+		q_connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
+		q_connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
 
 		storage_cmb->addItems(StorageType::getTypes());
 		category_cmb->addItems(CategoryType::getTypes());

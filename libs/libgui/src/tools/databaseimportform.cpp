@@ -77,7 +77,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	q_connect(cancel_btn, &QPushButton::clicked, this, &DatabaseImportForm::cancelImport);
 
 	// connect(import_btn, &QPushButton::clicked, this,  &DatabaseImportForm::importDatabase);
-	__connect_s0(import_btn, &QPushButton::clicked, this, DatabaseImportForm::importDatabase);
+	//__connect_s0(import_btn, &QPushButton::clicked, this, DatabaseImportForm::importDatabase);
+	q_connect(import_btn, &QPushButton::clicked, this, __slot(this, DatabaseImportForm::importDatabase));
 
 	// connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 	q_connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, [this](){

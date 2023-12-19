@@ -62,8 +62,10 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 		//connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, &AggregateWidget::handleDataType);
 		//connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, &AggregateWidget::handleDataType);
-		__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, AggregateWidget::handleDataType);
-		__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, AggregateWidget::handleDataType);
+		//__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, AggregateWidget::handleDataType);
+		//__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, AggregateWidget::handleDataType);
+		q_connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, AggregateWidget::handleDataType));
+		q_connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, AggregateWidget::handleDataType));
 
 		frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);

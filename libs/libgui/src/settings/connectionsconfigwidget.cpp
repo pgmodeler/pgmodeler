@@ -35,14 +35,18 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 
 	//connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
 	//connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
-	__connect_s0(duplicate_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::duplicateConnection);
-	__connect_s0(update_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::handleConnection);
+	//__connect_s0(duplicate_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::duplicateConnection);
+	//__connect_s0(update_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::handleConnection);
+	q_connect(duplicate_tb, &QToolButton::clicked, this, __slot(this, ConnectionsConfigWidget::duplicateConnection));
+	q_connect(update_tb, &QToolButton::clicked, this, __slot(this, ConnectionsConfigWidget::handleConnection));
 
 	q_connect(edit_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::editConnection);
 	q_connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
 
 	q_connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
-	__connect_s0(add_tb, &QPushButton::clicked, this, ConnectionsConfigWidget::handleConnection);
+
+	//__connect_s0(add_tb, &QPushButton::clicked, this, ConnectionsConfigWidget::handleConnection);
+	q_connect(add_tb, &QPushButton::clicked, this, __slot(this, ConnectionsConfigWidget::handleConnection));
 
 	q_connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
 	q_connect(host_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);
@@ -610,9 +614,11 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			conn_cfg_wgt.loadConfiguration();
 		}); */
 
-		q_connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
+		/* q_connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
 			__trycatch( conn_cfg_wgt.loadConfiguration(); )
-		});
+		}); */
+
+		q_connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, __slot(&conn_cfg_wgt, ConnectionsConfigWidget::loadConfiguration));
 
 		/* connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
 			conn_cfg_wgt.saveConfiguration();

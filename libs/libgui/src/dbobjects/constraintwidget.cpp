@@ -72,10 +72,12 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		q_connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
 		//connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
-		__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, ConstraintWidget::selectReferencedTable);
+		//__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, ConstraintWidget::selectReferencedTable);
+		q_connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, __slot(this, ConstraintWidget::selectReferencedTable));
 
 		//connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
-		__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, ConstraintWidget::selectReferencedTable);
+		//__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, ConstraintWidget::selectReferencedTable);
+		q_connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, __slot(this, ConstraintWidget::selectReferencedTable));
 
 		selectConstraintType();
 		configureTabOrder();

@@ -68,7 +68,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		});
 
 		//connect(edit_seq_btn, &QPushButton::clicked, this, &ColumnWidget::editSequenceAttributes);
-		__connect_s0(edit_seq_btn, &QPushButton::clicked, this, ColumnWidget::editSequenceAttributes);
+		//__connect_s0(edit_seq_btn, &QPushButton::clicked, this, ColumnWidget::editSequenceAttributes);
+		q_connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
 
 		setMinimumSize(540, 480);
 	}

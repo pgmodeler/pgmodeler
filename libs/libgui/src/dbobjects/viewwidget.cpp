@@ -92,11 +92,17 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			// connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
 			// connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
 
-			__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, ViewWidget::removeObjects);
-			__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, ViewWidget::removeObject);
-			__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, ViewWidget::handleObject);
-			__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, ViewWidget::handleObject);
-			__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, ViewWidget::duplicateObject);
+			//__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, ViewWidget::removeObjects);
+			//__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, ViewWidget::removeObject);
+			//__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, ViewWidget::handleObject);
+			//__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, ViewWidget::handleObject);
+			//__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, ViewWidget::duplicateObject);
+
+			q_connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
+			q_connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
+			q_connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
+			q_connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
+			q_connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
