@@ -34,26 +34,27 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		setModel(nullptr);
 		filter_wgt->setVisible(false);
 
-		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
-		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+		q_connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
 
-		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
-			BaseObject *obj=src_object_sel->getSelectedObject();
+		q_connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		q_connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+		q_connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+		q_connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+
+		q_connect(swap_values_tb, &QToolButton::clicked, this, [this](){
+			BaseObject *obj = src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
 
-		connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
+		q_connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(index);
 		});
 
-		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+		q_connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
+		q_connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+		q_connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
 
 		objects_view->installEventFilter(this);
 		setMinimumSize(640,480);
