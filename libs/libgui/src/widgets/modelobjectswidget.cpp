@@ -41,27 +41,27 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	visibleobjects_grp->setVisible(false);
 	filter_wgt->setVisible(simplified_view);
 
-	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
-	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	q_connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
+	q_connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
 
-	connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
+	q_connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
 	});
 
-	connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
+	q_connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
 	});
 
-	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
+	q_connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
-	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
+	q_connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
 		objectstree_tw->expandAll();
 		objectstree_tw->blockSignals(false);
 		objectstree_tw->resizeColumnToContents(0);
 	});
 
-	connect(collapse_all_tb, &QToolButton::clicked,  this, [this](){
+	q_connect(collapse_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
 		objectstree_tw->collapseAll();
 		objectstree_tw->blockSignals(false);
@@ -73,19 +73,19 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		obj_types_wgt = new ObjectTypesListWidget(this);
 		visibleobjects_grp->layout()->addWidget(obj_types_wgt);
 
-		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
+		q_connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
 
-		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, [this](ObjectType obj_type, Qt::CheckState state) {
+		q_connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, this, [this](ObjectType obj_type, Qt::CheckState state) {
 			setObjectVisible(obj_type, state == Qt::Checked);
 			updateObjectsView();
 		});
 
-		connect(obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, [this](Qt::CheckState state) {
+		q_connect(obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, this, [this](Qt::CheckState state) {
 			setAllObjectsVisible(state == Qt::Checked);
 		});
 
-		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
-		connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
+		q_connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::editObject);
+		q_connect(hide_tb, &QToolButton::clicked, this, &ModelObjectsWidget::hide);
 
 		setAllObjectsVisible(true);	
 		objectstree_tw->installEventFilter(this);
@@ -96,13 +96,13 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
-		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
-		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
+		q_connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
+		q_connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
+		q_connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 	}
 
-	connect(filter_edt, &QLineEdit::textChanged, this, &ModelObjectsWidget::filterObjects);
-	connect(by_id_chk, &QCheckBox::toggled, this, &ModelObjectsWidget::filterObjects);
+	q_connect(filter_edt, &QLineEdit::textChanged, this, &ModelObjectsWidget::filterObjects);
+	q_connect(by_id_chk, &QCheckBox::toggled, this, &ModelObjectsWidget::filterObjects);
 }
 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
@@ -200,14 +200,14 @@ void ModelObjectsWidget::selectObject()
 		{
 			act.setData(QVariant(enum_t(obj_type)));
 			p_act = &act;
-			connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
+			q_connect(p_act, &QAction::triggered, model_wgt, &ModelWidget::addNewObject);
 		}
 		//Case is a relationship, insert the relationship menu of the model wiget into the action
 		else
 			p_act = model_wgt->rels_menu->menuAction();
 
 		if(simplified_view && enable_obj_creation)
-			connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
+			q_connect(model_wgt->getDatabaseModel(), &DatabaseModel::s_objectAdded, this, &ModelObjectsWidget::selectCreatedObject, Qt::QueuedConnection);
 
 		p_act->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
 		p_act->setText(tr("New") + " " + BaseObject::getTypeName(obj_type));
@@ -342,14 +342,6 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 
 void ModelObjectsWidget::changeObjectsView()
 {
-	/* if(sender()==tree_view_tb || sender()==list_view_tb)
-	{
-		visaoobjetos_stw->setCurrentIndex(sender()==tree_view_tb ? 0 : 1);
-		tree_view_tb->setChecked(sender()==tree_view_tb);
-		list_view_tb->setChecked(sender()==list_view_tb);
-		by_id_chk->setEnabled(sender()==tree_view_tb);
-	}
-	else */
 	if(sender()==options_tb)
 	{
 		filter_wgt->setVisible(options_tb->isChecked());
@@ -708,7 +700,8 @@ void ModelObjectsWidget::updateDatabaseTree()
 		catch(Exception &e)
 		{
 			objectstree_tw->setUpdatesEnabled(true);
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 
 		objectstree_tw->sortByColumn(0, Qt::AscendingOrder);
