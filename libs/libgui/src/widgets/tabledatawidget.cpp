@@ -61,44 +61,46 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	setMinimumSize(640, 480);
 
-	connect(add_row_tb, &QToolButton::clicked, this, &TableDataWidget::addRow);
-	connect(dup_rows_tb, &QToolButton::clicked, this, &TableDataWidget::duplicateRows);
-	connect(del_rows_tb, &QToolButton::clicked, this, &TableDataWidget::deleteRows);
-	connect(del_cols_tb, &QToolButton::clicked, this, &TableDataWidget::deleteColumns);
-	connect(clear_rows_tb, &QToolButton::clicked, this, &TableDataWidget::clearRows);
-	connect(clear_cols_tb, &QToolButton::clicked, this, &TableDataWidget::clearColumns);
+	q_connect(add_row_tb, &QToolButton::clicked, this, &TableDataWidget::addRow);
+	q_connect(dup_rows_tb, &QToolButton::clicked, this, &TableDataWidget::duplicateRows);
+	q_connect(del_rows_tb, &QToolButton::clicked, this, &TableDataWidget::deleteRows);
+	q_connect(del_cols_tb, &QToolButton::clicked, this, &TableDataWidget::deleteColumns);
+	q_connect(clear_rows_tb, &QToolButton::clicked, this, &TableDataWidget::clearRows);
+	q_connect(clear_cols_tb, &QToolButton::clicked, this, &TableDataWidget::clearColumns);
 
-	connect(data_tbw, &QTableWidget::currentCellChanged, this, &TableDataWidget::insertRowOnTabPress, Qt::QueuedConnection);
-	connect(&col_names_menu, &QMenu::triggered, this, &TableDataWidget::addColumn);
-	connect(data_tbw, &QTableWidget::itemSelectionChanged, this, &TableDataWidget::enableButtons);
-	connect(data_tbw->horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &TableDataWidget::changeColumnName);
+	q_connect(data_tbw, &QTableWidget::currentCellChanged, this, &TableDataWidget::insertRowOnTabPress, Qt::QueuedConnection);
+	q_connect(&col_names_menu, &QMenu::triggered, this, &TableDataWidget::addColumn);
+	q_connect(data_tbw, &QTableWidget::itemSelectionChanged, this, &TableDataWidget::enableButtons);
+	q_connect(data_tbw->horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &TableDataWidget::changeColumnName);
 
-	connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
+	q_connect(csv_load_tb, &QToolButton::toggled, csv_load_parent, &QWidget::setVisible);
 
-	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [this](){
+	q_connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, this, [this](){
 		populateDataGrid(csv_load_wgt->getCsvDocument());
 	});
 
 	connect(paste_tb, &QToolButton::clicked, this, [this](){
-		CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
-																													CsvDocument::Separator,
-																													CsvDocument::TextDelimiter,
-																													true);
-		populateDataGrid(csv_doc);
-		qApp->clipboard()->clear();
-		paste_tb->setEnabled(false);
+		__trycatch(
+			CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
+																														CsvDocument::Separator,
+																														CsvDocument::TextDelimiter,
+																														true);
+			populateDataGrid(csv_doc);
+			qApp->clipboard()->clear();
+			paste_tb->setEnabled(false);
+		)
 	});
 
-	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
+	q_connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
 		GuiUtilsNs::openColumnDataForm(data_tbw);
 	});
 
-	connect(copy_tb, &QToolButton::clicked, this, [this](){
+	q_connect(copy_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
 		paste_tb->setEnabled(true);
 	});
 
-	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
+	q_connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
 }
 
 void TableDataWidget::handleItemPressed()
