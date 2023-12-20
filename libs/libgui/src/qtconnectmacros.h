@@ -48,8 +48,15 @@ catch(Exception &e) \
  * lambda function in order to self-contain all exceptions that eventually go
  * outside the slot scope, avoiding undefined behavior and crashes.
  *
- * NOTE: differently from the original Qt's signal/slot connection, the slot passed
+ * NOTES:
+ *
+ * 1) Differently from the original Qt's signal/slot connection, the slot passed
  * to the macro MUST NOT be the reference (address) of the receiver's method.
+ *
+ * 2) The macro uses the receiver object as the lambda captured object/variable, so
+ * it's not possible to specify other lambda capture modes. If this is needed then
+ * you have to create a commom connect call using a lambda as slot and specify
+ * the needed captures.
  *
  * Usage:
  *
@@ -58,9 +65,19 @@ catch(Exception &e) \
  *
  * > Macro (note the absence of & in slot specification)
  *		connect(sender, &SenderClass::s_someSignal, context, __slot(receiver, ReceiverClass::someMethod))
+ *
+ * > The expanded result of the macro usage will be:
+ *		connect(sender, &SenderClass::s_someSignal, context, [receiver](){
+ *			try {
+ *				receiver->ReceiverClass::someMethod();
+ *			}
+ *			catch(Exception &e) {
+ *				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+ *			}
+ *		});
  */
 #define __slot(receiver, method) \
-[&]() { \
+[receiver]() { \
 	__trycatch( (receiver)->method(); ) \
 }
 
@@ -72,20 +89,37 @@ catch(Exception &e) \
  * lambda function in order to self-contain all exceptions that eventually go
  * outside the slot scope, avoiding undefined behavior and crashes.
  *
- * NOTE: differently from the original Qt's signal/slot connection, the slot passed
+ * NOTES:
+ *
+ * 1) Differently from the original Qt's signal/slot connection, the slot passed
  * to the macro MUST NOT be the reference (address) of the receiver's method.
+ *
+ * 2) The macro uses the receiver object as the lambda captured object/variable, so
+ * it's not possible to specify other lambda capture modes. If this is needed then
+ * you have to create a commom connect call using a lambda as slot and specify
+ * the needed captures.
  *
  * Usage:
  *
- * > Qt's original
+ * > Qt's original:
  *		connect(sender, &SenderClass::s_someSignal, receiver, &ReceiverClass::someMethod)
  *
- * > Macro (note the absence of & in slot specification)
+ * > Macro (note the absence of & in slot specification):
  *		connect(sender, &SenderClass::s_someSignal, context, __slot_n(receiver, ReceiverClass::someMethod))
+ *
+ * > The expanded result of the macro usage will be:
+ *		connect(sender, &SenderClass::s_someSignal, context, [receiver](auto... args){
+ *			try {
+ *				receiver->ReceiverClass::someMethod(args...);
+ *			}
+ *			catch(Exception &e) {
+ *				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+ *			}
+ *		});
  */
 #define __slot_n(receiver, method) \
-[&](auto... sig_args) { \
-	__trycatch( (receiver)->method(sig_args...); ) \
+[receiver](auto... args) { \
+	__trycatch( (receiver)->method(args...); ) \
 }
 
 /*! \brief This macro is just a placeholder for the original QObject::connect call.
