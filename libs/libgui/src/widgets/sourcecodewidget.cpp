@@ -42,10 +42,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+		q_connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		q_connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		q_connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+		q_connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
 		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
 		find_wgt_parent->setVisible(false);
@@ -54,8 +54,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		vbox->addWidget(find_sql_wgt);
 		vbox->setContentsMargins(0,0,0,0);
 
-		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+		q_connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+		q_connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
@@ -85,11 +85,18 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 void SourceCodeWidget::saveSQLCode()
 {
-	GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
-																tr("Save SQL code as..."),
-																QFileDialog::AnyFile,
-																{ tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
-																QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
+																	 tr("Save SQL code as..."),
+																	 QFileDialog::AnyFile,
+																	 { tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
+																	 QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -117,7 +124,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
-				connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
+				q_connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else
@@ -177,7 +184,9 @@ void SourceCodeWidget::generateSourceCode(int)
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+
+		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -215,7 +224,8 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }
