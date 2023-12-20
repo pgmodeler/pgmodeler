@@ -49,10 +49,10 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	warn_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 	warn_ico_lbl->setToolTip(tr("No such file or directory!"));
 
-	connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
-	connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
+	q_connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+	q_connect(rem_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::clearSelector);
 
-	connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
+	q_connect(filename_edt, &QLineEdit::textChanged, this, [this](const QString &text){
 		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());
 	});
@@ -195,11 +195,11 @@ void FileSelectorWidget::setReadOnly(bool value)
 	if(value)
 	{
 		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
-		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
+		q_connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 	else
 	{
-		connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
+		q_connect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileDialog);
 		disconnect(sel_file_tb, &QToolButton::clicked, this, &FileSelectorWidget::openFileExternally);
 	}
 }
