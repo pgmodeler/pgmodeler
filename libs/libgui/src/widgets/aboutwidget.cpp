@@ -33,7 +33,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
 	os_type_lbl->setText(QSysInfo::prettyProductName());
 
-	connect(hide_tb, &QToolButton::clicked, this, [this](){
+	q_connect(hide_tb, &QToolButton::clicked, this, [this](){
 		hide();
 		emit s_hideRequested();
 	});
