@@ -37,15 +37,15 @@ ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
 
 	obj_types_lst->adjustSize();
 
-	connect(check_all_tb, &QToolButton::clicked, this, [this](){
+	q_connect(check_all_tb, &QToolButton::clicked, this, [this](){
 		setItemsCheckState(Qt::Checked);
 	});
 
-	connect(uncheck_all_tb, &QToolButton::clicked, this, [this](){
+	q_connect(uncheck_all_tb, &QToolButton::clicked, this, [this](){
 		setItemsCheckState(Qt::Unchecked);
 	});
 
-	connect(obj_types_lst, &QListWidget::itemChanged, this, [this](QListWidgetItem *item){
+	q_connect(obj_types_lst, &QListWidget::itemChanged, this, [this](QListWidgetItem *item){
 		emit s_typeCheckStateChanged(item->data(Qt::UserRole).value<ObjectType>(), item->checkState());
 	});
 }
