@@ -78,11 +78,11 @@ is present has the same effect as performing an exact match searching on the nam
 
 	options_tb->setMenu(&options_menu);
 
-	connect(add_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::addFilter);
-	connect(clear_all_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::clearFilters);
-	connect(action_only_matching, &QAction::toggled, action_forced_filter,  &QAction::setEnabled);
+	q_connect(add_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::addFilter);
+	q_connect(clear_all_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::clearFilters);
+	q_connect(action_only_matching, &QAction::toggled, action_forced_filter,  &QAction::setEnabled);
 
-	connect(apply_tb, &QToolButton::clicked, this, [this](){
+	q_connect(apply_tb, &QToolButton::clicked, this, [this](){
 		emit s_filterApplyingRequested();
 	});
 
@@ -256,7 +256,7 @@ void ObjectsFilterWidget::addFilter()
 	rem_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
 	rem_tb->setToolTip(tr("Remove filter"));
 	rem_tb->setAutoRaise(true);
-	connect(rem_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::removeFilter);
+	q_connect(rem_tb, &QToolButton::clicked, this, &ObjectsFilterWidget::removeFilter);
 	filters_tbw->setCellWidget(row, 3, rem_tb);
 
 	clear_all_tb->setEnabled(true);
