@@ -30,11 +30,11 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
-	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
-	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
-	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
+	q_connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
+	q_connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
+	q_connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
-	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
+	q_connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
 	});
 }
@@ -227,12 +227,10 @@ void ObjectRenameWidget::applyRenaming()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		if(obj_type != ObjectType::Database)
 			op_list->removeLastOperation();
-
-		msg_box.show(e);
 
 		if(renamed_objs > 0)
 			accept();

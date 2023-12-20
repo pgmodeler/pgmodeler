@@ -189,7 +189,7 @@ void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
 	else
 	{
 		setContextMenuPolicy(Qt::CustomContextMenu);
-		connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
+		q_connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
 	}
 }
 
