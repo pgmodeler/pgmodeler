@@ -35,10 +35,10 @@ ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 	GuiUtilsNs::configureWidgetFont(updated_cnt_lbl, GuiUtilsNs::HugeFontFactor);
 	GuiUtilsNs::configureWidgetFont(total_cnt_lbl, GuiUtilsNs::HugeFontFactor);
 
-	connect(inspect_tb, &QToolButton::clicked, this, &ChangelogWidget::inspectChangelog);
-	connect(hide_tb, &QToolButton::clicked, this, &ChangelogWidget::s_visibilityChanged);
-	connect(clear_tb, &QToolButton::clicked, this, &ChangelogWidget::clearChangelog);
-	connect(persisted_chk, &QCheckBox::toggled, this, [this](bool checked){
+	q_connect(inspect_tb, &QToolButton::clicked, this, &ChangelogWidget::inspectChangelog);
+	q_connect(hide_tb, &QToolButton::clicked, this, &ChangelogWidget::s_visibilityChanged);
+	q_connect(clear_tb, &QToolButton::clicked, this, &ChangelogWidget::clearChangelog);
+	q_connect(persisted_chk, &QCheckBox::toggled, this, [this](bool checked){
 		model->getDatabaseModel()->setPersistedChangelog(checked);
 		model->setModified(true);
 	});
@@ -184,8 +184,7 @@ void ChangelogWidget::inspectChangelog()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	data_tbw->setWindowTitle("Changelog entries");
@@ -213,9 +212,9 @@ void ChangelogWidget::setModel(ModelWidget *model)
 	{
 		persisted_chk->setChecked(model->getDatabaseModel()->isPersistedChangelog());
 
-		connect(this->model, &ModelWidget::s_objectManipulated, this, &ChangelogWidget::updateChangelogInfo);
-		connect(this->model, &ModelWidget::s_objectModified, this, &ChangelogWidget::updateChangelogInfo);
-		connect(this->model, &ModelWidget::s_objectCreated, this, &ChangelogWidget::updateChangelogInfo);
-		connect(this->model, &ModelWidget::s_objectRemoved, this, &ChangelogWidget::updateChangelogInfo);
+		q_connect(this->model, &ModelWidget::s_objectManipulated, this, &ChangelogWidget::updateChangelogInfo);
+		q_connect(this->model, &ModelWidget::s_objectModified, this, &ChangelogWidget::updateChangelogInfo);
+		q_connect(this->model, &ModelWidget::s_objectCreated, this, &ChangelogWidget::updateChangelogInfo);
+		q_connect(this->model, &ModelWidget::s_objectRemoved, this, &ChangelogWidget::updateChangelogInfo);
 	}
 }
