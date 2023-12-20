@@ -31,21 +31,21 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	frame->installEventFilter(this);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
-	connect(&update_chk_manager, &QNetworkAccessManager::finished, this, &UpdateNotifierWidget::handleUpdateChecked);
+	q_connect(&update_chk_manager, &QNetworkAccessManager::finished, this, &UpdateNotifierWidget::handleUpdateChecked);
 
-	connect(get_source_tb, &QToolButton::clicked, this, [this](){
+	q_connect(get_source_tb, &QToolButton::clicked, this, [this](){
 		activateLink(GlobalAttributes::PgModelerSourceURL);
 	});
 
-	connect(get_binary_tb, &QToolButton::clicked, this, [this](){
+	q_connect(get_binary_tb, &QToolButton::clicked, this, [this](){
 		activateLink(GlobalAttributes::PgModelerDownloadURL);
 	});
 
-	connect(blog_post_tb, &QToolButton::clicked, this, [this](){
+	q_connect(blog_post_tb, &QToolButton::clicked, this, [this](){
 		activateLink(blogpost);
 	});
 
-	connect(hide_tb, &QToolButton::clicked, this,	[this](){
+	q_connect(hide_tb, &QToolButton::clicked, this,	[this](){
 		hide();
 		emit s_hideRequested();
 	});

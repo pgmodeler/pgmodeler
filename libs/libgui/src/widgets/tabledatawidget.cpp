@@ -79,7 +79,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		populateDataGrid(csv_load_wgt->getCsvDocument());
 	});
 
-	connect(paste_tb, &QToolButton::clicked, this, [this](){
+	q_connect(paste_tb, &QToolButton::clicked, this, [this](){
 		__trycatch(
 			CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
 																														CsvDocument::Separator,
