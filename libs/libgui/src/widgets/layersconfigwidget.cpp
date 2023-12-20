@@ -46,24 +46,24 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	visibility_tb->setMenu(&visibility_menu);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
-	connect(toggle_layers_rects_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
-	connect(toggle_layers_rects_chk, &QCheckBox::toggled, toggle_layers_names_chk, &QCheckBox::setEnabled);
-	connect(toggle_layers_names_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
+	q_connect(toggle_layers_rects_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
+	q_connect(toggle_layers_rects_chk, &QCheckBox::toggled, toggle_layers_names_chk, &QCheckBox::setEnabled);
+	q_connect(toggle_layers_names_chk, &QCheckBox::toggled, this, &LayersConfigWidget::toggleLayersRects);
 
-	connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
+	q_connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
 
-	connect(add_tb, &QToolButton::clicked, this, [this](){
+	q_connect(add_tb, &QToolButton::clicked, this, [this](){
 		addLayer();
 	});
 
-	connect(remove_tb, &QToolButton::clicked, this, &LayersConfigWidget::removeLayer);
+	q_connect(remove_tb, &QToolButton::clicked, this, &LayersConfigWidget::removeLayer);
 
-	connect(layers_tab, &QTableWidget::itemDoubleClicked, this, &LayersConfigWidget::startLayerRenaming);
-	connect(layers_tab, &QTableWidget::itemChanged, this, &LayersConfigWidget::updateActiveLayers);
-	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::finishLayerRenaming);
-	connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::enableButtons);
+	q_connect(layers_tab, &QTableWidget::itemDoubleClicked, this, &LayersConfigWidget::startLayerRenaming);
+	q_connect(layers_tab, &QTableWidget::itemChanged, this, &LayersConfigWidget::updateActiveLayers);
+	q_connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::finishLayerRenaming);
+	q_connect(layers_tab, &QTableWidget::itemSelectionChanged, this, &LayersConfigWidget::enableButtons);
 
-	connect(remove_all_tb, &QToolButton::clicked, this, [this](){
+	q_connect(remove_all_tb, &QToolButton::clicked, this, [this](){
 		removeLayer(true);
 	});
 }
@@ -333,8 +333,8 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker->setColor(0, QColor(0,0,0));
 	name_color_pickers.append(color_picker);
 
-	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
-	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
+	q_connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
+	q_connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
 		updateLayerColors();
 	});
 
@@ -345,8 +345,8 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	color_picker->layout()->setContentsMargins(5,5,5,5);
 	color_picker->generateRandomColors();
 	rect_color_pickers.append(color_picker);
-	connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
-	connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
+	q_connect(color_picker, &ColorPickerWidget::s_colorChanged, this, &LayersConfigWidget::updateLayerColors);
+	q_connect(color_picker, &ColorPickerWidget::s_colorsChanged, this, [this]() {
 		updateLayerColors();
 	});
 
