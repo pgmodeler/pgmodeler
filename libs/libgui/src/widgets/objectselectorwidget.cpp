@@ -38,10 +38,10 @@ void ObjectSelectorWidget::configureSelector()
 	model=nullptr;
 	selected_obj=nullptr;
 
-	connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
-	connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
-	connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
-					this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
+	q_connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
+	q_connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
+	q_connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
+						 this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
 
 	obj_name_edt->installEventFilter(this);
 }
@@ -107,23 +107,6 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	}
 	else
 		clearSelector();
-}
-
-void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType obj_type)
-{
-	try
-	{
-		BaseObject *object=nullptr;
-
-		if(model && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
-			object=model->getObject(obj_name, obj_type);
-
-		setSelectedObject(object);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
 }
 
 void ObjectSelectorWidget::setModel(DatabaseModel *modelo)
