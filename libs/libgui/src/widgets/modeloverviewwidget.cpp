@@ -53,21 +53,21 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 	if(this->model)
 	{
-		connect(this->model, &ModelWidget::s_objectCreated, this, qOverload<>(&ModelOverviewWidget::updateOverview));
-		connect(this->model, &ModelWidget::s_objectRemoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
-		connect(this->model, &ModelWidget::s_objectsMoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
-		connect(this->model, &ModelWidget::s_objectModified, this, qOverload<>(&ModelOverviewWidget::updateOverview));
-		connect(this->model, &ModelWidget::s_zoomModified, this, &ModelOverviewWidget::updateZoomFactor);
-		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeOverview);
-		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeWindowFrame);
-		connect(this->model, &ModelWidget::s_modelResized, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model, &ModelWidget::s_objectCreated, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model, &ModelWidget::s_objectRemoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model, &ModelWidget::s_objectsMoved, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model, &ModelWidget::s_objectModified, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model, &ModelWidget::s_zoomModified, this, &ModelOverviewWidget::updateZoomFactor);
+		q_connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeOverview);
+		q_connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeWindowFrame);
+		q_connect(this->model, &ModelWidget::s_modelResized, this, qOverload<>(&ModelOverviewWidget::updateOverview));
 
-		connect(this->model->viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
-		connect(this->model->viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
+		q_connect(this->model->viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
+		q_connect(this->model->viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
 
-		connect(this->model->scene, &ObjectsScene::selectionChanged, this, qOverload<>(&ModelOverviewWidget::updateOverview));
-		connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, &ModelOverviewWidget::resizeOverview);
-		connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model->scene, &ObjectsScene::selectionChanged, this, qOverload<>(&ModelOverviewWidget::updateOverview));
+		q_connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, &ModelOverviewWidget::resizeOverview);
+		q_connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, qOverload<>(&ModelOverviewWidget::updateOverview));
 
 		this->resizeOverview();
 		this->updateZoomFactor(this->model->getCurrentZoom());
