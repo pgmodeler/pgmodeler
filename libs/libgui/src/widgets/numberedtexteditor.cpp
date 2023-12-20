@@ -89,7 +89,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
-		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
+		q_connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
 
 		save_file_btn = new QToolButton(top_widget);
 		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
@@ -99,7 +99,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		save_file_btn->setFont(font);
 		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(save_file_btn);
-		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+		q_connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
@@ -109,7 +109,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
-		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
+
+		//connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
+		q_connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
 		word_wrap_btn = new QToolButton(top_widget);
 		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
@@ -121,7 +123,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		word_wrap_btn->setDisabled(true);
 		hbox->addWidget(word_wrap_btn);
-		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
+
+		q_connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 		});
 
@@ -133,12 +136,12 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
 
-		connect(clear_btn, &QToolButton::clicked, this, [this](){
+		q_connect(clear_btn, &QToolButton::clicked, this, [this](){
 			this->clear();
 			clear_btn->setEnabled(false);
 		});
 
-		connect(this, &NumberedTextEditor::textChanged, this, [this](){
+		q_connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
 			word_wrap_btn->setEnabled(!document()->isEmpty());
 			save_file_btn->setEnabled(!document()->isEmpty());
@@ -149,16 +152,18 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		top_widget->setLayout(hbox);
 		top_widget->adjustSize();
 
-		connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
-		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
-		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
+		//connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
+		q_connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
+
+		q_connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
+		q_connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}
 
 	setWordWrapMode(QTextOption::NoWrap);
 
-	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
-	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
+	q_connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
+	q_connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
+	q_connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -416,10 +421,17 @@ void NumberedTextEditor::identSelection(bool ident_right)
 void NumberedTextEditor::loadFile()
 {
 	QByteArray buff;
-	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
-																							tr("Load file"),
-																							QFileDialog::ExistingFile,
-																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	bool loaded = false;
+
+	try
+	{
+		loaded = GuiUtilsNs::selectAndLoadFile(buff,	tr("Load file"), QFileDialog::ExistingFile,
+																					{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(loaded)
 	{
@@ -431,11 +443,17 @@ void NumberedTextEditor::loadFile()
 
 void NumberedTextEditor::saveFile()
 {
-	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
-																tr("Save file"),
-																QFileDialog::AnyFile,
-																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
-																{}, "sql");
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(), tr("Save file"),
+																	QFileDialog::AnyFile,
+																	{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
+																	{}, "sql");
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void NumberedTextEditor::editSource()
@@ -488,7 +506,7 @@ void NumberedTextEditor::enableEditor()
 	this->setReadOnly(false);
 }
 
-void NumberedTextEditor::updateSource(int exit_code)
+void NumberedTextEditor::updateSource(int exit_code, QProcess::ExitStatus)
 {
 	if(exit_code != 0)
 		handleProcessError();
@@ -525,12 +543,11 @@ void NumberedTextEditor::handleProcessStart()
 
 void NumberedTextEditor::handleProcessError()
 {
-	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	Messagebox::error(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
-																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
+																						.arg(errors.join("\n\n"))));
 
 	enableEditor();
 }
