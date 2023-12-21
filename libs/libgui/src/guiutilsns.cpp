@@ -327,7 +327,7 @@ namespace GuiUtilsNs {
 			 * the production or reduntant/useless information on the exception message box */
 			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
 			{
-				text = QT_TR_NOOP("Another %1 error(s) were suppressed due to stacktrace size limits.");
+				text = QT_TR_NOOP("Other %1 error(s) were suppressed due to stacktrace size limits.");
 				text = text.arg(list.size() - idx);
 				createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, false);
 				break;
