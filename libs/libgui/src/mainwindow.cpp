@@ -1150,8 +1150,9 @@ void MainWindow::loadModelFromAction()
 				showFixMessage(e, filename);
 			else
 			{
-				Messagebox msgbox;
-				msgbox.show(e);
+				//Messagebox msgbox;
+				//msgbox.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -2054,8 +2055,9 @@ void MainWindow::loadModels(const QStringList &files)
 			showFixMessage(e, files[i]);
 		else
 		{
-			Messagebox msgbox;
-			msgbox.show(e);
+			//Messagebox msgbox;
+			//msgbox.show(e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }
@@ -2085,10 +2087,10 @@ ModelWidget *MainWindow::getCurrentModel()
 	return current_model;
 }
 
-void MainWindow::__updateToolsState()
+/* void MainWindow::__updateToolsState()
 {
 	updateToolsState(false);
-}
+} */
 
 void MainWindow::updateToolsState(bool model_closed)
 {

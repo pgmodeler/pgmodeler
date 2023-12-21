@@ -387,7 +387,8 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 				}
 				catch(Exception &e)
 				{
-					msgbox.show(e);
+					//msgbox.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}

@@ -164,14 +164,16 @@ void ConfigurationForm::loadConfiguration()
 		}
 		catch(Exception &e)
 		{
-			Messagebox msg_box;
+			//Messagebox msg_box;
 
 			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
-				msg_box.show(e);
+				//msg_box.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 			else
 			{
+				Messagebox msg_box;
 				Exception ex = Exception(Exception::getErrorMessage(ErrorCode::ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));

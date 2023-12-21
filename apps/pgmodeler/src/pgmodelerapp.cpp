@@ -35,8 +35,9 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	//Changing the current working dir to the executable's directory in
