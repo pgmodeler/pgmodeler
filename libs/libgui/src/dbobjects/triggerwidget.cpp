@@ -47,18 +47,18 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
-		q_connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
-		q_connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
-		q_connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
-		q_connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
-		q_connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
-		q_connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
+		connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
+		connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
+		connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
 
-		q_connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		q_connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		q_connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		q_connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		q_connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
+		connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+		connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
 
 		setRequiredField(event_lbl);
 		setRequiredField(firing_mode_lbl);

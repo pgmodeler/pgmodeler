@@ -141,6 +141,6 @@ void BaseForm::setMainWidget(QWidget *widget)
 	setWindowIcon(widget->windowIcon());
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
-	q_connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
-	q_connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
+	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+	connect(apply_ok_btn, &QPushButton::clicked, this, &BaseForm::accept);
 }

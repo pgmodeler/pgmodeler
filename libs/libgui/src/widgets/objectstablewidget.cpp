@@ -30,31 +30,31 @@ QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#30303
 ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	q_connect(move_down_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
-	q_connect(move_up_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
-	q_connect(move_first_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
-	q_connect(move_last_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
-	q_connect(add_tb, &QToolButton::clicked, this, qOverload<>(&ObjectsTableWidget::addRow));
+	connect(move_down_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_up_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_first_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(move_last_tb, &QToolButton::clicked, this, &ObjectsTableWidget::moveRows);
+	connect(add_tb, &QToolButton::clicked, this, qOverload<>(&ObjectsTableWidget::addRow));
 
-	q_connect(remove_tb, &QToolButton::clicked, this, [this]() {
+	connect(remove_tb, &QToolButton::clicked, this, [this]() {
 		removeRow();
 	});
 
-	q_connect(edit_tb, &QToolButton::clicked, this, &ObjectsTableWidget::editRow);
-	q_connect(update_tb, &QToolButton::clicked, this, &ObjectsTableWidget::updateRow);
-	q_connect(duplicate_tb, &QToolButton::clicked, this, &ObjectsTableWidget::duplicateRow);
-	q_connect(remove_all_tb, &QToolButton::clicked, this, &ObjectsTableWidget::removeRows);
-	q_connect(table_tbw, &QTableWidget::cellClicked, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
-	q_connect(table_tbw, &QTableWidget::cellActivated, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
-	q_connect(table_tbw, &QTableWidget::cellDoubleClicked, this, &ObjectsTableWidget::editRow);
-	q_connect(table_tbw, &QTableWidget::itemSelectionChanged, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
-	q_connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectsTableWidget::emitRowSelected);
+	connect(edit_tb, &QToolButton::clicked, this, &ObjectsTableWidget::editRow);
+	connect(update_tb, &QToolButton::clicked, this, &ObjectsTableWidget::updateRow);
+	connect(duplicate_tb, &QToolButton::clicked, this, &ObjectsTableWidget::duplicateRow);
+	connect(remove_all_tb, &QToolButton::clicked, this, &ObjectsTableWidget::removeRows);
+	connect(table_tbw, &QTableWidget::cellClicked, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::cellActivated, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::cellDoubleClicked, this, &ObjectsTableWidget::editRow);
+	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, qOverload<>(&ObjectsTableWidget::setButtonsEnabled));
+	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &ObjectsTableWidget::emitRowSelected);
 
-	q_connect(table_tbw, &QTableWidget::cellClicked, this, [this](int row, int col){
+	connect(table_tbw, &QTableWidget::cellClicked, this, [this](int row, int col){
 		emit s_cellClicked(row, col);
 	});
 
-	q_connect(resize_cols_tb, &QToolButton::clicked, this, &ObjectsTableWidget::resizeContents);
+	connect(resize_cols_tb, &QToolButton::clicked, this, &ObjectsTableWidget::resizeContents);
 
 	this->conf_exclusion=conf_exclusion;
 	cells_editable = false;

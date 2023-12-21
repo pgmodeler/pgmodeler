@@ -44,19 +44,19 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 
-	q_connect(replace_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceText);
-	q_connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
-	q_connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
+	connect(replace_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceText);
+	connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
+	connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
 
-	q_connect(next_tb, &QToolButton::clicked, this, [this]() {
+	connect(next_tb, &QToolButton::clicked, this, [this]() {
 		findText(false, true);
 	});
 
-	q_connect(previous_tb, &QToolButton::clicked, this, [this]() {
+	connect(previous_tb, &QToolButton::clicked, this, [this]() {
 		findText(true, true);
 	});
 
-	q_connect(find_edt, &QLineEdit::textChanged, this, [this]() {
+	connect(find_edt, &QLineEdit::textChanged, this, [this]() {
 		bool enable=!find_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
@@ -65,9 +65,9 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_find_tb->setEnabled(enable);
 	});
 
-	q_connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
+	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
 
-	q_connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
+	connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
 }
 
 void FindReplaceWidget::showEvent(QShowEvent *)

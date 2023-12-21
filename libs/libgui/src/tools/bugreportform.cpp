@@ -40,12 +40,12 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 
 	output_lt->addWidget(output_sel);
 
-	q_connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
-	q_connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
-	q_connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
-	q_connect(attach_tb, &QToolButton::clicked, this, qOverload<>(&BugReportForm::attachModel));
-	q_connect(details_txt, &QPlainTextEdit::textChanged, this,  &BugReportForm::enableGeneration);
-	q_connect(output_sel, &FileSelectorWidget::s_selectorChanged, this, &BugReportForm::enableGeneration);
+	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
+	connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
+	connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
+	connect(attach_tb, &QToolButton::clicked, this, qOverload<>(&BugReportForm::attachModel));
+	connect(details_txt, &QPlainTextEdit::textChanged, this,  &BugReportForm::enableGeneration);
+	connect(output_sel, &FileSelectorWidget::s_selectorChanged, this, &BugReportForm::enableGeneration);
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt);

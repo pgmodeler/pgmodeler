@@ -58,18 +58,18 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
-		q_connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
-		q_connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
-		q_connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+		connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 
-		q_connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
+		connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
 			notnull_chk->setDisabled(value);
 			notnull_chk->setChecked(false);
 		});
 
 		//connect(edit_seq_btn, &QPushButton::clicked, this, &ColumnWidget::editSequenceAttributes);
 		//__connect_s0(edit_seq_btn, &QPushButton::clicked, this, ColumnWidget::editSequenceAttributes);
-		q_connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
+		connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
 
 		setMinimumSize(540, 480);
 	}

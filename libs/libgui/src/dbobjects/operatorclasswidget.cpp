@@ -65,17 +65,17 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
-		q_connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
+		connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
 
 		//connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &OperatorClassWidget::handleElement);
 		//__connect_sn(elements_tab, &ObjectsTableWidget::s_rowAdded, this, OperatorClassWidget::handleElement);
-		q_connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, OperatorClassWidget::handleElement));
+		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, OperatorClassWidget::handleElement));
 
 		//connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, &OperatorClassWidget::handleElement);
 		//__connect_sn(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, OperatorClassWidget::handleElement);
-		q_connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, OperatorClassWidget::handleElement));
+		connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, OperatorClassWidget::handleElement));
 
-		q_connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
+		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
 
 		selectElementType(0);
 		indexing_cmb->addItems(IndexingType::getTypes());

@@ -54,7 +54,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	//connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
 	//__connect_s0(edt_data_tb, &QPushButton::clicked, this, TableWidget::editData);
-	q_connect(edt_data_tb, &QPushButton::clicked, this, __slot(this, TableWidget::editData));
+	connect(edt_data_tb, &QPushButton::clicked, this, __slot(this, TableWidget::editData));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
@@ -128,12 +128,12 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		//__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, TableWidget::duplicateObject);
 		//__connect_sn(tab, &ObjectsTableWidget::s_rowsMoved, this, TableWidget::swapObjects);
 
-		q_connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
-		q_connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));
-		q_connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, TableWidget::handleObject));
-		q_connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, TableWidget::handleObject));
-		q_connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, TableWidget::duplicateObject));
-		q_connect(tab, &ObjectsTableWidget::s_rowsMoved, this, __slot_n(this, TableWidget::swapObjects));
+		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
+		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));
+		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, TableWidget::duplicateObject));
+		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, __slot_n(this, TableWidget::swapObjects));
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
@@ -148,7 +148,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
-	q_connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col) {
+	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col) {
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			PhysicalTable *table = dynamic_cast<Table *>(this->object);
@@ -219,7 +219,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	part_types.push_front(tr("None"));
 	partitioning_type_cmb->addItems(part_types);
 
-	q_connect(partitioning_type_cmb, &QComboBox::currentTextChanged, this, [this](){
+	connect(partitioning_type_cmb, &QComboBox::currentTextChanged, this, [this](){
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 

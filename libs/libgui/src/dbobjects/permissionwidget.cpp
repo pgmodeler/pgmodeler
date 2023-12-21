@@ -76,13 +76,13 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		check->setText(privs[i].toUpper());
 		privileges_tbw->insertRow(i);
 		privileges_tbw->setCellWidget(i,0,check);
-		q_connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
+		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
 
 		check=new QCheckBox;
 		check->setText("GRANT OPTION");
 		check->setEnabled(false);
 		privileges_tbw->setCellWidget(i,1,check);
-		q_connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
+		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
 	}
 
 	frame=generateInformationFrame(tr("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
@@ -90,30 +90,30 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowAdded, roles_tab, &ObjectsTableWidget::selectRow);
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::selectRole);
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::enableEditButtons);
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::enableEditButtons);
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::disableGrantOptions);
-	q_connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::disableGrantOptions);
+	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, roles_tab, &ObjectsTableWidget::selectRow);
+	connect(roles_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::selectRole);
+	connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::enableEditButtons);
+	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::enableEditButtons);
+	connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::disableGrantOptions);
+	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::disableGrantOptions);
 
-	q_connect(permissions_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::removePermission);
-	q_connect(permissions_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::editPermission);
-	q_connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
+	connect(permissions_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::removePermission);
+	connect(permissions_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::editPermission);
+	connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
 
-	q_connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
+	connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
 
 	//connect(add_perm_tb, &QToolButton::clicked, this, &PermissionWidget::addPermission);
 	//__connect_s0(add_perm_tb, &QToolButton::clicked, this, PermissionWidget::addPermission);
-	q_connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
+	connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
 
 	//connect(upd_perm_tb, &QToolButton::clicked, this, &PermissionWidget::updatePermission);
 	//__connect_s0(upd_perm_tb, &QToolButton::clicked, this, PermissionWidget::updatePermission);
-	q_connect(upd_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::updatePermission));
+	connect(upd_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::updatePermission));
 
-	q_connect(revoke_rb, &QRadioButton::toggled, cascade_chk, &QCheckBox::setEnabled);
-	q_connect(revoke_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
-	q_connect(grant_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
+	connect(revoke_rb, &QRadioButton::toggled, cascade_chk, &QCheckBox::setEnabled);
+	connect(revoke_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
+	connect(grant_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
 
 	setMinimumSize(670,600);
 
@@ -140,15 +140,15 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		QCheckBox *chk=nullptr, *chk1=nullptr;
 
 		//connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PermissionWidget::showSelectedRoleData);
-		q_connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](){
+		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](){
 			__trycatch( showSelectedRoleData(); )
 		});
 
-		q_connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
+		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
 
 		//connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, &PermissionWidget::removePermissions);
 		//__connect_s0(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, PermissionWidget::removePermissions);
-		q_connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
+		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 

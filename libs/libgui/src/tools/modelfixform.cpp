@@ -68,16 +68,16 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 		output_txt->setFontPointSize(size);
 	}
 
-	q_connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardOutput, this, &ModelFixForm::updateOutput);
-	q_connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardError, this, &ModelFixForm::updateOutput);
-	q_connect(&pgmodeler_cli_proc, &QProcess::finished, this, &ModelFixForm::handleProcessFinish);
-	q_connect(fix_btn, &QPushButton::clicked, this, &ModelFixForm::fixModel);
-	q_connect(input_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
-	q_connect(output_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
-	q_connect(pgmodeler_cli_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
-	q_connect(close_btn, &QPushButton::clicked, this, &ModelFixForm::close);
+	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardOutput, this, &ModelFixForm::updateOutput);
+	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardError, this, &ModelFixForm::updateOutput);
+	connect(&pgmodeler_cli_proc, &QProcess::finished, this, &ModelFixForm::handleProcessFinish);
+	connect(fix_btn, &QPushButton::clicked, this, &ModelFixForm::fixModel);
+	connect(input_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
+	connect(output_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
+	connect(pgmodeler_cli_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelFixForm::enableFix);
+	connect(close_btn, &QPushButton::clicked, this, &ModelFixForm::close);
 
-	q_connect(cancel_btn, &QPushButton::clicked, this, [this](){
+	connect(cancel_btn, &QPushButton::clicked, this, [this](){
 		cancelFix();
 	});
 

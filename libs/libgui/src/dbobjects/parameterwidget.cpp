@@ -42,10 +42,10 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
 		configureFormLayout(parameter_grid, ObjectType::Parameter);
-		q_connect(param_variadic_chk, &QCheckBox::toggled, param_in_chk, &QCheckBox::setDisabled);
-		q_connect(param_variadic_chk, &QCheckBox::toggled, param_out_chk, &QCheckBox::setDisabled);
-		q_connect(param_in_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
-		q_connect(param_out_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
+		connect(param_variadic_chk, &QCheckBox::toggled, param_in_chk, &QCheckBox::setDisabled);
+		connect(param_variadic_chk, &QCheckBox::toggled, param_out_chk, &QCheckBox::setDisabled);
+		connect(param_in_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
+		connect(param_out_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
 
 		setMinimumSize(500, 200);
 	}

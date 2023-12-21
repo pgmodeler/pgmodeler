@@ -84,12 +84,12 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 		//connect(language_cmb, &QComboBox::currentIndexChanged, this, &BaseFunctionWidget::selectLanguage);
 		//__connect_s0(language_cmb, &QComboBox::currentIndexChanged, this, BaseFunctionWidget::selectLanguage);
-		q_connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
+		connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
 
 		/* connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
 			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
 		}); */
-		q_connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
+		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
 			__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
 		});
 

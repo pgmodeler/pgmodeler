@@ -24,7 +24,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 
 	layers_changed = false;
 
-	q_connect(layers_lst, &QListWidget::itemChanged, this, &LayersWidget::updateObjectsLayers);
+	connect(layers_lst, &QListWidget::itemChanged, this, &LayersWidget::updateObjectsLayers);
 }
 
 void LayersWidget::setAttributes(const QStringList &layers, const std::vector<BaseObject *> &sel_objs)

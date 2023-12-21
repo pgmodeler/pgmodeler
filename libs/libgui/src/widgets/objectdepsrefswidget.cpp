@@ -27,10 +27,10 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	q_connect(inc_indirect_links_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	q_connect(unique_results_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	q_connect(dependencies_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
-	q_connect(references_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(inc_indirect_links_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(unique_results_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(dependencies_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(references_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
 	setMinimumSize(580, 350);
 }

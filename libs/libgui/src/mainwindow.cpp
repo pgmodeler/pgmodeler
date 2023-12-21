@@ -511,176 +511,176 @@ void MainWindow::loadConfigurations()
 
 void MainWindow::connectSignalsToSlots()
 {
-	q_connect(welcome_wgt->new_tb, &QToolButton::clicked, this, [this]() {
+	connect(welcome_wgt->new_tb, &QToolButton::clicked, this, [this]() {
 		__trycatch( addModel(); )
 	});
 
-	q_connect(welcome_wgt->load_tb, &QToolButton::clicked, this, qOverload<>(&MainWindow::loadModel));
-	q_connect(welcome_wgt->last_session_tb, &QToolButton::clicked, this, &MainWindow::restoreLastSession);
-	q_connect(welcome_wgt->support_tb, &QToolButton::clicked, this, &MainWindow::openSupport);
+	connect(welcome_wgt->load_tb, &QToolButton::clicked, this, qOverload<>(&MainWindow::loadModel));
+	connect(welcome_wgt->last_session_tb, &QToolButton::clicked, this, &MainWindow::restoreLastSession);
+	connect(welcome_wgt->support_tb, &QToolButton::clicked, this, &MainWindow::openSupport);
 
 #ifndef NO_UPDATE_CHECK
-	q_connect(update_notifier_wgt, &UpdateNotifierWidget::s_updateAvailable, action_update_found, &QAction::setVisible, Qt::QueuedConnection);
-	q_connect(update_notifier_wgt, &UpdateNotifierWidget::s_updateAvailable, action_update_found, &QAction::setChecked, Qt::QueuedConnection);
-	q_connect(update_notifier_wgt, &UpdateNotifierWidget::s_hideRequested, action_update_found, &QAction::toggle, Qt::QueuedConnection);
-	q_connect(action_update_found, &QAction::toggled, this, &MainWindow::toggleUpdateNotifier, Qt::QueuedConnection);
-	q_connect(action_check_update, &QAction::triggered, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
+	connect(update_notifier_wgt, &UpdateNotifierWidget::s_updateAvailable, action_update_found, &QAction::setVisible, Qt::QueuedConnection);
+	connect(update_notifier_wgt, &UpdateNotifierWidget::s_updateAvailable, action_update_found, &QAction::setChecked, Qt::QueuedConnection);
+	connect(update_notifier_wgt, &UpdateNotifierWidget::s_hideRequested, action_update_found, &QAction::toggle, Qt::QueuedConnection);
+	connect(action_update_found, &QAction::toggled, this, &MainWindow::toggleUpdateNotifier, Qt::QueuedConnection);
+	connect(action_check_update, &QAction::triggered, update_notifier_wgt, &UpdateNotifierWidget::checkForUpdate);
 #endif
 
-	q_connect(action_about, &QAction::toggled, this, &MainWindow::toggleAboutWidget);
-	q_connect(about_wgt, &AboutWidget::s_hideRequested, action_about, &QAction::toggle);
+	connect(action_about, &QAction::toggled, this, &MainWindow::toggleAboutWidget);
+	connect(about_wgt, &AboutWidget::s_hideRequested, action_about, &QAction::toggle);
 
-	q_connect(action_donate, &QAction::toggled, this, &MainWindow::toggleDonateWidget);
-	q_connect(donate_wgt, &DonateWidget::s_hideRequested, action_donate, &QAction::toggle);
+	connect(action_donate, &QAction::toggled, this, &MainWindow::toggleDonateWidget);
+	connect(donate_wgt, &DonateWidget::s_hideRequested, action_donate, &QAction::toggle);
 
-	q_connect(action_restore_session, &QAction::triggered, this, &MainWindow::restoreLastSession);
-	q_connect(action_exit, &QAction::triggered, this, &MainWindow::close);
+	connect(action_restore_session, &QAction::triggered, this, &MainWindow::restoreLastSession);
+	connect(action_exit, &QAction::triggered, this, &MainWindow::close);
 
-	q_connect(action_new_model, &QAction::triggered, this, [this]() {
+	connect(action_new_model, &QAction::triggered, this, [this]() {
 		__trycatch( addModel(); )
 	});
 
-	q_connect(action_close_model, &QAction::triggered, this, &MainWindow::closeModel);
+	connect(action_close_model, &QAction::triggered, this, &MainWindow::closeModel);
 
-	q_connect(action_fix_model, &QAction::triggered, this, [this]() {
+	connect(action_fix_model, &QAction::triggered, this, [this]() {
 		fixModel();
 	});
 
-	q_connect(action_support, &QAction::triggered, this, &MainWindow::openSupport);
+	connect(action_support, &QAction::triggered, this, &MainWindow::openSupport);
 
-	q_connect(action_inc_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
-	q_connect(action_dec_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
-	q_connect(action_normal_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
+	connect(action_inc_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
+	connect(action_dec_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
+	connect(action_normal_zoom, &QAction::triggered, this, &MainWindow::applyZoom);
 
-	q_connect(action_load_model, &QAction::triggered, this, qOverload<>(&MainWindow::loadModel));
+	connect(action_load_model, &QAction::triggered, this, qOverload<>(&MainWindow::loadModel));
 
-	q_connect(action_save_model, &QAction::triggered, this, [this]() {
+	connect(action_save_model, &QAction::triggered, this, [this]() {
 		__trycatch( saveModel(); )
 	});
 
-	q_connect(action_save_as, &QAction::triggered, this, [this]() {
+	connect(action_save_as, &QAction::triggered, this, [this]() {
 		__trycatch( saveModel(); )
 	});
 
-	q_connect(action_save_all, &QAction::triggered, this, &MainWindow::saveAllModels);
-	q_connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
+	connect(action_save_all, &QAction::triggered, this, &MainWindow::saveAllModels);
+	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
 
 	//connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
-	q_connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, [this](){
+	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, [this](){
 		updateToolsState(false);
 	});
 
-	q_connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
-	q_connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
+	connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
+	connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
 
-	q_connect(model_nav_wgt, &ModelNavigationWidget::s_modelCloseRequested, this, &MainWindow::closeModel);
-	q_connect(model_nav_wgt, &ModelNavigationWidget::s_currentModelChanged, this, &MainWindow::setCurrentModel);
+	connect(model_nav_wgt, &ModelNavigationWidget::s_modelCloseRequested, this, &MainWindow::closeModel);
+	connect(model_nav_wgt, &ModelNavigationWidget::s_currentModelChanged, this, &MainWindow::setCurrentModel);
 
-	q_connect(action_print, &QAction::triggered, this, &MainWindow::printModel);
+	connect(action_print, &QAction::triggered, this, &MainWindow::printModel);
 
-	q_connect(action_configuration, &QAction::triggered, this, [this](){
+	connect(action_configuration, &QAction::triggered, this, [this](){
 		GeneralConfigWidget::restoreWidgetGeometry(configuration_form);
 		configuration_form->exec();
 		GeneralConfigWidget::saveWidgetGeometry(configuration_form);
 	});
 
-	q_connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, overview_wgt, qOverload<>(&ModelOverviewWidget::updateOverview));
-	q_connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, layers_cfg_wgt, &LayersConfigWidget::updateLayersRects);
-	q_connect(layers_cfg_wgt, &LayersConfigWidget::s_activeLayersChanged, overview_wgt, qOverload<>(&ModelOverviewWidget::updateOverview));
+	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, overview_wgt, qOverload<>(&ModelOverviewWidget::updateOverview));
+	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, layers_cfg_wgt, &LayersConfigWidget::updateLayersRects);
+	connect(layers_cfg_wgt, &LayersConfigWidget::s_activeLayersChanged, overview_wgt, qOverload<>(&ModelOverviewWidget::updateOverview));
 
-	q_connect(configuration_form, &ConfigurationForm::finished, this, &MainWindow::applyConfigurations);
+	connect(configuration_form, &ConfigurationForm::finished, this, &MainWindow::applyConfigurations);
 
-	q_connect(configuration_form, &ConfigurationForm::rejected, this, [this]() {
+	connect(configuration_form, &ConfigurationForm::rejected, this, [this]() {
 		updateConnections();
 	});
 
-	q_connect(configuration_form, &ConfigurationForm::s_invalidateModelsRequested, this, [this](){
+	connect(configuration_form, &ConfigurationForm::s_invalidateModelsRequested, this, [this](){
 		//Forcing the models code invalidation if the user changes the escape comments option
 		for(int idx = 0; idx < models_tbw->count(); idx++)
 			dynamic_cast<ModelWidget *>(models_tbw->widget(idx))->getDatabaseModel()->setCodesInvalidated();
 	});
 
-	q_connect(&model_save_timer, &QTimer::timeout, this, &MainWindow::saveAllModels);
+	connect(&model_save_timer, &QTimer::timeout, this, &MainWindow::saveAllModels);
 
-	q_connect(action_export, &QAction::triggered, this, &MainWindow::exportModel);
-	q_connect(action_import, &QAction::triggered, this, &MainWindow::importDatabase);
-	q_connect(action_diff, &QAction::triggered, this, &MainWindow::diffModelDatabase);
+	connect(action_export, &QAction::triggered, this, &MainWindow::exportModel);
+	connect(action_import, &QAction::triggered, this, &MainWindow::importDatabase);
+	connect(action_diff, &QAction::triggered, this, &MainWindow::diffModelDatabase);
 
-	q_connect(action_welcome, &QAction::triggered, this, &MainWindow::changeCurrentView);
-	q_connect(action_design, &QAction::triggered, this, &MainWindow::changeCurrentView);
-	q_connect(action_manage, &QAction::triggered, this, &MainWindow::changeCurrentView);
-	q_connect(action_manage, &QAction::toggled, this, &MainWindow::changeCurrentView);
+	connect(action_welcome, &QAction::triggered, this, &MainWindow::changeCurrentView);
+	connect(action_design, &QAction::triggered, this, &MainWindow::changeCurrentView);
+	connect(action_manage, &QAction::triggered, this, &MainWindow::changeCurrentView);
+	connect(action_manage, &QAction::toggled, this, &MainWindow::changeCurrentView);
 
-	q_connect(action_bug_report, &QAction::triggered, this, &MainWindow::reportBug);
-	q_connect(action_handle_metadata, &QAction::triggered, this, &MainWindow::handleObjectsMetadata);
+	connect(action_bug_report, &QAction::triggered, this, &MainWindow::reportBug);
+	connect(action_handle_metadata, &QAction::triggered, this, &MainWindow::handleObjectsMetadata);
 
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, this, [this](){
+	connect(model_valid_wgt, &ModelValidationWidget::s_connectionsUpdateRequest, this, [this](){
 		updateConnections(true);
 	});
 
-	q_connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, this, [this](){
+	connect(sql_tool_wgt, &SQLToolWidget::s_connectionsUpdateRequest, this, [this](){
 		updateConnections(true);
 	});
 
-	q_connect(action_compact_view, &QAction::triggered, this, &MainWindow::toggleCompactView);
+	connect(action_compact_view, &QAction::triggered, this, &MainWindow::toggleCompactView);
 
-	q_connect(objects_btn, &QToolButton::toggled, model_objs_parent, &QWidget::setVisible);
-	q_connect(objects_btn, &QToolButton::toggled, model_objs_wgt, &ModelObjectsWidget::setVisible);
-	q_connect(objects_btn, &QToolButton::toggled, this, &MainWindow::showRightWidgetsBar);
-	q_connect(model_objs_wgt, qOverload<bool>(&ModelObjectsWidget::s_visibilityChanged), objects_btn, &QToolButton::setChecked);
-	q_connect(model_objs_wgt, qOverload<bool>(&ModelObjectsWidget::s_visibilityChanged), this, &MainWindow::showRightWidgetsBar);
+	connect(objects_btn, &QToolButton::toggled, model_objs_parent, &QWidget::setVisible);
+	connect(objects_btn, &QToolButton::toggled, model_objs_wgt, &ModelObjectsWidget::setVisible);
+	connect(objects_btn, &QToolButton::toggled, this, &MainWindow::showRightWidgetsBar);
+	connect(model_objs_wgt, qOverload<bool>(&ModelObjectsWidget::s_visibilityChanged), objects_btn, &QToolButton::setChecked);
+	connect(model_objs_wgt, qOverload<bool>(&ModelObjectsWidget::s_visibilityChanged), this, &MainWindow::showRightWidgetsBar);
 
-	q_connect(operations_btn, &QToolButton::toggled, oper_list_parent, &QWidget::setVisible);
-	q_connect(operations_btn, &QToolButton::toggled, oper_list_wgt, &OperationListWidget::setVisible);
-	q_connect(operations_btn, &QToolButton::toggled, this, &MainWindow::showRightWidgetsBar);
-	q_connect(oper_list_wgt, &OperationListWidget::s_hideRequested, operations_btn, &QToolButton::toggle);
-	q_connect(oper_list_wgt, &OperationListWidget::s_hideRequested, this, &MainWindow::showRightWidgetsBar);
+	connect(operations_btn, &QToolButton::toggled, oper_list_parent, &QWidget::setVisible);
+	connect(operations_btn, &QToolButton::toggled, oper_list_wgt, &OperationListWidget::setVisible);
+	connect(operations_btn, &QToolButton::toggled, this, &MainWindow::showRightWidgetsBar);
+	connect(oper_list_wgt, &OperationListWidget::s_hideRequested, operations_btn, &QToolButton::toggle);
+	connect(oper_list_wgt, &OperationListWidget::s_hideRequested, this, &MainWindow::showRightWidgetsBar);
 
-	q_connect(validation_btn, &QToolButton::toggled, model_valid_parent, &QWidget::setVisible);
-	q_connect(validation_btn, &QToolButton::toggled, model_valid_wgt, &ModelValidationWidget::setVisible);
-	q_connect(validation_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, validation_btn, &QToolButton::toggle);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
+	connect(validation_btn, &QToolButton::toggled, model_valid_parent, &QWidget::setVisible);
+	connect(validation_btn, &QToolButton::toggled, model_valid_wgt, &ModelValidationWidget::setVisible);
+	connect(validation_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
+	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, validation_btn, &QToolButton::toggle);
+	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
-	q_connect(find_obj_btn, &QToolButton::toggled, obj_finder_parent, &QWidget::setVisible);
-	q_connect(find_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
-	q_connect(find_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
-	q_connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, find_obj_btn, &QToolButton::toggle);
-	q_connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
+	connect(find_obj_btn, &QToolButton::toggled, obj_finder_parent, &QWidget::setVisible);
+	connect(find_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
+	connect(find_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
+	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, find_obj_btn, &QToolButton::toggle);
+	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this->main_menu_mb, &QMenu::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_acts_tb, &QToolBar::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, tools_acts_tb, &QToolBar::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, oper_list_wgt, &OperationListWidget::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_objs_wgt, &ModelObjectsWidget::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectFinderWidget::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this, &MainWindow::stopTimers);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_btn, &QToolButton::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_cfg_wgt, &LayersConfigWidget::close);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_btn, &QToolButton::setDisabled);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_wgt, &ChangelogWidget::close);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this->main_menu_mb, &QMenu::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_acts_tb, &QToolBar::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, tools_acts_tb, &QToolBar::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, oper_list_wgt, &OperationListWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_objs_wgt, &ModelObjectsWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectFinderWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this, &MainWindow::stopTimers);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_btn, &QToolButton::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_cfg_wgt, &LayersConfigWidget::close);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_btn, &QToolButton::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_wgt, &ChangelogWidget::close);
 
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, this, [this](){
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, this, [this](){
 		pending_op = NoPendingOp;
 	});
 
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_validationFinished, this, &MainWindow::executePendingOperation);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_fixApplied, this, &MainWindow::removeOperations, Qt::QueuedConnection);
-	q_connect(model_valid_wgt, &ModelValidationWidget::s_graphicalObjectsUpdated, model_objs_wgt, &ModelObjectsWidget::updateObjectsView, Qt::QueuedConnection);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationFinished, this, &MainWindow::executePendingOperation);
+	connect(model_valid_wgt, &ModelValidationWidget::s_fixApplied, this, &MainWindow::removeOperations, Qt::QueuedConnection);
+	connect(model_valid_wgt, &ModelValidationWidget::s_graphicalObjectsUpdated, model_objs_wgt, &ModelObjectsWidget::updateObjectsView, Qt::QueuedConnection);
 
-	q_connect(layers_btn, &QToolButton::toggled, this, &MainWindow::toggleLayersWidget);
-	q_connect(layers_cfg_wgt, &LayersConfigWidget::s_visibilityChanged, layers_btn, &QToolButton::setChecked);
+	connect(layers_btn, &QToolButton::toggled, this, &MainWindow::toggleLayersWidget);
+	connect(layers_cfg_wgt, &LayersConfigWidget::s_visibilityChanged, layers_btn, &QToolButton::setChecked);
 
-	q_connect(changelog_btn, &QToolButton::toggled, this, &MainWindow::toggleChangelogWidget);
-	q_connect(changelog_wgt, &ChangelogWidget::s_visibilityChanged, changelog_btn, &QToolButton::setChecked);
+	connect(changelog_btn, &QToolButton::toggled, this, &MainWindow::toggleChangelogWidget);
+	connect(changelog_wgt, &ChangelogWidget::s_visibilityChanged, changelog_btn, &QToolButton::setChecked);
 
-	q_connect(&tmpmodel_save_timer, &QTimer::timeout, this, &MainWindow::saveTemporaryModels);
+	connect(&tmpmodel_save_timer, &QTimer::timeout, this, &MainWindow::saveTemporaryModels);
 
 #ifndef Q_OS_MAC
-	q_connect(action_show_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
-	q_connect(action_hide_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
+	connect(action_show_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
+	connect(action_hide_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 #endif
 }
 
@@ -842,7 +842,7 @@ void MainWindow::fixModel(const QString &filename)
 {
 	ModelFixForm model_fix_form(nullptr, Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	q_connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested,
+	connect(&model_fix_form, &ModelFixForm::s_modelLoadRequested,
 					this, qOverload<const QString &>(&MainWindow::loadModel),
 					Qt::QueuedConnection);
 
@@ -1412,48 +1412,48 @@ void MainWindow::setCurrentModel()
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);
 
-		q_connect(current_model, &ModelWidget::s_modelModified, model_nav_wgt, &ModelNavigationWidget::setCurrentModelModified, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_modelModified, model_nav_wgt, &ModelNavigationWidget::setCurrentModelModified, Qt::UniqueConnection);
 
-		q_connect(current_model, &ModelWidget::s_modelModified, this, [this](bool modified) {
+		connect(current_model, &ModelWidget::s_modelModified, this, [this](bool modified) {
 			if(modified) updateToolsState();
 		});
 
-		q_connect(current_model, &ModelWidget::s_sceneDragDropped, this, &MainWindow::loadModelsFromMimeData, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_manipulationCanceled, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectsMoved, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectModified,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectCreated,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectRemoved,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectManipulated,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectManipulated, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_objectModified, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_sceneDragDropped, this, &MainWindow::loadModelsFromMimeData, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_manipulationCanceled, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectsMoved, oper_list_wgt, &OperationListWidget::updateOperationList, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectModified,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectCreated,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectRemoved,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectManipulated,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectManipulated, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_objectModified, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
 
 		//connect(current_model, &ModelWidget::s_zoomModified, this, &MainWindow::__updateToolsState, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_zoomModified, this, [this](){
+		connect(current_model, &ModelWidget::s_zoomModified, this, [this](){
 			updateToolsState(false);
 		}, Qt::UniqueConnection);
 
-		q_connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), this, &MainWindow::configureMoreActionsMenu, Qt::UniqueConnection);
-		q_connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObject, Qt::UniqueConnection);
-		q_connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
-		q_connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
-		q_connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
+		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), this, &MainWindow::configureMoreActionsMenu, Qt::UniqueConnection);
+		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObject, Qt::UniqueConnection);
+		connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
+		connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
 
-		q_connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
+		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
 			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);
 			current_model->update();
 		});
 
-		q_connect(action_alin_objs_grade, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
-		q_connect(action_show_grid, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
-		q_connect(action_show_delimiters, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
-		q_connect(action_lock_delim, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
+		connect(action_alin_objs_grade, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
+		connect(action_show_grid, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
+		connect(action_show_delimiters, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
+		connect(action_lock_delim, &QAction::triggered, this, &MainWindow::setGridOptions, Qt::UniqueConnection);
 
-		q_connect(action_magnifier, &QAction::toggled, current_model, &ModelWidget::showMagnifierArea, Qt::UniqueConnection);
-		q_connect(action_overview, &QAction::toggled, this, &MainWindow::showOverview, Qt::UniqueConnection);
-		q_connect(overview_wgt, &ModelOverviewWidget::s_overviewVisible, action_overview, &QAction::setChecked, Qt::UniqueConnection);\
+		connect(action_magnifier, &QAction::toggled, current_model, &ModelWidget::showMagnifierArea, Qt::UniqueConnection);
+		connect(action_overview, &QAction::toggled, this, &MainWindow::showOverview, Qt::UniqueConnection);
+		connect(overview_wgt, &ModelOverviewWidget::s_overviewVisible, action_overview, &QAction::setChecked, Qt::UniqueConnection);\
 
-		q_connect(current_model, &ModelWidget::s_maginifierAreaVisible, this, [this](bool show) {
+		connect(current_model, &ModelWidget::s_maginifierAreaVisible, this, [this](bool show) {
 			action_magnifier->blockSignals(true);
 			action_magnifier->setChecked(show);
 			action_magnifier->blockSignals(false);
@@ -1847,7 +1847,7 @@ void MainWindow::exportModel()
 	{
 		stopTimers(true);
 
-		q_connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, this, [this](){
+		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, this, [this](){
 			updateConnections(true);
 		});
 
@@ -1866,7 +1866,7 @@ void MainWindow::importDatabase()
 
 	stopTimers(true);
 
-	q_connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, this, [this](){
+	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, this, [this](){
 		updateConnections(true);
 	});
 
@@ -1916,11 +1916,11 @@ void MainWindow::diffModelDatabase()
 		modeldb_diff_frm.setModelWidget(current_model);
 		stopTimers(true);
 
-		q_connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){
 			updateConnections(true);
 		});
 
-		q_connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
 			__trycatch(
 				action_manage->setChecked(true);
 				sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
@@ -2450,8 +2450,8 @@ void MainWindow::handleObjectsMetadata()
 	objs_meta_frm.setModelWidget(current_model);
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 
-	q_connect(&objs_meta_frm, &MetadataHandlingForm::s_metadataHandled, model_objs_wgt, &ModelObjectsWidget::updateObjectsView);
-	q_connect(&objs_meta_frm, &MetadataHandlingForm::s_metadataHandled, layers_cfg_wgt, &LayersConfigWidget::updateLayersList);
+	connect(&objs_meta_frm, &MetadataHandlingForm::s_metadataHandled, model_objs_wgt, &ModelObjectsWidget::updateObjectsView);
+	connect(&objs_meta_frm, &MetadataHandlingForm::s_metadataHandled, layers_cfg_wgt, &LayersConfigWidget::updateLayersList);
 
 	GuiUtilsNs::resizeDialog(&objs_meta_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);

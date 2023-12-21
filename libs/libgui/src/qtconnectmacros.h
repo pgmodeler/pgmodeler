@@ -127,7 +127,7 @@ catch(Exception &e) \
  * This macro is for TEMPORARY USE and will be replaced by the original call
  * once the signal/slots connections that need to use try/catch versions are refactored.
  */
-#define q_connect(sender, signal, receiver, slot, ...) \
-connect(sender, signal, receiver, slot, ##__VA_ARGS__);
+/* #define q_connect(sender, signal, receiver, slot, ...) \
+connect(sender, signal, receiver, slot, ##__VA_ARGS__); */
 
 #endif

@@ -44,33 +44,33 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		validation_helper=nullptr;
 		this->setModel(nullptr);
 
-		q_connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
-		q_connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
-		q_connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
-		q_connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
-		q_connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
-		q_connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
-		q_connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
-		q_connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
-		q_connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
-		q_connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
+		connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
+		connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
+		connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
+		connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
+		connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
+		connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
+		connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
+		connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
+		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
+		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		q_connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
+		connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		q_connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
+		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		q_connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
+		connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
 
-		q_connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
+		connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
 			configureValidation();
 			clearOutput();
 		});
@@ -114,42 +114,42 @@ void ModelValidationWidget::createThread()
 		validation_helper=new ModelValidationHelper;
 		validation_helper->moveToThread(validation_thread);
 
-		q_connect(validation_thread, &QThread::started, this, [this](){
+		connect(validation_thread, &QThread::started, this, [this](){
 			output_trw->setUniformRowHeights(true);
 		});
 
-		q_connect(validation_thread, &QThread::finished, this, [this](){
+		connect(validation_thread, &QThread::finished, this, [this](){
 			output_trw->setUniformRowHeights(false);
 		});
 
-		q_connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
-		q_connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::applyFixes);
-		q_connect(validation_thread, &QThread::finished, this, &ModelValidationWidget::updateGraphicalObjects);
+		connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
+		connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::applyFixes);
+		connect(validation_thread, &QThread::finished, this, &ModelValidationWidget::updateGraphicalObjects);
 
-		q_connect(validation_thread, &QThread::finished, this, [this](){
+		connect(validation_thread, &QThread::finished, this, [this](){
 			destroyThread();
 		});
 
-		q_connect(validation_helper, &ModelValidationHelper::s_validationInfoGenerated, this, &ModelValidationWidget::updateValidation, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_progressUpdated, this, &ModelValidationWidget::updateProgress, Qt::BlockingQueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_objectProcessed, this, &ModelValidationWidget::updateObjectName, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_validationFinished, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_sqlValidationStarted, this, &ModelValidationWidget::handleSQLValidationStarted, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, &ModelValidationWidget::clearOutput, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
-		q_connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
-		q_connect(validation_helper, &ModelValidationHelper::s_fixFailed, this, &ModelValidationWidget::handleFixFailed, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_validationInfoGenerated, this, &ModelValidationWidget::updateValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_progressUpdated, this, &ModelValidationWidget::updateProgress, Qt::BlockingQueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_objectProcessed, this, &ModelValidationWidget::updateObjectName, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_validationFinished, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, &ModelValidationWidget::reenableValidation, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_sqlValidationStarted, this, &ModelValidationWidget::handleSQLValidationStarted, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, &ModelValidationWidget::clearOutput, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
+		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
+		connect(validation_helper, &ModelValidationHelper::s_fixFailed, this, &ModelValidationWidget::handleFixFailed, Qt::QueuedConnection);
 
-		q_connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
 			emit s_validationCanceled();
 		});
 
-		q_connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [this](){
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, [this](){
 			emit s_fixApplied();
 		});
 
-		q_connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [this](BaseObject *obj) {
+		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, this, [this](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});
@@ -472,7 +472,7 @@ void ModelValidationWidget::applyFixes()
 	validation_helper->switchToFixMode(true);
 	disconnect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 	validation_thread->start();
-	q_connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
+	connect(validation_thread, &QThread::started, validation_helper, &ModelValidationHelper::validateModel);
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)

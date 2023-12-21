@@ -89,7 +89,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
-		q_connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
+		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
 
 		save_file_btn = new QToolButton(top_widget);
 		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
@@ -99,7 +99,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		save_file_btn->setFont(font);
 		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(save_file_btn);
-		q_connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
@@ -111,7 +111,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		hbox->addWidget(edit_src_btn);
 
 		//connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
-		q_connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
+		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
 		word_wrap_btn = new QToolButton(top_widget);
 		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
@@ -124,7 +124,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		word_wrap_btn->setDisabled(true);
 		hbox->addWidget(word_wrap_btn);
 
-		q_connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
+		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 		});
 
@@ -136,12 +136,12 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
 
-		q_connect(clear_btn, &QToolButton::clicked, this, [this](){
+		connect(clear_btn, &QToolButton::clicked, this, [this](){
 			this->clear();
 			clear_btn->setEnabled(false);
 		});
 
-		q_connect(this, &NumberedTextEditor::textChanged, this, [this](){
+		connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
 			word_wrap_btn->setEnabled(!document()->isEmpty());
 			save_file_btn->setEnabled(!document()->isEmpty());
@@ -153,17 +153,17 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		top_widget->adjustSize();
 
 		//connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
-		q_connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
+		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 
-		q_connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
-		q_connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
+		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
+		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}
 
 	setWordWrapMode(QTextOption::NoWrap);
 
-	q_connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
-	q_connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	q_connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
+	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
+	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
+	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -189,7 +189,7 @@ void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
 	else
 	{
 		setContextMenuPolicy(Qt::CustomContextMenu);
-		q_connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
+		connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
 	}
 }
 

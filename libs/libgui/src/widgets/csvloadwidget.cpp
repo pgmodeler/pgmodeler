@@ -41,14 +41,14 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 		col_names_chk->setChecked(true);
 	}
 
-	q_connect(txt_delim_chk, &QCheckBox::toggled, txt_delim_edt, &QLineEdit::setEnabled);
-	q_connect(load_btn, &QPushButton::clicked, this, &CsvLoadWidget::loadCsvFile);
+	connect(txt_delim_chk, &QCheckBox::toggled, txt_delim_edt, &QLineEdit::setEnabled);
+	connect(load_btn, &QPushButton::clicked, this, &CsvLoadWidget::loadCsvFile);
 
-	q_connect(separator_cmb, &QComboBox::currentTextChanged, this, [this](){
+	connect(separator_cmb, &QComboBox::currentTextChanged, this, [this](){
 			separator_edt->setVisible(separator_cmb->currentIndex() == separator_cmb->count()-1);
 	});
 
-	q_connect(file_sel, &FileSelectorWidget::s_selectorChanged, load_btn, &QPushButton::setEnabled);
+	connect(file_sel, &FileSelectorWidget::s_selectorChanged, load_btn, &QPushButton::setEnabled);
 }
 
 CsvDocument CsvLoadWidget::getCsvDocument()

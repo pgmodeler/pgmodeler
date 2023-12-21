@@ -42,10 +42,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		q_connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		q_connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		q_connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-		q_connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
 		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
 		find_wgt_parent->setVisible(false);
@@ -54,8 +54,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		vbox->addWidget(find_sql_wgt);
 		vbox->setContentsMargins(0,0,0,0);
 
-		q_connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-		q_connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
@@ -124,7 +124,7 @@ void SourceCodeWidget::generateSourceCode(int)
 				task_prog_wgt=new TaskProgressWidget;
 				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
-				q_connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
+				connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 			}
 			else

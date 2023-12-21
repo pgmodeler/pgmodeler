@@ -91,12 +91,12 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
 
-	q_connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
-	q_connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
-	q_connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::adjustNameListSize);
-	q_connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListSize);
+	connect(name_list, &QListWidget::itemDoubleClicked, this, &CodeCompletionWidget::selectItem);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::showItemTooltip);
+	connect(name_list, &QListWidget::currentRowChanged, this, &CodeCompletionWidget::adjustNameListSize);
+	connect(name_list->verticalScrollBar(), &QScrollBar::valueChanged, this, &CodeCompletionWidget::adjustNameListSize);
 
-	q_connect(&popup_timer, &QTimer::timeout, this, [this](){
+	connect(&popup_timer, &QTimer::timeout, this, [this](){
 		if(qualifying_level < 2)
 		{
 			auto_triggered=true;
@@ -107,7 +107,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	this->setVisible(false);
 
 	if(enable_snippets)
-		q_connect(this, &CodeCompletionWidget::s_wordSelected, this, &CodeCompletionWidget::handleSelectedWord);
+		connect(this, &CodeCompletionWidget::s_wordSelected, this, &CodeCompletionWidget::handleSelectedWord);
 }
 
 void CodeCompletionWidget::handleSelectedWord(QString word)

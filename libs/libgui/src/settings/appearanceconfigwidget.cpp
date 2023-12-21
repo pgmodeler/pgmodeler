@@ -278,69 +278,69 @@ CREATE TABLE public.table_b (\n \
 	icons_size_cmb->addItem(tr("Medium"), Attributes::Medium);
 	icons_size_cmb->addItem(tr("Small"), Attributes::Small);
 
-	q_connect(element_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::enableConfigElement);
-	q_connect(elem_font_cmb, &QFontComboBox::currentFontChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
-	q_connect(elem_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
-	q_connect(bold_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
-	q_connect(underline_chk,&QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
-	q_connect(italic_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(element_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::enableConfigElement);
+	connect(elem_font_cmb, &QFontComboBox::currentFontChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(elem_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(bold_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(underline_chk,&QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
+	connect(italic_chk, &QToolButton::toggled, this, &AppearanceConfigWidget::applyElementFontStyle);
 
-	q_connect(code_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(code_font_cmb, &QFontComboBox::currentFontChanged, this,  &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_numbers_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_numbers_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_highlight_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(line_highlight_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(disp_line_numbers_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(hightlight_lines_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(tab_width_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(tab_width_chk, &QCheckBox::toggled, tab_width_spb, &QSpinBox::setEnabled);
-	q_connect(tab_width_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
-	q_connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(code_font_size_spb, &QDoubleSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(code_font_cmb, &QFontComboBox::currentFontChanged, this,  &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_numbers_bg_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(line_highlight_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(disp_line_numbers_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(hightlight_lines_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(tab_width_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(tab_width_chk, &QCheckBox::toggled, tab_width_spb, &QSpinBox::setEnabled);
+	connect(tab_width_chk, &QCheckBox::toggled, this, &AppearanceConfigWidget::previewCodeFontStyle);
+	connect(font_preview_txt, &NumberedTextEditor::cursorPositionChanged, this, &AppearanceConfigWidget::previewCodeFontStyle);
 
-	q_connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
+	connect(elem_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::applyElementColor);
 
-	q_connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [this](){
+	connect(elem_color_cp, &ColorPickerWidget::s_colorsChanged, this, [this](){
 		for(unsigned i=0; i < elem_color_cp->getColorCount(); i++)
 			applyElementColor(i, elem_color_cp->getColor(i));
 	});
 
-	q_connect(canvas_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(delimiters_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
-	q_connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(canvas_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(delimiters_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_color_cp, &ColorPickerWidget::s_colorsChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
+	connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
 	//connect(ui_theme_cmb, &QComboBox::activated, this, &AppearanceConfigWidget::previewUiSettings);
 	//connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
 	//__connect_s0(ui_theme_cmb, &QComboBox::activated, this, AppearanceConfigWidget::previewUiSettings);
 	//__connect_s0(icons_size_cmb, &QComboBox::currentTextChanged, this, AppearanceConfigWidget::previewUiSettings);
-	q_connect(ui_theme_cmb, &QComboBox::activated, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
-	q_connect(icons_size_cmb, &QComboBox::currentTextChanged, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
+	connect(ui_theme_cmb, &QComboBox::activated, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
+	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
 
-	q_connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
+	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
 		setConfigurationChanged(true);
 	});
 
-	q_connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
+	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	q_connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
+	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	q_connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
+	connect(ext_attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
-	q_connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
+	connect(attribs_per_page_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 }

@@ -24,9 +24,9 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-	q_connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
-	q_connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);
-	q_connect(tmp_files_tbw, &QTableWidget::itemSelectionChanged, this, &ModelRestorationForm::enableRestoration);
+	connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
+	connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);
+	connect(tmp_files_tbw, &QTableWidget::itemSelectionChanged, this, &ModelRestorationForm::enableRestoration);
 }
 
 QStringList ModelRestorationForm::getTemporaryModels()

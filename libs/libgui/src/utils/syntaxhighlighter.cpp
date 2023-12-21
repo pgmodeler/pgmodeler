@@ -56,7 +56,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		parent->setLineWrapMode(QPlainTextEdit::NoWrap);
 		parent->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-		q_connect(parent, &QPlainTextEdit::textChanged, this, [parent](){
+		connect(parent, &QPlainTextEdit::textChanged, this, [parent](){
 			// Avoiding pasting code with line breaks when the single line mode is activated
 			QString txt = parent->toPlainText();
 			if(!txt.isEmpty() && txt.contains(QChar::LineFeed))
@@ -70,9 +70,9 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	}
 
 	highlight_timer.setInterval(300);
-	q_connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
+	connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
 
-	q_connect(&highlight_timer, &QTimer::timeout, this, [this](){
+	connect(&highlight_timer, &QTimer::timeout, this, [this](){
 		highlight_timer.stop();
 
 		if(this->single_line_mode)

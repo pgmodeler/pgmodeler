@@ -38,9 +38,9 @@ void ObjectSelectorWidget::configureSelector()
 	model=nullptr;
 	selected_obj=nullptr;
 
-	q_connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
-	q_connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
-	q_connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
+	connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
+	connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
+	connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
 						 this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
 
 	obj_name_edt->installEventFilter(this);

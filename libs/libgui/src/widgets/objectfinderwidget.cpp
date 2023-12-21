@@ -60,18 +60,18 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
-	q_connect(pattern_edt, &QLineEdit::textChanged, this, [this](const QString &txt) {
+	connect(pattern_edt, &QLineEdit::textChanged, this, [this](const QString &txt) {
 		find_btn->setEnabled(!txt.isEmpty());
 	});
 
-	q_connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
-	q_connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
-	q_connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
+	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
+	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
+	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
 
-	q_connect(result_view, &QTableView::doubleClicked, this, &ObjectFinderWidget::editObject);
-	q_connect(result_view, &QTableView::pressed, this, &ObjectFinderWidget::showObjectMenu);
+	connect(result_view, &QTableView::doubleClicked, this, &ObjectFinderWidget::editObject);
+	connect(result_view, &QTableView::pressed, this, &ObjectFinderWidget::showObjectMenu);
 
-	q_connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
+	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
 
 		if(!checked)
@@ -273,7 +273,7 @@ void ObjectFinderWidget::findObjects()
 		disconnect(result_view->selectionModel(), nullptr, this, nullptr);
 
 	GuiUtilsNs::populateObjectsTable(result_view, found_objs, search_attr);
-	q_connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
+	connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
 
 	clear_res_btn->setEnabled(!found_objs.empty());
 	select_btn->setEnabled(!found_objs.empty());

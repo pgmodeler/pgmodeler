@@ -38,7 +38,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		def_values_cmb->addItem("bigserial");
 		setMinimumSize(520, 350);
 
-		q_connect(def_values_cmb, &QComboBox::currentIndexChanged, this, &SequenceWidget::setDefaultValues);
+		connect(def_values_cmb, &QComboBox::currentIndexChanged, this, &SequenceWidget::setDefaultValues);
 	}
 	catch(Exception &e)
 	{

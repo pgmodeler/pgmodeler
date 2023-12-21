@@ -49,9 +49,9 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 		event_cmb->addItems(EventType::getTypes());
 		exec_type_cmb->addItems(ExecutionType::getTypes());
 
-		q_connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
-		q_connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
-		q_connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
+		connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
+		connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
+		connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
 
 		setRequiredField(event_lbl);
 		configureTabOrder();

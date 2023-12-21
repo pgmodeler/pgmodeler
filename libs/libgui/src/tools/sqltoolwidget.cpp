@@ -32,7 +32,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	DeletableItemDelegate *combo_del = new DeletableItemDelegate(database_cmb, tr("Delete this database"));
 	database_cmb->setItemDelegate(combo_del);
-	q_connect(combo_del, &DeletableItemDelegate::s_itemDeleteRequested, this, qOverload<int>(&SQLToolWidget::dropDatabase));
+	connect(combo_del, &DeletableItemDelegate::s_itemDeleteRequested, this, qOverload<int>(&SQLToolWidget::dropDatabase));
 
 	h_splitter->setSizes({315, 10000});
 	h_splitter->handle(1)->installEventFilter(this);
@@ -68,24 +68,24 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	//connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
 	//__connect_s0(connections_cmb, &QComboBox::activated, this, SQLToolWidget::connectToServer);
-	q_connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
+	connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
 
 	//connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
 	//__connect_s0(refresh_tb, &QToolButton::clicked, this, SQLToolWidget::connectToServer);
-	q_connect(refresh_tb, &QToolButton::clicked, this, __slot(this, SQLToolWidget::connectToServer));
+	connect(refresh_tb, &QToolButton::clicked, this, __slot(this, SQLToolWidget::connectToServer));
 
 	//connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
 	//__connect_s0(database_cmb, &QComboBox::activated, this, SQLToolWidget::browseDatabase);
-	q_connect(database_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::browseDatabase));
+	connect(database_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::browseDatabase));
 
-	q_connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
-	q_connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
+	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
+	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
 
-	q_connect(databases_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
+	connect(databases_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
 		closeDatabaseExplorer(idx, true);
 	});
 
-	q_connect(sql_exec_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx) {
+	connect(sql_exec_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx) {
 		closeSQLExecutionTab(idx, true);
 	});
 
@@ -93,9 +93,9 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 		addSQLExecutionTab();
 	});*/
 	//__connect_s0(sql_exec_corner_btn, &QToolButton::clicked, this, SQLToolWidget::addSQLExecutionTab);
-	q_connect(sql_exec_corner_btn, &QToolButton::clicked, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
+	connect(sql_exec_corner_btn, &QToolButton::clicked, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 
-	q_connect(databases_tbw, &QTabWidget::currentChanged,	this, [this](){
+	connect(databases_tbw, &QTabWidget::currentChanged,	this, [this](){
 		DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
 		QMap<QWidget *, QWidgetList> ::iterator itr=sql_exec_wgts.begin();
 
@@ -335,13 +335,13 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 				addSQLExecutionTab();
 			}); */
 			//__connect_s0(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, SQLToolWidget::addSQLExecutionTab);
-			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 
-			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_snippetShowRequested, this, &SQLToolWidget::showSnippet);
-			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sourceCodeShowRequested, this, &SQLToolWidget::showSourceCode);
-			q_connect(db_explorer_wgt, &DatabaseExplorerWidget::s_databaseDropRequested, this, qOverload<const QString &>(&SQLToolWidget::dropDatabase));
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_snippetShowRequested, this, &SQLToolWidget::showSnippet);
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sourceCodeShowRequested, this, &SQLToolWidget::showSourceCode);
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_databaseDropRequested, this, qOverload<const QString &>(&SQLToolWidget::dropDatabase));
 
-			q_connect(attributes_tb, &QToolButton::toggled, db_explorer_wgt->attributes_wgt, &QWidget::setVisible);
+			connect(attributes_tb, &QToolButton::toggled, db_explorer_wgt->attributes_wgt, &QWidget::setVisible);
 
 			db_explorer_wgt->attributes_wgt->setVisible(attributes_tb->isChecked());
 

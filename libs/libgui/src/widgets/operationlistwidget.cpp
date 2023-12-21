@@ -25,11 +25,11 @@ OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 	setModel(nullptr);
 
 	operations_tw->headerItem()->setHidden(true);
-	q_connect(undo_tb, &QToolButton::clicked, this, &OperationListWidget::undoOperation);
-	q_connect(redo_tb, &QToolButton::clicked, this, &OperationListWidget::redoOperation);
-	q_connect(rem_operations_tb, &QToolButton::clicked, this, &OperationListWidget::removeOperations);
-	q_connect(operations_tw, &QTreeWidget::itemClicked, this, &OperationListWidget::selectItem);
-	q_connect(hide_tb, &QToolButton::clicked, this, &OperationListWidget::hide);
+	connect(undo_tb, &QToolButton::clicked, this, &OperationListWidget::undoOperation);
+	connect(redo_tb, &QToolButton::clicked, this, &OperationListWidget::redoOperation);
+	connect(rem_operations_tb, &QToolButton::clicked, this, &OperationListWidget::removeOperations);
+	connect(operations_tw, &QTreeWidget::itemClicked, this, &OperationListWidget::selectItem);
+	connect(hide_tb, &QToolButton::clicked, this, &OperationListWidget::hide);
 }
 
 void OperationListWidget::hide()

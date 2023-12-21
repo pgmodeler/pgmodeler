@@ -23,21 +23,21 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	q_connect(models_cmb, &QComboBox::currentIndexChanged, this, &ModelNavigationWidget::setCurrentModel);
+	connect(models_cmb, &QComboBox::currentIndexChanged, this, &ModelNavigationWidget::setCurrentModel);
 
-	q_connect(close_tb, &QToolButton::clicked, this, [this](){
+	connect(close_tb, &QToolButton::clicked, this, [this](){
 		emit s_modelCloseRequested(models_cmb->currentIndex());
 	});
 
-	q_connect(next_tb, &QToolButton::clicked, this, [this](){
+	connect(next_tb, &QToolButton::clicked, this, [this](){
 		models_cmb->setCurrentIndex(models_cmb->currentIndex()+1);
 	});
 
-	q_connect(previous_tb, &QToolButton::clicked, this, [this](){
+	connect(previous_tb, &QToolButton::clicked, this, [this](){
 		models_cmb->setCurrentIndex(models_cmb->currentIndex()-1);
 	});
 
-	q_connect(models_cmb, &QComboBox::highlighted, this, &ModelNavigationWidget::showTooltip);
+	connect(models_cmb, &QComboBox::highlighted, this, &ModelNavigationWidget::showTooltip);
 
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));

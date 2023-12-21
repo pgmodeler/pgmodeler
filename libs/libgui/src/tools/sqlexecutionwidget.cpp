@@ -97,22 +97,22 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	act = export_menu.addAction(tr("Text file"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
 
-	q_connect(act, &QAction::triggered, this, [this](){
+	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw, false);
 	});
 
 	act = export_menu.addAction(tr("CSV file"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
 
-	q_connect(act, &QAction::triggered, this, [this](){
+	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw, true);
 	});
 
-	q_connect(columns_cmb, &QComboBox::currentIndexChanged, this, &SQLExecutionWidget::filterResults);
-	q_connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
-	q_connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
+	connect(columns_cmb, &QComboBox::currentIndexChanged, this, &SQLExecutionWidget::filterResults);
+	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
+	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
 
-	q_connect(filter_tb, &QToolButton::toggled, this, [this](bool checked){
+	connect(filter_tb, &QToolButton::toggled, this, [this](bool checked){
 		filter_wgt->setVisible(checked);
 
 		if(checked)
@@ -121,32 +121,32 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 			sql_cmd_txt->setFocus();
 	});
 
-	q_connect(exact_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
-	q_connect(exact_chk, &QCheckBox::toggled, this, [this](bool checked){
+	connect(exact_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
+	connect(exact_chk, &QCheckBox::toggled, this, [this](bool checked){
 		regexp_chk->setChecked(false);
 		regexp_chk->setEnabled(!checked);
 		case_sensitive_chk->setChecked(false);
 		case_sensitive_chk->setEnabled(!checked);
 	});
 
-	q_connect(regexp_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
-	q_connect(case_sensitive_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
+	connect(regexp_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
+	connect(case_sensitive_chk, &QCheckBox::toggled, this, &SQLExecutionWidget::filterResults);
 
-	q_connect(action_load, &QAction::triggered, this, &SQLExecutionWidget::loadCommands);
-	q_connect(action_save, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
-	q_connect(action_save_as, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
+	connect(action_load, &QAction::triggered, this, &SQLExecutionWidget::loadCommands);
+	connect(action_save, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
+	connect(action_save_as, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 
-	q_connect(clear_btn, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
-	q_connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, &SQLExecutionWidget::enableCommandButtons);
+	connect(clear_btn, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
+	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, &SQLExecutionWidget::enableCommandButtons);
 
-	q_connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
-	q_connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
+	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
+	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
 
-	q_connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-	q_connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
-	q_connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
+	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
 
-	q_connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
+	connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
 		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
 			 !PlainTextItemDelegate::isTextEditorEnabled() &&
 			 index.data().toString().length() > PlainTextItemDelegate::getMaxDisplayLength())
@@ -155,11 +155,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 		}
 	});
 
-	q_connect(results_tbw, &QTableView::pressed, this, [this](){
+	connect(results_tbw, &QTableView::pressed, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw);
 	});
 
-	q_connect(close_file_tb, &QToolButton::clicked, this, [this](){
+	connect(close_file_tb, &QToolButton::clicked, this, [this](){
 			if(clearAll() == QDialog::Accepted)
 			{
 				filename_edt->clear();
@@ -167,8 +167,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 			}
 	});
 
-	q_connect(&snippets_menu, &QMenu::triggered, this, &SQLExecutionWidget::selectSnippet);
-	q_connect(cmd_history_txt, &NumberedTextEditor::customContextMenuRequested, this, &SQLExecutionWidget::showHistoryContextMenu);
+	connect(&snippets_menu, &QMenu::triggered, this, &SQLExecutionWidget::selectSnippet);
+	connect(cmd_history_txt, &NumberedTextEditor::customContextMenuRequested, this, &SQLExecutionWidget::showHistoryContextMenu);
 
 	configureSnippets();
 	toggleOutputPane(false);
@@ -178,11 +178,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	stop_tb->setVisible(false);
 	sql_exec_hlp.moveToThread(&sql_exec_thread);
 
-	q_connect(&sql_exec_thread, &QThread::started, &sql_exec_hlp, &SQLExecutionHelper::executeCommand);
-	q_connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionFinished, this, &SQLExecutionWidget::finishExecution);
-	q_connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, &sql_exec_thread, &QThread::quit);
-	q_connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, this, &SQLExecutionWidget::handleExecutionAborted);
-	q_connect(stop_tb, &QToolButton::clicked, &sql_exec_hlp, &SQLExecutionHelper::cancelCommand, Qt::DirectConnection);
+	connect(&sql_exec_thread, &QThread::started, &sql_exec_hlp, &SQLExecutionHelper::executeCommand);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionFinished, this, &SQLExecutionWidget::finishExecution);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, &sql_exec_thread, &QThread::quit);
+	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, this, &SQLExecutionWidget::handleExecutionAborted);
+	connect(stop_tb, &QToolButton::clicked, &sql_exec_hlp, &SQLExecutionHelper::cancelCommand, Qt::DirectConnection);
 }
 
 SQLExecutionWidget::~SQLExecutionWidget()

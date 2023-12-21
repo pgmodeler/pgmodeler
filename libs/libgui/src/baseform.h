@@ -82,12 +82,12 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 			setButtonConfiguration(Messagebox::OkCancelButtons);
 
 			//__connect_s0(cancel_btn, &QPushButton::clicked, widget, Class::cancelConfiguration);
-			q_connect(cancel_btn, &QPushButton::clicked, widget, __slot(widget, Class::cancelConfiguration));
-			q_connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+			connect(cancel_btn, &QPushButton::clicked, widget, __slot(widget, Class::cancelConfiguration));
+			connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
 
 			//__connect_s0(apply_ok_btn, &QPushButton::clicked, widget, Class::applyConfiguration);
-			q_connect(apply_ok_btn, &QPushButton::clicked, widget, __slot(widget, Class::applyConfiguration));
-			q_connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
+			connect(apply_ok_btn, &QPushButton::clicked, widget, __slot(widget, Class::applyConfiguration));
+			connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 		}
 };
 
@@ -99,7 +99,7 @@ void BaseForm::setMainWidget(Class *widget, Slot accept_slot)
 
 	setMainWidget(widget);
 	disconnect(apply_ok_btn, nullptr, widget, nullptr);
-	q_connect(apply_ok_btn, &QPushButton::clicked, widget, accept_slot);
+	connect(apply_ok_btn, &QPushButton::clicked, widget, accept_slot);
 }
 
 #endif

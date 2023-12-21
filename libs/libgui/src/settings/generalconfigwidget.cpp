@@ -65,16 +65,16 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	check_versions_cmb->setItemData(1, Attributes::StableBeta);
 	check_versions_cmb->setItemData(2, Attributes::StableOnly);
 
-	q_connect(check_update_chk, &QCheckBox::toggled, check_versions_cmb, &QComboBox::setEnabled);
-	q_connect(unity_cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::convertMarginUnity);
-	q_connect(autosave_interv_chk, &QCheckBox::toggled, autosave_interv_spb, &QSpinBox::setEnabled);
-	q_connect(paper_cmb, &QComboBox::currentIndexChanged, this,  &GeneralConfigWidget::selectPaperSize);
-	q_connect(save_restore_geometry_chk, &QCheckBox::toggled, reset_sizes_tb, &QToolButton::setEnabled);
-	q_connect(reset_sizes_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetDialogsSizes);
+	connect(check_update_chk, &QCheckBox::toggled, check_versions_cmb, &QComboBox::setEnabled);
+	connect(unity_cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::convertMarginUnity);
+	connect(autosave_interv_chk, &QCheckBox::toggled, autosave_interv_spb, &QSpinBox::setEnabled);
+	connect(paper_cmb, &QComboBox::currentIndexChanged, this,  &GeneralConfigWidget::selectPaperSize);
+	connect(save_restore_geometry_chk, &QCheckBox::toggled, reset_sizes_tb, &QToolButton::setEnabled);
+	connect(reset_sizes_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetDialogsSizes);
 
-	q_connect(trunc_columns_data_chk, &QCheckBox::toggled, trunc_columns_data_spb, &QComboBox::setEnabled);
-	q_connect(trunc_columns_data_chk, &QCheckBox::toggled, disable_inline_editor_chk, &QComboBox::setEnabled);
-	q_connect(trunc_columns_data_chk, &QCheckBox::toggled, bytes_lbl, &QLabel::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, trunc_columns_data_spb, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, disable_inline_editor_chk, &QComboBox::setEnabled);
+	connect(trunc_columns_data_chk, &QCheckBox::toggled, bytes_lbl, &QLabel::setEnabled);
 
 	config_params[Attributes::Configuration][Attributes::GridSize]="";
 	config_params[Attributes::Configuration][Attributes::OpListSize]="";
@@ -121,38 +121,38 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QCheckBox *chk : chk_boxes)
 	{
 		child_wgts.push_back(chk);
-		q_connect(chk, &QCheckBox::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(chk, &QCheckBox::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QSpinBox *spin : spin_boxes)
 	{
 		child_wgts.push_back(spin);
-		q_connect(spin, &QSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(spin, &QSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QDoubleSpinBox *dspin : dspin_boxes)
 	{
 		child_wgts.push_back(dspin);
-		q_connect(dspin,  &QDoubleSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(dspin,  &QDoubleSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QComboBox *cmb : combos)
 	{
 		child_wgts.push_back(cmb);
-		q_connect(cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QRadioButton *radio : radios)
 	{
 		child_wgts.push_back(radio);
-		q_connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
-	q_connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
+	connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
 		SQLExecutionWidget::destroySQLHistory();
 	});
 
-	q_connect(reset_exit_alerts_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetExitAlerts);
+	connect(reset_exit_alerts_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetExitAlerts);
 
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);

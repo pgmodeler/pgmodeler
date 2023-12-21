@@ -74,20 +74,20 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		delete_menu.addAction(action_tab_delete);
 		delete_menu.addAction(action_gen_delete);
 
-		q_connect(clear_tb, &QToolButton::clicked, this, &CustomSQLWidget::clearCode);
-		q_connect(insert_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		q_connect(select_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		q_connect(update_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		q_connect(delete_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		q_connect(action_gen_insert, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_inc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_exc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_gen_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_tab_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_gen_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_tab_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_gen_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		q_connect(action_tab_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(clear_tb, &QToolButton::clicked, this, &CustomSQLWidget::clearCode);
+		connect(insert_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(select_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(update_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(delete_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_insert, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_inc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_exc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_gen_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+		connect(action_tab_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
 
 		setMinimumSize(640, 480);
 	}

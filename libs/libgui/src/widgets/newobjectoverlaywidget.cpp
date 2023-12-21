@@ -106,7 +106,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	}
 
 	for(auto &itr : btn_actions)
-		q_connect(itr.first, &QToolButton::clicked, this, &NewObjectOverlayWidget::executeAction, Qt::QueuedConnection);
+		connect(itr.first, &QToolButton::clicked, this, &NewObjectOverlayWidget::executeAction, Qt::QueuedConnection);
 }
 
 void NewObjectOverlayWidget::setSelectedObjects(std::vector<BaseObject *> &sel_objs)

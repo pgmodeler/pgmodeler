@@ -46,10 +46,10 @@ SimpleColumnsWidget::SimpleColumnsWidget(QWidget *parent) : QWidget(parent)
 
 	setMinimumSize(640, 480);
 
-	q_connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, &SimpleColumnsWidget::addColumn);
-	q_connect(columns_tab, &ObjectsTableWidget::s_rowUpdated, this, &SimpleColumnsWidget::updateColumn);
-	q_connect(columns_tab, &ObjectsTableWidget::s_rowEdited, this, &SimpleColumnsWidget::editColumn);
-	q_connect(columns_tab, &ObjectsTableWidget::s_rowDuplicated, this, &SimpleColumnsWidget::duplicateColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, &SimpleColumnsWidget::addColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowUpdated, this, &SimpleColumnsWidget::updateColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowEdited, this, &SimpleColumnsWidget::editColumn);
+	connect(columns_tab, &ObjectsTableWidget::s_rowDuplicated, this, &SimpleColumnsWidget::duplicateColumn);
 }
 
 void SimpleColumnsWidget::setAttributes(DatabaseModel *model, const std::vector<SimpleColumn> &cols)
