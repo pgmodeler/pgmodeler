@@ -564,11 +564,7 @@ void MainWindow::connectSignalsToSlots()
 
 	connect(action_save_all, &QAction::triggered, this, &MainWindow::saveAllModels);
 	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
-
-	//connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
-	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, [this](){
-		updateToolsState(false);
-	});
+	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
 
 	connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
 	connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
@@ -1428,11 +1424,7 @@ void MainWindow::setCurrentModel()
 		connect(current_model, &ModelWidget::s_objectManipulated, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectModified, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
 
-		//connect(current_model, &ModelWidget::s_zoomModified, this, &MainWindow::__updateToolsState, Qt::UniqueConnection);
-		connect(current_model, &ModelWidget::s_zoomModified, this, [this](){
-			updateToolsState(false);
-		}, Qt::UniqueConnection);
-
+		connect(current_model, &ModelWidget::s_zoomModified, this, &MainWindow::__updateToolsState, Qt::UniqueConnection);
 		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), this, &MainWindow::configureMoreActionsMenu, Qt::UniqueConnection);
 		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObject, Qt::UniqueConnection);
 		connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
@@ -2087,10 +2079,10 @@ ModelWidget *MainWindow::getCurrentModel()
 	return current_model;
 }
 
-/* void MainWindow::__updateToolsState()
+void MainWindow::__updateToolsState()
 {
 	updateToolsState(false);
-} */
+}
 
 void MainWindow::updateToolsState(bool model_closed)
 {
