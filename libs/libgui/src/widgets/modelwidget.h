@@ -518,7 +518,7 @@ class __libgui ModelWidget: public QWidget {
 		void removeObjects(bool cascade = false);
 
 		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-		void removeObjectsCascade();
+		//void removeObjectsCascade();
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects();
