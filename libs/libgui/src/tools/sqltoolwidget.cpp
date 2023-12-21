@@ -435,8 +435,9 @@ void SQLToolWidget::reloadHighlightConfigs()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
