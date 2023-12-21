@@ -97,7 +97,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	q_connect(copy_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
-		paste_tb->setEnabled(true);
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
 	q_connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
