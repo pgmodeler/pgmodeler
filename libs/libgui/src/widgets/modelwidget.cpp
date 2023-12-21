@@ -321,11 +321,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action = pagination_menu.addAction(tr("Enable"));
 	action->setData(true);
-	connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
+	q_connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
 
 	action = pagination_menu.addAction(tr("Disable"));
 	action->setData(false);
-	connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
+	q_connect(action, &QAction::triggered, this, &ModelWidget::togglePagination);
 
 	action_jump_to_table = jump_to_tab_menu.menuAction();
 	action_jump_to_table->setIcon(QIcon(GuiUtilsNs::getIconPath("jumptotable")));
@@ -397,29 +397,29 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_creation_order=new QAction(QIcon(GuiUtilsNs::getIconPath("swapobjs")), tr("Swap ids"), this);
 	action_edit_creation_order->setToolTip(tr("Edit the objects creation order by swapping their ids"));
-	connect(action_edit_creation_order, &QAction::triggered, this, &ModelWidget::swapObjectsIds);
+	q_connect(action_edit_creation_order, &QAction::triggered, this, &ModelWidget::swapObjectsIds);
 
 	action_break_rel_line = break_rel_menu.menuAction();
 	action_break_rel_line->setIcon(QIcon(GuiUtilsNs::getIconPath("breakrelline")));
 	action_break_rel_line->setText(tr("Break line"));
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dv")), tr("90° (vertical)"), this);
-	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
+	q_connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakVertNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_90dh")), tr("90° (horizontal)"), this);
-	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
+	q_connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakHorizNinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dv")), tr("90° + 90° (vertical)"), this);
-	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
+	q_connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakVert2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
 	action=new QAction(QIcon(GuiUtilsNs::getIconPath("breakline_290dh")), tr("90° + 90° (horizontal)"), this);
-	connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
+	q_connect(action, &QAction::triggered, this, qOverload<>(&ModelWidget::breakRelationshipLine));
 	action->setData(BreakHoriz2NinetyDegrees);
 	break_rel_menu.addAction(action);
 
@@ -428,7 +428,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	{
 		actions_new_objects[type]=new QAction(QIcon(GuiUtilsNs::getIconPath(type)), BaseObject::getTypeName(type), this);
 		actions_new_objects[type]->setData(QVariant(enum_t(type)));
-		connect(actions_new_objects[type], &QAction::triggered, this, &ModelWidget::addNewObject);
+		q_connect(actions_new_objects[type], &QAction::triggered, this, &ModelWidget::addNewObject);
 	}
 
 	// Configuring the submenu of database level objects
@@ -466,7 +466,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(enum_t(ObjectType::Relationship) + rel_types_id[i]));
 
-		connect(action, &QAction::triggered, this, &ModelWidget::addNewObject);
+		q_connect(action, &QAction::triggered, this, &ModelWidget::addNewObject);
 		rels_menu->addAction(action);
 	}
 
@@ -497,7 +497,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		}
 
 		action->setData(QVariant(enum_t(obj_type)));
-		connect(action, &QAction::triggered, this, &ModelWidget::selectAllObjects);
+		q_connect(action, &QAction::triggered, this, &ModelWidget::selectAllObjects);
 	}
 
 	action_stacking = stacking_menu.menuAction();
@@ -513,22 +513,30 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 
-	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
-	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
-	connect(action_edit_data, &QAction::triggered, this, &ModelWidget::editTableData);
-	connect(&zoom_info_timer, &QTimer::timeout, zoom_info_lbl, &QLabel::hide);
-	connect(action_source_code, &QAction::triggered, this, &ModelWidget::showSourceCode);
-	connect(action_edit, &QAction::triggered, this, &ModelWidget::editObject);
-	connect(action_protect, &QAction::triggered, this, &ModelWidget::protectObject);
-	connect(action_unprotect, &QAction::triggered, this, &ModelWidget::protectObject);
-	connect(action_select_all, &QAction::triggered, this, &ModelWidget::selectAllObjects);
-	connect(action_convert_relnn, &QAction::triggered, this, &ModelWidget::convertRelationshipNN);
-	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
-	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
-	connect(action_copy, &QAction::triggered, this, &ModelWidget::copyObjects);
-	connect(action_paste, &QAction::triggered, this, &ModelWidget::pasteObjects);
-	connect(action_cut, &QAction::triggered, this, &ModelWidget::cutObjects);
-	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
+	q_connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
+	q_connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
+	q_connect(action_edit_data, &QAction::triggered, this, &ModelWidget::editTableData);
+	q_connect(&zoom_info_timer, &QTimer::timeout, zoom_info_lbl, &QLabel::hide);
+	q_connect(action_source_code, &QAction::triggered, this, &ModelWidget::showSourceCode);
+	q_connect(action_edit, &QAction::triggered, this, &ModelWidget::editObject);
+	q_connect(action_protect, &QAction::triggered, this, &ModelWidget::protectObject);
+	q_connect(action_unprotect, &QAction::triggered, this, &ModelWidget::protectObject);
+	q_connect(action_select_all, &QAction::triggered, this, &ModelWidget::selectAllObjects);
+	q_connect(action_convert_relnn, &QAction::triggered, this, &ModelWidget::convertRelationshipNN);
+	q_connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
+	q_connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
+
+	//connect(action_copy, &QAction::triggered, this, &ModelWidget::copyObjects);
+	q_connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
+
+	//connect(action_paste, &QAction::triggered, this, &ModelWidget::pasteObjects);
+	q_connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
+
+	//connect(action_cut, &QAction::triggered, this, &ModelWidget::cutObjects);
+	q_connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
+
+	q_connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
+
 	connect(action_rename, &QAction::triggered, this, &ModelWidget::renameObjects);
 	connect(action_edit_perms, &QAction::triggered, this, &ModelWidget::editPermissions);
 	connect(action_sel_sch_children, &QAction::triggered, this, &ModelWidget::selectSchemaChildren);
@@ -1553,7 +1561,8 @@ void ModelWidget::convertRelationshipNN()
 						op_list->ignoreOperationChain(false);
 					}
 
-					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -1716,7 +1725,8 @@ void ModelWidget::convertRelationship1N()
 			op_list->ignoreOperationChain(false);
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2650,7 +2660,8 @@ void ModelWidget::protectObject()
 	catch(Exception &e)
 	{
 		scene->blockSignals(false);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -3191,7 +3202,8 @@ void ModelWidget::duplicateObject()
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -4811,7 +4823,8 @@ void ModelWidget::breakRelationshipLine()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -5227,10 +5240,19 @@ void ModelWidget::rearrangeTablesHierarchically()
 			rel->setPoints({});
 			rel->resetLabelsDistance();
 
-			if(!RelationshipView::isCurvedLines() &&
-				 round(rel->getTable(BaseRelationship::SrcTable)->getPosition().y()) !=
-				 round(rel->getTable(BaseRelationship::DstTable)->getPosition().y()))
-				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
+			try
+			{
+				if(!RelationshipView::isCurvedLines() &&
+						round(rel->getTable(BaseRelationship::SrcTable)->getPosition().y()) !=
+								round(rel->getTable(BaseRelationship::DstTable)->getPosition().y()))
+				{
+					breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
+				}
+			}
+			catch(Exception &e)
+			{
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
 		}
 
 		db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
