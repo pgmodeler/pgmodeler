@@ -33,10 +33,6 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
 	connect(cancel_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
 
-	//connect(duplicate_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::duplicateConnection);
-	//connect(update_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::handleConnection);
-	//__connect_s0(duplicate_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::duplicateConnection);
-	//__connect_s0(update_tb, &QToolButton::clicked, this, ConnectionsConfigWidget::handleConnection);
 	connect(duplicate_tb, &QToolButton::clicked, this, __slot(this, ConnectionsConfigWidget::duplicateConnection));
 	connect(update_tb, &QToolButton::clicked, this, __slot(this, ConnectionsConfigWidget::handleConnection));
 
@@ -44,8 +40,6 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	connect(remove_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::removeConnection);
 
 	connect(test_tb, &QPushButton::clicked, this, &ConnectionsConfigWidget::testConnection);
-
-	//__connect_s0(add_tb, &QPushButton::clicked, this, ConnectionsConfigWidget::handleConnection);
 	connect(add_tb, &QPushButton::clicked, this, __slot(this, ConnectionsConfigWidget::handleConnection));
 
 	connect(alias_edt, &QLineEdit::textChanged, this, &ConnectionsConfigWidget::enableConnectionTest);

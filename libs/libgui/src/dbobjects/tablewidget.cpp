@@ -52,8 +52,6 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
-	//connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
-	//__connect_s0(edt_data_tb, &QPushButton::clicked, this, TableWidget::editData);
 	connect(edt_data_tb, &QPushButton::clicked, this, __slot(this, TableWidget::editData));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
@@ -113,20 +111,6 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->addWidget(tab, 0,0,1,1);
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i + 1)->setLayout(grid);
-
-		//connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
-		//connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
-		//connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
-		//connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
-		//connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
-		//connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
-
-		//__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, TableWidget::removeObjects);
-		//__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, TableWidget::removeObject);
-		//__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, TableWidget::handleObject);
-		//__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, TableWidget::handleObject);
-		//__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, TableWidget::duplicateObject);
-		//__connect_sn(tab, &ObjectsTableWidget::s_rowsMoved, this, TableWidget::swapObjects);
 
 		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
 		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));

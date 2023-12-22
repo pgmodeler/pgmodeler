@@ -700,7 +700,6 @@ void ModelObjectsWidget::updateDatabaseTree()
 		catch(Exception &e)
 		{
 			objectstree_tw->setUpdatesEnabled(true);
-			//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 

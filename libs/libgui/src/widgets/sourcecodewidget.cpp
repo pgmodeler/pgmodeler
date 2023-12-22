@@ -185,7 +185,6 @@ void SourceCodeWidget::generateSourceCode(int)
 			delete task_prog_wgt;
 		}
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -224,7 +223,6 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		}
 		catch(Exception &e)
 		{
-			//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}

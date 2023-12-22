@@ -66,20 +66,13 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	vbox->addWidget(sourcecode_txt);
 	sourcecode_gb->setLayout(vbox);
 
-	//connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
-	//__connect_s0(connections_cmb, &QComboBox::activated, this, SQLToolWidget::connectToServer);
 	connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
 	connect(connections_cmb, &QComboBox::currentIndexChanged, this, [this](int idx) {
 		if(idx == 0)
 			clearDatabases();
 	});
 
-	//connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
-	//__connect_s0(refresh_tb, &QToolButton::clicked, this, SQLToolWidget::connectToServer);
 	connect(refresh_tb, &QToolButton::clicked, this, __slot(this, SQLToolWidget::connectToServer));
-
-	//connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
-	//__connect_s0(database_cmb, &QComboBox::activated, this, SQLToolWidget::browseDatabase);
 	connect(database_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::browseDatabase));
 
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
@@ -305,7 +298,6 @@ void SQLToolWidget::disconnectFromDatabases()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -642,7 +634,6 @@ void SQLToolWidget::dropDatabase(int database_idx)
 												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 		else
-			//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

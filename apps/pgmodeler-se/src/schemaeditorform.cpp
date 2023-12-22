@@ -109,62 +109,34 @@ subcontrol-position: right center; }");
 
 	syntax_cfg_menu.installEventFilter(this);
 
-	//connect(apply_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::applySyntaxConfig);
-	//__connect_s0(apply_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::applySyntaxConfig);
 	connect(apply_conf_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::applySyntaxConfig));
-
-	//connect(save_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveSyntaxConfig);
-	//__connect_s0(save_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::saveSyntaxConfig);
 	connect(save_conf_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::saveSyntaxConfig));
-
-	//connect(reload_conf_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadSyntaxConfig);
-	//__connect_s0(reload_conf_tb, &QToolButton::clicked, this, SchemaEditorForm::loadSyntaxConfig);
 	connect(reload_conf_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::loadSyntaxConfig));
 
-	/* connect(new_tb, &QToolButton::clicked, this, [this](){
-		addEditorTab();
-	}); */
 	connect(new_tb, &QToolButton::clicked, this, [this](){
 		__trycatch( addEditorTab(); )
 	});
 
-	//connect(load_tb, &QToolButton::clicked, this, &SchemaEditorForm::loadFile);
-	//__connect_s0(load_tb, &QToolButton::clicked, this, SchemaEditorForm::loadFile);
 	connect(load_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::loadFile));
-
 	connect(exit_tb, &QToolButton::clicked, this, &SchemaEditorForm::close);
 
-	//connect(save_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveFile);
-	//__connect_s0(save_tb, &QToolButton::clicked, this, SchemaEditorForm::saveFile);
 	connect(save_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::saveFile));
-
 	connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
 
-	//connect(save_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::saveAll);
-	//__connect_s0(save_all_tb, &QToolButton::clicked, this, SchemaEditorForm::saveAll);
 	connect(save_all_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::saveAll));
-
 	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
 
 	connect(editors_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
 		closeEditorTab(idx);
 	});
 
-	//connect(editors_tbw, &QTabWidget::currentChanged, this, &SchemaEditorForm::loadSyntaxFromCurrentTab);
-	//__connect_s0(editors_tbw, &QTabWidget::currentChanged, this, SchemaEditorForm::loadSyntaxFromCurrentTab);
 	connect(editors_tbw, &QTabWidget::currentChanged, this, __slot(this, SchemaEditorForm::loadSyntaxFromCurrentTab));
-
-	//connect(use_tmpl_file_chk, &QCheckBox::toggled, this, &SchemaEditorForm::loadSyntaxConfig);
-	//__connect_s0(use_tmpl_file_chk, &QCheckBox::toggled, this, SchemaEditorForm::loadSyntaxConfig);
 	connect(use_tmpl_file_chk, &QCheckBox::toggled, this, __slot(this, SchemaEditorForm::loadSyntaxConfig));
 
 	connect(syntax_txt, &NumberedTextEditor::textChanged, this, [this](){
 		alert_frm->setVisible(true);
 	});
 
-	/* connect(save_as_tb, &QToolButton::clicked, this, [this](){
-		saveFile(true);
-	}); */
 	connect(save_as_tb, &QToolButton::clicked, this, [this](){
 		__trycatch( saveFile(true); )
 	});

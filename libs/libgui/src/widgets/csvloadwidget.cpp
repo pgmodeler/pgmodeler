@@ -90,7 +90,6 @@ void CsvLoadWidget::loadCsvFile()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

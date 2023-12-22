@@ -102,13 +102,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
 
 	connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
-
-	//connect(add_perm_tb, &QToolButton::clicked, this, &PermissionWidget::addPermission);
-	//__connect_s0(add_perm_tb, &QToolButton::clicked, this, PermissionWidget::addPermission);
 	connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
-
-	//connect(upd_perm_tb, &QToolButton::clicked, this, &PermissionWidget::updatePermission);
-	//__connect_s0(upd_perm_tb, &QToolButton::clicked, this, PermissionWidget::updatePermission);
 	connect(upd_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::updatePermission));
 
 	connect(revoke_rb, &QRadioButton::toggled, cascade_chk, &QCheckBox::setEnabled);
@@ -139,15 +133,11 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=nullptr, *chk1=nullptr;
 
-		//connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PermissionWidget::showSelectedRoleData);
 		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](){
 			__trycatch( showSelectedRoleData(); )
 		});
 
 		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
-
-		//connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, &PermissionWidget::removePermissions);
-		//__connect_s0(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, PermissionWidget::removePermissions);
 		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));

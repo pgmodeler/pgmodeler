@@ -526,15 +526,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
 	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
 
-	//connect(action_copy, &QAction::triggered, this, &ModelWidget::copyObjects);
 	connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
-
-	//connect(action_paste, &QAction::triggered, this, &ModelWidget::pasteObjects);
 	connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
-
-	//connect(action_cut, &QAction::triggered, this, &ModelWidget::cutObjects);
 	connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
-
 	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
 
 	connect(action_rename, &QAction::triggered, this, &ModelWidget::renameObjects);
@@ -1562,7 +1556,6 @@ void ModelWidget::convertRelationshipNN()
 						op_list->ignoreOperationChain(false);
 					}
 
-					//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
@@ -1726,7 +1719,6 @@ void ModelWidget::convertRelationship1N()
 			op_list->ignoreOperationChain(false);
 		}
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2394,7 +2386,6 @@ void ModelWidget::moveToSchema()
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2454,7 +2445,6 @@ void ModelWidget::changeOwner()
 		if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2494,7 +2484,6 @@ void ModelWidget::setTag()
 		if(op_id >=0 &&  op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2664,7 +2653,6 @@ void ModelWidget::protectObject()
 	catch(Exception &e)
 	{
 		scene->blockSignals(false);
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -3206,7 +3194,6 @@ void ModelWidget::duplicateObject()
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -4262,7 +4249,6 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 					action->setText(tr("Delete"));
 					submenu->addAction(action);
 
-					//connect(action, &QAction::triggered, this, &ModelWidget::removeObjects);
 					connect(action, &QAction::triggered, this, [this](){
 						removeObjects(false);
 					});
@@ -4273,7 +4259,6 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 					action->setText(tr("Del. cascade"));
 					submenu->addAction(action);
 
-					//connect(action, &QAction::triggered, this, &ModelWidget::removeObjectsCascade);
 					connect(action, &QAction::triggered, this, [this](){
 						removeObjects(true);
 					});
@@ -4779,7 +4764,6 @@ void ModelWidget::createSequenceFromColumn()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -4820,7 +4804,6 @@ void ModelWidget::convertIntegerToSerial()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -4841,7 +4824,6 @@ void ModelWidget::breakRelationshipLine()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -4928,7 +4910,6 @@ void ModelWidget::removeRelationshipPoints()
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

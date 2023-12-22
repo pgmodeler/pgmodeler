@@ -36,14 +36,6 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	for(auto &wgt : wgt_list)
 		confs_stw->addWidget(wgt);
 
-	// connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
-	// connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
-	// connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
-
-	//__connect_s0(cancel_btn, &QPushButton::clicked, this, ConfigurationForm::reject);
-	//__connect_s0(apply_btn,  &QPushButton::clicked, this, ConfigurationForm::applyConfiguration);
-	//__connect_s0(defaults_btn,  &QPushButton::clicked, this, ConfigurationForm::restoreDefaults);
-
 	connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
 	connect(apply_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::applyConfiguration));
 	connect(defaults_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::restoreDefaults));

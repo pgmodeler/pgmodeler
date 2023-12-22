@@ -98,15 +98,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		range_attribs_gb->setVisible(false);
 
-		//connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		//connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		//connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		//connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
-		//connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleAttribute);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleAttribute); */
-
 		connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
 		connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
 		connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
@@ -114,8 +105,6 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
 		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
 
-		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, TypeWidget::handleAttribute);
-		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, TypeWidget::handleAttribute);
 		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
 		connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
 

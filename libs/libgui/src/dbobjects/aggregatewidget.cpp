@@ -60,10 +60,6 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		grid->addItem(spacer,1,0);
 		state_input_types_twg->widget(1)->setLayout(grid);
 
-		//connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, &AggregateWidget::handleDataType);
-		//connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, &AggregateWidget::handleDataType);
-		//__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, AggregateWidget::handleDataType);
-		//__connect_sn(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, AggregateWidget::handleDataType);
 		connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, AggregateWidget::handleDataType));
 		connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, AggregateWidget::handleDataType));
 

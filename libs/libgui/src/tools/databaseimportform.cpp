@@ -49,11 +49,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(close_btn, &QPushButton::clicked, this, &DatabaseImportForm::close);
 	connect(by_oid_chk,  &QCheckBox::toggled, this, qOverload<>(&DatabaseImportForm::filterObjects));
 
-	// connect(connections_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listDatabases));
-	// connect(database_cmb, &QComboBox::activated, this, qOverload<>(&DatabaseImportForm::listObjects));
-	// connect(import_sys_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
-	// connect(import_ext_objs_chk, &QCheckBox::clicked, this, qOverload<>(&DatabaseImportForm::listObjects));
-
 	connect(connections_cmb, &QComboBox::activated, this, [this](){
 		__trycatch( listDatabases(); )
 	});
@@ -76,11 +71,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(filter_edt, &QLineEdit::textChanged, this, qOverload<>(&DatabaseImportForm::filterObjects));
 	connect(cancel_btn, &QPushButton::clicked, this, &DatabaseImportForm::cancelImport);
 
-	// connect(import_btn, &QPushButton::clicked, this,  &DatabaseImportForm::importDatabase);
-	//__connect_s0(import_btn, &QPushButton::clicked, this, DatabaseImportForm::importDatabase);
 	connect(import_btn, &QPushButton::clicked, this, __slot(this, DatabaseImportForm::importDatabase));
 
-	// connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, qOverload<>(&DatabaseImportForm::listObjects));
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filterApplyingRequested, this, [this](){
 		__trycatch( listObjects(); )
 	});
@@ -171,7 +163,6 @@ void DatabaseImportForm::createThread()
 		output_trw->setUniformRowHeights(false);
 	});
 
-	//connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
 	connect(import_thread, &QThread::started, import_helper, [this](){
 		__trycatch( import_helper->importDatabase(); )
 	});
@@ -577,7 +568,6 @@ void DatabaseImportForm::captureThreadError(Exception e)
 
 	database_cmb->setCurrentIndex(0);
 
-	//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 

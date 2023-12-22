@@ -204,13 +204,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
 	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
 
-	//connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::listColumns);
 	connect(table_cmb, &QComboBox::currentIndexChanged, this, __slot(this, DataManipulationForm::listColumns));
-
-	//connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::retrieveData);
 	connect(table_cmb, &QComboBox::currentIndexChanged, this, __slot(this, DataManipulationForm::retrieveData));
-
-	//connect(refresh_tb, &QToolButton::clicked, this, &DataManipulationForm::retrieveData);
 	connect(refresh_tb, &QToolButton::clicked, this, __slot(this, DataManipulationForm::retrieveData));
 
 	connect(add_ord_col_tb, &QToolButton::clicked, this, &DataManipulationForm::addSortColumnToList);
@@ -307,7 +302,6 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 	catch(Exception &e)
 	{
-		//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

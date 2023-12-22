@@ -159,35 +159,11 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 		});
 
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		//connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
-
-		//__connect_s0(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, RelationshipWidget::removeObjects);
-		//__connect_s0(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, RelationshipWidget::addObject);
-		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, RelationshipWidget::editObject);
-		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, RelationshipWidget::removeObject);
-		//__connect_sn(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, RelationshipWidget::duplicateObject);
-
 		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
 		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
 		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
 		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
 		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
-
-		//connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		//connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		//connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		//connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		//connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
-
-		//__connect_s0(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, RelationshipWidget::removeObjects);
-		//__connect_s0(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, RelationshipWidget::addObject);
-		//__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, RelationshipWidget::editObject);
-		//__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, RelationshipWidget::removeObject);
-		//__connect_sn(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, RelationshipWidget::duplicateObject);
 
 		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
 		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));

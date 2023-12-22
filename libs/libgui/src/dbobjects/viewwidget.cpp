@@ -86,18 +86,6 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			attributes_tbw->widget(tab_id)->setLayout(grid);
 			tab_id++;
 
-			// connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
-			// connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
-			// connect(tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::handleObject);
-			// connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
-			// connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
-
-			//__connect_s0(tab, &ObjectsTableWidget::s_rowsRemoved, this, ViewWidget::removeObjects);
-			//__connect_sn(tab, &ObjectsTableWidget::s_rowRemoved, this, ViewWidget::removeObject);
-			//__connect_s0(tab, &ObjectsTableWidget::s_rowAdded, this, ViewWidget::handleObject);
-			//__connect_s0(tab, &ObjectsTableWidget::s_rowEdited, this, ViewWidget::handleObject);
-			//__connect_sn(tab, &ObjectsTableWidget::s_rowDuplicated, this, ViewWidget::duplicateObject);
-
 			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
 			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
 			connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));

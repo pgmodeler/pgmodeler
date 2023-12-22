@@ -71,12 +71,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
 		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
-		//connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
-		//__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, ConstraintWidget::selectReferencedTable);
 		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, __slot(this, ConstraintWidget::selectReferencedTable));
-
-		//connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
-		//__connect_s0(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, ConstraintWidget::selectReferencedTable);
 		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, __slot(this, ConstraintWidget::selectReferencedTable));
 
 		selectConstraintType();

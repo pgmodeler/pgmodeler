@@ -110,7 +110,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
 
-		//connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
 		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
 		word_wrap_btn = new QToolButton(top_widget);
@@ -152,9 +151,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		top_widget->setLayout(hbox);
 		top_widget->adjustSize();
 
-		//connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
 		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
-
 		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
 		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}

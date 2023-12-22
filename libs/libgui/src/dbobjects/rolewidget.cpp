@@ -69,7 +69,6 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	//connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
 	connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &RoleWidget::showSelectedRoleData);
 
 	setMinimumSize(580, 550);

@@ -113,16 +113,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		});
 
 		connect(pgsql_ver_chk, &QCheckBox::toggled, pgsql_ver_cmb, &QComboBox::setEnabled);
-
-		//connect(connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
 		connect(connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
 
 		connect(store_in_file_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(apply_on_server_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
-
-		//connect(generate_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::generateDiff);
 		connect(generate_btn, &QPushButton::clicked, this, __slot(this, ModelDatabaseDiffForm::generateDiff));
 
 		connect(close_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::close);
@@ -136,20 +132,14 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 		connect(src_model_rb, &QRadioButton::toggled, src_model_name_lbl, &QLabel::setEnabled);
 
-		//connect(src_connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
 		connect(src_connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
-
 		connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(src_model_rb, &QRadioButton::toggled, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(open_in_sql_tool_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::loadDiffInSQLTool);
 		connect(presets_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::selectPreset);
 
 		connect(default_presets_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::restoreDefaults);
-
-		//connect(remove_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::removePreset);
 		connect(remove_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::removePreset));
-
-		//connect(save_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::savePreset);
 		connect(save_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::savePreset));
 
 		connect(src_database_rb, &QRadioButton::toggled, this, [this](bool toggle){
@@ -303,7 +293,6 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		src_import_helper=new DatabaseImportHelper;
 		src_import_helper->moveToThread(src_import_thread);
 
-		//connect(src_import_thread, &QThread::started, src_import_helper, &DatabaseImportHelper::importDatabase);
 		connect(src_import_thread, &QThread::started, src_import_helper, [this]() {
 			__trycatch( src_import_helper->importDatabase(); )
 		});
@@ -313,9 +302,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 					updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
-		//connect(src_import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
 		connect(src_import_helper, &DatabaseImportHelper::s_importFinished, this, __slot_n(this, ModelDatabaseDiffForm::handleImportFinished));
-
 		connect(src_import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==ImportThread)
@@ -324,7 +311,6 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
 
-		//connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
 		connect(import_thread, &QThread::started, import_helper, [this]() {
 			__trycatch( import_helper->importDatabase(); )
 		});
@@ -334,9 +320,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 			updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
-		//connect(import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
 		connect(import_helper, &DatabaseImportHelper::s_importFinished, this, __slot_n(this, ModelDatabaseDiffForm::handleImportFinished));
-
 		connect(import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==DiffThread)
@@ -345,7 +329,6 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		diff_helper=new ModelsDiffHelper;
 		diff_helper->moveToThread(diff_thread);
 
-		//connect(diff_thread, &QThread::started, diff_helper, qOverload<>(&ModelsDiffHelper::diffModels));
 		connect(diff_thread, &QThread::started, diff_helper, [this](){
 			__trycatch( diff_helper->diffModels(); )
 		});
@@ -375,10 +358,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		connect(export_thread, &QThread::started, export_helper, qOverload<>(&ModelExportHelper::exportToDBMS));
 		connect(export_helper, &ModelExportHelper::s_progressUpdated, this, &ModelDatabaseDiffForm::updateProgress, Qt::BlockingQueuedConnection);
 		connect(export_helper, &ModelExportHelper::s_errorIgnored, this, &ModelDatabaseDiffForm::handleErrorIgnored);
-
-		//connect(export_helper, &ModelExportHelper::s_exportFinished, this, &ModelDatabaseDiffForm::handleExportFinished);
 		connect(export_helper, &ModelExportHelper::s_exportFinished, this, __slot(this, ModelDatabaseDiffForm::handleExportFinished));
-
 		connect(export_helper, &ModelExportHelper::s_exportAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 }
@@ -916,7 +896,6 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
-	//throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
