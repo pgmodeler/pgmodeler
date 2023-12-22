@@ -23,7 +23,6 @@
 #include "utilsns.h"
 #include "settings/connectionsconfigwidget.h"
 #include "pgsqlversions.h"
-#include "objectslistmodel.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
@@ -254,12 +253,16 @@ void ModelDatabaseDiffForm::resetForm()
 	ConnectionsConfigWidget::fillConnectionsComboBox(src_connections_cmb, true);
 	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
 	src_connection_lbl->setEnabled(src_connections_cmb->isEnabled());
-	src_database_cmb->setCurrentIndex(0);
+	src_database_cmb->clear();
+	src_database_cmb->setEnabled(false);
+	src_database_lbl->setEnabled(false);
 
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpDiff);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
-	database_cmb->setCurrentIndex(0);
+	database_cmb->clear();
+	database_cmb->setEnabled(false);
+	database_lbl->setEnabled(false);
 
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
@@ -459,14 +462,16 @@ void ModelDatabaseDiffForm::listDatabases()
 
 	try
 	{
-		if(conn_cmb->currentIndex()==conn_cmb->count()-1)
+		if(conn_cmb->currentIndex() == conn_cmb->count()-1)
 		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true);
-			resetForm();
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
+			{
+				resetForm();
+				emit s_connectionsUpdateRequest();
+			}
 		}
 
-		Connection *conn=reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
+		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
 
 		if(conn)
 		{
@@ -1352,7 +1357,7 @@ void ModelDatabaseDiffForm::savePreset()
 
 void ModelDatabaseDiffForm::enablePartialDiff()
 {
-	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() >= 0) &&
+	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
@@ -1366,7 +1371,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
 		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("dbmodel")));
 	}
-	else if(src_database_cmb->currentIndex() >= 0)
+	else if(src_database_cmb->currentIndex() > 0)
 	{
 		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
 		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());

@@ -507,8 +507,8 @@ void DatabaseImportForm::listDatabases()
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+				emit s_connectionsUpdateRequest();
 		}
 
 		Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());

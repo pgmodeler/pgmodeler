@@ -68,7 +68,9 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		//! \brief Fills the passed combobox with all the loaded connections
 		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, Connection::ConnOperation check_def_for=Connection::OpNone);
 		
-		//! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones */
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
 		//! \brief Returns the first connection found which is defined as the default for the specified operation

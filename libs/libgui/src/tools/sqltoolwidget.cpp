@@ -69,6 +69,10 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	//connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
 	//__connect_s0(connections_cmb, &QComboBox::activated, this, SQLToolWidget::connectToServer);
 	connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
+	connect(connections_cmb, &QComboBox::currentIndexChanged, this, [this](int idx) {
+		if(idx == 0)
+			clearDatabases();
+	});
 
 	//connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
 	//__connect_s0(refresh_tb, &QToolButton::clicked, this, SQLToolWidget::connectToServer);
@@ -241,8 +245,8 @@ void SQLToolWidget::connectToServer()
 	{
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+				emit s_connectionsUpdateRequest();
 		}
 		else
 		{

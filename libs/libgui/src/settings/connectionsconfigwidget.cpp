@@ -598,37 +598,32 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 
 	BaseForm parent_form;
 	ConnectionsConfigWidget conn_cfg_wgt;
+	bool conns_changed = false;
 
 	parent_form.setWindowTitle(tr("Edit database connections"));
 	parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
 	try
 	{
-		conn_cfg_wgt.loadConfiguration();
 		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
 		conn_cfg_wgt.layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
 																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
 
-		/* connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
-			conn_cfg_wgt.loadConfiguration();
-		}); */
+		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &conns_changed]() {
+			if(conn_cfg_wgt.isConfigurationChanged())
+			{
+				// Restore the original connection file if the user clicked "Cancel" after changing connections
+				conn_cfg_wgt.loadConfiguration();
+				conns_changed = true;
+			}
+		});
 
-		/* connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt](){
-			__trycatch( conn_cfg_wgt.loadConfiguration(); )
-		}); */
-
-		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, __slot(&conn_cfg_wgt, ConnectionsConfigWidget::loadConfiguration));
-
-		/* connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
-			conn_cfg_wgt.saveConfiguration();
-			parent_form.accept();
-		}); */
-
-		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form](){
+		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form, &conns_changed](){
 			__trycatch(
 				conn_cfg_wgt.saveConfiguration();
 				parent_form.accept();
+				conns_changed = true;
 			)
 		});
 
@@ -637,17 +632,19 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		parent_form.adjustMinimumSize();
 		parent_form.exec();
 
-		conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
+		if(conns_changed)
+			conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
+		else
+			combo->setCurrentIndex(0);
+
+		return parent_form.result() == QDialog::Accepted || conns_changed;
 	}
 	catch(Exception &e)
 	{
 		combo->setCurrentIndex(0);
-		//throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		return false;
 	}
-
-	return parent_form.result() == QDialog::Accepted;
 }
 
 Connection *ConnectionsConfigWidget::getDefaultConnection(Connection::ConnOperation operation)
