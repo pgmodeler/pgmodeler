@@ -5060,7 +5060,6 @@ void ModelWidget::swapObjectsIds()
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
-	bool swapped = false;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
 
@@ -5069,12 +5068,18 @@ void ModelWidget::swapObjectsIds()
 
 	parent_form.setMainWidget(swap_ids_wgt, &SwapObjectsIdsWidget::swapObjectsIds);
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+
 	parent_form.apply_ok_btn->setEnabled(false);
 	parent_form.apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("swapobjs")));
-	parent_form.apply_ok_btn->setText(tr("Swap ids"));
+	parent_form.apply_ok_btn->setText(tr("&Swap ids"));
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&swapped](){
-		swapped = true;
+	parent_form.cancel_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+	parent_form.cancel_btn->setText(tr("&Close"));
+
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [this](){
+		op_list->removeOperations();
+		setModified(true);
+		emit s_objectManipulated();
 	});
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
@@ -5082,13 +5087,6 @@ void ModelWidget::swapObjectsIds()
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
-
-	if(swapped)
-	{
-		op_list->removeOperations();
-		setModified(true);
-		emit s_objectManipulated();
-	}
 }
 
 void ModelWidget::jumpToTable()

@@ -13,6 +13,9 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 																																		 ObjectType::Constraint });
 		setupUi(this);
 
+		sort_column = 0;
+		sort_order = Qt::AscendingOrder;
+
 		selector_idx = 0;
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
@@ -50,6 +53,11 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(index);
+		});
+
+		connect(objects_view->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int index, Qt::SortOrder order){
+			sort_column = index;
+			sort_order = order;
 		});
 
 		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
@@ -99,11 +107,18 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 			objects.push_back(itr.second);
 		}
 	});
-	
+
+	/* Blocking the signals of the horizontal header to avoid calling the slot
+	 * that stores the current sort column/order. The slot must be called only
+	 * the user clicks the header, not when sortByColumn() is called. */
+	objects_view->horizontalHeader()->blockSignals(true);
 	GuiUtilsNs::populateObjectsTable(objects_view, objects, "");
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
 		filterObjects();
+
+	objects_view->sortByColumn(sort_column, sort_order);
+	objects_view->horizontalHeader()->blockSignals(false);
 }
 
 bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
