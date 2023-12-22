@@ -116,7 +116,14 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 
 		if(k_event->key() == Qt::Key_Space)
 			selectItem(index);
-		else if((k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up) && k_event->modifiers() == Qt::ControlModifier)
+		else if((k_event->modifiers() == Qt::ControlModifier ||
+
+						/* Workaround for macOS: On some keyboards, Qt seems to detect that modifiers
+						 * ControlModifier and KeypadModifier are combined even only Command/Control key is held,
+						 * thus, we have to do this extra check */
+						k_event->modifiers() == (Qt::ControlModifier | Qt::KeypadModifier)) &&
+
+						(k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up))
 		{
 			QAbstractItemModel *model = objects_view->model();
 			QModelIndex aux_index;
@@ -212,9 +219,14 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		return;
 
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
-					(src_obj->getObjectType() != dst_obj->getObjectType()))
-		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if((src_obj->getObjectType()==ObjectType::Relationship ||
+			dst_obj->getObjectType()==ObjectType::Relationship) &&
+		 (src_obj->getObjectType() != dst_obj->getObjectType()))
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::InvRelationshipIdSwap),
+											ErrorCode::InvRelationshipIdSwap, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return;
+	}
 
 	try
 	{
@@ -256,7 +268,7 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
