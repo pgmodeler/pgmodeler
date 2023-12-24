@@ -2171,14 +2171,14 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 						}
 						else
 						{
-							object=dbmodel.getObject(name, obj_type);
-							schema=object->getSchema();
+							object = dbmodel.getObject(name, obj_type);
+							schema = object ? object->getSchema() : nullptr;
 						}
 
 						if(object)
-							source=getObjectSource(object, &dbmodel);
+							source = getObjectSource(object, &dbmodel);
 						else
-							source=QString("-- %1 --").arg(tr("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
+							source = QString("-- %1 --").arg(tr("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
 					}
 				}
 

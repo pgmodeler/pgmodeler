@@ -85,7 +85,7 @@ namespace Attributes {
 	ClientEncoding("client-encoding"),
 	CloseChar("close-char"),
 	Code("code"),
-	CodeCompletion("code-completion"),	
+	CodeCompletion("code-completion"),
 	ColIndexes("col-indexes"),
 	ColIsIdentity("col-is-identity"),
 	CollapseMode("collapse-mode"),

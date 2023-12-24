@@ -572,7 +572,9 @@ unsigned Catalog::getObjectsCount(std::vector<ObjectType> obj_types, bool incl_s
 	try
 	{
 		QStringList queries;
-		QString sql;
+		QString sql, extra_info_token = Attributes::ExtraInfo;
+
+		extra_info_token.replace('-', '_');
 
 		if(!incl_sys_objs)
 			extra_attribs[Attributes::LastSysOid] = QString::number(last_sys_oid);
@@ -590,9 +592,10 @@ unsigned Catalog::getObjectsCount(std::vector<ObjectType> obj_types, bool incl_s
 			if(sql.isEmpty())
 				continue;
 
-			sql.remove(sql.indexOf("SELECT"), sql.indexOf("FROM"));
-
-			// Removing the selected colums and instead injecting a count(oid)
+			/* Removing the section of the query where columns are selected until the column extra_info,
+			 * and injecting a count(oid) instruction */
+			//sql.remove(sql.indexOf("SELECT"), sql.indexOf("FROM"));
+			sql.remove(sql.indexOf("SELECT"), sql.indexOf(extra_info_token) + extra_info_token.length());
 			sql.prepend(QString("SELECT count(%1) ").arg(oid_fields[obj_type]));
 			queries.append(sql);
 		}
