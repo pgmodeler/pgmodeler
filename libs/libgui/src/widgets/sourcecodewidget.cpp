@@ -85,11 +85,18 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 void SourceCodeWidget::saveSQLCode()
 {
-	GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
-																tr("Save SQL code as..."),
-																QFileDialog::AnyFile,
-																{ tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
-																QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
+																	 tr("Save SQL code as..."),
+																	 QFileDialog::AnyFile,
+																	 { tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
+																	 QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -177,7 +184,8 @@ void SourceCodeWidget::generateSourceCode(int)
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -215,7 +223,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }

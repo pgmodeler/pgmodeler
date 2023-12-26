@@ -21,6 +21,7 @@
 #include "table.h"
 #include "view.h"
 #include "relationship.h"
+#include "messagebox.h"
 
 ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 {
@@ -42,15 +43,15 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 	col_picker_grid->addWidget(columns_tab, 1, 0, 1, 3);
 
 	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
-		addColumn(idx);
+		__trycatch( addColumn(idx); )
 	});
 
 	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
-		updateColumnsCombo();
+		__trycatch( updateColumnsCombo(); )
 	});
 
 	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
-		updateColumnsCombo();
+		__trycatch( updateColumnsCombo(); )
 	});
 
 	setParentObject(nullptr);
@@ -58,22 +59,29 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 
 void ColumnPickerWidget::setParentObject(BaseObject *p_obj)
 {
-	/* Currently, column picker supports only tables and relatinoships.
+	try
+	{
+		/* Currently, column picker supports only tables and relatinoships.
 	 * Since views can't handle columns yet they will be ignored */
-	if(p_obj &&
-		 p_obj->getObjectType() != ObjectType::Table &&
-		 p_obj->getObjectType() != ObjectType::View &&
-		 p_obj->getObjectType() != ObjectType::Relationship)
-		p_obj = nullptr;
+		if(p_obj &&
+				p_obj->getObjectType() != ObjectType::Table &&
+				p_obj->getObjectType() != ObjectType::View &&
+				p_obj->getObjectType() != ObjectType::Relationship)
+			p_obj = nullptr;
 
-	parent_obj = p_obj;
-	setEnabled(p_obj != nullptr);
+		parent_obj = p_obj;
+		setEnabled(p_obj != nullptr);
 
-	columns_tab->blockSignals(true);
-	columns_tab->removeRows();
-	columns_tab->blockSignals(false);
+		columns_tab->blockSignals(true);
+		columns_tab->removeRows();
+		columns_tab->blockSignals(false);
 
-	updateColumnsCombo();
+		updateColumnsCombo();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void ColumnPickerWidget::setColumns(const std::vector<Column *> &cols)

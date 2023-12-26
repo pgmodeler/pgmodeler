@@ -373,7 +373,8 @@ class __libgui ModelWidget: public QWidget {
 		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
+		template<class WidgetClass>
+		int openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
@@ -517,7 +518,7 @@ class __libgui ModelWidget: public QWidget {
 		void removeObjects(bool cascade = false);
 
 		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-		void removeObjectsCascade();
+		//void removeObjectsCascade();
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects();

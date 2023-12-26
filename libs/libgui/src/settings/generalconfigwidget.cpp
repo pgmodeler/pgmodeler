@@ -148,7 +148,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
-	connect(clear_sql_history_tb, &QToolButton::clicked, [](){
+	connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
 		SQLExecutionWidget::destroySQLHistory();
 	});
 

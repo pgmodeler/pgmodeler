@@ -107,16 +107,21 @@ void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 	this->show("", msg,  icon_type, buttons);
 }
 
-void Messagebox::error(Exception e)
-{
-	Messagebox msgbox;
-	msgbox.show(e);
-}
-
 void Messagebox::error(const QString &msg)
 {
 	Messagebox msgbox;
 	msgbox.show(msg, ErrorIcon);
+}
+
+void Messagebox::error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e)
+{
+	Messagebox msgbox;
+	msgbox.show(Exception(msg, error_code, method, file, line, e));
+}
+
+void Messagebox::error(Exception &e, const QString &method, const QString &file, int line)
+{
+	error(e.getErrorMessage(), e.getErrorCode(), method, file, line, &e);
 }
 
 void Messagebox::alert(const QString &msg)

@@ -13,6 +13,9 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 																																		 ObjectType::Constraint });
 		setupUi(this);
 
+		sort_column = 0;
+		sort_order = Qt::AscendingOrder;
+
 		selector_idx = 0;
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
@@ -35,13 +38,14 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		filter_wgt->setVisible(false);
 
 		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
+
 		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
 		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
 		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
 		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
-			BaseObject *obj=src_object_sel->getSelectedObject();
+			BaseObject *obj = src_object_sel->getSelectedObject();
 			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
 			dst_object_sel->setSelectedObject(obj);
 		});
@@ -49,6 +53,11 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 		connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
 			if(QApplication::mouseButtons() == Qt::LeftButton)
 				selectItem(index);
+		});
+
+		connect(objects_view->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int index, Qt::SortOrder order){
+			sort_column = index;
+			sort_order = order;
 		});
 
 		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
@@ -98,11 +107,18 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 			objects.push_back(itr.second);
 		}
 	});
-	
+
+	/* Blocking the signals of the horizontal header to avoid calling the slot
+	 * that stores the current sort column/order. The slot must be called only
+	 * the user clicks the header, not when sortByColumn() is called. */
+	objects_view->horizontalHeader()->blockSignals(true);
 	GuiUtilsNs::populateObjectsTable(objects_view, objects, "");
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
 		filterObjects();
+
+	objects_view->sortByColumn(sort_column, sort_order);
+	objects_view->horizontalHeader()->blockSignals(false);
 }
 
 bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
@@ -115,7 +131,14 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 
 		if(k_event->key() == Qt::Key_Space)
 			selectItem(index);
-		else if((k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up) && k_event->modifiers() == Qt::ControlModifier)
+		else if((k_event->modifiers() == Qt::ControlModifier ||
+
+						/* Workaround for macOS: On some keyboards, Qt seems to detect that modifiers
+						 * ControlModifier and KeypadModifier are combined even only Command/Control key is held,
+						 * thus, we have to do this extra check */
+						k_event->modifiers() == (Qt::ControlModifier | Qt::KeypadModifier)) &&
+
+						(k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up))
 		{
 			QAbstractItemModel *model = objects_view->model();
 			QModelIndex aux_index;
@@ -211,9 +234,14 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		return;
 
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
-					(src_obj->getObjectType() != dst_obj->getObjectType()))
-		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if((src_obj->getObjectType()==ObjectType::Relationship ||
+			dst_obj->getObjectType()==ObjectType::Relationship) &&
+		 (src_obj->getObjectType() != dst_obj->getObjectType()))
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::InvRelationshipIdSwap),
+											ErrorCode::InvRelationshipIdSwap, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return;
+	}
 
 	try
 	{
@@ -255,7 +283,7 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

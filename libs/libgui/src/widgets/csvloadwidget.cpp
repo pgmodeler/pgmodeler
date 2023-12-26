@@ -21,6 +21,7 @@
 #include "exception.h"
 #include <QTextStream>
 #include "csvparser.h"
+#include "messagebox.h"
 
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
@@ -89,7 +90,7 @@ void CsvLoadWidget::loadCsvFile()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

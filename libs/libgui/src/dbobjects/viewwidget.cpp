@@ -86,11 +86,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			attributes_tbw->widget(tab_id)->setLayout(grid);
 			tab_id++;
 
-			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &ViewWidget::removeObjects);
-			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &ViewWidget::removeObject);
-			connect(tab, &ObjectsTableWidget::s_rowAdded, this, &ViewWidget::handleObject);
-			connect(tab, &ObjectsTableWidget::s_rowEdited, this, &ViewWidget::handleObject);
-			connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &ViewWidget::duplicateObject);
+			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
+			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
+			connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
+			connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
+			connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);

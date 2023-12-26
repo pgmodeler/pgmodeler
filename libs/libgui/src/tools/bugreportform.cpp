@@ -39,6 +39,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryPath());
 
 	output_lt->addWidget(output_sel);
+
 	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
 	connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
 	connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
@@ -138,7 +139,6 @@ void BugReportForm::attachModel()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

@@ -184,8 +184,7 @@ void ChangelogWidget::inspectChangelog()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	data_tbw->setWindowTitle("Changelog entries");

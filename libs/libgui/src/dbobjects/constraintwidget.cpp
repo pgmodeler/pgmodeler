@@ -69,9 +69,10 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
 		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
-		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ConstraintWidget::selectReferencedTable);
-		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, &ConstraintWidget::selectReferencedTable);
 		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
+
+		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, __slot(this, ConstraintWidget::selectReferencedTable));
+		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, __slot(this, ConstraintWidget::selectReferencedTable));
 
 		selectConstraintType();
 		configureTabOrder();
@@ -259,9 +260,10 @@ void ConstraintWidget::applyConfiguration()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
+		//Messagebox msg_box;
 		cancelConfiguration();
-		msg_box.show(e);
+		//msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

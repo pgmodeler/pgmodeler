@@ -58,8 +58,8 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 	use_columns_chk->setVisible(conf_view_refs);
 
 	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
-			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
-			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
+		sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
+		sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
 	connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferencesWidget::handleReference);
@@ -114,12 +114,12 @@ std::vector<Reference> ReferencesWidget::getObjectReferences()
 void ReferencesWidget::handleReference(int row)
 {
 	showReferenceData(row,
-													object_sel->getSelectedObject(),
-													ref_name_edt->text().remove(AttrDelimRegexp),
-													ref_alias_edt->text().remove(AttrDelimRegexp),
-													use_signature_chk->isChecked(),
-													format_name_chk->isChecked(),
-													use_columns_chk->isChecked());
+										object_sel->getSelectedObject(),
+										ref_name_edt->text().remove(AttrDelimRegexp),
+										ref_alias_edt->text().remove(AttrDelimRegexp),
+										use_signature_chk->isChecked(),
+										format_name_chk->isChecked(),
+										use_columns_chk->isChecked());
 	clearReferenceForm();
 }
 

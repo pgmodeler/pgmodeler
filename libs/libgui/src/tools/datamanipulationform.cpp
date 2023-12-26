@@ -61,7 +61,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	connect(act, &QAction::triggered,	this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
-		paste_tb->setEnabled(true);
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
 	act = copy_menu.addAction(tr("Copy as CSV"));
@@ -70,7 +70,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, true);
-		paste_tb->setEnabled(true);
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
 	act = save_menu.menuAction();
@@ -203,9 +203,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(hide_views_chk, &QCheckBox::toggled, this, &DataManipulationForm::listTables);
 	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
 	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::disableControlButtons);
-	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::listColumns);
-	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataManipulationForm::retrieveData);
-	connect(refresh_tb, &QToolButton::clicked, this, &DataManipulationForm::retrieveData);
+
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, __slot(this, DataManipulationForm::listColumns));
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, __slot(this, DataManipulationForm::retrieveData));
+	connect(refresh_tb, &QToolButton::clicked, this, __slot(this, DataManipulationForm::retrieveData));
+
 	connect(add_ord_col_tb, &QToolButton::clicked, this, &DataManipulationForm::addSortColumnToList);
 	connect(ord_columns_lst, &QListWidget::itemDoubleClicked, this, &DataManipulationForm::removeSortColumnFromList);
 	connect(ord_columns_lst, &QListWidget::itemPressed, this, &DataManipulationForm::changeOrderMode);
@@ -300,7 +302,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -327,14 +329,21 @@ void DataManipulationForm::clearItemsText()
 
 void DataManipulationForm::sortResults(int column, Qt::SortOrder order)
 {
-	clearSortColumnList();
-	ord_column_cmb->setCurrentIndex(column);
-	asc_rb->setChecked(order == Qt::SortOrder::AscendingOrder);
-	desc_rb->setChecked(order == Qt::SortOrder::DescendingOrder);
-	addSortColumnToList();
-	retrieveData();
-	results_tbw->horizontalHeader()->setSortIndicator(column, order);
-	results_tbw->horizontalHeader()->setSortIndicatorShown(true);
+	try
+	{
+		clearSortColumnList();
+		ord_column_cmb->setCurrentIndex(column);
+		asc_rb->setChecked(order == Qt::SortOrder::AscendingOrder);
+		desc_rb->setChecked(order == Qt::SortOrder::DescendingOrder);
+		addSortColumnToList();
+		retrieveData();
+		results_tbw->horizontalHeader()->setSortIndicator(column, order);
+		results_tbw->horizontalHeader()->setSortIndicatorShown(true);
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void DataManipulationForm::selectColumn(int column, Qt::SortOrder order)
@@ -355,23 +364,30 @@ void DataManipulationForm::selectColumn(int column, Qt::SortOrder order)
 
 void DataManipulationForm::listTables()
 {
-	table_cmb->clear();
-	csv_load_tb->setChecked(false);
-
-	if(schema_cmb->currentIndex() > 0)
+	try
 	{
-		std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
+		table_cmb->clear();
+		csv_load_tb->setChecked(false);
 
-		if(!hide_views_chk->isChecked())
-			types.push_back(ObjectType::View);
+		if(schema_cmb->currentIndex() > 0)
+		{
+			std::vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
 
-		listObjects(table_cmb, types, schema_cmb->currentText());
+			if(!hide_views_chk->isChecked())
+				types.push_back(ObjectType::View);
+
+			listObjects(table_cmb, types, schema_cmb->currentText());
+		}
+
+		table_lbl->setEnabled(table_cmb->count() > 0);
+		table_cmb->setEnabled(table_cmb->count() > 0);
+		result_info_wgt->setVisible(false);
+		setWindowTitle(tmpl_window_title.arg(""));
 	}
-
-	table_lbl->setEnabled(table_cmb->count() > 0);
-	table_cmb->setEnabled(table_cmb->count() > 0);
-	result_info_wgt->setVisible(false);
-	setWindowTitle(tmpl_window_title.arg(""));
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void DataManipulationForm::listColumns()
@@ -410,7 +426,6 @@ void DataManipulationForm::listColumns()
 		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
-
 }
 
 void DataManipulationForm::retrieveData()
@@ -678,95 +693,103 @@ void DataManipulationForm::swapColumns()
 
 void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_csv_parsing)
 {
-	QList<QStringList> rows;
-	QStringList csv_cols;
-	int row_id = 0, col_id = 0;
-	CsvDocument csv_doc;
-
-	qApp->setOverrideCursor(Qt::WaitCursor);
-	results_tbw->setUpdatesEnabled(false);
-
-	if(load_from_clipboard)
+	try
 	{
-		if(qApp->clipboard()->text().isEmpty())
-			return;
+		QList<QStringList> rows;
+		QStringList csv_cols;
+		int row_id = 0, col_id = 0;
+		CsvDocument csv_doc;
 
-		QString csv_pattern = "(%1)(.)*(%1)(%2)";
-		QChar separator = QChar::Tabulation, delimiter;
-		QString text = qApp->clipboard()->text();
+		qApp->setOverrideCursor(Qt::WaitCursor);
+		results_tbw->setUpdatesEnabled(false);
 
-		if(force_csv_parsing)
+		if(load_from_clipboard)
 		{
-			if(text.contains(QRegularExpression(csv_pattern.arg("\"").arg(CsvDocument::Separator))))
-				delimiter = '\"';
-			else if(text.contains(QRegularExpression(csv_pattern.arg("'").arg(CsvDocument::Separator))))
-				delimiter='\'';
+			if(qApp->clipboard()->text().isEmpty())
+				return;
 
-			// If one of the patterns matched the buffer we configure the right delimiter for csv buffer
-			if(!delimiter.isNull())
-				separator = CsvDocument::Separator;
+			QString csv_pattern = "(%1)(.)*(%1)(%2)";
+			QChar separator = QChar::Tabulation, delimiter;
+			QString text = qApp->clipboard()->text();
+
+			if(force_csv_parsing)
+			{
+				if(text.contains(QRegularExpression(csv_pattern.arg("\"").arg(CsvDocument::Separator))))
+					delimiter = '\"';
+				else if(text.contains(QRegularExpression(csv_pattern.arg("'").arg(CsvDocument::Separator))))
+					delimiter='\'';
+
+							 // If one of the patterns matched the buffer we configure the right delimiter for csv buffer
+				if(!delimiter.isNull())
+					separator = CsvDocument::Separator;
+			}
+
+			csv_doc = CsvLoadWidget::loadCsvFromBuffer(text, separator, delimiter, false);
+		}
+		else
+		{
+			csv_doc = csv_load_wgt->getCsvDocument();
+			csv_cols = csv_doc.getColumnNames();
 		}
 
-		csv_doc = CsvLoadWidget::loadCsvFromBuffer(text, separator, delimiter, false);
-	}
-	else
-	{
-		csv_doc = csv_load_wgt->getCsvDocument();
-		csv_cols = csv_doc.getColumnNames();
-	}
-
-	/* If there is only one empty row in the grid, this one will
-	be removed prior the csv loading */
-	if(results_tbw->rowCount()==1)
-	{
-		bool is_empty=true;
-
-		for(int col=0; col < results_tbw->columnCount(); col++)
+		/* If there is only one empty row in the grid, this one will
+		be removed prior the csv loading */
+		if(results_tbw->rowCount()==1)
 		{
-			if(!results_tbw->item(0, col)->text().isEmpty())
+			bool is_empty=true;
+
+			for(int col=0; col < results_tbw->columnCount(); col++)
 			{
-				is_empty=false;
-				break;
+				if(!results_tbw->item(0, col)->text().isEmpty())
+				{
+					is_empty=false;
+					break;
+				}
+			}
+
+			if(is_empty)
+				removeNewRows({0});
+		}
+
+		for(int csv_row = 0; csv_row < csv_doc.getRowCount(); csv_row++)
+		{
+			addRow();
+			row_id = results_tbw->rowCount() - 1;
+
+			for(int csv_col = 0; csv_col < csv_doc.getColumnCount(); csv_col++)
+			{
+				if(csv_col > csv_doc.getColumnCount())
+					break;
+
+				if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
+						(load_from_clipboard && !csv_cols.isEmpty()))
+				{
+					//First we need to get the index of the column by its name
+					col_id = col_names.indexOf(csv_cols[csv_col]);
+
+								 //If a matching column is not found we add the value at the current position
+					if(col_id < 0)
+						col_id = csv_col;
+
+					if(col_id >= 0 && col_id < results_tbw->columnCount())
+						results_tbw->item(row_id, col_id)->setText(csv_doc.getValue(csv_row, csv_col));
+				}
+				else if(csv_col < results_tbw->columnCount())
+				{
+					//Insert the value to the cell in order of appearance
+					results_tbw->item(row_id, csv_col)->setText(csv_doc.getValue(csv_row, csv_col));
+				}
 			}
 		}
 
-		if(is_empty)
-			removeNewRows({0});
+		results_tbw->setUpdatesEnabled(true);
+		qApp->restoreOverrideCursor();
 	}
-
-	for(int csv_row = 0; csv_row < csv_doc.getRowCount(); csv_row++)
+	catch(Exception &e)
 	{
-		addRow();
-		row_id = results_tbw->rowCount() - 1;
-
-		for(int csv_col = 0; csv_col < csv_doc.getColumnCount(); csv_col++)
-		{
-			if(csv_col > csv_doc.getColumnCount())
-				break;
-
-			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
-				 (load_from_clipboard && !csv_cols.isEmpty()))
-			{
-				//First we need to get the index of the column by its name
-				col_id = col_names.indexOf(csv_cols[csv_col]);
-
-				//If a matching column is not found we add the value at the current position
-				if(col_id < 0)
-					col_id = csv_col;
-
-				if(col_id >= 0 && col_id < results_tbw->columnCount())
-					results_tbw->item(row_id, col_id)->setText(csv_doc.getValue(csv_row, csv_col));
-			}
-			else if(csv_col < results_tbw->columnCount())
-			{
-				//Insert the value to the cell in order of appearance
-				results_tbw->item(row_id, csv_col)->setText(csv_doc.getValue(csv_row, csv_col));
-			}
-		}
+		qApp->restoreOverrideCursor();
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
-
-	results_tbw->setUpdatesEnabled(true);
-	qApp->restoreOverrideCursor();
 }
 
 void DataManipulationForm::removeSortColumnFromList()
@@ -1504,9 +1527,9 @@ void DataManipulationForm::saveChanges()
 		results_tbw->selectRow(row);
 		results_tbw->scrollToItem(results_tbw->item(row, 0));
 
-		throw Exception(Exception::getErrorMessage(ErrorCode::RowDataNotManipulated)
-						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
-						ErrorCode::RowDataNotManipulated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::RowDataNotManipulated)
+											.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
+											ErrorCode::RowDataNotManipulated, __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 #endif
 }
@@ -1729,8 +1752,7 @@ void DataManipulationForm::truncateTable()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   }
 }
 
@@ -1804,13 +1826,20 @@ void DataManipulationForm::showPopupMenu()
 
 void DataManipulationForm::saveSelectedItems(bool csv_format)
 {
-	QByteArray buffer = csv_format ?
-				SQLExecutionWidget::generateCSVBuffer(results_tbw) :
-				SQLExecutionWidget::generateTextBuffer(results_tbw);
+	try
+	{
+		QByteArray buffer = csv_format ?
+														SQLExecutionWidget::generateCSVBuffer(results_tbw) :
+														SQLExecutionWidget::generateTextBuffer(results_tbw);
 
-	GuiUtilsNs::selectAndSaveFile(buffer,
-																tr("Save file"),
-																QFileDialog::AnyFile,
-																{ csv_format ? tr("CSV file (*.csv)") :tr("Text file (*.txt)"),	tr("All files (*.*)") },
-																{}, csv_format ? "csv" : "txt");
+		GuiUtilsNs::selectAndSaveFile(buffer,
+																	 tr("Save file"),
+																	 QFileDialog::AnyFile,
+																	 { csv_format ? tr("CSV file (*.csv)") :tr("Text file (*.txt)"),	tr("All files (*.*)") },
+																	 {}, csv_format ? "csv" : "txt");
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }

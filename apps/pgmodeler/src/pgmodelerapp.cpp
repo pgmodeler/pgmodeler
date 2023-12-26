@@ -35,8 +35,9 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	//Changing the current working dir to the executable's directory in
@@ -97,14 +98,13 @@ bool PgModelerApp::notify(QObject *receiver, QEvent *event)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		return false;
 	}
 	catch(...)
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
+		Messagebox::error(tr("Unknown exception caught!"), ErrorCode::Custom,
+											__PRETTY_FUNCTION__, __FILE__, __LINE__);
 		return false;
 	}
 }

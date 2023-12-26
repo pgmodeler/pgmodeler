@@ -180,6 +180,7 @@ src/dbobjects/procedurewidget.h \
 src/dbobjects/tagwidget.h \
 src/dbobjects/elementstablewidget.h \
 src/dbobjects/columnpickerwidget.h \
+	src/qtconnectmacros.h \
 src/settings/appearanceconfigwidget.h \
 src/settings/configurationform.h \
 src/settings/generalconfigwidget.h \

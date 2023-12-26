@@ -122,7 +122,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void loadFile();
 		void saveFile();
 		void editSource();
-		void updateSource(int exit_code);
+		void updateSource(int exit_code, QProcess::ExitStatus);
 		void handleProcessStart();
 		void handleProcessError();
 		void enableEditor();

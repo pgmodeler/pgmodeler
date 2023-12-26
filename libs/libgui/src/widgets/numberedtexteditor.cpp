@@ -109,7 +109,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
-		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
+
+		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
 		word_wrap_btn = new QToolButton(top_widget);
 		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
@@ -121,6 +122,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		word_wrap_btn->setDisabled(true);
 		hbox->addWidget(word_wrap_btn);
+
 		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 		});
@@ -149,7 +151,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 		top_widget->setLayout(hbox);
 		top_widget->adjustSize();
 
-		connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
+		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
 		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}
@@ -416,10 +418,17 @@ void NumberedTextEditor::identSelection(bool ident_right)
 void NumberedTextEditor::loadFile()
 {
 	QByteArray buff;
-	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
-																							tr("Load file"),
-																							QFileDialog::ExistingFile,
-																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	bool loaded = false;
+
+	try
+	{
+		loaded = GuiUtilsNs::selectAndLoadFile(buff,	tr("Load file"), QFileDialog::ExistingFile,
+																					{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(loaded)
 	{
@@ -431,11 +440,17 @@ void NumberedTextEditor::loadFile()
 
 void NumberedTextEditor::saveFile()
 {
-	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
-																tr("Save file"),
-																QFileDialog::AnyFile,
-																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
-																{}, "sql");
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(), tr("Save file"),
+																	QFileDialog::AnyFile,
+																	{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
+																	{}, "sql");
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void NumberedTextEditor::editSource()
@@ -488,7 +503,7 @@ void NumberedTextEditor::enableEditor()
 	this->setReadOnly(false);
 }
 
-void NumberedTextEditor::updateSource(int exit_code)
+void NumberedTextEditor::updateSource(int exit_code, QProcess::ExitStatus)
 {
 	if(exit_code != 0)
 		handleProcessError();
@@ -525,12 +540,11 @@ void NumberedTextEditor::handleProcessStart()
 
 void NumberedTextEditor::handleProcessError()
 {
-	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	Messagebox::error(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
-																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
+																						.arg(errors.join("\n\n"))));
 
 	enableEditor();
 }

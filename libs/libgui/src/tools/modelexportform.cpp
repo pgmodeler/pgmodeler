@@ -275,10 +275,8 @@ void ModelExportForm::exportModel()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-
 		finishExport(tr("Exporting process aborted!"));
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -310,7 +308,7 @@ void ModelExportForm::captureThreadError(Exception e)
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 	finishExport(tr("Exporting process aborted!"));
 
-	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
 void ModelExportForm::cancelExport()
@@ -379,18 +377,10 @@ void ModelExportForm::closeEvent(QCloseEvent *event)
 
 void ModelExportForm::editConnections()
 {
-	try
+	if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 	{
-		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
-		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-			emit s_connectionsUpdateRequest();
-		}
-	}
-	catch(Exception &e)
-	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
+		emit s_connectionsUpdateRequest();
 	}
 
 	enableExport();

@@ -500,31 +500,12 @@ int OperationList::registerObject(BaseObject *object, Operation::OperType op_typ
 	}
 }
 
-void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type)
+const Operation *OperationList::getOperation(unsigned oper_idx)
 {
-	Operation *operation=nullptr;
-	BaseObject *pool_obj=nullptr;
-
 	if(oper_idx >= operations.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	operation=operations[oper_idx];
-	oper_type=operation->getOperationType();
-
-	if(operation->isOperationValid())
-	{
-		pool_obj=operation->getPoolObject();
-		obj_type=pool_obj->getObjectType();
-		obj_name=pool_obj->getName(true);
-
-		if(TableObject::isTableObject(obj_type))
-			obj_name=operation->getParentObject()->getName(true) + "." + obj_name;
-	}
-	else
-	{
-		obj_type=ObjectType::BaseObject;
-		obj_name=tr("(invalid object)");
-	}
+	return operations[oper_idx];
 }
 
 unsigned OperationList::getChainSize()
@@ -575,10 +556,6 @@ void OperationList::undoOperation()
 		Operation *operation=nullptr;
 		bool chain_active=false;
 		Exception error;
-		//unsigned chain_size=0, pos=0;
-
-		//if(!this->signalsBlocked())
-		//chain_size=getChainSize();
 
 		do
 		{

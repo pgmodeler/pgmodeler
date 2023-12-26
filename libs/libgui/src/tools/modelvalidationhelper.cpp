@@ -61,7 +61,7 @@ void ModelValidationHelper::generateValidationInfo(ValidationInfo::ValType val_t
 	}
 }
 
-void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
+void ModelValidationHelper::resolveConflict(ValidationInfo &info)
 {
 	try
 	{
@@ -635,7 +635,7 @@ void ModelValidationHelper::validateModel()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -660,8 +660,17 @@ void ModelValidationHelper::applyFixes()
 				if(!found_broken_rels)
 					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenRelConfig);
 
-				if(!valid_canceled)
-					resolveConflict(val_infos[i]);
+				try
+				{
+					if(!valid_canceled)
+						resolveConflict(val_infos[i]);
+				}
+				catch(Exception &e)
+				{
+					emit s_fixFailed(e);
+					cancelValidation();
+					return;
+				}
 			}
 
 			emit s_fixApplied();

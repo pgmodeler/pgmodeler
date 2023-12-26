@@ -80,13 +80,15 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	});
 
 	connect(paste_tb, &QToolButton::clicked, this, [this](){
-		CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
-																													CsvDocument::Separator,
-																													CsvDocument::TextDelimiter,
-																													true);
-		populateDataGrid(csv_doc);
-		qApp->clipboard()->clear();
-		paste_tb->setEnabled(false);
+		__trycatch(
+			CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
+																														CsvDocument::Separator,
+																														CsvDocument::TextDelimiter,
+																														true);
+			populateDataGrid(csv_doc);
+			qApp->clipboard()->clear();
+			paste_tb->setEnabled(false);
+		)
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
@@ -95,7 +97,7 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(copy_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
-		paste_tb->setEnabled(true);
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
 	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
@@ -385,7 +387,8 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 				}
 				catch(Exception &e)
 				{
-					msgbox.show(e);
+					//msgbox.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}

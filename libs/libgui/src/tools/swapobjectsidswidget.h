@@ -34,7 +34,14 @@ class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWi
 		Q_OBJECT
 
 		static const QString IdLabel;
+
 		unsigned selector_idx = 0;
+
+		//! \brief The sort mode (asc|desc) applied to a column
+		Qt::SortOrder sort_order;
+
+		//! \brief The current column in which the sort is applied
+		int sort_column;
 
 		//! \brief Reference database model
 		DatabaseModel *model;

@@ -131,12 +131,12 @@ void ModelNavigationWidget::removeModel(int idx)
 
 void ModelNavigationWidget::setCurrentModel()
 {
-    models_cmb->setToolTip(models_cmb->currentData().toString());
+	models_cmb->setToolTip(models_cmb->currentData().toString());
 
-    enableNavigationButtons();
+	enableNavigationButtons();
 
-    if(models_cmb->currentIndex() >= 0)
-      emit s_currentModelChanged(models_cmb->currentIndex());
+	if(models_cmb->currentIndex() >= 0)
+		emit s_currentModelChanged(models_cmb->currentIndex());
 }
 
 void ModelNavigationWidget::enableNavigationButtons()
