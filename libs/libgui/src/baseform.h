@@ -81,11 +81,9 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 			resizeForm(widget);
 			setButtonConfiguration(Messagebox::OkCancelButtons);
 
-			//__connect_s0(cancel_btn, &QPushButton::clicked, widget, Class::cancelConfiguration);
 			connect(cancel_btn, &QPushButton::clicked, widget, __slot(widget, Class::cancelConfiguration));
 			connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
 
-			//__connect_s0(apply_ok_btn, &QPushButton::clicked, widget, Class::applyConfiguration);
 			connect(apply_ok_btn, &QPushButton::clicked, widget, __slot(widget, Class::applyConfiguration));
 			connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 		}

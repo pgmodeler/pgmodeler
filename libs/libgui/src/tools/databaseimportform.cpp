@@ -99,9 +99,6 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		db_objects_tw->resizeColumnToContents(0);
 	});
 
-	/* connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
-		listObjects();
-	}); */
 	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		__trycatch( listObjects(); )
 	});
