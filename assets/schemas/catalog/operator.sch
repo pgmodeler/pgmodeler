@@ -9,21 +9,37 @@
 
 	[SELECT op.oid, oprname || '(' ||
 
-	CASE
-	WHEN oprleft::char = '0' THEN 'NONE'
-	ELSE oprleft::regtype::varchar
-	END
+		CASE
+		WHEN oprleft::char = '0' THEN 'NONE'
+		ELSE 
+			(SELECT 
+				CASE _ns.nspname
+				WHEN 'pg_catalog' THEN ''
+				ELSE _ns.nspname || '.' 
+				END || tp.typname 
+			 FROM pg_type AS tp
+			 LEFT JOIN pg_namespace AS _ns ON _ns.oid = tp.typnamespace
+	 		 WHERE tp.oid = op.oprleft)
+		END
 
-	|| ',' ||
+		|| ',' ||
 
-	CASE
-	WHEN oprright::char = '0' THEN 'NONE'
-	ELSE oprright::regtype::varchar
-	END
+		CASE
+		WHEN oprright::char = '0' THEN 'NONE'
+		ELSE
+			(SELECT 
+				CASE _ns.nspname
+				WHEN 'pg_catalog' THEN ''
+				ELSE _ns.nspname || '.' 
+				END || tp.typname 
+			 FROM pg_type AS tp
+			 LEFT JOIN pg_namespace AS _ns ON _ns.oid = tp.typnamespace
+	 		 WHERE tp.oid = op.oprright)
+		END
 
-	|| ')' AS name,
+		|| ')' AS name,
 
-	ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
+		ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 
 	FROM pg_operator AS op
 	LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
