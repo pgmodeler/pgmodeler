@@ -32,9 +32,9 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(cancel_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
 
 	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
-			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
-			resize(baseSize().width() * (checked ? 1.25 : 1),
-						 baseSize().height() * (checked ? 3 : 1));
+		objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
+		resize(baseSize().width() * (checked ? 1.25 : 1),
+					 baseSize().height() * (checked ? 3 : 1));
 	});
 }
 
@@ -71,13 +71,18 @@ void Messagebox::setCustomOptionText(const QString &text)
 	custom_option_chk->setText(text);
 }
 
+void Messagebox::setCustomOptionTooltip(const QString &tooltip)
+{
+	custom_option_chk->setToolTip(tooltip);
+}
+
 bool Messagebox::isCustomOptionChecked()
 {
 	return custom_option_chk->isChecked();
 }
 
 void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
-						const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+											const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString fmt_msg, title;
 
@@ -102,8 +107,37 @@ void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 	this->show("", msg,  icon_type, buttons);
 }
 
+void Messagebox::error(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, ErrorIcon);
+}
+
+void Messagebox::error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e)
+{
+	Messagebox msgbox;
+	msgbox.show(Exception(msg, error_code, method, file, line, e));
+}
+
+void Messagebox::error(Exception &e, const QString &method, const QString &file, int line)
+{
+	error(e.getErrorMessage(), e.getErrorCode(), method, file, line, &e);
+}
+
+void Messagebox::alert(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, AlertIcon);
+}
+
+void Messagebox::info(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, InfoIcon);
+}
+
 void Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
-						const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+											const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
 	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
@@ -148,47 +182,47 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	{
 		switch(icon_type)
 		{
-			case ErrorIcon:
-				aux_title=tr("Error");
+		case ErrorIcon:
+			aux_title=tr("Error");
 			break;
 
-			case AlertIcon:
-				aux_title=tr("Alert");
+		case AlertIcon:
+			aux_title=tr("Alert");
 			break;
 
-			case InfoIcon:
-				aux_title=tr("Information");
+		case InfoIcon:
+			aux_title=tr("Information");
 			break;
 
-			case ConfirmIcon:
-				aux_title=tr("Confirmation");
+		case ConfirmIcon:
+			aux_title=tr("Confirmation");
 			break;
 
-			default:
+		default:
 			break;
 		}
 	}
 
 	switch(icon_type)
 	{
-		case ErrorIcon:
-			icon_name="error";
+	case ErrorIcon:
+		icon_name="error";
 		break;
 
-		case InfoIcon:
-			icon_name="info";
+	case InfoIcon:
+		icon_name="info";
 		break;
 
-		case AlertIcon:
-			icon_name="alert";
+	case AlertIcon:
+		icon_name="alert";
 		break;
 
-		case ConfirmIcon:
-			icon_name="question";
+	case ConfirmIcon:
+		icon_name="question";
 		break;
 
-		default:
-			icon_name="";
+	default:
+		icon_name="";
 		break;
 	}
 
@@ -214,7 +248,7 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																		QRegularExpression::CaseInsensitiveOption),
+																											 QRegularExpression::CaseInsensitiveOption),
 																		"\n").count('\n');
 
 	if(ln_cnt > 0)

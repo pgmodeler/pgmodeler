@@ -82,10 +82,10 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		func_config_twg->widget(4)->setLayout(grid);
 
-		connect(language_cmb, &QComboBox::currentIndexChanged, this, &BaseFunctionWidget::selectLanguage);
+		connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
 
 		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
-			transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0);
+			__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
 		});
 
 		setRequiredField(language_lbl);
@@ -138,27 +138,34 @@ void BaseFunctionWidget::showParameterForm(ObjectsTableWidget *params_tab, bool 
 {
 	if(!params_tab) return;
 
-	Parameter aux_param;
-	int row_idx;
-	ParameterWidget *parameter_wgt = new ParameterWidget;
-	BaseForm parent_form;
+	try
+	{
+		Parameter aux_param;
+		int row_idx;
+		ParameterWidget *parameter_wgt = new ParameterWidget;
+		BaseForm parent_form;
 
-	parameter_wgt->param_in_chk->setEnabled(enable_param_modes);
-	parameter_wgt->param_out_chk->setEnabled(enable_param_modes);
-	parameter_wgt->param_variadic_chk->setEnabled(enable_param_modes);
-	parameter_wgt->default_value_edt->setEnabled(enable_param_modes);
+		parameter_wgt->param_in_chk->setEnabled(enable_param_modes);
+		parameter_wgt->param_out_chk->setEnabled(enable_param_modes);
+		parameter_wgt->param_variadic_chk->setEnabled(enable_param_modes);
+		parameter_wgt->default_value_edt->setEnabled(enable_param_modes);
 
-	row_idx=params_tab->getSelectedRow();
+		row_idx=params_tab->getSelectedRow();
 
-	if(row_idx >= 0 && !params_tab->getCellText(row_idx, 0).isEmpty())
-		aux_param = getParameter(params_tab, row_idx, enable_param_modes);
+		if(row_idx >= 0 && !params_tab->getCellText(row_idx, 0).isEmpty())
+			aux_param = getParameter(params_tab, row_idx, enable_param_modes);
 
-	parameter_wgt->setAttributes(aux_param, model);
-	parent_form.setMainWidget(parameter_wgt);
-	parent_form.exec();
+		parameter_wgt->setAttributes(aux_param, model);
+		parent_form.setMainWidget(parameter_wgt);
+		parent_form.exec();
 
-	aux_param = parameter_wgt->getParameter();
-	handleParameter(params_tab, aux_param, parent_form.result(), enable_param_modes);
+		aux_param = parameter_wgt->getParameter();
+		handleParameter(params_tab, aux_param, parent_form.result(), enable_param_modes);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes)

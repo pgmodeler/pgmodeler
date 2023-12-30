@@ -298,7 +298,7 @@ Exception::Exception()
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -307,15 +307,15 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
-						 error_code, method, file, line, extra_info);
+										 error_code, method, file, line, extra_info);
 
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	configureException(msg,error_code, method, file, line, extra_info);
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
@@ -326,13 +326,13 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
-						 error_code, method, file, line, extra_info);
+										 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
 	while(itr!=itr_end)
 	{
-		addException((*itr));
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -347,7 +347,7 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	itr_end=exceptions.end();
 	while(itr!=itr_end)
 	{
-		addException((*itr));
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -360,7 +360,7 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 
 	while(itr!=exceptions.end())
 	{
-		addException(*itr);
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -418,32 +418,27 @@ QString Exception::getExtraInfo()
 	return extra_info;
 }
 
-void Exception::addException(Exception &exception)
+void Exception::addException(Exception *exception)
 {
-	std::vector<Exception>::iterator itr, itr_end;
+	if(!exception)
+		return;
 
-	itr=exception.exceptions.begin();
-	itr_end=exception.exceptions.end();
-
-	for(auto &itr : exception.exceptions)
+	for(auto &ex : exception->exceptions)
 	{
-		this->exceptions.push_back(Exception(itr.error_msg,itr.error_code,
-																				 itr.method, itr.file, itr.line, nullptr,
-																				 itr.extra_info));
+		this->exceptions.push_back(Exception(ex.error_msg,ex.error_code,
+																				 ex.method, ex.file, ex.line, nullptr,
+																				 ex.extra_info));
 	}
 
-	exception.exceptions.clear();
-
-	this->exceptions.push_back(Exception(exception.error_msg,exception.error_code,
-																			 exception.method,exception.file,exception.line,
-																			 nullptr,exception.extra_info));
+	this->exceptions.push_back(*exception);
+	//exception->exceptions.clear();
 }
 
 void Exception::getExceptionsList(std::vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_code,
-							 this->method,this->file,this->line,nullptr,this->extra_info));
+													 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
 QString Exception::getExceptionsText()

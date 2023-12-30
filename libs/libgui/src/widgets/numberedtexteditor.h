@@ -75,6 +75,10 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		//! \brief The process object that holds the source code editor app
 		QProcess src_editor_proc;
 
+		/*! \brief Determines a custom font size used by the text editor widget as well as the line numbers widget
+		 * The default is to use the font size of the default font (see setDefaultFont) */
+		qreal custom_fnt_size;
+
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
 
@@ -83,7 +87,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void keyPressEvent(QKeyEvent *event);
 
 	public:
-		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false);
+		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false, qreal custom_fnt_size = 0);
 		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
@@ -118,7 +122,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void loadFile();
 		void saveFile();
 		void editSource();
-		void updateSource(int exit_code);
+		void updateSource(int exit_code, QProcess::ExitStatus);
 		void handleProcessStart();
 		void handleProcessError();
 		void enableEditor();

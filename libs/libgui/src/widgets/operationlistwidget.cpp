@@ -64,12 +64,12 @@ void OperationListWidget::updateOperationList()
 	}
 	else
 	{
-		unsigned count, i, op_type;
-		ObjectType obj_type;
-		QString obj_name, str_aux, op_name, op_icon;
-		QTreeWidgetItem *item=nullptr,*item1=nullptr;
-		QFont font=this->font();
-		bool value=false;
+		unsigned count = 0;
+		QString str_aux, op_name, op_icon;
+		QTreeWidgetItem *item = nullptr, *item1 = nullptr;
+		QFont font = this->font();
+		bool value = false;
+		Operation::OperationInfo op_info;
 
 		operations_tw->setUpdatesEnabled(false);
 		op_count_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentSize()));
@@ -77,57 +77,56 @@ void OperationListWidget::updateOperationList()
 		redo_tb->setEnabled(model_wgt->op_list->isRedoAvailable());
 		undo_tb->setEnabled(model_wgt->op_list->isUndoAvailable());
 
-		count=model_wgt->op_list->getCurrentSize();
-
+		count = model_wgt->op_list->getCurrentSize();
 		operations_tw->clear();
 		rem_operations_tb->setEnabled(count > 0);
 
-		for(i=0; i < count; i++)
+		for(unsigned i = 0; i < count; i++)
 		{
-			model_wgt->op_list->getOperationData(i,op_type,obj_name,obj_type);
+			op_info = model_wgt->op_list->getOperation(i)->getOperationInfo();
 
-			value=(i==static_cast<unsigned>(model_wgt->op_list->getCurrentIndex()-1));
+			value = (i == static_cast<unsigned>(model_wgt->op_list->getCurrentIndex() - 1));
 			font.setBold(value);
 			font.setItalic(value);
 
-			item=new QTreeWidgetItem;
-			str_aux=QString(BaseObject::getSchemaName(obj_type));
-			item->setData(0, Qt::UserRole, QVariant(enum_t(obj_type)));
+			item = new QTreeWidgetItem;
+			str_aux = QString(BaseObject::getSchemaName(op_info.obj_type));
+			item->setData(0, Qt::UserRole, QVariant(enum_t(op_info.obj_type)));
 
-			if(obj_type==ObjectType::BaseRelationship)
-				str_aux+="tv";
+			if(op_info.obj_type == ObjectType::BaseRelationship)
+				str_aux += "tv";
 
-			item->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(str_aux)));
+			item->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(str_aux)));
 
 			operations_tw->insertTopLevelItem(i,item);
-			item->setFont(0,font);
-			item->setText(0, QString("%1 (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type)));
+			item->setFont(0, font);
+			item->setText(0, QString("%1 (%2)").arg(op_info.obj_name, BaseObject::getTypeName(op_info.obj_type)));
 
-			if(op_type==Operation::ObjCreated)
+			if(op_info.oper_type == Operation::ObjCreated)
 			{
-				op_icon="created";
-				op_name=tr("created");
+				op_icon = "created";
+				op_name = tr("created");
 			}
-			else if(op_type==Operation::ObjRemoved)
+			else if(op_info.oper_type == Operation::ObjRemoved)
 			{
-				op_icon="removed";
-				op_name=tr("removed");
+				op_icon = "removed";
+				op_name = tr("removed");
 			}
-			else if(op_type==Operation::ObjModified)
+			else if(op_info.oper_type == Operation::ObjModified)
 			{
-				op_icon="modified";
-				op_name=tr("modified");
+				op_icon = "modified";
+				op_name = tr("modified");
 			}
-			else if(op_type==Operation::ObjMoved)
+			else if(op_info.oper_type == Operation::ObjMoved)
 			{
-				op_icon="moved";
-				op_name=tr("moved");
+				op_icon = "moved";
+				op_name = tr("moved");
 			}
 
-			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(GuiUtilsNs::getIconPath(op_icon)));
-			item1->setFont(0,font);
-			item1->setText(0,op_name);
+			item1 = new QTreeWidgetItem(item);
+			item1->setIcon(0, QPixmap(GuiUtilsNs::getIconPath(op_icon)));
+			item1->setFont(0, font);
+			item1->setText(0, op_name);
 
 			operations_tw->expandItem(item);
 
@@ -168,7 +167,7 @@ void OperationListWidget::undoOperation()
 			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -191,7 +190,7 @@ void OperationListWidget::redoOperation()
 			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

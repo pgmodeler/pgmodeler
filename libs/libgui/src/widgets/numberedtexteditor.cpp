@@ -37,12 +37,13 @@ double NumberedTextEditor::tab_width=0;
 QString NumberedTextEditor::src_editor_app="";
 QString NumberedTextEditor::src_editor_app_args="";
 
-NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
+NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, qreal custom_fnt_size) : QPlainTextEdit(parent)
 {
 	this->handle_ext_files = handle_ext_files;
 	line_number_wgt=new LineNumbersWidget(this);
 	top_widget = nullptr;
 	load_file_btn = clear_btn	 = nullptr;
+	this->custom_fnt_size = custom_fnt_size;
 
 	if(handle_ext_files)
 	{
@@ -108,7 +109,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
-		connect(edit_src_btn,  &QToolButton::clicked, this, &NumberedTextEditor::editSource);
+
+		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
 		word_wrap_btn = new QToolButton(top_widget);
 		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
@@ -120,6 +122,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		word_wrap_btn->setDisabled(true);
 		hbox->addWidget(word_wrap_btn);
+
 		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 		});
@@ -148,7 +151,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		top_widget->setLayout(hbox);
 		top_widget->adjustSize();
 
-		connect(&src_editor_proc, &QProcess::finished, this, &NumberedTextEditor::updateSource);
+		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
 		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 	}
@@ -415,10 +418,17 @@ void NumberedTextEditor::identSelection(bool ident_right)
 void NumberedTextEditor::loadFile()
 {
 	QByteArray buff;
-	bool loaded = GuiUtilsNs::selectAndLoadFile(buff,
-																							tr("Load file"),
-																							QFileDialog::ExistingFile,
-																							{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	bool loaded = false;
+
+	try
+	{
+		loaded = GuiUtilsNs::selectAndLoadFile(buff,	tr("Load file"), QFileDialog::ExistingFile,
+																					{ tr("SQL file (*.sql)"),	tr("All files (*.*)") });
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 
 	if(loaded)
 	{
@@ -430,11 +440,17 @@ void NumberedTextEditor::loadFile()
 
 void NumberedTextEditor::saveFile()
 {
-	GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(),
-																tr("Save file"),
-																QFileDialog::AnyFile,
-																{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
-																{}, "sql");
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(), tr("Save file"),
+																	QFileDialog::AnyFile,
+																	{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
+																	{}, "sql");
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void NumberedTextEditor::editSource()
@@ -487,7 +503,7 @@ void NumberedTextEditor::enableEditor()
 	this->setReadOnly(false);
 }
 
-void NumberedTextEditor::updateSource(int exit_code)
+void NumberedTextEditor::updateSource(int exit_code, QProcess::ExitStatus)
 {
 	if(exit_code != 0)
 		handleProcessError();
@@ -524,12 +540,11 @@ void NumberedTextEditor::handleProcessStart()
 
 void NumberedTextEditor::handleProcessError()
 {
-	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	Messagebox::error(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
-																						.arg(errors.join("\n\n"))), Messagebox::ErrorIcon);
+																						.arg(errors.join("\n\n"))));
 
 	enableEditor();
 }
@@ -557,14 +572,25 @@ void NumberedTextEditor::updateLineNumbers()
 	line_number_wgt->setVisible(line_nums_visible);
 	if(!line_nums_visible) return;
 
-	setFont(default_font);
-	line_number_wgt->setFont(default_font);
+	QFont fnt = default_font;
+
+	if(custom_fnt_size)
+		fnt.setPointSizeF(custom_fnt_size);
+
+	setFont(fnt);
+	line_number_wgt->setFont(fnt);
 
 	QTextBlock block = firstVisibleBlock();
 	int block_number = block.blockNumber(),
+
 			//Calculates the first block postion (in widget coordinates)
 			top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
-			bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
+
+			/* We need to retrieve the minimal height for one line of the block. So, we divide the
+			 * total block height by the block line numbers (in case of the block has more than one line, e.g., the
+			 * line wrap mode is activated) */
+			height = static_cast<int>(blockBoundingRect(block).height()) / block.lineCount(),
+			bottom = top + height,
 			dy = top;
 	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
@@ -591,7 +617,7 @@ void NumberedTextEditor::updateLineNumbers()
 			break;
 	}
 
-	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
+	line_number_wgt->drawLineNumbers(first_line, line_count, dy, height);
 	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))

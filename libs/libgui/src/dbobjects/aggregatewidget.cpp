@@ -28,7 +28,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		QSpacerItem *spacer=nullptr;
 		QFrame *frame=nullptr;
 
-		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true);
+		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true, false, font().pointSizeF());
 		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
@@ -60,8 +60,8 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		grid->addItem(spacer,1,0);
 		state_input_types_twg->widget(1)->setLayout(grid);
 
-		connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, &AggregateWidget::handleDataType);
-		connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, &AggregateWidget::handleDataType);
+		connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, AggregateWidget::handleDataType));
+		connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, AggregateWidget::handleDataType));
 
 		frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);

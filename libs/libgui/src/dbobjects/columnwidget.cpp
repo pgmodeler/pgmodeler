@@ -39,7 +39,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		data_type=new PgSQLTypeWidget(this);
 
 		hl_default_value=nullptr;
-		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
+		hl_default_value=new SyntaxHighlighter(def_value_txt, true, false, font().pointSizeF());
 		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, this);
@@ -67,7 +67,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 			notnull_chk->setChecked(false);
 		});
 
-		connect(edit_seq_btn, &QPushButton::clicked, this, &ColumnWidget::editSequenceAttributes);
+		connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
 
 		setMinimumSize(540, 480);
 	}

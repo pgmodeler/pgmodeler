@@ -20,12 +20,10 @@
 #include <QGraphicsDropShadowEffect>
 #include "guiutilsns.h"
 #include "messagebox.h"
-#include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
 #include "widgets/columndatawidget.h"
 #include "utilsns.h"
-#include "objectstablewidget.h"
 #include "generalconfigwidget.h"
 #include "appearanceconfigwidget.h"
 #include "objectslistmodel.h"
@@ -33,9 +31,9 @@
 
 namespace GuiUtilsNs {
 
-	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
+	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files, qreal custom_fnt_size)
 	{
-		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files);
+		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files, custom_fnt_size);
 
 		if(parent && !parent->layout())
 		{
@@ -329,7 +327,7 @@ namespace GuiUtilsNs {
 			 * the production or reduntant/useless information on the exception message box */
 			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
 			{
-				text = QT_TR_NOOP("Another %1 error(s) were suppressed due to stacktrace size limits.");
+				text = QT_TR_NOOP("Other %1 error(s) were suppressed due to stacktrace size limits.");
 				text = text.arg(list.size() - idx);
 				createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, false);
 				break;

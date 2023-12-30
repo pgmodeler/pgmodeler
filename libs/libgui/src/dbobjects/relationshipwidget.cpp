@@ -41,16 +41,16 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 									 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 
 		table1_hl=nullptr;
-		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
+		table1_hl=new SyntaxHighlighter(ref_table_txt, true, false, font().pointSizeF());
 		table1_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		table2_hl=nullptr;
-		table2_hl=new SyntaxHighlighter(recv_table_txt, true);
+		table2_hl=new SyntaxHighlighter(recv_table_txt, true, false, font().pointSizeF());
 		table2_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
-			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
+			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true, false, font().pointSizeF());
 			patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 		}
 
@@ -159,17 +159,17 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 		});
 
-		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
 
-		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
+		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
 
 		connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
 		connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
@@ -669,52 +669,59 @@ void RelationshipWidget::listAdvancedObjects()
 
 void RelationshipWidget::showAdvancedObject(int row)
 {
-	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
-	Table *tab=nullptr;
-	Constraint *constr=nullptr;
-	Column *col=nullptr;
-	ObjectType obj_type=object->getObjectType();
-	bool is_protected = false;
-
-	if(obj_type==ObjectType::Column)
+	try
 	{
-		col=dynamic_cast<Column *>(object);
-		is_protected = col->isProtected();
-		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
-	}
-	else if(obj_type==ObjectType::Constraint)
-	{
-		constr=dynamic_cast<Constraint *>(object);
+		BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
+		Table *tab=nullptr;
+		Constraint *constr=nullptr;
+		Column *col=nullptr;
+		ObjectType obj_type=object->getObjectType();
+		bool is_protected = false;
 
-		if(!constr->isAddedByRelationship())
+		if(obj_type==ObjectType::Column)
 		{
-			is_protected = constr->isProtected();
-			constr->setProtected(true);
+			col=dynamic_cast<Column *>(object);
+			is_protected = col->isProtected();
+			openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 		}
+		else if(obj_type==ObjectType::Constraint)
+		{
+			constr=dynamic_cast<Constraint *>(object);
 
-		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+			if(!constr->isAddedByRelationship())
+			{
+				is_protected = constr->isProtected();
+				constr->setProtected(true);
+			}
 
-		if(!constr->isAddedByRelationship())
-			constr->setProtected(is_protected);
+			openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+
+			if(!constr->isAddedByRelationship())
+				constr->setProtected(is_protected);
+		}
+		else
+		{
+			TableWidget *table_wgt=new TableWidget;
+			BaseForm editing_form(this);
+
+			tab=dynamic_cast<Table *>(object);
+			tab->setProtected(true);
+
+			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+																tab,	tab->getPosition().x(), tab->getPosition().y());
+
+			editing_form.setMainWidget(table_wgt);
+
+			GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+			editing_form.exec();
+			GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+
+			tab->setProtected(false);
+		}
 	}
-	else
+	catch(Exception &e)
 	{
-		TableWidget *table_wgt=new TableWidget;
-		BaseForm editing_form(this);
-
-		tab=dynamic_cast<Table *>(object);
-		tab->setProtected(true);
-
-		table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-														 tab,	tab->getPosition().x(), tab->getPosition().y());
-
-		editing_form.setMainWidget(table_wgt);
-
-		GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-		editing_form.exec();
-		GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-
-		tab->setProtected(false);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -899,7 +906,6 @@ void RelationshipWidget::removeObjects()
 			obj_type=ObjectType::Constraint;
 			count=rel->getConstraintCount();
 		}
-
 
 		op_count=op_list->getCurrentSize();
 
@@ -1167,10 +1173,11 @@ void RelationshipWidget::applyConfiguration()
 			}
 			catch(Exception &e)
 			{
-				Messagebox msg_box;
+				//Messagebox msg_box;
 
 				if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-					msg_box.show(e);
+					//msg_box.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			}

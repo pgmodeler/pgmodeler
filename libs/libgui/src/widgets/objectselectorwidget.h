@@ -53,7 +53,9 @@ class __libgui ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWi
 
 	public:
 		ObjectSelectorWidget(ObjectType sel_obj_type, QWidget * parent = nullptr);
+
 		ObjectSelectorWidget(std::vector<ObjectType> sel_obj_types, QWidget * parent = nullptr);
+
 		virtual ~ObjectSelectorWidget();
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog
@@ -67,9 +69,6 @@ class __libgui ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWi
 
 		//! \brief Defines the initial selected object to be show on the selector
 		void setSelectedObject(BaseObject *object);
-
-		//! \brief Defines the initial selected object to be show on the selector by searching it using the obj_name
-		void setSelectedObject(const QString &obj_name, ObjectType obj_type);
 
 		//! \brief Defines the model which the selector will search the objects
 		void setModel(DatabaseModel *model);

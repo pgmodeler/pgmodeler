@@ -56,12 +56,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	configureSamplesMenu();
 	applyConfigurations();
 
-	try
-	{
-		SQLExecutionWidget::loadSQLHistory();
-	}
-	catch(Exception &){}
-
+	SQLExecutionWidget::loadSQLHistory();
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	std::map<QString, attribs_map >confs = conf_wgt->getConfigurationParams();
 
@@ -517,7 +512,7 @@ void MainWindow::loadConfigurations()
 void MainWindow::connectSignalsToSlots()
 {
 	connect(welcome_wgt->new_tb, &QToolButton::clicked, this, [this]() {
-		addModel();
+		__trycatch( addModel(); )
 	});
 
 	connect(welcome_wgt->load_tb, &QToolButton::clicked, this, qOverload<>(&MainWindow::loadModel));
@@ -542,7 +537,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_exit, &QAction::triggered, this, &MainWindow::close);
 
 	connect(action_new_model, &QAction::triggered, this, [this]() {
-		addModel();
+		__trycatch( addModel(); )
 	});
 
 	connect(action_close_model, &QAction::triggered, this, &MainWindow::closeModel);
@@ -560,16 +555,17 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_load_model, &QAction::triggered, this, qOverload<>(&MainWindow::loadModel));
 
 	connect(action_save_model, &QAction::triggered, this, [this]() {
-		saveModel();
+		__trycatch( saveModel(); )
 	});
 
 	connect(action_save_as, &QAction::triggered, this, [this]() {
-		saveModel();
+		__trycatch( saveModel(); )
 	});
 
 	connect(action_save_all, &QAction::triggered, this, &MainWindow::saveAllModels);
 	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
 	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
+
 	connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
 	connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
 
@@ -663,7 +659,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, changelog_wgt, &ChangelogWidget::close);
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, this, [this](){
-		pending_op=NoPendingOp;
+		pending_op = NoPendingOp;
 	});
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationFinished, this, &MainWindow::executePendingOperation);
@@ -815,8 +811,9 @@ void MainWindow::restoreLastSession()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
-			Messagebox msg_box;
-			msg_box.show(e);
+			//Messagebox msg_box;
+			//msg_box.show(e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }
@@ -1082,8 +1079,9 @@ void MainWindow::saveTemporaryModels()
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		Messagebox msg_box;
-		msg_box.show(e);
+		//Messagebox msg_box;
+		//msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		tmpmodel_save_timer.start();
 	}
 #endif
@@ -1148,8 +1146,9 @@ void MainWindow::loadModelFromAction()
 				showFixMessage(e, filename);
 			else
 			{
-				Messagebox msgbox;
-				msgbox.show(e);
+				//Messagebox msgbox;
+				//msgbox.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1211,9 +1210,10 @@ void MainWindow::addModel(const QString &filename)
 
 				//Get the "public" schema and set as system object
 				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", ObjectType::Schema));
-				if(public_sch)	public_sch->setSystemObject(true);
 
-				model_tab->db_model->setInvalidated(false);
+				if(public_sch)
+					public_sch->setSystemObject(true);
+
 				model_tab->restoreLastCanvasPosition();
 
 				//Making a copy of the loaded database model file as the first version of the temp. model
@@ -1249,6 +1249,7 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_tab->setModified(false);
+		model_tab->db_model->setInvalidated(false);
 		action_save_model->setEnabled(false);
 
 		if(action_alin_objs_grade->isChecked())
@@ -1421,9 +1422,9 @@ void MainWindow::setCurrentModel()
 		connect(current_model, &ModelWidget::s_objectRemoved,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectManipulated,this, &MainWindow::updateDockWidgets, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectManipulated, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
-		connect(current_model, &ModelWidget::s_zoomModified, this, &MainWindow::__updateToolsState, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_objectModified, this, &MainWindow::updateModelTabName, Qt::UniqueConnection);
 
+		connect(current_model, &ModelWidget::s_zoomModified, this, &MainWindow::__updateToolsState, Qt::UniqueConnection);
 		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), this, &MainWindow::configureMoreActionsMenu, Qt::UniqueConnection);
 		connect(current_model, qOverload<BaseObjectView *>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObject, Qt::UniqueConnection);
 		connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
@@ -1681,16 +1682,20 @@ void MainWindow::applyConfigurations()
 
 void MainWindow::saveAllModels()
 {
-	if(models_tbw->count() > 0 &&
-			((sender()==action_save_all) ||
-			 (sender()==&model_save_timer &&	this->isActiveWindow())))
-
+	try
 	{
-		int i, count;
+		if(models_tbw->count() > 0 &&
+				((sender()==action_save_all) ||
+				 (sender()==&model_save_timer &&	this->isActiveWindow())))
 
-		count=models_tbw->count();
-		for(i=0; i < count; i++)
-			this->saveModel(dynamic_cast<ModelWidget *>(models_tbw->widget(i)));
+		{
+			for(auto i = 0; i < models_tbw->count(); i++)
+				this->saveModel(dynamic_cast<ModelWidget *>(models_tbw->widget(i)));
+		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -1833,7 +1838,10 @@ void MainWindow::exportModel()
 			(!db_model->isInvalidated() || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 	{
 		stopTimers(true);
-		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, this, [this](){ updateConnections(true); });
+
+		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, this, [this](){
+			updateConnections(true);
+		});
 
 		GuiUtilsNs::resizeDialog(&model_export_form);
 		GeneralConfigWidget::restoreWidgetGeometry(&model_export_form);
@@ -1850,7 +1858,9 @@ void MainWindow::importDatabase()
 
 	stopTimers(true);
 
-	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, this, [this](){ updateConnections(true); });
+	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, this, [this](){
+		updateConnections(true);
+	});
 
 	db_import_form.setModelWidget(current_model);
 	GuiUtilsNs::resizeDialog(&db_import_form);
@@ -1896,12 +1906,17 @@ void MainWindow::diffModelDatabase()
 			((db_model && !db_model->isInvalidated()) || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
 	{
 		modeldb_diff_frm.setModelWidget(current_model);
-
 		stopTimers(true);
-		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){ updateConnections(true); });
+
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, this, [this](){
+			updateConnections(true);
+		});
+
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
-			action_manage->setChecked(true);
-			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
+			__trycatch(
+				action_manage->setChecked(true);
+				sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
+			)
 		});
 
 		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
@@ -1985,8 +2000,9 @@ void MainWindow::loadModel()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		//Messagebox msg_box;
+		//msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2031,8 +2047,9 @@ void MainWindow::loadModels(const QStringList &files)
 			showFixMessage(e, files[i]);
 		else
 		{
-			Messagebox msgbox;
-			msgbox.show(e);
+			//Messagebox msgbox;
+			//msgbox.show(e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }
@@ -2320,7 +2337,7 @@ void MainWindow::showDemoVersionWarning(bool exit_msg)
 
 void MainWindow::executePendingOperation(bool valid_error)
 {
-	if(!valid_error && pending_op!=NoPendingOp)
+	if(!valid_error && pending_op != NoPendingOp)
 	{
 		static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
 																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") },
@@ -2332,14 +2349,14 @@ void MainWindow::executePendingOperation(bool valid_error)
 																		 tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]),
 																		 op_icons[pending_op]);
 
-		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
+		if(pending_op == PendingSaveOp || pending_op == PendingSaveAsOp)
 			saveModel();
-		else if(pending_op==PendingExportOp)
+		else if(pending_op == PendingExportOp)
 			exportModel();
-		else if(pending_op==PendingDiffOp)
+		else if(pending_op == PendingDiffOp)
 			diffModelDatabase();
 
-		pending_op=NoPendingOp;
+		pending_op = NoPendingOp;
 	}
 }
 
@@ -2551,7 +2568,7 @@ void MainWindow::addExecTabInSQLTool(const QString &sql_cmd)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

@@ -1,6 +1,41 @@
 Changelog
 ---------
 
+v1.1.0-beta1
+------
+<em>Release date: December 30, 2023</em><br/>
+
+* [New] Added the method Operation::getOperationInfo that returns some info (in the form of a struct) of an operation in read-only format.
+* [New] Created static methods error, info, and alert in Messagebox.
+* [New] Added support for custom font size in NumberedTextEditor/SyntaxHighlighter. This way UI elements that use objects of these classes in database object forms can keep the font size uniform even if the user has configured a different font size for source code inputs in SQL tool, for example.
+* [New] Added support for displaying a "Blog post" button in UpdateNotifierWidget.
+* [New] Added the method SQLToolWidget::moveExecutionTab.
+* [Change] Minor adjustment in ConnectionsConfigWidget openConnectionsConfiguration to return true when the user applies new connection settings or restores original connections by clicking "Cancel".
+* [Change] Adjusted the usage of ConnectionsConfigWidget::openConnectionsConfiguration on DatabaseImportForm, ModelDatabaseDiffForm, ModelValidationWidget and SQLToolWidget.
+* [Change] Minor improvement on SwapObjectsIdsWidget to preserve the sorting parameters after swapping object ids.
+* [Change] Minor change in ConnectionsConfigWidget, ModelExportForm, ModelValidationWidget related to the use of ConnectionsConfigWidget::openConnectionsConfiguration.
+* [Change] Minor improvement in Messagebox::error method in order to allow the user to specify the local in the code where the error occurred using __PRETTY_FUNCTION__, __FILE__ and __LINE__.
+* [Change] Moved the definition of template method BaseForm::setMainWidget to the outside of the class definition.
+* [Change] Refactored OperationListWidget::updateOperationList to use OperationInfo struct.
+* [Change] Minor change in operationlistwidget.ui to use icons instead of labels for operation list size and current history position.
+* [Change] Refactored the method ModelWidget::openEditingForm(QWidget*,Messagebox::ButtonId) turning it into a template method so the internal call to BaseForm::setMainWidget can be correctly used.
+* [Change] Changed the method BaseForm::setMainWidget that takes a BaseObjectWidget instance to be enabled only if a class that is inherited from BaseObjectWidget is passed as a parameter.
+* [Change] Refactored signal/slot connections that needed exception handling all over the tool.
+* [Change] Minor adjustment in MainWindow::addModel to avoid marking the model as invalidated even if it's new/empty.
+* [Change] Minor adjustment in CodeCompletionWidget to include sequences when listing living db objects.
+* [Fix] Fixed the catalog query operator.sch so argument data types can have the schema name prepended.
+* [Fix] Fixed a crash when trying to display function/procedure source code that references a domain in the parameters.
+* [Fix] Fixed the catalog queries for function and procedure to correctly format parameters' data type signatures.
+* [Fix] Fixed a problem in SwapObjectsIdsWidget::eventFilter that was not capturing arrow key press on macOS.
+* [Fix] Fixed a bug in the importing of partitioned table indexes which was affecting the results produced by the diff process.
+* [Fix] Fixed a bug in CodeCompletionWidget that was crashing when trying to list columns of an alias related to a table not schema-qualified.
+* [Fix] Fixed a bug in reverse engineering related to the importing of partition tables hierarchy.
+* [Fix] Fixed a bug in diff that was generating false-positive results for columns with the same user-defined type.
+* [Fix] Fixed a bug in LineNumbersWidget that was not aligning the line numbers with their respective lines when the font size was different from the default.
+* [Fix] Minor fix in XmlParser::readBuffer to use a const xmlError * instance instead of non-const.
+* [Fix] Minor fix in CodeCompletionWidget to avoid the displaying of the widget in a position that extrapolates the screen limits.
+* [Fix] Minor fix in the icon positioning in HtmlItemDelegate.
+
 v1.1.0-beta
 ------
 <em>Release date: November 17, 2023</em><br/>

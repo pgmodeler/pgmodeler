@@ -85,8 +85,6 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	completion_wgt->setLayout(vbox);
 
-	GuiUtilsNs::configureWidgetFont(name_list, GuiUtilsNs::MediumFontFactor);
-
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
 
@@ -571,6 +569,12 @@ bool CodeCompletionWidget::retrieveColumnNames()
 
 		tab_pos = getTablePosition(name);
 		aux_names = name.split(completion_trigger);
+
+		/* If the table name is not schema qualified or
+		 * have extra qualifications (dots) we discard it */
+		if(aux_names.size() != 2)
+			continue;
+
 		sch_name = aux_names[0].trimmed();
 		tab_name = aux_names[1].trimmed();
 		catalog.setQueryFilter(Catalog::ListAllObjects);
@@ -654,7 +658,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 
 	QStringList names = obj_name.split(completion_trigger);
 	QList<ObjectType> obj_types;
-	QString sch_name, aux_name;
+	QString sch_name, disp_name, fmt_name;
 
 	if(names.size() == 1)
 		obj_types.append(ObjectType::Schema);
@@ -665,7 +669,8 @@ bool CodeCompletionWidget::retrieveObjectNames()
 											 ObjectType::View,
 											 ObjectType::Aggregate,
 											 ObjectType::Function,
-											 ObjectType::Procedure });
+											 ObjectType::Procedure,
+											 ObjectType::Sequence });
 		sch_name = names[0];
 		obj_name = names[1];
 	}
@@ -681,24 +686,30 @@ bool CodeCompletionWidget::retrieveObjectNames()
 
 		for(auto &attr : attribs)
 		{
-			aux_name = attr.second;
+			disp_name = attr.second;
 
 			// Removing parameter names from functions/procedures/aggregates
 			if(obj_type == ObjectType::Function ||
 				 obj_type == ObjectType::Procedure ||
 				 obj_type == ObjectType::Aggregate)
-				aux_name.remove(QRegularExpression("(\\()(.*)(\\))"));
+			{
+				disp_name.remove(QRegularExpression("(\\()(.*)(\\))"));
+				fmt_name = BaseObject::formatName(disp_name) +
+									 attr.second.remove(disp_name);
+			}
+			else
+				fmt_name = BaseObject::formatName(attr.second);
 
-			name_list->addItem(aux_name);
+			name_list->addItem(disp_name);
 			item = name_list->item(name_list->count() - 1);
 			item->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
-			item->setData(Qt::UserRole, BaseObject::formatName(attr.second));
+			item->setData(Qt::UserRole, fmt_name);
 
 			if(obj_type != ObjectType::Schema)
 			{
 				item->setToolTip(tr("Object: <em>%1</em><br/>Signature: %2")
 												 .arg(BaseObject::getTypeName(obj_type),
-															QString("<strong>%1</strong>.%2").arg(sch_name, attr.second)));
+															QString("<strong>%1</strong>.%2").arg(sch_name, fmt_name)));
 			}
 			else
 				item->setToolTip(tr("Object: <em>%1</em>").arg(BaseObject::getTypeName(obj_type)));
@@ -994,7 +1005,8 @@ void CodeCompletionWidget::updateList()
 			word.remove(completion_trigger);
 			word.remove('"');
 
-			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View }, false, false, true);
+			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table,
+																						ObjectType::ForeignTable, ObjectType::View }, false, false, true);
 
 			if(objects.size()==1)
 				setQualifyingLevel(objects[0]);
@@ -1111,7 +1123,14 @@ void CodeCompletionWidget::updateList()
 	qApp->restoreOverrideCursor();
 
 	//Sets the list position right below of text cursor
-	completion_wgt->move(code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft()));
+	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
+	QSize screen_sz = completion_wgt->screen()->size();
+
+	// Adjust the position of the widget if it extrapolates the screen limits
+	if((pos.x() + completion_wgt->width()) > screen_sz.width())
+		pos.setX(pos.x() - completion_wgt->width());
+
+	completion_wgt->move(pos);
 	name_list->scrollToTop();
 	name_list->setFocus();
 	adjustNameListSize();
@@ -1221,7 +1240,7 @@ void CodeCompletionWidget::adjustNameListSize()
 {
 	int item_h = 0;
 	item_h = (name_list->iconSize().height() + GuiUtilsNs::LtMargin) * name_list->count();
-	item_h += 2.5 * GuiUtilsNs::LtMargin;
+	item_h += 2 * GuiUtilsNs::LtMargin;
 
 	if(item_h < completion_wgt->minimumHeight())
 		item_h = completion_wgt->minimumHeight();
@@ -1229,14 +1248,16 @@ void CodeCompletionWidget::adjustNameListSize()
 	{
 		item_h = completion_wgt->maximumHeight() -
 						 always_on_top_chk->height() -
-						 (2 * GuiUtilsNs::LtMargin);
+						 (4 * GuiUtilsNs::LtMargin);
 	}
 
 	name_list->setMinimumHeight(item_h);
 
 	QRect rect = name_list->viewport()->contentsRect(), brect;
-	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() + QPoint(2, 2)),
-			*last_item = name_list->itemAt(rect.bottomLeft() + QPoint(2, -2));
+	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() +
+																									QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
+			*last_item = name_list->itemAt(rect.bottomLeft() +
+																		 QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
 	int first_row = name_list->row(first_item),
 			last_row = name_list->row(last_item),
 			list_w = 0, item_w = 0;
@@ -1253,7 +1274,7 @@ void CodeCompletionWidget::adjustNameListSize()
 														remove(HtmlItemDelegate::TagRegExp));
 
 		item_w = brect.width() +
-						 name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 5) +
+						 name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 2) +
 						 name_list->verticalScrollBar()->width();
 
 		if(item_w > list_w)

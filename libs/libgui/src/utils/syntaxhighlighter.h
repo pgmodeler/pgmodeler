@@ -101,7 +101,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 * to be appended to the detected word. An example of contigous capture is for
 		 * SQL comment in the for /(slash)*(asterisk) if the nearby capture is not enabled
 		 * then the highlighting will not be able to identify multi line comments properly. */
-		capt_nearby_separators;
+				capt_nearby_separators;
+
+		//! \brief Stores the custom font size to be used instead of default_font size
+		qreal custom_font_size;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -144,10 +147,11 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
 	public:
-		/*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true
-		the highlighter prevents the parent text field to process line breaks. If use_custom_tab_width is true
-		the highlighter will use the same tab size as NumberedTextEdit class */
-		SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false);
+		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
+		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.
+		 * If use_custom_tab_width is true the highlighter will use the same tab size as NumberedTextEdit class.
+		 * If custom_fnt_size is greater than 0 the higlighter will apply that font size instead of the one set in default_font */
+		SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false, qreal custom_fnt_size = 0);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -161,6 +165,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger();
+
+		/*! \brief Returns the current font size according to the custom_font_size attribute.
+		 *  If it is greater than 0 then its value is returned otherwise the default_font size is returned */
+		qreal getCurrentFontSize();
 
 		//! \brief Sets the default font for all instances of this class
 		static void setDefaultFont(const QFont &fnt);

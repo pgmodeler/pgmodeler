@@ -251,11 +251,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	font_preview_txt->setPlainText(
-"-- object: public.foo | type: TABLE --\n \
+"-- object: public.foo | type: TABLE --\n\
 CREATE TABLE public.table_b (\n \
 \tid serial NOT NULL,\n \
 \tsku integer NOT NULL,\n \
-\tCONSTRAINT foo_pk PRIMARY KEY (id)\n \
+\tCONSTRAINT foo_pk PRIMARY KEY (id)\n\
 );\n");
 
 	font_preview_hl = new SyntaxHighlighter(font_preview_txt, false, true);
@@ -316,8 +316,8 @@ CREATE TABLE public.table_b (\n \
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
-	connect(ui_theme_cmb, &QComboBox::activated, this, &AppearanceConfigWidget::previewUiSettings);
-	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
+	connect(ui_theme_cmb, &QComboBox::activated, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
+	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
 
 	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);

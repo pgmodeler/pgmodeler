@@ -22,6 +22,7 @@
 #include "utils/deletableitemdelegate.h"
 #include "utilsns.h"
 #include "tools/databaseimportform.h"
+#include "pgsqlversions.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -65,9 +66,15 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	vbox->addWidget(sourcecode_txt);
 	sourcecode_gb->setLayout(vbox);
 
-	connect(connections_cmb, &QComboBox::activated, this, &SQLToolWidget::connectToServer);
-	connect(refresh_tb, &QToolButton::clicked, this, &SQLToolWidget::connectToServer);
-	connect(database_cmb, &QComboBox::activated, this, &SQLToolWidget::browseDatabase);
+	connect(connections_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::connectToServer));
+	connect(connections_cmb, &QComboBox::currentIndexChanged, this, [this](int idx) {
+		if(idx == 0)
+			clearDatabases();
+	});
+
+	connect(refresh_tb, &QToolButton::clicked, this, __slot(this, SQLToolWidget::connectToServer));
+	connect(database_cmb, &QComboBox::activated, this, __slot(this, SQLToolWidget::browseDatabase));
+
 	connect(disconnect_tb, &QToolButton::clicked, this, &SQLToolWidget::disconnectFromDatabases);
 	connect(source_pane_tb, &QToolButton::toggled, sourcecode_gb, &QGroupBox::setVisible);
 
@@ -79,9 +86,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 		closeSQLExecutionTab(idx, true);
 	});
 
-	connect(sql_exec_corner_btn, &QToolButton::clicked, this, [this](){
-		addSQLExecutionTab();
-	});
+	connect(sql_exec_corner_btn, &QToolButton::clicked, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,	this, [this](){
 		DatabaseExplorerWidget *dbexplorer=qobject_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
@@ -229,8 +234,8 @@ void SQLToolWidget::connectToServer()
 	{
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+				emit s_connectionsUpdateRequest();
 		}
 		else
 		{
@@ -289,7 +294,7 @@ void SQLToolWidget::disconnectFromDatabases()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -318,13 +323,11 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
-			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, [this](){
-				addSQLExecutionTab();
-			});
-
+			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sqlExecutionRequested, this, __slot(this, SQLToolWidget::addSQLExecutionTab));
 			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_snippetShowRequested, this, &SQLToolWidget::showSnippet);
 			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_sourceCodeShowRequested, this, &SQLToolWidget::showSourceCode);
 			connect(db_explorer_wgt, &DatabaseExplorerWidget::s_databaseDropRequested, this, qOverload<const QString &>(&SQLToolWidget::dropDatabase));
+
 			connect(attributes_tb, &QToolButton::toggled, db_explorer_wgt->attributes_wgt, &QWidget::setVisible);
 
 			db_explorer_wgt->attributes_wgt->setVisible(attributes_tb->isChecked());
@@ -419,8 +422,9 @@ void SQLToolWidget::reloadHighlightConfigs()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -497,20 +501,27 @@ void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)
 
 void SQLToolWidget::showSnippet(const QString &snip)
 {
-	SQLExecutionWidget *sql_exec_wgt=nullptr;
-
-	if(sql_exec_tbw->count()==0)
-		addSQLExecutionTab();
-
-	sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
-
-	if(sql_exec_wgt->sql_cmd_txt->isEnabled())
+	try
 	{
-		QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
-		cursor.movePosition(QTextCursor::End);
+		SQLExecutionWidget *sql_exec_wgt=nullptr;
 
-		sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
-		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+		if(sql_exec_tbw->count()==0)
+			addSQLExecutionTab();
+
+		sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
+
+		if(sql_exec_wgt->sql_cmd_txt->isEnabled())
+		{
+			QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
+			cursor.movePosition(QTextCursor::End);
+
+			sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
+			sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -557,22 +568,37 @@ void SQLToolWidget::dropDatabase(int database_idx)
 		return;
 
 	Connection *tmpl_conn = reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-	Messagebox msg_box;
+	Connection conn = Connection(tmpl_conn->getConnectionParams());
 	QString dbname = database_cmb->itemText(database_idx),
 			maintanance_db = tmpl_conn->getConnectionParam(Connection::ParamDbName);
-	Connection conn = Connection(tmpl_conn->getConnectionParams());
 
-	msg_box.show(tr("Warning"),
-				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
-						.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
-				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	try
 	{
-		try
+		Messagebox msg_box;
+		bool allow_force_drop = false;
+
+		conn.connect();
+
+		if(conn.getPgSQLVersion() >= PgSqlVersions::PgSqlVersion130)
 		{
-			conn.connect();
-			conn.executeDDLCommand(QString("DROP DATABASE \"%1\";").arg(dbname));
+			allow_force_drop = true;
+			msg_box.setCustomOptionText(tr("Forced database drop"));
+			msg_box.setCustomOptionTooltip(tr("<p>If the current user has the proper permissions, this option causes the termination of all existing connections to the target database before dropping it.</p>"));
+		}
+
+		msg_box.show(tr("Warning"),
+								 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+								.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+		if(msg_box.result() == QDialog::Accepted)
+		{
+			QString extra_opt;
+
+			if(allow_force_drop && msg_box.isCustomOptionChecked())
+				extra_opt = "WITH (FORCE)";
+
+			conn.executeDDLCommand(QString("DROP DATABASE \"%1\" %2;").arg(dbname, extra_opt));
 			conn.close();
 
 			//Closing tabs related to the database to be dropped
@@ -587,15 +613,19 @@ void SQLToolWidget::dropDatabase(int database_idx)
 
 			connectToServer();
 		}
-		catch(Exception &e)
+	}
+	catch(Exception &e)
+	{
+		if(conn.getConnectionParam(Connection::ParamDbName) == maintanance_db)
 		{
-			if(conn.getConnectionParam(Connection::ParamDbName) == maintanance_db)
-				throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
-												.arg(dbname).arg(conn.getConnectionParam(Connection::ParamAlias)),
+			/* throw Exception(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault)
+											.arg(dbname, conn.getConnectionParam(Connection::ParamAlias)),
+											ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e); */
+			Messagebox::error(Exception::getErrorMessage(ErrorCode::DropCurrentDBDefault).arg(dbname, conn.getConnectionParam(Connection::ParamAlias)),
 												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-			else
-				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
+		else
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -610,4 +640,15 @@ QWidgetList SQLToolWidget::getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt)
 		return QWidgetList();
 
 	return sql_exec_wgts.value(db_expl_wgt);
+}
+
+void SQLToolWidget::moveExecutionTab(DatabaseExplorerWidget *db_expl_wgt, int from_idx, int to_idx)
+{
+	if(!db_expl_wgt || !sql_exec_wgts.contains(db_expl_wgt) ||
+		 from_idx < 0 || to_idx < 0 ||
+		 from_idx >= sql_exec_wgts[db_expl_wgt].size() ||
+		 to_idx >= sql_exec_wgts[db_expl_wgt].size())
+		return;
+
+	sql_exec_wgts[db_expl_wgt].move(from_idx, to_idx);
 }

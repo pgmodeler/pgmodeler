@@ -19,6 +19,7 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include "qtconnectmacros.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
@@ -100,14 +101,15 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
+	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, __slot_n(this, CrashHandlerForm::loadReport));
+	connect(save_tb, &QToolButton::clicked, this, __slot(this, CrashHandlerForm::saveModel));
+
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
-	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
 
 	connect(model_txt, &QPlainTextEdit::textChanged, this, [this](){
-			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
+		save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
 	});
 }
 
@@ -176,8 +178,9 @@ void CrashHandlerForm::saveModel()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

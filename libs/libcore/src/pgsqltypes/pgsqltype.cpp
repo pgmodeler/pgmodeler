@@ -385,7 +385,7 @@ QString PgSqlType::getTypeName(bool incl_dimension)
 	return ~(*this);
 }
 
-QString PgSqlType::getSQLTypeName()
+QString PgSqlType::getTypeSql()
 {
 	QString fmt_type, type, aux;
 	//unsigned idx;
@@ -1040,18 +1040,22 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 																		{"timestamp","timestamp without time zone"}};
 
 	//If the types are equal there is no need to perform further operations
-	if(*this==type)
+	if(*this == type)
+		return true;
+
+	if(isUserType() == type.isUserType() &&
+		 getTypeSql() == type.getTypeSql())
 		return true;
 
 	//Getting the index which the this type is in
-	for(QStringList list : types)
+	for(auto &list : types)
 	{
 		if(list.contains(~(*this))) break;
 		this_idx++;
 	}
 
 	//Getting the index which 'type' is in
-	for(QStringList list : types)
+	for(auto &list : types)
 	{
 		if(list.contains(~type)) break;
 		type_idx++;
@@ -1147,7 +1151,7 @@ int PgSqlType::getPrecision()
 QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_type)
 {
 	if(def_type==SchemaParser::SqlCode)
-		return getSQLTypeName();
+		return getTypeSql();
 
 	attribs_map attribs;
 	SchemaParser schparser;
@@ -1189,5 +1193,5 @@ QString PgSqlType::getSourceCode(SchemaParser::CodeType def_type, QString ref_ty
 
 QString PgSqlType::operator * ()
 {
-	return getSQLTypeName();
+	return getTypeSql();
 }

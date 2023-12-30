@@ -30,6 +30,7 @@
 #include "operationlist.h"
 #include "widgets/objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
+#include "qtconnectmacros.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:

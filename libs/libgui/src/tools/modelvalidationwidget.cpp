@@ -139,6 +139,7 @@ void ModelValidationWidget::createThread()
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, &ModelValidationWidget::clearOutput, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
+		connect(validation_helper, &ModelValidationHelper::s_fixFailed, this, &ModelValidationWidget::handleFixFailed, Qt::QueuedConnection);
 
 		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
 			emit s_validationCanceled();
@@ -594,8 +595,7 @@ void ModelValidationWidget::validateRelationships()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -623,8 +623,8 @@ void ModelValidationWidget::editConnections()
 {
 	if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 	{
-		ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-		emit s_connectionsUpdateRequest();
+		if(ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+			emit s_connectionsUpdateRequest();
 	}
 }
 
@@ -660,6 +660,21 @@ void ModelValidationWidget::selectObject()
 void ModelValidationWidget::copyTextOutput()
 {
 	qApp->clipboard()->setText(generateOutputText());
+}
+
+void ModelValidationWidget::handleFixFailed(Exception e)
+{
+	QTreeWidgetItem *root = nullptr, *child = nullptr;
+
+	root = GuiUtilsNs::createOutputTreeItem(output_trw, tr("Failed to apply one or more fixes. Operation aborted!"), GuiUtilsNs::getIconPath("error"));
+	child = new QTreeWidgetItem(root);
+
+	QLabel *label = new QLabel;
+	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	label->setText(e.getErrorMessage());
+
+	output_trw->setItemWidget(child, 0, label);
 }
 
 QString ModelValidationWidget::generateOutputText()

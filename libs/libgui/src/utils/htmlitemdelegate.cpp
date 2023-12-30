@@ -81,7 +81,9 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	//Repaint the text area
 	painter->fillRect(rect, bg_color);
-	ico.paint(painter, QRect(rect.topLeft() + QPoint(1, 1),  ico_sz));
+
+	dy = abs(rect.height() - ico_sz.height()) / 2;
+	ico.paint(painter, QRect(QPoint(rect.left() + 1, rect.top() + dy),  ico_sz));
 
 	if(!text.contains(TagRegExp))
 	{
@@ -94,7 +96,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 		txt_sz = option.fontMetrics.boundingRect(text).size();
 		dy = abs(rect.height() - txt_sz.height()) / 2;
-		rect.translate(ico_sz.width() + 4, dy);
+		rect.translate(ico_sz.width() + 5, dy);
 		painter->drawText(rect, text);
 	}
 	else
@@ -106,7 +108,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 		//Set the text to a html document instance and draw it to the painter
 		dy = abs(rect.height() - doc.size().height())/2;
-		painter->translate(rect.left() + ico_sz.width(), rect.top() - dy);
+		painter->translate(rect.left() + ico_sz.width() + 1, rect.top() - dy);
 		doc.drawContents(painter);
 	}
 

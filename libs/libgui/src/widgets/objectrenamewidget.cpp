@@ -227,12 +227,10 @@ void ObjectRenameWidget::applyRenaming()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		if(obj_type != ObjectType::Database)
 			op_list->removeLastOperation();
-
-		msg_box.show(e);
 
 		if(renamed_objs > 0)
 			accept();

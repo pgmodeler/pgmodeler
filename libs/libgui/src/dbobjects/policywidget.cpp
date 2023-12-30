@@ -28,14 +28,14 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		model_objs_wgt = new ModelObjectsWidget(true, this);
 		model_objs_wgt->setObjectVisible(ObjectType::Role, true);
 
-		using_edt = GuiUtilsNs::createNumberedTextEditor(using_wgt);
+		using_edt = GuiUtilsNs::createNumberedTextEditor(using_wgt, false, font().pointSizeF());
 		using_edt->setTabChangesFocus(true);
-		using_hl = new SyntaxHighlighter(using_edt);
+		using_hl = new SyntaxHighlighter(using_edt, false, false, font().pointSizeF());
 		using_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		check_edt = GuiUtilsNs::createNumberedTextEditor(check_wgt);
+		check_edt = GuiUtilsNs::createNumberedTextEditor(check_wgt, false, font().pointSizeF());
 		check_edt->setTabChangesFocus(true);
-		check_hl = new SyntaxHighlighter(check_edt);
+		check_hl = new SyntaxHighlighter(check_edt, false, false, font().pointSizeF());
 		check_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^

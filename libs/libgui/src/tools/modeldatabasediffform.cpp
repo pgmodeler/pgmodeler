@@ -23,7 +23,6 @@
 #include "utilsns.h"
 #include "settings/connectionsconfigwidget.h"
 #include "pgsqlversions.h"
-#include "objectslistmodel.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
@@ -114,12 +113,14 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		});
 
 		connect(pgsql_ver_chk, &QCheckBox::toggled, pgsql_ver_cmb, &QComboBox::setEnabled);
-		connect(connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
+		connect(connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
+
 		connect(store_in_file_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(apply_on_server_rb, &QRadioButton::clicked, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
-		connect(generate_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::generateDiff);
+		connect(generate_btn, &QPushButton::clicked, this, __slot(this, ModelDatabaseDiffForm::generateDiff));
+
 		connect(close_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::close);
 		connect(store_in_file_rb, &QRadioButton::clicked, store_in_file_wgt, &QWidget::setEnabled);
 		connect(force_recreation_chk, &QCheckBox::toggled, recreate_unmod_chk, &QCheckBox::setEnabled);
@@ -130,15 +131,16 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(ignore_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
 		connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 		connect(src_model_rb, &QRadioButton::toggled, src_model_name_lbl, &QLabel::setEnabled);
-		connect(src_connections_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::listDatabases);
+
+		connect(src_connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
 		connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(src_model_rb, &QRadioButton::toggled, this, &ModelDatabaseDiffForm::enableDiffMode);
 		connect(open_in_sql_tool_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::loadDiffInSQLTool);
 		connect(presets_cmb, &QComboBox::activated, this, &ModelDatabaseDiffForm::selectPreset);
 
 		connect(default_presets_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::restoreDefaults);
-		connect(remove_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::removePreset);
-		connect(save_preset_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::savePreset);
+		connect(remove_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::removePreset));
+		connect(save_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::savePreset));
 
 		connect(src_database_rb, &QRadioButton::toggled, this, [this](bool toggle){
 			src_database_wgt->setEnabled(toggle);
@@ -241,12 +243,16 @@ void ModelDatabaseDiffForm::resetForm()
 	ConnectionsConfigWidget::fillConnectionsComboBox(src_connections_cmb, true);
 	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
 	src_connection_lbl->setEnabled(src_connections_cmb->isEnabled());
-	src_database_cmb->setCurrentIndex(0);
+	src_database_cmb->clear();
+	src_database_cmb->setEnabled(false);
+	src_database_lbl->setEnabled(false);
 
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpDiff);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
-	database_cmb->setCurrentIndex(0);
+	database_cmb->clear();
+	database_cmb->setEnabled(false);
+	database_lbl->setEnabled(false);
 
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
@@ -287,14 +293,16 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		src_import_helper=new DatabaseImportHelper;
 		src_import_helper->moveToThread(src_import_thread);
 
-		connect(src_import_thread, &QThread::started, src_import_helper, &DatabaseImportHelper::importDatabase);
+		connect(src_import_thread, &QThread::started, src_import_helper, [this]() {
+			__trycatch( src_import_helper->importDatabase(); )
+		});
 
 		connect(src_import_helper, &DatabaseImportHelper::s_progressUpdated, this,
-						[this](int progress, QString msg, ObjectType obj_type) {
-			updateProgress(progress, msg, obj_type);
+				[this](int progress, QString msg, ObjectType obj_type) {
+					updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
-		connect(src_import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
+		connect(src_import_helper, &DatabaseImportHelper::s_importFinished, this, __slot_n(this, ModelDatabaseDiffForm::handleImportFinished));
 		connect(src_import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==ImportThread)
@@ -303,14 +311,16 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
 
-		connect(import_thread, &QThread::started, import_helper, &DatabaseImportHelper::importDatabase);
+		connect(import_thread, &QThread::started, import_helper, [this]() {
+			__trycatch( import_helper->importDatabase(); )
+		});
 
 		connect(import_helper, &DatabaseImportHelper::s_progressUpdated, this,
 						[this](int progress, QString msg, ObjectType obj_type) {
 			updateProgress(progress, msg, obj_type);
 		}, Qt::BlockingQueuedConnection);
 
-		connect(import_helper, &DatabaseImportHelper::s_importFinished, this, &ModelDatabaseDiffForm::handleImportFinished);
+		connect(import_helper, &DatabaseImportHelper::s_importFinished, this, __slot_n(this, ModelDatabaseDiffForm::handleImportFinished));
 		connect(import_helper, &DatabaseImportHelper::s_importAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 	else if(thread_id==DiffThread)
@@ -319,7 +329,9 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		diff_helper=new ModelsDiffHelper;
 		diff_helper->moveToThread(diff_thread);
 
-		connect(diff_thread, &QThread::started, diff_helper, qOverload<>(&ModelsDiffHelper::diffModels));
+		connect(diff_thread, &QThread::started, diff_helper, [this](){
+			__trycatch( diff_helper->diffModels(); )
+		});
 
 		connect(diff_helper, &ModelsDiffHelper::s_progressUpdated, this,
 						[this](int progress, QString msg, ObjectType obj_type) {
@@ -346,7 +358,7 @@ void ModelDatabaseDiffForm::createThread(ThreadId thread_id)
 		connect(export_thread, &QThread::started, export_helper, qOverload<>(&ModelExportHelper::exportToDBMS));
 		connect(export_helper, &ModelExportHelper::s_progressUpdated, this, &ModelDatabaseDiffForm::updateProgress, Qt::BlockingQueuedConnection);
 		connect(export_helper, &ModelExportHelper::s_errorIgnored, this, &ModelDatabaseDiffForm::handleErrorIgnored);
-		connect(export_helper, &ModelExportHelper::s_exportFinished, this, &ModelDatabaseDiffForm::handleExportFinished);
+		connect(export_helper, &ModelExportHelper::s_exportFinished, this, __slot(this, ModelDatabaseDiffForm::handleExportFinished));
 		connect(export_helper, &ModelExportHelper::s_exportAborted, this, &ModelDatabaseDiffForm::captureThreadError);
 	}
 }
@@ -430,14 +442,16 @@ void ModelDatabaseDiffForm::listDatabases()
 
 	try
 	{
-		if(conn_cmb->currentIndex()==conn_cmb->count()-1)
+		if(conn_cmb->currentIndex() == conn_cmb->count()-1)
 		{
-			ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true);
-			resetForm();
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
+			{
+				resetForm();
+				emit s_connectionsUpdateRequest();
+			}
 		}
 
-		Connection *conn=reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
+		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
 
 		if(conn)
 		{
@@ -757,29 +771,35 @@ void ModelDatabaseDiffForm::filterDiffInfos()
 
 void ModelDatabaseDiffForm::loadDiffInSQLTool()
 {
-	QString database = database_cmb->currentText(), filename;
-	QFile out_tmp_file;
-	Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
-	QByteArray buffer;
-	QTemporaryFile tmp_sql_file;
-
-	cancelOperation(true);
-
-	if(store_in_file_rb->isChecked())
-			filename = file_sel->getSelectedFile();
-	else
+	try
 	{
-		tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("diff_%1_XXXXXX.sql").arg(database)));
+		QString database = database_cmb->currentText(), filename;
+		QFile out_tmp_file;
+		Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+		QTemporaryFile tmp_sql_file;
 
-		tmp_sql_file.open();
-		filename = tmp_sql_file.fileName();
-		tmp_sql_file.close();
+		cancelOperation(true);
 
-		UtilsNs::saveFile(filename, sqlcode_txt->toPlainText().toUtf8());
+		if(store_in_file_rb->isChecked())
+				filename = file_sel->getSelectedFile();
+		else
+		{
+			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("diff_%1_XXXXXX.sql").arg(database)));
+
+			tmp_sql_file.open();
+			filename = tmp_sql_file.fileName();
+			tmp_sql_file.close();
+
+			UtilsNs::saveFile(filename, sqlcode_txt->toPlainText().toUtf8());
+		}
+
+		emit s_loadDiffInSQLTool(conn.getConnectionId(), database, filename);
+		close();
 	}
-
-	emit s_loadDiffInSQLTool(conn.getConnectionId(), database, filename);
-	close();
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void ModelDatabaseDiffForm::resetButtons()
@@ -876,7 +896,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
-	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
 void ModelDatabaseDiffForm::handleImportFinished(Exception e)
@@ -1136,8 +1156,7 @@ void ModelDatabaseDiffForm::restoreDefaults()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -1317,7 +1336,7 @@ void ModelDatabaseDiffForm::savePreset()
 
 void ModelDatabaseDiffForm::enablePartialDiff()
 {
-	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() >= 0) &&
+	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
@@ -1331,7 +1350,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
 		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("dbmodel")));
 	}
-	else if(src_database_cmb->currentIndex() >= 0)
+	else if(src_database_cmb->currentIndex() > 0)
 	{
 		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
 		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
@@ -1352,32 +1371,39 @@ void ModelDatabaseDiffForm::enableFilterByDate()
 
 void ModelDatabaseDiffForm::applyPartialDiffFilters()
 {
-	if(src_model_rb->isChecked())
+	try
 	{
-		QString search_attr = (gen_filters_from_log_chk->isChecked() ||
-													 pd_filter_wgt->isMatchSignature()) ?
-														Attributes::Signature : Attributes::Name;
+		if(src_model_rb->isChecked())
+		{
+			QString search_attr = (gen_filters_from_log_chk->isChecked() ||
+														 pd_filter_wgt->isMatchSignature()) ?
+																Attributes::Signature : Attributes::Name;
 
-		std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
+			std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
 
-		GuiUtilsNs::populateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
-		getFilteredObjects(filtered_objs);
+			GuiUtilsNs::populateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
+			getFilteredObjects(filtered_objs);
+		}
+		else if(src_connections_cmb->currentIndex() > 0 &&
+						 src_database_cmb->currentIndex() > 0)
+		{
+			DatabaseImportHelper import_helper;
+			Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
+
+			filtered_objs.clear();
+			conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
+			import_helper.setConnection(conn);
+			import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
+																			pd_filter_wgt->isOnlyMatching(),
+																			pd_filter_wgt->isMatchSignature(),
+																			pd_filter_wgt->getForceObjectsFilter());
+
+			DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_view);
+		}
 	}
-	else if(src_connections_cmb->currentIndex() > 0 &&
-					src_database_cmb->currentIndex() > 0)
+	catch(Exception &e)
 	{
-		DatabaseImportHelper import_helper;
-		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
-
-		filtered_objs.clear();
-		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
-		import_helper.setConnection(conn);
-		import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
-																	 pd_filter_wgt->isOnlyMatching(),
-																	 pd_filter_wgt->isMatchSignature(),
-																	 pd_filter_wgt->getForceObjectsFilter());
-
-		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_view);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

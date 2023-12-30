@@ -76,6 +76,7 @@ namespace Attributes {
 	Bold,
 	BorderColor,
 	Bottom,
+	BlogPost,
 	Buffering,
 	BypassRls,
 	ByValue,

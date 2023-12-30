@@ -206,8 +206,8 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 			return tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage());
 		}
 	}
-	else
-		return "";
+
+	return "";
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(std::map<QString, attribs_map> &config)
@@ -430,16 +430,14 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 
 void SnippetsConfigWidget::parseSnippet()
 {
-	Messagebox msg_box;
-
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(tr("No syntax errors found in the snippet."), Messagebox::InfoIcon);
+		Messagebox::info(tr("No syntax errors found in the code snippet."));
 	}
 	catch(Exception &e)
 	{
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

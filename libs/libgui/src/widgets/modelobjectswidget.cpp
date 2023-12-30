@@ -75,12 +75,12 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 		connect(options_tb, &QToolButton::clicked,this, &ModelObjectsWidget::changeObjectsView);
 
-		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, [this](ObjectType obj_type, Qt::CheckState state) {
+		connect(obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, this, [this](ObjectType obj_type, Qt::CheckState state) {
 			setObjectVisible(obj_type, state == Qt::Checked);
 			updateObjectsView();
 		});
 
-		connect(obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, [this](Qt::CheckState state) {
+		connect(obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, this, [this](Qt::CheckState state) {
 			setAllObjectsVisible(state == Qt::Checked);
 		});
 
@@ -342,14 +342,6 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 
 void ModelObjectsWidget::changeObjectsView()
 {
-	/* if(sender()==tree_view_tb || sender()==list_view_tb)
-	{
-		visaoobjetos_stw->setCurrentIndex(sender()==tree_view_tb ? 0 : 1);
-		tree_view_tb->setChecked(sender()==tree_view_tb);
-		list_view_tb->setChecked(sender()==list_view_tb);
-		by_id_chk->setEnabled(sender()==tree_view_tb);
-	}
-	else */
 	if(sender()==options_tb)
 	{
 		filter_wgt->setVisible(options_tb->isChecked());
@@ -708,7 +700,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 		catch(Exception &e)
 		{
 			objectstree_tw->setUpdatesEnabled(true);
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 
 		objectstree_tw->sortByColumn(0, Qt::AscendingOrder);

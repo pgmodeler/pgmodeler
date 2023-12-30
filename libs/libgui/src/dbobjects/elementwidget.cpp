@@ -26,7 +26,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element = nullptr;
 
 		setupUi(this);
-		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
+		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true, font().pointSizeF());
 		elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		parent_obj=nullptr;

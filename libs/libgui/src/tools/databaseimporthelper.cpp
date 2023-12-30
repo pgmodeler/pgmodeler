@@ -2707,26 +2707,29 @@ void DatabaseImportHelper::destroyDetachedColumns()
 												 ObjectType::Column);
 
 	//Destroying detached columns before create inheritances
-	for(Column *col : inherited_cols)
+	for(auto &col : inherited_cols)
 	{
-		refs = col->getReferences();
+		if(col->isReferenced())
+			continue;
 
-		if(refs.empty())
+		try
 		{
-			try
+			parent_tab = dynamic_cast<PhysicalTable *>(col->getParentTable());
+
+			/* Removing the column from the parent table only when the column isn't referenced by a partition key.
+				 After removing from table, we destroy it since they will be recreated by inheritances/partitioning */
+			if(!parent_tab->isPartitionKeyRefColumn(col))
 			{
-				//Removing the column from the parent table and destroying it since they will be recreated by inheritances
-				parent_tab=dynamic_cast<PhysicalTable *>(col->getParentTable());
 				parent_tab->removeObject(col);
 				delete col;
 			}
-			catch(Exception &e)
-			{
-				if(ignore_errors)
-					errors.push_back(e);
-				else
-					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-			}
+		}
+		catch(Exception &e)
+		{
+			if(ignore_errors)
+				errors.push_back(e);
+			else
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 	}
 

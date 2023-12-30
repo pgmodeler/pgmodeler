@@ -102,8 +102,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
 
 	connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
-	connect(add_perm_tb, &QToolButton::clicked, this, &PermissionWidget::addPermission);
-	connect(upd_perm_tb, &QToolButton::clicked, this, &PermissionWidget::updatePermission);
+	connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
+	connect(upd_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::updatePermission));
 
 	connect(revoke_rb, &QRadioButton::toggled, cascade_chk, &QCheckBox::setEnabled);
 	connect(revoke_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
@@ -133,9 +133,12 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=nullptr, *chk1=nullptr;
 
-		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PermissionWidget::showSelectedRoleData);
+		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](){
+			__trycatch( showSelectedRoleData(); )
+		});
+
 		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
-		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, &PermissionWidget::removePermissions);
+		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
@@ -265,7 +268,7 @@ void PermissionWidget::showSelectedRoleData()
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObjectContainer)
 											.arg(role->getName())
 											.arg(role->getTypeName())
-											.arg(roles_gb->title()),
+											.arg(roles_gb->title().remove('&')),
 											ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}

@@ -130,6 +130,9 @@ class __libgui ModelValidationHelper: public QObject {
 		//! \brief This signal is emitted when the validator applied some fix on validation info
 		void s_fixApplied();
 
+		//! \brief This signal is emitted when the validator failed to apply some fix via resolveConflict
+		void s_fixFailed(Exception e);
+
 		//! \brief This signal is emitted when the validator changes some objects id by swapping or update operations
 		void s_objectIdChanged(BaseObject *object);
 

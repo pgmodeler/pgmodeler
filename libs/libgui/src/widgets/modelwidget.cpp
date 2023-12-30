@@ -525,10 +525,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_convert_relnn, &QAction::triggered, this, &ModelWidget::convertRelationshipNN);
 	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
 	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
-	connect(action_copy, &QAction::triggered, this, &ModelWidget::copyObjects);
-	connect(action_paste, &QAction::triggered, this, &ModelWidget::pasteObjects);
-	connect(action_cut, &QAction::triggered, this, &ModelWidget::cutObjects);
+
+	connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
+	connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
+	connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
 	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
+
 	connect(action_rename, &QAction::triggered, this, &ModelWidget::renameObjects);
 	connect(action_edit_perms, &QAction::triggered, this, &ModelWidget::editPermissions);
 	connect(action_sel_sch_children, &QAction::triggered, this, &ModelWidget::selectSchemaChildren);
@@ -573,6 +575,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_objectsMoved, this, &ModelWidget::handleObjectsMovement);
 	connect(scene, &ObjectsScene::s_objectModified, this,  &ModelWidget::handleObjectModification);
 	connect(scene, &ObjectsScene::s_objectDoubleClicked, this,  &ModelWidget::handleObjectDoubleClick);
+
 	connect(scene, &ObjectsScene::s_objectSelected, this,  &ModelWidget::configureObjectSelection, Qt::QueuedConnection);
 	connect(scene, qOverload<BaseObject *>(&ObjectsScene::s_popupMenuRequested), this, qOverload<BaseObject *>(&ModelWidget::configurePopupMenu), Qt::QueuedConnection);
 	connect(scene, qOverload<>(&ObjectsScene::s_popupMenuRequested), this,  &ModelWidget::showObjectMenu, Qt::QueuedConnection);
@@ -647,10 +650,7 @@ ModelWidget::~ModelWidget()
 	tags_menu.clear();
 	break_rel_menu.clear();
 
-	//delete viewport;
 	delete scene;
-	//delete op_list;
-	//delete db_model;
 }
 
 void ModelWidget::setModified(bool value)
@@ -1556,7 +1556,7 @@ void ModelWidget::convertRelationshipNN()
 						op_list->ignoreOperationChain(false);
 					}
 
-					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -1719,7 +1719,7 @@ void ModelWidget::convertRelationship1N()
 			op_list->ignoreOperationChain(false);
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2005,22 +2005,26 @@ QString ModelWidget::getTempFilename()
 	return this->tmp_filename;
 }
 
-int ModelWidget::openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf)
+template<class WidgetClass>
+int ModelWidget::openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf)
 {
 	BaseForm editing_form(this);
-	BaseObjectWidget *base_obj_wgt=qobject_cast<BaseObjectWidget *>(widget);
 	QString class_name = widget->metaObject()->className();
 	int res = 0;
 
-	if(base_obj_wgt)
+	/* If the widget specified can be converted to BaseObjectWidget
+	 * means that we are handling a database object widget so
+	 * we use the BaseObjectWidget version of BaseForm::setMainWidget */
+	if(qobject_cast<BaseObjectWidget *>(widget))
 	{
-		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(base_obj_wgt->getHandledObject());
-		editing_form.setMainWidget(base_obj_wgt);
+		BaseRelationship *rel = dynamic_cast<BaseRelationship *>(widget->getHandledObject());
+		editing_form.setMainWidget(widget);
 
 		if(rel)
 			class_name.prepend(rel->getRelationshipTypeName().replace(QRegularExpression("( )+|(\\-)+"), ""));
 	}
 	else
+		// Use the QWidget version of BaseForm::setMainWidget
 		editing_form.setMainWidget(widget);
 
 	editing_form.setButtonConfiguration(button_conf);
@@ -2250,8 +2254,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2383,7 +2386,7 @@ void ModelWidget::moveToSchema()
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2442,7 +2445,7 @@ void ModelWidget::changeOwner()
 		if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2481,7 +2484,7 @@ void ModelWidget::setTag()
 		if(op_id >=0 &&  op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -2650,7 +2653,7 @@ void ModelWidget::protectObject()
 	catch(Exception &e)
 	{
 		scene->blockSignals(false);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -3191,7 +3194,7 @@ void ModelWidget::duplicateObject()
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -3512,7 +3515,9 @@ void ModelWidget::removeObjects(bool cascade)
 				scene->clearSelection();
 				setModified(true);
 				emit s_objectRemoved();
-				msg_box.show(e);
+
+				//msg_box.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 
 			/* In case of any object removal we clear the copied objects list in order to avoid
@@ -3523,10 +3528,10 @@ void ModelWidget::removeObjects(bool cascade)
 	}
 }
 
-void ModelWidget::removeObjectsCascade()
+/* void ModelWidget::removeObjectsCascade()
 {
 	removeObjects(true);
-}
+} */
 
 void ModelWidget::editCustomSQL()
 {
@@ -3686,10 +3691,12 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 							act->setEnabled(!act->isChecked());
 							act->setData(QVariant::fromValue<void *>(obj_list.back()));
 
-							if(i==0)
+							if(i == 0) {
 								connect(act, &QAction::triggered, this, &ModelWidget::moveToSchema);
-							else if(i==1)
+							}
+							else if(i == 1)	{
 								connect(act, &QAction::triggered, this, &ModelWidget::changeOwner);
+							}
 							else
 								connect(act, &QAction::triggered, this, &ModelWidget::setTag);
 
@@ -4241,14 +4248,20 @@ void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Delete"));
 					submenu->addAction(action);
-					connect(action, &QAction::triggered, this, &ModelWidget::removeObjects);
+
+					connect(action, &QAction::triggered, this, [this](){
+						removeObjects(false);
+					});
 
 					action=new QAction(dynamic_cast<QObject *>(submenu));
 					action->setIcon(QIcon(GuiUtilsNs::getIconPath("delcascade")));
 					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
 					action->setText(tr("Del. cascade"));
 					submenu->addAction(action);
-					connect(action, &QAction::triggered, this, &ModelWidget::removeObjectsCascade);
+
+					connect(action, &QAction::triggered, this, [this](){
+						removeObjects(true);
+					});
 				}
 				submenus.push_back(submenu);
 			}
@@ -4751,7 +4764,7 @@ void ModelWidget::createSequenceFromColumn()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -4791,7 +4804,7 @@ void ModelWidget::convertIntegerToSerial()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -4811,7 +4824,7 @@ void ModelWidget::breakRelationshipLine()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -4897,7 +4910,7 @@ void ModelWidget::removeRelationshipPoints()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -5028,7 +5041,6 @@ void ModelWidget::swapObjectsIds()
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
-	bool swapped = false;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
 
@@ -5037,12 +5049,18 @@ void ModelWidget::swapObjectsIds()
 
 	parent_form.setMainWidget(swap_ids_wgt, &SwapObjectsIdsWidget::swapObjectsIds);
 	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+
 	parent_form.apply_ok_btn->setEnabled(false);
 	parent_form.apply_ok_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("swapobjs")));
-	parent_form.apply_ok_btn->setText(tr("Swap ids"));
+	parent_form.apply_ok_btn->setText(tr("&Swap ids"));
 
-	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [&swapped](){
-		swapped = true;
+	parent_form.cancel_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+	parent_form.cancel_btn->setText(tr("&Close"));
+
+	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, this, [this](){
+		op_list->removeOperations();
+		setModified(true);
+		emit s_objectManipulated();
 	});
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapReady, parent_form.apply_ok_btn, &QPushButton::setEnabled);
@@ -5050,13 +5068,6 @@ void ModelWidget::swapObjectsIds()
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
-
-	if(swapped)
-	{
-		op_list->removeOperations();
-		setModified(true);
-		emit s_objectManipulated();
-	}
 }
 
 void ModelWidget::jumpToTable()
@@ -5227,10 +5238,19 @@ void ModelWidget::rearrangeTablesHierarchically()
 			rel->setPoints({});
 			rel->resetLabelsDistance();
 
-			if(!RelationshipView::isCurvedLines() &&
-				 round(rel->getTable(BaseRelationship::SrcTable)->getPosition().y()) !=
-				 round(rel->getTable(BaseRelationship::DstTable)->getPosition().y()))
-				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
+			try
+			{
+				if(!RelationshipView::isCurvedLines() &&
+						round(rel->getTable(BaseRelationship::SrcTable)->getPosition().y()) !=
+								round(rel->getTable(BaseRelationship::DstTable)->getPosition().y()))
+				{
+					breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
+				}
+			}
+			catch(Exception &e)
+			{
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
 		}
 
 		db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });

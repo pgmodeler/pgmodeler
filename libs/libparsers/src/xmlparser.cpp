@@ -142,7 +142,6 @@ void XmlParser::readBuffer()
 {
 	QByteArray buffer;
 	QString msg, file;
-	xmlError *xml_error=nullptr;
 	int parser_opt;
 
 	if(!xml_buffer.isEmpty())
@@ -169,7 +168,7 @@ void XmlParser::readBuffer()
 		xml_doc=xmlReadMemory(buffer.data(), buffer.size(),	nullptr, nullptr, parser_opt);
 
 		//In case the document criation fails, gets the last xml parser error
-		xml_error=xmlGetLastError();
+		const xmlError *xml_error = xmlGetLastError();
 
 		//If some error is set
 		if(xml_error)

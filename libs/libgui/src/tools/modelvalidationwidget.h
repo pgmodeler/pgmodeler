@@ -97,6 +97,7 @@ class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidation
 		void handleSQLValidationStarted();
 		void swapObjectsIds();
 		void copyTextOutput();
+		void handleFixFailed(Exception e);
 
 	public slots:
 		void hide();

@@ -29,7 +29,7 @@ Operation::Operation()
 	op_type=NoOperation;
 }
 
-QString Operation::generateOperationId()
+QString Operation::generateOperationId() const
 {
 	QString addr;
 	QTextStream stream(&addr);
@@ -126,7 +126,23 @@ QString Operation::getXMLDefinition()
 	return xml_definition;
 }
 
-bool Operation::isOperationValid()
+bool Operation::isOperationValid() const
 {
-	return (operation_id==generateOperationId());
+	return (operation_id == generateOperationId());
+}
+
+Operation::OperationInfo Operation::getOperationInfo() const
+{
+	OperType oper_type = OperType::NoOperation;
+	ObjectType obj_type = ObjectType::BaseObject;
+	QString obj_name = QT_TR_NOOP("(invalid object)");
+
+	if(isOperationValid())
+	{
+		obj_type = pool_obj->getObjectType();
+		obj_name = pool_obj->getSignature(true);
+		oper_type = this->op_type;
+	}
+
+	return OperationInfo(obj_name, obj_type, oper_type);
 }

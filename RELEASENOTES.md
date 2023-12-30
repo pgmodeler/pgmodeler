@@ -1,36 +1,32 @@
-v1.1.0-beta
+v1.1.0-beta1
 ------
-<em>Release date: November 17, 2023</em><br/>
-<em>Changes since: <strong>v1.1.0-alpha1</strong></em><br/>
+<em>Release date: December 30, 2023</em><br/>
+<em>Changes since: <strong>v1.1.0-beta</strong></em><br/>
 
-<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-beta causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
+<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0-beta1 causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
 
-Almost two months after launching 1.1.0-alpha1, I'm pleased to announce 1.1.0-beta! This version is the last of this development cycle to receive new features, and from now on, until the release of the stable 1.1.0 only bug fixes will be done. My main focus on this release was to work on two things that always bothered me since the early days of pgModeler: the view creation process and the extension data types handling. Since the codebase was mature enough, I thought it was time to change those two aspects of the tool, and this was done as described below:<br/>
+<strong>Summary</strong> This version was supposed to be released earlier this month, but after discovering a critical problem on macOS that almost made pgModeler unusable, there was the need to perform lots of refactoring on all portions of the UI, which consumed more time than expected. Fortunately, most problems were solved and now the macOS version runs normally after a long routine of adjustments and tests. Of course, one or another corner case may not be covered and eventually will be quickly patched once reported.<br/>
 
-**Views creation is now way simpler:** Instead of that clunky interface to configure views on previous versions, now the user can create this kind of object by using freely typed SQL commands with special placeholder variables enclosed by {} that we call references. Any reference in the typed SQL command that defines the view will be replaced by the referenced object, which can be columns, functions, procedures, tables, foreign tables, and views (yeah, views!). Once the view is created, pgModeler will create relationships between the referenced tables (foreign tables, and views) and the new view. Of course, not everything is roses, the feature is not backward compatible with models designed in the previous version, which means if you have models containing views you'll need to use the pgmodeler-cli fix process to make the proper corrections.<br/>
+**Changes/improvements**<br/>
+* [Change] Minor adjustment in connections configuration form in such a way to reload connections where they a used only when the user applies new connection settings on the form or restores original connections by clicking "Cancel".
+* [Change] Minor improvement on the object ids swapping form in such a way as to preserve the sorting parameters after swapping object ids.
+* [Change] Minor change in the operation list widget in such a way as to use icons instead of labels for operation list size and current history position.
+* [Change] Refactored signal/slot connections that needed exception handling all over the tool avoiding crashing the application when an exception is raised (macOS only).
+* [Change] Minor adjustment in model creation to avoid marking it invalidated even if it's new and empty.
+* [Change] Minor adjustment in code completion widget to include sequences when listing living database objects.
 
-**Extensions can now have multiple child data types:** In previous releases, pgModeler had a special flag in the extension's editing form labeled "Handles data type". That flag served to inform pgModeler that the extension needed to be used as a data type, for example, creating an extension named "hstore" and checking the mentioned flag, would create the type "hstore" making it usable in the columns, function parameters, and so on. The problem with this approach is that if an extension installed more than one data type in the database, it was needed to make some workarounds to have a second type available to be used in the database modeling process. So, in pgModeler 1.1.0-beta, the "Handles data type" flag was ditched and now the user can specify a free number of data types that the extension handles. pgModeler will handle the data types when adding or removing the extension. Models that use the old extension format can be fixed by using the pgmodeler-cli model fix process.<br/>
+**Bug fixes**<br/>
+* [Fix] Fixed the catalog query operator.sch so argument data types can have the schema name prepended.
+* [Fix] Fixed a crash when trying to display function/procedure/operator source code that references a domain in the parameters.
+* [Fix] Fixed the catalog queries for function and procedure to correctly format parameters' data type signatures.
+* [Fix] Fixed a problem in object ids swapping widget that was not capturing arrow key press on macOS.
+* [Fix] Fixed a bug in the importing of partitioned table indexes which was affecting the results produced by the diff process.
+* [Fix] Fixed a bug in the code completion widget that was crashing the application when trying to list columns of an alias related to a non-schema-qualified table.
+* [Fix] Fixed a bug in reverse engineering related to the importing of partition tables hierarchy.
+* [Fix] Fixed a bug in diff that was generating false-positive results for columns with the same user-defined type.
+* [Fix] Fixed a bug in the line numbers widget, within source code input fields, that was not aligning the line numbers with their respective lines when the font size was different from the default.
+* [Fix] Fixed a broken build related to XML parser that was using an xmlError * reference instead of a const xmlError * reference.
+* [Fix] Minor fix in code completion widget to avoid the displaying of the widget in a position that extrapolates the screen limits.
+* [Fix] Minor fix in the icon positioning in the list and tree widget items.
 
-**Improved tool's executables relocation:** pgModeler already has some mechanisms to customize the paths associated with the assets and executables once installed in the system. One of them is the environment variables, but sometimes the user doesn't want or even has no privileges to change environment variables in the system. Thinking of that, this new version introduces a special configuration file called "pgmpaths.conf" which goal is to configure the paths where the pgModeler main executable as well as the auxiliary tools can find all the needed folders, assets, and configuration files. This file must be created in the same folder as a pgModeler's executable and must be filled with lines in the format variable=path. The "variable" refers to one of the available environment variables understood by pgModeler (refer to the installation instructions, section "Environment variables" for details) and the "path" is a relative or absolute path to the resource associated with the environment variable.<br/>
-
-**Several other improvements:** General improvements were made all over the tool and some of them are described below.<br/>
-* Added support for overriding the canvas' background color when exporting the model to PNG.
-* The "Display unique results" option on objects' dependencies & references dialog is now checked by default.
-* Adjusted the CSV pasting in the table data editor.
-* Adjusted the extension's attributes display in the database explorer to list types related to an extension.
-* The code completion widget now resizes according to the displayed items' width.
-* The code completion will not display a "no items found" popup if no element is found matching the word at the cursor's position.
-* Adjusted the reverse engineering process so relationships can be created from the link between two views.
-* Minor change in reverse engineering to avoid importing extension child types into the model since the extension itself, when imported, already creates the types.
-
-**Bug fixes:** Also, as part of the constant search for the overall tool's stability and reliability, almost twenty bugs were fixed, and below we highlight some key ones:<br/>
-* Fixed settings storing for the grid options in MainWindow.
-* Fix a crash that was happening only on Windows.
-* Fixed a bug in the generation of diff commands for identity columns.
-* Fixed a bug in list widget items painting that was causing the rendering of artifacts sometimes.
-* Fixed a bug in pgmodeler-cli that was aborting the fix process during the parsing of the model changelog.
-* Fixed a crash when trying to load an invalid model from the recent model's menu.
-* Fixed sample model structure to the new view's format.
-* Fixed several bugs in the code completion widget when completing code using live database object names.
-
-Finally, for more details about the version's changelog, please, take a look at the file CHANGELOG.md.
+Finally, for more details about this version's changelog, please, refer to CHANGELOG.md.

@@ -18,6 +18,7 @@
 
 #include "baseform.h"
 #include "guiutilsns.h"
+#include "qtconnectmacros.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -130,26 +131,6 @@ void BaseForm::resizeForm(QWidget *widget)
 void BaseForm::closeEvent(QCloseEvent *)
 {
 	this->reject();
-}
-
-void BaseForm::setMainWidget(BaseObjectWidget *widget)
-{
-	if(!widget)
-		return;
-
-	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
-		setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
-	else
-		setWindowTitle(widget->windowTitle());
-
-	apply_ok_btn->setDisabled(widget->isHandledObjectProtected());
-	resizeForm(widget);
-	setButtonConfiguration(Messagebox::OkCancelButtons);
-
-	connect(cancel_btn, &QPushButton::clicked, widget, &BaseObjectWidget::cancelConfiguration);
-	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
-	connect(apply_ok_btn, &QPushButton::clicked, widget, &BaseObjectWidget::applyConfiguration);
-	connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
 }
 
 void BaseForm::setMainWidget(QWidget *widget)

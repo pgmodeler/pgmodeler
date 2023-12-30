@@ -31,8 +31,8 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent_edt = qobject_cast<QPlainTextEdit *>(parent);
-	first_line=line_count=start_sel_pos=0;
-	dy=0;
+	first_line = line_count=start_sel_pos=0;
+	dy = block_height = 0;
 	has_selection = false;
 	start_sel_line = -1;
 
@@ -40,11 +40,12 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	connect(parent_edt, &QPlainTextEdit::cursorPositionChanged, this, qOverload<>(&LineNumbersWidget::update));
 }
 
-void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
+void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy, int blk_height)
 {
 	this->first_line=first_line;
 	this->line_count=line_count;
-	this->dy=dy;
+	this->dy = dy;
+	this->block_height = blk_height;
 	this->update();
 }
 
@@ -57,8 +58,7 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y = dy, height = 0,
-			last_line=first_line + line_count;
+	int y = dy,	last_line=first_line + line_count;
 	QFont font = painter.font();
 	QTextCursor cursor = parent_edt->textCursor();
 
@@ -68,7 +68,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 
 	QTextCursor aux_cur;
 	QTextBlock block;
-	int blk_num = 0, prev_blk_num = -1;
+	int blk_num = 0, prev_blk_num = -1, padding = (line_count == 1 ? -3 : 1);
 	QString lin_str;
 
 	//Draw line numbers
@@ -76,6 +76,7 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 	{
 		aux_cur = parent_edt->cursorForPosition(QPoint(0, y));
 		block = aux_cur.block();
+
 		blk_num = block.blockNumber();
 
 		if(blk_num != prev_blk_num)
@@ -95,20 +96,19 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 			font.setBold(false);
 
 		painter.setFont(font);
-		height = painter.fontMetrics().height() + 1;
 
 		if(font.bold())
 		{
 			painter.setBrush(bg_color.darker(150));
 			painter.setPen(Qt::transparent);
-			painter.drawRect(QRect(-1, y, this->width() + 1, height));
+			painter.drawRect(QRect(-1, y - 1, this->width() + 1, block_height + padding));
 			painter.setPen(font_color.lighter(180));
 		}
 		else
 			painter.setPen(font_color);
 
-		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, lin_str);
-		y += height;
+		painter.drawText(0, y, this->width(), block_height, Qt::AlignHCenter, lin_str);
+		y += block_height;
 	}
 }
 
