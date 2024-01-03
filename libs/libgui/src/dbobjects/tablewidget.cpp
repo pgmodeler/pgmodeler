@@ -428,8 +428,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 void TableWidget::listObjects(ObjectType obj_type)
 {
 	ObjectsTableWidget *tab=nullptr;
-	unsigned idx = 0, count = 0;
-	PhysicalTable *table=nullptr;
+	PhysicalTable *table = nullptr;
+	std::vector<unsigned> pk_cols;
 
 	try
 	{
@@ -438,13 +438,34 @@ void TableWidget::listObjects(ObjectType obj_type)
 		table=dynamic_cast<PhysicalTable *>(this->object);
 
 		tab->blockSignals(true);
-		tab->removeRows();
-		count = table->getObjectCount(obj_type);
 
-		for(idx = 0; idx < count; idx++)
+		/* In case of displaying columns we need to store
+		 * the row related to table columns that are marked as primary key so
+		 * we restore the check state after (re)populate the grid */
+		if(obj_type == ObjectType::Column)
+		{
+			for(unsigned row = 0; row < tab->getRowCount(); row++)
+			{
+				if(tab->getCellCheckState(row, 0) == Qt::Checked)
+					pk_cols.push_back(row);
+			}
+		}
+
+		tab->removeRows();
+
+		for(auto &obj : *table->getObjectList(obj_type))
 		{
 			tab->addRow();
-			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
+			showObjectData(obj, tab->getRowCount() - 1);
+		}
+
+		// Restoring the check state of columns marked as primary key
+		for(auto &pk_col : pk_cols)
+		{
+			if(pk_col >= tab->getRowCount())
+				continue;
+
+			tab->setCellCheckState(pk_col, 0, Qt::Checked);
 		}
 
 		tab->resizeContents();
