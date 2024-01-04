@@ -124,7 +124,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		attribs_map custom_items_tips;
 
-		//! \brief Puts the selected object name on the current cursor position.
+					 //! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 		
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items

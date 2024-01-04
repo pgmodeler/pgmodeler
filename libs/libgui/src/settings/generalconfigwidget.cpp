@@ -109,6 +109,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::UseCurvedLines]="";
 	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]="";
 	config_params[Attributes::Configuration][Attributes::LowVerbosity]="";
+	config_params[Attributes::Configuration][Attributes::DefaultSchema]="";
 
 	selectPaperSize();
 
@@ -169,7 +170,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
-	for(QString lang : langs)
+	for(auto &lang : langs)
 	{
 		native_lang = QLocale(lang).nativeLanguageName();
 		native_lang[0] = native_lang[0].toUpper();
@@ -274,7 +275,7 @@ void GeneralConfigWidget::loadConfiguration()
 			wgt->blockSignals(false);
 
 		widgets_geom.clear();
-		for(auto itr : config_params)
+		for(auto &itr : config_params)
 		{
 			if(itr.second.count(Attributes::XPos))
 			{

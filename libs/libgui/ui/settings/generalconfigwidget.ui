@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>830</height>
+    <width>835</width>
+    <height>835</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -384,22 +390,6 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="0">
-           <widget class="QCheckBox" name="hide_ext_attribs_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Hide the portion of table which represents triggers, indexes and rules.</string>
-            </property>
-            <property name="text">
-             <string>Hide table extended attributes</string>
-            </property>
-           </widget>
-          </item>
           <item row="6" column="0">
            <widget class="QCheckBox" name="corner_move_chk">
             <property name="sizePolicy">
@@ -677,25 +667,6 @@
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QCheckBox" name="code_completion_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Toggles the code completion in all fields that accepts the input of SQL commands.</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Enable SQL code completion</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
            <widget class="QCheckBox" name="use_curved_lines_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -714,7 +685,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QCheckBox" name="hide_obj_shadows_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -733,7 +704,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QCheckBox" name="hide_sch_name_usr_types_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -752,7 +723,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="hide_rel_name_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -771,7 +742,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="2" column="1">
            <widget class="QCheckBox" name="hide_table_tags_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -787,6 +758,22 @@
             </property>
             <property name="text">
              <string>Hide table tags</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="hide_ext_attribs_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Hide the portion of table which represents triggers, indexes and rules.</string>
+            </property>
+            <property name="text">
+             <string>Hide table extended attributes</string>
             </property>
            </widget>
           </item>
@@ -827,26 +814,7 @@
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="sql_history_lbl">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>SQL command history maximum lines:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="disable_inline_editor_chk">
             <property name="enabled">
              <bool>false</bool>
@@ -871,45 +839,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="old_pgsql_versions_chk">
-            <property name="toolTip">
-             <string>&lt;p&gt;pgModeler will try to connect to older server versions (below 10) in a minimum compatibility mode. &lt;strong&gt;WARNING:&lt;/strong&gt; this option may cause the diff and import processes to fail or produce unreliable results. Also, it can lead to data loss when handling table data. Enable this option at &lt;strong&gt;your own risk&lt;/strong&gt;!&lt;/p&gt;</string>
-            </property>
-            <property name="text">
-             <string>Allow unsupported server versions</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="trunc_columns_data_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;Toggles the automatic truncation of columns' data in the results grid when exceeding a specified threshold. This improves performance when displaying/handling columns with lots of data.&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Truncate columns data exceeding:</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
+          <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_19">
             <property name="spacing">
              <number>5</number>
@@ -995,7 +925,23 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="2">
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="old_pgsql_versions_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;pgModeler will try to connect to older server versions (below 10) in a minimum compatibility mode. &lt;strong&gt;WARNING:&lt;/strong&gt; this option may cause the diff and import processes to fail or produce unreliable results. Also, it can lead to data loss when handling table data. Enable this option at &lt;strong&gt;your own risk&lt;/strong&gt;!&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Allow unsupported server versions</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <property name="spacing">
              <number>5</number>
@@ -1073,6 +1019,66 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="trunc_columns_data_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the automatic truncation of columns' data in the results grid when exceeding a specified threshold. This improves performance when displaying/handling columns with lots of data.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Truncate columns data exceeding:</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="code_completion_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the code completion in all fields that accept the input of SQL commands, in both the SQL tool and design view. Requires restarting the tool to take effect.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Enable SQL code completion</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="sql_history_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>SQL command history maximum lines:</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

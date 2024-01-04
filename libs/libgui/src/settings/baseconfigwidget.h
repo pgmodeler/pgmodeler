@@ -91,7 +91,7 @@ class __libgui BaseConfigWidget: public QWidget {
 
 	public:
 		BaseConfigWidget(QWidget *parent = nullptr);
-		~BaseConfigWidget(void){}
+		~BaseConfigWidget(){}
 		
 		bool isConfigurationChanged();
 		
