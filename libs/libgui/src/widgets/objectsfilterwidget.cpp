@@ -129,11 +129,13 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 		addFilter();
 		row = filters_tbw->rowCount() - 1;
 
+		// Object type combo
 		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0));
-		combo->setCurrentIndex(types.indexOf(values[0]));
+		combo->setCurrentIndex(types.indexOf(values[0]) + 1);
 
 		filters_tbw->item(row, 1)->setText(values[1]);
 
+		// Filter mode combo (wildcard, regexp, etc)
 		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
 		combo->setCurrentText(values[2]);
 	}
