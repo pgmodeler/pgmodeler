@@ -21,7 +21,13 @@
 #include "attributes.h"
 #include "settings/appearanceconfigwidget.h"
 
-const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli(
+#ifdef Q_OS_WIN
+	"pgmodeler-cli.exe"
+#else
+	"pgmodeler-cli"
+#endif
+);
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -30,7 +36,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 
 	input_file_sel = new FileSelectorWidget(this);
-	//input_file_sel->setFileMode(QFileDialog::ExistingFile);
 	input_file_sel->setFileMustExist(true);
 	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
