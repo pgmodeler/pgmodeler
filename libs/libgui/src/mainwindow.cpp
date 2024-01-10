@@ -1978,7 +1978,7 @@ void MainWindow::printModel()
 				current_model->printModel(printer,
 																	conf_wgt->print_grid_chk->isChecked(),
 																	conf_wgt->print_pg_num_chk->isChecked(),
-																	true);
+																	action_lock_delim->isChecked());
 			}
 		}
 	}

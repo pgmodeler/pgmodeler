@@ -1860,7 +1860,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 	margins = printer->pageLayout().marginsPoints();
 	page_cnt = pages.size();
 
-	for(page=0, h_pg_id=1, v_pg_id=1; page < page_cnt; page++)
+	for(page = 0, h_pg_id = 1, v_pg_id = 1; page < page_cnt; page++)
 	{
 		//Render the current page on the printer
 		scene->render(&painter, QRect(), pages[page]);
@@ -1868,7 +1868,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		//Print the current page number if this option is marked
 		if(print_page_nums)
 		{
-			page_info = tr("Page #%1 / C:%2 x R:%3").arg(QString::number(page + 1)).arg(h_pg_id).arg(v_pg_id);
+			page_info = tr("Page #%1 / X:%2 Y:%3").arg(QString::number(page + 1)).arg(h_pg_id).arg(v_pg_id);
 			color = ObjectsScene::getGridColor().darker();
 			color.setAlpha(128);
 			painter.setBrush(color);
