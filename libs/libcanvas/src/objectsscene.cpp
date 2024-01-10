@@ -793,9 +793,30 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setDashPattern({3, 5});
 		painter->setPen(pen);
 
-		for(int px = start_x; px < end_x; px += page_w)
+		double st_x = start_x, st_y = start_y;
+
+		/* If the current origin point of the canvas is not at the positive origin (0,0)
+		 * we need to calculate the number of page delimiter to be drawn before the (0,0).
+		 * This avoid the delimiters to be shifted every time the canvas origin moves
+		 * far to a negative point. In the comparison below, we use a -grid_size as the origin
+		 * because the canvas is padded in one grid cell */
+		if(start_x < static_cast<int>(-grid_size))
 		{
-			for(int py = start_y; py < end_y; py += page_h)
+			/* Due to the infinite canvas feature, we need to calculate
+			 * the number of pages before origin (0,0) so the iteration
+			 * can start in the right position of rendering */
+			st_x = round((start_x/page_w)) * page_w,
+			st_y = round((start_y/page_h)) * page_h;
+
+			/* We decremente in one page the start rendering position
+			 * so the round operation above doesn't cut any start page */
+			st_x -= page_w;
+			st_y -= page_h;
+		}
+
+		for(int px = st_x; px < end_x; px += page_w)
+		{
+			for(int py = st_y; py < end_y; py += page_h)
 			{
 				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
 				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
@@ -809,8 +830,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setColor(QColor(255, 0, 0));
 		pen.setStyle(Qt::SolidLine);
 		painter->setPen(pen);
-		painter->drawLine(0, scene_lim_y, scene_lim_x, scene_lim_y);
-		painter->drawLine(scene_lim_x, 0, scene_lim_x, scene_lim_y);
+		painter->drawLine(start_x, scene_lim_y, scene_lim_x, scene_lim_y);
+		painter->drawLine(scene_lim_x, start_y, scene_lim_x, scene_lim_y);
 	}
 
 	painter->restore();
