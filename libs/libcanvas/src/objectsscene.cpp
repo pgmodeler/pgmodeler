@@ -742,8 +742,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
 
-	start_x = (round(rect.left()/grid_size) * grid_size) - grid_size;
-	start_y = (round(rect.top()/grid_size) * grid_size) - grid_size;
+	start_x = (round(rect.left()/grid_size) * grid_size) /*- grid_size */;
+	start_y = (round(rect.top()/grid_size) * grid_size) /*- grid_size*/;
 	end_x = rect.right() < scene_w ? rect.right() : scene_w;
 	end_y = rect.bottom() < scene_h ? rect.bottom() : scene_h;
 
@@ -795,10 +795,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		/* If the current origin point of the canvas is not at the positive origin (0,0)
 		 * we need to calculate the number of page delimiter to be drawn before the (0,0).
 		 * This avoid the delimiters to be shifted every time the canvas origin moves
-		 * far to a negative point. In the comparison below, we use a -grid_size as the origin
-		 * because the canvas is padded in one grid cell */
-		if(start_x < static_cast<int>(-grid_size) ||
-			 start_y < static_cast<int>(-grid_size))
+		 * far to a negative point. */
+		if(start_x < 0 || start_y < 0)
 		{
 			/* Due to the infinite canvas feature, we need to calculate
 			 * the number of pages before origin (0,0) so the iteration
@@ -1716,7 +1714,7 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 	QRectF page_rect, max_rect, scn_rect = sceneRect();
 	double width = 0, height = 0, page_width = 0, page_height = 0;
 	int h_page = 0, v_page = 0, start_h = 999999, start_v = 999999,
-			st_x = scn_rect.left(), st_y = scn_rect.top();
+			st_x = scn_rect.toRect().left(), st_y = scn_rect.toRect().top();
 	QList<QGraphicsItem *> list;
 
 	if(scale < MinScaleFactor)
@@ -1732,11 +1730,10 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 
 	/* If the origin point is before (0,0) we have to calculate the number
 	 * pages are before that coordinate */
-	if(st_x < static_cast<int>(-grid_size) ||
-		 st_y < static_cast<int>(-grid_size))
+	if(st_x < 0 || st_y < 0)
 	{
-		st_x = round((scn_rect.left() / page_width)),
-		st_y = round((scn_rect.top() / page_height));
+		st_x = round(scn_rect.left() / page_width),
+		st_y = round(scn_rect.top() / page_height);
 	}
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size

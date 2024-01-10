@@ -1801,9 +1801,13 @@ void ModelWidget::adjustSceneSize()
 
 	if(rect.left() > 0)
 		rect.setLeft(0);
+	else if(rect.left() <= 0)
+		rect.setLeft(rect.left() - padding);
 
 	if(rect.top() > 0)
 		rect.setTop(0);
+	else if(rect.top() <= 0)
+		rect.setTop(rect.top() - padding);
 
 	rect.setRight(rect.right() + padding);
 	rect.setBottom(rect.bottom() + padding);
