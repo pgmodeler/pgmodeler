@@ -3332,7 +3332,7 @@ void DatabaseModel::loadModel(const QString &filename)
 		pos_str=attribs[Attributes::LastPosition].split(',');
 
 		if(pos_str.size()>=2)
-			this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
+			this->last_pos = QPoint(pos_str[0].toInt(),pos_str[1].toInt());
 
 		this->last_zoom=attribs[Attributes::LastZoom].toDouble();
 		if(this->last_zoom <= 0) this->last_zoom=1;

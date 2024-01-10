@@ -423,6 +423,12 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when tables children objects have their selection statuses changed
 		void s_childrenSelectionChanged();
 
+		/*! \brief Signal emitted when one of the dimensions of the scene rect changes after moving one or more object
+		 * The signal argument is the selected object rectangles united in one single bounding rect.
+		 * This signal is used to indicated that the viewport attached to the scene must center/ensure visible the
+		 * passed rectagle causing the object recently move to be visible */
+		void s_ensureVisibleRequested(QRectF);
+
 		friend class ModelWidget;
 		friend class PgModelerCliApp;
 };

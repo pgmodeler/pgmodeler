@@ -598,6 +598,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		setModified(true);
 	});
 
+	connect(scene, &ObjectsScene::s_ensureVisibleRequested, this, [this](const QRectF &rect){
+		viewport->ensureVisible(rect);
+	});
+
 	connect(scene, &ObjectsScene::s_layersChanged, this, &ModelWidget::updateModelLayersInfo);
 	connect(scene, &ObjectsScene::s_activeLayersChanged, this, &ModelWidget::updateModelLayersInfo);
 	connect(scene, qOverload<BaseObject *>(&ObjectsScene::s_popupMenuRequested), new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
@@ -873,7 +877,7 @@ bool ModelWidget::saveLastCanvasPosition()
 				pos.x()!=hscroll->value() || pos.y()!=vscroll->value())
 		{
 			db_model->setLastPosition(QPoint(viewport->horizontalScrollBar()->value(),
-											 viewport->verticalScrollBar()->value()));
+																			 viewport->verticalScrollBar()->value()));
 			db_model->setLastZoomFactor(this->current_zoom);
 			return true;
 		}
@@ -895,7 +899,7 @@ void ModelWidget::restoreLastCanvasPosition()
 		QScrollBar *hscroll=viewport->horizontalScrollBar(),
 				*vscroll=viewport->verticalScrollBar();
 
-		if(db_model->getLastZoomFactor()!=1.0)
+		if(db_model->getLastZoomFactor() != 1.0)
 			this->applyZoom(db_model->getLastZoomFactor());
 
 		hscroll->setValue(db_model->getLastPosition().x());
@@ -1739,7 +1743,7 @@ void ModelWidget::loadModel(const QString &filename)
 		#endif
 
 		db_model->loadModel(filename);
-		this->filename=filename;
+		this->filename = filename;
 		updateObjectsOpacity();
 		updateSceneLayers();
 		adjustSceneSize();
@@ -1786,7 +1790,7 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 
 void ModelWidget::adjustSceneSize()
 {
-	viewport->centerOn(0,0);
+	//viewport->centerOn(0,0);
 
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
@@ -1794,11 +1798,15 @@ void ModelWidget::adjustSceneSize()
 		db_model->setObjectsModified();
 	}
 
+	double padding = 2 * ObjectsScene::getGridSize();
 	QRectF rect = scene->itemsBoundingRect();
-	rect.setTopLeft(QPointF(0,0));
-	rect.setWidth(rect.width() + (2 * ObjectsScene::getGridSize()));
-	rect.setHeight(rect.height() + (2 * ObjectsScene::getGridSize()));
+	rect.setTop(rect.top() - padding);
+	rect.setLeft(rect.left() - padding);
+	rect.setWidth(rect.width() + padding);
+	rect.setHeight(rect.height() + padding);
+
 	scene->setSceneRect(rect);
+	viewport->centerOn(rect.topLeft());
 
 	emit s_sceneInteracted(rect.size());
 }

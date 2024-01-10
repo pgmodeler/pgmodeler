@@ -656,8 +656,8 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 	int px = static_cast<int>(round(pnt.x()/static_cast<double>(grid_size))) * grid_size,
 			py = static_cast<int>(round(pnt.y()/static_cast<double>(grid_size))) * grid_size;
 
-	if(px < 0) px = 0;
-	if(py < 0) py = 0;
+	//if(px < 0) px = 0;
+	//if(py < 0) py = 0;
 
 	return QPointF(px,	py);
 }
@@ -672,7 +672,7 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 	if(sz.height() < MinSceneHeight)
 		sz.setHeight(MinSceneHeight);
 
-	QGraphicsScene::setSceneRect(0, 0, sz.width(), sz.height());
+	QGraphicsScene::setSceneRect(rect.left(), rect.top(), sz.width(), sz.height());
 }
 
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only, bool incl_layer_rects)
@@ -793,9 +793,9 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setDashPattern({3, 5});
 		painter->setPen(pen);
 
-		for(int px = 0; px < end_x; px += page_w)
+		for(int px = start_x; px < end_x; px += page_w)
 		{
-			for(int py = 0; py < end_y; py += page_h)
+			for(int py = start_y; py < end_y; py += page_h)
 			{
 				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
 				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
@@ -1455,6 +1455,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	BaseTableView *tab_view=nullptr;
 	TableObjectView *tab_obj_view=nullptr;
 	QSet<BaseObjectView *> tables;
+	QRectF sel_rect;
 
 	//Gathering the relationships inside the selected schemsa in order to move their points too
 	for(auto &item : items)
@@ -1509,8 +1510,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	for(auto &item : items)
 	{
 		// Ignoring table objects items
-		tab_obj_view = dynamic_cast<TableObjectView *>(item);
-		if(tab_obj_view) continue;
+		if(dynamic_cast<TableObjectView *>(item))
+			continue;
 
 		rel=dynamic_cast<RelationshipView *>(item);
 
@@ -1518,13 +1519,11 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		{
 			if(align_objs_grid)
 				item->setPos(alignPointToGrid(item->pos()));
-			else
-			{
-				QPointF p=item->pos();
-				if(p.x() < 0) p.setX(0);
-				if(p.y() < 0) p.setY(0);
-				item->setPos(p);
-			}
+
+			/* Storing the object's bounding rect (with position) so we can
+			 * request that the viewport adjust the current position to make
+			 * the selection visible */
+			sel_rect = sel_rect.united(QRectF(item->pos(), item->boundingRect().size()));
 		}
 		else
 		{
@@ -1552,6 +1551,11 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				rel->getUnderlyingObject()->setPoints(points);
 				rel->configureLine();
 			}
+
+			/* Storing the relationship's bounding rect so we can
+			 * request that the viewport adjust the current position to make
+			 * the selection visible */
+			sel_rect = sel_rect.united(rel->boundingRect());
 		}
 	}
 
@@ -1581,17 +1585,24 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	QRectF rect = this->itemsBoundingRect(true, false, true),
 			old_scene_rect = sceneRect();
-	rect.setTopLeft(QPointF(0,0));
-	rect.setWidth(rect.width() + (2 * grid_size));
-	rect.setHeight(rect.height() + (2 * grid_size));
+	double padding = 2 * grid_size;
+
+	rect.setLeft(rect.left() - padding);
+	rect.setTop(rect.top() - padding);
+	rect.setWidth(rect.width() + padding);
+	rect.setHeight(rect.height() + padding);
 
 	setSceneRect(rect);
 
 	/* We invalidate the entire scene if the old scene size differs from the new one
 	 * calculated based upon the items bounding rects after objects movement */
-	if(old_scene_rect.height() != rect.height() ||
+	if(old_scene_rect.topLeft() != rect.topLeft() ||
+		 old_scene_rect.height() != rect.height() ||
 		 old_scene_rect.width() != rect.width())
+	{
 		invalidate();
+		emit s_ensureVisibleRequested(sel_rect);
+	}
 
 	emit s_objectsMoved(true);
 }
@@ -1604,25 +1615,25 @@ void ObjectsScene::alignObjectsToGrid()
 	TextboxView *lab=nullptr;
 	std::vector<QPointF> points;
 	std::vector<Schema *> schemas;
-	unsigned i, count, i1, count1;
+	unsigned i1, count1;
 
-	count=items.size();
-	for(i=0; i < count; i++)
+	for(auto &item : items)
 	{
-		if(dynamic_cast<QGraphicsItemGroup *>(items[i]) && !items[i]->parentItem())
+		if(dynamic_cast<QGraphicsItemGroup *>(item) && !item->parentItem())
 		{
-			tab=dynamic_cast<BaseTableView *>(items[i]);
-			rel=dynamic_cast<RelationshipView *>(items[i]);
+			tab = dynamic_cast<BaseTableView *>(item);
+			rel = dynamic_cast<RelationshipView *>(item);
 
 			if(tab)
 				tab->setPos(this->alignPointToGrid(tab->pos()));
 			else if(rel)
 			{
 				//Align the relationship points
-				points=rel->getUnderlyingObject()->getPoints();
-				count1=points.size();
-				for(i1=0; i1 < count1; i1++)
-					points[i1]=this->alignPointToGrid(points[i1]);
+				points = rel->getUnderlyingObject()->getPoints();
+				count1 = points.size();
+
+				for(i1 = 0; i1 < count1; i1++)
+					points[i1] = this->alignPointToGrid(points[i1]);
 
 				if(count1 > 0)
 				{
@@ -1631,17 +1642,18 @@ void ObjectsScene::alignObjectsToGrid()
 				}
 
 				//Align the labels
-				for(i1=BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
+				for(i1 = BaseRelationship::SrcCardLabel; i1 <= BaseRelationship::RelNameLabel; i1++)
 				{
-					lab=rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
+					lab = rel->getLabel(static_cast<BaseRelationship::LabelId>(i1));
+
 					if(lab)
 						lab->setPos(this->alignPointToGrid(lab->pos()));
 				}
 			}
-			else if(!dynamic_cast<SchemaView *>(items[i]))
-				items[i]->setPos(this->alignPointToGrid(items[i]->pos()));
+			else if(!dynamic_cast<SchemaView *>(item))
+				item->setPos(this->alignPointToGrid(item->pos()));
 			else
-				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getUnderlyingObject()));
+				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(item)->getUnderlyingObject()));
 		}
 	}
 

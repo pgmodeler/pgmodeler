@@ -33,8 +33,6 @@ class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidg
 	private:
 		Q_OBJECT
 
-		QScrollArea *scrollarea;
-
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 
@@ -52,8 +50,14 @@ class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidg
 
 		QSize pixmap_size;
 
+		//! \brief Indicates that the viewport frame is being moved by the user via mouse move event
+		bool moving_frame;
+
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
 		static constexpr double ResizeFactor = 0.20;
+
+		//! \brief The screen size threshold used to determine if the scroll area must be displayed or not
+		static constexpr double ScreenSzThreshold = 0.50;
 
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
@@ -74,7 +78,7 @@ class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidg
 		void updateOverview();
 
 		//! \brief Resizes the frame that represents the visualization window
-		void resizeWindowFrame();
+		void resizeViewportFrame();
 
 		//! \brief Resizes the whole overview widget
 		void resizeOverview();
