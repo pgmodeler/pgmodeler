@@ -19,30 +19,27 @@
 #include "schemaview.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
-#include "utilsns.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
 	connect(schema, &Schema::s_objectModified, this, &SchemaView::configureObject);
 
-	sch_name=new QGraphicsSimpleTextItem;
+	sch_name = new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
+	this->addToGroup(sch_name);
 
-	box=new RoundedRectItem;
+	box = new RoundedRectItem;
 	box->setZValue(0);
+	this->addToGroup(box);
 
-	obj_selection=new RoundedRectItem;
-	obj_selection->setVisible(false);
+	obj_selection = new RoundedRectItem;
 	obj_selection->setZValue(4);
 	this->addToGroup(obj_selection);
 
-	this->addToGroup(box);
-	this->addToGroup(sch_name);
 	this->setZValue(-200);
-
 	this->configureObject();
-	all_selected=false;
 
+	all_selected = false;
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 

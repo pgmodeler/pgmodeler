@@ -656,9 +656,6 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 	int px = static_cast<int>(round(pnt.x()/static_cast<double>(grid_size))) * grid_size,
 			py = static_cast<int>(round(pnt.y()/static_cast<double>(grid_size))) * grid_size;
 
-	//if(px < 0) px = 0;
-	//if(py < 0) py = 0;
-
 	return QPointF(px,	py);
 }
 
@@ -800,7 +797,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		 * This avoid the delimiters to be shifted every time the canvas origin moves
 		 * far to a negative point. In the comparison below, we use a -grid_size as the origin
 		 * because the canvas is padded in one grid cell */
-		if(start_x < static_cast<int>(-grid_size))
+		if(start_x < static_cast<int>(-grid_size) ||
+			 start_y < static_cast<int>(-grid_size))
 		{
 			/* Due to the infinite canvas feature, we need to calculate
 			 * the number of pages before origin (0,0) so the iteration
@@ -1606,12 +1604,17 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	QRectF rect = this->itemsBoundingRect(true, false, true),
 			old_scene_rect = sceneRect();
-	double padding = 2 * grid_size;
 
-	rect.setLeft(rect.left() - padding);
-	rect.setTop(rect.top() - padding);
-	rect.setWidth(rect.width() + padding);
-	rect.setHeight(rect.height() + padding);
+	rect.setLeft(rect.left() - grid_size);
+	rect.setTop(rect.top() - grid_size);
+	rect.setWidth(rect.width() + grid_size);
+	rect.setHeight(rect.height() + grid_size);
+
+	if(rect.left() > 0)
+		rect.setLeft(0);
+
+	if(rect.top() > 0)
+		rect.setTop(0);
 
 	setSceneRect(rect);
 
@@ -1710,9 +1713,10 @@ void ObjectsScene::clearSelection()
 QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
 {
 	QList<QRectF> pages;
-	QRectF page_rect, max_rect;
+	QRectF page_rect, max_rect, scn_rect = sceneRect();
 	double width = 0, height = 0, page_width = 0, page_height = 0;
-	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
+	int h_page = 0, v_page = 0, start_h = 999999, start_v = 999999,
+			st_x = scn_rect.left(), st_y = scn_rect.top();
 	QList<QGraphicsItem *> list;
 
 	if(scale < MinScaleFactor)
@@ -1726,27 +1730,43 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 	page_height = page_lt.paintRect(QPageLayout::Point).height();
 	page_height /= scale;
 
+	/* If the origin point is before (0,0) we have to calculate the number
+	 * pages are before that coordinate */
+	if(st_x < static_cast<int>(-grid_size) ||
+		 st_y < static_cast<int>(-grid_size))
+	{
+		st_x = round((scn_rect.left() / page_width)),
+		st_y = round((scn_rect.top() / page_height));
+	}
+
 	//Calculates the horizontal and vertical page count based upon the passed paper size
-	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
-	v_page_cnt=round(this->sceneRect().height()/page_height) + 1;
+	h_page_cnt = round(scn_rect.width() / page_width) + 1;
+	v_page_cnt = round(scn_rect.height() / page_height) + 1;
 
 	//Calculates the maximum count of horizontal and vertical pages
-	for(v_page=0; v_page < v_page_cnt; v_page++)
+	for(v_page = st_y; v_page < static_cast<int>(v_page_cnt); v_page++)
 	{
-		for(h_page=0; h_page < h_page_cnt; h_page++)
+		for(h_page = st_x; h_page < static_cast<int>(h_page_cnt); h_page++)
 		{
 			//Calculates the current page rectangle
-			page_rect=QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height));
+			page_rect = QRectF(QPointF(h_page * page_width, v_page * page_height),
+													QSizeF(page_width, page_height));
 
-			//Case there is selected items recalculates the maximum page size
-			list=this->items(page_rect, Qt::IntersectsItemShape);
+			/* Case there are items in which intersects the current page boundaries
+			 * recalculates the maximum page size. This is used to discard empty pages
+			 * at the border of the canvas */
+			list = this->items(page_rect, Qt::IntersectsItemShape);
+
 			if(!list.isEmpty())
 			{
-				if(start_h > h_page) start_h=h_page;
-				if(start_v > v_page) start_v=v_page;
+				if(start_h > h_page)
+					start_h = h_page;
 
-				width=page_rect.left() + page_rect.width();
-				height=page_rect.top() + page_rect.height();
+				if(start_v > v_page)
+					start_v = v_page;
+
+				width = page_rect.left() + page_rect.width();
+				height = page_rect.top() + page_rect.height();
 
 				if(width > max_rect.width())
 					max_rect.setWidth(width);
@@ -1758,12 +1778,12 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 	}
 
 	//Re calculates the maximum page count based upon the maximum page size
-	h_page_cnt=round(max_rect.width()/page_width);
-	v_page_cnt=round(max_rect.height()/page_height);
+	h_page_cnt = round(max_rect.width()/page_width);
+	v_page_cnt = round(max_rect.height()/page_height);
 
 	//Inserts the page rectangles on the list
-	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)
-		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
+	for(v_page = start_v; v_page < static_cast<int>(v_page_cnt); v_page++)
+		for(h_page = start_h; h_page < static_cast<int>(h_page_cnt); h_page++)
 			pages.append(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
 	return pages;

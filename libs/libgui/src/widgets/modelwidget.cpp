@@ -964,7 +964,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 				if(!graph_obj->isSystemObject() ||
 						(graph_obj->isSystemObject() && graph_obj->getName()=="public"))
 				{
-					item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
+					item = new SchemaView(dynamic_cast<Schema *>(graph_obj));
 				}
 			break;
 
@@ -1790,20 +1790,23 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 
 void ModelWidget::adjustSceneSize()
 {
-	//viewport->centerOn(0,0);
-
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
 		scene->alignObjectsToGrid();
 		db_model->setObjectsModified();
 	}
 
-	double padding = 2 * ObjectsScene::getGridSize();
+	double padding = ObjectsScene::getGridSize();
 	QRectF rect = scene->itemsBoundingRect();
-	rect.setTop(rect.top() - padding);
-	rect.setLeft(rect.left() - padding);
-	rect.setWidth(rect.width() + padding);
-	rect.setHeight(rect.height() + padding);
+
+	if(rect.left() > 0)
+		rect.setLeft(0);
+
+	if(rect.top() > 0)
+		rect.setTop(0);
+
+	rect.setRight(rect.right() + padding);
+	rect.setBottom(rect.bottom() + padding);
 
 	scene->setSceneRect(rect);
 	viewport->centerOn(rect.topLeft());

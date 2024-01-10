@@ -17,7 +17,6 @@
 */
 
 #include "baseobjectview.h"
-#include "textboxview.h"
 #include "roundedrectitem.h"
 #include "objectsscene.h"
 

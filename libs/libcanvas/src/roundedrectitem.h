@@ -26,10 +26,10 @@
 #define ROUNDED_RECT_ITEM_H
 
 #include "canvasglobal.h"
-#include <QGraphicsRectItem>
+#include <QAbstractGraphicsShapeItem>
 #include <QPainter>
 
-class __libcanvas RoundedRectItem: public QGraphicsRectItem {
+class __libcanvas RoundedRectItem: public QAbstractGraphicsShapeItem {
 	public:
 		enum RectCorners: unsigned {
 			//! \brief Implies a normal rectangle (no rounded corner)
@@ -51,7 +51,10 @@ class __libcanvas RoundedRectItem: public QGraphicsRectItem {
 			AllCorners=32
 		};
 
-	private:
+	protected:
+		//! \brief The rect that defines the rounded corner rectangle item
+		QRectF rect;
+
 		//! \brief Rect border radius
 		double radius;
 
@@ -87,7 +90,9 @@ class __libcanvas RoundedRectItem: public QGraphicsRectItem {
 
 		QPolygonF getPolygon();
 
-		void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+		virtual QRectF boundingRect() const override;
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 };
 
 #endif

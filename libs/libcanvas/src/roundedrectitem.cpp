@@ -18,15 +18,15 @@
 
 #include "roundedrectitem.h"
 
-RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QGraphicsRectItem(parent)
+RoundedRectItem::RoundedRectItem(QGraphicsItem *parent) :  QAbstractGraphicsShapeItem(parent)
 {
-	radius=12;
-	corners=AllCorners;
+	radius = 12;
+	corners = AllCorners;
 }
 
 void RoundedRectItem::setBorderRadius(double radius)
 {
-	this->radius=radius;
+	this->radius = radius;
 	createPolygon();
 }
 
@@ -51,13 +51,18 @@ RoundedRectItem::RectCorners RoundedRectItem::getRoundedCorners()
 
 bool RoundedRectItem::isCornerRounded(RectCorners corner)
 {
-	return (corners & corner)==corner;
+	return (corners & corner) == corner;
 }
 
 void RoundedRectItem::setRect(const QRectF &rect)
 {
-	QGraphicsRectItem::setRect(rect);
+	this->rect = rect;
 	createPolygon();
+}
+
+QRectF RoundedRectItem::boundingRect() const
+{
+	return rect.isValid() ? rect : QRectF();
 }
 
 QPolygonF RoundedRectItem::getPolygon()
@@ -67,13 +72,13 @@ QPolygonF RoundedRectItem::getPolygon()
 
 void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	painter->setPen(this->pen());
-	painter->setBrush(this->brush());
+	painter->setPen(pen());
+	painter->setBrush(brush());
 
 	if(corners==NoCorners)
-		painter->drawRect(this->rect());
+		painter->drawRect(rect);
 	else if(corners==AllCorners)
-		painter->drawRoundedRect(this->rect(), radius, radius);
+		painter->drawRoundedRect(rect, radius, radius);
 	else
 		painter->drawPolygon(polygon);
 }
@@ -82,29 +87,27 @@ void RoundedRectItem::createPolygon()
 {
 	polygon.clear();
 
-	if(corners!=NoCorners && corners!=AllCorners && this->rect().isValid())
+	if(corners!=NoCorners && corners!=AllCorners && rect.isValid())
 	{
-		QRectF rect=this->rect();
-
 		if(isCornerRounded(TopLeftCorner))
 			polygon << calculatePoints(rect.topLeft() + QPointF(radius, radius), 180, 90);
 		else
-			polygon.append(this->rect().topLeft());
+			polygon.append(rect.topLeft());
 
 		if(isCornerRounded(TopRightCorner))
-			polygon << calculatePoints(this->rect().topRight() + QPointF(-radius, radius), 90, 0);
+			polygon << calculatePoints(rect.topRight() + QPointF(-radius, radius), 90, 0);
 		else
-			polygon.append(this->rect().topRight());
+			polygon.append(rect.topRight());
 
 		if(isCornerRounded(BottomRightCorner))
-			polygon << calculatePoints(this->rect().bottomRight() + QPointF(-radius, -radius), 360, 270);
+			polygon << calculatePoints(rect.bottomRight() + QPointF(-radius, -radius), 360, 270);
 		else
-			polygon.append(this->rect().bottomRight());
+			polygon.append(rect.bottomRight());
 
 		if(isCornerRounded(BottomLeftCorner))
-			polygon << calculatePoints(this->rect().bottomLeft() + QPointF(radius, -radius), 270, 180);
+			polygon << calculatePoints(rect.bottomLeft() + QPointF(radius, -radius), 270, 180);
 		else
-			polygon.append(this->rect().bottomLeft());
+			polygon.append(rect.bottomLeft());
 	}
 }
 

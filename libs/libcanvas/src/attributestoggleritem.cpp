@@ -153,7 +153,7 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 					}
 				}
 
-				configureButtons(this->rect());
+				configureButtons(this->rect);
 				clearButtonsSelection();
 				configureButtonsState();
 
