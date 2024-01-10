@@ -222,16 +222,13 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 	if(event->buttons() == Qt::LeftButton)
 	{
 		QRect bg_rect = scene_bg_lbl->geometry(), rect = viewport_frm->geometry();
-		QPointF pnt;
 		QScrollBar *h_scroll = model->viewport->horizontalScrollBar(),
 				*v_scroll = model->viewport->verticalScrollBar();
 
-		int width = 0, height = 0,
+		int width = rect.width() / 2,
+				height = rect.height() / 2,
 				x = event->pos().x(),
 				y = event->pos().y();
-
-		width = rect.width() / 2;
-		height = rect.height() / 2;
 
 		//Configures a rectangle having as central point the event position
 		rect.setLeft(x - width);
@@ -239,16 +236,34 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		rect.setRight(x + width);
 		rect.setBottom(y + height);
 
-		double h_factor = (rect.left() / static_cast<double>(bg_rect.width())),
-				v_factor = (rect.top() / static_cast<double>(bg_rect.height()));
+		// Do not allow the viewport rectangle extrapolates the bg_rect limits
+		if(rect.left() < 0)
+			rect.moveLeft(0);
+
+		if(rect.top() < 0)
+			rect.moveTop(0);
+
+		if(rect.right() > bg_rect.right())
+			rect.moveRight(bg_rect.right());
+
+		if(rect.bottom() > bg_rect.bottom())
+			rect.moveBottom(bg_rect.bottom());
 
 		viewport_frm->move(rect.topLeft());
 
-		pnt.setX(scene_rect.left() + (scene_rect.width() * h_factor));
-		pnt.setY(scene_rect.top() + (scene_rect.height() * v_factor));
+		/* Determine the horizontal and vertical factors by divinding the rect left/top
+		 * by the background rect width / height. These factors are used to determine
+		 * the new position of the viewport by changing the scroll bars values */
+		double h_factor = (rect.left() / static_cast<double>(bg_rect.width())),
+				v_factor = (rect.top() / static_cast<double>(bg_rect.height()));
 
-		h_scroll->setValue(pnt.x() * zoom_factor);
-		v_scroll->setValue(pnt.y() * zoom_factor);
+		// Calculates the new scene position based upon the viewport rectangle.
+		QPointF pnt;
+		pnt.setX((scene_rect.left() + (scene_rect.width() * h_factor)) * zoom_factor);
+		pnt.setY((scene_rect.top() + (scene_rect.height() * v_factor)) * zoom_factor);
+
+		h_scroll->setValue(pnt.x());
+		v_scroll->setValue(pnt.y());
 	}
 }
 
