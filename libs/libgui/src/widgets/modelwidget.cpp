@@ -1746,7 +1746,7 @@ void ModelWidget::loadModel(const QString &filename)
 		this->filename = filename;
 		updateObjectsOpacity();
 		updateSceneLayers();
-		adjustSceneSize();
+		adjustSceneRect();
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1788,7 +1788,7 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 	plugins_actions = plugin_acts;
 }
 
-void ModelWidget::adjustSceneSize()
+void ModelWidget::adjustSceneRect()
 {
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
@@ -1796,23 +1796,7 @@ void ModelWidget::adjustSceneSize()
 		db_model->setObjectsModified();
 	}
 
-	double padding = ObjectsScene::getGridSize();
-	QRectF rect = scene->itemsBoundingRect();
-
-	if(rect.left() > 0)
-		rect.setLeft(0);
-	else if(rect.left() <= 0)
-		rect.setLeft(rect.left() - padding);
-
-	if(rect.top() > 0)
-		rect.setTop(0);
-	else if(rect.top() <= 0)
-		rect.setTop(rect.top() - padding);
-
-	rect.setRight(rect.right() + padding);
-	rect.setBottom(rect.bottom() + padding);
-
-	scene->setSceneRect(rect);
+	QRectF rect = scene->adjustSceneRect();
 	viewport->centerOn(rect.topLeft());
 
 	emit s_sceneInteracted(rect.size());
@@ -3076,7 +3060,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	//Validates the relationships to reflect any modification on the tables structures and not propagated columns
 	db_model->validateRelationships();
 
-	this->adjustSceneSize();
+	this->adjustSceneRect();
 	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user
@@ -5000,7 +4984,7 @@ void ModelWidget::rearrangeSchemasInGrid(unsigned tabs_per_row, unsigned sch_per
 																 ObjectType::BaseRelationship, ObjectType::Relationship});
 
 	//Adjust the whole scene size due to table/schema repositioning
-	this->adjustSceneSize();
+	this->adjustSceneRect();
 }
 
 void ModelWidget::rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row,  QPointF origin, double obj_spacing)
@@ -5276,7 +5260,7 @@ void ModelWidget::rearrangeTablesHierarchically()
 		rearrangeSchemasInGrid();
 	}
 
-	adjustSceneSize();
+	adjustSceneRect();
 	viewport->updateScene({ scene->sceneRect() });
 }
 
@@ -5576,7 +5560,7 @@ void ModelWidget::rearrangeTablesInSchemas()
 
 	db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 																 ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
-	adjustSceneSize();
+	adjustSceneRect();
 	viewport->updateScene({ scene->sceneRect() });
 }
 

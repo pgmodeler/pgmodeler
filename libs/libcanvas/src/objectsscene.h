@@ -188,6 +188,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default layer or not. */
 		void removeLayers(bool reset_obj_layers);
 
+		/*! \brief Adjusts the current scene rectangle based upon the items bounding rect.
+		 *  The method returns the new scene rectangle. */
+		QRectF adjustSceneRect();
+
 	public:
 		enum LayerAttrColor: unsigned {
 			LayerNameColor,

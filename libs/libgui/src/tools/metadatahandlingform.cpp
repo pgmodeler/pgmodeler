@@ -203,7 +203,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 
 			model_wgt->setUpdatesEnabled(false);
 			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
-			model_wgt->adjustSceneSize();
+			model_wgt->adjustSceneRect();
 			model_wgt->updateSceneLayers();
 			model_wgt->restoreLastCanvasPosition();
 			model_wgt->setUpdatesEnabled(true);

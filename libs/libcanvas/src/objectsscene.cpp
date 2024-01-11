@@ -1600,7 +1600,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
 
-	QRectF rect = this->itemsBoundingRect(true, false, true),
+	/* QRectF rect = this->itemsBoundingRect(true, false, true),
 			old_scene_rect = sceneRect();
 
 	rect.setLeft(rect.left() - grid_size);
@@ -1614,7 +1614,10 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	if(rect.top() > 0)
 		rect.setTop(0);
 
-	setSceneRect(rect);
+	setSceneRect(rect); */
+
+	QRectF old_scene_rect = sceneRect(),
+			rect = adjustSceneRect();
 
 	/* We invalidate the entire scene if the old scene size differs from the new one
 	 * calculated based upon the items bounding rects after objects movement */
@@ -1627,6 +1630,28 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	}
 
 	emit s_objectsMoved(true);
+}
+
+QRectF ObjectsScene::adjustSceneRect()
+{
+	QRectF rect = this->itemsBoundingRect(true, false, true);
+
+	if(rect.left() > 0)
+		rect.setLeft(0);
+	else if(rect.left() <= 0)
+		rect.setLeft(rect.left() - grid_size);
+
+	if(rect.top() > 0)
+		rect.setTop(0);
+	else if(rect.top() <= 0)
+		rect.setTop(rect.top() - grid_size);
+
+	rect.setWidth(rect.width() + grid_size);
+	rect.setHeight(rect.height() + grid_size);
+
+	setSceneRect(rect);
+
+	return rect;
 }
 
 void ObjectsScene::alignObjectsToGrid()
