@@ -174,7 +174,6 @@ void FileSelectorWidget::setAppendSuffix(bool append)
 
 bool FileSelectorWidget::hasWarning()
 {
-	QString str = warn_ico_lbl->toolTip();
 	return !warn_ico_lbl->toolTip().isEmpty();
 }
 

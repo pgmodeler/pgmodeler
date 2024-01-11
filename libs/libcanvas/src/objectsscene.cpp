@@ -1762,9 +1762,9 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 	return pages;
 }
 
-QList<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale)
+QList<QRectF> ObjectsScene::getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
-	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt, scale);
+	return getPagesForPrinting(page_layout, h_page_cnt, v_page_cnt, 1);
 }
 
 bool ObjectsScene::isRangeSelectionEnabled()

@@ -110,12 +110,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 	try
 	{
-		QPixmap pix;
-		bool prev_show_grd, prev_show_dlm;
+		bool prev_show_grd = false, prev_show_dlm = false;
 		QGraphicsView *view = nullptr;
-		QList<QRectF> pages;
-		unsigned v_cnt=0, h_cnt=0, page_idx=1;
-		QString tmpl_filename, file;
 		QColor bg_color;
 
 		/* If an external view is specified it will be used instead of creating a local one,
@@ -142,22 +138,31 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		ObjectsScene::setShowPageDelimiters(show_delim);
 		scene->setShowSceneLimits(false);
 
+		QPixmap pix;
+		QList<QRectF> pages;
+		unsigned v_cnt=0, h_cnt=0, page_idx=1;
+		QString tmpl_filename, file;
+
 		if(page_by_page)
 		{
 			QFileInfo fi(filename);
+			QString suffix = fi.completeSuffix();
 
-			//Calculates the page count to be exported
-			pages = scene->getPagesForPrinting(h_cnt, v_cnt, zoom);
+			if(!suffix.isEmpty())
+				suffix.prepend('.');
+
+			//Calculates the page dimensions and the page count (horizontally and vertically) to be exported
+			pages = scene->getPagesForPrinting(h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1") + suffix;
 		}
 		else
 		{
 			QRectF rect = scene->itemsBoundingRect(true, false, true);
 
 			//Give some margin to the resulting image
-			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
+			QSizeF margin = QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
 			rect.setTopLeft(rect.topLeft() - QPointF(margin.width(), margin.height()));
 			rect.setSize(rect.size() + margin);
 
@@ -196,7 +201,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
 														 tr("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
-			view->render(&painter, QRect(), rect);
+			view->scene()->render(&painter, QRect(), pg_rect);
 			painter.end();
 
 			if(page_by_page)
