@@ -60,10 +60,15 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
 	export_to_img_gb->setFocusProxy(export_to_img_rb);
 
+	connect(sql_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(sql_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(sql_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+
+	connect(img_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(img_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(img_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+
+	connect(dict_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(dict_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(dict_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
 
@@ -399,10 +404,11 @@ void ModelExportForm::editConnections()
 
 void ModelExportForm::enableExport()
 {
-	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex() != connections_cmb->count()-1) ||
-												 (export_to_file_rb->isChecked() && !sql_file_sel->getSelectedFile().isEmpty()) ||
-												 (export_to_img_rb->isChecked() && !img_file_sel->getSelectedFile().isEmpty()) ||
-												 (export_to_dict_rb->isChecked() && !dict_file_sel->getSelectedFile().isEmpty()));
+	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 &&
+													 connections_cmb->currentIndex() != connections_cmb->count()-1) ||
+												 (export_to_file_rb->isChecked() && !sql_file_sel->hasWarning()) ||
+												 (export_to_img_rb->isChecked() && !img_file_sel->hasWarning()) ||
+												 (export_to_dict_rb->isChecked() && !dict_file_sel->hasWarning()));
 }
 
 void ModelExportForm::selectImageFormat()
