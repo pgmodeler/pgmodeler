@@ -477,6 +477,7 @@ void ModelDatabaseDiffForm::listDatabases()
 void ModelDatabaseDiffForm::enableDiffMode()
 {
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
+	file_sel->setFileIsMandatory(store_in_file_rb->isChecked());
 
 	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
 													 ((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||

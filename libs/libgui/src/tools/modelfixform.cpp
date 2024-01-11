@@ -40,6 +40,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_file_sel->setAllowFilenameInput(true);
+	input_file_sel->setFileIsMandatory(true);
 	input_file_sel->setWindowTitle(tr("Select input file"));
 	model_fix_grid->addWidget(input_file_sel, 1, 2);
 
@@ -48,7 +49,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	output_file_sel->setDefaultSuffix(GlobalAttributes::DbModelExt);
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	output_file_sel->setAllowFilenameInput(true);
-	input_file_sel->setWindowTitle(tr("Select output file"));
+	output_file_sel->setFileIsMandatory(true);
+	output_file_sel->setWindowTitle(tr("Select output file"));
 	model_fix_grid->addWidget(output_file_sel, 2, 2);
 
 	pgmodeler_cli_sel = new FileSelectorWidget(this);

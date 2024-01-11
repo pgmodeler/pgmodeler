@@ -42,7 +42,8 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 		QLabel *warn_ico_lbl;
 
 		bool allow_filename_input, read_only,
-		check_exec_flag, file_is_mandatory, file_must_exist;
+		check_exec_flag, file_is_mandatory,
+		file_must_exist;
 
 		QRegularExpression name_regexp;
 
