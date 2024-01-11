@@ -34,6 +34,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	sql_file_sel->setAllowFilenameInput(true);
 	sql_file_sel->setFileIsMandatory(false);
+	sql_file_sel->setAppendSuffix(true);
 	export_to_file_grid->addWidget(sql_file_sel, 1, 1);
 
 	img_file_sel = new FileSelectorWidget(this);
@@ -41,12 +42,14 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	img_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	img_file_sel->setAllowFilenameInput(true);
 	img_file_sel->setFileIsMandatory(false);
+	img_file_sel->setAppendSuffix(true);
 	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
 	dict_file_sel->setAllowFilenameInput(true);
 	dict_file_sel->setFileIsMandatory(false);
+	dict_file_sel->setAppendSuffix(true);
 	export_to_dict_grid->addWidget(dict_file_sel, 1, 1, 1, 5);
 
 	htmlitem_del=new HtmlItemDelegate(this);

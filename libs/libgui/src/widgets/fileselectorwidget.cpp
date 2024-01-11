@@ -167,6 +167,11 @@ void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 	file_dlg.setDefaultSuffix(suffix);
 }
 
+void FileSelectorWidget::setAppendSuffix(bool append)
+{
+	append_suffix = append;
+}
+
 bool FileSelectorWidget::hasWarning()
 {
 	QString str = warn_ico_lbl->toolTip();
@@ -175,6 +180,18 @@ bool FileSelectorWidget::hasWarning()
 
 QString FileSelectorWidget::getSelectedFile()
 {
+	if(append_suffix && allow_filename_input &&
+		 file_mode != QFileDialog::Directory &&
+		 !file_dlg.defaultSuffix().isEmpty())
+	{
+		QString filename = filename_edt->text();
+
+		if(QFileInfo(filename).completeSuffix().isEmpty())
+			filename.append("." + file_dlg.defaultSuffix());
+
+		return filename;
+	}
+
 	return filename_edt->text();
 }
 
