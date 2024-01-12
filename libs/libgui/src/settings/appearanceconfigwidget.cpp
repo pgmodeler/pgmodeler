@@ -205,7 +205,6 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
-	scene->setSceneRect(QRectF(0,0,500,500));
 	placeholder=new RoundedRectItem;
 
 	viewp=new QGraphicsView(scene);

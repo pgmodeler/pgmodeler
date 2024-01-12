@@ -665,17 +665,6 @@ void ModelWidget::setModified(bool value)
 
 void ModelWidget::resizeEvent(QResizeEvent *)
 {
-	QRectF ret=scene->sceneRect();
-
-	//Validating the width and height of the scene, resizing if the dimension is invalid
-	if(viewport->rect().width() > ret.width())
-		ret.setWidth(viewport->rect().width());
-
-	if(viewport->rect().height() > ret.height())
-		ret.setHeight(viewport->rect().height());
-
-	scene->setSceneRect(ret);
-
 	zoom_info_lbl->move((this->width()/2) - (zoom_info_lbl->width()/2),
 											(this->height()/2)  - (zoom_info_lbl->height()/2));
 

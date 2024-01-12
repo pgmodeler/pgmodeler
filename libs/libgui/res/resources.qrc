@@ -270,6 +270,7 @@
         <file>icons/blogpost.png</file>
         <file>icons/ophistorypos.png</file>
         <file>icons/ophistory.png</file>
+        <file>icons/expandcanvas.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

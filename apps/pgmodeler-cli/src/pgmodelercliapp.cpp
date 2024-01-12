@@ -272,7 +272,6 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 				scene=new ObjectsScene;
 				scene->setParent(this);
-				scene->setSceneRect(QRectF(0,0,2000,2000));
 			}
 
 			if(parsed_opts.count(ExportToDbms) || parsed_opts.count(ImportDb) || parsed_opts.count(Diff))

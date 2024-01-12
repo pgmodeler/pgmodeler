@@ -35,7 +35,8 @@ unsigned ObjectsScene::grid_size=20;
 double ObjectsScene::delimiter_scale = 1;
 
 QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
-QSizeF ObjectsScene::custom_paper_size(0,0);
+double ObjectsScene::min_scene_width = ObjectsScene::page_layout.paintRect().width();
+double ObjectsScene::min_scene_height = ObjectsScene::page_layout.paintRect().height();
 
 const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
 const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
@@ -86,7 +87,8 @@ ObjectsScene::ObjectsScene()
 	scene_move_timer.setInterval(SceneMoveTimeout);
 	corner_hover_timer.setInterval(SceneMoveTimeout * 10);
 	object_move_timer.setInterval(SceneMoveTimeout * 10);
-	setSceneRect(QRectF(0,0, MinSceneWidth, MinSceneHeight));
+
+	setSceneRect(QRectF(0, 0, min_scene_width, min_scene_height));
 }
 
 ObjectsScene::~ObjectsScene()
@@ -664,11 +666,11 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 {
 	QSizeF sz = rect.size();
 
-	if(sz.width() < MinSceneWidth)
-		sz.setWidth(MinSceneWidth);
+	if(sz.width() < min_scene_width)
+		sz.setWidth(min_scene_width);
 
-	if(sz.height() < MinSceneHeight)
-		sz.setHeight(MinSceneHeight);
+	if(sz.height() < min_scene_height)
+		sz.setHeight(min_scene_height);
 
 	QGraphicsScene::setSceneRect(rect.left(), rect.top(), sz.width(), sz.height());
 }
@@ -726,8 +728,7 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 									BaseObjectView::getScreenDpiFactor();
 	QSizeF aux_size;
 	QPen pen = QPen(QColor(), pen_width);
-	int scene_lim_x = 0, scene_lim_y = 0,
-			start_x = 0, start_y = 0,
+	int start_x = 0, start_y = 0,
 			end_x = 0, end_y = 0;
 
 	// Retrieve the page rect considering the orientation, margin and page size
@@ -750,36 +751,38 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 
 	if(show_grid && !move_scene)
 	{
-		int px = 0, py = 0;
+		int x1 = 0, y1 = 0,
+				x2 = 0, y2 = 0;
 
 		pen.setWidthF(pen_width *	(grid_pattern == GridPattern::DotPattern ? 1.65 : 1));
 		pen.setColor(grid_color);
 		painter->setPen(pen);
 
 		//Draws the grid
-		for(px = start_x; px <= end_x; px += grid_size)
+		for(x1 = start_x; x1 < end_x; x1 += grid_size)
 		{
-			for(py = start_y; py <= end_y; py += grid_size)
+			for(y1 = start_y; y1 < end_y; y1 += grid_size)
 			{
+				x2 = x1 + grid_size;
+				y2 = y1 + grid_size;
+
+				if(y2 > scene_h)
+					y2 = scene_h;
+
+				if(x2 > scene_w)
+					x2 = scene_w;
+
 				if(grid_pattern == GridPattern::SquarePattern)
-					painter->drawRect(QRectF(QPointF(px, py), QPointF(px + grid_size, py + grid_size)));
+					painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
 				else
 				{
-					painter->drawPoint(px, py);
-					painter->drawPoint(px + grid_size, py);
-					painter->drawPoint(px + grid_size, py + grid_size);
-					painter->drawPoint(px, py + grid_size);
+					painter->drawPoint(x1, y1);
+					painter->drawPoint(x2, y1);
+					painter->drawPoint(x2, y2);
+					painter->drawPoint(x1, y2);
 				}
 			}
 		}
-
-		scene_lim_x = px;
-		scene_lim_y = py;
-	}
-	else
-	{
-		scene_lim_x = scene_w;
-		scene_lim_y = scene_h;
 	}
 
 	//Creates the page delimiter lines
@@ -830,11 +833,13 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	// Drawing the scene boundaries
 	if(show_scene_limits && !move_scene)
 	{
+		pen.setWidthF(pen_width * 1.30);
 		pen.setColor(QColor(255, 0, 0));
 		pen.setStyle(Qt::SolidLine);
 		painter->setPen(pen);
-		painter->drawLine(start_x, scene_lim_y, scene_lim_x, scene_lim_y);
-		painter->drawLine(scene_lim_x, start_y, scene_lim_x, scene_lim_y);
+
+		painter->drawLine(start_x, scene_h, scene_w, scene_h);
+		painter->drawLine(scene_w, start_y, scene_w, scene_h);
 	}
 
 	painter->restore();
@@ -931,6 +936,8 @@ bool ObjectsScene::isShowPageDelimiters()
 void ObjectsScene::setPageLayout(const QPageLayout &page_lt)
 {
 	page_layout = page_lt;
+	min_scene_width = page_layout.paintRect().width() * 2;
+	min_scene_height = page_layout.paintRect().height() * 2;
 }
 
 QPageLayout ObjectsScene::getPageLayout()
@@ -1617,22 +1624,6 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 	updateLayerRects();
 
-	/* QRectF rect = this->itemsBoundingRect(true, false, true),
-			old_scene_rect = sceneRect();
-
-	rect.setLeft(rect.left() - grid_size);
-	rect.setTop(rect.top() - grid_size);
-	rect.setWidth(rect.width() + grid_size);
-	rect.setHeight(rect.height() + grid_size);
-
-	if(rect.left() > 0)
-		rect.setLeft(0);
-
-	if(rect.top() > 0)
-		rect.setTop(0);
-
-	setSceneRect(rect); */
-
 	QRectF old_scene_rect = sceneRect(),
 			rect = adjustSceneRect();
 
@@ -1654,7 +1645,7 @@ QRectF ObjectsScene::adjustSceneRect()
 	QRectF rect = this->itemsBoundingRect(true, false, true);
 
 	if(rect.isNull())
-		rect = QRectF(0, 0, MinSceneWidth, MinSceneHeight);
+		rect = QRectF(0, 0, min_scene_width, min_scene_height);
 	else
 	{
 		if(rect.left() > 0)

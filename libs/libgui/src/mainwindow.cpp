@@ -211,28 +211,32 @@ void MainWindow::configureMenusActionsWidgets()
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
+	expand_canvas_menu.addAction(tr("Expand to top"),
+															 this, &MainWindow::expandSceneRect,
+															 QKeySequence("Ctrl+Shift+Up"))->setData(ObjectsScene::ExpandTop);
 
-	QAction *act = expand_canvas_menu.addAction(tr("Expand to top"), this, &MainWindow::expandSceneRect, QKeySequence(""));
-	act->setData(ObjectsScene::ExpandTop);
+	expand_canvas_menu.addAction(tr("Expand to left"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Left"))->setData(ObjectsScene::ExpandLeft);
 
-	act = expand_canvas_menu.addAction(tr("Expand to left"), this, &MainWindow::expandSceneRect, QKeySequence(""));
-	act->setData(ObjectsScene::ExpandLeft);
+	expand_canvas_menu.addAction(tr("Expand to bottom"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Down"))->setData(ObjectsScene::ExpandBottom);
 
-	act = expand_canvas_menu.addAction(tr("Expand to bottom"), this, &MainWindow::expandSceneRect, QKeySequence(""));
-	act->setData(ObjectsScene::ExpandBottom);
-
-	act = expand_canvas_menu.addAction(tr("Expand to right"), this, &MainWindow::expandSceneRect, QKeySequence(""));
-	act->setData(ObjectsScene::ExpandRight);
+	expand_canvas_menu.addAction(tr("Expand to right"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Right"))->setData(ObjectsScene::ExpandRight);
 
 	expand_canvas_menu.addSeparator();
-	act = expand_canvas_menu.addAction(tr("Reset geometry"), this, &MainWindow::expandSceneRect);
-	act->setData(-1);
+	expand_canvas_menu.addAction(tr("Reset geometry"),
+																this, &MainWindow::expandSceneRect,
+																QKeySequence("Ctrl+Shift+="))->setData(-1);
 
 	action_expand_canvas = expand_canvas_menu.menuAction();
 	action_expand_canvas->setEnabled(false);
 	action_expand_canvas->setText(tr("Expand canvas"));
 	action_expand_canvas->setToolTip(tr("Expand the canvas geometry to a specific direction"));
-	action_expand_canvas->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
+	action_expand_canvas->setIcon(QIcon(GuiUtilsNs::getIconPath("expandcanvas")));
 	model_acts_tb->insertAction(act_arrange_objs, action_expand_canvas);
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_expand_canvas));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
@@ -335,7 +339,7 @@ void MainWindow::configureMenusActionsWidgets()
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
 #endif
 
-	act = recent_models_menu->menuAction();
+	QAction *act = recent_models_menu->menuAction();
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
 	act->setText(tr("Recent models"));
 	act->setToolTip(tr("Load recently opened model"));

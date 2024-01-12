@@ -113,13 +113,16 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		//! \brief The number of pages in which the scene rect is expanded
 		expansion_factor;
 
-		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
-		static QSizeF custom_paper_size;
-
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
 		static QPageLayout page_layout;
 
 		static double delimiter_scale;
+
+		//! \brief The minimum scene width is defined to be width of the current page layout * 2
+		static double min_scene_width,
+
+		//! \brief The minimum scene height is defined to be height of the current page layout * 2
+		min_scene_height;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -211,9 +214,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static constexpr double MinScaleFactor = 0.100000,
 		MaxScaleFactor = 5.000001;
-
-		static constexpr double MinSceneWidth = 2000,
-				MinSceneHeight = 1500;
 
 		static constexpr unsigned DefaultLayer = 0;
 
@@ -316,6 +316,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
+
+		/*! \brief Define the geometry of the scene. If the rectangle is invalid or
+		 *  the size is below the minimum specificed by min_scene_width/min_scene_height
+		 *  it will be adjusted to the minimum acceptable size. */
 		void setSceneRect(const QRectF &rect);
 
 		//! \brief Aligns the specified point in relation to the grid
