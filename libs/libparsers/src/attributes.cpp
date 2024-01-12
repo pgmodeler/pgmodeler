@@ -223,6 +223,7 @@ namespace Attributes {
 	ExecutionCost("execution-cost"),
 	ExecutPriv("execute"),
 	ExistingValue("existing-value"),
+	ExpansionFactor("expansion-factor"),
 	Explicit("explicit"),
 	Export("export"),
 	ExportToFile("export-to-file"),

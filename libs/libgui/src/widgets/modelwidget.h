@@ -380,6 +380,10 @@ class __libgui ModelWidget: public QWidget {
 		 * rect when some object is out of bound */
 		void adjustSceneRect();
 
+		/*! \brief Expand the scene rect to the specified direction.
+		 * The size expanded is determined by the current page layout used by the scene. */
+		void expandSceneRect(ObjectsScene::ExpandDirection exp_dir);
+
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);
 

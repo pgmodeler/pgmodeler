@@ -25,6 +25,7 @@
 #include "databasemodel.h"
 
 ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
+unsigned ObjectsScene::expansion_factor = 2;
 
 bool ObjectsScene::align_objs_grid=false;
 bool ObjectsScene::show_grid=true;
@@ -814,8 +815,14 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		{
 			for(int py = st_y; py < end_y; py += page_h)
 			{
-				painter->drawLine(px + page_w, py, px + page_w, py + page_h);
-				painter->drawLine(px, py + page_h, px + page_w, py + page_h);
+				painter->drawLine(px, py, px + page_w, py);
+				painter->drawLine(px, py, px, py + page_h);
+
+				if(px + page_w >= end_x)
+					painter->drawLine(px + page_w, py, px + page_w, py + page_h);
+
+				if(py + page_h >= end_y)
+					painter->drawLine(px, py + page_h, px + page_w, py + page_h);
 			}
 		}
 	}
@@ -1152,6 +1159,16 @@ void ObjectsScene::setPageDelimitersColor(const QColor &value)
 QColor ObjectsScene::getPageDelimitersColor()
 {
 	return delimiters_color;
+}
+
+void ObjectsScene::setExpansionFactor(unsigned factor)
+{
+	expansion_factor = factor > 10 ? 10 : factor;
+}
+
+unsigned int ObjectsScene::getExpansionFactor()
+{
+	return expansion_factor;
 }
 
 bool ObjectsScene::mouseIsAtCorner()
@@ -1636,18 +1653,23 @@ QRectF ObjectsScene::adjustSceneRect()
 {
 	QRectF rect = this->itemsBoundingRect(true, false, true);
 
-	if(rect.left() > 0)
-		rect.setLeft(0);
-	else if(rect.left() <= 0)
-		rect.setLeft(rect.left() - grid_size);
+	if(rect.isNull())
+		rect = QRectF(0, 0, MinSceneWidth, MinSceneHeight);
+	else
+	{
+		if(rect.left() > 0)
+			rect.setLeft(0);
+		else if(rect.left() <= 0)
+			rect.setLeft(rect.left() - grid_size);
 
-	if(rect.top() > 0)
-		rect.setTop(0);
-	else if(rect.top() <= 0)
-		rect.setTop(rect.top() - grid_size);
+		if(rect.top() > 0)
+			rect.setTop(0);
+		else if(rect.top() <= 0)
+			rect.setTop(rect.top() - grid_size);
 
-	rect.setWidth(rect.width() + grid_size);
-	rect.setHeight(rect.height() + grid_size);
+		rect.setWidth(rect.width() + grid_size);
+		rect.setHeight(rect.height() + grid_size);
+	}
 
 	setSceneRect(rect);
 
@@ -1831,4 +1853,33 @@ QList<QGraphicsItem *> ObjectsScene::selectedItems() const
 bool ObjectsScene::hasOnlyTableChildrenSelection() const
 {
 	return QGraphicsScene::selectedItems().isEmpty() && !tabs_sel_children.isEmpty();
+}
+
+void ObjectsScene::expandSceneRect(ObjectsScene::ExpandDirection exp_dir)
+{
+	QRectF scn_rect = sceneRect(),
+			pg_rect = getPageLayout().paintRect();
+
+	switch(exp_dir)
+	{
+		case ExpandTop:
+			scn_rect.setTop(scn_rect.top() - (pg_rect.height() * expansion_factor));
+		break;
+
+		case ExpandBottom:
+			scn_rect.setBottom(scn_rect.bottom() + (pg_rect.height() * expansion_factor));
+		break;
+
+		case ExpandLeft:
+			scn_rect.setLeft(scn_rect.left() - (pg_rect.width() * expansion_factor));
+		break;
+
+		case ExpandRight:
+		default:
+			scn_rect.setRight(scn_rect.right() + (pg_rect.width() * expansion_factor));
+		break;
+	}
+
+	setSceneRect(scn_rect);
+	invalidate();
 }

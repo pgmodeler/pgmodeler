@@ -16,6 +16,7 @@
 <!ATTLIST design min-object-opacity CDATA #IMPLIED>
 <!ATTLIST design attribs-per-page CDATA #IMPLIED>
 <!ATTLIST design ext-attribs-per-page CDATA #IMPLIED>
+<!ATTLIST design expansion-factor CDATA #IMPLIED>
 
 <!ELEMENT code EMPTY>
 <!ATTLIST code font CDATA #IMPLIED>

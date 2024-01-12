@@ -108,7 +108,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static bool align_objs_grid, show_grid, show_page_delim;
 
 		//! \brief Scene grid size
-		static unsigned grid_size;
+		static unsigned grid_size,
+
+		//! \brief The number of pages in which the scene rect is expanded
+		expansion_factor;
 
 		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
 		static QSizeF custom_paper_size;
@@ -193,6 +196,14 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		QRectF adjustSceneRect();
 
 	public:
+		//! \brief This enum controls the direction to where the scene must be expanded.
+		enum ExpandDirection {
+			ExpandTop,
+			ExpandLeft,
+			ExpandRight,
+			ExpandBottom
+		};
+
 		enum LayerAttrColor: unsigned {
 			LayerNameColor,
 			LayerRectColor
@@ -216,6 +227,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		DefaultDelimitersColor;
 
 		ObjectsScene();
+
 		virtual ~ObjectsScene();
 
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
@@ -349,8 +361,15 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static void setPageDelimitersColor(const QColor &value);
 		static QColor getPageDelimitersColor();
 
+		static void setExpansionFactor(unsigned factor);
+		static unsigned getExpansionFactor();
+
 		bool isLayerRectsVisible();
 		bool isLayerNamesVisible();
+
+		/*! \brief Expand the scene rect to the specified direction.
+		 * The size expanded is determined by the current page layout used by the scene. */
+		void expandSceneRect(ExpandDirection exp_dir);
 
 	public slots:
 		//! \brief Force the update of all layer rectangles

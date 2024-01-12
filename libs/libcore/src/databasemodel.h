@@ -115,6 +115,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		QList<unsigned> active_layers;
 
+		/*! \brief The current scene (canvas) geometry that is restored when the database
+		 * model is rendered by a scene for the first time after loading the model. */
+		QRectF scene_rect;
+
 		//! \brief Stores the layer information of FK relationships during the model loading
 		std::map<QString, QStringList> fk_rel_layers;
 
@@ -852,6 +856,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the XML code for the changelog
 		QString getChangelogDefinition(bool csv_format = false);
+
+		void setSceneRect(const QRectF &rect);
+		QRectF getSceneRect();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

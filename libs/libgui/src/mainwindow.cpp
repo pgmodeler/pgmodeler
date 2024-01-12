@@ -208,8 +208,33 @@ void MainWindow::configureMenusActionsWidgets()
 	act_arrange_objs->setIcon(QIcon(GuiUtilsNs::getIconPath("arrangetables")));
 	act_arrange_objs->setEnabled(false);
 	model_acts_tb->insertAction(action_compact_view, act_arrange_objs);
-
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+
+	QAction *act = expand_canvas_menu.addAction(tr("Expand to top"), this, &MainWindow::expandSceneRect, QKeySequence(""));
+	act->setData(ObjectsScene::ExpandTop);
+
+	act = expand_canvas_menu.addAction(tr("Expand to left"), this, &MainWindow::expandSceneRect, QKeySequence(""));
+	act->setData(ObjectsScene::ExpandLeft);
+
+	act = expand_canvas_menu.addAction(tr("Expand to bottom"), this, &MainWindow::expandSceneRect, QKeySequence(""));
+	act->setData(ObjectsScene::ExpandBottom);
+
+	act = expand_canvas_menu.addAction(tr("Expand to right"), this, &MainWindow::expandSceneRect, QKeySequence(""));
+	act->setData(ObjectsScene::ExpandRight);
+
+	expand_canvas_menu.addSeparator();
+	act = expand_canvas_menu.addAction(tr("Reset geometry"), this, &MainWindow::expandSceneRect);
+	act->setData(-1);
+
+	action_expand_canvas = expand_canvas_menu.menuAction();
+	action_expand_canvas->setEnabled(false);
+	action_expand_canvas->setText(tr("Expand canvas"));
+	action_expand_canvas->setToolTip(tr("Expand the canvas geometry to a specific direction"));
+	action_expand_canvas->setIcon(QIcon(GuiUtilsNs::getIconPath("moreactions")));
+	model_acts_tb->insertAction(act_arrange_objs, action_expand_canvas);
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_expand_canvas));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	arrange_menu.addAction(tr("Grid"), this, &MainWindow::arrangeObjects);
@@ -310,7 +335,7 @@ void MainWindow::configureMenusActionsWidgets()
 	dynamic_cast<QToolButton *>(model_acts_tb->widgetForAction(main_menu.menuAction()))->setPopupMode(QToolButton::InstantPopup);
 #endif
 
-	QAction *act = recent_models_menu->menuAction();
+	act = recent_models_menu->menuAction();
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("loadrecent")));
 	act->setText(tr("Recent models"));
 	act->setToolTip(tr("Load recently opened model"));
@@ -2108,6 +2133,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_redo->setEnabled(enabled);
 	action_compact_view->setEnabled(enabled);
 	action_magnifier->setEnabled(enabled && current_model->getCurrentZoom() < 1);
+	action_expand_canvas->setEnabled(enabled);
 
 	action_handle_metadata->setEnabled(enabled);
 
@@ -2526,6 +2552,20 @@ void MainWindow::toggleChangelogWidget(bool show)
 	layers_btn->setChecked(false);
 	layers_cfg_wgt->setVisible(false);
 	layers_btn->blockSignals(false);
+}
+
+void MainWindow::expandSceneRect()
+{
+	if(!current_model)
+		return;
+
+	QAction *act = qobject_cast<QAction *>(sender());
+	int expand_dir = act->data().toInt();
+
+	if(expand_dir < 0)
+		current_model->adjustSceneRect();
+	else
+		current_model->expandSceneRect(static_cast<ObjectsScene::ExpandDirection>(expand_dir));
 }
 
 void MainWindow::configureMoreActionsMenu()

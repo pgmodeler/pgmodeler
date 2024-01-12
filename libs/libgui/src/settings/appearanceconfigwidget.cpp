@@ -487,6 +487,9 @@ void AppearanceConfigWidget::loadConfiguration()
 		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
 		custom_scale_spb->setValue(config_params[GlobalAttributes::AppearanceConf][Attributes::CustomScale].toDouble());
 
+		expansion_factor_spb->setValue(config_params[Attributes::Design][Attributes::ExpansionFactor].toUInt());
+		ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
+
 		applyConfiguration();
 	}
 	catch(Exception &e)
@@ -625,6 +628,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::GridColor] = grid_color_cp->getColor(0).name();
 		attribs[Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
 		attribs[Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
+		attribs[Attributes::ExpansionFactor] = QString::number(expansion_factor_spb->value());
+
 		config_params[Attributes::Design] = attribs;
 		attribs.clear();
 
@@ -636,6 +641,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		attribs[Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 		attribs[Attributes::TabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+
 		config_params[Attributes::Code] = attribs;
 		attribs.clear();
 

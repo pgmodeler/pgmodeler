@@ -10124,3 +10124,17 @@ QString DatabaseModel::getChangelogDefinition(bool csv_format)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
+
+void DatabaseModel::setSceneRect(const QRectF &rect)
+{
+	if(!rect.isValid())
+		return;
+
+	setCodeInvalidated(rect != scene_rect);
+	scene_rect = rect;
+}
+
+QRectF DatabaseModel::getSceneRect()
+{
+	return scene_rect;
+}

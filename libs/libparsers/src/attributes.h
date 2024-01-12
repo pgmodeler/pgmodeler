@@ -237,6 +237,7 @@ namespace Attributes {
 	ExecutionCost,
 	ExecutPriv,
 	ExistingValue,
+	ExpansionFactor,
 	Explicit,
 	Export,
 	ExportToFile,

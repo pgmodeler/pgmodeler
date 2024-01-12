@@ -1802,6 +1802,13 @@ void ModelWidget::adjustSceneRect()
 	emit s_sceneInteracted(rect.size());
 }
 
+void ModelWidget::expandSceneRect(ObjectsScene::ExpandDirection exp_dir)
+{
+	scene->expandSceneRect(exp_dir);
+	db_model->setSceneRect(scene->sceneRect());
+	setModified(true);
+}
+
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims)
 {
 	if(!printer)
