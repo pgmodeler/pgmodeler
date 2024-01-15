@@ -1644,8 +1644,15 @@ QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 {
 	QRectF rect = this->itemsBoundingRect(true, false, true);
 
+	// Create a default-sized rectangle if there are no items on the scene
 	if(rect.isNull())
 		rect = QRectF(0, 0, min_scene_width, min_scene_height);
+
+	/* If the expand_only is false, we always adjust the scene rect
+	 * to the items bounding rect with a padding (using grid_size).
+	 * In this case, the rectangle can be expanded or shrinked but never
+	 * shrinks in such a way to be lesser that the
+	 * default scene rect (0,0, min_scene_width, min_scene_height) */
 	else if(!expand_only)
 	{
 		if(rect.left() > 0)
@@ -1661,6 +1668,10 @@ QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 		rect.setWidth(rect.width() + grid_size);
 		rect.setHeight(rect.height() + grid_size);
 	}
+	/* In this case, the scene rect always expands.
+	 * This means that the items rectangle coordinates that
+	 * are beyond (in any direction, positive/negative) are always
+	 * used as the new scene rectangle coordinates */
 	else
 	{
 		QRectF scn_rect = sceneRect();
@@ -1880,20 +1891,20 @@ void ObjectsScene::expandSceneRect(ObjectsScene::ExpandDirection exp_dir)
 	switch(exp_dir)
 	{
 		case ExpandTop:
-			scn_rect.setTop(scn_rect.top() - (pg_rect.height() * expansion_factor));
+			scn_rect.adjust(0, -pg_rect.height() * expansion_factor, 0, 0);
 		break;
 
 		case ExpandBottom:
-			scn_rect.setBottom(scn_rect.bottom() + (pg_rect.height() * expansion_factor));
+			scn_rect.adjust(0, 0, 0, pg_rect.height() * expansion_factor);
 		break;
 
 		case ExpandLeft:
-			scn_rect.setLeft(scn_rect.left() - (pg_rect.width() * expansion_factor));
+			scn_rect.adjust(-pg_rect.width() * expansion_factor, 0, 0, 0);
 		break;
 
 		case ExpandRight:
 		default:
-			scn_rect.setRight(scn_rect.right() + (pg_rect.width() * expansion_factor));
+			scn_rect.adjust(0, 0, pg_rect.width() * expansion_factor, 0);
 		break;
 	}
 
