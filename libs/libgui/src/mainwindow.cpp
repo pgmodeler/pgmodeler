@@ -2567,7 +2567,7 @@ void MainWindow::expandSceneRect()
 	int expand_dir = act->data().toInt();
 
 	if(expand_dir < 0)
-		current_model->adjustSceneRect();
+		current_model->adjustSceneRect(false);
 	else
 		current_model->expandSceneRect(static_cast<ObjectsScene::ExpandDirection>(expand_dir));
 }

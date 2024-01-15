@@ -485,9 +485,7 @@ void AppearanceConfigWidget::loadConfiguration()
 
 		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
 		custom_scale_spb->setValue(config_params[GlobalAttributes::AppearanceConf][Attributes::CustomScale].toDouble());
-
 		expansion_factor_spb->setValue(config_params[Attributes::Design][Attributes::ExpansionFactor].toUInt());
-		ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
 
 		applyConfiguration();
 	}
@@ -823,6 +821,7 @@ void AppearanceConfigWidget::applyConfiguration()
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+	ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
 
 	loadExampleModel();
 	model->setObjectsModified();

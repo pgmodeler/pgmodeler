@@ -1830,7 +1830,7 @@ void PgModelerCliApp::loadModel()
 		scene->setLayerNamesVisible(model->isLayerNamesVisible());
 		scene->setLayerRectsVisible(model->isLayerRectsVisible());
 
-		scene->adjustSceneRect();
+		scene->adjustSceneRect(true);
 		model->setObjectsModified({ ObjectType::Schema });
 
 		scene->blockSignals(false);

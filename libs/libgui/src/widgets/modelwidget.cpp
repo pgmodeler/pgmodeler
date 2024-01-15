@@ -1735,7 +1735,7 @@ void ModelWidget::loadModel(const QString &filename)
 		this->filename = filename;
 		updateObjectsOpacity();
 		updateSceneLayers();
-		adjustSceneRect();
+		adjustSceneRect(true);
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -1777,7 +1777,7 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 	plugins_actions = plugin_acts;
 }
 
-void ModelWidget::adjustSceneRect()
+void ModelWidget::adjustSceneRect(bool use_model_rect)
 {
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
@@ -1785,7 +1785,13 @@ void ModelWidget::adjustSceneRect()
 		db_model->setObjectsModified();
 	}
 
-	QRectF rect = scene->adjustSceneRect();
+	QRectF rect = db_model->getSceneRect();
+
+	if(use_model_rect && rect.isValid())
+		scene->setSceneRect(rect);
+	else
+		rect = scene->adjustSceneRect(false);
+
 	viewport->centerOn(rect.topLeft());
 
 	emit s_sceneInteracted(rect.size());
@@ -3056,7 +3062,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	//Validates the relationships to reflect any modification on the tables structures and not propagated columns
 	db_model->validateRelationships();
 
-	this->adjustSceneRect();
+	this->adjustSceneRect(false);
 	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user
@@ -4980,7 +4986,7 @@ void ModelWidget::rearrangeSchemasInGrid(unsigned tabs_per_row, unsigned sch_per
 																 ObjectType::BaseRelationship, ObjectType::Relationship});
 
 	//Adjust the whole scene size due to table/schema repositioning
-	this->adjustSceneRect();
+	this->adjustSceneRect(false);
 }
 
 void ModelWidget::rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row,  QPointF origin, double obj_spacing)
@@ -5256,7 +5262,7 @@ void ModelWidget::rearrangeTablesHierarchically()
 		rearrangeSchemasInGrid();
 	}
 
-	adjustSceneRect();
+	adjustSceneRect(false);
 	viewport->updateScene({ scene->sceneRect() });
 }
 
@@ -5556,7 +5562,7 @@ void ModelWidget::rearrangeTablesInSchemas()
 
 	db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 																 ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
-	adjustSceneRect();
+	adjustSceneRect(false);
 	viewport->updateScene({ scene->sceneRect() });
 }
 

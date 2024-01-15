@@ -562,6 +562,7 @@ namespace Attributes {
 	Rules("rules"),
 	SaveLastPosition("save-last-position"),
 	SaveRestoreGeometry("save-restore-geometry"),
+	SceneRect("scene-rect"),
 	Schema("schema"),
 	SchemaOid("schema-oid"),
 	SearchPath("search-path"),

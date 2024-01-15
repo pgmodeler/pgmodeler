@@ -196,7 +196,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Adjusts the current scene rectangle based upon the items bounding rect.
 		 *  The method returns the new scene rectangle. */
-		QRectF adjustSceneRect();
+		QRectF adjustSceneRect(bool expand_only);
 
 	public:
 		//! \brief This enum controls the direction to where the scene must be expanded.

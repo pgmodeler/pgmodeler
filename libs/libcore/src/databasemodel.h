@@ -857,6 +857,8 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the XML code for the changelog
 		QString getChangelogDefinition(bool csv_format = false);
 
+		/*! \brief Defines the current scene rectangle in which the model is being rendered
+		 *  This is used to restore the original scene geometry when the model is loaded from file */
 		void setSceneRect(const QRectF &rect);
 		QRectF getSceneRect();
 

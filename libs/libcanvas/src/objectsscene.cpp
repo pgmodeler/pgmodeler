@@ -1625,7 +1625,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	updateLayerRects();
 
 	QRectF old_scene_rect = sceneRect(),
-			rect = adjustSceneRect();
+			rect = adjustSceneRect(true);
 
 	/* We invalidate the entire scene if the old scene size differs from the new one
 	 * calculated based upon the items bounding rects after objects movement */
@@ -1640,13 +1640,13 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	emit s_objectsMoved(true);
 }
 
-QRectF ObjectsScene::adjustSceneRect()
+QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 {
 	QRectF rect = this->itemsBoundingRect(true, false, true);
 
 	if(rect.isNull())
 		rect = QRectF(0, 0, min_scene_width, min_scene_height);
-	else
+	else if(!expand_only)
 	{
 		if(rect.left() > 0)
 			rect.setLeft(0);
@@ -1661,9 +1661,35 @@ QRectF ObjectsScene::adjustSceneRect()
 		rect.setWidth(rect.width() + grid_size);
 		rect.setHeight(rect.height() + grid_size);
 	}
+	else
+	{
+		QRectF scn_rect = sceneRect();
+
+		if(rect.left() < scn_rect.left())
+			rect.setLeft(rect.left() - grid_size);
+		else
+			rect.setLeft(scn_rect.left());
+
+		if(rect.top() < scn_rect.top())
+			rect.setTop(rect.top() - grid_size);
+		else
+			rect.setTop(scn_rect.top());
+
+		rect.setWidth(rect.width() - abs(rect.left()));
+		rect.setHeight(rect.height() - abs(rect.top()));
+
+		if(rect.width() > scn_rect.width())
+			rect.setWidth(rect.width() + grid_size);
+		else
+			rect.setWidth(scn_rect.width());
+
+		if(rect.height() > scn_rect.height())
+			rect.setHeight(rect.height() + grid_size);
+		else
+			rect.setHeight(scn_rect.height());
+	}
 
 	setSceneRect(rect);
-
 	return rect;
 }
 

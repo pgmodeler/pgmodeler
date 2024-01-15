@@ -378,7 +378,7 @@ class __libgui ModelWidget: public QWidget {
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		 * rect when some object is out of bound */
-		void adjustSceneRect();
+		void adjustSceneRect(bool use_model_rect);
 
 		/*! \brief Expand the scene rect to the specified direction.
 		 * The size expanded is determined by the current page layout used by the scene. */

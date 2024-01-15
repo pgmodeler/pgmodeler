@@ -578,6 +578,7 @@ namespace Attributes {
 	Rules,
 	SaveLastPosition,
 	SaveRestoreGeometry,
+	SceneRect,
 	Schema,
 	SchemaOid,
 	SearchPath,
