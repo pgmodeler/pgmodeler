@@ -377,8 +377,12 @@ class __libgui ModelWidget: public QWidget {
 		int openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
-		 * rect when some object is out of bound */
-		void adjustSceneRect(bool use_model_rect);
+		 * rect when some object is out of bound. The parameter use_model_rect, when true, uses
+		 * the rect stored in the database model (retrieved from the dbm file loading) to resize
+		 * the scene rect. The parameter expand_only, when true, indicates that the method must
+		 * only expand the scene rect, If the recalculated rect is smaller the the current
+		 * scene rect that no operation is done. */
+		void adjustSceneRect(bool use_model_rect, bool expand_only = false);
 
 		/*! \brief Expand the scene rect to the specified direction.
 		 * The size expanded is determined by the current page layout used by the scene. */

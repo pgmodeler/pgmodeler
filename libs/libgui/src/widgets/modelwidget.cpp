@@ -1783,7 +1783,7 @@ void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 	plugins_actions = plugin_acts;
 }
 
-void ModelWidget::adjustSceneRect(bool use_model_rect)
+void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 {
 	if(ObjectsScene::isAlignObjectsToGrid())
 	{
@@ -1796,7 +1796,7 @@ void ModelWidget::adjustSceneRect(bool use_model_rect)
 	if(use_model_rect && rect.isValid())
 		scene->setSceneRect(rect);
 	else
-		rect = scene->adjustSceneRect(false);
+		rect = scene->adjustSceneRect(expand_only);
 
 	viewport->centerOn(rect.topLeft());
 
@@ -1876,7 +1876,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 
 			h_pg_id++;
 
-			if(h_pg_id >= h_page_cnt)
+			if(h_pg_id > h_page_cnt)
 			{
 				h_pg_id = 1;
 				v_pg_id++;
@@ -3068,7 +3068,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	//Validates the relationships to reflect any modification on the tables structures and not propagated columns
 	db_model->validateRelationships();
 
-	this->adjustSceneRect(false);
+	this->adjustSceneRect(false, true);
 	task_prog_wgt.close();
 
 	//If some error occur during the process show it to the user

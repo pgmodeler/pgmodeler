@@ -767,14 +767,20 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 				x2 = x1 + grid_size;
 				y2 = y1 + grid_size;
 
+				// Avoid drawing rectangle/dots beyond the scene limits
 				if(y2 > end_y)
-					y2 = end_y;
+					y2 = y1;
 
 				if(x2 > end_x)
-					x2 = end_x;
+					x2 = x1;
 
 				if(grid_pattern == GridPattern::SquarePattern)
-					painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
+				{
+					painter->drawLine(x1, y1, x2, y1);
+					painter->drawLine(x2, y1, x2, y2);
+					painter->drawLine(x1, y2, x2, y2);
+					painter->drawLine(x1, y1, x1, y2);
+				}
 				else
 				{
 					painter->drawPoint(x1, y1);
@@ -1795,13 +1801,17 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 		start_v = round(scn_rect.top() / page_h) - 1;
 	}
 
-	/* Calculates the horizontal and vertical page count based upon the
-	 * passed paper size and scene rect */
+	/* Calculates the horizontal and vertical page count to iterate
+	 * based upon the passed paper size and scene rect.
+	 * This is not the real page count since we still need to detect
+	 * empty pages that don't need to be printed */
 	h_page_cnt = round(scn_rect.width() / page_w) + 1;
 	v_page_cnt = round(scn_rect.height() / page_h) + 1;
 
 	end_h = start_h + h_page_cnt;
 	end_v = start_v + v_page_cnt;
+
+	QList<QPoint> pg_ids;
 
 	for(int curr_v = start_v; curr_v < end_v; curr_v++)
 	{
@@ -1814,8 +1824,22 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 			/* We consider only page rects that intersect the items bounding rect.
 			 * This will avoid printing extra/uneeded pages */
 			if(items_rect.intersects(page_rect))
+			{
+				/* Store the page position so we can calculate the exact number
+				 * of pages to be printed */
+				pg_ids.append(QPoint(curr_h, curr_v));
 				pages.append(page_rect);
+			}
 		}
+	}
+
+	if(pg_ids.isEmpty())
+		h_page_cnt = v_page_cnt = 0;
+	else
+	{
+		QPoint f_id = pg_ids.first(), l_id = pg_ids.last();
+		h_page_cnt = (l_id.x() - f_id.x()) + 1;
+		v_page_cnt = (l_id.y() - f_id.y()) + 1;
 	}
 
 	return pages;
