@@ -602,13 +602,19 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		viewport->ensureVisible(rect);
 	});
 
+	connect(scene, &ObjectsScene::s_sceneRectChanged, this, [this](const QRectF &rect){
+		db_model->setSceneRect(rect);
+		viewport->resetCachedContent();
+		setModified(true);
+	});
+
 	connect(scene, &ObjectsScene::s_layersChanged, this, &ModelWidget::updateModelLayersInfo);
 	connect(scene, &ObjectsScene::s_activeLayersChanged, this, &ModelWidget::updateModelLayersInfo);
 	connect(scene, qOverload<BaseObject *>(&ObjectsScene::s_popupMenuRequested), new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, qOverload<>(&ObjectsScene::s_popupMenuRequested), new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, &ObjectsScene::s_objectSelected, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
-	connect(scene, &ObjectsScene::s_objectsScenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
+	connect(scene, &ObjectsScene::s_scenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 
 	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
@@ -1794,14 +1800,14 @@ void ModelWidget::adjustSceneRect(bool use_model_rect)
 
 	viewport->centerOn(rect.topLeft());
 
+	setModified(true);
+
 	emit s_sceneInteracted(rect.size());
 }
 
 void ModelWidget::expandSceneRect(ObjectsScene::ExpandDirection exp_dir)
 {
 	scene->expandSceneRect(exp_dir);
-	db_model->setSceneRect(scene->sceneRect());
-	setModified(true);
 }
 
 void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page_nums, bool resize_delims)

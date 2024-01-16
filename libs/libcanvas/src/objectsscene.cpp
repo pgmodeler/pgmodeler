@@ -673,6 +673,8 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 		sz.setHeight(min_scene_height);
 
 	QGraphicsScene::setSceneRect(rect.left(), rect.top(), sz.width(), sz.height());
+
+	emit s_sceneRectChanged(rect);
 }
 
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only, bool incl_layer_rects)
@@ -722,11 +724,10 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
 	double page_w = 0, page_h = 0,
 			delim_factor = 1/delimiter_scale,
-			scene_w = width(),
-			scene_h = height(),
 			pen_width = BaseObjectView::ObjectBorderWidth *
 									BaseObjectView::getScreenDpiFactor();
 	QSizeF aux_size;
+	QRectF scn_rect = sceneRect();
 	QPen pen = QPen(QColor(), pen_width);
 	int start_x = 0, start_y = 0,
 			end_x = 0, end_y = 0;
@@ -744,10 +745,10 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
 
-	start_x = (round(rect.left()/grid_size) * grid_size) /*- grid_size */;
-	start_y = (round(rect.top()/grid_size) * grid_size) /*- grid_size*/;
-	end_x = rect.right() < scene_w ? rect.right() : scene_w;
-	end_y = rect.bottom() < scene_h ? rect.bottom() : scene_h;
+	start_x = round(scn_rect.left()/grid_size) * grid_size;
+	start_y = round(scn_rect.top()/grid_size) * grid_size;
+	end_x = scn_rect.right();
+	end_y = scn_rect.bottom();
 
 	if(show_grid && !move_scene)
 	{
@@ -766,11 +767,11 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 				x2 = x1 + grid_size;
 				y2 = y1 + grid_size;
 
-				if(y2 > scene_h)
-					y2 = scene_h;
+				if(y2 > end_y)
+					y2 = end_y;
 
-				if(x2 > scene_w)
-					x2 = scene_w;
+				if(x2 > end_x)
+					x2 = end_x;
 
 				if(grid_pattern == GridPattern::SquarePattern)
 					painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
@@ -838,8 +839,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 		pen.setStyle(Qt::SolidLine);
 		painter->setPen(pen);
 
-		painter->drawLine(start_x, scene_h, scene_w, scene_h);
-		painter->drawLine(scene_w, start_y, scene_w, scene_h);
+		painter->drawLine(start_x, end_y, end_x, end_y);
+		painter->drawLine(end_x, start_y, end_x, end_y);
 	}
 
 	painter->restore();
@@ -1079,7 +1080,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	bool is_deselection = !this->selectedItems().isEmpty() && !item;
 
 	if(selectedItems().empty())
-		emit s_objectsScenePressed(event->buttons());
+		emit s_scenePressed(event->buttons());
 
 	/* If the relationship line is visible, indicates that the user is in the middle of
 	 a relationship creation, thus is needed to inform to the scene to activate the
@@ -1633,7 +1634,6 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		 old_scene_rect.height() != rect.height() ||
 		 old_scene_rect.width() != rect.width())
 	{
-		invalidate();
 		emit s_ensureVisibleRequested(sel_rect);
 	}
 
@@ -1642,7 +1642,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 {
-	QRectF rect = this->itemsBoundingRect(true, false, true);
+	QRectF rect = this->itemsBoundingRect(true, false, true),
+				scn_rect = sceneRect();
 
 	// Create a default-sized rectangle if there are no items on the scene
 	if(rect.isNull())
@@ -1655,18 +1656,19 @@ QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 	 * default scene rect (0,0, min_scene_width, min_scene_height) */
 	else if(!expand_only)
 	{
-		if(rect.left() > 0)
-			rect.setLeft(0);
-		else if(rect.left() <= 0)
-			rect.setLeft(rect.left() - grid_size);
+		double lp = 0, tp = 0;
 
-		if(rect.top() > 0)
-			rect.setTop(0);
-		else if(rect.top() <= 0)
-			rect.setTop(rect.top() - grid_size);
+		if(rect.left() <= 0)
+			lp = -static_cast<double>(grid_size);
+		else
+			lp = -rect.left();
 
-		rect.setWidth(rect.width() + grid_size);
-		rect.setHeight(rect.height() + grid_size);
+		if(rect.top() <= 0)
+			tp = -static_cast<double>(grid_size);
+		else
+			tp = -rect.top();
+
+		rect.adjust(lp, tp, grid_size, grid_size);
 	}
 	/* In this case, the scene rect always expands.
 	 * This means that the items rectangle coordinates that
@@ -1674,30 +1676,12 @@ QRectF ObjectsScene::adjustSceneRect(bool expand_only)
 	 * used as the new scene rectangle coordinates */
 	else
 	{
-		QRectF scn_rect = sceneRect();
+		double left = std::min(scn_rect.left(), rect.left() - grid_size),
+				top = std::min(scn_rect.top(), rect.top() - grid_size),
+				right = std::max(scn_rect.right(), rect.right() + grid_size),
+				bottom = std::max(scn_rect.bottom(), rect.bottom() + grid_size);
 
-		if(rect.left() < scn_rect.left())
-			rect.setLeft(rect.left() - grid_size);
-		else
-			rect.setLeft(scn_rect.left());
-
-		if(rect.top() < scn_rect.top())
-			rect.setTop(rect.top() - grid_size);
-		else
-			rect.setTop(scn_rect.top());
-
-		rect.setWidth(rect.width() - abs(rect.left()));
-		rect.setHeight(rect.height() - abs(rect.top()));
-
-		if(rect.width() > scn_rect.width())
-			rect.setWidth(rect.width() + grid_size);
-		else
-			rect.setWidth(scn_rect.width());
-
-		if(rect.height() > scn_rect.height())
-			rect.setHeight(rect.height() + grid_size);
-		else
-			rect.setHeight(scn_rect.height());
+		rect = QRectF(QPointF(left, top), QPointF(right, bottom));
 	}
 
 	setSceneRect(rect);
@@ -1909,5 +1893,4 @@ void ObjectsScene::expandSceneRect(ObjectsScene::ExpandDirection exp_dir)
 	}
 
 	setSceneRect(scn_rect);
-	invalidate();
 }

@@ -437,7 +437,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		void s_objectsSelectedInRange();
 
 		//! \brief Signal emitted when a blank area of the canvas is pressed
-		void s_objectsScenePressed(Qt::MouseButtons);
+		void s_scenePressed(Qt::MouseButtons);
 
 		//! \brief Signal emitted when the active layers change
 		void s_activeLayersChanged();
@@ -456,6 +456,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		 * This signal is used to indicated that the viewport attached to the scene must center/ensure visible the
 		 * passed rectagle causing the object recently move to be visible */
 		void s_ensureVisibleRequested(QRectF);
+
+		//! \brief Signal emitted when the scene rect changes
+		void s_sceneRectChanged(QRectF);
 
 		friend class ModelWidget;
 		friend class PgModelerCliApp;

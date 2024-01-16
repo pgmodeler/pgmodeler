@@ -34,6 +34,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	obj_selection = new RoundedRectItem;
 	obj_selection->setZValue(4);
+	obj_selection->setVisible(false);
 	this->addToGroup(obj_selection);
 
 	this->setZValue(-200);

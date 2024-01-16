@@ -595,6 +595,14 @@ void MainWindow::connectSignalsToSlots()
 	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
 	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
 
+	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, [this]() {
+		/* Everytime an operation is executed in the operation history
+		 * we have to adjust (update) the scene rect to reflect an eventual
+		 * new scene size due to the restoration of objects' positions */
+		if(current_model)
+			current_model->adjustSceneRect(false);
+	});
+
 	connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
 	connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
 
