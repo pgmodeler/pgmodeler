@@ -37,7 +37,7 @@ class __libcanvas StyledTextboxView: public TextboxView {
 		QGraphicsTextItem *styled_txt_item;
 
 	public:
-		static constexpr double DefaultWidth = 200;
+		static constexpr double DefaultWidth = 40;
 
 		StyledTextboxView(Textbox *txtbox, bool override_style=false);
 

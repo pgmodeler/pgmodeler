@@ -78,10 +78,12 @@ void StyledTextboxView::configureObject()
 
 	QFontMetricsF fm(text_item->getFont());
 	Textbox *txtbox = dynamic_cast<Textbox *>(getUnderlyingObject());
-	double txt_width = txtbox->getTextWidth() <= 0 ? DefaultWidth : txtbox->getTextWidth();
 
-	rect = fm.boundingRect(QRectF(0,0, txt_width + (4 * HorizSpacing), 0),
+	rect = fm.boundingRect(QRectF(0,0, txtbox->getTextWidth() + (4 * HorizSpacing), 0),
 													Qt::TextWordWrap, txtbox->getComment());
+
+	if(rect.width() < DefaultWidth)
+		rect.setWidth(DefaultWidth);
 
 	txtbox->setTextWidth(rect.width());
 
