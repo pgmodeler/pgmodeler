@@ -26,7 +26,12 @@
 		[ WHERE ]
 	%end
 
-	[ tgisinternal IS FALSE AND tgparentid = 0 ]
+	[ tgisinternal IS FALSE ] 
+
+
+	%if ({pgsql-ver} >=f "13.0") %then
+		[ AND tgparentid = 0 ]
+	%end
 
 	%if {last-sys-oid} %then
 		[ AND tg.oid ] {oid-filter-op} $sp {last-sys-oid}
@@ -108,7 +113,11 @@
 		it.trigger_schema=ns.nspname AND
 		it.trigger_name=tg.tgname AND
 		it.event_object_table=tb.relname
-		WHERE tg.tgisinternal IS FALSE AND tgparentid = 0 ]
+		WHERE tg.tgisinternal IS FALSE ]
+
+		%if ({pgsql-ver} >=f "13.0") %then
+			[ AND tgparentid = 0 ]
+		%end
 
 		%if {schema} %then
 			[ AND ns.nspname= ] '{schema}'
