@@ -379,74 +379,67 @@ void AppearanceConfigWidget::loadExampleModel()
 		if(model->getObjectCount() != 0)
 			return;
 
-		RelationshipView *rel=nullptr;
-		StyledTextboxView *txtbox=nullptr;
-		TableView *tab=nullptr;
-		GraphicalView *view=nullptr;
+		RelationshipView *rel = nullptr;
+		StyledTextboxView *txtbox = nullptr;
+		TableView *tab = nullptr;
+		GraphicalView *view = nullptr;
 		unsigned count = 0, i = 0;
-		QList<BaseObjectView *> graph_objs;
 
 		model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
 
-		count=model->getObjectCount(ObjectType::Table);
+		count = model->getObjectCount(ObjectType::Table);
 		for(i=0; i < count; i++)
 		{
-			tab=new TableView(model->getTable(i));
-			tab->setSelected(i==1);
+			tab = new TableView(model->getTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::ForeignTable);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::ForeignTable);
+		for(i = 0; i < count; i++)
 		{
-			tab=new TableView(model->getForeignTable(i));
+			tab = new TableView(model->getForeignTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::View);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::View);
+		for(i = 0; i < count; i++)
 		{
-			view=new GraphicalView(model->getView(i));
+			view = new GraphicalView(model->getView(i));
 			scene->addItem(view);
-			graph_objs.append(view);
+			view->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Relationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Relationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::BaseRelationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::BaseRelationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Textbox);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Textbox);
+		for(i = 0; i < count; i++)
 		{
-			txtbox=new StyledTextboxView(model->getTextbox(i));
-			txtbox->setSelected(i==0);
+			txtbox = new StyledTextboxView(model->getTextbox(i));
 			scene->addItem(txtbox);
-			graph_objs.append(txtbox);
+			txtbox->setEnabled(false);
 		}
 
-		for(auto &obj : graph_objs)
-			obj->setEnabled(false);
-
-		placeholder->setRect(QRectF(400, 280, 200, 150));
+		placeholder->setRect(QRectF(400, 150, 200, 150));
 		updatePlaceholderItem();
 		scene->addItem(placeholder);
 		scene->setActiveLayers(QList<unsigned>({0}));
 		scene->setSceneRect(scene->itemsBoundingRect(false));
-
 	}
 	catch(Exception &e)
 	{

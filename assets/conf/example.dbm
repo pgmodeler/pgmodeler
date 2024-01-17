@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 CAUTION: Do not modify this file unless you know what you are doing.
-         Unexpected results may occur if the code is changed deliberately.
+ Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.0-beta" use-changelog="false" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1.05" max-obj-count="6"
+<dbmodel pgmodeler-ver="1.1.0" use-changelog="false" author="Raphael Araújo e Silva" max-obj-count="6"
+	 last-position="0,0" last-zoom="1.05" scene-rect="0,0,1570.8,1076.8"
 	 layers="Default layer"
 	 active-layers="0"
 	 layer-name-colors="#000000"
 	 layer-rect-colors="#1b81b4"
 	 show-layer-names="false" show-layer-rects="false">
 <role name="roletest"
-      inherit="true">
+ inherit="true">
 </role>
 
 <database name="exampledb" encoding="UTF8" is-template="false" allow-conns="true">
-	<comment><![CDATA[Example Database Model]]></comment>
+	<comment> <![CDATA[Example Database Model]]> </comment>
 </database>
+
+<schema name="public" layers="0" protected="true" fill-color="#000000" name-color="#000000" sql-disabled="true">
+</schema>
 
 <tag name="sample tag">
 	<style id="table-body" colors="#ffffff,#ffffff,#000000"/>
@@ -25,11 +29,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-title" colors="#ff0000,#800000,#000000"/>
 	<style id="table-toggler-body" colors="#ffffff,#ffffff,#000000"/>
 	<style id="table-toggler-btns" colors="#fcfcfc,#fcfcfc,#808080"/>
-	<comment><![CDATA[this tag is a test]]></comment>
+	<comment> <![CDATA[this tag is a test]]> </comment>
 </tag>
-<schema name="public" layers="0" protected="true" fill-color="#000000" sql-disabled="true">
-</schema>
-
 	<language name="testlang"/>
 <function name="trigger_func"
 		window-func="false"
@@ -43,9 +44,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<language name="testlang"/>
 	<return-type>
-	<type name="trigger" length="1"/>
+	<type name="trigger" length="0"/>
 	</return-type>
-	<definition><![CDATA[SELECT 1+1;]]></definition>
+	<definition> <![CDATA[SELECT 1+1;]]> </definition>
 </function>
 
 <table name="table" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
@@ -65,52 +66,52 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="table_ck" type="ck-constr" table="public.&quot;table&quot;">
-			<expression><![CDATA[ column1 > 0 ]]></expression>
+			<expression> <![CDATA[ column1 > 0 ]]> </expression>
 	</constraint>
 </table>
 
 <index name="index" table="public.&quot;table&quot;"
-	 concurrent="true" unique="true" fast-update="false" buffering="false"
+	 concurrent="true" unique="true" fast-update="false" buffering="false" nulls-not-distinct="false"
 	 index-type="hash" factor="0">
 		<idxelement use-sorting="false">
 			<column name="column1"/>
 		</idxelement>
 </index>
 
-<table name="table1" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="table1" layers="0" protected="true" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<position x="680" y="560"/>
-	<column name="column" not-null="true">
+	<column name="column" not-null="true" protected="true">
 		<type name="serial" length="1"/>
 	</column>
-	<column name="column1">
+	<column name="column1" protected="true">
 		<type name="text" length="1"/>
 	</column>
-	<column name="column2" not-null="true">
+	<column name="column2" not-null="true" protected="true">
 		<type name="integer" length="1"/>
 	</column>
-	<column name="column3">
+	<column name="column3" protected="true">
 		<type name="text" length="1"/>
 	</column>
-	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table1">
+	<constraint name="table_pk" type="pk-constr" factor="10" protected="true" table="public.table1">
 		<columns names="column" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_uq" type="uq-constr" factor="10" table="public.table1">
+	<constraint name="table_uq" type="uq-constr" factor="10" protected="true" table="public.table1">
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_ck" type="ck-constr" table="public.table1">
-			<expression><![CDATA[ column1 > 0 ]]></expression>
+	<constraint name="table_ck" type="ck-constr" protected="true" table="public.table1">
+			<expression> <![CDATA[ column1 > 0 ]]> </expression>
 	</constraint>
 </table>
 
 <rule name="rule1" event-type="ON INSERT" exec-type="ALSO"
- table="public.table1">
-		<condition><![CDATA[column1 = 0]]></condition>
-		<commands><![CDATA[UPDATE public.table1 SET column1 = 1]]></commands>
+ protected="true" table="public.table1">
+		<condition> <![CDATA[column1 = 0]]> </condition>
+		<commands> <![CDATA[UPDATE public.table1 SET column1 = 1]]> </commands>
 </rule>
 
 <trigger name="trigger1" firing-type="BEFORE" per-line="false" constraint="false"
-	 ins-event="true" del-event="true" upd-event="true" trunc-event="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false" protected="true"
 	 table="public.table1">
 		<function signature="public.trigger_func()"/>
 </trigger>
@@ -130,11 +131,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </relationship>
 
-<view name="view" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<view name="view" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<position x="40" y="600"/>
 	<reference object="public.&quot;table&quot;.column1" type="column" ref-name="c1" ref-alias="col1" use-columns="true"/>
-	<reference object="public.table1.column2" ref-name="c2" type="column" ref-alias="col2" use-columns="true"/>
+	<reference object="public.table1.column2" type="column" ref-name="c2" ref-alias="col2" use-columns="true"/>
 	<reference object="public.table1" type="table" ref-name="t3" use-columns="true"/>
 	<definition> <![CDATA[ select 1+1 ]]> </definition>
 </view>
@@ -153,14 +154,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<textbox name="textbox" layers="0" z-value="0" font-size="9">
-	<position x="320" y="640"/>
-	<comment><![CDATA[Selected Textbox]]></comment>
-</textbox>
-
-<textbox name="textbox1" layers="0" protected="true" z-value="0" font-size="9">
-	<position x="300" y="520"/>
-	<comment><![CDATA[Protected Textbox]]></comment>
+<textbox name="textbox1" layers="0" protected="true" z-value="0" width="102.406" font-size="9">
+	<position x="260" y="420"/>
+	<comment> <![CDATA[Protected Textbox]]> </comment>
 </textbox>
 
 <table name="table2" layers="0" oids="true" collapse-mode="2" max-obj-count="4" z-value="0">
@@ -185,12 +181,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="table_ck" type="ck-constr" table="public.table2">
-			<expression><![CDATA[ column1 > 0 ]]></expression>
+			<expression> <![CDATA[ column1 > 0 ]]> </expression>
 	</constraint>
 </table>
 
 <index name="index" table="public.table2"
-	 concurrent="true" unique="true" fast-update="false" buffering="false"
+	 concurrent="true" unique="true" fast-update="false" buffering="false" nulls-not-distinct="false"
 	 index-type="hash" factor="0">
 		<idxelement use-sorting="false">
 			<column name="column1"/>
