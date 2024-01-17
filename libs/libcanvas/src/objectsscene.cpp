@@ -1819,7 +1819,7 @@ QList<QRectF> ObjectsScene::getPagesForPrinting(const QPageLayout &page_lt, unsi
 		{
 			// Calculates the current page rectangle
 			page_rect = QRectF(QPointF(curr_h * page_w, curr_v * page_h),
-													QSizeF(page_w, page_h));
+													QSizeF(page_w + 1, page_h + 1));
 
 			/* We consider only page rects that intersect the items bounding rect.
 			 * This will avoid printing extra/uneeded pages */
