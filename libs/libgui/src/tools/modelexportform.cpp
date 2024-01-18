@@ -18,6 +18,7 @@
 
 #include "modelexportform.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
@@ -181,7 +182,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 	item=GuiUtilsNs::createOutputTreeItem(output_trw, tr("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
 																					 QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
 
-	GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(err_msg),
+	GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(err_msg),
 																			QPixmap(GuiUtilsNs::getIconPath("alert")),	item, false, true);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
@@ -190,7 +191,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	QTreeWidgetItem *item=nullptr;
-	QString text=GuiUtilsNs::formatMessage(msg);
+	QString text=UtilsNs::formatMessage(msg);
 	QPixmap ico;
 
 	progress_lbl->setText(text);
@@ -319,7 +320,7 @@ void ModelExportForm::selectExportMode()
 
 void ModelExportForm::captureThreadError(Exception e)
 {
-	QTreeWidgetItem *item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()),
+	QTreeWidgetItem *item=GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(e.getErrorMessage()),
 																														QPixmap(GuiUtilsNs::getIconPath("error")), nullptr, false, true);
 
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);

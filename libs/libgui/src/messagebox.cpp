@@ -18,6 +18,7 @@
 
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -95,9 +96,9 @@ void Messagebox::show(Exception e, const QString &msg, IconType icon_type, Butto
 	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
-		fmt_msg = GuiUtilsNs::formatMessage(e.getErrorMessage());
+		fmt_msg = UtilsNs::formatMessage(e.getErrorMessage());
 	else
-		fmt_msg = GuiUtilsNs::formatMessage(msg);
+		fmt_msg = UtilsNs::formatMessage(msg);
 
 	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }

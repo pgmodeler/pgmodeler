@@ -72,6 +72,9 @@ namespace UtilsNs {
 	extern __libutils QString convertToXmlEntities(const QString value);
 
 	extern __libutils QString getStringHash(const QString &string);
+
+	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
+	extern __libutils QString formatMessage(const QString &msg);
 }
 
 #endif

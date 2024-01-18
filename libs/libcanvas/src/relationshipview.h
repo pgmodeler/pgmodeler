@@ -129,6 +129,9 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		//! \brief Configures the labels positioning
 		void configureLabels();
 
+		//! \brief Configures the relationship tooltip
+		void configureToolTip();
+
 		//! \brief Configures the descriptor form and positioning
 		void configureDescriptor();
 

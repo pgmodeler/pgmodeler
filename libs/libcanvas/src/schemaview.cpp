@@ -19,6 +19,7 @@
 #include "schemaview.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
+#include "utilsns.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
@@ -282,9 +283,14 @@ void SchemaView::configureObject()
 		this->bounding_rect=rect;
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
-		this->setToolTip(schema->getName(true) +
-										 " (" + schema->getTypeName() + ")" +
-										 QString("\nId: %1").arg(schema->getObjectId()));
+
+		QString tooltip = QString("`%1' (%2)").arg(schema->getName(true), schema->getTypeName()) +
+											QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(schema->getObjectId()));
+
+		if(!schema->getComment().isEmpty())
+			tooltip += "\n\n" + schema->getComment();
+
+		this->setToolTip(UtilsNs::formatMessage(tooltip));
 		sch_name->setToolTip(this->toolTip());
 
 		this->protected_icon->setPos(QPointF(sch_name->boundingRect().width() + sp_h ,

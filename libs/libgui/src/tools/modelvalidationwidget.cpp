@@ -18,6 +18,7 @@
 
 #include "modelvalidationwidget.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
@@ -517,7 +518,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	{
 		QPixmap ico;
 
-		msg=GuiUtilsNs::formatMessage(msg);
+		msg=UtilsNs::formatMessage(msg);
 
 		if(obj_type!=ObjectType::BaseObject)
 			ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
@@ -546,7 +547,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	object_lbl->setText(tr("Processing object: %1").arg(GuiUtilsNs::formatMessage(obj_name)));
+	object_lbl->setText(tr("Processing object: %1").arg(UtilsNs::formatMessage(obj_name)));
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 }
 

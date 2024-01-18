@@ -894,7 +894,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	progress_lbl->setText(tr("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("error")));
 
-	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(e.getErrorMessage()), progress_ico_lbl->pixmap(Qt::ReturnByValue), nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
 	Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -969,7 +969,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 											 QPixmap(GuiUtilsNs::getIconPath("alert")),
 											 export_item, false);
 
-	GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(err_msg),
+	GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(err_msg),
 										QPixmap(GuiUtilsNs::getIconPath("alert")),
 										item, false, true);
 
@@ -982,7 +982,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 {
 	int progress_aux = 0;
 
-	msg=GuiUtilsNs::formatMessage(msg);
+	msg=UtilsNs::formatMessage(msg);
 
 	if(src_import_thread && src_import_thread->isRunning())
 	{
@@ -1067,7 +1067,7 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 	if(!low_verbosity)
 	{
 		item=GuiUtilsNs::createOutputTreeItem(output_trw,
-												 GuiUtilsNs::formatMessage(diff_info.getInfoMessage()),
+												 UtilsNs::formatMessage(diff_info.getInfoMessage()),
 												 QPixmap(GuiUtilsNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
 		item->setData(0, Qt::UserRole, diff_info.getDiffType());
 	}

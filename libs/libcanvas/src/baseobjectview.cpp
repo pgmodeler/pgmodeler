@@ -19,6 +19,7 @@
 #include "baseobjectview.h"
 #include "roundedrectitem.h"
 #include "objectsscene.h"
+#include "utilsns.h"
 
 std::map<QString, QTextCharFormat> BaseObjectView::font_config;
 std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
@@ -493,9 +494,9 @@ void BaseObjectView::__configureObject()
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-		this->setToolTip(graph_obj->getName(true) +
-						 " (" + graph_obj->getTypeName() +
-						 ") " + QString("\nId: %1").arg(graph_obj->getObjectId()));
+		this->setToolTip(UtilsNs::formatMessage(
+											QString("`%1' (%2)").arg(graph_obj->getName(true), graph_obj->getTypeName()) +
+											QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(graph_obj->getObjectId()))));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}

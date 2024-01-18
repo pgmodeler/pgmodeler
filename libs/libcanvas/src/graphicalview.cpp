@@ -17,6 +17,7 @@
 */
 
 #include "graphicalview.h"
+#include "utilsns.h"
 
 GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 {
@@ -318,11 +319,11 @@ void GraphicalView::configureObject()
 	pen.setStyle(Qt::DashLine);
 	attribs_toggler->setPen(pen);
 
-	if(!view->getAlias().isEmpty())
-		table_tooltip += QString("\nAlias: %1").arg(view->getAlias());
+	//if(!view->getAlias().isEmpty())
+	//	table_tooltip += QString("\n%1 Alias: %2").arg(UtilsNs::DataSeparator, view->getAlias());
 
-	if(!view->getComment().isEmpty())
-		table_tooltip += QString("\n---\n%1").arg(view->getComment());
+	//if(!view->getComment().isEmpty())
+	//	table_tooltip += QString("\n\n%1").arg(view->getComment());
 
 	BaseObjectView::__configureObject();
 	BaseTableView::configureObjectShadow();

@@ -17,6 +17,7 @@
 */
 
 #include "tableview.h"
+#include "utilsns.h"
 
 TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
@@ -252,21 +253,19 @@ void TableView::configureObject()
 	BaseTableView::__configureObject(width);
 
 	if(table->isPartitioned())
-		table_tooltip += QString("\n%1 (%2)").arg(tr("Partitioned")).arg(~table->getPartitioningType());
+		table_tooltip += UtilsNs::formatMessage(QString("\n%1 %2 (%3)")
+																						.arg(UtilsNs::DataSeparator,
+																									tr("Partitioned"), ~table->getPartitioningType()));
 
 	if(table->isPartition())
 	{
-		table_tooltip += QString("\n%1 of %2").arg(tr("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+		table_tooltip += UtilsNs::formatMessage(QString("\n%1 %2 of `%3'")
+																						.arg(UtilsNs::DataSeparator, tr("Partition"),
+																									table->getPartitionedTable()->getSignature(true)));
 		pen = attribs_toggler->pen();
 		pen.setStyle(Qt::DashLine);
 		attribs_toggler->setPen(pen);
 	}
-
-	if(!table->getAlias().isEmpty())
-		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());
-
-	if(!table->getComment().isEmpty())
-		table_tooltip += QString("\n---\n%1").arg(table->getComment());
 
 	BaseObjectView::__configureObject();
 	configureTag();

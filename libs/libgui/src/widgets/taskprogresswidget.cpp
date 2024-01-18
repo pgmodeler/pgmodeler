@@ -19,6 +19,7 @@
 #include "taskprogresswidget.h"
 #include "baseobject.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -67,7 +68,7 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 	progress_pb->setValue(progress);
 
 	if(!text.isEmpty())
-		text_lbl->setText(GuiUtilsNs::formatMessage(text));
+		text_lbl->setText(UtilsNs::formatMessage(text));
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(icon_lbl->minimumSize()));

@@ -70,9 +70,6 @@ namespace GuiUtilsNs {
 	//! \brief Recursively toggles the specified object's references SQL
 	extern __libgui void disableReferencesSQL(BaseObject *object);
 
-	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
-	extern __libgui QString formatMessage(const QString &msg);
-
 	/*! \brief Fills a tree widget with all the stack trace provided by the passed Exception. A root item
 	can be specified so all created child items are appended to it */
 	extern __libgui void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root);

@@ -18,6 +18,7 @@
 
 #include "connectionsconfigwidget.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "baseform.h"
 
 std::vector<Connection *> ConnectionsConfigWidget::connections;
@@ -422,7 +423,7 @@ void ConnectionsConfigWidget::testConnection()
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(tr("Success"),
-					 GuiUtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+					 UtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);

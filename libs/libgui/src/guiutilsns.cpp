@@ -215,43 +215,6 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	QString formatMessage(const QString &msg)
-	{
-		QString fmt_msg=msg;
-		QChar start_chrs[2]={'`','('},
-				end_chrs[2]={'\'', ')'};
-		QStringList start_tags={ "<strong>", "<em>(" },
-				end_tags={ "</strong>", ")</em>" };
-		int pos=-1, pos1=-1;
-
-		// Replacing the form `' by <strong></strong> and () by <em></em>
-		for(int chr_idx=0; chr_idx < 2; chr_idx++)
-		{
-			pos=0;
-			do
-			{
-				pos=fmt_msg.indexOf(start_chrs[chr_idx], pos);
-				pos1=fmt_msg.indexOf(end_chrs[chr_idx], pos);
-
-				if(pos >= 0 && pos1 >=0)
-				{
-					fmt_msg.replace(pos, 1 , start_tags[chr_idx]);
-					pos1 += start_tags[chr_idx].length() - 1;
-					fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
-				}
-				else
-					break;
-
-				pos=pos1;
-			}
-			while(pos >= 0 && pos < fmt_msg.size());
-		}
-
-		fmt_msg.replace("\n", "<br/>");
-
-		return fmt_msg;
-	}
-
 	void configureWidgetFont(QWidget *widget, FontFactorId factor_id)
 	{
 		double factor = 1;
