@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	out << Qt::endl;
 	out << "pgModeler " << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
 	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
-	out << QT_TR_NOOP("Copyright 2006-2022 Raphael Araújo e Silva <raphael@pgmodeler.io>") << Qt::endl;
+	out << QT_TR_NOOP("Copyright 2006-2024 Raphael Araújo e Silva <raphael@pgmodeler.io>") << Qt::endl;
 	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << Qt::endl << Qt::endl;
 #else
 	try

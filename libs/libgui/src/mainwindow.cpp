@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1202,7 +1202,7 @@ void MainWindow::addModel(const QString &filename)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model creation limit."
 	if(models_tbw->count()==1)
-		throw Exception(tr("The demonstration version can create only `one' instance of database model!"),
+		throw Exception(tr("The demonstration version can create only `one' instance of a database model!"),
 										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #endif
 
