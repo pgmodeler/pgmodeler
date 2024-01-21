@@ -28,7 +28,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
+See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/main/LICENSE) for details.
 
 :heart: pgModeler needs your support!
 -------------------
@@ -42,7 +42,7 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 :bookmark_tabs: Changelog
 ----------
 
-The detailed changelog can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The detailed changelog can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/main/CHANGELOG.md) file.
 
 :card_file_box: Older Releases & Code
 -------------------
