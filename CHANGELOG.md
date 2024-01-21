@@ -3822,7 +3822,7 @@ v0.2.0
 
 <em>Release date: August 31, 2012</em>
 
-* [New] Added an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
+* [New] Added an interface to implement third party plugins. Check [PLUGINS.md](https://github.com/pgmodeler/pgmodeler/blob/main/PLUGINS.md) for details.
 * [New] Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down).
 * [Change] Due to the plugin interface the compilation method changed back to the form of shared libraries + executable.
 * [Fix] No more crashes when removing an primary-key of a table which has relationship with other tables. [(issue#2)](https://github.com/pgmodeler/pgmodeler/issues/2)
