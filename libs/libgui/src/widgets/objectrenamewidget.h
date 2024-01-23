@@ -44,17 +44,33 @@ class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget
 		//! \brief Model used to made duplicity name validations
 		DatabaseModel *model;
 
+		bool paste_mode;
+
 		void hideEvent(QHideEvent *);
+
+		void updateLabelsButtons();
 
 	public:
 		ObjectRenameWidget(QWidget *parent);
+
+		/*! \brief This version toggles the "normal mode" where the provided list of object are renamed.
+		 * This method performs the all the needed operations pre and post rename like validate relationships,
+		 * handle operation history, etc */
 		void setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list);
+
+		/*! \brief This version toggles the "paste mode" of the rename widget.
+		 *  In this mode, when the user click "Apply" the type name is validated and
+		 *  the widget closed. The typed name can be retrieved via getNewName() */
+		void setAttributes(BaseObject *object);
+
+		QString getNewName();
 
 	public slots:
 		int exec();
 
 	private slots:
 		void applyRenaming();
+		void validateName();
 };
 
 #endif

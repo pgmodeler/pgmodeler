@@ -2766,43 +2766,46 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 void ModelWidget::pasteObjects(bool duplicate_mode)
 {
 	std::map<BaseObject *, QString> xml_objs;
-	BaseTable *orig_parent_tab=nullptr;
+	BaseTable *orig_parent_tab = nullptr;
 	std::vector<BaseObject *>::iterator itr, itr_end;
-	std::map<BaseObject *, QString> orig_obj_names;
-	BaseObject *object=nullptr, *aux_object=nullptr;
-	TableObject *tab_obj=nullptr;
-	Table *sel_table=nullptr, *aux_table = nullptr;
-	View *sel_view=nullptr;
-	BaseTable *parent=nullptr;
-	Function *func=nullptr;
-	Constraint *constr=nullptr;
-	Operator *oper=nullptr;
-	QString aux_name, copy_obj_name;
+	std::map<BaseObject *, QString> orig_names, orig_fmt_names;
+	BaseObject *object = nullptr, *aux_object = nullptr;
+	TableObject *tab_obj = nullptr;
+	Table *sel_table = nullptr, *aux_table = nullptr;
+	View *sel_view = nullptr;
+	BaseTable *parent = nullptr;
+	Function *func = nullptr;
+	Constraint *constr = nullptr;
+	Operator *oper = nullptr;
+	QString aux_name, copy_obj_name, new_name;
+	QStringList reserved;
 	ObjectType obj_type;
 	std::vector<Exception> errors;
-	unsigned pos=0;
+	unsigned pos = 0;
 	TaskProgressWidget task_prog_wgt(this);
+	ObjectRenameWidget obj_rename_wgt(this);
 
 	task_prog_wgt.setWindowTitle(tr("Pasting objects..."));
 	task_prog_wgt.show();
+	task_prog_wgt.stackUnder(&obj_rename_wgt);
 
-	itr=copied_objects.begin();
-	itr_end=copied_objects.end();
+	itr = copied_objects.begin();
+	itr_end = copied_objects.end();
 
 	/* If there is only one object selected, check if its a table or view.
 	Because if the user try to paste a table object the receiver object (selected)
 	must be a table or view */
-	if(selected_objects.size()==1)
+	if(selected_objects.size() == 1)
 	{
-		sel_table=dynamic_cast<Table *>(selected_objects[0]);
-		sel_view=dynamic_cast<View *>(selected_objects[0]);
+		sel_table = dynamic_cast<Table *>(selected_objects[0]);
+		sel_view = dynamic_cast<View *>(selected_objects[0]);
 	}
 
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
-		object=(*itr);
-		obj_type=object->getObjectType();
-		tab_obj=dynamic_cast<TableObject *>(object);
+		object = (*itr);
+		obj_type = object->getObjectType();
+		tab_obj = dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
 		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
@@ -2814,76 +2817,106 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		{
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
-
-			if(obj_type==ObjectType::Function)
+			if(obj_type == ObjectType::Function)
 				dynamic_cast<Function *>(object)->createSignature(true);
 			else if(tab_obj)
-				aux_name=tab_obj->getName(true);
+				aux_name = tab_obj->getName(true);
 			else
-				aux_name=object->getSignature();
+				aux_name = object->getSignature();
 
 			if(!tab_obj)
 				//Try to find the object on the model
-				aux_object=db_model->getObject(aux_name, obj_type);
+				aux_object = db_model->getObject(aux_name, obj_type);
 			else
 			{
-				if(sel_view && (obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule || obj_type==ObjectType::Index))
-					aux_object=sel_view->getObject(aux_name, obj_type);
+				if(sel_view && (obj_type == ObjectType::Trigger || obj_type == ObjectType::Rule || obj_type == ObjectType::Index))
+					aux_object = sel_view->getObject(aux_name, obj_type);
 				else if(sel_table)
-					aux_object=sel_table->getObject(aux_name, obj_type);
+					aux_object = sel_table->getObject(aux_name, obj_type);
 			}
 
 			/* The second validation is to check, when the object is found on the model, if the XML code of the found object
 			 and the object to be pasted are different. When the XML defintion are the same the object isn't pasted because
 			 the found object can be used as substitute of the object to be pasted. This operation is not applied to graphical
 			 objects because they are ALWAYS pasted on the model. The only exception is that the below code is executed when the
-			 found object is the same as the copied object (this means that user is copying and pasting the object at the same database) */
+			 found object is the same as the copied object (this means that user is copying and pasting the object in the same database) */
 			if(tab_obj ||
 					(aux_object &&
 					 (dynamic_cast<BaseGraphicObject *>(object) ||
-						(aux_object->getDatabase()==object->getDatabase()) ||
+						(aux_object->getDatabase() == object->getDatabase()) ||
 						(aux_object->getSourceCode(SchemaParser::SchemaParser::XmlCode) !=
 						 object->getSourceCode(SchemaParser::SchemaParser::XmlCode)))))
 			{
 				//Resolving name conflicts
-				if(obj_type!=ObjectType::Cast)
+				if(obj_type != ObjectType::Cast)
 				{
-					func=nullptr; oper=nullptr;
+					obj_rename_wgt.setAttributes(object);
 
-					//Store the orignal object name on a map
-					orig_obj_names[object]=object->getName();
+					/* Ask the user a new object name by using an instance of ObjectRenameWidget
+					 * If the user accept the dialog we use the typed name otherwise the
+					 * original object name will be used and eventually disambigated */
+					if(!obj_rename_wgt.dont_ask_again_chk->isChecked() &&
+						 obj_rename_wgt.exec() == QDialog::Accepted)
+						new_name = obj_rename_wgt.getNewName();
+					else
+						new_name = object->getName();
+
+					func = nullptr; oper = nullptr;
+
+					// Store the orignal object name on a map so we can restore it at the end of pasting operation
+					orig_names[object] = object->getName();
+					orig_fmt_names[object] = object->getName(true);
+
+					// Set the name specified in the rename dialog so we can start the disambigation operation
+					object->setName(new_name);
 
 					/* For each object type as follow configures the name and the suffix and store them on the
 						'copy_obj_name' variable. This string is used to check if there are objects with the same name
 						on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
 					if(obj_type==ObjectType::Function)
 					{
-						func=dynamic_cast<Function *>(object);
-						func->setName(CoreUtilsNs::generateUniqueName(func, (*db_model->getObjectList(ObjectType::Function)), false, "_cp"));
-						copy_obj_name=func->getName();
-						func->setName(orig_obj_names[object]);
+						func = dynamic_cast<Function *>(object);
+						func->setName(CoreUtilsNs::generateUniqueName(func,
+																													*db_model->getObjectList(ObjectType::Function),
+																													true, "_cp", true, true, { orig_fmt_names[object] }));
+						copy_obj_name = func->getName();
+						func->setName(orig_names[object]);
 					}
 					else if(obj_type==ObjectType::Operator)
 					{
-						oper=dynamic_cast<Operator *>(object);
-						oper->setName(CoreUtilsNs::generateUniqueName(oper, (*db_model->getObjectList(ObjectType::Operator))));
-						copy_obj_name=oper->getName();
-						oper->setName(orig_obj_names[object]);
+						oper = dynamic_cast<Operator *>(object);
+						oper->setName(CoreUtilsNs::generateUniqueName(oper,
+																													*db_model->getObjectList(ObjectType::Operator),
+																													true, "", true, true, { orig_fmt_names[object] }));
+						copy_obj_name = oper->getName();
+						oper->setName(orig_names[object]);
 					}
 					else
 					{
 						if(tab_obj)
 						{
 							if(sel_table)
-								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_table->getObjectList(tab_obj->getObjectType())), false, "_cp", true));
+							{
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
+																																 *sel_table->getObjectList(tab_obj->getObjectType()),
+																																 false, "_cp", true, true, { orig_names[object] }));
+							}
 							else
-								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj, (*sel_view->getObjectList(tab_obj->getObjectType())), false, "_cp", true));
+							{
+								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
+																																 *sel_view->getObjectList(tab_obj->getObjectType()),
+																																 false, "_cp", true, true, { orig_names[object] }));
+							}
 						}
 						else
-							object->setName(CoreUtilsNs::generateUniqueName(object, (*db_model->getObjectList(object->getObjectType())), false, "_cp", true));
+						{
+							object->setName(CoreUtilsNs::generateUniqueName(object,
+																															*db_model->getObjectList(object->getObjectType()),
+																															true, "_cp", true, true, { orig_fmt_names[object] }));
+						}
 
-						copy_obj_name=object->getName();
-						object->setName(orig_obj_names[object]);
+						copy_obj_name = object->getName();
+						object->setName(orig_names[object]);
 					}
 
 					//Sets the new object name concatenating the suffix to the original name
@@ -2895,15 +2928,15 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 	/* The third step is get the XML code definition of the copied objects, is
 	with the xml code that the copied object are created and inserted on the model */
-	itr=copied_objects.begin();
-	itr_end=copied_objects.end();
-	pos=0;
-	while(itr!=itr_end)
+	itr = copied_objects.begin();
+	itr_end = copied_objects.end();
+	pos = 0;
+	while(itr != itr_end)
 	{
-		object=(*itr);
+		object = (*itr);
 		object->setCodeInvalidated(true);
 
-		tab_obj=dynamic_cast<TableObject *>(object);
+		tab_obj = dynamic_cast<TableObject *>(object);
 		itr++;
 
 		pos++;
@@ -2923,7 +2956,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			  object->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
+				xml_objs[object] = object->getSourceCode(SchemaParser::XmlCode);
 		}
 
 		//Store the original parent table of the object
@@ -2943,7 +2976,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 									tab_obj->getObjectType()==ObjectType::Index)))
 			{
 				//Backups the original parent table
-				orig_parent_tab=tab_obj->getParentTable();
+				orig_parent_tab = tab_obj->getParentTable();
 
 				constr = dynamic_cast<Constraint *>(tab_obj);
 
@@ -2953,11 +2986,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				//Generates the XML code with the new parent table
 				if(constr)
 				{
-					xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
+					xml_objs[object] = constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 				  tab_obj->setCodeInvalidated(true);
 				}
 				else
-					xml_objs[object]=object->getSourceCode(SchemaParser::XmlCode);
+					xml_objs[object] = object->getSourceCode(SchemaParser::XmlCode);
 
 				//Restore the original parent table
 				tab_obj->setParentTable(orig_parent_tab);
@@ -2970,36 +3003,36 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 			if(constr)
 			{
-				xml_objs[object]=constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
+				xml_objs[object] = constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
 			  tab_obj->setCodeInvalidated(true);
 			}
 			else
-				xml_objs[object]=tab_obj->getSourceCode(SchemaParser::XmlCode);
+				xml_objs[object] = tab_obj->getSourceCode(SchemaParser::XmlCode);
 		}
 	}
 
 	//The fourth step is the restoration of original names of the copied objects
-	itr=copied_objects.begin();
-	itr_end=copied_objects.end();
+	itr = copied_objects.begin();
+	itr_end = copied_objects.end();
 
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
 		object = (*itr);
 		obj_type = object->getObjectType();
 		itr++;
 
-		if(orig_obj_names[object].count() && obj_type!=ObjectType::Cast)
-			object->setName(orig_obj_names[object]);
+		if(orig_names[object].count() && obj_type != ObjectType::Cast)
+			object->setName(orig_names[object]);
 	}
 
 	//The last step is create the object from the stored xmls
-	itr=copied_objects.begin();
-	itr_end=copied_objects.end();
-	pos=0;
+	itr = copied_objects.begin();
+	itr_end = copied_objects.end();
+	pos = 0;
 
 	op_list->startOperationChain();
 
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
 		object = *itr;
 		itr++;
@@ -3018,9 +3051,9 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 											 enum_t(object->getObjectType()));
 
 				//Creates the object from the XML
-				object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
-				tab_obj=dynamic_cast<TableObject *>(object);
-				constr=dynamic_cast<Constraint *>(tab_obj);
+				object = db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
+				tab_obj = dynamic_cast<TableObject *>(object);
+				constr = dynamic_cast<Constraint *>(tab_obj);
 
 				/* Once created, the object is added on the model, except for relationships and table objects
 				 * because they are inserted automatically */
@@ -3035,7 +3068,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				//Special case for table objects
 				if(tab_obj)
 				{
-					if(sel_table && tab_obj->getObjectType()==ObjectType::Column)
+					if(sel_table && tab_obj->getObjectType() == ObjectType::Column)
 					{
 						sel_table->addObject(tab_obj);
 						sel_table->setModified(true);
@@ -3049,7 +3082,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
-					if(constr && constr->getConstraintType()==ConstraintType::ForeignKey)
+					if(constr && constr->getConstraintType() == ConstraintType::ForeignKey)
 						db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab_obj->getParentTable()));
 
 					op_list->registerObject(tab_obj, Operation::ObjCreated, -1, tab_obj->getParentTable());
@@ -3059,7 +3092,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			}
 			catch(Exception &e)
 			{
-				errors.push_back(e);
+				if(e.getErrorCode() != ErrorCode::AsgDuplicatedObject)
+					errors.push_back(e);
 			}
 		}
 	}
@@ -3129,23 +3163,44 @@ void ModelWidget::duplicateObject()
 			QList<BaseTable *> upd_view_ref_tables;
 			QList<BaseTable *> upd_tables;
 			QList<BaseTable *> upd_fk_rels;
+			ObjectRenameWidget obj_rename_wgt(this);
+			QString new_name;
 
 			op_list->startOperationChain();
 
 			for(auto &tab_obj : selected_objects)
 			{
-				dup_object=nullptr;
+				dup_object = nullptr;
 				obj_type = tab_obj->getObjectType();
 				table = dynamic_cast<TableObject *>(tab_obj)->getParentTable();
 				schema = dynamic_cast<Schema *>(table->getSchema());
 				CoreUtilsNs::copyObject(&dup_object, tab_obj, obj_type);
 
-				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
-					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, "_cp"));
-				else
-					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, "_cp"));
+				obj_rename_wgt.setAttributes(dup_object);
 
-				op_id=op_list->registerObject(dup_object, Operation::ObjCreated, -1, table);
+				/* Ask the user a new object name by using an instance of ObjectRenameWidget
+				 * If the user accept the dialog we use the typed name otherwise the
+				 * original object name will be used and eventually disambigated */
+				if(!obj_rename_wgt.dont_ask_again_chk->isChecked() &&
+						obj_rename_wgt.exec() == QDialog::Accepted)
+					dup_object->setName(obj_rename_wgt.getNewName());
+				else
+					new_name = dup_object->getName();
+
+				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
+				{
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object,
+																															*dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type),
+																															false, "_cp", true));
+				}
+				else
+				{
+					dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object,
+																															*dynamic_cast<View *>(table)->getObjectList(obj_type),
+																															false, "_cp", true));
+				}
+
+				op_id = op_list->registerObject(dup_object, Operation::ObjCreated, -1, table);
 				table->addObject(dup_object);
 
 				// Flagging the table to be repainted
