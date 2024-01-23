@@ -233,7 +233,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	//std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	name_list->clear();
 	word.clear();
@@ -242,7 +242,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True)
+	if(GeneralConfigWidget::getConfigurationParam(Attributes::Configuration,
+																								Attributes::CodeCompletion) == Attributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);

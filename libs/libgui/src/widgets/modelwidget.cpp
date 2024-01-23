@@ -2851,15 +2851,23 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				if(obj_type != ObjectType::Cast)
 				{
 					obj_rename_wgt.setAttributes(object);
+					obj_rename_wgt.use_defaults_chk->setChecked(GeneralConfigWidget::
+																												getConfigurationParam(Attributes::Configuration,
+																																							Attributes::UseDefDisambiguation) == Attributes::True);
 
 					/* Ask the user a new object name by using an instance of ObjectRenameWidget
 					 * If the user accept the dialog we use the typed name otherwise the
 					 * original object name will be used and eventually disambigated */
-					if(!obj_rename_wgt.dont_ask_again_chk->isChecked() &&
-						 obj_rename_wgt.exec() == QDialog::Accepted)
+					if(!obj_rename_wgt.use_defaults_chk->isChecked() &&
+							obj_rename_wgt.exec() == QDialog::Accepted)
 						new_name = obj_rename_wgt.getNewName();
 					else
 						new_name = object->getName();
+
+					GeneralConfigWidget::appendConfigurationSection(Attributes::Configuration,
+																													 {{ Attributes::UseDefDisambiguation,
+																															obj_rename_wgt.use_defaults_chk->isChecked() ?
+																															Attributes::True : Attributes::False }});
 
 					func = nullptr; oper = nullptr;
 
@@ -3176,16 +3184,24 @@ void ModelWidget::duplicateObject()
 				schema = dynamic_cast<Schema *>(table->getSchema());
 				CoreUtilsNs::copyObject(&dup_object, tab_obj, obj_type);
 
-				obj_rename_wgt.setAttributes(dup_object);
+				obj_rename_wgt.setAttributes(dup_object);		
+				obj_rename_wgt.use_defaults_chk->setChecked(GeneralConfigWidget::
+																										 getConfigurationParam(Attributes::Configuration,
+																																						Attributes::UseDefDisambiguation) == Attributes::True);
 
 				/* Ask the user a new object name by using an instance of ObjectRenameWidget
 				 * If the user accept the dialog we use the typed name otherwise the
 				 * original object name will be used and eventually disambigated */
-				if(!obj_rename_wgt.dont_ask_again_chk->isChecked() &&
+				if(!obj_rename_wgt.use_defaults_chk->isChecked() &&
 						obj_rename_wgt.exec() == QDialog::Accepted)
 					dup_object->setName(obj_rename_wgt.getNewName());
 				else
 					new_name = dup_object->getName();
+
+				GeneralConfigWidget::appendConfigurationSection(Attributes::Configuration,
+																												 {{ Attributes::UseDefDisambiguation,
+																														 obj_rename_wgt.use_defaults_chk->isChecked() ?
+																																 Attributes::True : Attributes::False }});
 
 				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
 				{

@@ -696,6 +696,7 @@ namespace Attributes {
 	UseChangelog("use-changelog"),
 	UseColumns("use-columns"),
 	UseCurvedLines("use-curved-lines"),
+	UseDefDisambiguation("use-def-disambiguation"),
 	UsePlaceholders("use-placeholders"),
 	UseSignature("use-signature"),
 	UseSorting("use-sorting"),

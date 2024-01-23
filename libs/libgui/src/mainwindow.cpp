@@ -918,7 +918,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	else
 	{
 		GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-		std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
+		//std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
 		GeneralConfigWidget::saveWidgetGeometry(this);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
@@ -947,7 +947,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					model_names.push_back(QString("<strong>%1</strong>").arg(model->getDatabaseModel()->getName()));
 			}
 
-			if(!model_names.isEmpty() && confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False)
+			if(!model_names.isEmpty() &&
+					conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertUnsavedModels) != Attributes::False
+					/* confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False */)
 			{
 				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
@@ -967,7 +969,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		// Warning the user about non empty sql execution panels
 		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels() &&
-				confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False)
+				conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertOpenSqlTabs) != Attributes::False
+				/* confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False */)
 		{
 			action_manage->trigger();
 			msg_box.setCustomOptionText(tr("Always close without alerting me next time."));

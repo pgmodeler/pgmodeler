@@ -89,7 +89,7 @@ void ObjectRenameWidget::updateLabelsButtons()
 		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objects.size()));
 	}
 
-	dont_ask_again_chk->setVisible(paste_mode);
+	use_defaults_chk->setVisible(paste_mode);
 	alert_frm->setVisible(paste_mode);
 
 	if(!paste_mode)

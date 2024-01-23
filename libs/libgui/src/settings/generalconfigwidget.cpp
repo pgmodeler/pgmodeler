@@ -153,7 +153,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		SQLExecutionWidget::destroySQLHistory();
 	});
 
-	connect(reset_exit_alerts_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetExitAlerts);
+	connect(reset_alerts_choices_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetAlertChoices);
 
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);
@@ -196,10 +196,11 @@ void GeneralConfigWidget::loadConfiguration()
 
 		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels) ||
 			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
-			resetExitAlerts();
+			resetAlertChoices();
 
-		reset_exit_alerts_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
-																		 config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True);
+		reset_alerts_choices_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
+																				config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True ||
+																				config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] == Attributes::True);
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
@@ -333,10 +334,9 @@ void GeneralConfigWidget::appendConfigurationSection(const QString &section_id, 
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
 {
-  if(config_params.count(section_id) &&
-	 config_params[section_id].count(param_name))
-	return config_params[section_id][param_name];
-  else
+	if(config_params.count(section_id) &&	config_params[section_id].count(param_name))
+		return config_params[section_id][param_name];
+
 	return "";
 }
 
@@ -671,9 +671,10 @@ void GeneralConfigWidget::resetDialogsSizes()
 		widgets_geom.clear();
 }
 
-void GeneralConfigWidget::resetExitAlerts()
+void GeneralConfigWidget::resetAlertChoices()
 {
 	config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] = Attributes::True;
 	config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] = Attributes::True;
-	reset_exit_alerts_tb->setEnabled(false);
+	config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] = Attributes::False;
+	reset_alerts_choices_tb->setEnabled(false);
 }

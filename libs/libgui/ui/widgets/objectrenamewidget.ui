@@ -254,7 +254,7 @@
         <item row="1" column="1">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="0">
-           <widget class="QCheckBox" name="dont_ask_again_chk">
+           <widget class="QCheckBox" name="use_defaults_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -265,7 +265,7 @@
              <string>&lt;p&gt;Use the default name disambiguation convention the next time a name conflict is detected.&lt;/p&gt;</string>
             </property>
             <property name="text">
-             <string>Use default convention next time.</string>
+             <string>Always use the default.</string>
             </property>
            </widget>
           </item>

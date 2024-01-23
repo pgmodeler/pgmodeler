@@ -712,6 +712,7 @@ namespace Attributes {
 	UseChangelog,
 	UseColumns,
 	UseCurvedLines,
+	UseDefDisambiguation,
 	UsePlaceholders,
 	UseSignature,
 	UseSorting,
