@@ -245,12 +245,12 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	tab_obj=dynamic_cast<TableObject *>(object);
 	item=new QTreeWidgetItem(root);
 
-	if(obj_type==ObjectType::Function)
+	if(BaseFunction::isBaseFunction(obj_type))
 	{
-		Function *func=dynamic_cast<Function *>(object);
+		BaseFunction *func = dynamic_cast<BaseFunction *>(object);
 		func->createSignature(false);
 		item->setText(0,func->getSignature());
-		obj_name=func->getSignature();
+		obj_name = func->getSignature();
 		func->createSignature(true);
 	}
 	else if(obj_type==ObjectType::Operator)

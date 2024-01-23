@@ -2774,11 +2774,10 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	Table *sel_table = nullptr, *aux_table = nullptr;
 	View *sel_view = nullptr;
 	BaseTable *parent = nullptr;
-	Function *func = nullptr;
+	BaseFunction *func = nullptr;
 	Constraint *constr = nullptr;
 	Operator *oper = nullptr;
 	QString aux_name, copy_obj_name, new_name;
-	QStringList reserved;
 	ObjectType obj_type;
 	std::vector<Exception> errors;
 	unsigned pos = 0;
@@ -2817,8 +2816,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		{
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
-			if(obj_type == ObjectType::Function)
-				dynamic_cast<Function *>(object)->createSignature(true);
+			if(BaseFunction::isBaseFunction(obj_type))
+				dynamic_cast<BaseFunction *>(object)->createSignature(true);
 			else if(tab_obj)
 				aux_name = tab_obj->getName(true);
 			else
@@ -2858,8 +2857,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					/* Ask the user a new object name by using an instance of ObjectRenameWidget
 					 * If the user accept the dialog we use the typed name otherwise the
 					 * original object name will be used and eventually disambigated */
-					if(!obj_rename_wgt.use_defaults_chk->isChecked() &&
-							obj_rename_wgt.exec() == QDialog::Accepted)
+					if(!tab_obj && aux_object && !obj_rename_wgt.use_defaults_chk->isChecked() &&
+						 obj_rename_wgt.exec() == QDialog::Accepted)
 						new_name = obj_rename_wgt.getNewName();
 					else
 						new_name = object->getName();
@@ -2881,21 +2880,21 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					/* For each object type as follow configures the name and the suffix and store them on the
 						'copy_obj_name' variable. This string is used to check if there are objects with the same name
 						on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
-					if(obj_type==ObjectType::Function)
+					if(BaseFunction::isBaseFunction(obj_type))
 					{
-						func = dynamic_cast<Function *>(object);
+						func = dynamic_cast<BaseFunction *>(object);
 						func->setName(CoreUtilsNs::generateUniqueName(func,
-																													*db_model->getObjectList(ObjectType::Function),
-																													true, "_cp", true, true, { orig_fmt_names[object] }));
+																													*db_model->getObjectList(obj_type),
+																													true, "_cp", true, true));
 						copy_obj_name = func->getName();
 						func->setName(orig_names[object]);
 					}
-					else if(obj_type==ObjectType::Operator)
+					else if(obj_type == ObjectType::Operator)
 					{
 						oper = dynamic_cast<Operator *>(object);
 						oper->setName(CoreUtilsNs::generateUniqueName(oper,
 																													*db_model->getObjectList(ObjectType::Operator),
-																													true, "", true, true, { orig_fmt_names[object] }));
+																													true, "", true, true));
 						copy_obj_name = oper->getName();
 						oper->setName(orig_names[object]);
 					}
@@ -2907,20 +2906,20 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_table->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, true, { orig_names[object] }));
+																																 false, "_cp", true, true));
 							}
 							else
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_view->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, true, { orig_names[object] }));
+																																 false, "_cp", true, true));
 							}
 						}
 						else
 						{
 							object->setName(CoreUtilsNs::generateUniqueName(object,
 																															*db_model->getObjectList(object->getObjectType()),
-																															true, "_cp", true, true, { orig_fmt_names[object] }));
+																															true, "_cp", true, true));
 						}
 
 						copy_obj_name = object->getName();
@@ -2939,6 +2938,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	itr = copied_objects.begin();
 	itr_end = copied_objects.end();
 	pos = 0;
+
 	while(itr != itr_end)
 	{
 		object = (*itr);

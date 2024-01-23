@@ -60,13 +60,11 @@ namespace CoreUtilsNs {
 	 * that the suffix should be used only in case of conflicts.
 	 * Now, the discard_input_obj is used to indicate whether the input object should be considered or not in the unique
 	 * name generation, in this case, when false the name of the input object (obj) will always be compared to itself if
-	 * it is present in the provided list. When that parameter is true the comparison is not made.
-	 * Finally, the list reserved_names, can be used to specify an extra set of names in which the object name must differ */
+	 * it is present in the provided list. When that parameter is true the comparison is not made. */
 	template <class Class>
 	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
 														 bool fmt_name = false, const QString &suffix = "",
-														 bool use_suf_on_conflict = false, bool discard_input_obj = false,
-														 const QStringList &reserved_names = {})
+														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
 		unsigned counter = 0;
 		int len = 0;
@@ -116,8 +114,7 @@ namespace CoreUtilsNs {
 				continue;
 
 			//If a conflicting object is found
-			if(reserved_names.contains(aux_name) ||
-				 aux_obj->getName(fmt_name).remove('"') == aux_name)
+			if(aux_obj->getName(fmt_name).remove('"') == aux_name)
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type == ObjectType::Operator)

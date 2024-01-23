@@ -406,6 +406,11 @@ void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps, con
 	BaseObject::updateDependencies(aux_deps, old_deps);
 }
 
+bool BaseFunction::isBaseFunction(ObjectType obj_tp)
+{
+	return obj_tp == ObjectType::Function || obj_tp == ObjectType::Procedure;
+}
+
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)
 {
 	attribs_map attribs,
