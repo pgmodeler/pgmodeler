@@ -449,18 +449,6 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
-	{
-		QGraphicsDropShadowEffect *shadow=nullptr;
-
-		shadow=new QGraphicsDropShadowEffect(wgt);
-		shadow->setXOffset(x_offset);
-		shadow->setYOffset(y_offset);
-		shadow->setBlurRadius(radius);
-		shadow->setColor(color);
-		wgt->setGraphicsEffect(shadow);
-	}
-
 	void handleFileDialogState(QFileDialog *file_dlg, bool save_state)
 	{
 		if(!file_dlg)
@@ -687,30 +675,50 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	void updateDropShadows(QWidgetList widgets)
+	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(wgt);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(color);
+		wgt->setGraphicsEffect(shadow);
+	}
+
+	void updateDropShadow(QWidget *wgt)
 	{
 		QColor color(0, 0, 0, 80);
 		int radius = 6, x = 1, y = 1;
-		QGraphicsDropShadowEffect *shadow = nullptr;
-		QString class_name = "QToolButton";
 
 		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light ||
-			 AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
+				AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
 		{
 			radius = 1;
 			color.setRgb(225, 225, 225);
 			color.setAlpha(255);
 		}
 
+		if(!wgt->graphicsEffect())
+			createDropShadow(wgt, x, y, radius, color);
+		else
+		{
+			QGraphicsDropShadowEffect *shadow =
+					qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+
+			shadow->setColor(color);
+			shadow->setOffset(x, y);
+			shadow->setBlurRadius(radius);
+		}
+	}
+
+	void updateDropShadows(QWidgetList widgets, const QString &class_name)
+	{
 		for(auto &wgt : widgets)
 		{
 			if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
-			{
-				shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
-				shadow->setColor(color);
-				shadow->setOffset(x, y);
-				shadow->setBlurRadius(radius);
-			}
+				updateDropShadow(wgt);
 		}
 	}
 }
