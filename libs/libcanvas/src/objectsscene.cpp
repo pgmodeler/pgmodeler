@@ -745,6 +745,8 @@ void ObjectsScene::drawBackground(QPainter *painter, const QRectF &rect)
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::TextAntialiasing, false);
 
+	painter->fillRect(rect, canvas_color);
+
 	start_x = round(scn_rect.left()/grid_size) * grid_size;
 	start_y = round(scn_rect.top()/grid_size) * grid_size;
 	end_x = scn_rect.right();
