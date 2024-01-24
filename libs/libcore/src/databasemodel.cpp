@@ -1017,6 +1017,29 @@ void DatabaseModel::removeExtensionTypes(Extension *ext)
 	}
 }
 
+void DatabaseModel::setRelTablesModified(BaseRelationship *rel)
+{
+	if(!rel)
+		return;
+
+	BaseTable *src_table = rel->getTable(BaseRelationship::SrcTable),
+			*dst_table = rel->getTable(BaseRelationship::DstTable);
+
+	src_table->setModified(true);
+
+	if(!rel->isSelfRelationship())
+		dst_table->setModified(true);
+
+	BaseObject *src_sch = src_table->getSchema(),
+			*dst_sch = dst_table->getSchema();
+
+	if(src_sch)
+		dynamic_cast<BaseGraphicObject *>(src_sch)->setModified(true);
+
+	if(dst_sch && dst_sch != src_sch)
+		dynamic_cast<BaseGraphicObject *>(dst_sch)->setModified(true);
+}
+
 bool DatabaseModel::updateExtensionTypes(Extension *ext)
 {
 	if(!ext)
@@ -1809,7 +1832,7 @@ void DatabaseModel::updateRelsGeneratedObjects()
 	}
 }
 
-void DatabaseModel::validateRelationships()
+bool DatabaseModel::validateRelationships()
 {
 	Relationship *rel = nullptr;
 	BaseRelationship *base_rel = nullptr;
@@ -1818,7 +1841,7 @@ void DatabaseModel::validateRelationships()
 	std::vector<Relationship *> failed_rels;
 
 	if(!hasInvalidRelatioships())
-		return;
+		return false;
 
 	if(!loading_model)
 		BaseGraphicObject::setUpdatesEnabled(false);
@@ -1924,6 +1947,8 @@ void DatabaseModel::validateRelationships()
 
 	if(!errors.empty())
 		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+
+	return true;
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -2319,7 +2344,12 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 		if(rel->getObjectType()==ObjectType::Relationship)
 		{
 			dynamic_cast<Relationship *>(rel)->connectRelationship();
-			validateRelationships();
+
+			/* If no relationship was validated means that the relationship we are adding
+			 * is the first one in the model, so we force the modification of the involved
+			 * tables so they can be properly updated graphically */
+			if(!validateRelationships())
+				setRelTablesModified(rel);
 		}
 		else
 			rel->connectRelationship();
@@ -2359,8 +2389,12 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 
 			__removeObject(rel, obj_idx);
 
-			if(rel->getObjectType()==ObjectType::Relationship)
-				validateRelationships();
+			/* If no relationship was validated means that the relationship we are removing
+			 * was the only one in the model, so we force the modification of the involved
+			 * tables so they can be properly updated graphically */
+			if(rel->getObjectType() == ObjectType::Relationship &&
+				 !validateRelationships())
+				setRelTablesModified(rel);
 
 			//Updating the fk relationships for the receiver table after removing the old relationship
 			if(recv_tab && recv_tab->getObjectType() == ObjectType::Table)
@@ -8406,7 +8440,8 @@ void DatabaseModel::setObjectsModified(std::vector<BaseObject *> &objects)
 
 void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 {
-	ObjectType obj_types[]={ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
+	ObjectType obj_types[]={
+							ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
 	std::vector<BaseObject *>::iterator itr, itr_end;

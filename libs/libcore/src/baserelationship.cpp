@@ -616,4 +616,3 @@ void BaseRelationship::setCodeInvalidated(bool value)
 
 	BaseGraphicObject::setCodeInvalidated(value);
 }
-
