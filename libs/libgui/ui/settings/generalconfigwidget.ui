@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
+    <width>862</width>
     <height>835</height>
    </rect>
   </property>
@@ -224,10 +224,10 @@
                <enum>Qt::StrongFocus</enum>
               </property>
               <property name="toolTip">
-               <string>&lt;p&gt;Reset alerts statuses/choices regarding the unsaved models, the open SQL execution tabs, and the usage of name disambiguation convention for duplicated object names.&lt;/p&gt;</string>
+               <string>&lt;p&gt;Reset alert statuses/choices regarding the unsaved models, the open SQL execution tabs, and the usage of the disambiguation convention for duplicated object names.&lt;/p&gt;</string>
               </property>
               <property name="text">
-               <string>Reset alerts choices</string>
+               <string>Reset alerts</string>
               </property>
               <property name="icon">
                <iconset resource="../../res/resources.qrc">

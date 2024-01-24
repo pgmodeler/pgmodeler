@@ -97,7 +97,7 @@ void ModelFixForm::resetFixForm()
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
 	output_file_sel->clearSelector();
-	output_txt->setPlainText(tr("Waiting process to start..."));
+	output_txt->setPlainText(tr("Waiting for the process to start..."));
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
 	progress_pb->setVisible(false);

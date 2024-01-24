@@ -255,7 +255,7 @@ void FileSelectorWidget::openFileExternally()
 
 void FileSelectorWidget::showWarning()
 {
-	QPalette pal;
+	QColor color = qApp->palette().color(QPalette::Text);
 	int padding = 0;
 	bool has_warn = !warn_ico_lbl->toolTip().isEmpty();
 
@@ -263,14 +263,12 @@ void FileSelectorWidget::showWarning()
 
 	if(has_warn)
 	{
-		pal.setColor(QPalette::Text, QColor(255, 0, 0));
+		color.setRgb(255, 0, 0);
 		padding = warn_ico_lbl->width();
 	}
-	else
-		pal = qApp->palette();
 
-	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px").arg(padding));
-	filename_edt->setPalette(pal);
+	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px; color: %2")
+															.arg(QString::number(padding), color.name()));
 }
 
 void FileSelectorWidget::validateSelectedFile()
