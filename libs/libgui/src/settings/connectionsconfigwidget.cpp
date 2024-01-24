@@ -138,6 +138,7 @@ void ConnectionsConfigWidget::loadConfiguration()
 
 		edit_tb->setEnabled(!connections.empty());
 		remove_tb->setEnabled(!connections.empty());
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -443,13 +444,13 @@ void ConnectionsConfigWidget::restoreDefaults()
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
-			this->removeConnection();
+			removeConnection();
 
 		//Reloads the configuration
-		this->loadConfiguration();
+		loadConfiguration();
 
 		updateConnectionsCombo();
-		this->setConfigurationChanged(true);
+		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
@@ -514,6 +515,8 @@ void ConnectionsConfigWidget::saveConfiguration()
 		schparser.ignoreUnkownAttributes(true);
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::ConnectionsConf, config_params);
 		schparser.ignoreUnkownAttributes(false);
+
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{

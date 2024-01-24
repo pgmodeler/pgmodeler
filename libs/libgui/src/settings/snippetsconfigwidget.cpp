@@ -286,6 +286,7 @@ void SnippetsConfigWidget::loadConfiguration()
 			config_params.erase(id);
 
 		fillSnippetsCombo(config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -464,6 +465,7 @@ void SnippetsConfigWidget::saveConfiguration()
 
 		config_params[GlobalAttributes::SnippetsConf]=attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::SnippetsConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{

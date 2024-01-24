@@ -96,6 +96,7 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 		void selectPaperSize();
 
 	private slots:
+		void setConfigurationChanged(bool changed = true) override;
 		void convertMarginUnity();
 		void resetDialogsSizes();
 		void resetAlertChoices();

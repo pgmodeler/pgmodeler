@@ -113,48 +113,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	selectPaperSize();
 
-	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
-	QList<QSpinBox *> spin_boxes=this->findChildren<QSpinBox *>();
-	QList<QDoubleSpinBox *> dspin_boxes=this->findChildren<QDoubleSpinBox *>();
-	QList<QComboBox *> combos=this->findChildren<QComboBox *>();
-	QList<QRadioButton *> radios=this->findChildren<QRadioButton *>();
-
-	for(QCheckBox *chk : chk_boxes)
-	{
-		child_wgts.push_back(chk);
-		connect(chk, &QCheckBox::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
-	}
-
-	for(QSpinBox *spin : spin_boxes)
-	{
-		child_wgts.push_back(spin);
-		connect(spin, &QSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
-	}
-
-	for(QDoubleSpinBox *dspin : dspin_boxes)
-	{
-		child_wgts.push_back(dspin);
-		connect(dspin,  &QDoubleSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
-	}
-
-	for(QComboBox *cmb : combos)
-	{
-		child_wgts.push_back(cmb);
-		connect(cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::setConfigurationChanged);
-	}
-
-	for(QRadioButton *radio : radios)
-	{
-		child_wgts.push_back(radio);
-		connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
-	}
-
-	connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
-		SQLExecutionWidget::destroySQLHistory();
-	});
-
-	connect(reset_alerts_choices_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetAlertChoices);
-
 #ifdef NO_UPDATE_CHECK
 	check_update_chk->setChecked(false);
 	check_update_chk->setVisible(false);
@@ -179,6 +137,50 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 														 .arg(QLocale::languageToString(QLocale(lang).language()))
 														 .arg(lang), lang);
 	}
+
+	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
+	QList<QSpinBox *> spin_boxes=this->findChildren<QSpinBox *>();
+	QList<QDoubleSpinBox *> dspin_boxes=this->findChildren<QDoubleSpinBox *>();
+	QList<QComboBox *> combos=this->findChildren<QComboBox *>();
+	QList<QRadioButton *> radios=this->findChildren<QRadioButton *>();
+
+	for(QCheckBox *chk : chk_boxes)
+	{
+		child_wgts.push_back(chk);
+		connect(chk, &QCheckBox::toggled, this, &GeneralConfigWidget::setConfigurationChanged);
+	}
+
+	for(QSpinBox *spin : spin_boxes)
+	{
+		child_wgts.push_back(spin);
+		connect(spin, &QSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+	}
+
+	for(QDoubleSpinBox *dspin : dspin_boxes)
+	{
+		child_wgts.push_back(dspin);
+		connect(dspin,  &QDoubleSpinBox::valueChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+	}
+
+	for(QComboBox *cmb : combos)
+	{
+		child_wgts.push_back(cmb);
+		connect(cmb, &QComboBox::currentIndexChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+	}
+
+	for(QRadioButton *radio : radios)
+	{
+		child_wgts.push_back(radio);
+		connect(radio, &QRadioButton::toggled, this, &GeneralConfigWidget::setConfigurationChanged);
+	}
+
+	connect(source_editor_sel, &FileSelectorWidget::s_selectorChanged, this, &GeneralConfigWidget::setConfigurationChanged);
+
+	connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
+		SQLExecutionWidget::destroySQLHistory();
+	});
+
+	connect(reset_alerts_choices_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetAlertChoices);
 }
 
 void GeneralConfigWidget::loadConfiguration()
@@ -289,7 +291,8 @@ void GeneralConfigWidget::loadConfiguration()
 			}
 		}
 
-		this->applyConfiguration();
+		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -540,6 +543,7 @@ void GeneralConfigWidget::saveConfiguration()
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::GeneralConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -617,8 +621,8 @@ void GeneralConfigWidget::restoreDefaults()
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SchHighlightConf, true);
-		this->loadConfiguration();
-		this->applyConfiguration();
+		loadConfiguration();
+		applyConfiguration();
 		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
@@ -659,6 +663,14 @@ void GeneralConfigWidget::selectPaperSize()
 	height_lbl->setVisible(visible);
 	width_spb->setVisible(visible);
 	height_spb->setVisible(visible);
+}
+
+void GeneralConfigWidget::setConfigurationChanged(bool changed)
+{
+	if(child_wgts.contains(sender()))
+		BaseConfigWidget::setConfigurationChanged(true);
+	else
+		BaseConfigWidget::setConfigurationChanged(changed);
 }
 
 void GeneralConfigWidget::resetDialogsSizes()

@@ -327,6 +327,10 @@ CREATE TABLE public.table_b (\n \
 		setConfigurationChanged(true);
 	});
 
+	connect(expansion_factor_spb, &QSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
 	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
@@ -354,10 +358,22 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 
 void AppearanceConfigWidget::showEvent(QShowEvent *)
 {
+	/* We store the current changed state of the configurations
+	 * because the call to previewCanvasColors() always set
+	 * the settings as changed and since the show event
+	 * doens't need to change settings we do a small workaround.
+	 *
+	 * This will avoid reload appearance settings when the user
+	 * just displayed the appearance settings but don't changed
+	 * anything. */
+	bool conf_changed = isConfigurationChanged();
+
 	// Store the current state of grid/delimiters display
 	show_grid = ObjectsScene::isShowGrid();
 	show_delimiters = ObjectsScene::isShowPageDelimiters();
 	previewCanvasColors();
+
+	setConfigurationChanged(conf_changed);
 }
 
 void AppearanceConfigWidget::hideEvent(QHideEvent *)
@@ -481,6 +497,7 @@ void AppearanceConfigWidget::loadConfiguration()
 		expansion_factor_spb->setValue(config_params[Attributes::Design][Attributes::ExpansionFactor].toUInt());
 
 		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -714,6 +731,8 @@ void AppearanceConfigWidget::saveConfiguration()
 												tr("The template file `%1' could not be accessed!").arg(theme_hl_files[i]) : "");
 			}
 		}
+
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -815,6 +834,7 @@ void AppearanceConfigWidget::applyConfiguration()
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
 	ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 
 	loadExampleModel();
 	model->setObjectsModified();

@@ -96,7 +96,7 @@ void ConfigurationForm::reject()
 	{
 		if(sender() == cancel_btn)
 		{
-			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
+			QWidgetList wgt_list={ general_conf, appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
 			qApp->setOverrideCursor(Qt::WaitCursor);
@@ -125,9 +125,9 @@ void ConfigurationForm::applyConfiguration()
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
 
-	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
+	for(int i = GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
-		conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
+		conf_wgt = qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
 
 		if(conf_wgt->isConfigurationChanged())
 			conf_wgt->saveConfiguration();

@@ -68,7 +68,10 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
 	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-	connect(deferrable_chk, &QCheckBox::toggled, this, &RelationshipConfigWidget::setConfigurationChanged);
+
+	connect(deferrable_chk, &QCheckBox::toggled, this, [this]() {
+		setConfigurationChanged(true);
+	});
 
 	connect(rel_type_cmb,  &QComboBox::currentIndexChanged, this,&RelationshipConfigWidget::fillNamePatterns);
 
@@ -119,7 +122,8 @@ void RelationshipConfigWidget::loadConfiguration()
 		patterns[Attributes::RelationshipPart]=config_params[Attributes::RelationshipPart];
 
 		fillNamePatterns();
-		this->applyConfiguration();
+		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -161,6 +165,7 @@ void RelationshipConfigWidget::saveConfiguration()
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -188,7 +193,7 @@ void RelationshipConfigWidget::restoreDefaults()
 	try
 	{
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::RelationshipsConf, false);
-		this->loadConfiguration();
+		loadConfiguration();
 		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
