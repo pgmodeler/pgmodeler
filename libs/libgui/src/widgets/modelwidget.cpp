@@ -2817,7 +2817,10 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			/* The first validation is to check if the object to be pasted does not conflict
 			with any other object of the same type on the model */
 			if(BaseFunction::isBaseFunction(obj_type))
+			{
 				dynamic_cast<BaseFunction *>(object)->createSignature(true);
+				aux_name = object->getSignature();
+			}
 			else if(tab_obj)
 				aux_name = tab_obj->getName(true);
 			else

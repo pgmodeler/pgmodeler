@@ -386,8 +386,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 		}
 	}
 
-	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
+	signature = this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
 	this->setCodeInvalidated(true);
 }
 
