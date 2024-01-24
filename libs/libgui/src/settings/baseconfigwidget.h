@@ -30,7 +30,6 @@
 #include "guiglobal.h"
 #include "xmlparser.h"
 #include "schemaparser.h"
-#include <algorithm>
 #include <QWidget>
 
 class __libgui BaseConfigWidget: public QWidget {

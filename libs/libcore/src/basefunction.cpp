@@ -386,8 +386,7 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 		}
 	}
 
-	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
+	signature = this->getName(format, prepend_schema) + "(" + fmt_params.join(",") + ")";
 	this->setCodeInvalidated(true);
 }
 
@@ -404,6 +403,11 @@ void BaseFunction::updateDependencies(const std::vector<BaseObject *> &deps, con
 		aux_deps.push_back(type.getObject());
 
 	BaseObject::updateDependencies(aux_deps, old_deps);
+}
+
+bool BaseFunction::isBaseFunction(ObjectType obj_tp)
+{
+	return obj_tp == ObjectType::Function || obj_tp == ObjectType::Procedure;
 }
 
 attribs_map BaseFunction::getAlterCodeAttributes(BaseFunction *func)

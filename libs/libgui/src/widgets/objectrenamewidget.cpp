@@ -25,13 +25,13 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
 	op_list = nullptr;
 	model = nullptr;
+	paste_mode = false;
 
 	setupUi(this);
-	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
-	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
 	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
 	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
@@ -48,42 +48,88 @@ void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseM
 		tab_obj = dynamic_cast<TableObject *>(obj);
 
 		if(obj->isSystemObject())
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-												.arg(obj->getName()).arg(obj->getTypeName()),
-												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+												 .arg(obj->getName(), obj->getTypeName()),
+											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(tab_obj && tab_obj->isAddedByRelationship())
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
-												.arg(tab_obj->getName())
-												.arg(tab_obj->getTypeName()),
-												ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
+											.arg(tab_obj->getName(), tab_obj->getTypeName()),
+											ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 	}
 
-	if(objs.size() == 1)
-	{
-		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(objs[0]->getSchemaName())));
-		obj_icon_lbl->setToolTip(objs[0]->getTypeName());
-		obj_name_lbl->setText(objs[0]->getName());
-		new_name_edt->setText(objs[0]->getName());
-	}
-	else
-	{
-		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectall")));
-		obj_icon_lbl->setToolTip("");
-		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objs.size()));
-		to_lbl->setVisible(false);
-		obj_name_lbl->setVisible(false);
-	}
-
-	adjustSize();
+	paste_mode = false;
 	objects = objs;
 	this->op_list = op_list;
 	this->model = model;
+
+	updateLabelsButtons();
+	adjustSize();
+}
+
+void ObjectRenameWidget::updateLabelsButtons()
+{
+	if(objects.size() == 1)
+	{
+		BaseObject *obj = objects.front();
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(obj->getSchemaName())));
+		obj_icon_lbl->setToolTip(obj->getTypeName());
+		new_name_edt->setText(obj->getName());
+		rename_lbl->setText(tr("Rename %1 <strong>%2</strong> to:").arg(obj->getTypeName().toLower(), obj->getName()));
+	}
+	else
+	{
+		new_name_edt->setText("");
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("objects")));
+		obj_icon_lbl->setToolTip("");
+		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objects.size()));
+	}
+
+	use_defaults_chk->setVisible(paste_mode);
+	alert_frm->setVisible(paste_mode);
+
+	if(!paste_mode)
+	{
+		cancel_tb->setText(tr("Cancel"));
+		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+
+		disconnect(apply_tb, nullptr, nullptr, nullptr);
+		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming, Qt::UniqueConnection);
+	}
+	else
+	{
+		cancel_tb->setText(tr("Ignore"));
+		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("cancel")));
+
+		disconnect(apply_tb, nullptr, nullptr, nullptr);
+		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::validateName, Qt::UniqueConnection);
+	}
+}
+
+void ObjectRenameWidget::setAttributes(BaseObject *object)
+{
+	if(!object)
+		return;
+
+	paste_mode = true;
+	objects.clear();
+	objects.push_back(object);
+	updateLabelsButtons();
+	adjustSize();
+}
+
+QString ObjectRenameWidget::getNewName()
+{
+	return new_name_edt->text();
 }
 
 int ObjectRenameWidget::exec()
 {
-	if(!objects.empty() && op_list)
+	if(paste_mode || (!objects.empty() && op_list))
 		return QDialog::exec();
 
 	return QDialog::Rejected;
@@ -93,8 +139,6 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 {
 	op_list = nullptr;
 	model = nullptr;
-	new_name_edt->clear();
-	obj_name_lbl->clear();
 }
 
 void ObjectRenameWidget::applyRenaming()
@@ -237,4 +281,17 @@ void ObjectRenameWidget::applyRenaming()
 		else
 			reject();
 	}
+}
+
+void ObjectRenameWidget::validateName()
+{
+	if(!BaseObject::isValidName(new_name_edt->text()))
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::AsgInvalidNameObject),
+											ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+		return;
+	}
+
+	accept();
 }

@@ -312,6 +312,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		bool updateExtensionTypes(Extension *ext);
 
 		void removeExtensionTypes(Extension *ext);
+
+		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
+		void setRelTablesModified(BaseRelationship *rel);
+
 	public:
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
@@ -363,8 +367,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 by relationship) in order to be reconstructed in a posterior moment */
 		void storeSpecialObjectsXML();
 
-		//! \brief Validates all the relationship, propagating all column modifications over the tables
-		void validateRelationships();
+		/*! \brief Validates all relationships, propagating all column modifications over the tables when needed.
+		 *  This method returns false when no relationship was invalid and true when the method validated (reconnected)
+		 *  at least one relationship */
+		bool validateRelationships();
 
 		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
 		 * If the types list is empty the method will return nullptr. */

@@ -55,6 +55,7 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [disable-inline-editor="] %if {disable-inline-editor} %then true %else false %end ["] $br
 {spc} [alert-unsaved-models="] {alert-unsaved-models} ["] $br
 {spc} [alert-open-sqltabs="] {alert-open-sqltabs} ["] $br
+{spc} [use-def-disambiguation="] {use-def-disambiguation} ["] $br
 
 %if {source-editor-app} %then
 	{spc} [source-editor-app="] &{source-editor-app} ["] $br

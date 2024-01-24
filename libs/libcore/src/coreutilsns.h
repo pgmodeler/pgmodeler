@@ -54,23 +54,24 @@ namespace CoreUtilsNs {
 	//! \brief Returns true if the specified word is a PostgreSQL reserved word.
 	extern __libcore bool isReservedKeyword(const QString &word);
 
-	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
-	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with
-	 * formated names. The optinal parameter use_suf_on_conflict indicates that the suffix should be used only in case of conflicts.
-	 * Now, the discard_input_obj is used to indicate if the input object should be considered or not in the unique name generation, in this case,
-	 * when false the name of the input object (obj) will always be compared to itself if it is present in the provided list. When that
-	 * parameter is true the comparison is not made. */
+	/*! \brief Generates an unique name based on the specified object and the list of objects of the same type.
+	 * The user can specify a suffix for the generated name as well if the comparison inside the method must be done with
+	 * formated names (schema-qualified) by using fmt_name parameter. The optinal parameter use_suf_on_conflict indicates
+	 * that the suffix should be used only in case of conflicts.
+	 * Now, the discard_input_obj is used to indicate whether the input object should be considered or not in the unique
+	 * name generation, in this case, when false the name of the input object (obj) will always be compared to itself if
+	 * it is present in the provided list. When that parameter is true the comparison is not made. */
 	template <class Class>
 	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
 														 bool fmt_name = false, const QString &suffix = "",
 														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
-		unsigned counter=0;
-		int len=0;
+		unsigned counter = 0;
+		int len = 0;
 		QString aux_name, obj_name, id;
-		Class *aux_obj=nullptr;
-		typename std::vector<Class *>::iterator itr=obj_vector.begin(), itr_end=obj_vector.end();
-		QChar oper_uniq_chr='?'; //Char appended at end of operator names in order to resolve conflicts
+		Class *aux_obj = nullptr;
+		typename std::vector<Class *>::iterator itr = obj_vector.begin(), itr_end = obj_vector.end();
+		QChar oper_uniq_chr = '?'; //Char appended at end of operator names in order to resolve conflicts
 		ObjectType obj_type;
 
 		if(!obj)
@@ -79,10 +80,10 @@ namespace CoreUtilsNs {
 		else if(obj->getObjectType()==ObjectType::Cast || obj->getObjectType()==ObjectType::Database)
 			return(obj->getName());
 
-		obj_name=obj->getName(fmt_name);
-		obj_type=obj->getObjectType();
+		obj_name = obj->getName(fmt_name);
+		obj_type = obj->getObjectType();
 
-		if(!use_suf_on_conflict && obj_type!=ObjectType::Operator)
+		if(!use_suf_on_conflict && obj_type != ObjectType::Operator)
 			obj_name += suffix;
 
 		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
@@ -96,7 +97,7 @@ namespace CoreUtilsNs {
 			obj_name.chop(id.size() + 3);
 
 			//Append the id of the object on its name (this is not applied to operators)
-			if(obj_type!=ObjectType::Operator)
+			if(obj_type != ObjectType::Operator)
 				obj_name += "_" + id;
 		}
 
@@ -116,18 +117,18 @@ namespace CoreUtilsNs {
 			if(aux_obj->getName(fmt_name).remove('"') == aux_name)
 			{
 				//For operators is appended a '?' on the name
-				if(obj_type==ObjectType::Operator)
-					aux_name=QString("%1%2").arg(obj_name).arg(QString("").leftJustified(counter++, oper_uniq_chr));
+				if(obj_type == ObjectType::Operator)
+					aux_name = QString("%1%2").arg(obj_name, QString("").leftJustified(counter++, oper_uniq_chr));
 				else
 				{
-					aux_name=QString("%1%2%3")
-									 .arg(obj_name)
-									 .arg(use_suf_on_conflict ? suffix : "")
-									 .arg(use_suf_on_conflict && counter == 0 ? "" : QString::number(counter));
+					aux_name = QString("%1%2%3")
+										.arg(obj_name,
+										use_suf_on_conflict ? suffix : "",
+										use_suf_on_conflict && counter == 0 ? "" : QString::number(counter));
 					counter++;
 				}
 
-				itr=obj_vector.begin();
+				itr = obj_vector.begin();
 			}
 		}
 

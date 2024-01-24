@@ -233,7 +233,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	//std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	name_list->clear();
 	word.clear();
@@ -242,7 +242,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True)
+	if(GeneralConfigWidget::getConfigurationParam(Attributes::Configuration,
+																								Attributes::CodeCompletion) == Attributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);
@@ -334,10 +335,10 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type == ObjectType::Function)
+		if(BaseFunction::isBaseFunction(obj_type))
 		{
-			dynamic_cast<Function *>(obj)->createSignature(false);
-			obj_name = dynamic_cast<Function *>(obj)->getSignature();
+			dynamic_cast<BaseFunction *>(obj)->createSignature(false);
+			obj_name = dynamic_cast<BaseFunction *>(obj)->getSignature();
 		}
 		else if(obj_type == ObjectType::Operator)
 			obj_name = dynamic_cast<Operator *>(obj)->getSignature(false);
@@ -1356,11 +1357,11 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 			code_field_txt->setTextCursor(lvl_cur);
 		}
 	}
-	else if(obj_type==ObjectType::Function)
+	else if(BaseFunction::isBaseFunction(obj_type))
 	{
-		Function *func=dynamic_cast<Function *>(obj);
+		BaseFunction *func = dynamic_cast<BaseFunction *>(obj);
 		func->createSignature(true, sch_qualified);
-		name=func->getSignature();
+		name = func->getSignature();
 	}
 	else if(obj_type==ObjectType::Cast)
 	{

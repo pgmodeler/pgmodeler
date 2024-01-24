@@ -1166,17 +1166,14 @@ void RelationshipWidget::applyConfiguration()
 						rel->isIdentifier())
 					model->checkRelationshipRedundancy(rel);
 
-				if(rel_type!=BaseRelationship::RelationshipFk)
+				if(rel_type != BaseRelationship::RelationshipFk)
 					model->validateRelationships();
 
 				rel->blockSignals(false);
 			}
 			catch(Exception &e)
 			{
-				//Messagebox msg_box;
-
 				if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-					//msg_box.show(e);
 					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
