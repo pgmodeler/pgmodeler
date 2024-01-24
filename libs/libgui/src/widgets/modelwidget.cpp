@@ -2678,7 +2678,7 @@ void ModelWidget::cutObjects()
 void ModelWidget::copyObjects(bool duplicate_mode)
 {
 	std::map<unsigned, BaseObject *> objs_map;
-	std::vector<BaseObject *> deps;
+	std::vector<BaseObject *> sel_obj_deps, deps;
 	BaseObject *object = nullptr;
 	TableObject *tab_obj = nullptr;
 	BaseTable *table = nullptr;
@@ -2712,10 +2712,13 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 		if(object->getObjectType() == ObjectType::BaseRelationship)
 			continue;
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.result() == QDialog::Accepted)
+		{
 			deps = object->getDependencies(true, { ObjectType::Column });
+			sel_obj_deps.insert(sel_obj_deps.end(), deps.begin(), deps.end());
+		}
 
-		deps.push_back(object);
+		sel_obj_deps.push_back(object);
 
 		/* Copying the special objects (which references columns added by relationship) in order
 		to be correclty created when pasted */
@@ -2738,14 +2741,14 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 									(constr->getConstraintType()==ConstraintType::Unique &&
 									 constr->isReferRelationshipAddedColumn()))))))))
 				{
-					deps.push_back(tab_obj);
+					sel_obj_deps.push_back(tab_obj);
 				}
 			}
 		}
 	}
 
 	//Storing the objects ids in a auxiliary map organizing them by creation order
-	std::for_each(deps.begin(), deps.end(), [&objs_map](BaseObject *object) {
+	std::for_each(sel_obj_deps.begin(), sel_obj_deps.end(), [&objs_map](BaseObject *object) {
 		objs_map[object->getObjectId()] = object;
 	});
 
