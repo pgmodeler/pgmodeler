@@ -1728,14 +1728,14 @@ void ModelWidget::loadModel(const QString &filename)
 
 	try
 	{
+		#ifdef PGMODELER_DEBUG
+			quint64 start = QDateTime::currentMSecsSinceEpoch();
+		#endif
+
 		connect(db_model, &DatabaseModel::s_objectLoaded, &task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 		task_prog_wgt.addIcon(enum_t(ObjectType::BaseObject), QPixmap(GuiUtilsNs::getIconPath("design")));
 		task_prog_wgt.setWindowTitle(tr("Loading database model"));
 		task_prog_wgt.show();
-
-		#ifdef PGMODELER_DEBUG
-			quint64 start = QDateTime::currentSecsSinceEpoch();
-		#endif
 
 		db_model->loadModel(filename);
 		this->filename = filename;
@@ -1748,10 +1748,19 @@ void ModelWidget::loadModel(const QString &filename)
 		setModified(false);
 
 		#ifdef PGMODELER_DEBUG
-			quint64 end = QDateTime::currentSecsSinceEpoch();
+			quint64 end = QDateTime::currentMSecsSinceEpoch();
+			double	total = end - start;
+			QString unit = "ms";
+
+			if(total > 1000)
+			{
+				total /= 1000;
+				unit = "s";
+			}
+
 			QTextStream out(stdout);
 			out << "File: " << filename << Qt::endl;
-			out << "Loaded in " << end - start << "s" << Qt::endl;
+			out << "Loaded in " << total << unit << Qt::endl;
 			out << "---" << Qt::endl;
 		#endif
 	}
