@@ -143,13 +143,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	protected_model_frm->setLayout(grid);
 	protected_model_frm->adjustSize();
 
-	db_model=new DatabaseModel(this);
-	xmlparser=db_model->getXMLParser();
-	op_list=new OperationList(db_model);
-	scene=new ObjectsScene;
+	db_model = new DatabaseModel(this);
+	xmlparser = db_model->getXMLParser();
+	op_list = new OperationList(db_model);
+	scene = new ObjectsScene;
 	scene->installEventFilter(this);
 
-	viewport=new QGraphicsView(scene);
+	viewport = new QGraphicsView(scene);
 	updateRenderHints();
 	viewport->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -629,14 +629,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
 	viewport->verticalScrollBar()->installEventFilter(this);
-
-	connect(viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
-		viewport->resetCachedContent();
-	});
-
-	connect(viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
-		viewport->resetCachedContent();
-	});
 }
 
 ModelWidget::~ModelWidget()
@@ -1164,9 +1156,6 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 	op_list->registerObject(object, Operation::ObjModified);
 	setModified(true);
 	emit s_objectModified();
-
-	/*	if(object->getSchema())
-			dynamic_cast<Schema *>(object->getSchema())->setModified(true); */
 }
 
 void ModelWidget::emitSceneInteracted()
@@ -1194,6 +1183,7 @@ void ModelWidget::startSceneMove()
 	if(scene_moving)
 		return;
 
+	viewport->resetCachedContent();
 	scene_moving = true;
 	curr_show_grid = ObjectsScene::isShowGrid();
 	curr_show_delim = ObjectsScene::isShowPageDelimiters();
@@ -1208,7 +1198,6 @@ void ModelWidget::finishSceneMove()
 	ObjectsScene::setShowGrid(curr_show_grid);
 	ObjectsScene::setShowPageDelimiters(curr_show_delim);
 	scene->setShowSceneLimits(true);
-	viewport->resetCachedContent();
 	scene->invalidate(viewport->sceneRect());
 }
 
