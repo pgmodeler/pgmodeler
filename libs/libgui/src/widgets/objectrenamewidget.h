@@ -46,9 +46,12 @@ class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget
 
 		bool paste_mode;
 
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *) override;
 
 		void updateLabelsButtons();
+
+	protected:
+		bool eventFilter(QObject *object, QEvent *event) override;
 
 	public:
 		ObjectRenameWidget(QWidget *parent);
@@ -66,7 +69,7 @@ class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget
 		QString getNewName();
 
 	public slots:
-		int exec();
+		int exec() override;
 
 	private slots:
 		void applyRenaming();

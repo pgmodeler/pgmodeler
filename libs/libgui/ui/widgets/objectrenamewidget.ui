@@ -82,10 +82,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <property name="spacing">
-       <number>5</number>
-      </property>
+     <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
        <number>5</number>
       </property>
@@ -98,7 +95,10 @@
       <property name="bottomMargin">
        <number>5</number>
       </property>
-      <item>
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <item row="0" column="0">
        <widget class="QFrame" name="alert_frm">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -195,7 +195,7 @@
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="spacing">
          <number>5</number>
@@ -269,19 +269,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="3">
-           <widget class="QLineEdit" name="new_name_edt">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="2">
            <widget class="QToolButton" name="cancel_tb">
             <property name="sizePolicy">
@@ -340,6 +327,44 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="handle_lbl">
+            <property name="maximumSize">
+             <size>
+              <width>7</width>
+              <height>31</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>SizeAllCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-image: url(:images/images/handle_dark.png)</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap>:/quickedit/wgthandle.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="4">
+           <widget class="QLineEdit" name="new_name_edt">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

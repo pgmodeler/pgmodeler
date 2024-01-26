@@ -292,5 +292,7 @@
         <file>images/rel_crows_foot_dark.png</file>
         <file>images/rel_center_pnts_light.png</file>
         <file>images/rel_center_pnts_dark.png</file>
+        <file>images/handle_dark.png</file>
+        <file>images/handle_light.png</file>
     </qresource>
 </RCC>

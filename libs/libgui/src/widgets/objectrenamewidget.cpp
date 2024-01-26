@@ -37,6 +37,8 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
 	});
+
+	handle_lbl->installEventFilter(this);
 }
 
 void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
@@ -108,6 +110,21 @@ void ObjectRenameWidget::updateLabelsButtons()
 		disconnect(apply_tb, nullptr, nullptr, nullptr);
 		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::validateName, Qt::UniqueConnection);
 	}
+}
+
+bool ObjectRenameWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == handle_lbl && event->type() == QEvent::MouseMove)
+	{
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
+
+		move(m_event->globalPosition().x() - width() + (handle_lbl->width() / 2),
+				 m_event->globalPosition().y() - (height() - (handle_lbl->height() / 2)));
+
+		return true;
+	}
+
+	return QDialog::eventFilter(object, event);
 }
 
 void ObjectRenameWidget::setAttributes(BaseObject *object)
