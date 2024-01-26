@@ -1183,7 +1183,6 @@ void ModelWidget::startSceneMove()
 	if(scene_moving)
 		return;
 
-	viewport->resetCachedContent();
 	scene_moving = true;
 	curr_show_grid = ObjectsScene::isShowGrid();
 	curr_show_delim = ObjectsScene::isShowPageDelimiters();
@@ -1197,6 +1196,7 @@ void ModelWidget::finishSceneMove()
 	scene_moving = false;
 	ObjectsScene::setShowGrid(curr_show_grid);
 	ObjectsScene::setShowPageDelimiters(curr_show_delim);
+	viewport->resetCachedContent();
 	scene->setShowSceneLimits(true);
 	scene->invalidate(viewport->sceneRect());
 }
