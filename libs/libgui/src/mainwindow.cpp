@@ -1707,7 +1707,7 @@ void MainWindow::applyConfigurations()
 		}
 
 		if(current_model)
-			current_model->update();
+			setGridOptions();
 
 		updateConnections();
 		sql_tool_wgt->configureSnippets();
