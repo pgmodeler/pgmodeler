@@ -1188,6 +1188,7 @@ void ModelWidget::startSceneMove()
 	curr_show_delim = ObjectsScene::isShowPageDelimiters();
 	ObjectsScene::setShowGrid(false);
 	ObjectsScene::setShowPageDelimiters(false);
+	viewport->resetCachedContent();
 	scene->setShowSceneLimits(false);
 }
 
