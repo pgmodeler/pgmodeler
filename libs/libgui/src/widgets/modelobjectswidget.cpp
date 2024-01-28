@@ -628,6 +628,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 		std::vector<BaseObject *> ref_list, tree_state, obj_list;
 		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
 		unsigned count = 0, i = 0, i1 = 0;
+		int tree_v_pos = 0;
 
 		objectstree_tw->setUpdatesEnabled(false);
 
@@ -640,7 +641,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 		try
 		{
 			if(save_tree_state)
-				saveTreeState(tree_state);
+				saveTreeState(tree_state, tree_v_pos);
 
 			objectstree_tw->clear();
 
@@ -694,7 +695,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)
-					restoreTreeState(tree_state);
+					restoreTreeState(tree_state, tree_v_pos);
 			}
 		}
 		catch(Exception &e)
@@ -867,7 +868,7 @@ void ModelObjectsWidget::clearSelectedObject()
 	model_wgt->emitSceneInteracted();
 }
 
-void ModelObjectsWidget::saveTreeState(std::vector<BaseObject *> &tree_items)
+void ModelObjectsWidget::saveTreeState(std::vector<BaseObject *> &tree_items, int &v_scroll_pos)
 {
 	QTreeWidgetItemIterator itr(objectstree_tw);
 	BaseObject *obj=nullptr;
@@ -883,13 +884,13 @@ void ModelObjectsWidget::saveTreeState(std::vector<BaseObject *> &tree_items)
 
 		++itr;
 	}
+
+	v_scroll_pos = objectstree_tw->verticalScrollBar()->value();
 }
 
-void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items)
+void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items, int v_scroll_pos)
 {
 	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
-
-	//objectslist_tbw->setUpdatesEnabled(false);
 
 	while(!tree_items.empty())
 	{
@@ -909,7 +910,7 @@ void ModelObjectsWidget::restoreTreeState(std::vector<BaseObject *> &tree_items)
 		tree_items.pop_back();
 	}
 
-	//objectslist_tbw->setUpdatesEnabled(true);
+	objectstree_tw->verticalScrollBar()->setValue(v_scroll_pos);
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)

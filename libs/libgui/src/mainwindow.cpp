@@ -1379,7 +1379,7 @@ void MainWindow::setCurrentModel()
 
 	//Restore the tree state
 	if(current_model)
-		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
+		model_objs_wgt->saveTreeState(model_tree_states[current_model], model_tree_v_pos[current_model]);
 
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
@@ -1517,7 +1517,7 @@ void MainWindow::setCurrentModel()
 	changelog_wgt->setModel(current_model);
 
 	if(current_model)
-		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
+		model_objs_wgt->restoreTreeState(model_tree_states[current_model], model_tree_v_pos[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
 	resizeGeneralToolbarButtons();
@@ -1622,6 +1622,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
+			model_tree_v_pos.erase(model);
 
 			disconnect(model, nullptr, nullptr, nullptr);
 

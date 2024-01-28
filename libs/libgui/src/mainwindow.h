@@ -122,6 +122,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the model objects tree state for each opened model
 		std::map<ModelWidget *, std::vector<BaseObject *> > model_tree_states;
 
+		//! \brief Stores the model objects tree vertical scrollbar position for each opened model
+		std::map<ModelWidget *, int> model_tree_v_pos;
+
 		//! \brief Stores the defaul window title
 		QString window_title;
 

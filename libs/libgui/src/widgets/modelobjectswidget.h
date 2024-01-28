@@ -104,11 +104,13 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void enableObjectCreation(bool value);
 
 	protected:
-		//! \brief Saves the currently expanded items on the specified vector
-		void saveTreeState(std::vector<BaseObject *> &tree_items);
+		/*! \brief Saves the currently expanded items on the specified vector.
+		 *  The vertical scrollbar position is stored in v_scroll_pos */
+		void saveTreeState(std::vector<BaseObject *> &tree_items, int &v_scroll_pos);
 
-		//! \brief Restores the tree at a previous state when the specified items were expanded
-		void restoreTreeState(std::vector<BaseObject *> &tree_items);
+		/*! \brief Restores the tree at a previous state when the specified items were expanded
+		 *  as well as to a vertical scrollbar position */
+		void restoreTreeState(std::vector<BaseObject *> &tree_items, int v_scroll_pos);
 
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);
