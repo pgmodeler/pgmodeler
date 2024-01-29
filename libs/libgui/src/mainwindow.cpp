@@ -1517,7 +1517,8 @@ void MainWindow::setCurrentModel()
 	changelog_wgt->setModel(current_model);
 
 	if(current_model)
-		model_objs_wgt->restoreTreeState(model_tree_states[current_model], model_tree_v_pos[current_model]);
+		model_objs_wgt->restoreTreeState(model_tree_states[current_model],
+																		 model_tree_v_pos[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
 	resizeGeneralToolbarButtons();
@@ -1621,8 +1622,8 @@ void MainWindow::closeModel(int model_id)
 				(model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
 			model_nav_wgt->removeModel(model_id);
-			model_tree_states.erase(model);
-			model_tree_v_pos.erase(model);
+			model_tree_states.remove(model);
+			model_tree_v_pos.remove(model);
 
 			disconnect(model, nullptr, nullptr, nullptr);
 

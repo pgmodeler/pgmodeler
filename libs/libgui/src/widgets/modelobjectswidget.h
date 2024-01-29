@@ -84,6 +84,9 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);
 
+		//! \brief Returns an item from the tree related to the specified item id
+		QTreeWidgetItem *getTreeItem(const QString &item_id);
+
 		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
 
@@ -106,11 +109,11 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 	protected:
 		/*! \brief Saves the currently expanded items on the specified vector.
 		 *  The vertical scrollbar position is stored in v_scroll_pos */
-		void saveTreeState(std::vector<BaseObject *> &tree_items, int &v_scroll_pos);
+		void saveTreeState(QStringList &exp_items_ids, int &v_scroll_pos);
 
 		/*! \brief Restores the tree at a previous state when the specified items were expanded
 		 *  as well as to a vertical scrollbar position */
-		void restoreTreeState(std::vector<BaseObject *> &tree_items, int v_scroll_pos);
+		void restoreTreeState(const QStringList &exp_items_ids, int v_scroll_pos);
 
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);
