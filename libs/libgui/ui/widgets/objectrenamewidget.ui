@@ -335,14 +335,11 @@
             <property name="maximumSize">
              <size>
               <width>7</width>
-              <height>31</height>
+              <height>28</height>
              </size>
             </property>
             <property name="cursor">
              <cursorShape>SizeAllCursor</cursorShape>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-image: url(:images/images/handle_dark.png)</string>
             </property>
             <property name="text">
              <string/>

@@ -99,7 +99,7 @@ void ObjectRenameWidget::updateLabelsButtons()
 		cancel_tb->setText(tr("Cancel"));
 		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
 
-		disconnect(apply_tb, nullptr, nullptr, nullptr);
+		disconnect(apply_tb, nullptr, this, nullptr);
 		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming, Qt::UniqueConnection);
 	}
 	else
@@ -107,7 +107,7 @@ void ObjectRenameWidget::updateLabelsButtons()
 		cancel_tb->setText(tr("Ignore"));
 		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("cancel")));
 
-		disconnect(apply_tb, nullptr, nullptr, nullptr);
+		disconnect(apply_tb, nullptr, this, nullptr);
 		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::validateName, Qt::UniqueConnection);
 	}
 }
