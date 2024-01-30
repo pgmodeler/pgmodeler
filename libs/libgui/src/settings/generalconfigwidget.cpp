@@ -183,6 +183,14 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(reset_alerts_choices_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetAlertChoices);
 }
 
+void GeneralConfigWidget::showEvent(QShowEvent *)
+{
+	reset_alerts_choices_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
+																			 config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True ||
+																			 config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] == Attributes::True);
+
+}
+
 void GeneralConfigWidget::loadConfiguration()
 {
 	try
@@ -199,10 +207,6 @@ void GeneralConfigWidget::loadConfiguration()
 		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels) ||
 			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
 			resetAlertChoices();
-
-		reset_alerts_choices_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
-																				config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True ||
-																				config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] == Attributes::True);
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());

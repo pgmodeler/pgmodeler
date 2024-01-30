@@ -59,6 +59,9 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 			UnitCentimeters
 		};
 
+	protected:
+		void showEvent(QShowEvent *) override;
+
 	public:
 		//! \brief Maximum number of files listed as recent models
 		static constexpr int MaxRecentModels=15;
