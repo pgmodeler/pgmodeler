@@ -241,17 +241,43 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_convert_relnn=new QAction(QIcon(GuiUtilsNs::getIconPath("convrelnn")), tr("Convert"), this);
 	action_convert_rel1n=new QAction(QIcon(GuiUtilsNs::getIconPath("convrel1n")), tr("Convert"), this);
 
-	action_copy=new QAction(QIcon(GuiUtilsNs::getIconPath("copy")), tr("Copy"), this);
-	action_copy->setShortcut(QKeySequence(tr("Ctrl+C")));
+	action_copy = copy_menu.menuAction();
+	action_copy->setText(tr("Copy"));
 	action_copy->setMenuRole(QAction::NoRole);
+	action_copy->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
+
+	action = copy_menu.addAction(tr("Selected only"), QKeySequence(tr("Ctrl+C")));
+
+	connect(action, &QAction::triggered, this, [this]() {
+		__trycatch( copyObjects(false, false); )
+	});
+
+	action = copy_menu.addAction(tr("Sel. + dependencies"), QKeySequence(tr("Ctrl+Shift+C")));
+
+	connect(action, &QAction::triggered, this, [this]() {
+		__trycatch( copyObjects(false, true); )
+	});
 
 	action_paste=new QAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste"), this);
 	action_paste->setShortcut(QKeySequence(tr("Ctrl+V")));
 	action_paste->setMenuRole(QAction::NoRole);
 
-	action_cut=new QAction(QIcon(GuiUtilsNs::getIconPath("cut")), tr("Cut"), this);
-	action_cut->setShortcut(QKeySequence(tr("Ctrl+X")));
+	action_cut = cut_menu.menuAction();
+	action_cut->setText(tr("Cut"));
 	action_cut->setMenuRole(QAction::NoRole);
+	action_cut->setIcon(QIcon(GuiUtilsNs::getIconPath("cut")));
+
+	action = cut_menu.addAction(tr("Selected only"), QKeySequence(tr("Ctrl+X")));
+
+	connect(action, &QAction::triggered, this, [this]() {
+		__trycatch( cutObjects(false); )
+	});
+
+	action = cut_menu.addAction(tr("Sel. + dependencies"), QKeySequence(tr("Ctrl+Shift+X")));
+
+	connect(action, &QAction::triggered, this, [this]() {
+		__trycatch( cutObjects(true); )
+	});
 
 	action_deps_refs=new QAction(QIcon(GuiUtilsNs::getIconPath("depsrefs")), tr("Deps && Referrers"), this);
 
@@ -526,9 +552,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
 	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
 
-	connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
+	//connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
+	//connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
+
 	connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
-	connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
 	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
 
 	connect(action_rename, &QAction::triggered, this, &ModelWidget::renameObjects);
@@ -2663,7 +2690,7 @@ void ModelWidget::protectObject()
 	}
 }
 
-void ModelWidget::cutObjects()
+void ModelWidget::cutObjects(bool copy_deps)
 {
 	/* Store the source model as 'this'. This attribute is used on the paste method
 	to remove the selected object and updated the source model */
@@ -2671,10 +2698,10 @@ void ModelWidget::cutObjects()
 
 	//Set the flag indicating that a cut operation started
 	ModelWidget::cut_operation=true;
-	this->copyObjects();
+	copyObjects(false, copy_deps);
 }
 
-void ModelWidget::copyObjects(bool duplicate_mode)
+void ModelWidget::copyObjects(bool duplicate_mode, bool copy_deps)
 {
 	std::map<unsigned, BaseObject *> objs_map;
 	std::vector<BaseObject *> sel_obj_deps, deps;
@@ -2682,22 +2709,16 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 	TableObject *tab_obj = nullptr;
 	BaseTable *table = nullptr;
 	Constraint *constr = nullptr;
-	Messagebox msg_box;
 
 	if(selected_objects.size()==1)
 	{
 		//Raise an error if the user try to copy a reserved object
 		if(selected_objects[0]->isSystemObject())
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 											.arg(selected_objects[0]->getName()).arg(selected_objects[0]->getTypeName()),
 											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-
-	if(!duplicate_mode)
-	{
-		//Ask for confirmation to copy the dependencies of the object(s)
-		msg_box.show(tr("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-					 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		}
 	}
 
 	/* When in cut operation is necessary to store the selected objects in a separeted list
@@ -2711,7 +2732,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 		if(object->getObjectType() == ObjectType::BaseRelationship)
 			continue;
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(copy_deps)
 		{
 			deps = object->getDependencies(true, { ObjectType::Column });
 			sel_obj_deps.insert(sel_obj_deps.end(), deps.begin(), deps.end());
@@ -2779,7 +2800,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	BaseFunction *func = nullptr;
 	Constraint *constr = nullptr;
 	Operator *oper = nullptr;
-	QString aux_name, copy_obj_name, new_name;
+	QString aux_name, new_name;
 	ObjectType obj_type;
 	std::vector<Exception> errors;
 	unsigned pos = 0;
@@ -2862,7 +2883,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 					/* Ask the user a new object name by using an instance of ObjectRenameWidget
 					 * If the user accept the dialog we use the typed name otherwise the
 					 * original object name will be used and eventually disambigated */
-					if(!tab_obj && aux_object && !obj_rename_wgt.use_defaults_chk->isChecked() &&
+					if(aux_object && !obj_rename_wgt.use_defaults_chk->isChecked() &&
 						 obj_rename_wgt.exec() == QDialog::Accepted)
 						new_name = obj_rename_wgt.getNewName();
 					else
@@ -2890,18 +2911,14 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 						func = dynamic_cast<BaseFunction *>(object);
 						func->setName(CoreUtilsNs::generateUniqueName(func,
 																													*db_model->getObjectList(obj_type),
-																													true, "_cp", true, true));
-						copy_obj_name = func->getName();
-						func->setName(orig_names[object]);
+																													true, "_cp", true, false));
 					}
 					else if(obj_type == ObjectType::Operator)
 					{
 						oper = dynamic_cast<Operator *>(object);
 						oper->setName(CoreUtilsNs::generateUniqueName(oper,
 																													*db_model->getObjectList(ObjectType::Operator),
-																													true, "", true, true));
-						copy_obj_name = oper->getName();
-						oper->setName(orig_names[object]);
+																													true, "", true, false));
 					}
 					else
 					{
@@ -2911,28 +2928,22 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_table->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, true));
+																																 false, "_cp", true, duplicate_mode));
 							}
 							else
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_view->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, true));
+																																 false, "_cp", true, duplicate_mode));
 							}
 						}
 						else
 						{
 							object->setName(CoreUtilsNs::generateUniqueName(object,
 																															*db_model->getObjectList(object->getObjectType()),
-																															true, "_cp", true, true));
+																															true, "_cp", true, false));
 						}
-
-						copy_obj_name = object->getName();
-						object->setName(orig_names[object]);
 					}
-
-					//Sets the new object name concatenating the suffix to the original name
-					object->setName(copy_obj_name);
 				}
 			}
 		}
@@ -2960,7 +2971,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 		if(!tab_obj)
 		{
-			aux_table =  dynamic_cast<Table *>(object);;
+			aux_table =  dynamic_cast<Table *>(object);
 
 			//Stores the XML definition on a xml buffer map
 			if(duplicate_mode && aux_table)
@@ -2998,10 +3009,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 				//Generates the XML code with the new parent table
 				if(constr)
-				{
 					xml_objs[object] = constr->getSourceCode(SchemaParser::XmlCode, duplicate_mode);
-				  tab_obj->setCodeInvalidated(true);
-				}
 				else
 					xml_objs[object] = object->getSourceCode(SchemaParser::XmlCode);
 
@@ -3090,8 +3098,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 							constr->getConstraintType() == ConstraintType::PrimaryKey &&
 							constr->getParentTable()->getObjectIndex(constr) < 0)
 					{
-					  constr->getParentTable()->addObject(constr);
-					  constr->getParentTable()->setModified(true);
+						constr->getParentTable()->addObject(constr);
+						constr->getParentTable()->setModified(true);
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
@@ -3265,7 +3273,7 @@ void ModelWidget::duplicateObject()
 		}
 		else if(!selected_objects.empty())
 		{
-			copyObjects(true);
+			copyObjects(true, false);
 			pasteObjects(true);
 		}
 

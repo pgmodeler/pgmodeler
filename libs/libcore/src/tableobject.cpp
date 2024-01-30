@@ -28,6 +28,7 @@ TableObject::TableObject()
 
 void TableObject::setParentTable(BaseTable *table)
 {
+	setCodeInvalidated(table != parent_table);
 	parent_table=table;
 }
 

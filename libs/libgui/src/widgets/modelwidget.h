@@ -339,7 +339,11 @@ class __libgui ModelWidget: public QWidget {
 		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
-		QMenu *rels_menu;
+		QMenu *rels_menu,
+
+		copy_menu,
+
+		cut_menu;
 
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -532,7 +536,7 @@ class __libgui ModelWidget: public QWidget {
 		void selectAllObjects();
 
 		//! \brief Copies all the selected objects
-		void copyObjects(bool duplicate_mode = false);
+		void copyObjects(bool duplicate_mode, bool copy_deps);
 
 		//! \brief Paste all the objects copied previously
 		void pasteObjects(bool duplicate_mode = false);
@@ -541,7 +545,7 @@ class __libgui ModelWidget: public QWidget {
 		void duplicateObject();
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
-		void cutObjects();
+		void cutObjects(bool copy_deps);
 
 		//! \brief Converts a Many to Many relationship generating a table and two additional relationships.
 		void convertRelationshipNN();
