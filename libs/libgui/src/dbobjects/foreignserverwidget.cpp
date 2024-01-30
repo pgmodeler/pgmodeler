@@ -21,44 +21,37 @@
 
 ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignServer)
 {
-	try
-	{
-		QHBoxLayout *hbox = nullptr;
+	QHBoxLayout *hbox = nullptr;
 
-		Ui_ForeignServerWidget::setupUi(this);
+	Ui_ForeignServerWidget::setupUi(this);
 
-		fdw_sel=nullptr;
-		fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, this);
+	fdw_sel=nullptr;
+	fdw_sel=new ObjectSelectorWidget(ObjectType::ForeignDataWrapper, this);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(0,0,0,0);
-		hbox->addWidget(fdw_sel);
-		fdw_wgt->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(0,0,0,0);
+	hbox->addWidget(fdw_sel);
+	fdw_wgt->setLayout(hbox);
 
-		options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
-		options_tab->setCellsEditable(true);
-		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(tr("Option"), 0);
-		options_tab->setHeaderLabel(tr("Value"), 1);
+	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab->setCellsEditable(true);
+	options_tab->setColumnCount(2);
+	options_tab->setHeaderLabel(tr("Option"), 0);
+	options_tab->setHeaderLabel(tr("Value"), 1);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		hbox->addWidget(options_tab);
-		options_gb->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	hbox->addWidget(options_tab);
+	options_gb->setLayout(hbox);
 
-		configureFormLayout(server_grid, ObjectType::ForeignServer);
+	configureFormLayout(server_grid, ObjectType::ForeignServer);
 
-		setRequiredField(fdw_sel);
-		setRequiredField(fdw_lbl);
-		configureTabOrder({ type_edt, version_edt, fdw_sel, options_tab });
+	setRequiredField(fdw_sel);
+	setRequiredField(fdw_lbl);
+	configureTabOrder({ type_edt, version_edt, fdw_sel, options_tab });
 
-		setMinimumSize(600, 420);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(600, 420);
 }
 
 void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, ForeignServer *server)

@@ -21,61 +21,54 @@
 
 OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Operator)
 {
-	try
+	QGridLayout *grid=nullptr;
+	unsigned i, i1;
+	QFrame *frame=nullptr;
+
+	Ui_OperatorWidget::setupUi(this);
+
+	arg_types[0]=nullptr;
+	arg_types[0]=new PgSQLTypeWidget(this, tr("Left Argument Type"));
+	arg_types[1]=nullptr;
+	arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
+
+	grid=new QGridLayout;
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	grid->addWidget(arg_types[0],0,0);
+	grid->addWidget(arg_types[1],1,0);
+
+	grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0);
+
+	frame=generateInformationFrame(tr("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
+	grid->addWidget(frame, 3, 0);
+	attributes_twg->widget(0)->setLayout(grid);
+
+
+	grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
+	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 	{
-		QGridLayout *grid=nullptr;
-		unsigned i, i1;
-		QFrame *frame=nullptr;
+		functions_sel[i]=nullptr;
+		functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
 
-		Ui_OperatorWidget::setupUi(this);
-
-		arg_types[0]=nullptr;
-		arg_types[0]=new PgSQLTypeWidget(this, tr("Left Argument Type"));
-		arg_types[1]=nullptr;
-		arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
-
-		grid=new QGridLayout;
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		grid->addWidget(arg_types[0],0,0);
-		grid->addWidget(arg_types[1],1,0);
-
-		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0);
-
-		frame=generateInformationFrame(tr("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
-		grid->addWidget(frame, 3, 0);
-		attributes_twg->widget(0)->setLayout(grid);
-
-
-		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
-		for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-		{
-			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
-
-			if(i!=Operator::FuncOperator)
-				grid->addWidget(functions_sel[i],i,1,1,1);
-		}
-
-		for(i=Operator::OperCommutator, i1=3; i <= Operator::OperNegator; i++,i1++)
-		{
-			operators_sel[i]=nullptr;
-			operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, this);
-			grid->addWidget(operators_sel[i],i1,1,1,1);
-		}
-
-		operator_grid->addWidget(functions_sel[0],0,1,1,3);
-		configureFormLayout(operator_grid, ObjectType::Operator);
-
-		setRequiredField(operator_func_lbl);
-		setRequiredField(functions_sel[0]);
-		configureTabOrder({ functions_sel[0], merges_chk, hashes_chk, arg_types[0], arg_types[1] });
-
-		setMinimumSize(600, 620);
+		if(i!=Operator::FuncOperator)
+			grid->addWidget(functions_sel[i],i,1,1,1);
 	}
-	catch(Exception &e)
+
+	for(i=Operator::OperCommutator, i1=3; i <= Operator::OperNegator; i++,i1++)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		operators_sel[i]=nullptr;
+		operators_sel[i]=new ObjectSelectorWidget(ObjectType::Operator, this);
+		grid->addWidget(operators_sel[i],i1,1,1,1);
 	}
+
+	operator_grid->addWidget(functions_sel[0],0,1,1,3);
+	configureFormLayout(operator_grid, ObjectType::Operator);
+
+	setRequiredField(operator_func_lbl);
+	setRequiredField(functions_sel[0]);
+	configureTabOrder({ functions_sel[0], merges_chk, hashes_chk, arg_types[0], arg_types[1] });
+
+	setMinimumSize(600, 620);
 }
 
 void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper)

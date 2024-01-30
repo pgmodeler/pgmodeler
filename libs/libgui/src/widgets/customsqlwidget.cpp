@@ -21,80 +21,73 @@
 
 CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 {
-	try
-	{
-		QFont font;
+	QFont font;
 
-		Ui_CustomSQLWidget::setupUi(this);
-		configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
+	Ui_CustomSQLWidget::setupUi(this);
+	configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
 
-		append_sql_txt=GuiUtilsNs::createNumberedTextEditor(append_sql_wgt, true);
-		prepend_sql_txt=GuiUtilsNs::createNumberedTextEditor(prepend_sql_wgt, true);
+	append_sql_txt=GuiUtilsNs::createNumberedTextEditor(append_sql_wgt, true);
+	prepend_sql_txt=GuiUtilsNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
-		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-		append_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
+	append_sql_hl=new SyntaxHighlighter(append_sql_txt);
+	append_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
-		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-		prepend_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
+	prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
+	prepend_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
-		name_edt->setReadOnly(true);
-		comment_edt->setVisible(false);
-		comment_lbl->setVisible(false);
+	name_edt->setReadOnly(true);
+	comment_edt->setVisible(false);
+	comment_lbl->setVisible(false);
 
-		GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
-		action_gen_insert=new QAction(tr("Generic INSERT"), this);
-		action_gen_insert->setObjectName("action_gen_insert");
-		action_inc_serials=new QAction(tr("Include serial columns"), this);
-		action_inc_serials->setObjectName("action_inc_serials");
-		action_exc_serials=new QAction(tr("Exclude serial columns"), this);
-		action_exc_serials->setObjectName("action_exc_serials");
-		action_gen_select=new QAction(tr("Generic SELECT"), this);
-		action_gen_select->setObjectName("action_gen_select");
-		action_tab_select=new QAction(tr("Table SELECT"), this);
-		action_tab_select->setObjectName("action_tab_select");
-		action_gen_update=new QAction(tr("Generic UPDATE"), this);
-		action_gen_update->setObjectName("action_gen_update");
-		action_tab_update=new QAction(tr("Table UPDATE"), this);
-		action_tab_update->setObjectName("action_tab_update");
-		action_gen_delete=new QAction(tr("Generic DELETE"), this);
-		action_gen_delete->setObjectName("action_gen_delete");
-		action_tab_delete=new QAction(tr("Table DELETE"), this);
-		action_tab_delete->setObjectName("action_tab_delete");
+	action_gen_insert=new QAction(tr("Generic INSERT"), this);
+	action_gen_insert->setObjectName("action_gen_insert");
+	action_inc_serials=new QAction(tr("Include serial columns"), this);
+	action_inc_serials->setObjectName("action_inc_serials");
+	action_exc_serials=new QAction(tr("Exclude serial columns"), this);
+	action_exc_serials->setObjectName("action_exc_serials");
+	action_gen_select=new QAction(tr("Generic SELECT"), this);
+	action_gen_select->setObjectName("action_gen_select");
+	action_tab_select=new QAction(tr("Table SELECT"), this);
+	action_tab_select->setObjectName("action_tab_select");
+	action_gen_update=new QAction(tr("Generic UPDATE"), this);
+	action_gen_update->setObjectName("action_gen_update");
+	action_tab_update=new QAction(tr("Table UPDATE"), this);
+	action_tab_update->setObjectName("action_tab_update");
+	action_gen_delete=new QAction(tr("Generic DELETE"), this);
+	action_gen_delete->setObjectName("action_gen_delete");
+	action_tab_delete=new QAction(tr("Table DELETE"), this);
+	action_tab_delete->setObjectName("action_tab_delete");
 
-		insert_menu.addAction(action_inc_serials);
-		insert_menu.addAction(action_exc_serials);
-		insert_menu.addAction(action_gen_insert);
-		select_menu.addAction(action_tab_select);
-		select_menu.addAction(action_gen_select);
-		update_menu.addAction(action_tab_update);
-		update_menu.addAction(action_gen_update);
-		delete_menu.addAction(action_tab_delete);
-		delete_menu.addAction(action_gen_delete);
+	insert_menu.addAction(action_inc_serials);
+	insert_menu.addAction(action_exc_serials);
+	insert_menu.addAction(action_gen_insert);
+	select_menu.addAction(action_tab_select);
+	select_menu.addAction(action_gen_select);
+	update_menu.addAction(action_tab_update);
+	update_menu.addAction(action_gen_update);
+	delete_menu.addAction(action_tab_delete);
+	delete_menu.addAction(action_gen_delete);
 
-		connect(clear_tb, &QToolButton::clicked, this, &CustomSQLWidget::clearCode);
-		connect(insert_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		connect(select_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		connect(update_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		connect(delete_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
-		connect(action_gen_insert, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_inc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_exc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_gen_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_tab_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_gen_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_tab_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_gen_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
-		connect(action_tab_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(clear_tb, &QToolButton::clicked, this, &CustomSQLWidget::clearCode);
+	connect(insert_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+	connect(select_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+	connect(update_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+	connect(delete_tb, &QToolButton::clicked, this, &CustomSQLWidget::addCommand);
+	connect(action_gen_insert, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_inc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_exc_serials, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_gen_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_tab_select, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_gen_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_tab_update, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_gen_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
+	connect(action_tab_delete, &QAction::triggered, this, &CustomSQLWidget::addCommand);
 
-		setMinimumSize(640, 480);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(640, 480);
 }
 
 void CustomSQLWidget::configureMenus()

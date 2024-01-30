@@ -22,53 +22,46 @@ const QString PgSQLTypeWidget::InvalidType("invalid_type");
 
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
-	try
-	{
-		QStringList interval_lst, spatial_lst;
+	QStringList interval_lst, spatial_lst;
 
-		setupUi(this);
+	setupUi(this);
 
-		allow_qualifiers = true;
+	allow_qualifiers = true;
 
-		if(!label.isEmpty())
-			groupBox->setTitle(label);
+	if(!label.isEmpty())
+		groupBox->setTitle(label);
 
-		this->setWindowTitle(groupBox->title());
+	this->setWindowTitle(groupBox->title());
 
-		format_hl=nullptr;
-		format_hl=new SyntaxHighlighter(format_txt, true, false, font().pointSizeF());
-		format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		this->adjustSize();
+	format_hl=nullptr;
+	format_hl=new SyntaxHighlighter(format_txt, true, false, font().pointSizeF());
+	format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	this->adjustSize();
 
-		interval_lst = IntervalType::getTypes();
-		interval_cmb->addItem("");
-		interval_cmb->addItems(interval_lst);
+	interval_lst = IntervalType::getTypes();
+	interval_cmb->addItem("");
+	interval_cmb->addItems(interval_lst);
 
-		spatial_lst = SpatialType::getTypes();
-		spatial_lst.sort();
-		spatial_cmb->addItem(tr("NONE"));
-		spatial_cmb->addItems(spatial_lst);
+	spatial_lst = SpatialType::getTypes();
+	spatial_lst.sort();
+	spatial_cmb->addItem(tr("NONE"));
+	spatial_cmb->addItems(spatial_lst);
 
-		type_cmb->installEventFilter(this);
-		type_cmb->completer()->setFilterMode(Qt::MatchContains);
-		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
+	type_cmb->installEventFilter(this);
+	type_cmb->completer()->setFilterMode(Qt::MatchContains);
+	type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
-		connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
 }
 
 bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)

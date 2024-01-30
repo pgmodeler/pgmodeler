@@ -20,39 +20,32 @@
 
 ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Parameter)
 {
-	try
-	{
-		QGridLayout *parameter_grid=nullptr;
-		QSpacerItem *spacer=nullptr;
+	QGridLayout *parameter_grid=nullptr;
+	QSpacerItem *spacer=nullptr;
 
-		Ui_ParameterWidget::setupUi(this);
+	Ui_ParameterWidget::setupUi(this);
 
-		data_type=new PgSQLTypeWidget(this);
-		parameter_grid=new QGridLayout(this);
-		spacer=new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
-		parameter_grid->setContentsMargins(0, 0, 0, 0);
+	data_type=new PgSQLTypeWidget(this);
+	parameter_grid=new QGridLayout(this);
+	spacer=new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	parameter_grid->setContentsMargins(0, 0, 0, 0);
 
-		parameter_grid->addWidget(default_value_lbl, 0, 0, 1, 1);
-		parameter_grid->addWidget(default_value_edt, 0, 1, 1, 3);
-		parameter_grid->addWidget(mode_lbl, 1, 0, 1, 1);
-		parameter_grid->addWidget(param_in_chk, 1, 1, 1, 1);
-		parameter_grid->addWidget(param_out_chk, 1, 2, 1, 1);
-		parameter_grid->addWidget(param_variadic_chk, 1, 3, 1, 1);
-		parameter_grid->addWidget(data_type,2, 0, 1, 4);
-		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
+	parameter_grid->addWidget(default_value_lbl, 0, 0, 1, 1);
+	parameter_grid->addWidget(default_value_edt, 0, 1, 1, 3);
+	parameter_grid->addWidget(mode_lbl, 1, 0, 1, 1);
+	parameter_grid->addWidget(param_in_chk, 1, 1, 1, 1);
+	parameter_grid->addWidget(param_out_chk, 1, 2, 1, 1);
+	parameter_grid->addWidget(param_variadic_chk, 1, 3, 1, 1);
+	parameter_grid->addWidget(data_type,2, 0, 1, 4);
+	parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
-		configureFormLayout(parameter_grid, ObjectType::Parameter);
-		connect(param_variadic_chk, &QCheckBox::toggled, param_in_chk, &QCheckBox::setDisabled);
-		connect(param_variadic_chk, &QCheckBox::toggled, param_out_chk, &QCheckBox::setDisabled);
-		connect(param_in_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
-		connect(param_out_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
+	configureFormLayout(parameter_grid, ObjectType::Parameter);
+	connect(param_variadic_chk, &QCheckBox::toggled, param_in_chk, &QCheckBox::setDisabled);
+	connect(param_variadic_chk, &QCheckBox::toggled, param_out_chk, &QCheckBox::setDisabled);
+	connect(param_in_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
+	connect(param_out_chk, &QCheckBox::toggled, this, &ParameterWidget::enableVariadic);
 
-		setMinimumSize(500, 200);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(500, 200);
 }
 
 void ParameterWidget::enableVariadic()

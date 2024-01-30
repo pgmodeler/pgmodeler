@@ -18,7 +18,6 @@
 
 #include "baserelationship.h"
 #include "table.h"
-#include "schema.h"
 #include "doublenan.h"
 #include <QApplication>
 

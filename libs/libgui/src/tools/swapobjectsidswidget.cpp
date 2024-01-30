@@ -5,72 +5,65 @@ const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
-	try
-	{
-		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Permission,
-																																		 ObjectType::Textbox,
-																																		 ObjectType::Column,
-																																		 ObjectType::Constraint });
-		setupUi(this);
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Permission,
+																																	 ObjectType::Textbox,
+																																	 ObjectType::Column,
+																																	 ObjectType::Constraint });
+	setupUi(this);
 
-		sort_column = 0;
-		sort_order = Qt::AscendingOrder;
+	sort_column = 0;
+	sort_order = Qt::AscendingOrder;
 
-		selector_idx = 0;
-		src_object_sel=nullptr;
-		dst_object_sel=nullptr;
+	selector_idx = 0;
+	src_object_sel=nullptr;
+	dst_object_sel=nullptr;
 
-		filter_lt->setAlignment(filter_btn, Qt::AlignLeft);
+	filter_lt->setAlignment(filter_btn, Qt::AlignLeft);
 
-		QHBoxLayout *hbox = new QHBoxLayout(src_sel_parent);
-		hbox->setContentsMargins(0,0,0,0);
-		src_object_sel=new ObjectSelectorWidget(types, src_sel_parent);
-		src_object_sel->enableObjectCreation(false);
-		hbox->addWidget(src_object_sel);
+	QHBoxLayout *hbox = new QHBoxLayout(src_sel_parent);
+	hbox->setContentsMargins(0,0,0,0);
+	src_object_sel=new ObjectSelectorWidget(types, src_sel_parent);
+	src_object_sel->enableObjectCreation(false);
+	hbox->addWidget(src_object_sel);
 
-		hbox = new QHBoxLayout(dst_sel_parent);
-		hbox->setContentsMargins(0,0,0,0);
-		dst_object_sel=new ObjectSelectorWidget(types, dst_sel_parent);
-		dst_object_sel->enableObjectCreation(false);
-		hbox->addWidget(dst_object_sel);
+	hbox = new QHBoxLayout(dst_sel_parent);
+	hbox->setContentsMargins(0,0,0,0);
+	dst_object_sel=new ObjectSelectorWidget(types, dst_sel_parent);
+	dst_object_sel->enableObjectCreation(false);
+	hbox->addWidget(dst_object_sel);
 
-		setModel(nullptr);
-		filter_wgt->setVisible(false);
+	setModel(nullptr);
+	filter_wgt->setVisible(false);
 
-		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
+	connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
 
-		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
-			BaseObject *obj = src_object_sel->getSelectedObject();
-			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
-			dst_object_sel->setSelectedObject(obj);
-		});
+	connect(swap_values_tb, &QToolButton::clicked, this, [this](){
+		BaseObject *obj = src_object_sel->getSelectedObject();
+		src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
+		dst_object_sel->setSelectedObject(obj);
+	});
 
-		connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
-			if(QApplication::mouseButtons() == Qt::LeftButton)
-				selectItem(index);
-		});
+	connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
+		if(QApplication::mouseButtons() == Qt::LeftButton)
+			selectItem(index);
+	});
 
-		connect(objects_view->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int index, Qt::SortOrder order){
-			sort_column = index;
-			sort_order = order;
-		});
+	connect(objects_view->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int index, Qt::SortOrder order){
+		sort_column = index;
+		sort_order = order;
+	});
 
-		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+	connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
+	connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+	connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
 
-		objects_view->installEventFilter(this);
-		setMinimumSize(640,480);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	objects_view->installEventFilter(this);
+	setMinimumSize(640,480);
 }
 
 void SwapObjectsIdsWidget::setModel(DatabaseModel *model)

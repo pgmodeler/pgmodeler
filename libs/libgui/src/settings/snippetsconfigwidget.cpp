@@ -55,15 +55,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
 
-	try
-	{
-		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+	snippet_hl=new SyntaxHighlighter(snippet_txt);
+	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
 
 	enableEditMode(false);
 

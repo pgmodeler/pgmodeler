@@ -21,47 +21,40 @@
 
 RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Rule)
 {
-	try
-	{
-		QStringList list;
-		QFrame *frame=nullptr;
+	QStringList list;
+	QFrame *frame=nullptr;
 
-		Ui_RuleWidget::setupUi(this);
+	Ui_RuleWidget::setupUi(this);
 
-		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true, font().pointSizeF());
-		cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true, font().pointSizeF());
+	cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		command_hl=new SyntaxHighlighter(comando_txt, false, true, font().pointSizeF());
-		command_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		command_cp=new CodeCompletionWidget(comando_txt);
+	command_hl=new SyntaxHighlighter(comando_txt, false, true, font().pointSizeF());
+	command_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	command_cp=new CodeCompletionWidget(comando_txt);
 
-		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
-		commands_tab->setHeaderLabel(tr("SQL command"),0);
-		commands_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")),0);
-		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
+	commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	commands_tab->setHeaderLabel(tr("SQL command"),0);
+	commands_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")),0);
+	dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
-		frame=generateInformationFrame(tr("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
-		rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+	frame=generateInformationFrame(tr("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
+	rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
+	frame->setParent(this);
 
-		configureFormLayout(rule_grid, ObjectType::Rule);
+	configureFormLayout(rule_grid, ObjectType::Rule);
 
-		event_cmb->addItems(EventType::getTypes());
-		exec_type_cmb->addItems(ExecutionType::getTypes());
+	event_cmb->addItems(EventType::getTypes());
+	exec_type_cmb->addItems(ExecutionType::getTypes());
 
-		connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
-		connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
-		connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
+	connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
+	connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
+	connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
 
-		setRequiredField(event_lbl);
-		configureTabOrder();
+	setRequiredField(event_lbl);
+	configureTabOrder();
 
-		setMinimumSize(550, 500);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(550, 500);
 }
 
 void RuleWidget::editCommand(int row)

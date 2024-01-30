@@ -21,67 +21,59 @@
 
 AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Aggregate)
 {
-	try
-	{
-		QGridLayout *grid=nullptr;
-		Ui_AggregateWidget::setupUi(this);
-		QSpacerItem *spacer=nullptr;
-		QFrame *frame=nullptr;
+	QGridLayout *grid=nullptr;
+	Ui_AggregateWidget::setupUi(this);
+	QSpacerItem *spacer=nullptr;
+	QFrame *frame=nullptr;
 
-		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true, false, font().pointSizeF());
-		initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	initial_cond_hl=new SyntaxHighlighter(initial_cond_txt, true, false, font().pointSizeF());
+	initial_cond_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
+	final_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
-		input_type=new PgSQLTypeWidget(this, tr("Input Data Type"));
-		state_type=new PgSQLTypeWidget(this, tr("State Data Type"));
+	input_type=new PgSQLTypeWidget(this, tr("Input Data Type"));
+	state_type=new PgSQLTypeWidget(this, tr("State Data Type"));
 
-		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-											  ObjectsTableWidget::EditButton, true, this);
-		input_types_tab->setColumnCount(1);
+	input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											ObjectsTableWidget::EditButton, true, this);
+	input_types_tab->setColumnCount(1);
 
-		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
-		funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
-		funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
+	funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
+	funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
+	funcaoagregacao_grid->addWidget(sort_op_sel,2,1,1,1);
 
-		grid=new QGridLayout;
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		grid->addWidget(input_type,0,0);
-		grid->addWidget(input_types_tab,1,0);
-		state_input_types_twg->widget(0)->setLayout(grid);
+	grid=new QGridLayout;
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	grid->addWidget(input_type,0,0);
+	grid->addWidget(input_types_tab,1,0);
+	state_input_types_twg->widget(0)->setLayout(grid);
 
-		grid=new QGridLayout;
-		spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	grid=new QGridLayout;
+	spacer=new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		grid->addWidget(state_type,0,0);
-		grid->addItem(spacer,1,0);
-		state_input_types_twg->widget(1)->setLayout(grid);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	grid->addWidget(state_type,0,0);
+	grid->addItem(spacer,1,0);
+	state_input_types_twg->widget(1)->setLayout(grid);
 
-		connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, AggregateWidget::handleDataType));
-		connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, AggregateWidget::handleDataType));
+	connect(input_types_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, AggregateWidget::handleDataType));
+	connect(input_types_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, AggregateWidget::handleDataType));
 
-		frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
-		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
-		frame->setParent(this);
+	frame=generateInformationFrame(tr("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
+	funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
+	frame->setParent(this);
 
-		configureFormLayout(funcaoagregacao_grid, ObjectType::Aggregate);
+	configureFormLayout(funcaoagregacao_grid, ObjectType::Aggregate);
 
-		setRequiredField(state_type);
-		setRequiredField(input_type);
-		setRequiredField(transition_func_sel);
-		setRequiredField(transition_func_lbl);
+	setRequiredField(state_type);
+	setRequiredField(input_type);
+	setRequiredField(transition_func_sel);
+	setRequiredField(transition_func_lbl);
 
-		configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
-		setMinimumSize(620,700);
-
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	configureTabOrder({ final_func_sel, transition_func_sel, sort_op_sel });
+	setMinimumSize(620,700);
 }
 
 void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)

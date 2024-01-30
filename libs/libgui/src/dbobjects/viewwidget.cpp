@@ -26,127 +26,120 @@
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {
-	try
+	ObjectsTableWidget *tab = nullptr;
+	ObjectType types[] = { ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
+	QGridLayout *grid = nullptr;
+	QVBoxLayout *vbox = nullptr;
+
+	Ui_ViewWidget::setupUi(this);
+
+	sql_definition_txt = new NumberedTextEditor(this, true);
+	sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
+	sql_definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
+	vbox = new QVBoxLayout(sql_definition_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(sql_definition_txt);
+
+	obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
+																				ObjectType::Table, ObjectType::ForeignTable,
+																				ObjectType::View, ObjectType::Function,
+																				ObjectType::Procedure } , true, this);
+
+	vbox = new QVBoxLayout(view_refs_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(obj_refs_wgt);
+	vbox->addWidget(obj_refs_wgt);
+
+	sql_preview_txt=new NumberedTextEditor(this);
+	sql_preview_txt->setReadOnly(true);
+	sql_preview_hl=new SyntaxHighlighter(sql_preview_txt);
+	sql_preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
+	vbox = new QVBoxLayout(sql_preview_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(sql_preview_txt);
+
+	tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
+	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
+
+	custom_cols_wgt = new SimpleColumnsWidget(this);
+	vbox = new QVBoxLayout(columns_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(custom_cols_wgt);
+
+	//Configuring the table objects that stores the triggers and rules
+	unsigned tab_id = 4;
+
+	for(auto &type : types)
 	{
-		ObjectsTableWidget *tab = nullptr;
-		ObjectType types[] = { ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
-		QGridLayout *grid = nullptr;
-		QVBoxLayout *vbox = nullptr;
+		tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																(ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
 
-		Ui_ViewWidget::setupUi(this);
+		objects_tab_map[type] = tab;
 
-		sql_definition_txt = new NumberedTextEditor(this, true);
-		sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
-		sql_definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		grid=new QGridLayout;
+		grid->addWidget(tab, 0, 0, 1, 1);
+		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+		attributes_tbw->widget(tab_id)->setLayout(grid);
+		tab_id++;
 
-		vbox = new QVBoxLayout(sql_definition_tab);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(sql_definition_txt);
-
-		obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
-																					ObjectType::Table, ObjectType::ForeignTable,
-																					ObjectType::View, ObjectType::Function,
-																					ObjectType::Procedure } , true, this);
-
-		vbox = new QVBoxLayout(view_refs_tab);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(obj_refs_wgt);
-		vbox->addWidget(obj_refs_wgt);
-
-		sql_preview_txt=new NumberedTextEditor(this);
-		sql_preview_txt->setReadOnly(true);
-		sql_preview_hl=new SyntaxHighlighter(sql_preview_txt);
-		sql_preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-
-		vbox = new QVBoxLayout(sql_preview_tab);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(sql_preview_txt);
-
-		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
-		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
-
-		custom_cols_wgt = new SimpleColumnsWidget(this);
-		vbox = new QVBoxLayout(columns_tab);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(custom_cols_wgt);
-
-		//Configuring the table objects that stores the triggers and rules
-		unsigned tab_id = 4;
-
-		for(auto &type : types)
-		{
-			tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																	(ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
-
-			objects_tab_map[type] = tab;
-
-			grid=new QGridLayout;
-			grid->addWidget(tab, 0, 0, 1, 1);
-			grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-			attributes_tbw->widget(tab_id)->setLayout(grid);
-			tab_id++;
-
-			connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
-			connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
-			connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
-			connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
-			connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
-		}
-
-		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("table")),1);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
-		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("trigger")),2);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
-
-		objects_tab_map[ObjectType::Index]->setColumnCount(4);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
-
-		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
-		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
-
-		tablespace_sel->setEnabled(false);
-		tablespace_lbl->setEnabled(false);
-
-		connect(attributes_tbw, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
-
-		connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
-		connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
-		connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
-
-		connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
-		connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
-		connect(with_no_data_chk, &QCheckBox::toggled, this, &ViewWidget::updateCodePreview);
-		connect(tablespace_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
-		connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
-		connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
-		connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
-
-		configureFormFields(ObjectType::View);
-		baseobject_grid->setContentsMargins(0, 0, 0, 0);
-		dynamic_cast<QVBoxLayout*>(attributes_tbw->widget(0)->layout())->insertLayout(0, baseobject_grid);
-
-		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, attributes_tbw });
-		setMinimumSize(700, 650);
+		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
+		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
+		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
 	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+
+	objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
+	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
+	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("table")),1);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
+	objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("trigger")),2);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
+	objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
+
+	objects_tab_map[ObjectType::Index]->setColumnCount(4);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
+	objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
+	objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
+
+	objects_tab_map[ObjectType::Rule]->setColumnCount(5);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
+	objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
+	objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
+
+	tablespace_sel->setEnabled(false);
+	tablespace_lbl->setEnabled(false);
+
+	connect(attributes_tbw, &QTabWidget::currentChanged, this, &ViewWidget::updateCodePreview);
+
+	connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
+	connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
+	connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
+
+	connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
+	connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
+	connect(with_no_data_chk, &QCheckBox::toggled, this, &ViewWidget::updateCodePreview);
+	connect(tablespace_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+	connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+	connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
+	connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+
+	configureFormFields(ObjectType::View);
+	baseobject_grid->setContentsMargins(0, 0, 0, 0);
+	dynamic_cast<QVBoxLayout*>(attributes_tbw->widget(0)->layout())->insertLayout(0, baseobject_grid);
+
+	configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, attributes_tbw });
+	setMinimumSize(700, 650);
 }
 
 ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)

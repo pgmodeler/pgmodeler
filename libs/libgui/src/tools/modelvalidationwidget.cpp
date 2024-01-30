@@ -24,64 +24,57 @@
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
-	try
-	{
-		setupUi(this);
+	setupUi(this);
 
-		output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
-		output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
-		output_btn->setMenu(&output_menu);
+	output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+	output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
+	output_btn->setMenu(&output_menu);
 
-		htmlitem_del=new HtmlItemDelegate(this);
-		output_trw->setItemDelegateForColumn(0, htmlitem_del);
+	htmlitem_del=new HtmlItemDelegate(this);
+	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-		version_cmb->addItem(tr("Autodetect"));
-		version_cmb->addItems(PgSqlVersions::AllVersions);
+	version_cmb->addItem(tr("Autodetect"));
+	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		options_frm->setVisible(false);
-		curr_step=0;
+	options_frm->setVisible(false);
+	curr_step=0;
 
-		validation_thread=nullptr;
-		validation_helper=nullptr;
-		this->setModel(nullptr);
+	validation_thread=nullptr;
+	validation_helper=nullptr;
+	this->setModel(nullptr);
 
-		connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
-		connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
-		connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
-		connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
-		connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
-		connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
-		connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
-		connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
-		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
-		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
+	connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
+	connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
+	connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
+	connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
+	connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
+	connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
+	connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
+	connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
+	connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
+	connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 }
 
 bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)

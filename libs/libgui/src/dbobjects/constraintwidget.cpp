@@ -21,67 +21,60 @@
 
 ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Constraint)
 {
-	try
-	{
-		QStringList list;
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		std::map<QWidget *, std::vector<QString> > values_map;
-		QGridLayout *grid=nullptr;
+	QStringList list;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > values_map;
+	QGridLayout *grid=nullptr;
 
-		Ui_ConstraintWidget::setupUi(this);
+	Ui_ConstraintWidget::setupUi(this);
 
-		excl_elems_tab=new ElementsTableWidget(this);
-		grid=new QGridLayout;
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		grid->addWidget(excl_elems_tab,0,0);
-		excl_elems_grp->setLayout(grid);
+	excl_elems_tab=new ElementsTableWidget(this);
+	grid=new QGridLayout;
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	grid->addWidget(excl_elems_tab,0,0);
+	excl_elems_grp->setLayout(grid);
 
-		expression_hl=new SyntaxHighlighter(expression_txt, false, true, font().pointSizeF());
-		expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	expression_hl=new SyntaxHighlighter(expression_txt, false, true, font().pointSizeF());
+	expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
-		col_picker_wgt = new ColumnPickerWidget(this);
-		ref_col_picker_wgt = new ColumnPickerWidget(this);
+	ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
+	col_picker_wgt = new ColumnPickerWidget(this);
+	ref_col_picker_wgt = new ColumnPickerWidget(this);
 
-		QVBoxLayout *vbox = new QVBoxLayout(columns_tbw->widget(0));
-		vbox->addWidget(col_picker_wgt);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	QVBoxLayout *vbox = new QVBoxLayout(columns_tbw->widget(0));
+	vbox->addWidget(col_picker_wgt);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 
-		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
-		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_col_picker_wgt, 3,0,1,3);
+	dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
+	dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_col_picker_wgt, 3,0,1,3);
 
-		configureFormLayout(constraint_grid, ObjectType::Constraint);
+	configureFormLayout(constraint_grid, ObjectType::Constraint);
 
-		constr_type_cmb->addItems(ConstraintType::getTypes());
-		match_cmb->addItems(MatchType::getTypes());
-		deferral_cmb->addItems(DeferralType::getTypes());
-		indexing_cmb->addItems(IndexingType::getTypes());
+	constr_type_cmb->addItems(ConstraintType::getTypes());
+	match_cmb->addItems(MatchType::getTypes());
+	deferral_cmb->addItems(DeferralType::getTypes());
+	indexing_cmb->addItems(IndexingType::getTypes());
 
-		list = ActionType::getTypes();
-		on_delete_cmb->addItems(list);
-		on_update_cmb->addItems(list);
+	list = ActionType::getTypes();
+	on_delete_cmb->addItems(list);
+	on_update_cmb->addItems(list);
 
-		info_frm=generateInformationFrame(tr("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
-		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
-		info_frm->setParent(this);
+	info_frm=generateInformationFrame(tr("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
+	constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
+	info_frm->setParent(this);
 
-		connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
-		connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
-		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
+	connect(constr_type_cmb, &QComboBox::currentIndexChanged, this, &ConstraintWidget::selectConstraintType);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+	connect(indexing_chk, &QCheckBox::toggled, indexing_cmb, &QComboBox::setEnabled);
+	connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
-		connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, __slot(this, ConstraintWidget::selectReferencedTable));
-		connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, __slot(this, ConstraintWidget::selectReferencedTable));
+	connect(ref_table_sel, &ObjectSelectorWidget::s_selectorCleared, this, __slot(this, ConstraintWidget::selectReferencedTable));
+	connect(ref_table_sel, &ObjectSelectorWidget::s_objectSelected, this, __slot(this, ConstraintWidget::selectReferencedTable));
 
-		selectConstraintType();
-		configureTabOrder();
-		setMinimumSize(540, 600);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	selectConstraintType();
+	configureTabOrder();
+	setMinimumSize(540, 600);
 }
 
 void ConstraintWidget::selectReferencedTable()

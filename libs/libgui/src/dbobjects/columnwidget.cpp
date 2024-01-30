@@ -25,56 +25,49 @@
 
 ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Column)
 {
-	try
-	{
-		QSpacerItem *spacer=new QSpacerItem(10,10,QSizePolicy::Fixed,QSizePolicy::Expanding);
-		QStringList list;
+	QSpacerItem *spacer=new QSpacerItem(10,10,QSizePolicy::Fixed,QSizePolicy::Expanding);
+	QStringList list;
 
-		Ui_ColumnWidget::setupUi(this);
-		edit_seq_btn->setVisible(false);
+	Ui_ColumnWidget::setupUi(this);
+	edit_seq_btn->setVisible(false);
 
-		identity_type_cmb->addItems(IdentityType::getTypes());
+	identity_type_cmb->addItems(IdentityType::getTypes());
 
-		data_type=nullptr;
-		data_type=new PgSQLTypeWidget(this);
+	data_type=nullptr;
+	data_type=new PgSQLTypeWidget(this);
 
-		hl_default_value=nullptr;
-		hl_default_value=new SyntaxHighlighter(def_value_txt, true, false, font().pointSizeF());
-		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	hl_default_value=nullptr;
+	hl_default_value=new SyntaxHighlighter(def_value_txt, true, false, font().pointSizeF());
+	hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, this);
-		sequence_sel->setEnabled(false);
+	sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, this);
+	sequence_sel->setEnabled(false);
 
-		column_grid->addWidget(data_type,0,0,1,0);
-		column_grid->addWidget(default_value_grp,1,0,1,1);
+	column_grid->addWidget(data_type,0,0,1,0);
+	column_grid->addWidget(default_value_grp,1,0,1,1);
 
-		column_grid->addItem(spacer,column_grid->count(),0);
-		dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1, 1, 6);
+	column_grid->addItem(spacer,column_grid->count(),0);
+	dynamic_cast<QGridLayout *>(default_value_grp->layout())->addWidget(sequence_sel, 1, 1, 1, 6);
 
-		configureFormLayout(column_grid, ObjectType::Column);
-		configureTabOrder({ data_type });
+	configureFormLayout(column_grid, ObjectType::Column);
+	configureTabOrder({ data_type });
 
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
-		highlightVersionSpecificFields(fields_map);
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
+	highlightVersionSpecificFields(fields_map);
 
-		connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
-		connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
-		connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+	connect(expression_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+	connect(sequence_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
+	connect(identity_rb, &QRadioButton::toggled, this, &ColumnWidget::enableDefaultValueFields);
 
-		connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
-			notnull_chk->setDisabled(value);
-			notnull_chk->setChecked(false);
-		});
+	connect(generated_chk, &QCheckBox::toggled, this, [this](bool value){
+		notnull_chk->setDisabled(value);
+		notnull_chk->setChecked(false);
+	});
 
-		connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
+	connect(edit_seq_btn, &QPushButton::clicked, this, __slot(this, ColumnWidget::editSequenceAttributes));
 
-		setMinimumSize(540, 480);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(540, 480);
 }
 
 void ColumnWidget::enableDefaultValueFields()

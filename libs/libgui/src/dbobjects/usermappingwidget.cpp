@@ -21,44 +21,37 @@
 
 UserMappingWidget::UserMappingWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::UserMapping)
 {
-	try
-	{
-		QHBoxLayout *hbox = nullptr;
+	QHBoxLayout *hbox = nullptr;
 
-		Ui_UserMappingWidget::setupUi(this);
+	Ui_UserMappingWidget::setupUi(this);
 
-		server_sel=nullptr;
-		server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
+	server_sel=nullptr;
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, this);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(0,0,0,0);
-		hbox->addWidget(server_sel);
-		server_wgt->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(0,0,0,0);
+	hbox->addWidget(server_sel);
+	server_wgt->setLayout(hbox);
 
-		options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
-		options_tab->setCellsEditable(true);
-		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(tr("Option"), 0);
-		options_tab->setHeaderLabel(tr("Value"), 1);
+	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab->setCellsEditable(true);
+	options_tab->setColumnCount(2);
+	options_tab->setHeaderLabel(tr("Option"), 0);
+	options_tab->setHeaderLabel(tr("Value"), 1);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		hbox->addWidget(options_tab);
-		options_gb->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	hbox->addWidget(options_tab);
+	options_gb->setLayout(hbox);
 
-		configureFormLayout(server_grid, ObjectType::UserMapping);
+	configureFormLayout(server_grid, ObjectType::UserMapping);
 
-		setRequiredField(server_sel);
-		setRequiredField(server_lbl);
-		configureTabOrder({ server_sel, options_tab });
+	setRequiredField(server_sel);
+	setRequiredField(server_lbl);
+	configureTabOrder({ server_sel, options_tab });
 
-		setMinimumSize(550, 280);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(550, 280);
 }
 
 void UserMappingWidget::setAttributes(DatabaseModel *model, OperationList *op_list, UserMapping *user_map)

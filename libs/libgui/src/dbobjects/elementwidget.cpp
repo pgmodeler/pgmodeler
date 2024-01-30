@@ -21,58 +21,51 @@
 
 ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 {
-	try
-	{
-		element = nullptr;
+	element = nullptr;
 
-		setupUi(this);
-		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true, font().pointSizeF());
-		elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	setupUi(this);
+	elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true, font().pointSizeF());
+	elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		parent_obj=nullptr;
-		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
-		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
+	parent_obj=nullptr;
+	op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
+	collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+	operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
 
-		element_grid->addWidget(collation_sel, 3,1,1,2);
-		element_grid->addWidget(op_class_sel, 4,1,1,2);
-		element_grid->addWidget(operator_sel, 5,1,1,2);
+	element_grid->addWidget(collation_sel, 3,1,1,2);
+	element_grid->addWidget(op_class_sel, 4,1,1,2);
+	element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		connect(column_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
-		connect(expression_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
-		connect(sorting_chk, &QCheckBox::toggled, ascending_rb, &QRadioButton::setEnabled);
-		connect(sorting_chk, &QCheckBox::toggled, descending_rb, &QRadioButton::setEnabled);
-		connect(sorting_chk, &QCheckBox::toggled, nulls_first_chk, &QCheckBox::setEnabled);
+	connect(column_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+	connect(expression_rb, &QRadioButton::toggled, this, &ElementWidget::selectElementObject);
+	connect(sorting_chk, &QCheckBox::toggled, ascending_rb, &QRadioButton::setEnabled);
+	connect(sorting_chk, &QCheckBox::toggled, descending_rb, &QRadioButton::setEnabled);
+	connect(sorting_chk, &QCheckBox::toggled, nulls_first_chk, &QCheckBox::setEnabled);
 
-		this->setEnabled(false);
-		collation_sel->setVisible(false);
-		collation_lbl->setVisible(false);
-		operator_sel->setVisible(false);
-		operator_lbl->setVisible(false);
+	this->setEnabled(false);
+	collation_sel->setVisible(false);
+	collation_lbl->setVisible(false);
+	operator_sel->setVisible(false);
+	operator_lbl->setVisible(false);
 
-		BaseObjectWidget::setRequiredField(operator_sel);
-		BaseObjectWidget::setRequiredField(operator_lbl);
+	BaseObjectWidget::setRequiredField(operator_sel);
+	BaseObjectWidget::setRequiredField(operator_lbl);
 
-		setTabOrder(column_rb, column_cmb);
-		setTabOrder(column_cmb, expression_rb);
-		setTabOrder(expression_rb, elem_expr_txt);
-		setTabOrder(elem_expr_txt, collation_sel);
-		setTabOrder(collation_sel, collation_sel->rem_object_tb);
-		setTabOrder(collation_sel->rem_object_tb, collation_sel->sel_object_tb);
-		setTabOrder(collation_sel->sel_object_tb, op_class_sel);
+	setTabOrder(column_rb, column_cmb);
+	setTabOrder(column_cmb, expression_rb);
+	setTabOrder(expression_rb, elem_expr_txt);
+	setTabOrder(elem_expr_txt, collation_sel);
+	setTabOrder(collation_sel, collation_sel->rem_object_tb);
+	setTabOrder(collation_sel->rem_object_tb, collation_sel->sel_object_tb);
+	setTabOrder(collation_sel->sel_object_tb, op_class_sel);
 
-		setTabOrder(op_class_sel, op_class_sel->rem_object_tb);
-		setTabOrder(op_class_sel->rem_object_tb, op_class_sel->sel_object_tb);
-		setTabOrder(op_class_sel->sel_object_tb, sorting_chk);
+	setTabOrder(op_class_sel, op_class_sel->rem_object_tb);
+	setTabOrder(op_class_sel->rem_object_tb, op_class_sel->sel_object_tb);
+	setTabOrder(op_class_sel->sel_object_tb, sorting_chk);
 
-		setTabOrder(sorting_chk, ascending_rb);
-		setTabOrder(ascending_rb, descending_rb);
-		setTabOrder(descending_rb, nulls_first_chk);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setTabOrder(sorting_chk, ascending_rb);
+	setTabOrder(ascending_rb, descending_rb);
+	setTabOrder(descending_rb, nulls_first_chk);
 }
 
 void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem)

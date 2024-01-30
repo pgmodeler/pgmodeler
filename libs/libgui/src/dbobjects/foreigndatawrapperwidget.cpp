@@ -21,49 +21,42 @@
 
 ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignDataWrapper)
 {
-	try
-	{
-		QHBoxLayout *hbox = nullptr;
+	QHBoxLayout *hbox = nullptr;
 
-		Ui_ForeignDataWrapperWidget::setupUi(this);
+	Ui_ForeignDataWrapperWidget::setupUi(this);
 
-		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
-		func_handler_sel->setToolTip(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
-		func_validator_sel->setToolTip(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
+	func_handler_sel->setToolTip(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
+	func_validator_sel->setToolTip(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(0,0,0,0);
-		hbox->addWidget(func_handler_sel);
-		func_handler_wgt->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(0,0,0,0);
+	hbox->addWidget(func_handler_sel);
+	func_handler_wgt->setLayout(hbox);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(0,0,0,0);
-		hbox->addWidget(func_validator_sel);
-		func_validator_wgt->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(0,0,0,0);
+	hbox->addWidget(func_validator_sel);
+	func_validator_wgt->setLayout(hbox);
 
-		options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
-		options_tab->setCellsEditable(true);
-		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(tr("Option"), 0);
-		options_tab->setHeaderLabel(tr("Value"), 1);
+	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab->setCellsEditable(true);
+	options_tab->setColumnCount(2);
+	options_tab->setHeaderLabel(tr("Option"), 0);
+	options_tab->setHeaderLabel(tr("Value"), 1);
 
-		hbox = new QHBoxLayout;
-		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		hbox->addWidget(options_tab);
-		options_gb->setLayout(hbox);
+	hbox = new QHBoxLayout;
+	hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	hbox->addWidget(options_tab);
+	options_gb->setLayout(hbox);
 
-		configureFormLayout(fdw_grid, ObjectType::ForeignDataWrapper);
-		configureTabOrder({ func_handler_sel, func_validator_sel, options_tab });
+	configureFormLayout(fdw_grid, ObjectType::ForeignDataWrapper);
+	configureTabOrder({ func_handler_sel, func_validator_sel, options_tab });
 
-		setMinimumSize(600, 420);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(600, 420);
 }
 
 void ForeignDataWrapperWidget::setAttributes(DatabaseModel *model, OperationList *op_list, ForeignDataWrapper *fdw)
@@ -117,4 +110,3 @@ void ForeignDataWrapperWidget::applyConfiguration()
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
-

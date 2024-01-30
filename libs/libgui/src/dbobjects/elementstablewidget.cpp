@@ -22,45 +22,38 @@
 
 ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 {
-	try
-	{
-		handled_elem = nullptr;
-		model = nullptr;
-		parent_obj = nullptr;
+	handled_elem = nullptr;
+	model = nullptr;
+	parent_obj = nullptr;
 
-		element_wgt = new ElementWidget;
-		element_form.setMainWidget(element_wgt);
-		element_form.setButtonConfiguration();
-		connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
+	element_wgt = new ElementWidget;
+	element_form.setMainWidget(element_wgt);
+	element_form.setButtonConfiguration();
+	connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
 
-		QVBoxLayout *vbox = new QVBoxLayout(this);
-		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																				(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
+	QVBoxLayout *vbox = new QVBoxLayout(this);
+	elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 
-		elements_tab->setColumnCount(7);
-		elements_tab->setHeaderLabel(tr("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		elements_tab->setHeaderLabel(tr("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-		elements_tab->setHeaderLabel(tr("Operator"), 2);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("operator")),2);
-		elements_tab->setHeaderLabel(tr("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("opclass")),3);
-		elements_tab->setHeaderLabel(tr("Collation"), 4);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),4);
-		elements_tab->setHeaderLabel(tr("Sorting"), 5);
-		elements_tab->setHeaderLabel(tr("Nulls"), 6);
+	elements_tab->setColumnCount(7);
+	elements_tab->setHeaderLabel(tr("Element"), 0);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
+	elements_tab->setHeaderLabel(tr("Type"), 1);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+	elements_tab->setHeaderLabel(tr("Operator"), 2);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("operator")),2);
+	elements_tab->setHeaderLabel(tr("Operator Class"), 3);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("opclass")),3);
+	elements_tab->setHeaderLabel(tr("Collation"), 4);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),4);
+	elements_tab->setHeaderLabel(tr("Sorting"), 5);
+	elements_tab->setHeaderLabel(tr("Nulls"), 6);
 
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(elements_tab);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(elements_tab);
 
-		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
-		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
+	connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
 }
 
 ElementsTableWidget::~ElementsTableWidget()

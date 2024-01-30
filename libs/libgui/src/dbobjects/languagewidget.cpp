@@ -20,39 +20,32 @@
 
 LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Language)
 {
-	try
-	{
-		QFrame *frame=nullptr;
-		Ui_LanguageWidget::setupUi(this);
+	QFrame *frame=nullptr;
+	Ui_LanguageWidget::setupUi(this);
 
-		func_handler_sel=nullptr;
-		func_validator_sel=nullptr;
-		func_inline_sel=nullptr;
+	func_handler_sel=nullptr;
+	func_validator_sel=nullptr;
+	func_inline_sel=nullptr;
 
-		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		func_inline_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	func_inline_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 
-		language_grid->addWidget(func_handler_sel,1,1,1,2);
-		language_grid->addWidget(func_validator_sel,2,1,1,2);
-		language_grid->addWidget(func_inline_sel,3,1,1,2);
+	language_grid->addWidget(func_handler_sel,1,1,1,2);
+	language_grid->addWidget(func_validator_sel,2,1,1,2);
+	language_grid->addWidget(func_inline_sel,3,1,1,2);
 
-		configureFormLayout(language_grid, ObjectType::Language);
+	configureFormLayout(language_grid, ObjectType::Language);
 
-		frame=generateInformationFrame(tr("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
+	frame=generateInformationFrame(tr("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
 
-		language_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), language_grid->count()+1, 0, 1, 0);
-		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+	language_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), language_grid->count()+1, 0, 1, 0);
+	language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
+	frame->setParent(this);
 
-		configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
+	configureTabOrder({ trusted_chk, func_handler_sel, func_validator_sel, func_inline_sel });
 
-		setMinimumSize(600, 420);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(600, 420);
 }
 
 void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Language *language)

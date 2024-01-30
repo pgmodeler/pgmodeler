@@ -24,79 +24,72 @@
 
 BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : BaseObjectWidget(parent, obj_type)
 {
-	try
-	{
-		QGridLayout *grid = nullptr;
-		Ui_BaseFunctionWidget::setupUi(this);
+	QGridLayout *grid = nullptr;
+	Ui_BaseFunctionWidget::setupUi(this);
 
-		source_code_txt = new NumberedTextEditor(this, true);
-		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
+	source_code_txt = new NumberedTextEditor(this, true);
+	dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
-		source_code_hl = new SyntaxHighlighter(source_code_txt);
-		source_code_cp = new CodeCompletionWidget(source_code_txt, true);
+	source_code_hl = new SyntaxHighlighter(source_code_txt);
+	source_code_cp = new CodeCompletionWidget(source_code_txt, true);
 
-		parameters_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																						ObjectsTableWidget::UpdateButton, true, this);
-		parameters_tab->setColumnCount(4);
-		parameters_tab->setHeaderLabel(tr("Name"), 0);
-		parameters_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("parameter")), 0);
-		parameters_tab->setHeaderLabel(tr("Type"), 1);
-		parameters_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 1);
-		parameters_tab->setHeaderLabel(tr("Mode"), 2);
-		parameters_tab->setHeaderLabel(tr("Default Value"), 3);
+	parameters_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																					ObjectsTableWidget::UpdateButton, true, this);
+	parameters_tab->setColumnCount(4);
+	parameters_tab->setHeaderLabel(tr("Name"), 0);
+	parameters_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("parameter")), 0);
+	parameters_tab->setHeaderLabel(tr("Type"), 1);
+	parameters_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 1);
+	parameters_tab->setHeaderLabel(tr("Mode"), 2);
+	parameters_tab->setHeaderLabel(tr("Default Value"), 3);
 
-		grid = new QGridLayout;
-		grid->addWidget(parameters_tab, 0, 0, 1, 1);
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		func_config_twg->widget(1)->setLayout(grid);
-		security_cmb->addItems(SecurityType::getTypes());
+	grid = new QGridLayout;
+	grid->addWidget(parameters_tab, 0, 0, 1, 1);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	func_config_twg->widget(1)->setLayout(grid);
+	security_cmb->addItems(SecurityType::getTypes());
 
 
-		transform_type_wgt = new PgSQLTypeWidget(this);
-		transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																								 (ObjectsTableWidget::UpdateButton |
-																									ObjectsTableWidget::EditButton |
-																									ObjectsTableWidget::ResizeColsButton), true, this);
-		transform_types_tab->setColumnCount(1);
-		transform_types_tab->setHeaderLabel(tr("Type"), 0);
-		transform_types_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 0);
+	transform_type_wgt = new PgSQLTypeWidget(this);
+	transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																							 (ObjectsTableWidget::UpdateButton |
+																								ObjectsTableWidget::EditButton |
+																								ObjectsTableWidget::ResizeColsButton), true, this);
+	transform_types_tab->setColumnCount(1);
+	transform_types_tab->setHeaderLabel(tr("Type"), 0);
+	transform_types_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 0);
 
-		grid = new QGridLayout;
-		grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
-		grid->addWidget(transform_types_tab, 1, 0, 1, 1);
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		func_config_twg->widget(2)->setLayout(grid);
+	grid = new QGridLayout;
+	grid->addWidget(transform_type_wgt, 0, 0, 1, 1);
+	grid->addWidget(transform_types_tab, 1, 0, 1, 1);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	func_config_twg->widget(2)->setLayout(grid);
 
 
-		config_params_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																								 (ObjectsTableWidget::UpdateButton |
-																									ObjectsTableWidget::EditButton), true, this);
-		config_params_tab->setColumnCount(2);
-		config_params_tab->setHeaderLabel(tr("Parameter"), 0);
-		config_params_tab->setHeaderLabel(tr("Value"), 1);
-		config_params_tab->setCellsEditable(true);
+	config_params_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																							 (ObjectsTableWidget::UpdateButton |
+																								ObjectsTableWidget::EditButton), true, this);
+	config_params_tab->setColumnCount(2);
+	config_params_tab->setHeaderLabel(tr("Parameter"), 0);
+	config_params_tab->setHeaderLabel(tr("Value"), 1);
+	config_params_tab->setCellsEditable(true);
 
-		grid = new QGridLayout;
-		grid->addWidget(config_params_tab, 0, 0, 1, 1);
-		grid->addWidget(hint_frm, 1, 0, 1, 1);
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		func_config_twg->widget(4)->setLayout(grid);
+	grid = new QGridLayout;
+	grid->addWidget(config_params_tab, 0, 0, 1, 1);
+	grid->addWidget(hint_frm, 1, 0, 1, 1);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	func_config_twg->widget(4)->setLayout(grid);
 
-		connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
+	connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
 
-		connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
-			__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
-		});
+	connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
+		__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
+	});
 
-		setRequiredField(language_lbl);
-		setRequiredField(symbol_lbl);
-		setRequiredField(library_lbl);
-		setRequiredField(sourc_code_lbl);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setRequiredField(language_lbl);
+	setRequiredField(symbol_lbl);
+	setRequiredField(library_lbl);
+	setRequiredField(sourc_code_lbl);
 }
 
 void BaseFunctionWidget::handleParameter(ObjectsTableWidget *params_tab, Parameter param, int result, bool handle_param_modes)

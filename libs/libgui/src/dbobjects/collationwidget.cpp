@@ -21,66 +21,59 @@
 
 CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Collation)
 {
-	try
+	QStringList loc_list, encodings, providers;
+	QFrame *frame=nullptr;
+
+	Ui_CollationWidget::setupUi(this);
+
+	frame=generateInformationFrame(tr("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
+
+	collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
+	collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
+	frame->setParent(this);
+
+	configureFormLayout(collation_grid, ObjectType::Collation);
+
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(provider_lbl);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(deterministic_chk);
+	highlightVersionSpecificFields(fields_map);
+
+	//Configures the encoding combobox
+	encodings = EncodingType::getTypes();
+	encodings.push_front(tr("Not defined"));
+	encoding_cmb->addItems(encodings);
+
+	//Configures the localizations combobox
+	for(int i=QLocale::C; i <= QLocale::Chewa; i++)
 	{
-		QStringList loc_list, encodings, providers;
-		QFrame *frame=nullptr;
-
-		Ui_CollationWidget::setupUi(this);
-
-		frame=generateInformationFrame(tr("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
-
-		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
-		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
-
-		configureFormLayout(collation_grid, ObjectType::Collation);
-
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(provider_lbl);
-		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(deterministic_chk);
-		highlightVersionSpecificFields(fields_map);
-
-		//Configures the encoding combobox
-		encodings = EncodingType::getTypes();
-		encodings.push_front(tr("Not defined"));
-		encoding_cmb->addItems(encodings);
-
-		//Configures the localizations combobox
-		for(int i=QLocale::C; i <= QLocale::Chewa; i++)
-		{
-			for(int i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
-				loc_list.append(QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1)).name());
-		}
-
-		loc_list.removeDuplicates();
-		loc_list.sort();
-		loc_list.push_front(tr("Not defined"));
-
-		lccollate_cmb->addItems(loc_list);
-		lcctype_cmb->addItems(loc_list);
-		locale_cmb->addItems(loc_list);
-
-		providers = ProviderType::getTypes();
-		providers.push_front(tr("Default"));
-		provider_cmb->addItems(providers);
-
-		connect(collation_sel, &ObjectSelectorWidget::s_objectSelected, this, &CollationWidget::resetFields);
-		connect(collation_sel, &ObjectSelectorWidget::s_selectorCleared, this, &CollationWidget::resetFields);
-		connect(locale_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
-		connect(lcctype_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
-		connect(lccollate_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
-
-		locale_mod_lbl->setToolTip(tr("<p>The modifier is any value specified after the character <strong>@</strong>. For example: <em>en_US.utf8<strong>@modifier</strong></em></p>"));
-		lcctype_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
-		lccollate_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
-
-		setMinimumSize(540, 500);
+		for(int i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
+			loc_list.append(QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1)).name());
 	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+
+	loc_list.removeDuplicates();
+	loc_list.sort();
+	loc_list.push_front(tr("Not defined"));
+
+	lccollate_cmb->addItems(loc_list);
+	lcctype_cmb->addItems(loc_list);
+	locale_cmb->addItems(loc_list);
+
+	providers = ProviderType::getTypes();
+	providers.push_front(tr("Default"));
+	provider_cmb->addItems(providers);
+
+	connect(collation_sel, &ObjectSelectorWidget::s_objectSelected, this, &CollationWidget::resetFields);
+	connect(collation_sel, &ObjectSelectorWidget::s_selectorCleared, this, &CollationWidget::resetFields);
+	connect(locale_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+	connect(lcctype_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+	connect(lccollate_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+
+	locale_mod_lbl->setToolTip(tr("<p>The modifier is any value specified after the character <strong>@</strong>. For example: <em>en_US.utf8<strong>@modifier</strong></em></p>"));
+	lcctype_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
+	lccollate_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
+
+	setMinimumSize(540, 500);
 }
 
 void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Collation *collation)

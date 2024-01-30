@@ -23,49 +23,42 @@
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
-	try
-	{
-		Ui_SourceCodeWidget::setupUi(this);
-		configureFormLayout(codigofonte_grid, ObjectType::BaseObject);
-		comment_lbl->setVisible(false);
-		comment_edt->setVisible(false);
+	Ui_SourceCodeWidget::setupUi(this);
+	configureFormLayout(codigofonte_grid, ObjectType::BaseObject);
+	comment_lbl->setVisible(false);
+	comment_edt->setVisible(false);
 
-		hl_sqlcode=nullptr;
-		hl_xmlcode=nullptr;
+	hl_sqlcode=nullptr;
+	hl_xmlcode=nullptr;
 
-		sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
-		sqlcode_txt->setReadOnly(true);
+	sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
+	sqlcode_txt->setReadOnly(true);
 
-		xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
-		xmlcode_txt->setReadOnly(true);
+	xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
+	xmlcode_txt->setReadOnly(true);
 
-		name_edt->setReadOnly(true);
-		version_cmb->addItems(PgSqlVersions::AllVersions);
+	name_edt->setReadOnly(true);
+	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+	connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+	connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
-		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
-		find_wgt_parent->setVisible(false);
+	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
+	find_wgt_parent->setVisible(false);
 
-		QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
-		vbox->addWidget(find_sql_wgt);
-		vbox->setContentsMargins(0,0,0,0);
+	QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+	vbox->addWidget(find_sql_wgt);
+	vbox->setContentsMargins(0,0,0,0);
 
-		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 
-		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
-		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
+	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
+	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
-		setMinimumSize(640, 540);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(640, 540);
 }
 
 void SourceCodeWidget::setSourceCodeTab(int)

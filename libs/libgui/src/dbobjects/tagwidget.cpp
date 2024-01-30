@@ -88,12 +88,6 @@ void TagWidget::applyConfiguration()
 									.arg(color_pickers[attr]->getColor(enum_t(ColorId::BorderColor)).name()));
 		}
 
-		/* model->getObjectReferences(tag, tagged_tabs);
-		while(!tagged_tabs.empty())
-		{
-			dynamic_cast<BaseTable *>(tagged_tabs.back())->setModified(true);
-			tagged_tabs.pop_back();
-		} */
 		for(auto &obj : tag->getReferences())
 			dynamic_cast<BaseTable *>(obj)->setModified(true);
 

@@ -21,115 +21,108 @@
 
 TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Type)
 {
-	try
+	QGridLayout *grid=nullptr;
+	QFrame *frame=nullptr;
+	unsigned i,i1;
+
+	Ui_TypeWidget::setupUi(this);
+	configureFormLayout(type_grid, ObjectType::Type);
+
+	like_type=new PgSQLTypeWidget(this, tr("Like Type"));
+	element_type=new PgSQLTypeWidget(this, tr("Element Type"));
+	range_subtype=new PgSQLTypeWidget(this, tr("Subtype"));
+
+	grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
+	grid->addWidget(like_type,6,0,1,0);
+	grid->addWidget(element_type,7,0,1,0);
+	grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),8,0);
+
+	grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
+	for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 	{
-		QGridLayout *grid=nullptr;
-		QFrame *frame=nullptr;
-		unsigned i,i1;
-
-		Ui_TypeWidget::setupUi(this);
-		configureFormLayout(type_grid, ObjectType::Type);
-
-		like_type=new PgSQLTypeWidget(this, tr("Like Type"));
-		element_type=new PgSQLTypeWidget(this, tr("Element Type"));
-		range_subtype=new PgSQLTypeWidget(this, tr("Subtype"));
-
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
-		grid->addWidget(like_type,6,0,1,0);
-		grid->addWidget(element_type,7,0,1,0);
-		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),8,0);
-
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
-		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-		{
-			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
-			grid->addWidget(functions_sel[i],i,1,1,1);
-		}
-
-		enumerations_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-												 (ObjectsTableWidget::EditButton | ObjectsTableWidget::DuplicateButton), true, this);
-		grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
-		grid->addWidget(enumerations_tab,1,0,1,2);
-		enumerations_gb->setVisible(false);
-
-		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
-		attributes_tab->setColumnCount(3);
-		attributes_tab->setHeaderLabel(tr("Name"),0);
-		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
-		attributes_tab->setHeaderLabel(tr("Type"),1);
-		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-		attributes_tab->setHeaderLabel(tr("Collation"),2);
-		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),2);
-
-		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
-
-		attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
-		grid->addWidget(attrib_collation_sel, 1,1,1,2);
-
-		attrib_type_wgt=new PgSQLTypeWidget(this);
-		grid->addWidget(attrib_type_wgt,2,0,1,2);
-
-		grid->addWidget(attributes_tab,3,0,1,2);
-		attributes_gb->setVisible(false);
-
-		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
-		frame=generateInformationFrame(tr("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
-
-		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), grid->count()+1,0);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(base_attribs_twg->widget(0));
-
-		grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
-		opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
-		grid->addWidget(opclass_sel,0,1,1,1);
-
-		for(i1=1, i=Type::CanonicalFunc; i <= Type::SubtypeDiffFunc; i++,i1++)
-		{
-			functions_sel[i]=nullptr;
-			functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
-			grid->addWidget(functions_sel[i],i1,1,1,1);
-		}
-
-		grid->addWidget(range_subtype,3,0,1,2);
-		frame=generateInformationFrame(tr("The functions to be assigned to a range type should have the following signatures:<br/><br/><strong>Canonical:</strong> <em>any function(any)</em> <br/><strong>Subtype Diff:</strong> <em>double precision function(subtype, subtype)</em>"));
-		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),4,0);
-		grid->addWidget(frame, 5, 0, 1, 0);
-
-		range_attribs_gb->setVisible(false);
-
-		connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-		connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
-		connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
-
-		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
-		connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
-
-		storage_cmb->addItems(StorageType::getTypes());
-		category_cmb->addItems(CategoryType::getTypes());
-
-		setRequiredField(range_subtype);
-		setRequiredField(input_lbl);
-		setRequiredField(output_lbl);
-		setRequiredField(functions_sel[Type::InputFunc]);
-		setRequiredField(functions_sel[Type::OutputFunc]);
-		setRequiredField(enumerations_gb);
-		setRequiredField(attributes_gb);
-
-		configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
-						   enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
-						   opclass_sel, functions_sel[Type::CanonicalFunc], functions_sel[Type::SubtypeDiffFunc],
-						   base_attribs_twg});
-
-		setMinimumSize(620, 750);
+		functions_sel[i]=nullptr;
+		functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
+		grid->addWidget(functions_sel[i],i,1,1,1);
 	}
-	catch(Exception &e)
+
+	enumerations_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											 (ObjectsTableWidget::EditButton | ObjectsTableWidget::DuplicateButton), true, this);
+	grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
+	grid->addWidget(enumerations_tab,1,0,1,2);
+	enumerations_gb->setVisible(false);
+
+	attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	attributes_tab->setColumnCount(3);
+	attributes_tab->setHeaderLabel(tr("Name"),0);
+	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
+	attributes_tab->setHeaderLabel(tr("Type"),1);
+	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+	attributes_tab->setHeaderLabel(tr("Collation"),2);
+	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("collation")),2);
+
+	grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
+
+	attrib_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+	grid->addWidget(attrib_collation_sel, 1,1,1,2);
+
+	attrib_type_wgt=new PgSQLTypeWidget(this);
+	grid->addWidget(attrib_type_wgt,2,0,1,2);
+
+	grid->addWidget(attributes_tab,3,0,1,2);
+	attributes_gb->setVisible(false);
+
+	grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
+	frame=generateInformationFrame(tr("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
+
+	grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), grid->count()+1,0);
+	grid->addWidget(frame, grid->count()+1, 0, 1, 0);
+	frame->setParent(base_attribs_twg->widget(0));
+
+	grid=dynamic_cast<QGridLayout *>(range_attribs_gb->layout());
+	opclass_sel=new ObjectSelectorWidget(ObjectType::OpClass, this);
+	grid->addWidget(opclass_sel,0,1,1,1);
+
+	for(i1=1, i=Type::CanonicalFunc; i <= Type::SubtypeDiffFunc; i++,i1++)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		functions_sel[i]=nullptr;
+		functions_sel[i]=new ObjectSelectorWidget(ObjectType::Function, this);
+		grid->addWidget(functions_sel[i],i1,1,1,1);
 	}
+
+	grid->addWidget(range_subtype,3,0,1,2);
+	frame=generateInformationFrame(tr("The functions to be assigned to a range type should have the following signatures:<br/><br/><strong>Canonical:</strong> <em>any function(any)</em> <br/><strong>Subtype Diff:</strong> <em>double precision function(subtype, subtype)</em>"));
+	grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),4,0);
+	grid->addWidget(frame, 5, 0, 1, 0);
+
+	range_attribs_gb->setVisible(false);
+
+	connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+	connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+	connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
+	connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
+	connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
+	connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
+
+	connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
+	connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
+
+	storage_cmb->addItems(StorageType::getTypes());
+	category_cmb->addItems(CategoryType::getTypes());
+
+	setRequiredField(range_subtype);
+	setRequiredField(input_lbl);
+	setRequiredField(output_lbl);
+	setRequiredField(functions_sel[Type::InputFunc]);
+	setRequiredField(functions_sel[Type::OutputFunc]);
+	setRequiredField(enumerations_gb);
+	setRequiredField(attributes_gb);
+
+	configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
+						 enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
+						 opclass_sel, functions_sel[Type::CanonicalFunc], functions_sel[Type::SubtypeDiffFunc],
+						 base_attribs_twg});
+
+	setMinimumSize(620, 750);
 }
 
 void TypeWidget::selectTypeConfiguration()

@@ -27,70 +27,63 @@
 
 BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidget(parent)
 {
-	try
-	{
-		QSpacerItem *spacer=nullptr;
+	QSpacerItem *spacer=nullptr;
 
-		setWindowTitle("");
-		setupUi(this);
+	setWindowTitle("");
+	setupUi(this);
 
-		handled_obj_type=obj_type;
-		operation_count=0;
-		new_object=false;
-		model=nullptr;
-		table=nullptr;
-		relationship=nullptr;
-		prev_schema=nullptr;
-		op_list=nullptr;
-		object=nullptr;
-		object_px=DNaN;
-		object_py=DNaN;
-		schema_sel=nullptr;
-		owner_sel=nullptr;
-		tablespace_sel=nullptr;
-		object_protected = false;
+	handled_obj_type=obj_type;
+	operation_count=0;
+	new_object=false;
+	model=nullptr;
+	table=nullptr;
+	relationship=nullptr;
+	prev_schema=nullptr;
+	op_list=nullptr;
+	object=nullptr;
+	object_px=DNaN;
+	object_py=DNaN;
+	schema_sel=nullptr;
+	owner_sel=nullptr;
+	tablespace_sel=nullptr;
+	object_protected = false;
 
-		connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
-		connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
+	connect(edt_perms_tb, &QPushButton::clicked, this, &BaseObjectWidget::editPermissions);
+	connect(append_sql_tb, &QPushButton::clicked, this, &BaseObjectWidget::editCustomSQL);
 
-		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
-		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
-		tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
-		owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
+	schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
+	collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+	tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
+	owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
 
-		baseobject_grid = new QGridLayout;
-		baseobject_grid->setObjectName("objetobase_grid");
-		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
-		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
-		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
-		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
-		baseobject_grid->addWidget(logical_name_lbl, 2, 0, 1, 1);
-		baseobject_grid->addWidget(alias_edt, 2, 1, 1, 1);
-		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
-		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
-		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
-		baseobject_grid->addWidget(collation_sel, 5, 1, 1, 4);
-		baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
-		baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
-		baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
-		baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
-		baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
-		baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
+	baseobject_grid = new QGridLayout;
+	baseobject_grid->setObjectName("objetobase_grid");
+	baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
+	baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
+	baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
+	baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
+	baseobject_grid->addWidget(logical_name_lbl, 2, 0, 1, 1);
+	baseobject_grid->addWidget(alias_edt, 2, 1, 1, 1);
+	baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
+	baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
+	baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
+	baseobject_grid->addWidget(collation_sel, 5, 1, 1, 4);
+	baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
+	baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
+	baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
+	baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
+	baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
+	baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
 
-		misc_btns_lt=new QHBoxLayout;
-		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
+	misc_btns_lt=new QHBoxLayout;
+	spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
 
-		misc_btns_lt->addItem(spacer);
-		misc_btns_lt->addWidget(append_sql_tb);
-		misc_btns_lt->addWidget(edt_perms_tb);
-		misc_btns_lt->addWidget(disable_sql_chk);
+	misc_btns_lt->addItem(spacer);
+	misc_btns_lt->addWidget(append_sql_tb);
+	misc_btns_lt->addWidget(edt_perms_tb);
+	misc_btns_lt->addWidget(disable_sql_chk);
 
-		baseobject_grid->addLayout(misc_btns_lt,9,0,1,5);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	baseobject_grid->addLayout(misc_btns_lt,9,0,1,5);
 }
 
 BaseObjectWidget::~BaseObjectWidget()

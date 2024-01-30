@@ -20,62 +20,55 @@
 
 TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Trigger)
 {
-	try
-	{
-		QStringList list;
+	QStringList list;
 
-		Ui_TriggerWidget::setupUi(this);
+	Ui_TriggerWidget::setupUi(this);
 
-		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true, font().pointSizeF());
-		cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true, font().pointSizeF());
+	cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		col_picker_wgt = new ColumnPickerWidget(this);
-		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	col_picker_wgt = new ColumnPickerWidget(this);
+	arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		ref_table_sel->setEnabled(false);
+	ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	ref_table_sel->setEnabled(false);
 
-		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
+	trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(col_picker_wgt, 1,0,1,3);
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
-		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
+	dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(col_picker_wgt, 1,0,1,3);
+	dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
+	dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
-		deferral_type_cmb->addItems(DeferralType::getTypes());
-		firing_mode_cmb->addItems(FiringType::getTypes());
+	deferral_type_cmb->addItems(DeferralType::getTypes());
+	firing_mode_cmb->addItems(FiringType::getTypes());
 
-		configureFormLayout(trigger_grid, ObjectType::Trigger);
+	configureFormLayout(trigger_grid, ObjectType::Trigger);
 
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
-		connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
-		connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
-		connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
-		connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
-		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
+	connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
+	connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
+	connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
+	connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
+	connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
 
-		connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
-		connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
+	connect(insert_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+	connect(delete_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+	connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+	connect(truncate_chk, &QCheckBox::toggled, this, &TriggerWidget::enableTransitionTableNames);
+	connect(firing_mode_cmb, &QComboBox::currentIndexChanged, this, &TriggerWidget::enableTransitionTableNames);
 
-		setRequiredField(event_lbl);
-		setRequiredField(firing_mode_lbl);
-		setRequiredField(function_lbl);
-		setRequiredField(function_sel);
+	setRequiredField(event_lbl);
+	setRequiredField(firing_mode_lbl);
+	setRequiredField(function_lbl);
+	setRequiredField(function_sel);
 
-		setMinimumSize(580, 500);
-		configureTabOrder({ ordinary_rb, constraint_rb, insert_chk, delete_chk, update_chk,
-												truncate_chk, firing_mode_cmb, exec_per_row_chk, function_sel,
-												old_table_edt, new_table_edt, argument_edt, arguments_tab,
-												col_picker_wgt, deferrable_chk, deferral_type_cmb,
-												ref_table_sel, cond_expr_txt });
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(580, 500);
+	configureTabOrder({ ordinary_rb, constraint_rb, insert_chk, delete_chk, update_chk,
+											truncate_chk, firing_mode_cmb, exec_per_row_chk, function_sel,
+											old_table_edt, new_table_edt, argument_edt, arguments_tab,
+											col_picker_wgt, deferrable_chk, deferral_type_cmb,
+											ref_table_sel, cond_expr_txt });
 }
 
 void TriggerWidget::selectUpdateEvent()

@@ -20,61 +20,54 @@
 
 DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Database)
 {
-	try
+	QStringList loc_list, encodings;
+	QFrame *frame=nullptr;
+	QGridLayout *grid=nullptr;
+
+	Ui_DatabaseWidget::setupUi(this);
+	configureFormLayout(database_grid, ObjectType::Database);
+
+	def_schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
+	def_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
+	def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
+	def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
+
+	frame=generateInformationFrame(tr("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
+	grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());
+	grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
+	grid->addWidget(frame, grid->count()+1, 0, 1, 0);
+
+	frame=generateInformationFrame(tr("Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model."));
+	grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
+
+	grid->addWidget(def_collation_sel, 0, 1);
+	grid->addWidget(def_schema_sel, 1, 1);
+	grid->addWidget(def_owner_sel, 2, 1);
+	grid->addWidget(def_tablespace_sel, 3, 1);
+	grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
+	grid->addWidget(frame, grid->count()+1, 0, 1, 0);
+	frame->setParent(attributes_twg->widget(1));
+
+	//Configures the encoding combobox
+	encodings = EncodingType::getTypes();
+	encodings.push_front(tr("Default"));
+	encoding_cmb->addItems(encodings);
+
+	//Configures the localizations combobox
+	for(int i=QLocale::C; i <= QLocale::Chewa; i++)
 	{
-		QStringList loc_list, encodings;
-		QFrame *frame=nullptr;
-		QGridLayout *grid=nullptr;
-
-		Ui_DatabaseWidget::setupUi(this);
-		configureFormLayout(database_grid, ObjectType::Database);
-
-		def_schema_sel=new ObjectSelectorWidget(ObjectType::Schema, this);
-		def_collation_sel=new ObjectSelectorWidget(ObjectType::Collation, this);
-		def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, this);
-		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, this);
-
-		frame=generateInformationFrame(tr("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
-		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());
-		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-
-		frame=generateInformationFrame(tr("Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model."));
-		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
-
-		grid->addWidget(def_collation_sel, 0, 1);
-		grid->addWidget(def_schema_sel, 1, 1);
-		grid->addWidget(def_owner_sel, 2, 1);
-		grid->addWidget(def_tablespace_sel, 3, 1);
-		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(attributes_twg->widget(1));
-
-		//Configures the encoding combobox
-		encodings = EncodingType::getTypes();
-		encodings.push_front(tr("Default"));
-		encoding_cmb->addItems(encodings);
-
-		//Configures the localizations combobox
-		for(int i=QLocale::C; i <= QLocale::Chewa; i++)
-		{
-			for(int i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
-				loc_list.append(QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1)).name());
-		}
-
-		loc_list.removeDuplicates();
-		loc_list.sort();
-		loc_list.push_front(tr("Default"));
-
-		lccollate_cmb->addItems(loc_list);
-		lcctype_cmb->addItems(loc_list);
-
-		setMinimumSize(560, 380);
+		for(int i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
+			loc_list.append(QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1)).name());
 	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+
+	loc_list.removeDuplicates();
+	loc_list.sort();
+	loc_list.push_front(tr("Default"));
+
+	lccollate_cmb->addItems(loc_list);
+	lcctype_cmb->addItems(loc_list);
+
+	setMinimumSize(560, 380);
 }
 
 void DatabaseWidget::setAttributes(DatabaseModel *model)
