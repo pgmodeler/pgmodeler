@@ -606,11 +606,6 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 
 	try
 	{
-		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-		conn_cfg_wgt.layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
-																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
-		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
-
 		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &conns_changed]() {
 			if(conn_cfg_wgt.isConfigurationChanged())
 			{
