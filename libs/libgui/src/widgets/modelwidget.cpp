@@ -246,14 +246,19 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_copy->setMenuRole(QAction::NoRole);
 	action_copy->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
 
-	copy_menu.addAction(tr("Selected only"), QKeySequence(tr("Ctrl+C")), this, [this]() {
+	action = copy_menu.addAction(tr("Selected only"));
+	action->setShortcut(QKeySequence(tr("Ctrl+C")));
+
+	connect(action, &QAction::triggered, this, [this]() {
 		__trycatch( copyObjects(false, false); )
 	});
 
-	copy_menu.addAction(tr("Sel. + dependencies"), QKeySequence(tr("Ctrl+Shift+C")), this, [this]() {
+	action = copy_menu.addAction(tr("Sel. + dependencies"));
+	action->setShortcut(QKeySequence(tr("Ctrl+Shift+C")));
+
+	connect(action, &QAction::triggered, this, [this]() {
 		__trycatch( copyObjects(false, true); )
 	});
-
 
 	action_paste=new QAction(QIcon(GuiUtilsNs::getIconPath("paste")), tr("Paste"), this);
 	action_paste->setShortcut(QKeySequence(tr("Ctrl+V")));
@@ -264,11 +269,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cut->setMenuRole(QAction::NoRole);
 	action_cut->setIcon(QIcon(GuiUtilsNs::getIconPath("cut")));
 
-	cut_menu.addAction(tr("Selected only"), QKeySequence(tr("Ctrl+X")), this, [this]() {
+	action = cut_menu.addAction(tr("Selected only"));
+	action->setShortcut(QKeySequence(tr("Ctrl+X")));
+
+	connect(action, &QAction::triggered, this, [this]() {
 		__trycatch( cutObjects(false); )
 	});
 
-	cut_menu.addAction(tr("Sel. + dependencies"), QKeySequence(tr("Ctrl+Shift+X")), this, [this]() {
+	action = cut_menu.addAction(tr("Sel. + dependencies"));
+	action->setShortcut(QKeySequence(tr("Ctrl+Shift+X")));
+
+	connect(action, &QAction::triggered, this, [this]() {
 		__trycatch( cutObjects(true); )
 	});
 
