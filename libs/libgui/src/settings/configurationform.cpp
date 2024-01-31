@@ -80,9 +80,10 @@ void ConfigurationForm::changeCurrentView()
 	confs_stw->setCurrentIndex(btn_sender->property(Attributes::ObjectId.toStdString().c_str()).toInt());
 }
 
-void ConfigurationForm::hideEvent(QHideEvent *)
+void ConfigurationForm::hideEvent(QHideEvent *event)
 {
-	general_tb->setChecked(true);
+	if(!event->spontaneous())
+		general_tb->setChecked(true);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
@@ -156,11 +157,8 @@ void ConfigurationForm::loadConfiguration()
 		}
 		catch(Exception &e)
 		{
-			//Messagebox msg_box;
-
 			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
-				//msg_box.show(e);
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 			else

@@ -44,7 +44,7 @@ class __libgui ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		SnippetsConfigWidget *snippets_conf;
 		PluginsConfigWidget *plugins_conf;
 		
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *event);
 		void showEvent(QShowEvent *);
 		
 	public:

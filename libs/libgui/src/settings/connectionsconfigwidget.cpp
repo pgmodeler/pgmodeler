@@ -58,16 +58,20 @@ ConnectionsConfigWidget::~ConnectionsConfigWidget()
 
 }
 
-void ConnectionsConfigWidget::hideEvent(QHideEvent *)
+void ConnectionsConfigWidget::hideEvent(QHideEvent *event)
 {
-	this->newConnection();
+	if(!event->spontaneous())
+		this->newConnection();
 }
 
-void ConnectionsConfigWidget::showEvent(QShowEvent *)
+void ConnectionsConfigWidget::showEvent(QShowEvent *event)
 {
-	updateConnectionsCombo();
-	newConnection();
-	conn_attribs_tbw->setCurrentIndex(0);
+	if(!event->spontaneous())
+	{
+		updateConnectionsCombo();
+		newConnection();
+		conn_attribs_tbw->setCurrentIndex(0);
+	}
 }
 
 void ConnectionsConfigWidget::updateConnectionsCombo()
@@ -515,8 +519,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 		schparser.ignoreUnkownAttributes(true);
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::ConnectionsConf, config_params);
 		schparser.ignoreUnkownAttributes(false);
-
-		setConfigurationChanged(false);
+		//setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{

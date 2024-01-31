@@ -45,8 +45,8 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn, bool is_update);
 
-		virtual void hideEvent(QHideEvent *) override;
-		virtual void showEvent(QShowEvent *) override;
+		virtual void hideEvent(QHideEvent *event) override;
+		virtual void showEvent(QShowEvent *event) override;
 		void updateConnectionsCombo();
 		
 	public:

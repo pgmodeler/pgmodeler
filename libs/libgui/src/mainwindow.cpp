@@ -1067,16 +1067,16 @@ void MainWindow::updateConnections(bool force)
 			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::ConnectionsConfWgt));
 
 	if(force || (!force && (conn_cfg_wgt->isConfigurationChanged() ||
-							model_valid_wgt->connections_cmb->count()==0 ||
-							sql_tool_wgt->connections_cmb->count()==0)))
+													model_valid_wgt->connections_cmb->count() == 0 ||
+													sql_tool_wgt->connections_cmb->count() == 0)))
 	{
-		if(sender()!=sql_tool_wgt)
+		if(sender() != sql_tool_wgt)
 		{
 			ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
 			sql_tool_wgt->clearDatabases();
 		}
 
-		if(sender()!=model_valid_wgt)
+		if(sender() != model_valid_wgt)
 			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OpValidation);
 	}
 }
