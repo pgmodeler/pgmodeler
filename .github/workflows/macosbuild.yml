@@ -10,11 +10,11 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
 
     strategy:
       matrix:
-        qt: ['6.2.4', '6.3.2', '6.4.3', '6.5.1']
+        qt: ['6.2.4', '6.3.2', '6.4.3', '6.5.3', '6.6.1']
 
     steps:
     - uses: actions/checkout@v2
