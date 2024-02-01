@@ -205,7 +205,8 @@ void GeneralConfigWidget::loadConfiguration()
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, { Attributes::Id });
 
 		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels) ||
-			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
+			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs) ||
+			 !config_params[Attributes::Configuration].count(Attributes::UseDefDisambiguation))
 			resetAlertChoices();
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
