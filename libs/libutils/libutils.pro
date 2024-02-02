@@ -16,16 +16,14 @@ src/globalattributes.h \
 src/pgsqlversions.h \
 src/doublenan.h \
 src/application.h \
-src/utilsns.h \
-src/pgmodelercliplugin.h
+src/utilsns.h
 
 SOURCES += src/exception.cpp \
 src/customuistyle.cpp \
 src/globalattributes.cpp \
 src/pgsqlversions.cpp \
 src/application.cpp \
-src/utilsns.cpp \
-src/pgmodelercliplugin.cpp
+src/utilsns.cpp
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

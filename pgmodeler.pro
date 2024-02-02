@@ -7,7 +7,8 @@ SUBDIRS = libs/$$LIBUTILS \
 	  libs/$$LIBCORE \
 	  libs/$$LIBCONNECTOR \
 	  libs/$$LIBCANVAS \
-	  libs/$$LIBGUI
+		libs/$$LIBGUI \
+		libs/$$LIBCLI
 
 # Including executables subprojects
 SUBDIRS += apps/pgmodeler \

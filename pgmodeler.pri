@@ -53,6 +53,11 @@ LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
 LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 LIBUTILS_INC = $$LIBUTILS_ROOT/src
 
+LIBCLI = libcli
+LIBCLI_ROOT = $$absolute_path($$PWD/libs/$$LIBCLI)
+LIBCLI_LIB = -L$$LIBCLI_ROOT -lcli
+LIBCLI_INC = $$LIBCLI_ROOT/src
+
 # Set the flag passed to compiler to indicate a snapshot build
 isEqual(SNAPSHOT_BUILD, true): DEFINES+=SNAPSHOT_BUILD
 
