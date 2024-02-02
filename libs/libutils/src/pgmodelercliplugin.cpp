@@ -17,11 +17,10 @@
 */
 
 #include "pgmodelercliplugin.h"
-//#include "globalattributes.h"
 
 PgModelerCliPlugin::PgModelerCliPlugin()
 {
-
+	cli_app = nullptr;
 }
 
 PgModelerCliPlugin::~PgModelerCliPlugin()
@@ -53,28 +52,3 @@ QString PgModelerCliPlugin::getPluginName() const
 {
 	return plugin_name;
 }
-
-/* QString PgModelerCliPlugin::getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const
-{
-	QString file_pth = root_path + GlobalAttributes::DirSeparator + getPluginName();
-
-	if(!subdir.isEmpty())
-		file_pth += GlobalAttributes::DirSeparator + subdir;
-
-	if(!filename.isEmpty())
-		file_pth += GlobalAttributes::DirSeparator + filename;
-
-	return file_pth;
-}
-
-QString PgModelerCliPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
-{
-	return getPluginFilePath(GlobalAttributes::getConfigurationsPath() +
-													 GlobalAttributes::DirSeparator +
-													 GlobalAttributes::PluginsDir, subdir, filename);
-}
-
-QString PgModelerCliPlugin::getTmplPluginFilePath(const QString &subdir, const QString &filename) const
-{
-	return getPluginFilePath(GlobalAttributes::getPluginsPath(), subdir, filename);
-} */

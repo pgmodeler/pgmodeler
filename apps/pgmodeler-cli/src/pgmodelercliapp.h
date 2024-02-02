@@ -127,8 +127,73 @@ class PgModelerCliApp: public Application {
 		QString changelog;
 
 		static const QRegularExpression PasswordRegExp;
+
 		static const QString PasswordPlaceholder;
 
+		//! \brief Parsers the options and executes the action specified by them
+		void parseOptions(attribs_map &parsed_opts);
+
+		//! \brief Shows the options menu
+		void showMenu();
+
+		//! \brief Shows the version info
+		void showVersionInfo();
+
+		//! \brief Returns if the specified options exists on short options map
+		bool isOptionRecognized(QString &op, bool &accepts_val);
+
+		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
+		void loadModel();
+
+		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
+		in order to be parsed by the recreateObjects() method */
+		void extractObjectXML();
+
+		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
+		void recreateObjects();
+
+		//! \brief Fix some xml attributes and remove unused tags
+		void fixObjectAttributes(QString &obj_xml);
+
+		/*! \brief Extracts the foreign key code for the specified table xml. The foreign keys
+		are recreated after all the other objects */
+		QStringList extractForeignKeys(QString &obj_xml);
+
+		//! \brief Returns if the specified string contains some of relationship attributes
+		bool containsRelAttributes(const QString &str);
+
+		/*! \brief Install the .dbm file association in the mime database (default behaviour).
+		The paramenter 'uninstall' is used to clean up any file association done previously. */
+		void handleMimeDatabase(bool uninstall, bool system_wide, bool force);
+
+		/*! \brief Fixes the references to opertor classes and families by replacing tags like
+		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
+		only over operator classes, indexes and constraints */
+		void fixOpClassesFamiliesReferences(QString &obj_xml);
+
+		void fixModel();
+		void exportModel();
+		void importDatabase();
+		void diffModelDatabase();
+		void updateMimeType();
+		void configureConnection(bool extra_conn);
+		void importDatabase(DatabaseModel *model, Connection conn);
+
+		/*! \brief Prints to the stdout the provided text appending a \n on the string
+		 * even if the silent mode is active. */
+		void printText(const QString &txt = "");
+
+		//! \brief Prints to the stdout only if the silent mode is not active
+		void printMessage(const QString &txt = "");
+
+		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
+		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
+		void createConfigurations();
+		void listConnections();
+		void loadPlugins();
+		void listPlugins();
+
+	public:
 		//! \brief Option names constants
 		static const QString Input,
 		Output,
@@ -205,7 +270,7 @@ class PgModelerCliApp: public Application {
 		CreateConfigs,
 		MissingOnly,
 
-		DisablePlugins,
+		IgnoreFaultyPlugins,
 		ListPlugins,
 
 		TagExpr,
@@ -216,72 +281,10 @@ class PgModelerCliApp: public Application {
 		MsgNoFileAssociation,
 		ModelFixLog;
 
-		//! \brief Parsers the options and executes the action specified by them
-		void parseOptions(attribs_map &parsed_opts);
-
-		//! \brief Shows the options menu
-		void showMenu();
-
-		//! \brief Shows the version info
-		void showVersionInfo();
-
-		//! \brief Returns if the specified options exists on short options map
-		bool isOptionRecognized(QString &op, bool &accepts_val);
-
-		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
-		void loadModel();
-
-		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
-		in order to be parsed by the recreateObjects() method */
-		void extractObjectXML();
-
-		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
-		void recreateObjects();
-
-		//! \brief Fix some xml attributes and remove unused tags
-		void fixObjectAttributes(QString &obj_xml);
-
-		/*! \brief Extracts the foreign key code for the specified table xml. The foreign keys
-		are recreated after all the other objects */
-		QStringList extractForeignKeys(QString &obj_xml);
-
-		//! \brief Returns if the specified string contains some of relationship attributes
-		bool containsRelAttributes(const QString &str);
-
-		/*! \brief Install the .dbm file association in the mime database (default behaviour).
-		The paramenter 'uninstall' is used to clean up any file association done previously. */
-		void handleMimeDatabase(bool uninstall, bool system_wide, bool force);
-
-		/*! \brief Fixes the references to opertor classes and families by replacing tags like
-		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
-		only over operator classes, indexes and constraints */
-		void fixOpClassesFamiliesReferences(QString &obj_xml);
-
-		void fixModel();
-		void exportModel();
-		void importDatabase();
-		void diffModelDatabase();
-		void updateMimeType();
-		void configureConnection(bool extra_conn);
-		void importDatabase(DatabaseModel *model, Connection conn);
-
-		/*! \brief Prints to the stdout the provided text appending a \n on the string
-		 * even if the silent mode is active. */
-		void printText(const QString &txt = "");
-
-		//! \brief Prints to the stdout only if the silent mode is not active
-		void printMessage(const QString &txt = "");
-
-		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
-		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
-		void createConfigurations();
-		void listConnections();
-		void loadPlugins();
-		void listPlugins();
-
-	public:
 		PgModelerCliApp(int argc, char **argv);
+
 		virtual ~PgModelerCliApp();
+
 		int exec();
 
 	private slots:

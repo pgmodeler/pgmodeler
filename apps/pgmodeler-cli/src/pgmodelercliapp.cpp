@@ -103,7 +103,7 @@ const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
 const QString PgModelerCliApp::MissingOnly("--missing-only");
-const QString PgModelerCliApp::DisablePlugins("--disable-plugins");
+const QString PgModelerCliApp::IgnoreFaultyPlugins("--ignore-faulty-plugins");
 const QString PgModelerCliApp::ListPlugins("--list-plugins");
 
 const QString PgModelerCliApp::TagExpr("<%1");
@@ -139,7 +139,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
-	{ CommentsAsAliases, "-cl" }, { DisablePlugins, "-dp" }, { ListPlugins, "-lp" }
+		{ CommentsAsAliases, "-cl" }, { IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
 };
 
 std::map<QString, bool> PgModelerCliApp::long_opts = {
@@ -165,33 +165,33 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false },
-	{ DisablePlugins, true }, { ListPlugins, false }
+		{ IgnoreFaultyPlugins, false }, { ListPlugins, false }
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
-	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb, DisablePlugins }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, DisablePlugins }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor, DisablePlugins }},
-	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters, DisablePlugins }},
-	{{ ExportToDict }, { Input, Output, Split, NoIndex, DisablePlugins }},
+	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb, IgnoreFaultyPlugins }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, IgnoreFaultyPlugins }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor, IgnoreFaultyPlugins }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters, IgnoreFaultyPlugins }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex, IgnoreFaultyPlugins }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-											 DropDatabase, DropObjects, Simulate, UseTmpNames, Force, DisablePlugins }},
+											DropDatabase, DropObjects, Simulate, UseTmpNames, Force, IgnoreFaultyPlugins }},
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
-									 Host, Port, User, Passwd, InitialDb, CommentsAsAliases, DisablePlugins }},
+									Host, Port, User, Passwd, InitialDb, CommentsAsAliases, IgnoreFaultyPlugins }},
 
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable, DisablePlugins }},
+							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable, IgnoreFaultyPlugins }},
 
-	{{ DbmMimeType }, { SystemWide, Force, DisablePlugins }},
-	{{ FixModel },	{ Input, Output, FixTries, DisablePlugins }},
+	{{ DbmMimeType }, { SystemWide, Force, IgnoreFaultyPlugins }},
+	{{ FixModel },	{ Input, Output, FixTries, IgnoreFaultyPlugins }},
 	{{ ListConns }, { }},
-	{{ CreateConfigs }, { MissingOnly, Force, DisablePlugins }},
-	{{ ListPlugins }, { DisablePlugins }},
+	{{ CreateConfigs }, { MissingOnly, Force, IgnoreFaultyPlugins }},
+	{{ ListPlugins }, { IgnoreFaultyPlugins }},
 };
 
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
@@ -544,9 +544,20 @@ void PgModelerCliApp::showMenu()
 	printText();
 
 	printText(tr("Plugins options: "));
-	printText(tr("  %1, %2 [LIST]\t\t    Prevents the execution of the named plugins. LIST is a comma-separated list of plugin IDs to be disabled.").arg(short_opts[DisablePlugins]).arg(DisablePlugins));
-	printText(tr("  %1, %2 \t\t\t    List the available plugins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText(tr("  %1, %2 \t    Discard plugins that failed to be loaded preventing the CLI from being aborted due to faulty plugins.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("  %1, %2 \t\t    List the available plugins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
 	printText();
+
+	bool plugins_failed = false;
+
+	try
+	{
+		loadPlugins();
+	}
+	catch(Exception &)
+	{
+		plugins_failed = true;
+	}
 
 	printText();
 	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
@@ -612,6 +623,16 @@ void PgModelerCliApp::showMenu()
 	printText(tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above."));
 	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
 	printText();
+
+	if(plugins_failed)
+	{
+		printText();
+		printText("**");
+		printText(tr("** WARNING: Failed to retrieve available plugins' options due to one or more errors!"));
+		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get details about plugins loading error(s).").arg(ListPlugins));
+		printText("**");
+		printText();
+	}
 }
 
 void PgModelerCliApp::listConnections()
@@ -965,7 +986,6 @@ void PgModelerCliApp::handleObjectAddition(BaseObject *object)
 	}
 }
 
-
 void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
@@ -979,7 +999,6 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
-
 
 void PgModelerCliApp::extractObjectXML()
 {
@@ -2529,7 +2548,7 @@ void PgModelerCliApp::loadPlugins()
 			dir_plugins = GlobalAttributes::getPluginsPath() +
 										GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
-	QStringList dir_list, disabled_plugins = parsed_opts[DisablePlugins].split(',');
+	QStringList dir_list;
 	PgModelerCliPlugin *plugin = nullptr;
 	QFileInfo fi;
 
@@ -2546,9 +2565,6 @@ void PgModelerCliApp::loadPlugins()
 
 	for(auto &plugin_name : dir_list)
 	{
-		if(disabled_plugins.contains(plugin_name))
-			continue;
-
 		/* Configures the basic path to the library on the form:
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 		#ifdef Q_OS_WIN
@@ -2583,17 +2599,25 @@ void PgModelerCliApp::loadPlugins()
 				continue;
 			}
 
-			if(plugin->getOperationId() == PgModelerCliPlugin::CustomMode &&
+			if(plugin->getTaskId() == PgModelerCliPlugin::CustomTask &&
 				 plugin->getEventId() != PgModelerCliPlugin::None)
 			{
 				// Error!
 				// Custom mode always need to run without an event attached
+				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																	 .arg(plugin_name, lib, tr("Plugins that implement custom operations must not be associate to a specific triggering moment (before/after)!")),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plugin id: %1").arg(plugin_name)));
 			}
-			else if(plugin->getOperationId() != PgModelerCliPlugin::CustomMode &&
+			else if(plugin->getTaskId() != PgModelerCliPlugin::CustomTask &&
 							plugin->getEventId() == PgModelerCliPlugin::None)
 			{
 				// Error!
 				// Non-custom mode always need to run after or before an event
+				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																	 .arg(plugin_name, lib, tr("Plugins that implement additional tasks that run before or after an existing operation must specify when to be triggered!")),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plugin id: %1").arg(plugin_name)));
 			}
 			else
 			{
@@ -2604,7 +2628,7 @@ void PgModelerCliApp::loadPlugins()
 				plugins.push_back(plugin);
 			}
 		}
-		else
+		else if(!parsed_opts.count(IgnoreFaultyPlugins))
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
 																 .arg(plugin_name, lib, plugin_loader.errorString()),
@@ -2616,7 +2640,7 @@ void PgModelerCliApp::loadPlugins()
 	if(!errors.empty())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::PluginsNotLoaded) + " " +
-										tr("HINT: you can use the option `%1' to disable the faulty plugin(s)."),
+												tr("HINT: you can use the option `%1' to disable the faulty plugin(s).").arg(IgnoreFaultyPlugins),
 										ErrorCode::PluginsNotLoaded,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
 	}

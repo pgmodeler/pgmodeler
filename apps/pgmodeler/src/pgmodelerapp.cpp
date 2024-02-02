@@ -70,22 +70,22 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	loadTranslation(lang_id);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::getPluginsPath() +
-								GlobalAttributes::DirSeparator,
-								"*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+	dir_list = QDir(GlobalAttributes::getPluginsPath() +
+									GlobalAttributes::DirSeparator,
+									"*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
 	{
-		plugin_name=dir_list.front();
+		plugin_name = dir_list.front();
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::getPluginsPath() +
+		plug_lang_dir = GlobalAttributes::getPluginsPath() +
 					  GlobalAttributes::DirSeparator + plugin_name +
 						GlobalAttributes::DirSeparator + "lang" +
 					  GlobalAttributes::DirSeparator;
 
-		plug_lang_file=plugin_name + "." + lang_id;
+		plug_lang_file = plugin_name + "." + lang_id;
 		loadTranslation(plug_lang_file, plug_lang_dir);
 	}
 }

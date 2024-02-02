@@ -33,8 +33,6 @@ class PgModelerCliApp;
 
 class PgModelerCliPlugin {
 	private:
-		PgModelerCliApp *cli_app;
-
 		QString libname,
 
 		plugin_name;
@@ -45,10 +43,13 @@ class PgModelerCliPlugin {
 		//! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
 		void setPluginName(const QString &name);
 
+	protected:
+		PgModelerCliApp *cli_app;
+
 		virtual void initPlugin(PgModelerCliApp *app);
 
 	public:
-		enum OperationId {
+		enum TaskId {
 			ExportToFile,
 			ExportToPng,
 			ExportToSvg,
@@ -58,7 +59,7 @@ class PgModelerCliPlugin {
 			Diff,
 			FixModel,
 			CreateConfigs,
-			CustomMode
+			CustomTask
 		};
 
 		enum EventId {
@@ -87,7 +88,9 @@ class PgModelerCliPlugin {
 
 		virtual std::map<QString, bool> getPluginLongOpts() const = 0;
 
-		virtual OperationId getOperationId() const = 0;
+		virtual attribs_map getOptsDescription() const = 0;
+
+		virtual TaskId getTaskId() const = 0;
 
 		virtual EventId getEventId() const = 0;
 
@@ -98,20 +101,6 @@ class PgModelerCliPlugin {
 
 		//! \brief Returns the name of the plugin
 		QString getPluginName() const;
-
-		/*! \brief This method mimics the behavior of GlobalAttributes::getConfigurationFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's root directory.
-		 * If both subdir and filename are empty, only the full path to the plugin's root directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-root]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-root]/subdir/filename is returned. */
-		//QString getPluginFilePath(const QString &subdir, const QString &filename) const;
-
-		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's template confs directory.
-		 * If both subdir and filename are empty, only the full path to the plugin's template confs directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-tmpl-conf]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-tmpl-conf]/subdir/filename is returned. */
-		//QString getTmplPluginFilePath(const QString &subdir, const QString &filename) const;
 
 		friend class PgModelerCliApp;
 };
