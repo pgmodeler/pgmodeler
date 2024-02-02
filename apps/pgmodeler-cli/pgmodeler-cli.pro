@@ -9,13 +9,13 @@ windows: RCC_DIR = src/
 windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
-	src/compat/compatns.cpp \
+src/compat/compatns.cpp \
 src/pgmodelercliapp.cpp \
 src/compat/view.cpp \
 src/compat/reference.cpp
 
 HEADERS += src/pgmodelercliapp.h \
-	src/compat/compatns.h \
+src/compat/compatns.h \
 src/compat/view.h \
 src/compat/reference.h
 

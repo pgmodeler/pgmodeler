@@ -36,6 +36,7 @@
 #include "settings/generalconfigwidget.h"
 #include "tools/databaseimporthelper.h"
 #include "tools/modelsdiffhelper.h"
+#include "pgmodelercliplugin.h"
 
 class PgModelerCliApp: public Application {
 	private:
@@ -81,6 +82,9 @@ class PgModelerCliApp: public Application {
 		RelationshipConfigWidget *rel_conf;
 
 		GeneralConfigWidget *general_conf;
+
+		//! \brief Stores the instances of loaded plugins
+		std::vector<PgModelerCliPlugin *> plugins;
 
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;
@@ -201,6 +205,9 @@ class PgModelerCliApp: public Application {
 		CreateConfigs,
 		MissingOnly,
 
+		DisablePlugins,
+		ListPlugins,
+
 		TagExpr,
 		EndTagExpr,
 		AttributeExpr,
@@ -269,6 +276,8 @@ class PgModelerCliApp: public Application {
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void createConfigurations();
 		void listConnections();
+		void loadPlugins();
+		void listPlugins();
 
 	public:
 		PgModelerCliApp(int argc, char **argv);
