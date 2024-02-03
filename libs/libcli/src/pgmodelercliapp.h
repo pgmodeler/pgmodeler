@@ -17,9 +17,9 @@
 */
 
 /**
-\ingroup pgmodeler-cli
+\ingroup libcli
 \class PgModelerCliApp
-\brief Implements the operations export models whitout use the graphical interface
+\brief Implements a set of operations that can be used without the graphical interface
 */
 
 #ifndef PGMODELER_CLI_APP_H
@@ -38,7 +38,7 @@
 #include "tools/modelsdiffhelper.h"
 #include "pgmodelercliplugin.h"
 
-class PgModelerCliApp: public Application {
+class __libcli PgModelerCliApp: public Application {
 	private:
 		Q_OBJECT
 
@@ -104,6 +104,9 @@ class PgModelerCliApp: public Application {
 		//! \brief Indicates if the cli must run in silent mode
 		bool silent_mode;
 
+		//! \brief Store the error stack related to plugins loading
+		QString plugin_load_errors;
+
 		//! \brief Stores the xml code for the objects being fixed
 		QStringList objs_xml,
 
@@ -132,12 +135,6 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
-
-		//! \brief Shows the options menu
-		void showMenu();
-
-		//! \brief Shows the version info
-		void showVersionInfo();
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
@@ -179,19 +176,15 @@ class PgModelerCliApp: public Application {
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
 
-		/*! \brief Prints to the stdout the provided text appending a \n on the string
-		 * even if the silent mode is active. */
-		void printText(const QString &txt = "");
-
-		//! \brief Prints to the stdout only if the silent mode is not active
-		void printMessage(const QString &txt = "");
-
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void createConfigurations();
 		void listConnections();
 		void loadPlugins();
 		void listPlugins();
+		bool isPluginOptsValid(const PgModelerCliPlugin *plugin);
+
+		int exec();
 
 	public:
 		//! \brief Option names constants
@@ -285,13 +278,34 @@ class PgModelerCliApp: public Application {
 
 		virtual ~PgModelerCliApp();
 
-		int exec();
+		//! \brief Shows the options menu
+		void showMenu();
+
+					 //! \brief Shows the version info
+		void showVersionInfo();
+
+		/*! \brief Prints to the stdout the provided text appending a \n on the string
+		 * even if the silent mode is active. */
+		void printText(const QString &txt = "");
+
+		//! \brief Prints to the stdout only if the silent mode is not active
+		void printMessage(const QString &txt = "");
+
+		//! \brief Returns the options parsed when calling the application
+		attribs_map getParsedOptions();
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
 		void updateProgress(int progress, QString msg, ObjectType = ObjectType::BaseObject);
 		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
+
+		/* We main the main() a friend function of PgModelerCliApp just to
+		 * allow it to call exec() that is a private function.
+		 *
+		 * This will avoid the exec() method to be called from within
+		 * plugins which is not desirable. */
+		friend int main(int, char **);
 };
 
 #endif

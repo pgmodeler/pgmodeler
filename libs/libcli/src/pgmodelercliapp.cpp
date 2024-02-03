@@ -199,7 +199,7 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 	try
 	{
 		QString op, value, orig_op;
-		bool accepts_val=false;
+		bool accepts_val = false;
 		attribs_map opts;
 		QStringList args = arguments();
 
@@ -216,6 +216,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 		conn_conf = nullptr;
 		rel_conf = nullptr;
 		general_conf = nullptr;
+
+		loadPlugins();
 
 		// We extract the options values only if the help option is not present
 		if(args.size() > 1 && !args.contains(Help) && !args.contains(short_opts[Help]))
@@ -242,7 +244,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
 						throw Exception(tr("Value not specified for option `%1'.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					else if(!accepts_val && !value.isEmpty())
+
+					if(!accepts_val && !value.isEmpty())
 						throw Exception(tr("Option `%1' does not accept values.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					/* If we find a filter object parameter we append its parameter index so
@@ -363,6 +366,11 @@ void PgModelerCliApp::printMessage(const QString &txt)
 		printText(txt);
 }
 
+attribs_map PgModelerCliApp::getParsedOptions()
+{
+	return parsed_opts;
+}
+
 void PgModelerCliApp::configureConnection(bool extra_conn)
 {
 	QString chr = (extra_conn ? "1" : "");
@@ -390,7 +398,7 @@ void PgModelerCliApp::configureConnection(bool extra_conn)
 
 bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 {
-	bool found=false, append_chr = false;
+	bool found = false, append_chr = false;
 
 	if(op.endsWith('1'))
 	{
@@ -400,8 +408,8 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 
 	for(auto &itr : short_opts)
 	{
-		found=(op==itr.first || op==itr.second);
-		accepts_val=(found && long_opts[itr.first]);
+		found = (op == itr.first || op == itr.second);
+		accepts_val = (found && long_opts[itr.first]);
 
 		if(found)
 		{
@@ -410,7 +418,9 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 		}
 	}
 
-	if(append_chr) op += '1';
+	if(append_chr)
+		op += '1';
+
 	return found;
 }
 
@@ -543,20 +553,27 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
 
-	printText(tr("Plugins options: "));
-	printText(tr("  %1, %2 \t    Discard plugins that failed to be loaded preventing the CLI from being aborted due to faulty plugins.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
-	printText(tr("  %1, %2 \t\t    List the available plugins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText(tr("Plug-ins options: "));
+	printText(tr("  %1, %2 \t    Discard plug-ins that failed to be loaded preventing the CLI from being aborted due to faulty plug-ins.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("  %1, %2 \t\t    List the available plug-ins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
 	printText();
 
-	bool plugins_failed = false;
+	// Displaying loaded plugin's options
+	attribs_map p_short_opts, p_opts_desc;
+	std::map<QString, bool> p_long_opts;
 
-	try
+	for(auto &plugin : plugins)
 	{
-		loadPlugins();
-	}
-	catch(Exception &)
-	{
-		plugins_failed = true;
+		p_short_opts = plugin->getShortOptions();
+		p_long_opts =  plugin->getLongOptions();
+		p_opts_desc = plugin->getOptsDescription();
+
+		printText(tr("%1 options: ").arg(plugin->getPluginTitle()));
+
+		for(auto &itr : p_opts_desc)
+			printText(QString("  %1, %2 \t\t    %3").arg(p_short_opts[itr.first], itr.first, itr.second));
+
+		printText();
 	}
 
 	printText();
@@ -624,12 +641,12 @@ void PgModelerCliApp::showMenu()
 	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
 	printText();
 
-	if(plugins_failed)
+	if(!plugin_load_errors.isEmpty())
 	{
 		printText();
 		printText("**");
-		printText(tr("** WARNING: Failed to retrieve available plugins' options due to one or more errors!"));
-		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get details about plugins loading error(s).").arg(ListPlugins));
+		printText(tr("** WARNING: Failed to retrieve available plug-ins' options due to one or more errors!"));
+		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get detailed info about the error(s).").arg(ListPlugins));
 		printText("**");
 		printText();
 	}
@@ -898,8 +915,6 @@ int PgModelerCliApp::exec()
 				listConnections();
 			else
 			{
-				loadPlugins();
-
 				if(parsed_opts.count(ListPlugins))
 					listPlugins();
 				else if(parsed_opts.count(FixModel))
@@ -2551,6 +2566,8 @@ void PgModelerCliApp::loadPlugins()
 	QStringList dir_list;
 	PgModelerCliPlugin *plugin = nullptr;
 	QFileInfo fi;
+	attribs_map p_short_opts;
+	std::map<QString, bool> p_long_opts;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
@@ -2599,25 +2616,12 @@ void PgModelerCliApp::loadPlugins()
 				continue;
 			}
 
-			if(plugin->getTaskId() == PgModelerCliPlugin::CustomTask &&
-				 plugin->getEventId() != PgModelerCliPlugin::None)
+			if(!isPluginOptsValid(plugin))
 			{
-				// Error!
-				// Custom mode always need to run without an event attached
 				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
-																	 .arg(plugin_name, lib, tr("Plugins that implement custom operations must not be associate to a specific triggering moment (before/after)!")),
+																	 .arg(plugin_name, lib, tr("The plug-in contains a malformed list of options!")),
 																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
-																	 nullptr, tr("Plugin id: %1").arg(plugin_name)));
-			}
-			else if(plugin->getTaskId() != PgModelerCliPlugin::CustomTask &&
-							plugin->getEventId() == PgModelerCliPlugin::None)
-			{
-				// Error!
-				// Non-custom mode always need to run after or before an event
-				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
-																	 .arg(plugin_name, lib, tr("Plugins that implement additional tasks that run before or after an existing operation must specify when to be triggered!")),
-																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
-																	 nullptr, tr("Plugin id: %1").arg(plugin_name)));
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
 			}
 			else
 			{
@@ -2626,6 +2630,12 @@ void PgModelerCliApp::loadPlugins()
 				plugin->setLibraryName(fi.fileName());
 				plugin->setPluginName(plugin_name);
 				plugins.push_back(plugin);
+
+				p_short_opts = plugin->getShortOptions();
+				p_long_opts = plugin->getLongOptions();
+
+				short_opts.insert(p_short_opts.begin(), p_short_opts.end());
+				long_opts.insert(p_long_opts.begin(), p_long_opts.end());
 			}
 		}
 		else if(!parsed_opts.count(IgnoreFaultyPlugins))
@@ -2633,16 +2643,16 @@ void PgModelerCliApp::loadPlugins()
 			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
 																 .arg(plugin_name, lib, plugin_loader.errorString()),
 																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
-																	 nullptr, tr("Plugin id: %1").arg(plugin_name)));
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
 		}
 	}
 
 	if(!errors.empty())
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::PluginsNotLoaded) + " " +
-												tr("HINT: you can use the option `%1' to disable the faulty plugin(s).").arg(IgnoreFaultyPlugins),
-										ErrorCode::PluginsNotLoaded,
-										__PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
+		plugin_load_errors = Exception(Exception::getErrorMessage(ErrorCode::PluginsNotLoaded) + " " +
+																	 tr("HINT: you can use the option `%1' to disable the faulty plug-in(s).").arg(IgnoreFaultyPlugins),
+																	 ErrorCode::PluginsNotLoaded,
+																	 __PRETTY_FUNCTION__, __FILE__, __LINE__, errors).getExceptionsText();
 	}
 }
 
@@ -2650,12 +2660,12 @@ void PgModelerCliApp::listPlugins()
 {
 	if(plugins.empty())
 	{
-		printText(tr("There are no loaded plugins."));
+		printText(tr("There are no loaded plug-ins."));
 		printText();
 	}
 	else
 	{
-		printText(tr("Available plugins:"));
+		printText(tr("Available plug-ins:"));
 		printText();
 
 		for(auto &plugin : plugins)
@@ -2668,4 +2678,50 @@ void PgModelerCliApp::listPlugins()
 			printText();
 		}
 	}
+
+	if(!plugin_load_errors.isEmpty())
+	{
+		printText("** Plug-ins loading errors:");
+		printText();
+		printText(plugin_load_errors);
+	}
+}
+
+bool PgModelerCliApp::isPluginOptsValid(const PgModelerCliPlugin *plugin)
+{
+	QString opt;
+	QRegularExpression s_opt_rx("^\\-(\\w){1,3}$"),
+			l_opt_rx("^\\-\\-(\\w|\\-)+$");
+	attribs_map s_opts = plugin->getShortOptions();
+	std::map<QString, bool> l_opts = plugin->getLongOptions();
+
+	/* Short options must start with an dash (-) and
+	 * contain no more than alphanumeric characters */
+	for(auto &itr : s_opts)
+	{
+		opt = itr.second.trimmed();
+
+		if(!opt.contains(s_opt_rx))
+			return false;
+	}
+
+	/* Long options must start with two dashes (--) and
+	 * contain a free number of alphanumeric characters */
+	for(auto &itr : l_opts)
+	{
+		opt = itr.first.trimmed();
+
+		if(!opt.contains(l_opt_rx))
+			return false;
+	}
+
+	/* Validate if the long options keys are compatible with
+	 * short options keys */
+	for(auto &itr : l_opts)
+	{
+		if(!s_opts.count(itr.first))
+			return false;
+	}
+
+	return true;
 }

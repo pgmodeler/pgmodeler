@@ -13,7 +13,8 @@ src/compat/view.cpp \
 src/compat/reference.cpp \
 src/pgmodelercliplugin.cpp
 
-HEADERS += src/pgmodelercliapp.h \
+HEADERS += src/cliglobal.h \
+src/pgmodelercliapp.h \
 src/compat/compatns.h \
 src/compat/view.h \
 src/compat/reference.h \

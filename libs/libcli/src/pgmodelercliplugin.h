@@ -25,13 +25,14 @@
 #ifndef PGMODELER_CLI_PLUGIN_H
 #define PGMODELER_CLI_PLUGIN_H
 
+#include "cliglobal.h"
 #include <QObject>
 #include <QString>
 #include "attribsmap.h"
 
 class PgModelerCliApp;
 
-class PgModelerCliPlugin {
+class __libcli PgModelerCliPlugin {
 	private:
 		QString libname,
 
@@ -49,7 +50,7 @@ class PgModelerCliPlugin {
 		virtual void initPlugin(PgModelerCliApp *app);
 
 	public:
-		enum TaskId {
+		enum OperationId {
 			ExportToFile,
 			ExportToPng,
 			ExportToSvg,
@@ -59,13 +60,7 @@ class PgModelerCliPlugin {
 			Diff,
 			FixModel,
 			CreateConfigs,
-			CustomTask
-		};
-
-		enum EventId {
-			Before,
-			After,
-			None
+			CustomCliOp
 		};
 
 		PgModelerCliPlugin();
@@ -84,17 +79,17 @@ class PgModelerCliPlugin {
 		//! \brief Returns the plugin's complete description
 		virtual QString getPluginDescription() const = 0;
 
-		virtual attribs_map getPluginShortOpts() const = 0;
+		virtual attribs_map getShortOptions() const = 0;
 
-		virtual std::map<QString, bool> getPluginLongOpts() const = 0;
+		virtual std::map<QString, bool> getLongOptions() const = 0;
 
 		virtual attribs_map getOptsDescription() const = 0;
 
-		virtual TaskId getTaskId() const = 0;
+		virtual OperationId getOperationId() const = 0;
 
-		virtual EventId getEventId() const = 0;
-
-		virtual void executePlugin() = 0;
+		virtual void execBeforeOperation() = 0;
+		virtual void execAfterOperation() = 0;
+		virtual void execCustomOperation() = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName() const;
