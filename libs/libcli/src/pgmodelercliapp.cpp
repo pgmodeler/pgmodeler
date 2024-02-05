@@ -2725,3 +2725,21 @@ bool PgModelerCliApp::isPluginOptsValid(const PgModelerCliPlugin *plugin)
 
 	return true;
 }
+
+int PgModelerCliApp::definePluginsExecOrder()
+{
+	int custom_cli_ops = 0;
+
+	for(auto &opt : parsed_opts)
+	{
+		for(auto &plugin : plugins)
+		{
+			if(plugin->isValidOption(opt.first) && !plug_exec_order.contains(plugin))
+			{
+				plug_exec_order.append(plugin);
+			}
+		}
+	}
+
+	return custom_cli_ops;
+}

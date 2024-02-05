@@ -50,6 +50,7 @@ class __libcli PgModelerCliPlugin {
 		virtual void initPlugin(PgModelerCliApp *app);
 
 	public:
+		//! \brief This enum is used to identify the CLI operations in which a plugin can be attached to.
 		enum OperationId {
 			ExportToFile,
 			ExportToPng,
@@ -60,7 +61,7 @@ class __libcli PgModelerCliPlugin {
 			Diff,
 			FixModel,
 			CreateConfigs,
-			CustomCliOp
+			CustomCliOp // The plugin runs a standalone operation, detached from any CLI operation
 		};
 
 		PgModelerCliPlugin();
@@ -79,17 +80,37 @@ class __libcli PgModelerCliPlugin {
 		//! \brief Returns the plugin's complete description
 		virtual QString getPluginDescription() const = 0;
 
+		/*! \brief Returns a list of short options used by the plugin
+		 *  Short options must be formed of one dash and at most three
+		 *  alphanumeric characters (e.g. -foo) */
 		virtual attribs_map getShortOptions() const = 0;
 
+		/*! \brief Returns a list of long options used by the plugin
+		 *  Long options must be formed of two dashes and at least one
+		 *  alphanumeric character (e.g. --foo-bar-abc) */
 		virtual std::map<QString, bool> getLongOptions() const = 0;
 
+		/*! \brief Returns a list of plugin's options descriptions.
+		 *  The key of the map must be the long option id and the
+		 *  value the full option description */
 		virtual attribs_map getOptsDescription() const = 0;
 
+		//! \brief Returns the id of the operation that causes the triggering of the plugin
 		virtual OperationId getOperationId() const = 0;
 
-		virtual void execBeforeOperation() = 0;
-		virtual void execAfterOperation() = 0;
-		virtual void execCustomOperation() = 0;
+		//! \brief Returns if the provided option is accepted by the plugin
+		virtual bool isValidOption(const QString &opt) const;
+
+		//! \brief This method is used to execute operations before the main plugin operation.
+		virtual void runPreOperation() = 0;
+
+		/*! \brief This method is used to execute main operations of the plugin.
+		 * This method is called only when the plugin implements a custom CLI operation */
+		virtual void runOperation() = 0;
+
+		/*! \brief This method is used to execute operations after the main plugin operation
+		 *  was executed successfuly */
+		virtual void runPostOperation() = 0;
 
 		//! \brief Returns the name of the library of the plugin
 		QString getLibraryName() const;

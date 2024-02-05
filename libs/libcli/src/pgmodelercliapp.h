@@ -84,7 +84,7 @@ class __libcli PgModelerCliApp: public Application {
 		GeneralConfigWidget *general_conf;
 
 		//! \brief Stores the instances of loaded plugins
-		std::vector<PgModelerCliPlugin *> plugins;
+		QList<PgModelerCliPlugin *> plugins, plug_exec_order;
 
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;
@@ -183,6 +183,11 @@ class __libcli PgModelerCliApp: public Application {
 		void loadPlugins();
 		void listPlugins();
 		bool isPluginOptsValid(const PgModelerCliPlugin *plugin);
+
+		/*! \brief Determines the execution order of the plugins by reading the
+		 *  list of options provided. This method also returns the number of
+		 *  plugins that are set to run custom CLI operations (standalone). */
+		int definePluginsExecOrder();
 
 		int exec();
 

@@ -28,6 +28,19 @@ PgModelerCliPlugin::~PgModelerCliPlugin()
 
 }
 
+bool PgModelerCliPlugin::isValidOption(const QString &opt) const
+{
+	static attribs_map short_opts = getShortOptions();
+
+	for(auto &itr : short_opts)
+	{
+		if(itr.first == opt)
+			return true;
+	}
+
+	return false;
+}
+
 void PgModelerCliPlugin::setLibraryName(const QString &lib)
 {
 	libname = lib;
