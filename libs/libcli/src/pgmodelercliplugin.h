@@ -45,8 +45,11 @@ class __libcli PgModelerCliPlugin {
 		void setPluginName(const QString &name);
 
 	protected:
+		//! \brief Instance of cli application that the plugin has access
 		PgModelerCliApp *cli_app;
 
+		/*! \brief Initializes the plugin with an instance of the cli application.
+		 *  This method can be overriden to perform extra initializations */
 		virtual void initPlugin(PgModelerCliApp *app);
 
 	public:
@@ -68,7 +71,7 @@ class __libcli PgModelerCliPlugin {
 
 		virtual ~PgModelerCliPlugin();
 
-		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
+		//! \brief Returns the plugin's title
 		virtual QString getPluginTitle() const = 0;
 
 		//! \brief Returns the plugin's author
@@ -89,6 +92,10 @@ class __libcli PgModelerCliPlugin {
 		 *  Long options must be formed of two dashes and at least one
 		 *  alphanumeric character (e.g. --foo-bar-abc) */
 		virtual std::map<QString, bool> getLongOptions() const = 0;
+
+		/*! \brief Returns a list of known/valid plugin's options that is used to trigger
+		 * the runOperation() method. */
+		virtual QStringList getOpModeOptions() const = 0;
 
 		/*! \brief Returns a list of plugin's options descriptions.
 		 *  The key of the map must be the long option id and the

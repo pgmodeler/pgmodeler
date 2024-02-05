@@ -46,7 +46,16 @@ class __libcli PgModelerCliApp: public Application {
 
 		qint64 buffer_size;
 
-		bool has_fix_log;
+		bool has_fix_log,
+		fix_model,
+		upd_mime,
+		import_db,
+		diff,
+		create_configs,
+		list_conns,
+		list_plugins,
+		plugin_op,
+		export_op;
 
 		//! \brief Holds the pgModeler version in which the model was construted (used by the fix operation)
 		QString model_version;
@@ -187,7 +196,16 @@ class __libcli PgModelerCliApp: public Application {
 		/*! \brief Determines the execution order of the plugins by reading the
 		 *  list of options provided. This method also returns the number of
 		 *  plugins that are set to run custom CLI operations (standalone). */
-		int definePluginsExecOrder();
+		int definePluginsExecOrder(const attribs_map &opts);
+
+		//! \brief Execute all activated plugins pre operations
+		void runPluginsPreOperations();
+
+		//! \brief Execute all activated plugins custom operations
+		void runPluginsOperations();
+
+		//! \brief Execute all activated plugins post operations
+		void runPluginsPostOperations();
 
 		int exec();
 
