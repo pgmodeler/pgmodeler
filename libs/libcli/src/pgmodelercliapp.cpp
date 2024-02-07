@@ -2794,6 +2794,12 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 	int plug_op_modes = 0;
 	PgModelerCliPlugin::OperationId op_id;
 	QString acc_op_key;
+
+	QStringList export_opts = {
+		ExportToFile, ExportToPng, ExportToSvg,
+		ExportToDbms, ExportToDict
+	};
+
 	std::map<PgModelerCliPlugin::OperationId, QString> cli_op = {
 		{ PgModelerCliPlugin::ExportToFile, ExportToFile},
 		{ PgModelerCliPlugin::ExportToPng, ExportToPng },
@@ -2821,6 +2827,8 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 				acc_op_key = opt.first;
 				plug_op_modes++;
 			}
+			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt.first))
+				acc_op_key = opt.first;
 			else if(cli_op.count(op_id))
 				acc_op_key = cli_op[op_id];
 
