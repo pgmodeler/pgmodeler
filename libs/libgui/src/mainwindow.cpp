@@ -1136,7 +1136,10 @@ void MainWindow::updateRecentModelsMenu()
 	recent_models_menu->clear();
 	recent_models.removeDuplicates();
 
-	for(int i=0; i < recent_models.size() && i < GeneralConfigWidget::MaxRecentModels; i++)
+	while(recent_models.size() > GeneralConfigWidget::MaxRecentModels)
+		recent_models.pop_front();
+
+	for(int i = 0; i < recent_models.size(); i++)
 	{
 		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
