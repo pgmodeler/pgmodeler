@@ -20,6 +20,11 @@ src/compat/view.h \
 src/compat/reference.h \
 src/pgmodelercliplugin.h
 
+isEqual(PRIVATE_PLUGINS, true) {
+  HEADERS+=$$PLUGINS_SRC_ROOT/src/privpluginsns.h
+  SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginsns.cpp
+}
+
 INCLUDEPATH += $$LIBCANVAS_INC \
 				 $$LIBCONNECTOR_INC \
 				 $$LIBCORE_INC \

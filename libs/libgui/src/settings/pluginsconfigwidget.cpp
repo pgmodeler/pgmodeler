@@ -68,7 +68,7 @@ void PluginsConfigWidget::loadConfiguration()
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
-	PgModelerPlugin *plugin = nullptr;
+	PgModelerGuiPlugin *plugin = nullptr;
 	QFileInfo fi;
 	unsigned row = 0;
 
@@ -108,7 +108,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 		if(plugin_loader.load())
 		{
-			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
+			plugin = qobject_cast<PgModelerGuiPlugin *>(plugin_loader.instance());
 
 			/* If the plugin was loaded but couldnt be cas't to PgModelerPlugin it means that
 			 * the plugin is a CLI plugin (PgModelerCliPlugin) which is incompatible with
@@ -151,7 +151,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
-	std::vector<PgModelerPlugin *> inv_plugins;
+	std::vector<PgModelerGuiPlugin *> inv_plugins;
 	std::vector<Exception> errors;
 	int row_idx = -1;
 
@@ -219,8 +219,8 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 
 	for(auto &plugin : plugins)
 	{
-		if(plugin->getAction(PgModelerPlugin::ModelAction))
-			list.append(plugin->getAction(PgModelerPlugin::ModelAction));
+		if(plugin->getAction(PgModelerGuiPlugin::ModelAction))
+			list.append(plugin->getAction(PgModelerGuiPlugin::ModelAction));
 	}
 
 	return list;
@@ -230,11 +230,11 @@ void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction 
 {
 	for(auto &plugin : plugins)
 	{
-		if(conf_menu && plugin->getAction(PgModelerPlugin::ConfigAction))
-			conf_menu->addAction(plugin->getAction(PgModelerPlugin::ConfigAction));
+		if(conf_menu && plugin->getAction(PgModelerGuiPlugin::ConfigAction))
+			conf_menu->addAction(plugin->getAction(PgModelerGuiPlugin::ConfigAction));
 
-		if(plugin->getAction(PgModelerPlugin::ToolbarAction))
-			tb_actions.append(plugin->getAction(PgModelerPlugin::ToolbarAction));
+		if(plugin->getAction(PgModelerGuiPlugin::ToolbarAction))
+			tb_actions.append(plugin->getAction(PgModelerGuiPlugin::ToolbarAction));
 
 		if(plugin->getToolButton())
 			db_expl_btns.append(plugin->getToolButton());

@@ -41,27 +41,7 @@ bool PgModelerCliPlugin::isValidOption(const QString &opt) const
 	return false;
 }
 
-void PgModelerCliPlugin::setLibraryName(const QString &lib)
-{
-	libname = lib;
-}
-
-void PgModelerCliPlugin::setPluginName(const QString &name)
-{
-	plugin_name = name;
-}
-
 void PgModelerCliPlugin::initPlugin(PgModelerCliApp *app)
 {
 	cli_app = app;
-}
-
-QString PgModelerCliPlugin::getLibraryName() const
-{
-	return libname;
-}
-
-QString PgModelerCliPlugin::getPluginName() const
-{
-	return plugin_name;
 }

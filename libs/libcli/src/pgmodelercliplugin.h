@@ -29,21 +29,15 @@
 #include <QObject>
 #include <QString>
 #include "attribsmap.h"
+#include "pgmodelerplugin.h"
+
+#if defined(PRIVATE_PLUGINS_SYMBOLS)
+	#include "privpluginsns.h"
+#endif
 
 class PgModelerCliApp;
 
-class __libcli PgModelerCliPlugin {
-	private:
-		QString libname,
-
-		plugin_name;
-
-		//! \brief Defines the name of the library from where the plugin is being loaded
-		void setLibraryName(const QString &lib);
-
-		//! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
-		void setPluginName(const QString &name);
-
+class __libcli PgModelerCliPlugin: public PgModelerPlugin {
 	protected:
 		//! \brief Instance of cli application that the plugin has access
 		PgModelerCliApp *cli_app;
@@ -118,12 +112,6 @@ class __libcli PgModelerCliPlugin {
 		/*! \brief This method is used to execute operations after the main plugin operation
 		 *  was executed successfuly */
 		virtual void runPostOperation() = 0;
-
-		//! \brief Returns the name of the library of the plugin
-		QString getLibraryName() const;
-
-		//! \brief Returns the name of the plugin
-		QString getPluginName() const;
 
 		friend class PgModelerCliApp;
 };
