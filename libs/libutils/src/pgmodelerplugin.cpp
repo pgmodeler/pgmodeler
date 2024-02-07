@@ -49,9 +49,9 @@ QString PgModelerPlugin::getPluginName() const
 	return plugin_name;
 }
 
-QString PgModelerPlugin::getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const
+QString PgModelerPlugin::getPluginFilePath(const QString &plugin_name, const QString &root_path, const QString &subdir, const QString &filename)
 {
-	QString file_pth = root_path + GlobalAttributes::DirSeparator + getPluginName();
+	QString file_pth = root_path + GlobalAttributes::DirSeparator + plugin_name;
 
 	if(!subdir.isEmpty())
 		file_pth += GlobalAttributes::DirSeparator + subdir;
@@ -62,14 +62,25 @@ QString PgModelerPlugin::getPluginFilePath(const QString &root_path, const QStri
 	return file_pth;
 }
 
-QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
+QString PgModelerPlugin::getPluginTmplFilePath(const QString &plugin_name, const QString &subdir, const QString &filename)
 {
-	return getPluginFilePath(GlobalAttributes::getConfigurationsPath() +
+	return getPluginFilePath(plugin_name, GlobalAttributes::getPluginsPath(), subdir, filename);
+}
+
+QString PgModelerPlugin::getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const
+{
+	return getPluginFilePath(getPluginName(), root_path, subdir, filename);
+}
+
+QString PgModelerPlugin::getConfigFilePath(const QString &subdir, const QString &filename) const
+{
+	return getPluginFilePath(getPluginName(),
+													 GlobalAttributes::getConfigurationsPath() +
 													 GlobalAttributes::DirSeparator +
 													 GlobalAttributes::PluginsDir, subdir, filename);
 }
 
-QString PgModelerPlugin::getTmplPluginFilePath(const QString &subdir, const QString &filename) const
+QString PgModelerPlugin::getTmplConfigFilePath(const QString &subdir, const QString &filename) const
 {
 	return getPluginFilePath(GlobalAttributes::getPluginsPath(), subdir, filename);
 }
