@@ -2716,6 +2716,7 @@ void PgModelerCliApp::listPlugins()
 			printText(QString("* Name   : %1").arg(plugin->getPluginTitle()));
 			printText(QString("* Version: %1").arg(plugin->getPluginVersion()));
 			printText(QString("* Library: %1").arg(plugin->getLibraryName()));
+			printText(QString("* Author : %1").arg(plugin->getPluginAuthor()));
 			printText(QString("* %1").arg(plugin->getPluginDescription()));
 			printText();
 		}
