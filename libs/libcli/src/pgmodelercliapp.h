@@ -317,6 +317,12 @@ class __libcli PgModelerCliApp: public Application {
 		//! \brief Returns the options parsed when calling the application
 		attribs_map getParsedOptions();
 
+		//! \brief Returns a single parsed option value
+		QString getParsedOptValue(const QString &opt);
+
+		//! \brief Replaces the value of a single parsed option
+		void setParsedOptValue(const QString &opt, const QString &value);
+
 	private slots:
 		void handleObjectAddition(BaseObject *);
 		void updateProgress(int progress, QString msg, ObjectType = ObjectType::BaseObject);

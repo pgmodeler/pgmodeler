@@ -25,6 +25,13 @@ isEqual(PRIVATE_PLUGINS, true) {
   SOURCES+=$$PLUGINS_SRC_ROOT/src/privpluginsns.cpp
 }
 
+unix|windows: LIBS += $$LIBCANVAS_LIB \
+			  $$LIBCONNECTOR_LIB \
+			  $$LIBCORE_LIB \
+			  $$LIBPARSERS_LIB \
+			  $$LIBUTILS_LIB \
+			  $$LIBGUI_LIB
+
 INCLUDEPATH += $$LIBCANVAS_INC \
 				 $$LIBCONNECTOR_INC \
 				 $$LIBCORE_INC \

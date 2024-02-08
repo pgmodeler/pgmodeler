@@ -376,6 +376,28 @@ attribs_map PgModelerCliApp::getParsedOptions()
 	return parsed_opts;
 }
 
+QString PgModelerCliApp::getParsedOptValue(const QString &opt)
+{
+	if(parsed_opts.count(opt) == 0)
+	{
+		throw Exception(tr("Trying to retrieve the value of unknown parsed option `%1'!").arg(opt),
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	return parsed_opts[opt];
+}
+
+void PgModelerCliApp::setParsedOptValue(const QString &opt, const QString &value)
+{
+	if(parsed_opts.count(opt) == 0)
+	{
+		throw Exception(tr("Trying to set the value of unknown parsed option `%1'!").arg(opt),
+										 ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	parsed_opts[opt] = value;
+}
+
 void PgModelerCliApp::configureConnection(bool extra_conn)
 {
 	QString chr = (extra_conn ? "1" : "");
