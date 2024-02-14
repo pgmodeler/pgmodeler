@@ -24,7 +24,7 @@
 #include "utils/textblockinfo.h"
 
 const QStringList CodeCompletionWidget::dml_keywords = {
-	/* ATTENTION: the key words in this list MUST have a counter part in
+	/* ATTENTION: the keywords in this list MUST have a counter part in
 	 * DmlKeywordId. Also, the list MUST follow the same item order
 	 * in DmlKeywordId.
 	 *
@@ -32,8 +32,9 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	 * in order to call retriveColumnNames() and retrieveObjectsName().
 	 * New keywords here need a new entry in DmlKeywordId enum */
 	"select", "insert", "update", "delete",
-	"truncate", "from", "join", "into", "as",
-	"set", "table", "only", "where",
+	"truncate", "alter", "drop", "from",
+	"join",	"into", "as", "set", "table",
+	"only", "where",
 
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
@@ -933,7 +934,7 @@ bool CodeCompletionWidget::updateObjectsList()
 																							QTextDocument::FindBackward),
 																						 QTextDocument::FindWholeWords };
 
-	dml_cmds = dml_keywords.mid(Select, 5);
+	dml_cmds = dml_keywords.mid(Select, 7);
 	orig_tc = tc = code_field_txt->textCursor();
 	resetKeywordsPos();
 
