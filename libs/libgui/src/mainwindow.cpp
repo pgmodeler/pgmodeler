@@ -2078,7 +2078,7 @@ void MainWindow::loadModels(const QStringList &files)
 			}
 
 			addModel(file);
-			recent_models.push_front(file);
+			recent_models.append(file);
 		}
 
 		updateRecentModelsMenu();
