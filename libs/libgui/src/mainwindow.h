@@ -267,9 +267,13 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Adds an entry to the recent models menu
 		void registerRecentModel(const QString &filename);
 
+		//! \brief Adds several entries to the recent models menu
+		void registerRecentModels(const QStringList &filenames);
+
+		//! \brief Register an icon for a specific file extension (suffix) in the recent models menu
 		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
 
-				//! \brief Updates the window title taking into account the current model filename
+		//! \brief Updates the window title taking into account the current model filename
 		void updateWindowTitle();
 
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
