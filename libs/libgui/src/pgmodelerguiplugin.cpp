@@ -16,10 +16,10 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgmodelerplugin.h"
+#include "pgmodelerguiplugin.h"
 #include "guiutilsns.h"
 
-PgModelerPlugin::PgModelerPlugin()
+PgModelerGuiPlugin::PgModelerGuiPlugin()
 {
 	QGridLayout *gridLayout=nullptr;
 	QSpacerItem *verticalSpacer=nullptr;
@@ -31,7 +31,7 @@ PgModelerPlugin::PgModelerPlugin()
 	gridLayout=new QGridLayout;
 
 	widget=new QWidget;
-	widget->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerPlugin", "Plug-in information"));
+	widget->setWindowTitle(QT_TRANSLATE_NOOP("PgModelerGuiPlugin", "Plug-in information"));
 
 	gridLayout->setHorizontalSpacing(GuiUtilsNs::LtSpacing);
 	gridLayout->setVerticalSpacing(GuiUtilsNs::LtSpacing);
@@ -77,12 +77,12 @@ PgModelerPlugin::PgModelerPlugin()
 	plugin_info_frm->setMainWidget(widget);
 }
 
-PgModelerPlugin::~PgModelerPlugin()
+PgModelerGuiPlugin::~PgModelerGuiPlugin()
 {
 	delete plugin_info_frm;
 }
 
-void PgModelerPlugin::initPlugin(MainWindow *main_window)
+void PgModelerGuiPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
 
@@ -92,75 +92,30 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 						getPluginDescription());
 }
 
-void PgModelerPlugin::postInitPlugin()
+void PgModelerGuiPlugin::postInitPlugin()
 {
 	if(!main_window)
 	{
-		throw Exception(QT_TRANSLATE_NOOP("PgModelerPlugin", "Trying to perform a post initialization on a plug-in without initializing the application's main window!"),
+		throw Exception(QT_TRANSLATE_NOOP("PgModelerGuiPlugin", "Trying to perform a post initialization on a plug-in without initializing the application's main window!"),
 										ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
-void PgModelerPlugin::showPluginInfo() const
-{
-	plugin_info_frm->show();
-}
-
-void PgModelerPlugin::setLibraryName(const QString &lib)
-{
-	libname = lib;
-}
-
-void PgModelerPlugin::setPluginName(const QString &name)
-{
-	plugin_name = name;
-}
-
-QString PgModelerPlugin::getLibraryName() const
-{
-	return libname;
-}
-
-QString PgModelerPlugin::getPluginName() const
-{
-	return plugin_name;
-}
-
-QString PgModelerPlugin::getPluginIcon(const QString &icon_name) const
-{
-	return QString(":/%1/%2.png").arg(plugin_name, icon_name);
-}
-
-QString PgModelerPlugin::getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const
-{
-	QString file_pth = root_path + GlobalAttributes::DirSeparator + getPluginName();
-
-	if(!subdir.isEmpty())
-		file_pth += GlobalAttributes::DirSeparator + subdir;
-
-	if(!filename.isEmpty())
-		file_pth += GlobalAttributes::DirSeparator + filename;
-
-	return file_pth;
-}
-
-QString PgModelerPlugin::getPluginFilePath(const QString &subdir, const QString &filename) const
-{
-	return getPluginFilePath(GlobalAttributes::getConfigurationsPath() +
-													 GlobalAttributes::DirSeparator +
-													 GlobalAttributes::PluginsDir, subdir, filename);
-}
-
-QString PgModelerPlugin::getTmplPluginFilePath(const QString &subdir, const QString &filename) const
-{
-	return getPluginFilePath(GlobalAttributes::getPluginsPath(), subdir, filename);
-}
-
-void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
+void PgModelerGuiPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description)
 {
 	title_lbl->setText(title);
 	version_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin", "<strong>Version:</strong> %1")).arg(version));
 	author_lbl->setText(QString(QT_TRANSLATE_NOOP("PgModelerPlugin","<strong>Author:</strong> %1")).arg(author));
 	description_lbl->setText(description);
-	icon_lbl->setPixmap(QPixmap(getPluginIcon(plugin_name)));
+	icon_lbl->setPixmap(QPixmap(getPluginIcon(getPluginName())));
+}
+
+void PgModelerGuiPlugin::showPluginInfo() const
+{
+	plugin_info_frm->show();
+}
+
+QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name) const
+{
+	return QString(":/%1/%2.png").arg(getPluginName(), icon_name);
 }

@@ -103,6 +103,8 @@ const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
 const QString PgModelerCliApp::MissingOnly("--missing-only");
+const QString PgModelerCliApp::IgnoreFaultyPlugins("--ignore-faulty-plugins");
+const QString PgModelerCliApp::ListPlugins("--list-plugins");
 
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
@@ -137,7 +139,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
-	{ CommentsAsAliases, "-cl" }
+		{ CommentsAsAliases, "-cl" }, { IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
 };
 
 std::map<QString, bool> PgModelerCliApp::long_opts = {
@@ -162,32 +164,34 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
-	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false }
+	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false },
+		{ IgnoreFaultyPlugins, false }, { ListPlugins, false }
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
-	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
-	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
+	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb, IgnoreFaultyPlugins }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, IgnoreFaultyPlugins }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor, IgnoreFaultyPlugins }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters, IgnoreFaultyPlugins }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex, IgnoreFaultyPlugins }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-											 DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
+											DropDatabase, DropObjects, Simulate, UseTmpNames, Force, IgnoreFaultyPlugins }},
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
-									 Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
+									Host, Port, User, Passwd, InitialDb, CommentsAsAliases, IgnoreFaultyPlugins }},
 
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
+							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable, IgnoreFaultyPlugins }},
 
-	{{ DbmMimeType }, { SystemWide, Force }},
-	{{ FixModel },	{ Input, Output, FixTries }},
-	{{ ListConns }, {}},
-	{{ CreateConfigs }, {MissingOnly, Force}}
+	{{ DbmMimeType }, { SystemWide, Force, IgnoreFaultyPlugins }},
+	{{ FixModel },	{ Input, Output, FixTries, IgnoreFaultyPlugins }},
+	{{ ListConns }, { }},
+	{{ CreateConfigs }, { MissingOnly, Force, IgnoreFaultyPlugins }},
+	{{ ListPlugins }, { IgnoreFaultyPlugins }},
 };
 
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
@@ -195,16 +199,21 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 	try
 	{
 		QString op, value, orig_op;
-		bool accepts_val=false;
+		bool accepts_val = false;
 		attribs_map opts;
 		QStringList args = arguments();
 
 		has_fix_log = false;
 		buffer_size = 0;
-		model=nullptr;
-		scene=nullptr;
-		xmlparser=nullptr;
-		zoom=1;
+		model = nullptr;
+		scene = nullptr;
+		xmlparser = nullptr;
+		zoom = 1;
+
+		fix_model = upd_mime = import_db = false;
+		diff = create_configs = list_conns = false;
+		list_plugins = plugin_op = false;
+		export_op = false;
 
 		export_hlp = nullptr;
 		import_hlp = nullptr;
@@ -212,6 +221,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 		conn_conf = nullptr;
 		rel_conf = nullptr;
 		general_conf = nullptr;
+
+		loadPlugins();
 
 		// We extract the options values only if the help option is not present
 		if(args.size() > 1 && !args.contains(Help) && !args.contains(short_opts[Help]))
@@ -238,7 +249,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
 						throw Exception(tr("Value not specified for option `%1'.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					else if(!accepts_val && !value.isEmpty())
+
+					if(!accepts_val && !value.isEmpty())
 						throw Exception(tr("Option `%1' does not accept values.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					/* If we find a filter object parameter we append its parameter index so
@@ -338,6 +350,12 @@ PgModelerCliApp::~PgModelerCliApp()
 	if(general_conf)
 		delete general_conf;
 
+	while(!plugins.empty())
+	{
+		delete plugins.back();
+		plugins.pop_back();
+	}
+
 	if(show_flush_msg)
 		printMessage(tr("Done!"));
 }
@@ -351,6 +369,33 @@ void PgModelerCliApp::printMessage(const QString &txt)
 {
 	if(!silent_mode)
 		printText(txt);
+}
+
+attribs_map PgModelerCliApp::getParsedOptions()
+{
+	return parsed_opts;
+}
+
+QString PgModelerCliApp::getParsedOptValue(const QString &opt)
+{
+	if(parsed_opts.count(opt) == 0)
+	{
+		throw Exception(tr("Trying to retrieve the value of unknown parsed option `%1'!").arg(opt),
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	return parsed_opts[opt];
+}
+
+void PgModelerCliApp::setParsedOptValue(const QString &opt, const QString &value)
+{
+	if(parsed_opts.count(opt) == 0)
+	{
+		throw Exception(tr("Trying to set the value of unknown parsed option `%1'!").arg(opt),
+										 ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	parsed_opts[opt] = value;
 }
 
 void PgModelerCliApp::configureConnection(bool extra_conn)
@@ -380,7 +425,7 @@ void PgModelerCliApp::configureConnection(bool extra_conn)
 
 bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 {
-	bool found=false, append_chr = false;
+	bool found = false, append_chr = false;
 
 	if(op.endsWith('1'))
 	{
@@ -390,8 +435,8 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 
 	for(auto &itr : short_opts)
 	{
-		found=(op==itr.first || op==itr.second);
-		accepts_val=(found && long_opts[itr.first]);
+		found = (op == itr.first || op == itr.second);
+		accepts_val = (found && long_opts[itr.first]);
 
 		if(found)
 		{
@@ -400,7 +445,9 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 		}
 	}
 
-	if(append_chr) op += '1';
+	if(append_chr)
+		op += '1';
+
 	return found;
 }
 
@@ -490,7 +537,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t    Imports built-in system objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs));
 	printText(tr("  %1, %2\t    Imports extension objects. This option causes the model to bloat due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs));
 	printText(tr("  %1, %2\t    Use objects comments as aliases. This option is takes effect on objects graphically represented in the database model.").arg(short_opts[CommentsAsAliases]).arg(CommentsAsAliases));
-	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
+	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER must be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
 	printText(tr("  %1, %2\t\t    Makes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
 	printText(tr("  %1, %2\t\t    Makes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
 	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
@@ -532,6 +579,29 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 \t\t    Copies only missing configuration files to the user's local storage.").arg(short_opts[MissingOnly]).arg(MissingOnly));
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
+
+	printText(tr("Plug-ins options: "));
+	printText(tr("  %1, %2 \t    Discard plug-ins that failed to be loaded preventing the CLI from being aborted due to faulty plug-ins.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("  %1, %2 \t\t    List the available plug-ins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText();
+
+	// Displaying loaded plugin's options
+	attribs_map p_short_opts, p_opts_desc;
+	std::map<QString, bool> p_long_opts;
+
+	for(auto &plugin : plugins)
+	{
+		p_short_opts = plugin->getShortOptions();
+		p_long_opts =  plugin->getLongOptions();
+		p_opts_desc = plugin->getOptsDescription();
+
+		printText(tr("%1 options: ").arg(plugin->getPluginTitle()));
+
+		for(auto &itr : p_opts_desc)
+			printText(QString("  %1, %2 \t\t    %3").arg(p_short_opts[itr.first], itr.first, itr.second));
+
+		printText();
+	}
 
 	printText();
 	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
@@ -597,6 +667,16 @@ void PgModelerCliApp::showMenu()
 	printText(tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above."));
 	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
 	printText();
+
+	if(!plugin_load_errors.isEmpty())
+	{
+		printText();
+		printText("**");
+		printText(tr("** WARNING: Failed to retrieve available plug-ins' options due to one or more errors!"));
+		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get detailed info about the error(s).").arg(ListPlugins));
+		printText("**");
+		printText();
+	}
 }
 
 void PgModelerCliApp::listConnections()
@@ -610,6 +690,7 @@ void PgModelerCliApp::listConnections()
 		unsigned id=0;
 
 		printText(tr("Available connections (alias : connection string)"));
+		printText();
 
 		while(itr != connections.end())
 		{
@@ -617,9 +698,9 @@ void PgModelerCliApp::listConnections()
 								itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder));
 			itr++;
 		}
-
-		printText();
 	}
+
+	printText();
 }
 
 void PgModelerCliApp::parseOptions(attribs_map &opts)
@@ -657,14 +738,22 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 	else
 	{
 		QString curr_op_mode;
-		int exp_mode_cnt = 0, other_modes_cnt = 0;
-		bool fix_model = (opts.count(FixModel) > 0),
-				upd_mime = (opts.count(DbmMimeType) > 0),
-				import_db = (opts.count(ImportDb) > 0),
-				diff = (opts.count(Diff) > 0),
-				create_configs= (opts.count(CreateConfigs) > 0),
-				list_conns = (opts.count(ListConns) > 0),
-				export_dbms = (opts.count(ExportToDbms) > 0);
+		int exp_mode_cnt = 0, other_modes_cnt = 0, plugin_modes_cnt = 0;
+
+		bool export_dbms = (opts.count(ExportToDbms) > 0),
+				export_file = (opts.count(ExportToFile) > 0);
+
+		fix_model = (opts.count(FixModel) > 0);
+		upd_mime = (opts.count(DbmMimeType) > 0);
+		import_db = (opts.count(ImportDb) > 0);
+		diff = (opts.count(Diff) > 0);
+		create_configs= (opts.count(CreateConfigs) > 0);
+		list_conns = (opts.count(ListConns) > 0);
+		list_plugins = (opts.count(ListPlugins) > 0);
+		plugin_op = false;
+		export_op = false;
+
+		plugin_modes_cnt = definePluginsExecOrder(opts);
 
 		for(auto &itr : accepted_opts)
 		{
@@ -678,49 +767,57 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 				if(itr.first == ExportToFile || itr.first == ExportToPng ||
 					 itr.first == ExportToSvg || itr.first == ExportToDbms ||
 					 itr.first == ExportToDict)
+				{
 					exp_mode_cnt++;
+					export_op = true;
+				}
 				else
 					other_modes_cnt++;
 			}
 		}
 
-		if(opts.count(ZoomFactor))
-			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
+		plugin_op = (plugin_modes_cnt > 0);
 
-		if(other_modes_cnt==0 && exp_mode_cnt==0)
+		if(opts.count(ZoomFactor))
+			zoom = opts[ZoomFactor].toDouble()/static_cast<double>(100);
+
+		if(other_modes_cnt == 0 && exp_mode_cnt == 0)
 			throw Exception(tr("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if((exp_mode_cnt > 0 && (fix_model || upd_mime || import_db || diff || create_configs || list_conns)) || (exp_mode_cnt==0 && other_modes_cnt > 1))
+		if((exp_mode_cnt > 0 && (fix_model || upd_mime || import_db || diff || create_configs || list_conns || list_plugins)) ||
+			 (exp_mode_cnt == 0 && other_modes_cnt > 1))
 			throw Exception(tr("Multiple operation modes were specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
+		if(!fix_model && !upd_mime && !plugin_op && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export modes were specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!list_conns && !upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
+		if(!plugin_op && !list_conns && !list_plugins && !upd_mime && !import_db &&
+			 !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && !opts.count(InputDb))
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !list_conns && !diff && !create_configs && !opts.count(Output))
+		if(!plugin_op && !export_dbms && !upd_mime && !list_conns &&
+			 !list_plugins && !diff && !create_configs && !opts.count(Output))
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
-			 opts.count(Input) && opts.count(Output) &&
+		if(!export_dbms && !upd_mime && !import_db && !list_conns && !list_plugins &&
+			 !create_configs && opts.count(Input) && opts.count(Output) &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(tr("The input file must be different from the output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
+		if(export_dbms && !opts.count(ConnAlias) &&
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
 			throw Exception(tr("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(opts.count(ExportToDbms) && opts.count(Force) && !opts.count(DropDatabase))
+		if(export_dbms && opts.count(Force) && !opts.count(DropDatabase))
 			throw Exception(tr("The option `%1' must be used only with `%2' when exporting to DBMS!").arg(Force).arg(DropDatabase), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
+		if(upd_mime && opts[DbmMimeType] != Install && opts[DbmMimeType] != Uninstall)
 			throw Exception(tr("Invalid action specified to mime type update option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(create_configs && opts.count(Force) && opts.count(MissingOnly))
@@ -728,7 +825,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		if(opts.count(DependenciesSql) || opts.count(ChildrenSql))
 		{
-			if(!opts.count(ExportToFile) || (opts.count(ExportToFile) && !opts.count(Split)))
+			if(!export_file || (export_file && !opts.count(Split)))
 				throw Exception(tr("The options `%1' and `%2' must be used together with the split mode option `%3'!").arg(DependenciesSql, ChildrenSql, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			else if(opts.count(DependenciesSql) && opts.count(ChildrenSql))
 				throw Exception(tr("The options `%1' and `%2' can't be used at the same time!").arg(DependenciesSql, ChildrenSql), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -796,10 +893,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
 		if(opts.count(Input))
-			opts[Input]=QFileInfo(opts[Input]).absoluteFilePath();
+			opts[Input] = QFileInfo(opts[Input]).absoluteFilePath();
 
 		if(opts.count(Output))
-			opts[Output]=QFileInfo(opts[Output]).absoluteFilePath();
+			opts[Output] = QFileInfo(opts[Output]).absoluteFilePath();
 
 		/* Special treatment for filter parameters:
 		 * Since it can be specified several filter parameter we need to join
@@ -856,27 +953,38 @@ int PgModelerCliApp::exec()
 		{
 			showVersionInfo();
 
-			if(parsed_opts.count(ListConns))
+			if(list_conns)
 				listConnections();
-			else if(parsed_opts.count(FixModel))
-				fixModel();
-			else if(parsed_opts.count(DbmMimeType))
-				updateMimeType();
-			else if(parsed_opts.count(CreateConfigs))
-				createConfigurations();
-			else if(parsed_opts.count(ImportDb))
-				importDatabase();
-			else if(parsed_opts.count(Diff))
-				diffModelDatabase();
+			else if(list_plugins)
+				listPlugins();
 			else
-				exportModel();
+			{
+				runPluginsPreOperations();
+
+				if(fix_model)
+					fixModel();
+				else if(upd_mime)
+					updateMimeType();
+				else if(create_configs)
+					createConfigurations();
+				else if(import_db)
+					importDatabase();
+				else if(diff)
+					diffModelDatabase();
+				else if(export_op)
+					exportModel();
+				else
+					runPluginsOperations();
+
+				runPluginsPostOperations();
+			}
 		}
 
 		return 0;
 	}
 	catch(Exception &e)
 	{
-		throw e;
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -941,7 +1049,6 @@ void PgModelerCliApp::handleObjectAddition(BaseObject *object)
 	}
 }
 
-
 void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
@@ -955,7 +1062,6 @@ void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
-
 
 void PgModelerCliApp::extractObjectXML()
 {
@@ -2495,5 +2601,314 @@ void PgModelerCliApp::createConfigurations()
 	catch (Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void PgModelerCliApp::loadPlugins()
+{
+	std::vector<Exception> errors;
+	QString lib,
+			dir_plugins = GlobalAttributes::getPluginsPath() +
+										GlobalAttributes::DirSeparator;
+	QPluginLoader plugin_loader;
+	QStringList dir_list;
+	PgModelerCliPlugin *plugin = nullptr;
+	QFileInfo fi;
+	attribs_map p_short_opts;
+	std::map<QString, bool> p_long_opts;
+
+	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
+	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
+
+	/* Configures an QDir instance to list only directories on the plugins/ subdir.
+		If the user does not put the plugin in it's directory the file is ignored  */
+	dir_list = QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+
+	/* Removing the "schemas" dir from the list since it is reserved to shared schema files
+	 * for configuration file generation */
+	dir_list.removeAll(GlobalAttributes::SchemasDir);
+
+	for(auto &plugin_name : dir_list)
+	{
+		/* Configures the basic path to the library on the form:
+		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
+		#ifdef Q_OS_WIN
+				lib = dir_plugins + plugin_name +
+							GlobalAttributes::DirSeparator  +
+							plugin_name + ".dll";
+		#else
+			#ifdef Q_OS_MAC
+					lib = dir_plugins + plugin_name +
+								GlobalAttributes::DirSeparator  +
+								"lib" + plugin_name + ".dylib";
+			#else
+					lib = dir_plugins + plugin_name +
+								GlobalAttributes::DirSeparator  +
+								"lib" + plugin_name + ".so";
+			#endif
+		#endif
+
+		//Try to load the library
+		plugin_loader.setFileName(lib);
+
+		if(plugin_loader.load())
+		{
+			plugin = qobject_cast<PgModelerCliPlugin *>(plugin_loader.instance());
+
+			/* If the plugin was loaded but couldn't be cast to PgModelerPlugin it means that
+			 * the plugin is a GUI plugin (PgModelerPlugin) which is incompatible with
+			 * plugins made for CLI, so we just discard it. */
+			if(!plugin)
+			{
+				plugin_loader.unload();
+				continue;
+			}
+
+			if(!isPluginOptsValid(plugin))
+			{
+				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																	 .arg(plugin_name, lib, tr("The plug-in contains a list of options that are either malformed or that conflict with the pgmodeler-cli default options!")),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
+			}
+			else if(plugin->getOperationId() != PgModelerCliPlugin::CustomCliOp &&
+							!plugin->getOpModeOptions().isEmpty())
+			{
+				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																	 .arg(plugin_name, lib, tr("The plug-in doesn't implement a custom CLI operation but has a list of operation modes defined!")),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
+			}
+			else if(plugin->getOperationId() == PgModelerCliPlugin::CustomCliOp &&
+							plugin->getOpModeOptions().isEmpty())
+			{
+				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																	 .arg(plugin_name, lib, tr("The plug-in implements a custom CLI operation but doesn't specify a list of operation modes!")),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
+			}
+			else
+			{
+				fi.setFile(lib);
+				plugin->initPlugin(this);
+				plugin->setLibraryName(fi.fileName());
+				plugin->setPluginName(plugin_name);
+				plugins.push_back(plugin);
+
+				p_short_opts = plugin->getShortOptions();
+				p_long_opts = plugin->getLongOptions();
+
+				short_opts.insert(p_short_opts.begin(), p_short_opts.end());
+				long_opts.insert(p_long_opts.begin(), p_long_opts.end());
+			}
+		}
+		else if(!parsed_opts.count(IgnoreFaultyPlugins))
+		{
+			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																 .arg(plugin_name, lib, plugin_loader.errorString()),
+																	 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__,
+																	 nullptr, tr("Plug-in id: %1").arg(plugin_name)));
+		}
+	}
+
+	if(!errors.empty())
+	{
+		plugin_load_errors = Exception(Exception::getErrorMessage(ErrorCode::PluginsNotLoaded) + " " +
+																	 tr("HINT: you can use the option `%1' to disable the faulty plug-in(s).").arg(IgnoreFaultyPlugins),
+																	 ErrorCode::PluginsNotLoaded,
+																	 __PRETTY_FUNCTION__, __FILE__, __LINE__, errors).getExceptionsText();
+	}
+}
+
+void PgModelerCliApp::listPlugins()
+{
+	if(plugins.empty())
+	{
+		printText(tr("There are no loaded plug-ins."));
+		printText();
+	}
+	else
+	{
+		printText(tr("Available plug-ins:"));
+		printText();
+
+		for(auto &plugin : plugins)
+		{
+			printText(QString("* Id     : %1").arg(plugin->getPluginName()));
+			printText(QString("* Name   : %1").arg(plugin->getPluginTitle()));
+			printText(QString("* Version: %1").arg(plugin->getPluginVersion()));
+			printText(QString("* Library: %1").arg(plugin->getLibraryName()));
+			printText(QString("* Author : %1").arg(plugin->getPluginAuthor()));
+			printText(QString("* %1").arg(plugin->getPluginDescription()));
+			printText();
+		}
+	}
+
+	if(!plugin_load_errors.isEmpty())
+	{
+		printText("** Plug-ins loading errors:");
+		printText();
+		printText(plugin_load_errors);
+	}
+}
+
+bool PgModelerCliApp::isPluginOptsValid(const PgModelerCliPlugin *plugin)
+{
+	QString opt;
+	QRegularExpression s_opt_rx("^\\-(\\w){1,3}$"),
+			l_opt_rx("^\\-\\-(\\w|\\-)+$");
+	attribs_map s_opts = plugin->getShortOptions();
+	std::map<QString, bool> l_opts = plugin->getLongOptions();
+	QStringList op_mode_opts = plugin->getOpModeOptions();
+
+	/* Short options must start with an dash (-) and
+	 * contain no more than alphanumeric characters */
+	for(auto &itr : s_opts)
+	{
+		opt = itr.second.trimmed();
+
+		if(!opt.contains(s_opt_rx))
+			return false;
+
+		// Validates if the option conflicts with the original CLI list of short options
+		for(auto &s_itr : short_opts)
+		{
+			if(s_itr.second == opt)
+				return false;
+		}
+	}
+
+	/* Long options must start with two dashes (--) and
+	 * contain a free number of alphanumeric characters */
+	for(auto &itr : l_opts)
+	{
+		opt = itr.first.trimmed();
+
+		if(!opt.contains(l_opt_rx))
+			return false;
+
+		// Validates if the option conflicts with the original CLI list of long options
+		if(long_opts.count(opt))
+			return false;
+	}
+
+	/* Validate if the long options keys are compatible with
+	 * short options keys. */
+	for(auto &itr : l_opts)
+	{
+		if(!s_opts.count(itr.first))
+			return false;
+	}
+
+	/* Validate if the options used to trigger the main plugin operation
+	 * exists in the short options */
+	for(auto &opt : op_mode_opts)
+	{
+		if(!s_opts.count(opt))
+			return false;
+	}
+
+	return true;
+}
+
+int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
+{
+	int plug_op_modes = 0;
+	PgModelerCliPlugin::OperationId op_id;
+	QString acc_op_key;
+
+	QStringList export_opts = {
+		ExportToFile, ExportToPng, ExportToSvg,
+		ExportToDbms, ExportToDict
+	};
+
+	std::map<PgModelerCliPlugin::OperationId, QString> cli_op = {
+		{ PgModelerCliPlugin::ExportToFile, ExportToFile},
+		{ PgModelerCliPlugin::ExportToPng, ExportToPng },
+		{ PgModelerCliPlugin::ExportToSvg, ExportToSvg },
+		{ PgModelerCliPlugin::ExportToDbms, ExportToDbms },
+		{ PgModelerCliPlugin::ExportToDict, ExportToDict },
+		{ PgModelerCliPlugin::ImportDb, ImportDb },
+		{ PgModelerCliPlugin::Diff, Diff },
+		{ PgModelerCliPlugin::FixModel, FixModel },
+		{ PgModelerCliPlugin::CreateConfigs, CreateConfigs }
+	};
+
+	for(auto &opt : opts)
+	{
+		for(auto &plugin : plugins)
+		{
+			if(plugin->isValidOption(opt.first) && !plug_exec_order.contains(plugin))
+				plug_exec_order.append(plugin);
+
+			op_id = plugin->getOperationId();
+
+			if(op_id == PgModelerCliPlugin::CustomCliOp &&
+					plugin->getOpModeOptions().contains(opt.first) && !accepted_opts.count(opt.first))
+			{
+				acc_op_key = opt.first;
+				plug_op_modes++;
+			}
+			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt.first))
+				acc_op_key = opt.first;
+			else if(cli_op.count(op_id))
+				acc_op_key = cli_op[op_id];
+
+			for(auto &l_opt : plugin->getLongOptions())
+			{
+				accepted_opts[acc_op_key].append(l_opt.first);
+				accepted_opts[acc_op_key].append(IgnoreFaultyPlugins);
+			}
+		}
+	}
+
+	return plug_op_modes;
+}
+
+void PgModelerCliApp::runPluginsPreOperations()
+{
+	for(auto &plugin : plug_exec_order)
+	{
+		try
+		{
+			plugin->runPreOperation();
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
+											tr("Plug-in id:").arg(plugin->getPluginName()));
+		}
+	}
+}
+
+void PgModelerCliApp::runPluginsOperations()
+{
+	for(auto &plugin : plug_exec_order)
+	{
+		try
+		{
+			plugin->runOperation();
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
+											tr("Plug-in id:").arg(plugin->getPluginName()));
+		}
+	}
+}
+
+void PgModelerCliApp::runPluginsPostOperations()
+{
+	for(auto &plugin : plug_exec_order)
+	{
+		try
+		{
+			plugin->runPostOperation();
+		}
+		catch(Exception &e)
+		{
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
+											tr("Plug-in id:").arg(plugin->getPluginName()));
+		}
 	}
 }

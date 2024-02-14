@@ -18,15 +18,16 @@
 
 /**
 \ingroup libgui
-\class PgModelerPlugin
+\class PgModelerGuiPlugin
 \brief Implements the basic operations to create third party plugins based upon shared libraries.
 */
 
-#ifndef PGMODELER_PLUGIN_H
-#define PGMODELER_PLUGIN_H
+#ifndef PGMODELER_GUI_PLUGIN_H
+#define PGMODELER_GUI_PLUGIN_H
 
 #include "widgets/modelwidget.h"
 #include "baseform.h"
+#include "pgmodelerplugin.h"
 
 #if defined(PRIVATE_PLUGINS_SYMBOLS)
 	#include "privpluginsns.h"
@@ -64,29 +65,13 @@
 class MainWindow;
 class PluginsConfigWidget;
 
-class __libgui PgModelerPlugin {
+class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 	private:
-		QString libname,
-
-		plugin_name;
-
 		QLabel	*icon_lbl,
 		*title_lbl,
 		*author_lbl,
 		*version_lbl,
 		*description_lbl;
-
-		//! \brief Defines the name of the library from where the plugin is being loaded
-		void setLibraryName(const QString &lib);
-
-		//! \brief Defines the name of plugin itself. In practical terms, it's the plugin's root folder name
-		void setPluginName(const QString &name);
-
-		/*! \brief This method returns a full path to a file using the plugin's name as the root folder.
-		 * If both subdir and filename are empty, only the root path is returned [root-path]/[plugin-name]
-		 * If subdir is empty and filename not then a path in the format [root-path]/[plugin-name]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [root-path]/[plugin-name]/subdir/filename is returned. */
-		QString getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const;
 
 	protected:
 		BaseForm *plugin_info_frm;
@@ -122,9 +107,9 @@ class __libgui PgModelerPlugin {
 			OtherAction
 		};
 
-		PgModelerPlugin();
+		PgModelerGuiPlugin();
 
-		virtual ~PgModelerPlugin();
+		virtual ~PgModelerGuiPlugin();
 
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
 		virtual QString getPluginTitle(void) const = 0;
@@ -147,28 +132,8 @@ class __libgui PgModelerPlugin {
 		//! \brief Returns the tool button inserted in database explorer instances
 		virtual QToolButton *getToolButton() const = 0;
 
-		//! \brief Returns the name of the library of the plugin
-		QString getLibraryName() const;
-
-		//! \brief Returns the name of the plugin
-		QString getPluginName() const;
-
 		//! \brief Returns the path to a plugin icon in the plugin's qrc file
 		QString getPluginIcon(const QString &icon_name) const;
-
-		/*! \brief This method mimics the behavior of GlobalAttributes::getConfigurationFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's root directory.
-		 * If both subdir and filename are empty, only the full path to the plugin's root directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-root]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-root]/subdir/filename is returned. */
-		QString getPluginFilePath(const QString &subdir, const QString &filename) const;
-
-		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigurationFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's template confs directory.
-		 * If both subdir and filename are empty, only the full path to the plugin's template confs directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-tmpl-conf]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-tmpl-conf]/subdir/filename is returned. */
-		QString getTmplPluginFilePath(const QString &subdir, const QString &filename) const;
 
 		friend class PluginsConfigWidget;
 };
@@ -176,6 +141,6 @@ class __libgui PgModelerPlugin {
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base
 	 for plugin implementation. All plugin must inherit this class and use the Q_INTERFACE
 	 directive in its declaration  */
-Q_DECLARE_INTERFACE(PgModelerPlugin,"io.pgmodeler.PgModelerPlugin")
+Q_DECLARE_INTERFACE(PgModelerGuiPlugin, "io.pgmodeler.PgModelerGuiPlugin")
 
 #endif

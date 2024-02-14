@@ -27,7 +27,6 @@ together with CompatNs::View to convert views in older models to the new format 
 #ifndef COMPAT_REFERENCE_H
 #define COMPAT_REFERENCE_H
 
-#include "coreglobal.h"
 #include "simplecolumn.h"
 #include "physicaltable.h"
 

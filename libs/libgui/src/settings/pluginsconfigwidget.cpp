@@ -63,12 +63,12 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 void PluginsConfigWidget::loadConfiguration()
 {
 	std::vector<Exception> errors;
-	QString lib, plugin_name,
+	QString lib,
 			dir_plugins=GlobalAttributes::getPluginsPath() +
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
-	PgModelerPlugin *plugin=nullptr;
+	PgModelerGuiPlugin *plugin = nullptr;
 	QFileInfo fi;
 	unsigned row = 0;
 
@@ -77,33 +77,30 @@ void PluginsConfigWidget::loadConfiguration()
 
 	/* Configures an QDir instance to list only directories on the plugins/ subdir.
 		If the user does not put the plugin in it's directory the file is ignored  */
-	dir_list=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+	dir_list = QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	/* Removing the "schemas" dir from the list since it is reserved to shared schema files
 	 * for configuration file generation */
 	dir_list.removeAll(GlobalAttributes::SchemasDir);
 
-	while(!dir_list.isEmpty())
+	for(auto &plugin_name : dir_list)
 	{
-		plugin_name=dir_list.front();
-
 		/* Configures the basic path to the library on the form:
-
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 #ifdef Q_OS_WIN
-		lib=dir_plugins + plugin_name +
-            GlobalAttributes::DirSeparator  +
-			plugin_name + ".dll";
+		lib = dir_plugins + plugin_name +
+					GlobalAttributes::DirSeparator  +
+					plugin_name + ".dll";
 #else
-#ifdef Q_OS_MAC
-		lib=dir_plugins + plugin_name +
-            GlobalAttributes::DirSeparator  +
-			"lib" + plugin_name + ".dylib";
-#else
-		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DirSeparator  +
-			"lib" + plugin_name + ".so";
-#endif
+	#ifdef Q_OS_MAC
+			lib = dir_plugins + plugin_name +
+						GlobalAttributes::DirSeparator  +
+						"lib" + plugin_name + ".dylib";
+	#else
+			lib = dir_plugins + plugin_name +
+						GlobalAttributes::DirSeparator  +
+						"lib" + plugin_name + ".so";
+	#endif
 #endif
 
 		//Try to load the library
@@ -111,10 +108,19 @@ void PluginsConfigWidget::loadConfiguration()
 
 		if(plugin_loader.load())
 		{
-			fi.setFile(lib);
+			plugin = qobject_cast<PgModelerGuiPlugin *>(plugin_loader.instance());
+
+			/* If the plugin was loaded but couldnt be cas't to PgModelerPlugin it means that
+			 * the plugin is a CLI plugin (PgModelerCliPlugin) which is incompatible with
+			 * plugins made for GUI, so we just discard it. */
+			if(!plugin)
+			{
+				plugin_loader.unload();
+				continue;
+			}
 
 			//Inserts the loaded plugin on the vector
-			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
+			fi.setFile(lib);
 			plugin->setLibraryName(fi.fileName());
 			plugin->setPluginName(plugin_name);
 			plugins.push_back(plugin);
@@ -124,21 +130,17 @@ void PluginsConfigWidget::loadConfiguration()
 			plugins_tab->setCellIcon(QIcon(plugin->getPluginIcon(plugin_name)), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
 			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
-			plugins_tab->setRowData(
-							QVariant::fromValue<void *>(plugin),
-							row++
-						);
+			plugins_tab->setRowData(QVariant::fromValue<void *>(plugin), row++);
 		}
 		else
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
-																 .arg(dir_list.front())
+																 .arg(plugin_name)
 																 .arg(lib)
 																 .arg(plugin_loader.errorString()),
 																 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 
-		dir_list.pop_front();
 		plugins_tab->clearSelection();
 		plugins_tab->adjustColumnToContents(0);
 	}
@@ -149,7 +151,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
-	std::vector<PgModelerPlugin *> inv_plugins;
+	std::vector<PgModelerGuiPlugin *> inv_plugins;
 	std::vector<Exception> errors;
 	int row_idx = -1;
 
@@ -217,8 +219,8 @@ QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
 
 	for(auto &plugin : plugins)
 	{
-		if(plugin->getAction(PgModelerPlugin::ModelAction))
-			list.append(plugin->getAction(PgModelerPlugin::ModelAction));
+		if(plugin->getAction(PgModelerGuiPlugin::ModelAction))
+			list.append(plugin->getAction(PgModelerGuiPlugin::ModelAction));
 	}
 
 	return list;
@@ -228,11 +230,11 @@ void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction 
 {
 	for(auto &plugin : plugins)
 	{
-		if(conf_menu && plugin->getAction(PgModelerPlugin::ConfigAction))
-			conf_menu->addAction(plugin->getAction(PgModelerPlugin::ConfigAction));
+		if(conf_menu && plugin->getAction(PgModelerGuiPlugin::ConfigAction))
+			conf_menu->addAction(plugin->getAction(PgModelerGuiPlugin::ConfigAction));
 
-		if(plugin->getAction(PgModelerPlugin::ToolbarAction))
-			tb_actions.append(plugin->getAction(PgModelerPlugin::ToolbarAction));
+		if(plugin->getAction(PgModelerGuiPlugin::ToolbarAction))
+			tb_actions.append(plugin->getAction(PgModelerGuiPlugin::ToolbarAction));
 
 		if(plugin->getToolButton())
 			db_expl_btns.append(plugin->getToolButton());

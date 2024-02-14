@@ -47,6 +47,8 @@ int main(int argc, char **argv)
 		PgModelerCliApp pgmodeler_cli(argc, argv);
 		pgmodeler_cli.loadTranslation(QLocale::system().name());
 
+		#warning "TODO: Load plugin's translations"
+
 		//Executes the cli
 		return pgmodeler_cli.exec();
 	}

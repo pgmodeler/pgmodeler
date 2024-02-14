@@ -25,8 +25,6 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	 * If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler) */
 	if(!arguments().contains("-style"))
 		setStyle(GlobalAttributes::DefaultQtStyle);
-
-	//GlobalAttributes::setSearchPath(this->applicationDirPath());
 }
 
 bool Application::loadTranslation(const QString &lang_id, const QString &directory)

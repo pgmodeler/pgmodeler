@@ -17,9 +17,9 @@
 */
 
 /**
-\ingroup pgmodeler-cli
+\ingroup libcli
 \class PgModelerCliApp
-\brief Implements the operations export models whitout use the graphical interface
+\brief Implements a set of operations that can be used without the graphical interface
 */
 
 #ifndef PGMODELER_CLI_APP_H
@@ -36,8 +36,9 @@
 #include "settings/generalconfigwidget.h"
 #include "tools/databaseimporthelper.h"
 #include "tools/modelsdiffhelper.h"
+#include "pgmodelercliplugin.h"
 
-class PgModelerCliApp: public Application {
+class __libcli PgModelerCliApp: public Application {
 	private:
 		Q_OBJECT
 
@@ -45,7 +46,16 @@ class PgModelerCliApp: public Application {
 
 		qint64 buffer_size;
 
-		bool has_fix_log;
+		bool has_fix_log,
+		fix_model,
+		upd_mime,
+		import_db,
+		diff,
+		create_configs,
+		list_conns,
+		list_plugins,
+		plugin_op,
+		export_op;
 
 		//! \brief Holds the pgModeler version in which the model was construted (used by the fix operation)
 		QString model_version;
@@ -82,6 +92,9 @@ class PgModelerCliApp: public Application {
 
 		GeneralConfigWidget *general_conf;
 
+		//! \brief Stores the instances of loaded plugins
+		QList<PgModelerCliPlugin *> plugins, plug_exec_order;
+
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;
 
@@ -99,6 +112,9 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Indicates if the cli must run in silent mode
 		bool silent_mode;
+
+		//! \brief Store the error stack related to plugins loading
+		QString plugin_load_errors;
 
 		//! \brief Stores the xml code for the objects being fixed
 		QStringList objs_xml,
@@ -123,8 +139,77 @@ class PgModelerCliApp: public Application {
 		QString changelog;
 
 		static const QRegularExpression PasswordRegExp;
+
 		static const QString PasswordPlaceholder;
 
+		//! \brief Parsers the options and executes the action specified by them
+		void parseOptions(attribs_map &parsed_opts);
+
+		//! \brief Returns if the specified options exists on short options map
+		bool isOptionRecognized(QString &op, bool &accepts_val);
+
+		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
+		void loadModel();
+
+		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
+		in order to be parsed by the recreateObjects() method */
+		void extractObjectXML();
+
+		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
+		void recreateObjects();
+
+		//! \brief Fix some xml attributes and remove unused tags
+		void fixObjectAttributes(QString &obj_xml);
+
+		/*! \brief Extracts the foreign key code for the specified table xml. The foreign keys
+		are recreated after all the other objects */
+		QStringList extractForeignKeys(QString &obj_xml);
+
+		//! \brief Returns if the specified string contains some of relationship attributes
+		bool containsRelAttributes(const QString &str);
+
+		/*! \brief Install the .dbm file association in the mime database (default behaviour).
+		The paramenter 'uninstall' is used to clean up any file association done previously. */
+		void handleMimeDatabase(bool uninstall, bool system_wide, bool force);
+
+		/*! \brief Fixes the references to opertor classes and families by replacing tags like
+		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
+		only over operator classes, indexes and constraints */
+		void fixOpClassesFamiliesReferences(QString &obj_xml);
+
+		void fixModel();
+		void exportModel();
+		void importDatabase();
+		void diffModelDatabase();
+		void updateMimeType();
+		void configureConnection(bool extra_conn);
+		void importDatabase(DatabaseModel *model, Connection conn);
+
+		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
+		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
+		void createConfigurations();
+		void listConnections();
+		void loadPlugins();
+		void listPlugins();
+		bool isPluginOptsValid(const PgModelerCliPlugin *plugin);
+
+		/*! \brief Determines the execution order of the plugins by reading the
+		 *  list of options provided. This method also returns the number of
+		 *  plugins that are set to run custom CLI operations (standalone). */
+		int definePluginsExecOrder(const attribs_map &opts);
+
+		//! \brief Execute all activated plugins pre operations
+		void runPluginsPreOperations();
+
+		//! \brief Execute all activated plugins custom operations
+		void runPluginsOperations();
+
+		//! \brief Execute all activated plugins post operations
+		void runPluginsPostOperations();
+
+		int exec();
+
+	public:
 		//! \brief Option names constants
 		static const QString Input,
 		Output,
@@ -201,6 +286,9 @@ class PgModelerCliApp: public Application {
 		CreateConfigs,
 		MissingOnly,
 
+		IgnoreFaultyPlugins,
+		ListPlugins,
+
 		TagExpr,
 		EndTagExpr,
 		AttributeExpr,
@@ -209,54 +297,15 @@ class PgModelerCliApp: public Application {
 		MsgNoFileAssociation,
 		ModelFixLog;
 
-		//! \brief Parsers the options and executes the action specified by them
-		void parseOptions(attribs_map &parsed_opts);
+		PgModelerCliApp(int argc, char **argv);
+
+		virtual ~PgModelerCliApp();
 
 		//! \brief Shows the options menu
 		void showMenu();
 
-		//! \brief Shows the version info
+					 //! \brief Shows the version info
 		void showVersionInfo();
-
-		//! \brief Returns if the specified options exists on short options map
-		bool isOptionRecognized(QString &op, bool &accepts_val);
-
-		//! \brief Loads the input model and perform all tasks needed to configure the graphical objects
-		void loadModel();
-
-		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
-		in order to be parsed by the recreateObjects() method */
-		void extractObjectXML();
-
-		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
-		void recreateObjects();
-
-		//! \brief Fix some xml attributes and remove unused tags
-		void fixObjectAttributes(QString &obj_xml);
-
-		/*! \brief Extracts the foreign key code for the specified table xml. The foreign keys
-		are recreated after all the other objects */
-		QStringList extractForeignKeys(QString &obj_xml);
-
-		//! \brief Returns if the specified string contains some of relationship attributes
-		bool containsRelAttributes(const QString &str);
-
-		/*! \brief Install the .dbm file association in the mime database (default behaviour).
-		The paramenter 'uninstall' is used to clean up any file association done previously. */
-		void handleMimeDatabase(bool uninstall, bool system_wide, bool force);
-
-		/*! \brief Fixes the references to opertor classes and families by replacing tags like
-		<opclass name="name"/> by <opclass signature="name USING index_method"/>. This method operates
-		only over operator classes, indexes and constraints */
-		void fixOpClassesFamiliesReferences(QString &obj_xml);
-
-		void fixModel();
-		void exportModel();
-		void importDatabase();
-		void diffModelDatabase();
-		void updateMimeType();
-		void configureConnection(bool extra_conn);
-		void importDatabase(DatabaseModel *model, Connection conn);
 
 		/*! \brief Prints to the stdout the provided text appending a \n on the string
 		 * even if the silent mode is active. */
@@ -265,21 +314,27 @@ class PgModelerCliApp: public Application {
 		//! \brief Prints to the stdout only if the silent mode is not active
 		void printMessage(const QString &txt = "");
 
-		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
-		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
-		void createConfigurations();
-		void listConnections();
+		//! \brief Returns the options parsed when calling the application
+		attribs_map getParsedOptions();
 
-	public:
-		PgModelerCliApp(int argc, char **argv);
-		virtual ~PgModelerCliApp();
-		int exec();
+		//! \brief Returns a single parsed option value
+		QString getParsedOptValue(const QString &opt);
+
+		//! \brief Replaces the value of a single parsed option
+		void setParsedOptValue(const QString &opt, const QString &value);
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
 		void updateProgress(int progress, QString msg, ObjectType = ObjectType::BaseObject);
 		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
+
+		/* We main the main() a friend function of PgModelerCliApp just to
+		 * allow it to call exec() that is a private function.
+		 *
+		 * This will avoid the exec() method to be called from within
+		 * plugins which is not desirable. */
+		friend int main(int, char **);
 };
 
 #endif
