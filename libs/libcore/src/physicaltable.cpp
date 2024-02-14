@@ -1347,13 +1347,16 @@ void PhysicalTable::setGenerateAlterCmds(bool value)
 		 * SQL syntax errors */
 		setCodeInvalidated(true);
 		gen_alter_cmds = false;
+		updateAlterCmdsStatus();
 	}
 	else
-	{
-		setCodeInvalidated(gen_alter_cmds != value);
-		gen_alter_cmds = value;
-	}
+		__setGenerateAlterCmds(value);
+}
 
+void PhysicalTable::__setGenerateAlterCmds(bool value)
+{
+	setCodeInvalidated(gen_alter_cmds != value);
+	gen_alter_cmds = value;
 	updateAlterCmdsStatus();
 }
 

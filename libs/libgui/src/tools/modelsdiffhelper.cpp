@@ -1122,27 +1122,32 @@ QString ModelsDiffHelper::getSourceCode(BaseObject *object, bool drop_cmd)
 
 		/* For columns and constraints it is needed to force the generation of
 	   ALTER commands on the parent table */
-		if(tab_obj && (tab_obj->getObjectType()==ObjectType::Column || tab_obj->getObjectType()==ObjectType::Constraint))
+		if(tab_obj && (tab_obj->getObjectType() == ObjectType::Column || tab_obj->getObjectType() == ObjectType::Constraint))
 		{
 			bool gen_alter=false;
 			PhysicalTable *table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
 
-			gen_alter=table->isGenerateAlterCmds();
-			table->setGenerateAlterCmds(true);
+			gen_alter = table->isGenerateAlterCmds();
+
+			/* Using the method __setGenerateAlterCmds() instead of setGenerateAlterCmds()
+			 * because the first it doesn't check if the table is a partition/partitioned
+			 * table allowing the generation of ALTER...ADD commands for columns and constraints anyway.
+			 * This is needed for the proper generation of diffs for partitioned tables. */
+			table->__setGenerateAlterCmds(true);
 
 			if(drop_cmd)
-				cmd=tab_obj->getDropCode(diff_opts[OptCascadeMode]);
+				cmd = tab_obj->getDropCode(diff_opts[OptCascadeMode]);
 			else
-				cmd=tab_obj->getSourceCode(SchemaParser::SqlCode);
+				cmd = tab_obj->getSourceCode(SchemaParser::SqlCode);
 
-			table->setGenerateAlterCmds(gen_alter);
+			table->__setGenerateAlterCmds(gen_alter);
 		}
 		else
 		{
 			if(drop_cmd)
-				cmd=object->getDropCode(diff_opts[OptCascadeMode]);
+				cmd = object->getDropCode(diff_opts[OptCascadeMode]);
 			else
-				cmd=object->getSourceCode(SchemaParser::SqlCode);
+				cmd = object->getSourceCode(SchemaParser::SqlCode);
 		}
 
 		return cmd;
