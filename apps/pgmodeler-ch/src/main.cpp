@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 		GlobalAttributes::init(argv[0], true);
 		Application app(argc,argv);
 		QStringList args = app.arguments();
-		app.loadTranslation(QLocale::system().name());
+		app.loadTranslations(QLocale::system().name(), false);
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
 		GuiUtilsNs::resizeDialog(&crashhandler);

@@ -27,23 +27,47 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		setStyle(GlobalAttributes::DefaultQtStyle);
 }
 
-bool Application::loadTranslation(const QString &lang_id, const QString &directory)
+void Application::loadTranslation(const QString &lang_id, const QString &directory)
 {
-	if(lang_id.isEmpty())
-		return false;
+	if(lang_id.isEmpty() || !QFileInfo::exists(directory + GlobalAttributes::DirSeparator + lang_id + ".qm"))
+		return;
 
 	QTranslator *translator = new QTranslator(this);
 
 	/* Tries to load the ui translation according to the system's locale,
 	 * and in case of success install it in the application */
-	if(!translator->load(lang_id, directory) ||
-		 !installTranslator(translator))
-	{
+	if(!translator->load(lang_id, directory) || !installTranslator(translator))
 		delete(translator);
-		return false;
-	}
+}
 
-	return true;
+void Application::loadTranslations(const QString &lang_id, bool incl_plugins_tr)
+{
+	// Loading the main UI translations
+	loadTranslation(lang_id, GlobalAttributes::getLanguagesPath());
+
+	// Trying to load the plugins translations
+	if(incl_plugins_tr)
+	{
+		QStringList dir_list = QDir(GlobalAttributes::getPluginsPath() +
+																GlobalAttributes::DirSeparator,
+																"*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
+
+		QString plugin_name, plugin_lang_dir;
+
+		while(!dir_list.isEmpty())
+		{
+			plugin_name = dir_list.front();
+			dir_list.pop_front();
+
+			//Configure the path to "lang" subdir at current plugin directory
+			plugin_lang_dir = GlobalAttributes::getPluginsPath() +
+											GlobalAttributes::DirSeparator + plugin_name +
+											GlobalAttributes::DirSeparator + "lang" +
+											GlobalAttributes::DirSeparator;
+
+			loadTranslation(lang_id, plugin_lang_dir);
+		}
+	}
 }
 
 void Application::createUserConfiguration(bool missing_only)

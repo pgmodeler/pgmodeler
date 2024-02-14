@@ -40,13 +40,16 @@ class __libutils Application: public QApplication {
 		 * The output path is platform dependant and is determined by GlobalAttributes::getConfigurationsDir() */
 		void createUserConfiguration(bool missing_only);
 
-	public:
-		Application(int & argc, char ** argv);
-
 		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
 		 * By default, the files are searched in the pgModeler's default lang files location.
 		 * In case of success installs a translator object in the application */
-		bool loadTranslation(const QString &lang_id, const QString &directory = GlobalAttributes::getLanguagesPath());
+		void loadTranslation(const QString &lang_id, const QString &directory);
+
+	public:
+		Application(int & argc, char ** argv);
+
+		//! \brief Loads both UI translations and addition translations provided by plugins (incl_plugins_tr = true)
+		void loadTranslations(const QString &lang_id, bool incl_plugins_tr);
 };
 
 #endif
