@@ -2616,6 +2616,7 @@ void PgModelerCliApp::loadPlugins()
 	QFileInfo fi;
 	attribs_map p_short_opts;
 	std::map<QString, bool> p_long_opts;
+	QJsonObject metadata;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
@@ -2650,19 +2651,16 @@ void PgModelerCliApp::loadPlugins()
 
 		//Try to load the library
 		plugin_loader.setFileName(lib);
+		metadata = plugin_loader.metaData();
+
+		/* Ignores the plugin if it doesn't implement the correct interface,
+		 * in this case PgModelerCliPlugin */
+		if(metadata["IID"] != "PgModelerCliPlugin")
+			continue;
 
 		if(plugin_loader.load())
 		{
 			plugin = qobject_cast<PgModelerCliPlugin *>(plugin_loader.instance());
-
-			/* If the plugin was loaded but couldn't be cast to PgModelerPlugin it means that
-			 * the plugin is a GUI plugin (PgModelerPlugin) which is incompatible with
-			 * plugins made for CLI, so we just discard it. */
-			if(!plugin)
-			{
-				plugin_loader.unload();
-				continue;
-			}
 
 			if(!isPluginOptsValid(plugin))
 			{

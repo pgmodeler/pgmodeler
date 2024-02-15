@@ -120,6 +120,6 @@ class __libcli PgModelerCliPlugin: public PgModelerPlugin {
 /* Declares the class PgModelerCliPlugin as interface, this means that the class is a base
 	 for plugin implementation. All plugin must inherit this class and use the Q_INTERFACE
 	 directive in its declaration  */
-Q_DECLARE_INTERFACE(PgModelerCliPlugin,"io.pgmodeler.PgModelerCliPlugin")
+Q_DECLARE_INTERFACE(PgModelerCliPlugin, "PgModelerCliPlugin")
 
 #endif

@@ -71,6 +71,7 @@ void PluginsConfigWidget::loadConfiguration()
 	PgModelerGuiPlugin *plugin = nullptr;
 	QFileInfo fi;
 	unsigned row = 0;
+	QJsonObject metadata;
 
 	//The plugin loader must resolve all symbols otherwise return an error if some symbol is missing on library
 	plugin_loader.setLoadHints(QLibrary::ResolveAllSymbolsHint);
@@ -105,6 +106,12 @@ void PluginsConfigWidget::loadConfiguration()
 
 		//Try to load the library
 		plugin_loader.setFileName(lib);
+		metadata = plugin_loader.metaData();
+
+		/* Ignores the plugin if it doesn't implement the correct interface,
+		 * in this case PgModelerGuiPlugin */
+		if(metadata["IID"] != "PgModelerGuiPlugin")
+			continue;
 
 		if(plugin_loader.load())
 		{
