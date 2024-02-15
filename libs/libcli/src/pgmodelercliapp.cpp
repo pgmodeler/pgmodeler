@@ -103,7 +103,7 @@ const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
 const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
 const QString PgModelerCliApp::MissingOnly("--missing-only");
-const QString PgModelerCliApp::IgnoreFaultyPlugins("--ignore-faulty-plugins");
+const QString PgModelerCliApp::IgnoreFaultyPlugins("--ignore-faulty");
 const QString PgModelerCliApp::ListPlugins("--list-plugins");
 
 const QString PgModelerCliApp::TagExpr("<%1");
@@ -169,28 +169,28 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
-	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb, IgnoreFaultyPlugins }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, IgnoreFaultyPlugins }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor, IgnoreFaultyPlugins }},
-	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters, IgnoreFaultyPlugins }},
-	{{ ExportToDict }, { Input, Output, Split, NoIndex, IgnoreFaultyPlugins }},
+	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-											DropDatabase, DropObjects, Simulate, UseTmpNames, Force, IgnoreFaultyPlugins }},
+											DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
-									Host, Port, User, Passwd, InitialDb, CommentsAsAliases, IgnoreFaultyPlugins }},
+									Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
 
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable, IgnoreFaultyPlugins }},
+							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
 
-	{{ DbmMimeType }, { SystemWide, Force, IgnoreFaultyPlugins }},
-	{{ FixModel },	{ Input, Output, FixTries, IgnoreFaultyPlugins }},
+	{{ DbmMimeType }, { SystemWide, Force }},
+	{{ FixModel },	{ Input, Output, FixTries }},
 	{{ ListConns }, { }},
-	{{ CreateConfigs }, { MissingOnly, Force, IgnoreFaultyPlugins }},
+	{{ CreateConfigs }, { MissingOnly, Force }},
 	{{ ListPlugins }, { IgnoreFaultyPlugins }},
 };
 
@@ -580,9 +580,9 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
 
-	printText(tr("Plug-ins options: "));
-	printText(tr("  %1, %2 \t    Discard plug-ins that failed to be loaded preventing the CLI from being aborted due to faulty plug-ins.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("Plug-ins options: "));	
 	printText(tr("  %1, %2 \t\t    List the available plug-ins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText(tr("  %1, %2 \t\t    Ignore the errors of plug-ins that failed to be loaded.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
 	printText();
 
 	// Displaying loaded plugin's options
@@ -2700,7 +2700,7 @@ void PgModelerCliApp::loadPlugins()
 				long_opts.insert(p_long_opts.begin(), p_long_opts.end());
 			}
 		}
-		else if(!parsed_opts.count(IgnoreFaultyPlugins))
+		else
 		{
 			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
 																 .arg(plugin_name, lib, plugin_loader.errorString()),
@@ -2712,7 +2712,7 @@ void PgModelerCliApp::loadPlugins()
 	if(!errors.empty())
 	{
 		plugin_load_errors = Exception(Exception::getErrorMessage(ErrorCode::PluginsNotLoaded) + " " +
-																	 tr("HINT: you can use the option `%1' to disable the faulty plug-in(s).").arg(IgnoreFaultyPlugins),
+																	 tr("HINT: you can use the option `%1' to ignore the faulty plug-in(s) errors.").arg(IgnoreFaultyPlugins),
 																	 ErrorCode::PluginsNotLoaded,
 																	 __PRETTY_FUNCTION__, __FILE__, __LINE__, errors).getExceptionsText();
 	}
@@ -2742,7 +2742,7 @@ void PgModelerCliApp::listPlugins()
 		}
 	}
 
-	if(!plugin_load_errors.isEmpty())
+	if(!plugin_load_errors.isEmpty() && !parsed_opts.count(IgnoreFaultyPlugins))
 	{
 		printText("** Plug-ins loading errors:");
 		printText();
