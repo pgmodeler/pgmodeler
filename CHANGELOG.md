@@ -1,6 +1,80 @@
 Changelog
 ---------
 
+v1.1.0
+------
+<em>Release date: February 29, 2024</em><br/>
+
+* [New] Created the method Application::loadTranslations.
+* [New] FindReplaceWidget now accepts ENTER/RETURN to search texts.
+* [New] Added the method MainWindow::registerRecentModels.
+* [New] Adding support for table name completion on ALTER/DROP commands in CodeCompletionWidget.
+* [New] Added the methods PgModelerCliApp::(set|get)ParsedOptValue.
+* [New] pgModeler CLI now supports plugins.
+* [New] Created the method GuiUtils::updateDropShadow.
+* [New] Create the method BaseFunction::isBaseFunction.
+* [New] Now during object copy/paste or duplication, in case of name conflict, the user is asked to type a new name for each conflicting object.
+* [New] Adding the ability to restore the scene rect from the database model file.
+* [New] Adding support to expand canvas rect via the main window.
+* [New] Added the method FileSelectorWidget::setAppendSuffix.
+* [New] Added support for infinite canvas.
+* [Change] Minor adjustment in BaseObjectWidget::configureFormFields.
+* [Change] Moved the code that loads plugins' translations from PgModelerApp to Application::loadTranslations.
+* [Change] Updated the pgmodeler-intl.pro
+* [Change] The libutils/PgModelerPlugin class is now a base class of the new classes libgui/PgModelerGuiPlugin and libcli/PgModelerCliPlugin.
+* [Change] The subproject pgmodeler-cli now uses the classes in libcli.
+* [Change] Moved PgModelerCliApp to a dedicated library (libcli) to allow the proper creation of plugins for pgmodeler-cli.
+* [Change] Removed extra frames in pluginsconfigwidget.ui, connectionsconfigwidget.ui and snippetsconfigwidget.ui.
+* [Change] Minor adjustment in GeneralConfigWidget to change the enabled state of the "Reset alerts" button on the widget show.
+* [Change] Removed the confirmation dialog in ModelWidget::copyObjects related to copying dependencies. Now the copy of dependencies during the copy of an object is triggered by the shortcut Ctrl+Shift+C (copy selection and dependencies) or Ctrl+Shift+X (cut selection and dependencies).
+* [Change] Removed unneeded throw instruction in widget ctors.
+* [Change] Minor improvement in ModelObjectsWidget::saveTreeState/restoreTreeState to correctly restore the vertical scrollbar position.
+* [Change] Minor adjustment in MainWindow::applyConfigurations to correctly update grid settings on the current model.
+* [Change] Minor adjustment in ModelWidget::finishSceneMove.
+* [Change] Minor adjustment in ObjectsScene::setSceneRect to emit s_sceneRectChanged only when the new rect differs from the current one.
+* [Change] Removed unneeded calls to QGraphicsView::resetCachedContent in ModelWidget.
+* [Change] Forcing the drop shadows update in MainWindow::setCurrentModel every time the current model changes.
+* [Change] Minor adjustment in debug message related to model loading time.
+* [Change] Minor adjustment in ModelWidget::pasteObjects to avoid showing the rename widget when pasting table child objects.
+* [Change] Moved the function GuiUtilsNs::formatMessage to UtilsNs.
+* [Change] Minor adjustment in the example.dbm.
+* [Change] Minor adjustment in ObjectsScene::getPagesForPrinting to return the correct page size so the page delimiters can be displayed on all edges.
+* [Change] Refactored the method ObjectsScene::adjustSceneRect to get more accurate results.
+* [Change] Adjusted the default size of StyledTextboxView.
+* [Change] Changed the method FileSelectorWidget::getSelectedFile in such a way as to append the default suffix when the user types a filename that has no extension.
+* [Change] Minor adjument in FileSelectorWidget usage in ModelDatabaseDiffForm, ModelExportForm and ModelFixForm.
+* [Change] Changed the parent class of RoundedRectItem from QGraphicsRectItem to QAbstractGraphicsShapeItem due to the incorrect bounding rect returned when the rounded rect is null (all coordinates set to 0). This was causing undesired results when retrieving scene items' bounding rect.
+* [Change] Adjusted the method ObjectsScene::getPagesForPrinting to cover infinite canvas.
+* [Change] Minor adjustment in the stylesheet of NewObjectOverlayWidget.
+* [Change] Removed the origin point locks at (0,0) in ObjectsScene.
+* [Change] Changes in ModelOverviewWidget to handle the infinite canvas.
+* [Fix] Fixed the plugins' loading process by ignoring the ones that don't implement the correct interface (PgModelerCliPlugin or PgModelerGuiPlugin).
+* [Fix] Fixed a bug in MainWindow::loadModel that was not registering the loaded file as a recent model.
+* [Fix] Fixed a malformed diff code when adding a column to a partitioned table.
+* [Fix] Fixed a bug in MainWindow::updateRecentModelsMenu.
+* [Fix] Fixed a bug in GeneralConfigWidget::loadConfiguration to reset alerts when the parameter "use default disambiguation" is absent.
+* [Fix] Minor fix in ConnectionsConfigWidget that was preventing connections from being updated in MainWindow after editing them.
+* [Fix] Minor fix in ModelWidget to build in Qt 6.2.x.
+* [Fix] Minor fix in ModelWidget::pasetObjects to correctly paste table/view child objects in the destination parent table/view.
+* [Fix] Fixed the disconnect call in ObjectRenameWidget::setAttributes.
+* [Fix] Minor fix in ModelWidget::startSceneMove to reset viewport cached content.
+* [Fix] Minor fix on ObjectsScene::drawBackground in order to draw the canvas background in the correct color defined in the settings.
+* [Fix] Minor fix on all classes derived from BaseConfigWidget to correctly control the config changed status on loadConfiguration and saveConfiguration.
+* [Fix] Fixed a bug that was preventing tables and schemas from being updated graphically when adding/removing relationships in some circumstances.
+* [Fix] Fixed a bug in ModelWidget::copyObjects related to copying/pasting multiple objects.
+* [Fix] Minor fix in ModelWidget::pasteObjects when pasting copied functions.
+* [Fix] Minor fix in graphical objects tooltips in libcanvas.
+* [Fix] Fixed the trigger catalog query to avoid referencing tgparentoid field when importing from PostgreSQL 12 or below.
+* [Fix] Minor fix in MainWindow to adjust the scene size every time an operation (undo/redo) is performed in the operation list.
+* [Fix] Minor fix in ObjectsScene::drawBackground to avoid the undesired shifting on the page delimiters.
+* [Fix] Minor fix in SchemaView to avoid leaving the selection rectangle visible in the constructor.
+* [Fix] Minor fix in ObjectsScene::expandSceneRect.
+* [Fix] Fixed the PNG export process in GUI and CLI to handle infinite canvas.
+* [Fix] Fixed a bug in ModelFixForm that was not locating pgmodeler-cli on Windows.
+* [Fix] Fixed a bug in ObjectsFilterWidget that was setting wrong object types when doing a partial diff using filters generated from the changelog.
+* [Fix] Minor fix in CodeCompletionWidget in order to list columns of tables non-schema qualified. In that case, pg_catalog and public will be used as default schemas.
+* [Fix] Columns marked as PK are now restored when handling them in TableWidget.
+
 v1.1.0-beta1
 ------
 <em>Release date: December 30, 2023</em><br/>
