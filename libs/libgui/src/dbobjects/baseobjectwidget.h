@@ -93,7 +93,10 @@ class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			The obj_type parameter must be specified to show the object type icon */
 		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
-		void configureFormFields(ObjectType obj_type);
+		/*! \brief Configures the state of commom fields related to database objects enabling/disabling/hidding
+		 * according to the object type. The parameter inst_ev_filter indicates if the special event filter
+		 * must be installed on input fields. The event filter calls applyConfiguration() when ENTER/RETURN is pressed */
+		void configureFormFields(ObjectType obj_type, bool inst_ev_filter = true);
 
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */

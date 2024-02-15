@@ -18,7 +18,6 @@
 
 #include "baseform.h"
 #include "guiutilsns.h"
-#include "qtconnectmacros.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -48,6 +47,8 @@ void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 
 		cancel_btn->setVisible(false);
 	}
+
+	apply_ok_btn->setDefault(button_conf != Messagebox::CloseButton);
 }
 
 void BaseForm::adjustMinimumSize()

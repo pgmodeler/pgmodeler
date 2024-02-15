@@ -419,10 +419,10 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	}
 
 	baseobject_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-	configureFormFields(obj_type);
+	configureFormFields(obj_type, obj_type != ObjectType::BaseObject);
 }
 
-void BaseObjectWidget::configureFormFields(ObjectType obj_type)
+void BaseObjectWidget::configureFormFields(ObjectType obj_type, bool inst_ev_filter)
 {
 	QObjectList chld_list;
 	QWidget *wgt = nullptr;
@@ -478,19 +478,23 @@ void BaseObjectWidget::configureFormFields(ObjectType obj_type)
 		}
 	}
 
-	//Install the event filter into all children object in order to capture key press
-	chld_list=this->children();
-	while(!chld_list.isEmpty())
+	if(inst_ev_filter)
 	{
-		wgt=dynamic_cast<QWidget *>(chld_list.front());
+		//Install the event filter into all children object in order to capture key press
+		chld_list = this->children();
 
-		//Avoids install event filters in objects that are inteneded to edit multiple lines
-		if(wgt &&
-				wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
-				wgt->metaObject()->className()!=QString("NumberedTextEditor"))
-			wgt->installEventFilter(this);
+		while(!chld_list.isEmpty())
+		{
+			wgt=dynamic_cast<QWidget *>(chld_list.front());
 
-		chld_list.pop_front();
+			//Avoids install event filters in objects that are inteneded to edit multiple lines
+			if(wgt &&
+					wgt->metaObject()->className()!=QString("QPlainTextEdit") &&
+					wgt->metaObject()->className()!=QString("NumberedTextEditor"))
+				wgt->installEventFilter(this);
+
+			chld_list.pop_front();
+		}
 	}
 }
 
