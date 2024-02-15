@@ -51,6 +51,9 @@ class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 
 		void showSearchInfo(const QString &msg);
 
+	protected:
+		bool eventFilter(QObject *object, QEvent *event);
+
 	public:
 		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		
