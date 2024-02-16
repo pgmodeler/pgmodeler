@@ -2658,10 +2658,10 @@ void PgModelerCliApp::loadPlugins()
 		if(metadata["IID"] != "PgModelerCliPlugin")
 			continue;
 
-		if(plugin_loader.load())
-		{
-			plugin = qobject_cast<PgModelerCliPlugin *>(plugin_loader.instance());
+		plugin = qobject_cast<PgModelerCliPlugin *>(plugin_loader.instance());
 
+		if(plugin)
+		{
 			if(!isPluginOptsValid(plugin))
 			{
 				errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)

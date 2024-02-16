@@ -48,10 +48,10 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 
 PluginsConfigWidget::~PluginsConfigWidget()
 {
-	while(!plugins.empty())
+	while(!plugins.isEmpty())
 	{
-		delete plugins.back();
-		plugins.pop_back();
+		delete plugins.last();
+		plugins.removeLast();
 	}
 }
 
@@ -113,24 +113,15 @@ void PluginsConfigWidget::loadConfiguration()
 		if(metadata["IID"] != "PgModelerGuiPlugin")
 			continue;
 
-		if(plugin_loader.load())
+		plugin = qobject_cast<PgModelerGuiPlugin *>(plugin_loader.instance());
+
+		if(plugin)
 		{
-			plugin = qobject_cast<PgModelerGuiPlugin *>(plugin_loader.instance());
-
-			/* If the plugin was loaded but couldnt be cas't to PgModelerPlugin it means that
-			 * the plugin is a CLI plugin (PgModelerCliPlugin) which is incompatible with
-			 * plugins made for GUI, so we just discard it. */
-			if(!plugin)
-			{
-				plugin_loader.unload();
-				continue;
-			}
-
 			//Inserts the loaded plugin on the vector
 			fi.setFile(lib);
 			plugin->setLibraryName(fi.fileName());
 			plugin->setPluginName(plugin_name);
-			plugins.push_back(plugin);
+			plugins.append(plugin);
 
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
@@ -158,7 +149,7 @@ void PluginsConfigWidget::loadConfiguration()
 
 void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
-	std::vector<PgModelerGuiPlugin *> inv_plugins;
+	QList<PgModelerGuiPlugin *> inv_plugins;
 	std::vector<Exception> errors;
 	int row_idx = -1;
 
@@ -170,7 +161,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		}
 		catch(Exception &e)
 		{
-			inv_plugins.push_back(plugin);
+			inv_plugins.append(plugin);
 			errors.push_back(e);
 		}
 	}
@@ -178,14 +169,14 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 	// Erasing the plugins/actions related to the ones that failed to initialize
 	while(!inv_plugins.empty())
 	{
-		row_idx = plugins_tab->getRowIndex(QVariant::fromValue<void *>(inv_plugins.back()));
-		plugins.erase(std::find(plugins.begin(), plugins.end(), inv_plugins.back()));
+		row_idx = plugins_tab->getRowIndex(QVariant::fromValue<void *>(inv_plugins.last()));
+		plugins.removeOne(inv_plugins.last());
 
 		if(row_idx >= 0)
 			plugins_tab->removeRow(row_idx);
 
-		delete inv_plugins.back();
-		inv_plugins.pop_back();
+		delete inv_plugins.last();
+		inv_plugins.removeLast();
 	}
 
 	if(!errors.empty())

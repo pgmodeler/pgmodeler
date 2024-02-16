@@ -36,7 +36,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		Q_OBJECT
 
 		//! \brief Loaded plugins
-		std::vector<PgModelerGuiPlugin *> plugins;
+		QList<PgModelerGuiPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
