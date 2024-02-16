@@ -27,8 +27,6 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	file_must_exist = false;
 	file_mode = QFileDialog::AnyFile;
 
-	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
-
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
 
@@ -104,18 +102,17 @@ void FileSelectorWidget::setDirectoryMode(bool dir_mode)
 			file_mode = QFileDialog::AnyFile;
 	}
 
-	file_dlg.setFileMode(file_mode);
 	validateSelectedFile();
 }
 
 void FileSelectorWidget::setAcceptMode(QFileDialog::AcceptMode accept_mode)
 {
-	file_dlg.setAcceptMode(accept_mode);
+	this->accept_mode = accept_mode;
 }
 
 void FileSelectorWidget::setNameFilters(const QStringList &filters)
 {
-	file_dlg.setNameFilters(filters);
+	name_filters = filters;
 }
 
 void FileSelectorWidget::setNamePattern(const QString &pattern)
@@ -139,17 +136,14 @@ void FileSelectorWidget::setFileMustExist(bool value)
 	file_must_exist = value;
 
 	if(file_must_exist && file_mode == QFileDialog::AnyFile)
-	{
 		file_mode = QFileDialog::ExistingFile;
-		file_dlg.setFileMode(file_mode);
-	}
 
 	validateSelectedFile();
 }
 
 void FileSelectorWidget::setFileDialogTitle(const QString &title)
 {
-	file_dlg.setWindowTitle(title);
+	file_dlg_title = title;
 }
 
 void FileSelectorWidget::setSelectedFile(const QString &file)
@@ -159,12 +153,12 @@ void FileSelectorWidget::setSelectedFile(const QString &file)
 
 void FileSelectorWidget::setMimeTypeFilters(const QStringList &filters)
 {
-	file_dlg.setMimeTypeFilters(filters);
+	mime_filters = filters;
 }
 
 void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 {
-	file_dlg.setDefaultSuffix(suffix);
+	def_suffix = suffix;
 }
 
 void FileSelectorWidget::setAppendSuffix(bool append)
@@ -181,12 +175,12 @@ QString FileSelectorWidget::getSelectedFile()
 {
 	if(append_suffix && allow_filename_input &&
 		 file_mode != QFileDialog::Directory &&
-		 !file_dlg.defaultSuffix().isEmpty())
+		 !def_suffix.isEmpty())
 	{
 		QString filename = filename_edt->text();
 
 		if(QFileInfo(filename).completeSuffix().isEmpty())
-			filename.append("." + file_dlg.defaultSuffix());
+			filename.append("." + def_suffix);
 
 		return filename;
 	}
@@ -234,8 +228,17 @@ void FileSelectorWidget::setCustomWarning(const QString &warn_msg)
 
 void FileSelectorWidget::openFileDialog()
 {
+	QFileDialog file_dlg;
+
 	filename_edt->clearFocus();
+	file_dlg.setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 	file_dlg.selectFile(filename_edt->text());
+	file_dlg.setFileMode(file_mode);
+	file_dlg.setAcceptMode(accept_mode);
+	file_dlg.setNameFilters(name_filters);
+	file_dlg.setWindowTitle(file_dlg_title);
+	file_dlg.setMimeTypeFilters(mime_filters);
+	file_dlg.setDefaultSuffix(def_suffix);
 
 	GuiUtilsNs::restoreFileDialogState(&file_dlg);
 	file_dlg.exec();

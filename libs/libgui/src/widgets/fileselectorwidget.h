@@ -33,8 +33,9 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 	private:
 		Q_OBJECT
 
-		QFileDialog file_dlg;
-
+		QStringList name_filters, mime_filters;
+		QString file_dlg_title, def_suffix;
+		QFileDialog::AcceptMode accept_mode;
 		QFileDialog::FileMode file_mode;
 
 		QLabel *warn_ico_lbl;
