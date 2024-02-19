@@ -31,8 +31,11 @@ exists($$PLUGINS_PRO_FILE) {
 	 SUBDIRS += $$PLUGINS_FOLDER
 }
 
-# Include the tests subprojects only on debug mode
-CONFIG(debug, debug|release): SUBDIRS += tests
+# Include the tests subprojects only on debug mode when
+# NO_TESTS is set to true
+CONFIG(debug, debug|release): {
+	!isEqual(NO_TESTS, true):SUBDIRS += tests
+}
 
 # Deployment settings
 isEqual(DEMO_VERSION, true): samples.files = assets/samples/demo.dbm
