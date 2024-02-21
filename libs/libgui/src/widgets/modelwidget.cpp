@@ -1053,7 +1053,16 @@ void ModelWidget::addNewObject()
 				//Simple table|view|textbox creation
 				if(simple_obj_creation &&
 						(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Textbox))
-					this->showObjectForm(obj_type, nullptr, parent_obj, viewport->mapToScene(viewport->rect().center()));
+				{
+					QPointF pos = viewport->mapToScene(viewport->rect().center());
+					this->showObjectForm(obj_type, nullptr, parent_obj, pos);
+
+					/* If the calculated point (in scene coordinate) is
+					 * not contained by the scene rect we adjust the scene rect to avoid
+					 * the object to be placed outside the scene boundaries */
+					if(!viewport->scene()->sceneRect().contains(pos))
+						adjustSceneRect(true, true);
+				}
 				else
 				{
 					//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
