@@ -184,6 +184,7 @@ void ConnectionsConfigWidget::newConnection()
 	host_edt->clear();
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
+	passwd_edt->clearFocus();
 	other_params_edt->clear();
 	set_role_edt->clear();
 
