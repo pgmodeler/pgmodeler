@@ -721,4 +721,55 @@ namespace GuiUtilsNs {
 				updateDropShadow(wgt);
 		}
 	}
+
+	void createPasswordShowAction(QLineEdit *parent_edt)
+	{
+		if(!parent_edt ||
+				parent_edt->echoMode() != QLineEdit::Password)
+			return;
+
+		/* Appeding an action to the line edit which in turn creates a tool button.
+		 * That toolbutton that is used to handle the visiblity of the password */
+		parent_edt->addAction(new QAction(parent_edt), QLineEdit::TrailingPosition);
+
+		/* After creating the tool button we have to get the list of child tool buttons
+		 * If the flag clearButtonEnabled is true, we'll have a list with two elements
+		 * being the first the clear button and the last the recently added button
+		 * to control password visiblity */
+		QList<QToolButton *> btns = parent_edt->findChildren<QToolButton *>();
+		QToolButton *btn = nullptr;
+
+		btn = btns.last();
+		btn->setObjectName("password_show_btn"); // This is the name of the button referenced in the UI stylesheets
+		btn->setVisible(false);
+
+		/* Setting a custom property in the button to control the
+		 * icon state and echo mode of the parent input. This is changed
+		 * when the user clicks the password visibility icon */
+		static const char pass_attr[] = "pass_visible";
+		btn->setProperty(pass_attr, false);
+
+		// Hiding the password automatically when parent_edt loses focus
+		QObject::connect(qApp, &QApplication::focusChanged, parent_edt, [parent_edt, btn](QWidget *old_obj, QWidget *){
+			if(old_obj != parent_edt)
+				return;
+
+			btn->setIcon(QIcon(getIconPath("hidepwd")));
+			parent_edt->setEchoMode(QLineEdit::Password);
+			btn->setProperty(pass_attr, false);
+		});
+
+		// Hiding the icon when the text is empty
+		QObject::connect(parent_edt, &QLineEdit::textChanged, parent_edt, [btn](const QString &txt){
+			btn->setHidden(txt.isEmpty());
+		});
+
+		// Toggles the password visiblity when the user clicks the action
+		QObject::connect(btn, &QToolButton::clicked, parent_edt, [parent_edt, btn](){
+			bool pass_visible = btn->property(pass_attr).toBool();
+			btn->setProperty(pass_attr, !pass_visible);
+			btn->setIcon(QIcon(getIconPath(pass_visible ? "hidepwd" : "showpwd")));
+			parent_edt->setEchoMode(pass_visible ? QLineEdit::Password : QLineEdit::Normal);
+		});
+	}
 }

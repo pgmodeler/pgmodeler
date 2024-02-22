@@ -270,6 +270,8 @@
         <file>icons/ophistorypos.png</file>
         <file>icons/ophistory.png</file>
         <file>icons/expandcanvas.png</file>
+        <file>icons/showpwd.png</file>
+        <file>icons/hidepwd.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

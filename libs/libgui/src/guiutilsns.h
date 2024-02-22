@@ -144,6 +144,9 @@ namespace GuiUtilsNs {
 	extern __libgui  bool selectAndLoadFile(QByteArray &buffer,
 																					const QString &title = QT_TR_NOOP("Load file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
 																					const QStringList &name_filters = {}, const QStringList &mime_filters = {}, const QString &selected_file = "");
+
+	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
+	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
 }
 
 #endif
