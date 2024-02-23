@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,11 +28,9 @@
 
 #include "utilsglobal.h"
 #include <QObject>
-#include "doublenan.h"
 #include <exception>
 #include <signal.h>
 #include <vector>
-#include "enumtype.h"
 
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {
@@ -235,7 +233,6 @@ enum class ErrorCode: unsigned {
 	AsgInvalidOpClassObject,
 	InvPostgreSQLVersion,
 	ValidationFailure,
-	ExtensionHandlingTypeImmutable,
 	InvAllocationFKRelationship,
 	AsgInvalidNamePattern,
 	RefInvalidNamePatternId,
@@ -300,12 +297,16 @@ enum class ErrorCode: unsigned {
 	MalformedCsvInvalidCols,
 	MalformedCsvMissingDelim,
 	RefInvCsvDocumentValue,
-	ModelFileSaveFailure
+	ModelFileSaveFailure,
+	RemExtRefChildObject,
+	AddExtDupChildObject,
+	AsgSchExtTypeConflict,
+	MalformedViewDefObject
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=265;
+		static constexpr unsigned ErrorCount=268;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
@@ -322,18 +323,18 @@ class __libutils Exception {
 
 		//! \brief Formated error message
 		QString error_msg,
-		/*! \brief Holds the class name and method which was
-						triggered the exception. For this to be possible, at the time
-						instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
-						must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
-		method,
+				/*! \brief Holds the class name and method which was
+							triggered the exception. For this to be possible, at the time
+							instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
+							must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
+				method,
 
-		//! \brief File where the exception was generated (Macro __ FILE__)
-		file,
+				//! \brief File where the exception was generated (Macro __ FILE__)
+				file,
 
-		/*! \brief Additional information (optional) may store any other
-						type of information that is interesting on attempt to resolve the error */
-		extra_info;
+				/*! \brief Additional information (optional) may store any other
+				type of information that is interesting on attempt to resolve the error */
+				extra_info;
 
 		//! \brief Line of file where the exception were generated (Macro __LINE__)
 		int line;
@@ -342,7 +343,7 @@ class __libutils Exception {
 		void configureException(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, const QString &extra_info);
 
 		//! \brief Adds a exception to the list of exceptions
-		void addException(Exception &exception);
+		void addException(Exception *exception);
 
 	public:
 		static unsigned constexpr MaximumStackSize = 50;
@@ -372,7 +373,7 @@ class __libutils Exception {
 		QString getExceptionsText();
 
 		/*! \brief Returns in one string all the extra info from the exceptions in the error stack
-		 * Duplicated extra information is discarded */
+			 * Duplicated extra information is discarded */
 		QString getExceptiosExtraInfo();
 };
 

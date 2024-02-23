@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@ class __libcore Collation : public BaseObject {
 
 	public:
 		Collation();
+
+		virtual ~Collation(){}
 
 		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()

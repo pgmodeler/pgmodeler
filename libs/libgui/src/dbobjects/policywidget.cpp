@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,56 +17,50 @@
 */
 
 #include "policywidget.h"
+#include "guiutilsns.h"
 
 PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Policy)
 {
-	try
-	{
-		Ui_PolicyWidget::setupUi(this);
+	Ui_PolicyWidget::setupUi(this);
 
-		model_objs_wgt = new ModelObjectsWidget(true, this);
-		model_objs_wgt->setObjectVisible(ObjectType::Role, true);
+	model_objs_wgt = new ModelObjectsWidget(true, this);
+	model_objs_wgt->setObjectVisible(ObjectType::Role, true);
 
-		using_edt = GuiUtilsNs::createNumberedTextEditor(using_wgt);
-		using_edt->setTabChangesFocus(true);
-		using_hl = new SyntaxHighlighter(using_edt);
-		using_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	using_edt = GuiUtilsNs::createNumberedTextEditor(using_wgt, false, font().pointSizeF());
+	using_edt->setTabChangesFocus(true);
+	using_hl = new SyntaxHighlighter(using_edt, false, false, font().pointSizeF());
+	using_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		check_edt = GuiUtilsNs::createNumberedTextEditor(check_wgt);
-		check_edt->setTabChangesFocus(true);
-		check_hl = new SyntaxHighlighter(check_edt);
-		check_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	check_edt = GuiUtilsNs::createNumberedTextEditor(check_wgt, false, font().pointSizeF());
+	check_edt->setTabChangesFocus(true);
+	check_hl = new SyntaxHighlighter(check_edt, false, false, font().pointSizeF());
+	check_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																			 (ObjectsTableWidget::DuplicateButton |
-																				ObjectsTableWidget::UpdateButton |
-																				ObjectsTableWidget::EditButton), true, this);
-		roles_tab->setColumnCount(1);
-		roles_tab->setHeaderLabel(tr("Name"), 0);
-		roles_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")), 0);
+	roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																		 (ObjectsTableWidget::DuplicateButton |
+																			ObjectsTableWidget::UpdateButton |
+																			ObjectsTableWidget::EditButton), true, this);
+	roles_tab->setColumnCount(1);
+	roles_tab->setHeaderLabel(tr("Name"), 0);
+	roles_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")), 0);
 
-		QVBoxLayout *vbox = new QVBoxLayout;
-		vbox->addWidget(roles_tab);
+	QVBoxLayout *vbox = new QVBoxLayout;
+	vbox->addWidget(roles_tab);
 
-		QFrame *frame=generateInformationFrame(tr("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
-																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
-		vbox->addWidget(frame);
-		frame->setParent(this);
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		attribs_tbw->widget(0)->setLayout(vbox);
+	QFrame *frame=generateInformationFrame(tr("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+																				 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
+	vbox->addWidget(frame);
+	frame->setParent(this);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	attribs_tbw->widget(0)->setLayout(vbox);
 
-		command_cmb->addItems(PolicyCmdType::getTypes());
+	command_cmb->addItems(PolicyCmdType::getTypes());
 
-		configureFormLayout(policy_grid, ObjectType::Policy);
-		configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
+	configureFormLayout(policy_grid, ObjectType::Policy);
+	configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
 
-		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
-		connect(model_objs_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PolicyWidget::selectRole);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
+	connect(model_objs_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PolicyWidget::selectRole);
 }
 
 void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy)

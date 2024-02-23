@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ void UserMapping::setOwner(BaseObject *role)
 void UserMapping::setName(const QString &)
 {
 	//Configures a fixed name for the user mapping (in form: role@server)
-	this->obj_name=QString("%1@%2").arg(owner ? owner->getName() : QString("public"))
+	this->obj_name=QString("%1@%2").arg(owner ? owner->getName() : "public")
 								 .arg(foreign_server ? foreign_server->getName() : "");
 }
 
@@ -59,7 +59,7 @@ QString UserMapping::getName(bool, bool)
 
 QString UserMapping::getSignature(bool)
 {
-	return QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : QString("public"))
+	return QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : "public")
 																		.arg(foreign_server ? foreign_server->getName() : "");
 }
 
@@ -101,4 +101,9 @@ QString UserMapping::getAlterCode(BaseObject *object)
 QString UserMapping::getDropCode(bool)
 {
 	return BaseObject::getDropCode(false);
+}
+
+void UserMapping::updateDependencies()
+{
+	BaseObject::updateDependencies({ foreign_server });
 }

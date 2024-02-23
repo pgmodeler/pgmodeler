@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,15 +55,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
 
-	try
-	{
-		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+	snippet_hl=new SyntaxHighlighter(snippet_txt);
+	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
 
 	enableEditMode(false);
 
@@ -206,8 +199,8 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 			return tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage());
 		}
 	}
-	else
-		return "";
+
+	return "";
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(std::map<QString, attribs_map> &config)
@@ -286,6 +279,7 @@ void SnippetsConfigWidget::loadConfiguration()
 			config_params.erase(id);
 
 		fillSnippetsCombo(config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -430,16 +424,14 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 
 void SnippetsConfigWidget::parseSnippet()
 {
-	Messagebox msg_box;
-
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(tr("No syntax errors found in the snippet."), Messagebox::InfoIcon);
+		Messagebox::info(tr("No syntax errors found in the code snippet."));
 	}
 	catch(Exception &e)
 	{
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -461,14 +453,12 @@ void SnippetsConfigWidget::saveConfiguration()
 			snippets=getSnippetsByObject(obj_type);
 
 			for(auto &snip : snippets)
-			{
-				attribs[Attributes::Snippet]+=
-						XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(snippet_sch, snip));
-			}
+				attribs[Attributes::Snippet] +=	schparser.getSourceCode(snippet_sch, snip);
 		}
 
 		config_params[GlobalAttributes::SnippetsConf]=attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::SnippetsConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{

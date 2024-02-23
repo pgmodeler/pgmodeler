@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "newobjectoverlaywidget.h"
 #include "modelwidget.h"
-#include "guiutilsns.h"
 
 NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(parent)
 {
@@ -81,7 +80,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->actions_new_objects[obj_type];
 	}
@@ -92,7 +91,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = rel_actions[action_idx];
 	}
@@ -101,7 +100,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 	for(auto &itr : permission_btns)
 	{
 		button = itr;
-		button->setText(shortcut + QString(": ") + button->text());
+		button->setText(shortcut + ": " + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		btn_actions[button] = parent->action_edit_perms;
 	}

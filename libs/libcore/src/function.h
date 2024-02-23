@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,10 +68,12 @@ class __libcore Function: public BaseFunction {
 		void setTableReturnTypeAttribute(SchemaParser::CodeType def_type);
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Function();
+
+		virtual ~Function(){}
 
 		//! \brief Adds a column to the function returned table
 		void addReturnedTableColumn(const QString &name, PgSqlType type);
@@ -151,6 +153,8 @@ class __libcore Function: public BaseFunction {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		virtual QString getAlterCode(BaseObject *object) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

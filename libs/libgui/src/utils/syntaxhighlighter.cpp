@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,18 +19,23 @@
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
 #include "textblockinfo.h"
+#include "attributes.h"
+#include "exception.h"
+#include "globalattributes.h"
 
-QFont SyntaxHighlighter::default_font = QFont(QString("Source Code Pro"), 12);
-const QString SyntaxHighlighter::UnformattedGroup = QString("__unformatted__");
+QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
+const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
 
-SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	code_field_txt = parent;
 	capt_nearby_separators = false;
 	this->setDocument(parent->document());
-	this->single_line_mode=single_line_mode;
+	this->single_line_mode = single_line_mode;
+	custom_font_size = custom_fnt_size;
 	configureAttributes();
 	parent->installEventFilter(this);
 
@@ -40,7 +45,8 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)
 	{
-		QFontMetrics fm = QFontMetrics(default_font);
+		QFont fnt(default_font.family(), getCurrentFontSize());
+		QFontMetrics fm = QFontMetrics(fnt);
 		int height=fm.height() + fm.lineSpacing()/2;
 		parent->setMinimumHeight(height);
 		parent->setMaximumHeight(height);
@@ -62,6 +68,19 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 			}
 		});
 	}
+
+	highlight_timer.setInterval(300);
+	connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
+
+	connect(&highlight_timer, &QTimer::timeout, this, [this](){
+		highlight_timer.stop();
+
+		if(this->single_line_mode)
+			return;
+
+		for(auto &cfg : enclosing_chrs)
+			highlightEnclosingChars(cfg);
+	});
 }
 
 bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
@@ -134,6 +153,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
 		info->setGroup(prev_info->getGroup());
+		info->setAllowCompletion(prev_info->isCompletionAllowed());
 		info->setMultiExpr(prev_info->isMultiExpr());
 		info->setClosed(false);
 		setCurrentBlockState(OpenExprBlock);
@@ -145,8 +165,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		unsigned i=0, len, idx=0, i1;
 		int match_idx, match_len, aux_len, start_col;
 		QChar chr_delim, lookahead_chr;
+		bool force_disable_compl = false;
 
-		text = txt + QString("\n");
+		text = txt + "\n";
 		len = text.length();
 
 		do
@@ -258,6 +279,23 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				{
 					start_col=idx + match_idx;
 					setFormat(start_col, match_len, group);
+
+					/* Workaround to avoid the code completion to be triggered inside a delimited string when typing the
+					 * completion trigger char. If the cursor is within a delimited string like:
+					 *
+					 * 'some [cursor]string' other text outside delimiter)
+					 *
+					 * And there are other text typed ahead of the end of the delimited string, we need to force the code
+					 * completion disabling inside that block delimited even the other texts (outside the delimiters) are
+					 * from a group in which the completion is allowed in the settings. */
+					int cursor_pos = code_field_txt->textCursor().positionInBlock();
+					if(!info->isCompletionAllowed() && !force_disable_compl &&
+						 cursor_pos >= static_cast<int>(idx) && cursor_pos <= static_cast<int>(idx + match_len))
+					{
+						force_disable_compl = true;
+					}
+					else if(force_disable_compl)
+						info->setAllowCompletion(false);
 				}
 
 				if(info->isMultiExpr() && !info->isClosed() && hasInitialAndFinalExprs(group))
@@ -333,6 +371,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			/* We force unformmated group to stay closed so in the next interaction (word extraction / validation)
 			 * the group that matches the word can be properly found */
 			info->setGroup(UnformattedGroup);
+			info->setAllowCompletion(allow_completion[UnformattedGroup]);
 			info->setMultiExpr(true);
 			info->setClosed(true);
 			return info->getGroup();
@@ -351,6 +390,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		else if(prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
 			info->setGroup(prev_info->getGroup());
+			info->setAllowCompletion(prev_info->isCompletionAllowed());
 
 			/* We force the current info to be a multi expression one (like the previous)
 			 * and close it only if the word is a closing token of the group */
@@ -371,6 +411,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
 			info->setGroup(prev_info->getGroup());
+			info->setAllowCompletion(prev_info->isCompletionAllowed());
 			info->setMultiExpr(true);
 
 			/* We try to check if the current work matches a final expression of the previous block group
@@ -381,6 +422,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		}
 
 		info->setGroup(group);
+		info->setAllowCompletion(group.isEmpty() ? true : allow_completion[group]);
 		info->setMultiExpr(hasInitialAndFinalExprs(group));
 		info->setClosed(match && match_final_expr);
 
@@ -416,6 +458,104 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 	}
 
 	return has_match;
+}
+
+void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
+{
+	QTextCursor tc;
+	QString curr_txt;
+	QPlainTextEdit *code_txt = qobject_cast<QPlainTextEdit *>(parent());
+
+	tc = code_txt->textCursor();
+	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+	curr_txt = tc.selectedText();
+	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+
+	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+	{
+		tc = code_txt->textCursor();
+		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+		curr_txt = tc.selectedText();
+	}
+
+	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+		return;
+
+	QChar inc_chr, dec_chr;
+	QString code = code_txt->toPlainText();
+	int chr_cnt = 0,
+			pos = tc.position(),
+			ini_pos = pos,
+			inc = curr_txt == cfg.open_char ? 1 : -1;
+
+	inc_chr = curr_txt == cfg.open_char ? cfg.open_char : cfg.close_char;
+	dec_chr = curr_txt == cfg.open_char ? cfg.close_char : cfg.open_char;
+
+	while(pos >= 0 && pos < code.size())
+	{
+		if(code[pos] == inc_chr)
+			chr_cnt++;
+		else if(code[pos] == dec_chr)
+			chr_cnt--;
+
+		if(chr_cnt == 0)
+			break;
+
+		pos += inc;
+	}
+
+	if(ini_pos >= 0)
+	{
+		QTextCharFormat fmt;
+		QList<QTextEdit::ExtraSelection> selections;
+		QTextEdit::ExtraSelection sel;
+
+		if(NumberedTextEditor::isHighlightLines() && !single_line_mode)
+		{
+			sel.format.setBackground(NumberedTextEditor::getLineHighlightColor());
+			sel.format.setProperty(QTextFormat::FullWidthSelection, true);
+			sel.cursor = tc;
+			sel.cursor.clearSelection();
+			selections.append(sel);
+		}
+
+		fmt = tc.charFormat();
+
+		if(pos >= 0 && pos < code.size())
+		{
+			// Color config for balanced enclosing chars
+			fmt.setBackground(cfg.bg_color);
+			fmt.setForeground(cfg.fg_color);
+		}
+		else
+		{
+			// Color config for unbalanced enclosing chars
+			fmt.setBackground(QColor(200, 0, 0));
+			fmt.setForeground(Qt::white);
+		}
+
+		sel.format = fmt;
+		tc.setPosition(ini_pos);
+		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
+		sel.cursor = tc;
+		selections.append(sel);
+
+		if(pos >= 0 && pos < code.size())
+		{
+			tc.setPosition(pos);
+			tc.setPosition(pos + 1, QTextCursor::KeepAnchor);
+			sel.cursor = tc;
+			selections.append(sel);
+		}
+
+		code_txt->setExtraSelections(selections);
+	}
+}
+
+qreal SyntaxHighlighter::getCurrentFontSize()
+{
+	return custom_font_size > 0 ?
+					custom_font_size : default_font.pointSizeF();
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded()
@@ -492,6 +632,24 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 							if(attribs[Attributes::Value].size() >= 1)
 								completion_trigger=attribs[Attributes::Value].at(0);
+						}
+						else if(elem == Attributes::EnclosingChars)
+						{
+							xmlparser.getElementAttributes(attribs);
+
+							EnclosingCharsCfg cfg;
+							cfg.open_char = attribs[Attributes::OpenChar].front();
+							cfg.close_char = attribs[Attributes::CloseChar].front();
+
+							#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+								cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+								cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+							#else
+								cfg.fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+								cfg.bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+							#endif
+
+							enclosing_chrs.push_back(cfg);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -586,6 +744,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								format.setForeground(fg_color);
 								format.setBackground(bg_color);
 								formats[group]=format;
+
+								allow_completion[group] =
+										attribs[Attributes::AllowCompletion] != Attributes::False;
 
 								xmlparser.savePosition();
 								xmlparser.accessElement(XmlParser::ChildElement);
@@ -685,7 +846,8 @@ void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
 {
 	QTextCharFormat format=formats[group];
 	format.setFontFamily(default_font.family());
-	format.setFontPointSize(default_font.pointSizeF());
+	//format.setFontPointSize(default_font.pointSizeF());
+	format.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(start, count, format);
 }
 

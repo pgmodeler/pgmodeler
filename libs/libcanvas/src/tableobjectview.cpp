@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,18 +17,25 @@
 */
 
 #include "tableobjectview.h"
+#include "rule.h"
+#include "index.h"
+#include "trigger.h"
+#include "constraint.h"
+#include "policy.h"
+#include "physicaltable.h"
+#include "utilsns.h"
 
 bool TableObjectView::hide_sch_name_usr_type = false;
-const QString TableObjectView::TypeSeparator=QString(" ");
-const QString TableObjectView::ConstrSeparator=QString(" ");
-const QString TableObjectView::TextUnique=QString("uq");
-const QString TableObjectView::TextExclude=QString("ex");
-const QString TableObjectView::TextCheck=QString("ck");
-const QString TableObjectView::TextPrimaryKey=QString("pk");
-const QString TableObjectView::TextForeignKey=QString("fk");
-const QString TableObjectView::TextNotNull=QString("nn");
-const QString TableObjectView::ConstrDelimStart=QString("«");
-const QString TableObjectView::ConstrDelimEnd=QString("»");
+const QString TableObjectView::TypeSeparator(" ");
+const QString TableObjectView::ConstrSeparator(" ");
+const QString TableObjectView::TextUnique("uq");
+const QString TableObjectView::TextExclude("ex");
+const QString TableObjectView::TextCheck("ck");
+const QString TableObjectView::TextPrimaryKey("pk");
+const QString TableObjectView::TextForeignKey("fk");
+const QString TableObjectView::TextNotNull("nn");
+const QString TableObjectView::ConstrDelimStart("«");
+const QString TableObjectView::ConstrDelimEnd("»");
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
@@ -184,9 +191,9 @@ QString TableObjectView::formatUserTypeName(PgSqlType type)
 {
 	QString fmt_type_name = *type;
 
-	if(type.isUserType() && type.getUserTypeReference() && hide_sch_name_usr_type)
+	if(type.isUserType() && type.getObject() && hide_sch_name_usr_type)
 	{
-		BaseObject *obj = reinterpret_cast<BaseObject *>(type.getUserTypeReference());
+		BaseObject *obj = type.getObject();
 		fmt_type_name.remove(obj->getSchema()->getName() + ".");
 	}
 
@@ -195,329 +202,248 @@ QString TableObjectView::formatUserTypeName(PgSqlType type)
 
 void TableObjectView::configureObject()
 {
-	if(this->getUnderlyingObject())
-	{
-		QTextCharFormat fmt;
-		double px = 0;
-		QString str_constr, tooltip, atribs_tip;
-		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getUnderlyingObject());
-		Column *column=dynamic_cast<Column *>(tab_obj);
-		ConstraintType constr_type=ConstraintType::Null;
-		bool sql_disabled=false;
+	if(!this->getUnderlyingObject())
+		return;
 
-		tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
-		tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
-		sql_disabled=tab_obj->isSQLDisabled();
-		fake_selection=false;
-
-		if(column)
-		{
-			if(column->isAddedByRelationship())
-				tooltip+=tr("\nRelationship: %1").arg(column->getParentRelationship()->getName());
-
-			str_constr=this->getConstraintString(column);
-
-			if(str_constr.indexOf(TextPrimaryKey)>=0)
-			{
-				fmt=font_config[Attributes::PkColumn];
-				constr_type=ConstraintType::PrimaryKey;
-			}
-			else if(str_constr.indexOf(TextForeignKey)>=0)
-			{
-				fmt=font_config[Attributes::FkColumn];
-				constr_type=ConstraintType::ForeignKey;
-			}
-			else if(str_constr.indexOf(TextUnique)>=0)
-			{
-				fmt=font_config[Attributes::UqColumn];
-				constr_type=ConstraintType::Unique;
-			}
-			else if(str_constr.indexOf(TextNotNull)>=0)
-				fmt=font_config[Attributes::NnColumn];
-			else
-				fmt=font_config[Attributes::Column];
-
-			if(column->isAddedByRelationship())
-				fmt=font_config[Attributes::InhColumn];
-			else if(column->isProtected())
-				fmt=font_config[Attributes::ProtColumn];
-
-			if(str_constr.indexOf(TextPrimaryKey)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::PrimaryKey)).toLower() + QString(", ");
-
-			if(str_constr.indexOf(TextForeignKey)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::ForeignKey)).toLower() + QString(", ");
-
-			if(str_constr.indexOf(TextUnique)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::Unique)).toLower() + QString(", ");
-
-			if(str_constr.indexOf(TextExclude)>=0)
-				atribs_tip+=(~ConstraintType(ConstraintType::Exclude)).toLower() + QString(", ");
-
-			if(str_constr.indexOf(TextNotNull)>=0)
-				atribs_tip+=QString("not null");
-		}
-		else
-		{
-			if(tab_obj->isAddedByRelationship())
-				fmt=font_config[Attributes::InhColumn];
-			else if(tab_obj->isProtected())
-				fmt=font_config[Attributes::ProtColumn];
-			else
-				fmt=font_config[tab_obj->getSchemaName()];
-		}
-
-		configureDescriptor(constr_type);
-
-		descriptor->setPos(HorizSpacing * 3, 0);
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
-
-		//Configuring the labels as follow: [object name] [type] [constraints]
-		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
-
-		//Strikeout the column name when its SQL is disabled
-		QFont font=fmt.font();
-		font.setStrikeOut(sql_disabled);
-		fmt.setFont(font);
-
-		lables[0]->setFont(fmt.font());
-		lables[0]->setBrush(fmt.foreground());
-		lables[0]->setPos(px, 0);
-		px+=lables[0]->boundingRect().width();
-
-		//Configuring the type label
-		fmt=font_config[Attributes::ObjectType];
-
-		if(compact_view)
-			lables[1]->setText("");
-		else
-		{
-			if(column)
-				lables[1]->setText(TypeSeparator + formatUserTypeName(column->getType()));
-			else
-				lables[1]->setText(TypeSeparator + tab_obj->getSchemaName());
-		}
-
-		lables[1]->setFont(fmt.font());
-		lables[1]->setBrush(fmt.foreground());
-		lables[1]->setPos(px, 0);
-		px+=lables[1]->boundingRect().width() + (3 * HorizSpacing);
-
-		//Configuring the constraints label
-		fmt=font_config[Attributes::Constraints];
-		if(compact_view)
-			lables[2]->setText("");
-		else if(column)
-			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
-		else
-		{
-			Rule *rule=dynamic_cast<Rule *>(tab_obj);
-			Trigger *trigger=dynamic_cast<Trigger *>(tab_obj);
-			Index *index=dynamic_cast<Index *>(tab_obj);
-			Constraint *constr=dynamic_cast<Constraint *>(tab_obj);
-			Policy *policy = dynamic_cast<Policy *>(tab_obj);
-
-			if(rule)
-			{
-				str_constr+=(~rule->getExecutionType()).mid(0,1);
-				atribs_tip+=(~rule->getExecutionType()).toLower() + QString(", ");
-
-				str_constr+=ConstrSeparator;
-
-				str_constr+=(~rule->getEventType()).mid(3,1);
-				atribs_tip+=(~rule->getEventType()).toLower();
-				str_constr=str_constr.toLower();
-			}
-			else if(trigger)
-			{
-				str_constr+=(~trigger->getFiringType()).mid(0,1);
-				str_constr+=ConstrSeparator;
-
-				atribs_tip+=(~trigger->getFiringType()).toLower() + QString(", ");
-
-				for(unsigned i=EventType::OnInsert; i <= EventType::OnTruncate; i++)
-				{
-					if(trigger->isExecuteOnEvent(EventType(i)))
-					{
-						str_constr+=(~EventType(i)).mid(3,1);
-						atribs_tip+=(~EventType(i)).toLower() + QString(", ");
-					}
-				}
-				str_constr=str_constr.toLower();
-			}
-			else if(index)
-			{
-				if(index->getIndexAttribute(Index::Unique))
-				{
-					str_constr+=QString("u");
-					atribs_tip += QString("unique") + QString(", ");
-				}
-
-				if(index->getIndexAttribute(Index::Concurrent))
-				{
-					str_constr+=QString("c");
-					atribs_tip += QString("concurrent") + QString(", ");
-				}
-
-				if(index->getIndexAttribute(Index::FastUpdate))
-				{
-					str_constr+=QString("f");
-					atribs_tip += QString("fast updated");
-				}
-
-				if(index->getIndexAttribute(Index::Buffering))
-				{
-					str_constr+=QString("b");
-					atribs_tip += QString("buffering");
-				}
-			}
-			else if(constr)
-			{
-				ConstraintType type = constr->getConstraintType();
-
-				if(type == ConstraintType::PrimaryKey)
-					str_constr = TextPrimaryKey;
-				else if(type == ConstraintType::ForeignKey)
-					str_constr = TextForeignKey;
-				else if(type == ConstraintType::Unique)
-					str_constr = TextUnique;
-				else if(type == ConstraintType::Exclude)
-					str_constr = TextExclude;
-				else if(type == ConstraintType::Check)
-					str_constr = TextCheck;
-
-				atribs_tip = (~type).toLower();
-			}
-			else if(policy)
-			{
-				if(policy->isPermissive())
-				{
-					str_constr += QString("p");
-					atribs_tip += QString("permissive");
-				}
-				else
-				{
-					str_constr += QString("r");
-					atribs_tip += QString("restrictive");
-				}
-
-				atribs_tip += QString(", ");
-				str_constr += (~policy->getPolicyCommand()).toLower().at(0);
-				atribs_tip += (~policy->getPolicyCommand()).toLower();
-			}
-
-			if(!str_constr.isEmpty())
-				lables[2]->setText(ConstrDelimStart + QString(" ") +
-								   str_constr + QString(" ") +
-								   ConstrDelimEnd);
-			else
-				lables[2]->setText("");
-		}
-
-		if(!atribs_tip.isEmpty())
-		{
-			if(atribs_tip.at(atribs_tip.length()-1)==' ')
-				atribs_tip.remove(atribs_tip.length()-2, 2);
-
-			atribs_tip=QString("\n") + ConstrDelimStart +
-								 QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
-
-		}
-
-		if(!tab_obj->getComment().isEmpty())
-			atribs_tip += QString("\n---\n%1").arg(tab_obj->getComment());
-
-		lables[2]->setFont(fmt.font());
-		lables[2]->setBrush(fmt.foreground());
-		lables[2]->setPos(px, 0);
-
-		calculateBoundingRect();
-		this->setToolTip(tooltip + atribs_tip);
-	}
-}
-
-void TableObjectView::configureObject(Reference reference)
-{
 	QTextCharFormat fmt;
-	double px;
-	QString str_aux;
+	double px = 0;
+	QString str_constr, tooltip, atribs_tip;
+	TableObject *tab_obj=dynamic_cast<TableObject *>(this->getUnderlyingObject());
+	Column *column=dynamic_cast<Column *>(tab_obj);
+	ConstraintType constr_type=ConstraintType::Null;
+	bool sql_disabled=false;
 
-	configureDescriptor();
+	tooltip = QString("`%1' (%2)").arg(tab_obj->getName(), tab_obj->getTypeName());
+	tooltip += QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(tab_obj->getObjectId()));
+	sql_disabled = tab_obj->isSQLDisabled();
+	fake_selection=false;
+
+	if(column)
+	{
+		tooltip += tr("\n%1 Type: %2").arg(UtilsNs::DataSeparator, column->getType().getTypeSql());
+
+		if(column->isAddedByRelationship())
+			tooltip += tr("\n%1 Relationship: `%2'").arg(UtilsNs::DataSeparator, column->getParentRelationship()->getName());
+
+		str_constr=this->getConstraintString(column);
+
+		if(str_constr.indexOf(TextPrimaryKey)>=0)
+		{
+			fmt=font_config[Attributes::PkColumn];
+			constr_type=ConstraintType::PrimaryKey;
+		}
+		else if(str_constr.indexOf(TextForeignKey)>=0)
+		{
+			fmt=font_config[Attributes::FkColumn];
+			constr_type=ConstraintType::ForeignKey;
+		}
+		else if(str_constr.indexOf(TextUnique)>=0)
+		{
+			fmt=font_config[Attributes::UqColumn];
+			constr_type=ConstraintType::Unique;
+		}
+		else if(str_constr.indexOf(TextNotNull)>=0)
+			fmt=font_config[Attributes::NnColumn];
+		else
+			fmt=font_config[Attributes::Column];
+
+		if(column->isAddedByRelationship())
+			fmt=font_config[Attributes::InhColumn];
+		else if(column->isProtected())
+			fmt=font_config[Attributes::ProtColumn];
+
+		if(str_constr.indexOf(TextPrimaryKey)>=0)
+			atribs_tip+=(~ConstraintType(ConstraintType::PrimaryKey)).toLower() + ", ";
+
+		if(str_constr.indexOf(TextForeignKey)>=0)
+			atribs_tip+=(~ConstraintType(ConstraintType::ForeignKey)).toLower() + ", ";
+
+		if(str_constr.indexOf(TextUnique)>=0)
+			atribs_tip+=(~ConstraintType(ConstraintType::Unique)).toLower() + ", ";
+
+		if(str_constr.indexOf(TextExclude)>=0)
+			atribs_tip+=(~ConstraintType(ConstraintType::Exclude)).toLower() + ", ";
+
+		if(str_constr.indexOf(TextNotNull)>=0)
+			atribs_tip+="not null";
+	}
+	else
+	{
+		if(tab_obj->isAddedByRelationship())
+			fmt=font_config[Attributes::InhColumn];
+		else if(tab_obj->isProtected())
+			fmt=font_config[Attributes::ProtColumn];
+		else
+			fmt=font_config[tab_obj->getSchemaName()];
+	}
+
+	configureDescriptor(constr_type);
+
 	descriptor->setPos(HorizSpacing * 3, 0);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
-	if(reference.getReferenceType()==Reference::ReferColumn)
-	{
-		//Configures the name label as: [table].[column]
-		fmt=font_config[Attributes::RefTable];
+	//Configuring the labels as follow: [object name] [type] [constraints]
+	lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
 
-		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[0]->setText(reference.getReferenceAlias());
-		else
-			lables[0]->setText(reference.getTable()->getName() + ".");
+	//Strikeout the column name when its SQL is disabled
+	QFont font=fmt.font();
+	font.setStrikeOut(sql_disabled);
+	fmt.setFont(font);
 
-		lables[0]->setFont(fmt.font());
-		lables[0]->setBrush(fmt.foreground());
-		lables[0]->setPos(px, 0);
-		px+=lables[0]->boundingRect().width();
+	lables[0]->setFont(fmt.font());
+	lables[0]->setBrush(fmt.foreground());
+	lables[0]->setPos(px, 0);
+	px+=lables[0]->boundingRect().width();
 
-		fmt=font_config[Attributes::RefColumn];
-		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText("");
-		else
-		{
-			if(reference.getColumn())
-				lables[1]->setText(reference.getColumn()->getName());
-			else
-				lables[1]->setText("*");
-		}
+	//Configuring the type label
+	fmt=font_config[Attributes::ObjectType];
 
-		lables[1]->setFont(fmt.font());
-		lables[1]->setBrush(fmt.foreground());
-		lables[1]->setPos(px, 0);
-		px+=lables[1]->boundingRect().width();
-	}
-	else
-	{
-		fmt=font_config[Attributes::RefTable];
-		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : "";
-
-		if(str_aux.isEmpty())
-		{
-			str_aux=reference.getExpression().simplified().mid(0,25);
-			if(reference.getExpression().size() > 25) str_aux+=QString("...");
-			str_aux.replace(QString("\n"), QString(" "));
-		}
-
-		lables[0]->setText(str_aux);
-		lables[0]->setFont(fmt.font());
-		lables[0]->setBrush(fmt.foreground());
+	if(compact_view)
 		lables[1]->setText("");
-		lables[0]->setPos(px, 0);
-		px+=lables[0]->boundingRect().width();
-	}
-
-	//Configures a label for the alias (if there is one)
-	if(!compact_view &&
-		 ((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
-			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::ReferExpression)))
-	{
-		if(reference.getReferenceType()==Reference::ReferExpression)
-			str_aux=reference.getAlias();
-		else
-			str_aux=reference.getColumnAlias();
-
-		str_aux=QString(" (") + str_aux + QString(") ");
-		fmt=font_config[Attributes::Alias];
-		lables[2]->setText(str_aux);
-		lables[2]->setFont(fmt.font());
-		lables[2]->setBrush(fmt.foreground());
-		lables[2]->setPos(px, 0);
-	}
 	else
+	{
+		if(column)
+			lables[1]->setText(TypeSeparator + formatUserTypeName(column->getType()));
+		else
+			lables[1]->setText(TypeSeparator + tab_obj->getSchemaName());
+	}
+
+	lables[1]->setFont(fmt.font());
+	lables[1]->setBrush(fmt.foreground());
+	lables[1]->setPos(px, 0);
+	px+=lables[1]->boundingRect().width() + (3 * HorizSpacing);
+
+	//Configuring the constraints label
+	fmt=font_config[Attributes::Constraints];
+	if(compact_view)
 		lables[2]->setText("");
+	else if(column)
+		lables[2]->setText(!str_constr.isEmpty() ? str_constr : " ");
+	else
+	{
+		Rule *rule=dynamic_cast<Rule *>(tab_obj);
+		Trigger *trigger=dynamic_cast<Trigger *>(tab_obj);
+		Index *index=dynamic_cast<Index *>(tab_obj);
+		Constraint *constr=dynamic_cast<Constraint *>(tab_obj);
+		Policy *policy = dynamic_cast<Policy *>(tab_obj);
+
+		if(rule)
+		{
+			str_constr+=(~rule->getExecutionType()).mid(0,1);
+			atribs_tip+=(~rule->getExecutionType()).toLower() + ", ";
+
+			str_constr+=ConstrSeparator;
+
+			str_constr+=(~rule->getEventType()).mid(3,1);
+			atribs_tip+=(~rule->getEventType()).toLower();
+			str_constr=str_constr.toLower();
+		}
+		else if(trigger)
+		{
+			str_constr+=(~trigger->getFiringType()).mid(0,1);
+			str_constr+=ConstrSeparator;
+
+			atribs_tip+=(~trigger->getFiringType()).toLower() + ", ";
+
+			for(unsigned i=EventType::OnInsert; i <= EventType::OnTruncate; i++)
+			{
+				if(trigger->isExecuteOnEvent(EventType(i)))
+				{
+					str_constr+=(~EventType(i)).mid(3,1);
+					atribs_tip+=(~EventType(i)).toLower() + ", ";
+				}
+			}
+			str_constr=str_constr.toLower();
+		}
+		else if(index)
+		{
+			if(index->getIndexAttribute(Index::Unique))
+			{
+				str_constr+="u";
+				atribs_tip += "unique, ";
+			}
+
+			if(index->getIndexAttribute(Index::Concurrent))
+			{
+				str_constr+="c";
+				atribs_tip += "concurrent, ";
+			}
+
+			if(index->getIndexAttribute(Index::FastUpdate))
+			{
+				str_constr+="f";
+				atribs_tip += "fast updated";
+			}
+
+			if(index->getIndexAttribute(Index::Buffering))
+			{
+				str_constr+="b";
+				atribs_tip += "buffering";
+			}
+		}
+		else if(constr)
+		{
+			ConstraintType type = constr->getConstraintType();
+
+			if(type == ConstraintType::PrimaryKey)
+				str_constr = TextPrimaryKey;
+			else if(type == ConstraintType::ForeignKey)
+				str_constr = TextForeignKey;
+			else if(type == ConstraintType::Unique)
+				str_constr = TextUnique;
+			else if(type == ConstraintType::Exclude)
+				str_constr = TextExclude;
+			else if(type == ConstraintType::Check)
+				str_constr = TextCheck;
+
+			atribs_tip = (~type).toLower();
+		}
+		else if(policy)
+		{
+			if(policy->isPermissive())
+			{
+				str_constr += "p";
+				atribs_tip += "permissive";
+			}
+			else
+			{
+				str_constr += "r";
+				atribs_tip += "restrictive";
+			}
+
+			atribs_tip += ", ";
+			str_constr += (~policy->getPolicyCommand()).toLower().at(0);
+			atribs_tip += (~policy->getPolicyCommand()).toLower();
+		}
+
+		if(!str_constr.isEmpty())
+			lables[2]->setText(ConstrDelimStart + " " +
+												 str_constr + " " + ConstrDelimEnd);
+		else
+			lables[2]->setText("");
+	}
+
+	if(!atribs_tip.isEmpty())
+	{
+		if(atribs_tip.at(atribs_tip.length()-1)==' ')
+			atribs_tip.remove(atribs_tip.length()-2, 2);
+
+		atribs_tip="\n" + ConstrDelimStart +
+							 " " + atribs_tip + " " + ConstrDelimEnd;
+
+	}
+
+	if(!tab_obj->getComment().isEmpty())
+		atribs_tip += QString("\n\n%1").arg(tab_obj->getComment());
+
+	lables[2]->setFont(fmt.font());
+	lables[2]->setBrush(fmt.foreground());
+	lables[2]->setPos(px, 0);
 
 	calculateBoundingRect();
+
+	tooltip += atribs_tip;
+	this->setToolTip(UtilsNs::formatMessage(tooltip));
 }
 
 void TableObjectView::configureObject(const SimpleColumn &col)
@@ -531,24 +457,24 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 
 	fmt = font_config[Attributes::Column];
 
-	if(compact_view && !col.alias.isEmpty())
-		lables[0]->setText(col.alias);
+	if(compact_view && !col.getAlias().isEmpty())
+		lables[0]->setText(col.getAlias());
 	else
-		lables[0]->setText(col.name);
+		lables[0]->setText(col.getName());
 
 	lables[0]->setFont(fmt.font());
 	lables[0]->setBrush(fmt.foreground());
 	lables[0]->setPos(px, 0);
 	px+=lables[0]->boundingRect().width() + (4 * HorizSpacing);
 
-	if(!compact_view && !col.type.isEmpty())
+	if(!compact_view && !col.getType().isEmpty())
 	{
 		fmt=font_config[Attributes::ObjectType];
 
-		if(col.type == Attributes::Expression)
-			lables[1]->setText(col.type);
+		if(col.getType() == Attributes::Expression)
+			lables[1]->setText(col.getType());
 		else
-			lables[1]->setText(formatUserTypeName(PgSqlType::parseString(col.type)));
+			lables[1]->setText(formatUserTypeName(PgSqlType::parseString(col.getType())));
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -560,6 +486,12 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 
 	lables[2]->setText("");
 	calculateBoundingRect();
+
+	setToolTip(	UtilsNs::formatMessage(tr("`%1' (%2)\n%3 Type: %4")
+																			.arg(col.getName(),
+																					 BaseObject::getTypeName(ObjectType::Column),
+																					 UtilsNs::DataSeparator,
+																					 col.getType())));
 }
 
 void TableObjectView::setChildObjectXPos(ChildObjectId obj_id, double px)

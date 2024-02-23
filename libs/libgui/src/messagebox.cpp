@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "baseobjectview.h"
+#include "utilsns.h"
 
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=has_custom_size=false;
+	cancelled=false;
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
@@ -33,13 +33,9 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(cancel_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
 
 	connect(show_errors_tb, &QToolButton::toggled, this, [this](bool checked){
-			objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
-
-			if(!has_custom_size)
-			{
-				resize(baseSize().width(),baseSize().height() * (checked ? 2 : 1));
-				has_custom_size = false;
-			}
+		objs_group_wgt->setCurrentIndex(checked ? 1 : 0);
+		resize(baseSize().width() * (checked ? 1.25 : 1),
+					 baseSize().height() * (checked ? 3 : 1));
 	});
 }
 
@@ -76,13 +72,18 @@ void Messagebox::setCustomOptionText(const QString &text)
 	custom_option_chk->setText(text);
 }
 
+void Messagebox::setCustomOptionTooltip(const QString &tooltip)
+{
+	custom_option_chk->setToolTip(tooltip);
+}
+
 bool Messagebox::isCustomOptionChecked()
 {
 	return custom_option_chk->isChecked();
 }
 
 void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
-						const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+											const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString fmt_msg, title;
 
@@ -95,9 +96,9 @@ void Messagebox::show(Exception e, const QString &msg, IconType icon_type, Butto
 	exceptions_trw->scrollToTop();
 
 	if(msg.isEmpty())
-		fmt_msg = GuiUtilsNs::formatMessage(e.getErrorMessage());
+		fmt_msg = UtilsNs::formatMessage(e.getErrorMessage());
 	else
-		fmt_msg = GuiUtilsNs::formatMessage(msg);
+		fmt_msg = UtilsNs::formatMessage(msg);
 
 	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
@@ -107,17 +108,61 @@ void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 	this->show("", msg,  icon_type, buttons);
 }
 
+void Messagebox::error(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, ErrorIcon);
+}
+
+void Messagebox::error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e)
+{
+	Messagebox msgbox;
+	msgbox.show(Exception(msg, error_code, method, file, line, e));
+}
+
+void Messagebox::error(Exception &e, const QString &method, const QString &file, int line)
+{
+	error(e.getErrorMessage(), e.getErrorCode(), method, file, line, &e);
+}
+
+void Messagebox::alert(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, AlertIcon);
+}
+
+void Messagebox::info(const QString &msg)
+{
+	Messagebox msgbox;
+	msgbox.show(msg, InfoIcon);
+}
+
 void Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
-						const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+											const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
+	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
 
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
 	else
-		yes_ok_btn->setText(buttons==OkButton ? tr("&Ok") : tr("&Yes"));
+	{
+		QString btn_txt;
 
-	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QIcon(GuiUtilsNs::getIconPath("confirm")));
+		if(buttons == CloseButton)
+			btn_txt = tr("&Close");
+		else if(buttons == OkButton)
+			btn_txt = tr("&Ok");
+		else
+			btn_txt = tr("&Yes");
+
+		yes_ok_btn->setText(btn_txt);
+	}
+
+	if(!yes_ico.isEmpty())
+		yes_ok_btn->setIcon(QIcon(yes_ico));
+	else
+		yes_ok_btn->setIcon(buttons != CloseButton ? QIcon(GuiUtilsNs::getIconPath("confirm")) : QIcon(GuiUtilsNs::getIconPath("close1")));
 
 	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : tr("&No"));
 	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QIcon(GuiUtilsNs::getIconPath("close1")));
@@ -128,51 +173,57 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
 	cancel_btn->setVisible(buttons==OkCancelButtons || buttons==AllButtons);
 
+	for(auto &btn : btns)
+	{
+		btn->adjustSize();
+		btn->setMinimumSize(btn->size());
+	}
+
 	if(title.isEmpty())
 	{
 		switch(icon_type)
 		{
-			case ErrorIcon:
-				aux_title=tr("Error");
+		case ErrorIcon:
+			aux_title=tr("Error");
 			break;
 
-			case AlertIcon:
-				aux_title=tr("Alert");
+		case AlertIcon:
+			aux_title=tr("Alert");
 			break;
 
-			case InfoIcon:
-				aux_title=tr("Information");
+		case InfoIcon:
+			aux_title=tr("Information");
 			break;
 
-			case ConfirmIcon:
-				aux_title=tr("Confirmation");
+		case ConfirmIcon:
+			aux_title=tr("Confirmation");
 			break;
 
-			default:
+		default:
 			break;
 		}
 	}
 
 	switch(icon_type)
 	{
-		case ErrorIcon:
-			icon_name=QString("error");
+	case ErrorIcon:
+		icon_name="error";
 		break;
 
-		case InfoIcon:
-			icon_name=QString("info");
+	case InfoIcon:
+		icon_name="info";
 		break;
 
-		case AlertIcon:
-			icon_name=QString("alert");
+	case AlertIcon:
+		icon_name="alert";
 		break;
 
-		case ConfirmIcon:
-			icon_name=QString("question");
+	case ConfirmIcon:
+		icon_name="question";
 		break;
 
-		default:
-			icon_name="";
+	default:
+		icon_name="";
 		break;
 	}
 
@@ -191,12 +242,15 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 	double w_factor = 0.25, h_factor = 0.15;
 	QSize sz = screen()->size();
-	setMinimumWidth(sz.width() * w_factor);
+
+	if(sz.width() * w_factor > minimumWidth())
+		setMinimumWidth(sz.width() * w_factor);
+
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																			QRegularExpression::CaseInsensitiveOption),
-																		QString("\n")).count('\n');
+																											 QRegularExpression::CaseInsensitiveOption),
+																		"\n").count('\n');
 
 	if(ln_cnt > 0)
 		adjustSize();
@@ -209,8 +263,5 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 
 void Messagebox::resizeEvent(QResizeEvent *event)
 {
-	if(isVisible())
-		has_custom_size = true;
-
 	QWidget::resizeEvent(event);
 }

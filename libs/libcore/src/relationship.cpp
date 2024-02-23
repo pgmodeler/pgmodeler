@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "relationship.h"
 #include "coreutilsns.h"
+#include "tablespace.h"
 #include <QApplication>
 
 const QString Relationship::SuffixSeparator("_");
@@ -345,7 +346,8 @@ void Relationship::createSpecialPrimaryKey()
 				on internal operations of the relationship
 
 		 2) Use the same tablespace as the receiver table */
-		pk_special=new Constraint;
+		//pk_special=new Constraint;
+		pk_special = createObject<Constraint>();
 		pk_special->setName(generateObjectName(PkPattern));
 		pk_special->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_special->setConstraintType(ConstraintType::PrimaryKey);
@@ -370,7 +372,8 @@ void Relationship::createSpecialPrimaryKey()
 		catch(Exception &)
 		{
 			//Case some error is raised deletes the special primary key
-			delete pk_special;
+			//delete pk_special;
+			discardObject(pk_special);
 			pk_special=nullptr;
 		}
 	}
@@ -475,6 +478,57 @@ int Relationship::getObjectIndex(TableObject *object)
 		return ((itr-list->begin())-1);
 	else
 		return -1;
+}
+
+template<class Class>
+Class *Relationship::createObject()
+{
+	if constexpr (std::is_same_v<Class, Column>)
+	{
+		Column *new_col = nullptr;
+
+		if(cols_stack.empty())
+			new_col = new Column;
+		else
+		{
+			new_col = cols_stack.top();
+			cols_stack.pop();
+		}
+
+		return new_col;
+	}
+
+	if constexpr (std::is_same_v<Class, Constraint>)
+	{
+		Constraint *new_constr = nullptr;
+
+		if(constrs_stack.empty())
+			new_constr = new Constraint;
+		else
+		{
+			new_constr = constrs_stack.top();
+			constrs_stack.pop();
+		}
+
+		return new_constr;
+	}
+
+	return nullptr;
+}
+
+void Relationship::discardObject(TableObject* object)
+{
+	if(!object)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(object->getObjectType() == ObjectType::Column)
+		cols_stack.push(dynamic_cast<Column *>(object));
+	else if(object->getObjectType() == ObjectType::Constraint)
+	{
+		Constraint *constr = dynamic_cast<Constraint *>(object);
+		constr->removeColumns();
+		constrs_stack.push(constr);
+	}
 }
 
 bool Relationship::isColumnExists(Column *column)
@@ -596,6 +650,18 @@ void Relationship::destroyObjects()
 	{
 		delete rel_attributes.back();
 		rel_attributes.pop_back();
+	}
+
+	while(!cols_stack.empty())
+	{
+		delete cols_stack.top();
+		cols_stack.pop();
+	}
+
+	while(!constrs_stack.empty())
+	{
+		delete constrs_stack.top();
+		constrs_stack.pop();
 	}
 }
 
@@ -1076,7 +1142,8 @@ void Relationship::addColumnsRelGenPart(bool missing_only)
 
 
 					//Creates a new column making the initial configurations
-					column=new Column;
+					//column=new Column;
+					column = createObject<Column>();
 
 					(*column)=(*dst_col);
 
@@ -1140,7 +1207,8 @@ void Relationship::addColumnsRelGenPart(bool missing_only)
 			//In case of duplicity error the temporary columns are destroyed
 			while(!columns.empty())
 			{
-				delete columns.back();
+				//delete columns.back();
+				discardObject(columns.back());
 				columns.pop_back();
 			}
 
@@ -1208,7 +1276,8 @@ void Relationship::addCheckConstrsRelGenPart()
 
 				if(!aux_constr)
 				{
-					ck_constr=new Constraint;
+					//ck_constr=new Constraint;
+					ck_constr = createObject<Constraint>();
 					(*ck_constr)=(*constr);
 					ck_constr->setParentTable(nullptr);
 					ck_constr->setAddedByGeneralization(true);
@@ -1315,6 +1384,7 @@ void Relationship::connectRelationship()
 			dst_tab_prev_name=dst_table->getName();
 
 			this->invalidated=false;
+			setSQLDisabled(sql_disabled);
 		}
 	}
 	catch(Exception &e)
@@ -1411,7 +1481,8 @@ void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 			//Creates the primary key for the weak entity
 			if(!pk_relident)
 			{
-				pk=new Constraint;
+				//pk=new Constraint;
+				pk = createObject<Constraint>();
 				pk->setConstraintType(ConstraintType::PrimaryKey);
 				pk->setAddedByLinking(true);
 				pk->setDeferrable(this->deferrable);
@@ -1442,7 +1513,8 @@ void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 			if(new_pk)
 			{
 				recv_tab->removeObject(pk_relident);
-				delete pk_relident;
+				//delete pk_relident;
+				discardObject(pk_relident);
 			}
 			else
 			{
@@ -1469,7 +1541,8 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 		//Alocates the unique key
 		if(!uq_rel11)
 		{
-			uq=new Constraint;
+			//uq=new Constraint;
+			uq = createObject<Constraint>();
 			uq->setDeferrable(this->deferrable);
 			uq->setDeferralType(this->deferral_type);
 			uq->setConstraintType(ConstraintType::Unique);
@@ -1507,7 +1580,8 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 		if(uq_rel11)
 		{
 			recv_tab->removeObject(uq_rel11);
-			delete uq_rel11;
+			//delete uq_rel11;
+			discardObject(uq_rel11);
 			uq_rel11=nullptr;
 		}
 
@@ -1528,7 +1602,8 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 		if((rel_type==RelationshipNn) ||
 				(!fk_rel1n && (rel_type==Relationship11 || rel_type==Relationship1n)))
 		{
-			fk=new Constraint;
+			//fk=new Constraint;
+			fk = createObject<Constraint>();
 			fk->setDeferrable(this->deferrable);
 			fk->setDeferralType(this->deferral_type);
 			fk->setConstraintType(ConstraintType::ForeignKey);
@@ -1635,7 +1710,8 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 		if(fk_rel1n)
 		{
 			recv_tab->removeObject(fk_rel1n);
-			delete fk_rel1n;
+			//delete fk_rel1n;
+			discardObject(fk_rel1n);
 			fk_rel1n=nullptr;
 		}
 
@@ -1717,7 +1793,8 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 
 			pk_columns.push_back(column_aux);
 
-			column=new Column;
+			//column=new Column;
+			column = createObject<Column>();
 			gen_columns.push_back(column);
 
 			(*column)=(*column_aux);
@@ -1992,7 +2069,8 @@ void Relationship::addColumnsRelNn()
 
 		if(single_pk_column)
 		{
-			pk_col=new Column;
+			//pk_col=new Column;
+			pk_col = createObject<Column>();
 			pk_col->setName(generateObjectName(PkColPattern));
 			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
 			pk_col->setType(PgSqlType("serial"));
@@ -2001,7 +2079,8 @@ void Relationship::addColumnsRelNn()
 		}
 
 		//Creates the primary key for the n-n relationship table
-		pk_tabnn=new Constraint;
+		//pk_tabnn=new Constraint;
+		pk_tabnn = createObject<Constraint>();
 		pk_tabnn->setName(generateObjectName(PkPattern));
 		pk_tabnn->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_tabnn->setConstraintType(ConstraintType::PrimaryKey);
@@ -2270,7 +2349,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					while(!ck_constraints.empty())
 					{
 						table->removeObject(ck_constraints.back());
-						delete ck_constraints.back();
+						//delete ck_constraints.back();
+						discardObject(ck_constraints.back());
 						ck_constraints.pop_back();
 					}
 				}
@@ -2315,7 +2395,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					{
 						//Destroy the foreign key
 						fk_rel1n->removeColumns();
-						delete fk_rel1n;
+						//delete fk_rel1n;
+						discardObject(fk_rel1n);
 						fk_rel1n=nullptr;
 					}
 
@@ -2324,7 +2405,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					{
 						table->removeConstraint(uq_rel11->getName());
 						uq_rel11->removeColumns();
-						delete uq_rel11;
+						//delete uq_rel11;
+						discardObject(uq_rel11);
 						uq_rel11=nullptr;
 					}
 
@@ -2340,7 +2422,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 							table->removeConstraint(pk_relident->getName());
 
 						//Destroy the primary key
-						delete pk;
+						//delete pk;
+						discardObject(pk);
 						pk_relident=nullptr;
 					}
 					else if(pk_special && table->getObjectIndex(pk_special) >= 0)
@@ -2366,7 +2449,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						{
 							table_relnn->removeConstraint(constr->getName());
 							i--; count--;
-							delete constr;
+							//delete constr;
+							discardObject(constr);
 						}
 					}
 				}
@@ -2400,7 +2484,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			//Destroy the special pk before the generated columns to avoid crashes
 			if(pk_special)
 			{
-				delete pk_special;
+				//delete pk_special;
+				discardObject(pk_special);
 				pk_special=nullptr;
 			}
 
@@ -2416,7 +2501,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				table->removeColumn(column->getName());
 				itr++;
 
-				delete column;
+				//delete column;
+				discardObject(column);
 			}
 
 			gen_columns.clear();
@@ -2905,4 +2991,18 @@ bool Relationship::isReceiverTableMandatory()
 	else
 		return ((getReceiverTable() == src_table && isTableMandatory(SrcTable)) ||
 						(getReceiverTable() == dst_table && isTableMandatory(DstTable)));
+}
+
+void Relationship::setSQLDisabled(bool value)
+{
+	for(auto &obj : gen_columns)
+		obj->setSQLDisabled(value);
+
+	for(auto &obj : getGeneratedConstraints())
+		obj->setSQLDisabled(value);
+
+	if(table_relnn)
+		table_relnn->setSQLDisabled(value);
+
+	BaseRelationship::setSQLDisabled(value);
 }

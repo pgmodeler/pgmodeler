@@ -25,6 +25,9 @@
   <property name="focusPolicy">
    <enum>Qt::NoFocus</enum>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>pgModeler - PostgreSQL Database Modeler</string>
   </property>
@@ -749,7 +752,7 @@
      <x>0</x>
      <y>0</y>
      <width>1668</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -817,18 +820,9 @@
     <addaction name="action_overview"/>
     <addaction name="action_compact_view"/>
    </widget>
-   <widget class="QMenu" name="plugins_config_menu">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="title">
-     <string>Pl&amp;ugins</string>
-    </property>
-   </widget>
    <addaction name="file_menu"/>
    <addaction name="edit_menu"/>
    <addaction name="show_menu"/>
-   <addaction name="plugins_config_menu"/>
    <addaction name="about_menu"/>
   </widget>
   <widget class="QToolBar" name="tools_acts_tb">

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,18 +36,23 @@ class __libcore UserMapping: public BaseObject, public ForeignObject {
 	public:
 		UserMapping();
 
+		virtual ~UserMapping(){}
+
 		void setForeignServer(ForeignServer *server);
 		ForeignServer *getForeignServer();
 
 		//! \brief This method has a hardcoded way to generated the usermapping's name. It'll reject any value passed by its parameter
-		virtual void setName(const QString &);
+		virtual void setName(const QString &) override;
 
-		virtual void setOwner(BaseObject *role);
-		virtual QString getName(bool = false, bool = false);
-		virtual QString getSignature(bool = false);
-		virtual QString getSourceCode(SchemaParser::CodeType def_type);
-		virtual QString getAlterCode(BaseObject *object);
-		virtual QString getDropCode(bool);
+		virtual void setOwner(BaseObject *role) override;
+		virtual QString getName(bool = false, bool = false) override;
+		virtual QString getSignature(bool = false)  override;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type)  override;
+		virtual QString getAlterCode(BaseObject *object)  override;
+		virtual QString getDropCode(bool) override;
+
+		virtual void updateDependencies() override;
+
 };
 
 #endif

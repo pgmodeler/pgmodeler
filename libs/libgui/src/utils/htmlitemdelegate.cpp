@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,10 +34,11 @@ HtmlItemDelegate::~HtmlItemDelegate()
 
 QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	QSize sz = PlainTextItemDelegate::sizeHint(option, index);
+
 	if(ignore_tags_sz_hint)
 	{
 		QString text = index.data().toString();
-		QSize sz = PlainTextItemDelegate::sizeHint(option, index);
 
 		if(text.contains(TagRegExp))
 		{
@@ -46,50 +47,68 @@ QSize HtmlItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 			text.remove(TagRegExp);
 			sz.setWidth(option.fontMetrics.boundingRect(text).width() + option.decorationSize.width() * 2);
 		}
-
-		return sz;
 	}
 
-	return PlainTextItemDelegate::sizeHint(option, index);
+	return sz;
 }
 
 void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QString text=index.data().toString();
+	static QRect rect;
+	static QColor bg_color;
+	static QIcon ico;
+	static QString text;
+	static QSize ico_sz;
+	static int dy = 0;
+
+	text = index.data().toString();
+	ico = index.data(Qt::DecorationRole).value<QIcon>();
+	rect = option.rect;
+	ico_sz = option.decorationSize;
+
+	//Painting the correct background color according to the item state
+	if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
+		//Selected
+		bg_color = option.palette.color(QPalette::Highlight);
+	else if(option.features == QStyleOptionViewItem::Alternate)
+		//Alternate color
+		bg_color = option.palette.color(QPalette::AlternateBase);
+	else
+		//Base color
+		bg_color = option.palette.color(QPalette::Base);
 
 	painter->save();
-	QStyledItemDelegate::paint(painter, option, index);
 
-	if(text.contains(TagRegExp))
+	//Repaint the text area
+	painter->fillRect(rect, bg_color);
+
+	dy = abs(rect.height() - ico_sz.height()) / 2;
+	ico.paint(painter, QRect(QPoint(rect.left() + 1, rect.top() + dy),  ico_sz));
+
+	if(!text.contains(TagRegExp))
+	{
+		static QSize txt_sz;
+
+		if((option.state & QStyle::State_Enabled) == QStyle::State_Enabled)
+			painter->setPen(option.palette.color(QPalette::Active, QPalette::Text));
+		else
+			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
+
+		txt_sz = option.fontMetrics.boundingRect(text).size();
+		dy = abs(rect.height() - txt_sz.height()) / 2;
+		rect.translate(ico_sz.width() + 5, dy);
+		painter->drawText(rect, text);
+	}
+	else
 	{
 		static QTextDocument doc;
-		static QRect rect;
-		static QColor bg_color;
-		static int dy = 0;
 
 		text.replace("\n", "<br/>");
-		rect.setTop(option.rect.top());
-		rect.setLeft(option.rect.left() + option.decorationSize.width() + 5);
-		rect.setSize(option.rect.size());
-
-		//Painting the correct background color according to the item state
-		if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
-			//Selected
-			bg_color=option.palette.color(QPalette::Highlight);
-		else if(option.features==QStyleOptionViewItem::Alternate)
-			//Alternate color
-			bg_color=option.palette.color(QPalette::AlternateBase);
-		else
-			//Base color
-			bg_color=option.palette.color(QPalette::Base);
-
-		//Repaint the text area
-		painter->fillRect(rect, bg_color);
+		doc.setHtml(text);
 
 		//Set the text to a html document instance and draw it to the painter
-		doc.setHtml(text);
-		dy = abs(option.rect.height() - option.decorationSize.height());
-		painter->translate(rect.topLeft() - QPoint(0, dy));
+		dy = abs(rect.height() - doc.size().height())/2;
+		painter->translate(rect.left() + ico_sz.width() + 1, rect.top() - dy);
 		doc.drawContents(painter);
 	}
 

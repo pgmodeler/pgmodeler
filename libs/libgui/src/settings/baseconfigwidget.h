@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,10 +28,8 @@
 #define BASE_CONF_WIDGET_H
 
 #include "guiglobal.h"
-#include "exception.h"
 #include "xmlparser.h"
-#include "attributes.h"
-#include <algorithm>
+#include "schemaparser.h"
 #include <QWidget>
 
 class __libgui BaseConfigWidget: public QWidget {
@@ -82,14 +80,17 @@ class __libgui BaseConfigWidget: public QWidget {
 		 * The silent parameter indicates that the restoration should not emit a message box informing the restoration sucess */
 		void restoreDefaults(const QString &conf_id, bool silent);
 		
-		//! \brief Adds a parameter to the specified configuration parameters set
-		static void addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs);
+		//! \brief Set the configuration parameters to a configuration section
+		static void setConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params);
 		
-		void showEvent(QShowEvent *);
+		//! \brief Appends/overwrites the configuration parameters of the provided section_id.
+		static void appendConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params);
+
+		virtual void showEvent(QShowEvent *) override;
 
 	public:
 		BaseConfigWidget(QWidget *parent = nullptr);
-		~BaseConfigWidget(void){}
+		~BaseConfigWidget(){}
 		
 		bool isConfigurationChanged();
 		
@@ -106,7 +107,7 @@ class __libgui BaseConfigWidget: public QWidget {
 		virtual void restoreDefaults(void)=0;
 		
 	public slots:
-		void setConfigurationChanged(bool changed=true);
+		virtual void setConfigurationChanged(bool changed = true);
 };
 
 #endif

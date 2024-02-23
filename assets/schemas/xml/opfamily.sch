@@ -7,9 +7,9 @@
 [<opfamily ]
 
 %if {reduced-form} %then
-	[signature=] "{signature}"/> $br
+	[signature=] "&{signature}"/> $br
 %else
-	[name=] "{name}" [ index-type=] "{index-type}"
+	[name=] "&{name}" [ index-type=] "{index-type}"
 
 	%if {protected} %then
 		[ protected=] "true"

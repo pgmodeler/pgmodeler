@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include "guiglobal.h"
 #include <QtWidgets>
-#include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
 class __libgui ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {

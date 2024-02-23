@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,12 +28,10 @@
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
-#include "databaseimportform.h"
 #include "widgets/findreplacewidget.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "widgets/findreplacewidget.h"
-#include "utils/resultsetmodel.h"
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
@@ -61,12 +59,11 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Connection used to run commands specified on sql input field
 		Connection sql_cmd_conn;
 
-		//! \brief Dialog for SQL save/load
-		QFileDialog sql_file_dlg;
-
 		QMenu snippets_menu,
 
-		file_menu;
+		file_menu,
+
+		export_menu;
 
 		QAction *action_save, *action_save_as, *action_load;
 
@@ -98,6 +95,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void showEvent(QShowEvent *);
 		void resizeEvent(QResizeEvent *);
 		bool eventFilter(QObject *object, QEvent *event);
+		void reloadHighlightConfigs();
 
 	public:
 		static const QString ColumnNullValue;
@@ -111,9 +109,15 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Insert the provided sql commands in the input field. This method clears the current commands before adding new content
 		void setSQLCommand(const QString &sql);
 
+		//! \brief Returns true when there is a SQL command typed, otherwise, false is returned
+		bool hasSQLCommand();
+
+		//! \brief Returns the currently typed command
+		QString getSQLCommand();
+
 		/*! \brief Fills up the results grid based upon the specified result set.
-				The parameter store_data will make each item store the text as its data */
-		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
+		 * The parameter store_data will make each item store the text as its data. */
+		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data = false);
 
 		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
 		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false);
@@ -129,7 +133,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format);
 
 		//! \brief Exports the results to csv file
-		static void exportResults(QTableView *results_tbw);
+		static void exportResults(QTableView *results_tbw, bool csv_format);
 
 		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
 		static void saveSQLHistory();

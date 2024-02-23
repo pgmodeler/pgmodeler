@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ This class is the basis for the reverse engineering feature.
 
 #include "connection.h"
 #include "baseobject.h"
-#include "tableobject.h"
 #include <QTextStream>
 #include <QApplication>
 
@@ -94,6 +93,9 @@ class __libconnector Catalog {
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static std::map<ObjectType, QString> oid_fields,
 
+		//! \brief This map stores the relation names in catalogs for each object type
+		obj_relnames,
+		
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
 		name_fields,
 
@@ -159,9 +161,9 @@ class __libconnector Catalog {
 		 a extension. */
 		QString getNotExtObjectQuery(const QString &oid_field);
 
-		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_object' is used
-		to query the pg_shdescription instead of pg_description */
-		QString getCommentQuery(const QString &oid_field, bool is_shared_obj=false);
+		/*! \brief Returns the query that is used to retrieve an objects comment. The 'is_shared_obj' is used
+		 * to query the pg_shdescription instead of pg_description */
+		QString getCommentQuery(const QString &oid_field, ObjectType obj_type, bool is_shared_obj=false);
 
 		//! \brief Creates a comma separated string containing all the oids to be filtered
 		QString createOidFilter(const std::vector<unsigned> &oids);
@@ -183,6 +185,8 @@ class __libconnector Catalog {
 	Once this method is called the user must call setConnection() again or the
 	catalog queries will fail */
 		void closeConnection();
+
+		bool isConnectionValid();
 
 		//! \brief Configures the catalog query filter
 		void setQueryFilter(QueryFilter filter);
@@ -212,9 +216,14 @@ class __libconnector Catalog {
 		 * in the second parameter. */
 		bool isExtensionObject(unsigned oid, const QString &ext_name = "");
 
-		/*! \brief Returns the count for the specified object type. A schema name can be specified
-		in order to filter only objects of the specifed schema */
-		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
+		/*! \brief Returns the count for the specified object types. A schema name can be specified
+		 * in order to filter only objects of the specifed schema. The parameter incl_sys_objs
+		 * indicates if the system object need to be included in the resulting counting. */
+		unsigned getObjectsCount(std::vector<ObjectType> types, bool incl_sys_objs, const QString &sch_name = "", const QString &tab_name = "", attribs_map extra_attribs = attribs_map());
+
+		/*! \brief This special method returns the amount of object in pg_class table.
+		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
+		//unsigned getObjectCount(bool incl_sys_objs);
 
 		//! \brief Returns the current filter configuration for the catalog queries
 		QueryFilter getQueryFilter();
@@ -262,17 +271,13 @@ class __libconnector Catalog {
 		//! \brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes();
 
-		/*! \brief This special method returns the amount of object in pg_class table.
-		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
-		unsigned getObjectCount(bool incl_sys_objs);
-
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
 
 		/*! \brief Parse a function's default value and return the elements in a string list.
 		It can be specified the string delimiter as well the value separator if the input default value
 		contains several values */
-		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim=QString("'"), const QString &val_sep=QString(", "));
+		static QStringList parseDefaultValues(const QString &def_vals, const QString &str_delim="'", const QString &val_sep=", ");
 
 		//! \brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
 		static QStringList parseRuleCommands(const QString &cmd);

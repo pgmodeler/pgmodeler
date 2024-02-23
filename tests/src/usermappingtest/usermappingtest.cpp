@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -134,9 +134,12 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 		model.addUserMapping(&usr_mapping);
 
 		std::vector<BaseObject *> refs, deps;
-		model.getObjectDependecies(&usr_mapping, deps);
+		//model.getObjectDependecies(&usr_mapping, deps);
+		deps = usr_mapping.getDependencies();
 
-		model.getObjectReferences(&server, refs);
+		//model.getObjectReferences(&server, refs);
+		refs = server.getReferences();
+
 		model.removeUserMapping(&usr_mapping);
 		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);

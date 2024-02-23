@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-			attributes[Attributes::ColsComment]+=QString("-- ");
+			attributes[Attributes::ColsComment]+="-- ";
 
 		attributes[Attributes::ColsComment]+=schparser.getSourceCode(Attributes::Comment, attribs, SchemaParser::SqlCode);
 		schparser.ignoreUnkownAttributes(false);
@@ -465,6 +465,8 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					if(obj_type==ObjectType::Constraint)
 						dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
 				}
+
+				tab_obj->updateDependencies();
 			}
 			else if(isPhysicalTable(obj_type))
 			{
@@ -666,7 +668,9 @@ void PhysicalTable::removeObject(BaseObject *obj)
 			TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
 
 			if(tab_obj)
+			{
 				removeObject(getObjectIndex(tab_obj), obj->getObjectType());
+			}
 			else
 				removeObject(obj->getName(true), ObjectType::Table);
 		}
@@ -724,6 +728,8 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 			if(constr && constr->getConstraintType()==ConstraintType::PrimaryKey)
 				dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(false);
+
+			tab_obj->clearAllDepsRefs();
 		}
 		else
 		{
@@ -734,17 +740,17 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			column=dynamic_cast<Column *>(*itr);
 
 			//Gets the references to the column before the exclusion
-			getColumnReferences(column, refs, true);
+			refs = getColumnReferences(column);
 
 			//Case some trigger, constraint, index is referencing the column raises an error
 			if(!refs.empty())
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemInderectReference)
-								.arg(column->getName())
+								.arg(column->getSignature())
 								.arg(column->getTypeName())
-								.arg(refs[0]->getName())
+								.arg(refs[0]->getSignature())
 						.arg(refs[0]->getTypeName())
-						.arg(this->getName(true))
+						.arg(this->getSignature())
 						.arg(this->getTypeName()),
 						ErrorCode::RemInderectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -753,10 +759,11 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(isPartitionKeyRefColumn(column))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemColumnRefByPartitionKey)
-								.arg(column->getName()).arg(this->getName(true)),
+								.arg(column->getSignature()).arg(this->getSignature()),
 								ErrorCode::RemColumnRefByPartitionKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
+			column->clearDependencies();
 			column->setParentTable(nullptr);
 			columns.erase(itr);
 		}
@@ -1340,13 +1347,16 @@ void PhysicalTable::setGenerateAlterCmds(bool value)
 		 * SQL syntax errors */
 		setCodeInvalidated(true);
 		gen_alter_cmds = false;
+		updateAlterCmdsStatus();
 	}
 	else
-	{
-		setCodeInvalidated(gen_alter_cmds != value);
-		gen_alter_cmds = value;
-	}
+		__setGenerateAlterCmds(value);
+}
 
+void PhysicalTable::__setGenerateAlterCmds(bool value)
+{
+	setCodeInvalidated(gen_alter_cmds != value);
+	gen_alter_cmds = value;
 	updateAlterCmdsStatus();
 }
 
@@ -1523,54 +1533,22 @@ void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsig
 	}
 }
 
-void PhysicalTable::getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode)
+std::vector<TableObject *> PhysicalTable::getColumnReferences(Column *column)
 {
-	if(column && !column->isAddedByRelationship())
-	{
-		unsigned count, i;
-		Column *col=nullptr, *col1=nullptr;
-		std::vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
-		Constraint *constr=nullptr;
-		Trigger *trig=nullptr;
+	if(!column || column->isAddedByRelationship())
+		return {};
 
-		itr=constraints.begin();
-		itr_end=constraints.end();
+	std::vector<BaseObject *> refs = column->getReferences();
+	std::vector<TableObject *> col_refs;
 
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			constr=dynamic_cast<Constraint *>(*itr);
-			itr++;
+	std::for_each(refs.begin(), refs.end(),
+								[&col_refs](auto &obj)
+								{
+									if(TableObject::isTableObject(obj->getObjectType()))
+										col_refs.push_back(dynamic_cast<TableObject *>(obj));
+								});
 
-			col=constr->getColumn(column->getName(), Constraint::SourceCols);
-			col1=constr->getColumn(column->getName(), Constraint::ReferencedCols);
-
-			if((col && col==column) || (col1 && col1==column))
-			{
-				found=true;
-				refs.push_back(constr);
-			}
-		}
-
-		itr=triggers.begin();
-		itr_end=triggers.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
-		{
-			trig=dynamic_cast<Trigger *>(*itr);
-			itr++;
-
-			count=trig->getColumnCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !found)); i++)
-			{
-				if(trig->getColumn(i)==column)
-				{
-					found=true;
-					refs.push_back(trig);
-				}
-			}
-		}
-	}
+	return col_refs;
 }
 
 std::vector<BaseObject *> PhysicalTable::getObjects(const std::vector<ObjectType> &excl_types)
@@ -1604,7 +1582,7 @@ void PhysicalTable::setCodeInvalidated(bool value)
 			obj->setCodeInvalidated(value);
 	}
 
-	BaseObject::setCodeInvalidated(value);
+	BaseTable::setCodeInvalidated(value);
 }
 
 void PhysicalTable::setInitialData(const QString &value)
@@ -1699,9 +1677,9 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		{
 			value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
 			value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
-			value.replace(QString("\'"), QString("''"));
-			value.replace(QChar(QChar::LineFeed), QString("\\n"));
-			value=QString("E'") + value + QString("'");
+			value.replace("\'", "''");
+			value.replace(QChar(QChar::LineFeed), "\\n");
+			value="E'" + value + "'";
 		}
 
 		val_list.push_back(value);
@@ -1716,7 +1694,7 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
-				val_list.append(QString("DEFAULT"));
+				val_list.append("DEFAULT");
 		}
 
 		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))

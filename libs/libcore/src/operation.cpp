@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "operation.h"
+#include "utilsns.h"
 
 Operation::Operation()
 {
@@ -28,11 +29,10 @@ Operation::Operation()
 	op_type=NoOperation;
 }
 
-QString Operation::generateOperationId()
+QString Operation::generateOperationId() const
 {
 	QString addr;
 	QTextStream stream(&addr);
-	QCryptographicHash hash(QCryptographicHash::Md5);
 
 	//Stores the permission address on a string
 	stream << reinterpret_cast<unsigned *>(original_obj);
@@ -40,8 +40,7 @@ QString Operation::generateOperationId()
 	stream << reinterpret_cast<unsigned *>(parent_obj);
 
 	//Generates an unique id through md5 hash
-	hash.addData(QByteArray(addr.toStdString().c_str()));
-	return hash.result().toHex();
+	return UtilsNs::getStringHash(addr);
 }
 
 void Operation::setObjectIndex(int idx)
@@ -127,7 +126,23 @@ QString Operation::getXMLDefinition()
 	return xml_definition;
 }
 
-bool Operation::isOperationValid()
+bool Operation::isOperationValid() const
 {
-	return (operation_id==generateOperationId());
+	return (operation_id == generateOperationId());
+}
+
+Operation::OperationInfo Operation::getOperationInfo() const
+{
+	OperType oper_type = OperType::NoOperation;
+	ObjectType obj_type = ObjectType::BaseObject;
+	QString obj_name = QT_TR_NOOP("(invalid object)");
+
+	if(isOperationValid())
+	{
+		obj_type = pool_obj->getObjectType();
+		obj_name = pool_obj->getSignature(true);
+		oper_type = this->op_type;
+	}
+
+	return OperationInfo(obj_name, obj_type, oper_type);
 }

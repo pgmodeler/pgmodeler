@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ void Tablespace::setName(const QString &name)
 {
 	/* Tablespace names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
-	if(name.mid(0,3)==QString("pg_"))
+	if(name.mid(0,3)=="pg_")
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Tablespace)),
@@ -68,7 +68,7 @@ QString Tablespace::getSourceCode(SchemaParser::CodeType def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	if(!directory.isEmpty())
-		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
+		attributes[Attributes::Directory]="'" + directory + "'";
 
 	return BaseObject::__getSourceCode(def_type);
 }

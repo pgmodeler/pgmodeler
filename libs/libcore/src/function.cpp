@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
 */
 
 #include "function.h"
-#include "defaultlanguages.h"
 
 Function::Function() : BaseFunction()
 {
-	return_type = PgSqlType(QString("void"));
+	return_type = PgSqlType("void");
 	returns_setof=false;
 	is_wnd_function=false;
 	is_leakproof=false;
@@ -74,7 +73,7 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 
 	Parameter p;
 	p.setName(name);
-	p.setType(type);
+	p.setType(type);	
 	ret_table_columns.push_back(p);
 	setCodeInvalidated(true);
 }
@@ -112,7 +111,7 @@ void Function::setReturnType(PgSqlType type)
 {
 	type.reset();
 	setCodeInvalidated(return_type != type);
-	return_type=type;
+	return_type = type;
 	ret_table_columns.clear();
 }
 
@@ -225,11 +224,10 @@ void Function::removeReturnedTableColumns()
 
 void Function::removeReturnedTableColumn(unsigned column_idx)
 {
-	if(column_idx>=ret_table_columns.size())
+	if(column_idx >= ret_table_columns.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	std::vector<Parameter>::iterator itr;
-	itr=ret_table_columns.begin()+column_idx;
+	auto itr = ret_table_columns.begin() + column_idx;
 	ret_table_columns.erase(itr);
 	setCodeInvalidated(true);
 }
@@ -282,7 +280,7 @@ QString Function::getAlterCode(BaseObject *object)
 			 this->library!=func->library || this->symbol!=func->symbol)
 		{
 			attribs[Attributes::Definition]=func->getSourceCode(SchemaParser::SqlCode);
-			attribs[Attributes::Definition].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+			attribs[Attributes::Definition].replace("CREATE FUNCTION", "CREATE OR REPLACE FUNCTION");
 		}
 		else
 		{
@@ -319,6 +317,18 @@ QString Function::getAlterCode(BaseObject *object)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void Function::updateDependencies()
+{
+	std::vector<BaseObject *> deps = {
+			return_type.getObject()
+	};
+
+	for(auto &param : ret_table_columns)
+		deps.push_back(param.getType().getObject());
+
+	BaseFunction::updateDependencies(deps);
 }
 
 void Function::configureSearchAttributes()

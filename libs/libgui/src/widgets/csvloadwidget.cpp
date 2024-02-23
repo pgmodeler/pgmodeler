@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@
 #include <QFileDialog>
 #include "exception.h"
 #include <QTextStream>
-#include "utilsns.h"
+#include "csvparser.h"
+#include "messagebox.h"
 
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
 	setupUi(this);
 
 	file_sel = new FileSelectorWidget(this);
-	file_sel->setFileMode(QFileDialog::ExistingFile);
+	file_sel->setFileMustExist(true);
 	file_sel->setFileDialogTitle(tr("Load CSV file"));
 	file_sel->setMimeTypeFilters({"text/csv", "application/octet-stream"});
 	load_csv_grid->addWidget(file_sel, 0, 1, 1, 8);
@@ -64,8 +65,7 @@ CsvDocument CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, const QC
 
 		csv_parser.setSpecialChars(separator, text_delim, CsvDocument::LineBreak);
 		csv_parser.setColumnInFirstRow(cols_in_first_row);
-		csv_doc = csv_parser.parseBuffer(csv_buffer);
-		return csv_doc;
+		return csv_parser.parseBuffer(csv_buffer);
 	}
 	catch(Exception &e)
 	{
@@ -90,7 +90,7 @@ void CsvLoadWidget::loadCsvFile()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

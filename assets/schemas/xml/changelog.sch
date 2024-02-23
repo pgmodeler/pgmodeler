@@ -3,7 +3,7 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {entry} %then
-	$br <changelog> $br
+	$br <changelog>
 	{entry}
-	</changelog> $br
+	$br </changelog> $br
 %end

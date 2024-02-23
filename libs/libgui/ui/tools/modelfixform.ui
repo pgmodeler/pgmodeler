@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1009</width>
-    <height>572</height>
+    <width>650</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
-    <height>390</height>
+    <width>650</width>
+    <height>660</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Model file fix</string>
+   <string>Fix database model file</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../res/resources.qrc">
@@ -87,239 +87,7 @@
       <property name="spacing">
        <number>5</number>
       </property>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Input file:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="3">
-       <widget class="QFrame" name="alert_frm">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="leftMargin">
-          <number>5</number>
-         </property>
-         <property name="topMargin">
-          <number>5</number>
-         </property>
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
-         <property name="bottomMargin">
-          <number>5</number>
-         </property>
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="icon_lbl">
-           <property name="minimumSize">
-            <size>
-             <width>25</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>25</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::AutoText</enum>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="not_found_lbl">
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[pgmodeler-cli not found error]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
-         <number>5</number>
-        </property>
-        <item>
-         <widget class="QSpinBox" name="fix_tries_sb">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="load_model_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Load fixed model when finish</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="9" column="0" colspan="3">
-       <widget class="QFrame" name="alert2_frm">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <property name="leftMargin">
-          <number>5</number>
-         </property>
-         <property name="topMargin">
-          <number>5</number>
-         </property>
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
-         <property name="bottomMargin">
-          <number>5</number>
-         </property>
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item row="1" column="1">
-          <widget class="QLabel" name="message_lbl">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>In some cases the fix process will fail to restore certain objects in the model demanding manual fixes by changing the file in a text editor. &lt;strong&gt;NOTE:&lt;/strong&gt; relationships may lost their graphical configuration like custom points and line color.</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="icon_lbl2">
-           <property name="minimumSize">
-            <size>
-             <width>25</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>25</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="textFormat">
-            <enum>Qt::AutoText</enum>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Output file:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="pgmodeler_cli_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>pgmodeler-cli:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="3">
+      <item row="4" column="0" colspan="3">
        <widget class="QTextEdit" name="output_txt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -457,6 +225,9 @@
         <property name="lineWrapMode">
          <enum>QTextEdit::NoWrap</enum>
         </property>
+        <property name="markdown">
+         <string/>
+        </property>
         <property name="html">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -464,8 +235,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace'; font-size:9pt;&quot;&gt;Waiting process to start...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="acceptRichText">
          <bool>false</bool>
@@ -475,14 +246,159 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="8" column="0" colspan="3">
+       <widget class="QFrame" name="alert2_frm">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="leftMargin">
+          <number>5</number>
+         </property>
+         <property name="topMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
+          <number>5</number>
+         </property>
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <item row="1" column="1">
+          <widget class="QLabel" name="message_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>In some cases the fix process will fail to restore certain objects in the model demanding manual fixes by changing the file in a text editor. &lt;strong&gt;NOTE:&lt;/strong&gt; relationships may lost their graphical configuration like custom points and line color.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="icon_lbl2">
+           <property name="minimumSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="pgmodeler_cli_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>pgmodeler-cli:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>Fix tries:</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="0" colspan="3">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Input file:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QSpinBox" name="fix_tries_sb">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="load_model_chk">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Load fixed model when finish</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="5" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
          <number>5</number>
@@ -527,6 +443,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Output file:</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

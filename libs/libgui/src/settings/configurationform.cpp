@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,17 +17,18 @@
 */
 
 #include "configurationform.h"
+#include "guiutilsns.h"
 
 ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 
-	general_conf=new GeneralConfigWidget(this);
-	appearance_conf=new AppearanceConfigWidget(this);
-	connections_conf=new ConnectionsConfigWidget(this);
-	relationships_conf=new RelationshipConfigWidget(this);
-	snippets_conf=new SnippetsConfigWidget(this);
-	plugins_conf=new PluginsConfigWidget(this);
+	general_conf=new GeneralConfigWidget;
+	appearance_conf=new AppearanceConfigWidget;
+	connections_conf=new ConnectionsConfigWidget;
+	relationships_conf=new RelationshipConfigWidget;
+	snippets_conf=new SnippetsConfigWidget;
+	plugins_conf=new PluginsConfigWidget;
 
 	QWidgetList wgt_list={ general_conf, appearance_conf, relationships_conf,
 												 connections_conf, snippets_conf, plugins_conf };
@@ -36,8 +37,8 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 		confs_stw->addWidget(wgt);
 
 	connect(cancel_btn, &QPushButton::clicked, this, &ConfigurationForm::reject);
-	connect(apply_btn,  &QPushButton::clicked, this, &ConfigurationForm::applyConfiguration);
-	connect(defaults_btn,  &QPushButton::clicked, this, &ConfigurationForm::restoreDefaults);
+	connect(apply_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::applyConfiguration));
+	connect(defaults_btn,  &QPushButton::clicked, this, __slot(this, ConfigurationForm::restoreDefaults));
 
 	setMinimumSize(890, 740);
 
@@ -79,9 +80,10 @@ void ConfigurationForm::changeCurrentView()
 	confs_stw->setCurrentIndex(btn_sender->property(Attributes::ObjectId.toStdString().c_str()).toInt());
 }
 
-void ConfigurationForm::hideEvent(QHideEvent *)
+void ConfigurationForm::hideEvent(QHideEvent *event)
 {
-	general_tb->setChecked(true);
+	if(!event->spontaneous())
+		general_tb->setChecked(true);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
@@ -95,10 +97,10 @@ void ConfigurationForm::reject()
 	{
 		if(sender() == cancel_btn)
 		{
-			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
+			QWidgetList wgt_list={ general_conf, appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
-			QApplication::setOverrideCursor(Qt::WaitCursor);
+			qApp->setOverrideCursor(Qt::WaitCursor);
 
 			for(QWidget *wgt : wgt_list)
 			{
@@ -108,7 +110,7 @@ void ConfigurationForm::reject()
 					conf_wgt->loadConfiguration();
 			}
 
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 		}
 	}
 	catch(Exception &)
@@ -122,11 +124,11 @@ void ConfigurationForm::applyConfiguration()
 	BaseConfigWidget *conf_wgt=nullptr;
 	bool curr_escape_comments = BaseObject::isEscapeComments();
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
-	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
+	for(int i = GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
-		conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
+		conf_wgt = qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
 
 		if(conf_wgt->isConfigurationChanged())
 			conf_wgt->saveConfiguration();
@@ -138,7 +140,7 @@ void ConfigurationForm::applyConfiguration()
 	if(curr_escape_comments != BaseObject::isEscapeComments())
 		emit s_invalidateModelsRequested();
 
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 	QDialog::accept();
 }
 
@@ -155,14 +157,13 @@ void ConfigurationForm::loadConfiguration()
 		}
 		catch(Exception &e)
 		{
-			Messagebox msg_box;
-
 			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
-				msg_box.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 			else
 			{
+				Messagebox msg_box;
 				Exception ex = Exception(Exception::getErrorMessage(ErrorCode::ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));

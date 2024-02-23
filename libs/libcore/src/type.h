@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,7 @@
 #define TYPE_H
 
 #include "baseobject.h"
-#include "schema.h"
 #include "function.h"
-#include "role.h"
 #include "typeattribute.h"
 #include "operatorclass.h"
 #include "pgsqltypes/storagetype.h"
@@ -70,7 +68,7 @@ class __libcore Type: public BaseObject {
 		Function *functions[9];
 
 		//! \brief Type's internal length ( > 0 - Fixed length, 0 - Variable length)
-		unsigned internal_len; //! \brief INTERNALLENGTH
+		unsigned internal_len; // INTERNALLENGTH
 
 		//! \brief Indicates that the type can be passed by value
 		bool by_value, // PASSEDBYVALUE
@@ -127,11 +125,13 @@ class __libcore Type: public BaseObject {
 	public:
 		Type();
 
+		virtual ~Type(){}
+
 		//! \brief Sets the type name
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Sets the type schema
-		void setSchema(BaseObject *schema);
+		virtual void setSchema(BaseObject *schema) override;
 
 		/*! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE | RANGE).
 		Calling this method causes all attribute to be reset, so it may be executed before
@@ -230,6 +230,8 @@ class __libcore Type: public BaseObject {
 
 		//! \brief Makes a copy between two type
 		void operator = (Type &tipo);
+
+		virtual void updateDependencies() override;
 
 		friend class DatabaseModel;
 		friend class ModelsDiffHelper;

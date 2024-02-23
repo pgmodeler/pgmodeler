@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,15 +47,13 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "ui_updatenotifierwidget.h"
-#include "messagebox.h"
-#include "globalattributes.h"
-#include "attributes.h"
+#include "guiglobal.h"
 
 class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:
 		Q_OBJECT
 
-		QString check_versions;
+		QString check_versions, blogpost;
 
 		//! \brief Object responsible to make request to server
 		QNetworkAccessManager update_chk_manager;

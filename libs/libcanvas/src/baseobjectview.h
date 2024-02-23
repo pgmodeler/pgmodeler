@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,6 @@
 
 #include <QtWidgets>
 #include "basegraphicobject.h"
-#include "baserelationship.h"
-#include "xmlparser.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
 
@@ -52,12 +50,17 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 * as well the table's extended area is collapsed by default */
 		static bool compact_view;
 
+		//! \brief Indicate if the graphical element representing object's shadow must be hidden.
+		static bool hide_shadow;
+
 		/*! \brief Stores the selection order of the current object. This attribute is used to
 		 know when an item was selected before another in the scene because the implementation of
 		 the method QGraphicsScene :: selectedItem() the selected objects are returned without
 		 any sort, but for the database model objects is the ESSENTIAL to know the selection order
 		 mainly when creating relationships between tables. */
 		unsigned sel_order;
+
+		QString curr_hash_code;
 
 		//! \brief This item display the current object position on the scene
 		TextPolygonItem *pos_info_item;
@@ -87,7 +90,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static std::map<QString, std::vector<QColor>> color_config;
 
 		//! \brief Configures the objects shadow polygon
-		void configureObjectShadow(void) {}
+		void configureObjectShadow(void);
 
 		//! \brief Configures the object selection polygon
 		void configureObjectSelection();
@@ -103,7 +106,7 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void configurePlaceholder();
 
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 		void setSelectionOrder(bool selected);
 
@@ -138,13 +141,13 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		unsigned getSelectionOrder();
 
 		//! \brief Controls the changes during the object's selection and moving
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 		//! \brief Returns the object that is representend by the graphical object
 		BaseObject *getUnderlyingObject();
 
 		//! \brief Returns the objects bounding rect in local coordination
-		QRectF boundingRect(void) const;
+		virtual QRectF boundingRect() const override;
 
 		//! \brief Returns the fill style in a form of gradient for the specified element id
 		static QLinearGradient getFillStyle(const QString &id);
@@ -166,6 +169,10 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static void setCompactViewEnabled(bool value);
 
 		static bool isCompactViewEnabled();
+
+		static void setShadowHidden(bool value);
+
+		static bool isShadowHidden();
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);

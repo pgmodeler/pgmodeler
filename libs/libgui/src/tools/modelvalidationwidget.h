@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,10 +26,8 @@
 #define MODEL_VALIDATION_WIDGET_H
 
 #include "ui_modelvalidationwidget.h"
-#include "connection.h"
 #include "widgets/modelwidget.h"
 #include "modelvalidationhelper.h"
-#include "swapobjectsidswidget.h"
 #include "utils/htmlitemdelegate.h"
 
 class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
@@ -99,6 +97,7 @@ class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidation
 		void handleSQLValidationStarted();
 		void swapObjectsIds();
 		void copyTextOutput();
+		void handleFixFailed(Exception e);
 
 	public slots:
 		void hide();

@@ -1,30 +1,15 @@
-# XML definition for view references
+# XML definition for view / generic SQL references
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 $tb <reference
 
-%if {ref-alias} %then
-	[ ref-alias=] "{ref-alias}"
-%end
+[ object=] "&{object}" 
+[ type=] "{type}"
+[ ref-name=] "&{ref-name}"
 
-%if {table} %then
-	[ table=] "{table}"
-	%if {column} %then [ column=] "{column}" %end
-	%if {alias} %then [ alias=] "{alias}" %end
-	%if {column-alias} %then [ column-alias=] "{column-alias}" %end
-%else
-	%if {alias} %then [ alias=] "{alias}" %end
-%end
+%if {ref-alias} %then [ ref-alias=] "&{ref-alias}" %end
+%if {use-signature} %then [ use-signature=] "true" %end
+%if {format-name} %then [ format-name=] "true" %end
+%if {use-columns} %then [ use-columns=] "true" %end
 
-%if {expression} %then
-	> $br
-
-	$tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
-
-	%if {columns} %then {columns} %end
-	%if {ref-tables} %then {ref-tables} %end
-
-	$tb </reference> $br
-%else
-	/> $br
-%end
+/> $br

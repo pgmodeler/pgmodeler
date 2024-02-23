@@ -385,7 +385,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Export results to a CSV file</string>
+        <string>Export results to a file</string>
        </property>
        <property name="text">
         <string>E&amp;xport</string>
@@ -408,6 +408,9 @@
        </property>
        <property name="checked">
         <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>

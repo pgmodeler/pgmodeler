@@ -1,10 +1,54 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
 #include "styledtextboxview.h"
 
 StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : TextboxView(txtbox, override_style)
 {
-	fold=new QGraphicsPolygonItem;
+	fold = new QGraphicsPolygonItem;
 	this->addToGroup(fold);
-	this->configureObject();
+	StyledTextboxView::configureObject();
+}
+
+void StyledTextboxView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+	if(qApp->keyboardModifiers() == Qt::ShiftModifier &&
+		 !this->getUnderlyingObject()->isProtected())
+	{
+		event->ignore();
+
+		if(event->scenePos().x() > scenePos().x())
+		{
+			Textbox *txt = dynamic_cast<Textbox *>(getUnderlyingObject());
+			double orig_width = txt->getTextWidth(),
+						width = 0;
+
+			width = event->scenePos().x() - scenePos().x();
+
+			if(width <= DefaultWidth)
+				width = orig_width <= 0 ? DefaultWidth : orig_width;
+
+			txt->setTextWidth(width);
+			configureObject();
+		}
+	}
+	else
+		TextboxView::mouseMoveEvent(event);
 }
 
 StyledTextboxView::~StyledTextboxView()
@@ -32,16 +76,24 @@ void StyledTextboxView::configureObject()
 	fold->setPen(text_item->pen());
 	fold->setPolygon(pol);
 
-	rect = text_item->boundingRect();
-	rect.setLeft(rect.left() - HorizSpacing);
+	QFontMetricsF fm(text_item->getFont());
+	Textbox *txtbox = dynamic_cast<Textbox *>(getUnderlyingObject());
+
+	rect = fm.boundingRect(QRectF(0,0, txtbox->getTextWidth() + (4 * HorizSpacing), 0),
+													Qt::TextWordWrap, txtbox->getComment());
+
+	if(rect.width() < DefaultWidth)
+		rect.setWidth(DefaultWidth);
+
+	txtbox->setTextWidth(rect.width());
 
 	// Avoiding the fold element to ovelap the textbox body
-	if(rect.height() < fold->boundingRect().height() + (8 * VertSpacing))
-		rect.setHeight(fold->boundingRect().height() + (8 * VertSpacing));
+	rect.setHeight(rect.height() + fold->boundingRect().height() + (2 * VertSpacing));
 
 	rect_item.setRoundedCorners(RoundedRectItem::TopLeftCorner |
 															RoundedRectItem::TopRightCorner |
 															RoundedRectItem::BottomLeftCorner);
+
 	rect_item.setRect(rect);
 	pol = rect_item.getPolygon();
 	resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());
@@ -50,14 +102,21 @@ void StyledTextboxView::configureObject()
 	pol[20] = QPointF(pnt.x(), round(pnt.y() - fold->boundingRect().height()));
 	pol[21] = QPointF(round(pnt.x() - fold->boundingRect().width()), pnt.y());
 
+	text_item->setTextPos(HorizSpacing, 0);
+	text_item->setWordWrap(true);
 	text_item->setPolygon(pol);
+
 	rect = text_item->boundingRect();
-	fold->setPos(rect.bottomRight() - QPointF(fold->boundingRect().width(), fold->boundingRect().height()));
+	fold->setPos(rect.bottomRight() -
+								QPointF(fold->boundingRect().width(), fold->boundingRect().height()));
 
 	bounding_rect = text_item->boundingRect();
+	protected_icon->setPos(fold->pos() +
+													QPointF(fold->boundingRect().width()/2,
+																	fold->boundingRect().height()/2));
 
-	this->configureObjectShadow();
-	this->configureObjectSelection();
+	configureObjectShadow();
+	configureObjectSelection();
 
 	if((old_width != 0 && bounding_rect.width() != old_width) ||
 		 (old_height != 0 && bounding_rect.height()!= old_height))

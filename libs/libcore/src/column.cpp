@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,19 +66,19 @@ void Column::setName(const QString &name)
 	}
 }
 
-void Column::setType(PgSqlType type)
+void Column::setType(PgSqlType tp)
 {
 	//An error is raised if the column receive a pseudo-type as data type.
-	if(type.isPseudoType())
+	if(tp.isPseudoType())
 		throw Exception(ErrorCode::AsgPseudoTypeColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(this->identity_type != IdentityType::Null && !type.isIntegerType())
+	else if(this->identity_type != IdentityType::Null && !tp.isIntegerType())
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidIdentityColumn).arg(getSignature()),
 										ErrorCode::InvalidIdentityColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
-	setCodeInvalidated(this->type != type);
-	this->type=type;
+	setCodeInvalidated(this->type != tp);
+	this->type=tp;
 }
 
 void Column::setIdentityType(IdentityType id_type)
@@ -203,7 +203,7 @@ void Column::setSequence(BaseObject *seq)
 	}
 
 	setCodeInvalidated(sequence != seq);
-	sequence=seq;
+	sequence = seq;
 }
 
 BaseObject *Column::getSequence()
@@ -469,4 +469,15 @@ QString Column::getDataDictionary(const attribs_map &extra_attribs)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void Column::updateDependencies()
+{
+	TableObject::updateDependencies({ sequence, type.getObject() });
+}
+
+void Column::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + type.getTypeSql() + QString::number(not_null));
 }

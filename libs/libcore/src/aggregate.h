@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@ class __libcore Aggregate: public BaseObject {
 	protected:
 		virtual void configureSearchAttributes();
 
+		virtual void updateDependencies();
+
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
 		enum FunctionId: unsigned {
@@ -75,11 +77,13 @@ class __libcore Aggregate: public BaseObject {
 
 		Aggregate();
 
+		virtual ~Aggregate() {}
+
 		//! \brief Defines one of the functions used by the aggregate
 		void setFunction(FunctionId func_id, Function *func);
 
 		//! \brief Defines the state data type of the aggregate
-		void setStateType(PgSqlType state_type);
+		void setStateType(PgSqlType st_type);
 
 		//! \brief Defines the initial condition for the aggregate
 		void setInitialCondition(const QString &cond);

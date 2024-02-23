@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,12 +95,20 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		
 		bool eventFilter(QObject *object, QEvent *event);
 		
-		/*! \brief Returns the properly format object name by querying it using its OID and type.
-		Optional schema and table names can be specified to filter the results */
-		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
+		/*! \brief Returns a properly formatted object name by querying using its OID and different object types.
+		 * Optional schema and table names can be specified to filter the results */
+		QString getObjectName(const std::vector<ObjectType> &types, const QString &oid, const QString &sch_name="", const QString tab_name="");
+
+		/*! \brief Returns a properly formatted object name by querying using its OID and type.
+		 * Optional schema and table names can be specified to filter the results */
+		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name = "", const QString tab_name = "");
 		
-		/*! \brief Returns the properly format list of object names by querying them using their OIDs and type.
-		Optional schema and table names can be specified to filter the results */
+		/*! \brief Returns the properly formatted list of object names by querying them using their OIDs and different object types.
+		 * Optional schema and table names can be specified to filter the results */
+		QStringList getObjectsNames(const std::vector<ObjectType> &types, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
+
+		/*! \brief Returns a properly formatted list of object names by querying them using their OIDs and type.
+		 * Optional schema and table names can be specified to filter the results */
 		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
 		
 		//! \brief Format the object's name based upon the passed attributes
@@ -117,7 +125,14 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		
 		//! \brief Convert oid attributes (or array of oids) in object names by querying it on catalog
 		void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, ObjectType obj_type, bool is_oid_array);
+
+		/*! \brief Convert oid attributes (or array of oids) in object names by querying on catalog.
+		 * This version, instead of use just one object type to be queried, uses a vector of types which causes
+		 * the query to be performed on the specified type catalog tables. In that case, the first occurrence found
+		 * will be used as object name */
+		void formatOidAttribs(attribs_map &attribs, QStringList oid_attrs, const std::vector<ObjectType> &obj_types, bool is_oid_array);
 		
+		void formatDatabaseAttribs(attribs_map &attribs);
 		void formatCastAttribs(attribs_map &attribs);
 		void formatLanguageAttribs(attribs_map &attribs);
 		void formatRoleAttribs(attribs_map &attribs);
@@ -154,6 +169,13 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		
 		//! \brief Generate the SQL code for the specified object appending the permissions code for it as well
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
+
+	protected:
+		/*! \brief Add a custom tool button in the set of buttons in the top of database tree.
+		 *  This can be used to add custom actions for the current database explorer instance.
+		 *  the method will perform the need operations to create a copy of the provided button
+		 *  (icon, connect signal/slots, etc). */
+		void addPluginButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
@@ -199,9 +221,9 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		void cancelObjectRename();
 
 		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema=QString("public"), const QString &table="", bool hide_views=true);
+		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
-		void loadObjectSource();
+		void loadObjectSource(bool show_code);
 
 		void filterObjects();
 
@@ -216,7 +238,9 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		void s_snippetShowRequested(QString snippet);
 
 		//! \brief This signal is emmited containing the source code to be shown in an input field
-		void s_sourceCodeShowRequested(QString source);
+		void s_sourceCodeShowRequested(QString source, bool force_display);
+
+	friend class SQLToolWidget;
 };
 
 #endif

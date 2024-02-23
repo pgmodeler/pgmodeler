@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,6 +65,9 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Colors used for ObjectTableWidget items when in light theme
 		light_tab_item_colors;
 
+		//! \brief Holds the current user interface theme id (light/dark)
+		static QString UiThemeId;
+
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
 			public:
@@ -105,10 +108,12 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		
 		//! \brief Database model used to store the example base objects
 		DatabaseModel *model;
-		
+
 		//! \brief Stores the element configuration items
 		std::vector<AppearanceConfigItem> conf_items;
 		
+		bool show_grid, show_delimiters;
+
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
 		void loadExampleModel();
 		
@@ -129,39 +134,48 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		void applyUiStyleSheet();
 
 		//! \brief Returns the theme id (light/dark) depending on the selection in ui_theme_cmb
-		QString getUiThemeId();
+		QString __getUiThemeId();
 
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
 
 		virtual ~AppearanceConfigWidget();
 		
-		void saveConfiguration();
+		virtual void showEvent(QShowEvent *) override;
 
-		void loadConfiguration();
+		virtual void hideEvent(QHideEvent *) override;
+
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
 
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 
-		static std::map<QString, attribs_map> getConfigurationParams();
+		//! \brief Returns the currently selected theme
+		static QString getUiThemeId();
 
-		//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
-		void updateDropShadows();
+		/*! \brief Returns the currently UI palette lightness.
+		 * Return values can Attributes::Light or Attributes::Dark */
+		static QString getUiLightness(const QPalette &pal);
+
+		static std::map<QString, attribs_map> getConfigurationParams();
 
 	private slots:
 		void enableConfigElement();
 		void applyElementFontStyle();
 		void applyElementColor(unsigned color_idx, QColor color);
-		void applyConfiguration(void);
 		void previewCodeFontStyle();
 		void previewCanvasColors();
 		void applySyntaxHighlightTheme();
+
+		virtual void applyConfiguration() override;
 
 		//! \brief Applies temporarily all the settings related to the UI
 		void previewUiSettings();
 
 	public slots:
-		void restoreDefaults();
+		virtual void restoreDefaults() override;
 };
 
 #endif

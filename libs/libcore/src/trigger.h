@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ class __libcore Trigger: public TableObject{
 		};
 
 		Trigger();
+
+		virtual ~Trigger(){}
 
 		/*! \brief Adds a column as a firing condition (only when the event UPDATE is used).
 		 The columns added by this method must belongs to the trigger owner table. */
@@ -206,6 +208,9 @@ class __libcore Trigger: public TableObject{
 		void validateTrigger();
 
 		QString getDataDictionary(const attribs_map &extra_attribs);
+
+		virtual void updateDependencies() override;
+		virtual void generateHashCode() override;
 };
 
 #endif

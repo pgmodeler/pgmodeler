@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,53 +22,46 @@ const QString PgSQLTypeWidget::InvalidType("invalid_type");
 
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
-	try
-	{
-		QStringList interval_lst, spatial_lst;
+	QStringList interval_lst, spatial_lst;
 
-		setupUi(this);
+	setupUi(this);
 
-		allow_qualifiers = true;
+	allow_qualifiers = true;
 
-		if(!label.isEmpty())
-			groupBox->setTitle(label);
+	if(!label.isEmpty())
+		groupBox->setTitle(label);
 
-		this->setWindowTitle(groupBox->title());
+	this->setWindowTitle(groupBox->title());
 
-		format_hl=nullptr;
-		format_hl=new SyntaxHighlighter(format_txt, true);
-		format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		this->adjustSize();
+	format_hl=nullptr;
+	format_hl=new SyntaxHighlighter(format_txt, true, false, font().pointSizeF());
+	format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	this->adjustSize();
 
-		interval_lst = IntervalType::getTypes();
-		interval_cmb->addItem("");
-		interval_cmb->addItems(interval_lst);
+	interval_lst = IntervalType::getTypes();
+	interval_cmb->addItem("");
+	interval_cmb->addItems(interval_lst);
 
-		spatial_lst = SpatialType::getTypes();
-		spatial_lst.sort();
-		spatial_cmb->addItem(tr("NONE"));
-		spatial_cmb->addItems(spatial_lst);
+	spatial_lst = SpatialType::getTypes();
+	spatial_lst.sort();
+	spatial_cmb->addItem(tr("NONE"));
+	spatial_cmb->addItems(spatial_lst);
 
-		type_cmb->installEventFilter(this);
-		type_cmb->completer()->setFilterMode(Qt::MatchContains);
-		type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
+	type_cmb->installEventFilter(this);
+	type_cmb->completer()->setFilterMode(Qt::MatchContains);
+	type_cmb->completer()->setCompletionMode(QCompleter::PopupCompletion);
 
-		connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
-		connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	connect(type_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(type_cmb, &QComboBox::currentTextChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(precision_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(length_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(dimension_sb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(interval_cmb, &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(timezone_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(spatial_cmb,  &QComboBox::currentIndexChanged, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(var_m_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(var_z_chk, &QCheckBox::toggled, this, &PgSQLTypeWidget::updateTypeFormat);
+	connect(srid_spb, &QSpinBox::valueChanged, this, &PgSQLTypeWidget::updateTypeFormat);
 }
 
 bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
@@ -96,29 +89,29 @@ void PgSQLTypeWidget::updateTypeFormat()
 			type=data.toUInt();
 
 		length_sb->setEnabled(allow_qualifiers && type.hasVariableLength());
-		timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
-		timezone_lbl->setVisible(type==QString("timestamp") || type==QString("time"));
+		timezone_chk->setVisible(type=="timestamp" || type=="time");
+		timezone_lbl->setVisible(type=="timestamp" || type=="time");
 		precision_sb->setEnabled(allow_qualifiers && type.acceptsPrecision());
-		dimension_sb->setEnabled(type!=QString("void"));
+		dimension_sb->setEnabled(type!="void");
 
-		interval_cmb->setVisible(type==QString("interval"));
+		interval_cmb->setVisible(type=="interval");
 		interval_lbl->setVisible(interval_cmb->isVisible());
 		interval_cmb->setEnabled(allow_qualifiers);
 
 		spatial_cmb->setEnabled(allow_qualifiers);
-		spatial_cmb->setVisible(type.isGeoType());
-		spatial_lbl->setVisible(type.isGeoType());
-		variation_lbl->setVisible(type.isGeoType());
+		spatial_cmb->setVisible(type.isPostGisGeoType());
+		spatial_lbl->setVisible(type.isPostGisGeoType());
+		variation_lbl->setVisible(type.isPostGisGeoType());
 
-		srid_lbl->setVisible(type.isGeoType());
+		srid_lbl->setVisible(type.isPostGisGeoType());
 		srid_spb->setEnabled(allow_qualifiers);
-		srid_spb->setVisible(type.isGeoType());
+		srid_spb->setVisible(type.isPostGisGeoType());
 
 		var_m_chk->setEnabled(allow_qualifiers);
-		var_m_chk->setVisible(type.isGeoType());
+		var_m_chk->setVisible(type.isPostGisGeoType());
 
 		var_z_chk->setEnabled(allow_qualifiers);
-		var_z_chk->setVisible(type.isGeoType());
+		var_z_chk->setVisible(type.isPostGisGeoType());
 
 		if(spatial_cmb->isVisible())
 		{
@@ -189,7 +182,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		//Get the passed type index
 		type_name=~type;
-		type_name.remove(QRegularExpression(QString("( )(with)(out)?(.)*")));
+		type_name.remove(QRegularExpression("( )(with)(out)?(.)*"));
 		idx=type_cmb->findText(type_name);
 
 		//Select the type on the combo

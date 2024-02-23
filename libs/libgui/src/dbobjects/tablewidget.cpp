@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@
 #include "policywidget.h"
 #include "settings/generalconfigwidget.h"
 #include "coreutilsns.h"
+#include "relationshipview.h"
+#include "guiutilsns.h"
+#include "pgsqlversions.h"
 
 TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {
@@ -49,7 +52,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
 
-	connect(edt_data_tb, &QPushButton::clicked, this, &TableWidget::editData);
+	connect(edt_data_tb, &QPushButton::clicked, this, __slot(this, TableWidget::editData));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
 	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
@@ -84,7 +87,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(options_tab);
-	attributes_tbw->widget(8)->setLayout(vbox);
+	attributes_tbw->widget(9)->setLayout(vbox);
 
 	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
@@ -94,7 +97,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	grid=new QGridLayout;
 	grid->addWidget(parent_tables, 0,0,1,1);
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-	attributes_tbw->widget(7)->setLayout(grid);
+	attributes_tbw->widget(8)->setLayout(grid);
 
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
@@ -107,14 +110,14 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		attributes_tbw->widget(i)->setLayout(grid);
+		attributes_tbw->widget(i + 1)->setLayout(grid);
 
-		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, &TableWidget::removeObjects);
-		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, &TableWidget::removeObject);
-		connect(tab, &ObjectsTableWidget::s_rowAdded, this, &TableWidget::handleObject);
-		connect(tab, &ObjectsTableWidget::s_rowEdited, this, &TableWidget::handleObject);
-		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, &TableWidget::duplicateObject);
-		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, &TableWidget::swapObjects);
+		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
+		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));
+		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, TableWidget::duplicateObject));
+		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, __slot_n(this, TableWidget::swapObjects));
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
@@ -129,17 +132,16 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col){
+	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col) {
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
-			Messagebox msg_box;
 			PhysicalTable *table = dynamic_cast<Table *>(this->object);
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
-				msg_box.show(tr("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				Messagebox::alert(tr("It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."));
 			else
-				msg_box.show(tr("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."), Messagebox::AlertIcon);
+				Messagebox::alert(tr("It is not possible to mark a column created by a relationship as primary key! This action should be done in the section <strong>Primary key</strong> of the relationship's editing form."));
 		}
 	});
 
@@ -194,7 +196,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	partition_keys_tab = new ElementsTableWidget;
 	partition_keys_tab->setEnabled(false);
-	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
+	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(7)->layout());
 	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
 
 	part_types = PartitioningType::getTypes();
@@ -207,9 +209,13 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 
 	setRequiredField(server_lbl);
 	setRequiredField(server_sel);
-	configureFormLayout(table_grid, tab_type);
+
+	configureFormFields(tab_type);
+	baseobject_grid->setContentsMargins(0, 0, 0, 0);
+	dynamic_cast<QGridLayout*>(attributes_tbw->widget(0)->layout())->addLayout(baseobject_grid, 0, 0, 1, 3);
+
 	configureTabOrder({ tag_sel });
-	setMinimumSize(660, 630);
+	setMinimumSize(700, 650);
 }
 
 template<class Class, class WidgetClass>
@@ -277,7 +283,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	__setAttributes(model, op_list, schema, table, pos_x, pos_y);
 	server_lbl->setVisible(false);
 	server_wgt->setVisible(false);
-	attributes_tbw->removeTab(8); // Removing the options tab
+	attributes_tbw->removeTab(9); // Removing the options tab
 }
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y)
@@ -422,8 +428,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 void TableWidget::listObjects(ObjectType obj_type)
 {
 	ObjectsTableWidget *tab=nullptr;
-	unsigned idx = 0, count = 0;
-	PhysicalTable *table=nullptr;
+	PhysicalTable *table = nullptr;
+	std::vector<unsigned> pk_cols;
 
 	try
 	{
@@ -432,13 +438,34 @@ void TableWidget::listObjects(ObjectType obj_type)
 		table=dynamic_cast<PhysicalTable *>(this->object);
 
 		tab->blockSignals(true);
-		tab->removeRows();
-		count = table->getObjectCount(obj_type);
 
-		for(idx = 0; idx < count; idx++)
+		/* In case of displaying columns we need to store
+		 * the row related to table columns that are marked as primary key so
+		 * we restore the check state after (re)populate the grid */
+		if(obj_type == ObjectType::Column)
+		{
+			for(unsigned row = 0; row < tab->getRowCount(); row++)
+			{
+				if(tab->getCellCheckState(row, 0) == Qt::Checked)
+					pk_cols.push_back(row);
+			}
+		}
+
+		tab->removeRows();
+
+		for(auto &obj : *table->getObjectList(obj_type))
 		{
 			tab->addRow();
-			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
+			showObjectData(obj, tab->getRowCount() - 1);
+		}
+
+		// Restoring the check state of columns marked as primary key
+		for(auto &pk_col : pk_cols)
+		{
+			if(pk_col >= tab->getRowCount())
+				continue;
+
+			tab->setCellCheckState(pk_col, 0, Qt::Checked);
 		}
 
 		tab->resizeContents();
@@ -518,7 +545,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 	QStringList contr_types={ ~ConstraintType(ConstraintType::PrimaryKey), ~ConstraintType(ConstraintType::ForeignKey),
 														~ConstraintType(ConstraintType::Check), ~ConstraintType(ConstraintType::Unique),
-														QString("NOT NULL") },
+														"NOT NULL" },
 			constr_codes={ TableObjectView::TextPrimaryKey,
 										 TableObjectView::TextForeignKey,
 										 TableObjectView::TextCheck,
@@ -557,7 +584,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		else
 			str_aux=column->getDefaultValue();
 
-		if(str_aux.isEmpty()) str_aux=QString("-");
+		if(str_aux.isEmpty()) str_aux="-";
 		tab->setCellText(str_aux,row,3);
 
 		//Column 4: Column attributes (constraints which belongs)
@@ -565,11 +592,11 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		for(int i=0; i < constr_codes.size(); i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
-				str_aux1+=contr_types[i] + QString(", ");
+				str_aux1+=contr_types[i] + ", ";
 		}
 
 		if(str_aux1.isEmpty())
-			str_aux1=QString("-");
+			str_aux1="-";
 		else
 			str_aux1.remove(str_aux1.size()-2, 2);
 
@@ -603,8 +630,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		}
 		else
 		{
-			tab->setCellText(QString("-"),row,2);
-			tab->setCellText(QString("-"),row,3);
+			tab->setCellText("-",row,2);
+			tab->setCellText("-",row,3);
 		}
 
 		tab->setCellText(constr->getAlias(), row, 4);
@@ -625,7 +652,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		for(i=0; i < 4; i++)
 		{
 			if(trigger->isExecuteOnEvent(events[i]))
-				str_aux+=~events[i] + QString(", ");
+				str_aux+=~events[i] + ", ";
 		}
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);		
@@ -674,7 +701,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 			rol_names.append(role->getName());
 
 		//Column 5: Roles
-		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : QString("PUBLIC"), row, 5);
+		tab->setCellText(!rol_names.isEmpty() ? rol_names.join(", ") : "PUBLIC", row, 5);
 
 		tab->setCellText(policy->getAlias(), row, 6);
 	}
@@ -746,6 +773,8 @@ void TableWidget::removeObjects()
 	}
 	catch(Exception &e)
 	{
+		listObjects(obj_type);
+
 		if(op_count < op_list->getCurrentSize())
 		{
 			count=op_list->getCurrentSize()-op_count;
@@ -759,8 +788,6 @@ void TableWidget::removeObjects()
 
 			op_list->ignoreOperationChain(false);
 		}
-
-		listObjects(obj_type);
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -861,7 +888,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(sel_row).value<void *>());
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, "_cp"));
 
 		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, this->object);
 
@@ -1058,10 +1085,11 @@ void TableWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			Messagebox msg_box;
+			//Messagebox msg_box;
 
 			if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-				msg_box.show(e);
+				//msg_box.show(e);
+				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}

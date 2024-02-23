@@ -33,7 +33,6 @@
         <file>icons/codesnippet.png</file>
         <file>icons/collapse.png</file>
         <file>icons/collation.png</file>
-        <file>icons/colors.png</file>
         <file>icons/column.png</file>
         <file>icons/compactview.png</file>
         <file>icons/config.png</file>
@@ -45,7 +44,6 @@
         <file>icons/constraint_fk.png</file>
         <file>icons/constraint_pk.png</file>
         <file>icons/constraint_uq.png</file>
-        <file>icons/consttrigger.png</file>
         <file>icons/conversion.png</file>
         <file>icons/convrel1n.png</file>
         <file>icons/convrelnn.png</file>
@@ -240,16 +238,46 @@
         <file>icons/pluginsconfig.png</file>
         <file>icons/lockdelim.png</file>
         <file>icons/csvload.png</file>
+        <file>icons/typebinary.png</file>
+        <file>icons/typebitstring.png</file>
+        <file>icons/typeboolean.png</file>
+        <file>icons/typecharacter.png</file>
+        <file>icons/typedatetime.png</file>
+        <file>icons/typegeometric.png</file>
+        <file>icons/typeinteger.png</file>
+        <file>icons/typejson.png</file>
+        <file>icons/typemonetary.png</file>
+        <file>icons/typenetwork.png</file>
+        <file>icons/typenumeric.png</file>
+        <file>icons/typeoid.png</file>
+        <file>icons/typeother.png</file>
+        <file>icons/typepolymorphic.png</file>
+        <file>icons/typepostgis.png</file>
+        <file>icons/typepseudo.png</file>
+        <file>icons/typetextsearch.png</file>
+        <file>icons/typetimezone.png</file>
+        <file>icons/typeuuid.png</file>
+        <file>icons/typexml.png</file>
+        <file>icons/typerange.png</file>
+        <file>icons/typefloatpoint.png</file>
+        <file>icons/wordwrap.png</file>
+        <file>icons/txtfile.png</file>
+        <file>icons/csvfile.png</file>
+        <file>icons/selection.png</file>
+        <file>icons/resetalerts.png</file>
+        <file>icons/resetsizes.png</file>
+        <file>icons/blogpost.png</file>
+        <file>icons/ophistorypos.png</file>
+        <file>icons/ophistory.png</file>
+        <file>icons/expandcanvas.png</file>
+        <file>icons/showpwd.png</file>
+        <file>icons/hidepwd.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
         <file>images/crashhandler.png</file>
-        <file>images/crows_foot_notation.png</file>
         <file>images/pgmodeler_name.png</file>
         <file>images/pgmodeler_splash.png</file>
-        <file>images/rel_center_pnts.png</file>
-        <file>images/rel_fk_to_pk.png</file>
-        <file>images/rel_tab_edges.png</file>
         <file>images/schemafile.png</file>
         <file>images/exporttosql.png</file>
         <file>images/exporttodatadict.png</file>
@@ -258,5 +286,15 @@
         <file>images/checkmark_white.png</file>
         <file>images/checkmark_black.png</file>
         <file>images/checkmark_disabled.png</file>
+        <file>images/rel_tab_edges_light.png</file>
+        <file>images/rel_tab_edges_dark.png</file>
+        <file>images/rel_fk_to_pk_light.png</file>
+        <file>images/rel_fk_to_pk_dark.png</file>
+        <file>images/rel_crows_foot_light.png</file>
+        <file>images/rel_crows_foot_dark.png</file>
+        <file>images/rel_center_pnts_light.png</file>
+        <file>images/rel_center_pnts_dark.png</file>
+        <file>images/handle_dark.png</file>
+        <file>images/handle_light.png</file>
     </qresource>
 </RCC>

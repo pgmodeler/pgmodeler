@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 #include "changelogwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "guiutilsns.h"
+#include "columndatawidget.h"
+#include "baseform.h"
+#include "csvparser.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {
@@ -27,6 +30,12 @@ ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 	setModel(nullptr);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
+	GuiUtilsNs::configureWidgetFont(added_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(removed_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(updated_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+	GuiUtilsNs::configureWidgetFont(total_cnt_lbl, GuiUtilsNs::HugeFontFactor);
+
+	connect(inspect_tb, &QToolButton::clicked, this, &ChangelogWidget::inspectChangelog);
 	connect(hide_tb, &QToolButton::clicked, this, &ChangelogWidget::s_visibilityChanged);
 	connect(clear_tb, &QToolButton::clicked, this, &ChangelogWidget::clearChangelog);
 	connect(persisted_chk, &QCheckBox::toggled, this, [this](bool checked){
@@ -44,33 +53,41 @@ void ChangelogWidget::setVisible(bool value)
 
 void ChangelogWidget::updateChangelogInfo()
 {
-	QString entries_text = tr("Changelog entries: <strong>%1</strong>"),
-			last_change_text = tr("Last modified: <strong>%1</strong>"),
-			first_change_text = tr("First modified: <strong>%1</strong>");
-	unsigned log_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
+	QString last_change_text = tr("Last change: <strong>%1</strong>"),
+			first_change_text = tr("First change: <strong>%1</strong>");
+	unsigned total_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
 
-	if(log_len == 0)
+	if(total_len == 0)
 	{
-		info_lbl->setText(entries_text.arg('-'));
 		last_change_lbl->setText(last_change_text.arg('-'));
 		first_change_lbl->setText(first_change_text.arg('-'));
+		added_cnt_lbl->setText("-");
+		removed_cnt_lbl->setText("-");
+		updated_cnt_lbl->setText("-");
+		total_cnt_lbl->setText("-");
 	}
 	else
 	{
 		QString ui_lang = GeneralConfigWidget::getConfigurationParam(Attributes::Configuration, Attributes::UiLanguage),
 				dt_format;
 		QLocale locale(ui_lang);
+		DatabaseModel *db_model = model->getDatabaseModel();
 
 		dt_format = locale.dateTimeFormat();
 		dt_format.remove('t'); // Removing timezone info
-		dt_format.remove("dddd,"); //Removing month's full name info
+		dt_format.remove("dddd,"); //Removing day of week name info
 
-		info_lbl->setText(entries_text.arg(log_len));
-		last_change_lbl->setText(last_change_text.arg(locale.toString(model->getDatabaseModel()->getLastChangelogDate(), dt_format)));
-		first_change_lbl->setText(first_change_text.arg(locale.toString(model->getDatabaseModel()->getFirstChangelogDate(), dt_format)));
+		last_change_lbl->setText(last_change_text.arg(locale.toString(db_model->getLastChangelogDate(), dt_format)));
+		first_change_lbl->setText(first_change_text.arg(locale.toString(db_model->getFirstChangelogDate(), dt_format)));
+
+		added_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjCreated)));
+		removed_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjRemoved)));
+		updated_cnt_lbl->setText(QString::number(db_model->getChangelogLength(Operation::ObjModified)));
+		total_cnt_lbl->setText(QString::number(total_len));
 	}
 
-	clear_tb->setEnabled(log_len > 0);
+	inspect_tb->setEnabled(total_len > 0);
+	clear_tb->setEnabled(total_len > 0);
 	adjustSize();
 }
 
@@ -89,6 +106,97 @@ date of modification in partial diff will be unavailable! Do you want to proceed
 		model->setModified(true);
 		updateChangelogInfo();
 	}
+}
+
+void ChangelogWidget::inspectChangelog()
+{
+	BaseForm base_form;
+	QTableWidget *data_tbw = new QTableWidget;
+	CsvDocument csv_doc;
+	CsvParser csv_parser;
+
+	try
+	{
+		QString csv_buf = model->getDatabaseModel()->getChangelogDefinition(true);
+
+		csv_buf.prepend(QString("\"%1\";\"%2\";\"%3\";\"%4\"\n")
+									 .arg(tr("Date"), tr("Object"), tr("Type"), tr("Action")));
+
+		csv_parser.setColumnInFirstRow(true);
+		csv_doc = csv_parser.parseBuffer(csv_buf);
+		GuiUtilsNs::populateTable(data_tbw, csv_doc);
+
+		QHeaderView *header = data_tbw->horizontalHeader();
+		QAbstractItemModel *h_model = header->model();
+		QStringList icons = {
+			GuiUtilsNs::getIconPath("typedatetime"), GuiUtilsNs::getIconPath("objects"),
+			GuiUtilsNs::getIconPath("usertype"), GuiUtilsNs::getIconPath("changelog")
+		};
+
+		for(int section = 0; section <= 3; section++)
+		{
+			h_model->setHeaderData(section, Qt::Horizontal,
+														 QVariant::fromValue<Qt::Alignment>(Qt::AlignLeft | Qt::AlignVCenter),
+														 Qt::TextAlignmentRole);
+
+			h_model->setHeaderData(section, Qt::Horizontal, QIcon(icons[section]), Qt::DecorationRole);
+		}
+
+		ObjectType obj_type;
+		QFont fnt;
+		QString action;
+		QMap<QString, QString> actions_i18n = {
+			{	Attributes::Created, tr("Created") },
+			{ Attributes::Deleted, tr("Deleted") },
+			{ Attributes::Updated, tr("Updated") }
+		},
+
+		actions_icons = {
+			{	Attributes::Created, "created" },
+			{ Attributes::Deleted, "removed" },
+			{ Attributes::Updated, "modified" }
+		};
+
+		data_tbw->setUpdatesEnabled(false);
+
+		for(int row = 0; row < data_tbw->rowCount(); row++)
+		{
+			obj_type = BaseObject::getObjectType(data_tbw->item(row, 2)->text());
+			action = data_tbw->item(row, 3)->text();
+
+			data_tbw->item(row, 1)->setIcon(QIcon(GuiUtilsNs::getIconPath(obj_type)));
+			data_tbw->item(row, 2)->setText(BaseObject::getTypeName(obj_type));
+			data_tbw->item(row, 3)->setText(actions_i18n[action]);
+			data_tbw->item(row, 3)->setIcon(QIcon(GuiUtilsNs::getIconPath(actions_icons[action])));
+
+			fnt = data_tbw->item(row, 2)->font();
+			fnt.setItalic(true);
+			data_tbw->item(row, 2)->setFont(fnt);
+		}
+
+		header->swapSections(0, 1);
+		header->swapSections(1, 2);
+		header->setStretchLastSection(true);
+		data_tbw->setSortingEnabled(true);
+		data_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
+		data_tbw->setAlternatingRowColors(true);
+		data_tbw->setUpdatesEnabled(true);
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
+	data_tbw->setWindowTitle("Changelog entries");
+	base_form.setMainWidget(data_tbw);
+	base_form.setButtonConfiguration(Messagebox::OkButton);
+	base_form.apply_ok_btn->setShortcut(QKeySequence("Enter"));
+	base_form.main_frm->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																									 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&base_form, this->metaObject()->className());
+	base_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&base_form, this->metaObject()->className());
 }
 
 void ChangelogWidget::setModel(ModelWidget *model)

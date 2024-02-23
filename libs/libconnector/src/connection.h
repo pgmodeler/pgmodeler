@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -116,15 +116,21 @@ class __libconnector Connection {
 		ParamSslCrl,
 		ParamKerberosServer,
 		ParamLibGssapi,
+
+		/*! \brief Special parameter that store the name of the role
+		 *  to be switched in case of a successful connection */
+		ParamSetRole,
+
+		//! \brief Constants used to reference the connection ssl mode
 		SslDisable,
 		SslAllow,
 		SslPrefer,
 		SslRequire,
 		SslCaVerify,
-		SslFullVerify;
+		SslFullVerify,
 
 		//! \brief Constants used to reference the server info details (see getServerInfo())
-		static const QString	ServerVersion,
+		ServerVersion,
 		ServerProtocol,
 		ServerPid;
 

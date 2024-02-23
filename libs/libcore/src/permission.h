@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,11 +27,9 @@
 #define PERMISSION_H
 
 #include "baseobject.h"
-#include "function.h"
 #include "role.h"
 #include <algorithm>
 #include <QTextStream>
-#include <QCryptographicHash>
 #include <QRegularExpression>
 
 class __libcore Permission: public BaseObject {
@@ -104,6 +102,8 @@ class __libcore Permission: public BaseObject {
 		 the class is created. */
 		Permission(BaseObject *obj);
 
+		virtual ~Permission(){}
+
 		//! \brief Adds a role that will have privileges over the object
 		void addRole(Role *role);
 
@@ -164,6 +164,8 @@ class __libcore Permission: public BaseObject {
 		virtual QString getSignature(bool = false) final;
 
 		virtual QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

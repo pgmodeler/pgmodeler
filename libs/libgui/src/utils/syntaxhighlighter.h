@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,15 +29,21 @@
 #include <QtWidgets>
 #include <map>
 #include <vector>
-#include "exception.h"
 #include "xmlparser.h"
-#include "globalattributes.h"
-#include "attributes.h"
 #include <algorithm>
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
+
+		/*! \brief This struct stores the configuration of enclosing characters
+		 *  and their respective foreground/background color */
+		struct EnclosingCharsCfg {
+				QChar open_char, close_char;
+				QColor fg_color, bg_color;
+		};
+
+		QPlainTextEdit *code_field_txt;
 
 		/*! \brief The default name of the group related to unformatted words.
 		 * This is just a dummy group and just serves to force the non-formatting of
@@ -69,11 +75,17 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the text formatting to each group
 		std::map<QString, QTextCharFormat> formats;
 
+		//! \brief Stores the completion allowed status for each group
+		std::map<QString, bool> allow_completion;
+
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
 		std::map<QString, QChar> lookahead_char;
 
 		//! \brief Stores the order in which the groups must be applied
 		std::vector<QString> groups_order;
+
+		//! \brief Stores the enclosing characters config read from file
+		std::vector<EnclosingCharsCfg> enclosing_chrs;
 
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,
@@ -89,7 +101,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 * to be appended to the detected word. An example of contigous capture is for
 		 * SQL comment in the for /(slash)*(asterisk) if the nearby capture is not enabled
 		 * then the highlighting will not be able to identify multi line comments properly. */
-		capt_nearby_separators;
+				capt_nearby_separators;
+
+		//! \brief Stores the custom font size to be used instead of default_font size
+		qreal custom_font_size;
 
 		//! \brief Stores the chars that indicates word separators
 		QString word_separators,
@@ -102,6 +117,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
+
+		QTimer highlight_timer;
 
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes();
@@ -126,11 +143,15 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
 		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
+		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
+		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
+
 	public:
-		/*! \brief Install the syntax highlighter in a QPlainTextEdit. If single_line_mode is true
-		the highlighter prevents the parent text field to process line breaks. If use_custom_tab_width is true
-		the highlighter will use the same tab size as NumberedTextEdit class */
-		SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false);
+		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
+		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.
+		 * If use_custom_tab_width is true the highlighter will use the same tab size as NumberedTextEdit class.
+		 * If custom_fnt_size is greater than 0 the higlighter will apply that font size instead of the one set in default_font */
+		SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode=false, bool use_custom_tab_width=false, qreal custom_fnt_size = 0);
 
 		//! \brief Loads a highlight configuration from a XML file
 		void loadConfiguration(const QString &filename);
@@ -144,6 +165,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger();
+
+		/*! \brief Returns the current font size according to the custom_font_size attribute.
+		 *  If it is greater than 0 then its value is returned otherwise the default_font size is returned */
+		qreal getCurrentFontSize();
 
 		//! \brief Sets the default font for all instances of this class
 		static void setDefaultFont(const QFont &fnt);

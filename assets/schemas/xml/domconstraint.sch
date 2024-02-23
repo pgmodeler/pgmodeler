@@ -3,6 +3,6 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-$tb [<constraint name="] {name} [" type="check">] $br
+$tb [<constraint name="] &{name} [" type="check">] $br
 $tb $tb <expression> $sp <! $ob CDATA $ob {expression} $cb $cb > $sp </expression> $br
 $tb [</constraint>] $br

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "linenumberswidget.h"
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTextBlock>
 #include "exception.h"
 
 QColor LineNumbersWidget::font_color=Qt::lightGray;
@@ -30,8 +31,8 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	parent_edt = qobject_cast<QPlainTextEdit *>(parent);
-	first_line=line_count=start_sel_pos=0;
-	dy=0;
+	first_line = line_count=start_sel_pos=0;
+	dy = block_height = 0;
 	has_selection = false;
 	start_sel_line = -1;
 
@@ -39,17 +40,13 @@ LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 	connect(parent_edt, &QPlainTextEdit::cursorPositionChanged, this, qOverload<>(&LineNumbersWidget::update));
 }
 
-void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy)
+void LineNumbersWidget::drawLineNumbers(int first_line, int line_count, int dy, int blk_height)
 {
-	bool update=(first_line!=this->first_line || line_count != this->line_count);
-
-	if(update)
-	{
-		this->first_line=first_line;
-		this->line_count=line_count;
-		this->dy=dy;
-		this->update();
-	}
+	this->first_line=first_line;
+	this->line_count=line_count;
+	this->dy = dy;
+	this->block_height = blk_height;
+	this->update();
 }
 
 void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_color)
@@ -61,48 +58,57 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y = dy, height = 0, fs_line = 0,	ls_line = 0,
-			last_line=first_line + line_count;
+	int y = dy,	last_line=first_line + line_count;
 	QFont font = painter.font();
 	QTextCursor cursor = parent_edt->textCursor();
-
-	if(cursor.hasSelection())
-	{
-		QTextCursor start = cursor,	end = cursor;
-		start.setPosition(cursor.selectionStart(), QTextCursor::MoveAnchor);
-		fs_line = start.blockNumber();
-		end.setPosition(cursor.selectionEnd(), QTextCursor::KeepAnchor);
-		ls_line = end.blockNumber();
-	}
 
 	//Repaint the widget to clear previous drawn numbers
 	painter.fillRect(event->rect(), bg_color);
 	painter.setPen(font_color);
 
+	QTextCursor aux_cur;
+	QTextBlock block;
+	int blk_num = 0, prev_blk_num = -1, padding = (line_count == 1 ? -3 : 1);
+	QString lin_str;
+
 	//Draw line numbers
 	for(int lin = first_line; lin < last_line; lin++)
 	{
-		if((lin-1 == cursor.blockNumber()) ||
-			 (cursor.hasSelection() && lin-1 >= fs_line && lin-1 <= ls_line))
+		aux_cur = parent_edt->cursorForPosition(QPoint(0, y));
+		block = aux_cur.block();
+
+		blk_num = block.blockNumber();
+
+		if(blk_num != prev_blk_num)
+		{
+			lin_str = QString::number(blk_num + 1);
+			prev_blk_num = blk_num;
+		}
+		else
+			lin_str = "↪";
+
+		if(cursor.blockNumber() == aux_cur.blockNumber() ||
+			 (cursor.hasSelection() &&
+				aux_cur.position() >= cursor.selectionStart() &&
+				aux_cur.position() <= cursor.selectionEnd()))
 			font.setBold(true);
 		else
 			font.setBold(false);
 
 		painter.setFont(font);
-		height = painter.fontMetrics().height() + 1;
 
 		if(font.bold())
 		{
 			painter.setBrush(bg_color.darker(150));
 			painter.setPen(Qt::transparent);
-			painter.drawRect(QRect(-1, y, this->width() + 1, height));
+			painter.drawRect(QRect(-1, y - 1, this->width() + 1, block_height + padding));
 			painter.setPen(font_color.lighter(180));
 		}
 		else
 			painter.setPen(font_color);
 
-		painter.drawText(0, y, this->width(), height, Qt::AlignHCenter, QString::number(lin));
-		y+=height;
+		painter.drawText(0, y, this->width(), block_height, Qt::AlignHCenter, lin_str);
+		y += block_height;
 	}
 }
 
@@ -110,13 +116,14 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 {
 	if(event->buttons() == Qt::LeftButton && !has_selection)
 	{
-		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
+		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
 
 		has_selection = true;
-		cursor.select(QTextCursor::LineUnderCursor);
-		parent_edt->setTextCursor(cursor);
-		start_sel_line = cursor.blockNumber();
-		start_sel_pos = cursor.position();
+		evnt_cursor.movePosition(QTextCursor::EndOfLine);
+		evnt_cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+		parent_edt->setTextCursor(evnt_cursor);
+		start_sel_line = evnt_cursor.blockNumber();
+		start_sel_pos = evnt_cursor.position();
 	}
 }
 
@@ -124,28 +131,30 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	if(event->buttons() == Qt::LeftButton && has_selection)
 	{
-		QTextCursor cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
+		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
-		//If the user wants selects lines below the first
-		if(start_sel_line < cursor.blockNumber())
+		//If the user wants to select the lines below the first
+		if(evnt_cursor.blockNumber() > start_sel_line)
 		{
-			cursor.movePosition(QTextCursor::EndOfLine);
-			curr_cursor.setPosition(cursor.position(), QTextCursor::KeepAnchor);
+			curr_cursor.setPosition(start_sel_pos);
+			evnt_cursor.movePosition(QTextCursor::EndOfLine);
+			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
-		//If the user wants selects lines above the first
-		else if(start_sel_line > cursor.blockNumber())
+		//If the user wants to select the lines above the first
+		else if(evnt_cursor.blockNumber() < start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
 			curr_cursor.movePosition(QTextCursor::EndOfLine);
-			curr_cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor, curr_cursor.position() - cursor.position());
+			evnt_cursor.movePosition(QTextCursor::StartOfLine);
+			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
 		else
 		{
-			cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-			parent_edt->setTextCursor(cursor);
+			evnt_cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			parent_edt->setTextCursor(evnt_cursor);
 		}
 
 		this->update();
@@ -159,5 +168,10 @@ void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 
 QColor LineNumbersWidget::getBackgroundColor()
 {
-	return LineNumbersWidget::bg_color;
+	return bg_color;
+}
+
+QColor LineNumbersWidget::getFontColor()
+{
+	return font_color;
 }

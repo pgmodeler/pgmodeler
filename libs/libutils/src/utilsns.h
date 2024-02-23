@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,16 @@
 #include <QString>
 
 namespace UtilsNs {
+	static const QString EntityAmp("&amp;");
+
+	static const QString EntityLt("&lt;");
+
+	static const QString EntityGt("&gt;");
+
+	static const QString EntityQuot("&quot;");
+
+	static const QString EntityApos("&apos;");
+
 	//! \brief Default char for data/value separator for special usage
 	static const QString DataSeparator("•");
 
@@ -57,6 +67,14 @@ namespace UtilsNs {
 	/*! \brief Read the contents of the file specified by its filename returning its contents.
 	 * Raises an exception in case of the file couldn,t be open */
 	extern __libutils QByteArray loadFile(const QString &filename);
+
+	//! \brief Converts any chars (operators) < > " to the respective XML entities.
+	extern __libutils QString convertToXmlEntities(const QString value);
+
+	extern __libutils QString getStringHash(const QString &string);
+
+	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
+	extern __libutils QString formatMessage(const QString &msg);
 }
 
 #endif

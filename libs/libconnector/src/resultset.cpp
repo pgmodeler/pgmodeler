@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "resultset.h"
+#include "exception.h"
 
 ResultSet::ResultSet()
 {
@@ -91,6 +92,19 @@ QString ResultSet::getColumnName(int column_idx)
 
 	//Returns the column name on the specified index
 	return QString(PQfname(sql_result, column_idx));
+}
+
+QStringList ResultSet::getColumnNames()
+{
+	if(isEmpty() || !isValid())
+		return QStringList();
+
+	QStringList names;
+
+	for(int col_idx = 0; col_idx < getColumnCount(); col_idx++)
+		names.append(QString(PQfname(sql_result, col_idx)));
+
+	return names;
 }
 
 unsigned ResultSet::getColumnTypeId(int column_idx)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "role.h"
 #include "pgsqltypes/encodingtype.h"
 
 class __libcore Conversion: public BaseObject {
@@ -53,6 +52,8 @@ class __libcore Conversion: public BaseObject {
 
 		Conversion();
 
+		virtual ~Conversion(){}
+
 		//! \brief Defines whether the conversion is the default for the encodings
 		void setDefault(bool value);
 
@@ -73,6 +74,8 @@ class __libcore Conversion: public BaseObject {
 
 		//! \brief Returns the SQL/XML code definition for the conversion
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

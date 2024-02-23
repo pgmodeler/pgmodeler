@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.0-alpha" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="25"
+<dbmodel pgmodeler-ver="1.1.0-alpha1" use-changelog="false" last-position="88,180" last-zoom="1" max-obj-count="25"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -17,14 +17,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <database name="cryptoconcept" encoding="UTF8" is-template="false" allow-conns="true">
 </database>
 
-<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
 </schema>
 
-<schema name="economy" layers="0" rect-visible="true" fill-color="#9fcbc3">
+<schema name="economy" layers="0" rect-visible="true" fill-color="#9fcbc3" name-color="#000000">
 	<role name="cryptoapi"/>
 </schema>
 
-<schema name="people" layers="0" rect-visible="true" fill-color="#b6abc6">
+<schema name="people" layers="0" rect-visible="true" fill-color="#b6abc6" name-color="#000000">
 	<role name="cryptoapi"/>
 </schema>
 
@@ -50,7 +50,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+		<comment> <![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -78,18 +78,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="asset" not-null="true">
 		<type name="varchar" length="50"/>
-		<comment><![CDATA[token type, like 'Penguin']]></comment>
+		<comment> <![CDATA[token type, like 'Penguin']]> </comment>
 	</column>
 	<column name="quantity" not-null="true">
 		<type name="decimal" length="18" precision="9"/>
 	</column>
 	<column name="currency" not-null="true">
 		<type name="varchar" length="10"/>
-		<comment><![CDATA[symbol, like: 'SOL']]></comment>
+		<comment> <![CDATA[symbol, like: 'SOL']]> </comment>
 	</column>
 	<column name="price" not-null="true">
 		<type name="decimal" length="18" precision="9"/>
-		<comment><![CDATA[ask price before the sale, sale price after]]></comment>
+		<comment> <![CDATA[ask price before the sale, sale price after]]> </comment>
 	</column>
 	<column name="fees">
 		<type name="decimal" length="18" precision="9"/>
@@ -99,22 +99,22 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="status" not-null="true">
 		<type name="varchar" length="20"/>
-		<comment><![CDATA[in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]></comment>
+		<comment> <![CDATA[in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]> </comment>
 	</column>
 	<column name="status_time" not-null="true">
 		<type name="timestamptz" length="0"/>
 	</column>
 	<column name="currency_exchange_rate">
 		<type name="decimal" length="14" precision="4"/>
-		<comment><![CDATA[Fiat $ per unit of the currency used for this purchase when completes]]></comment>
+		<comment> <![CDATA[Fiat $ per unit of the currency used for this purchase when completes]]> </comment>
 	</column>
 	<column name="market_uid">
 		<type name="varchar" length="100"/>
-		<comment><![CDATA[The unique identifier for this transaction on this market.]]></comment>
+		<comment> <![CDATA[The unique identifier for this transaction on this market.]]> </comment>
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+		<comment> <![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -129,17 +129,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="sales_constr_status" type="ck-constr" table="economy.sales">
-			<expression><![CDATA[status in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]></expression>
+			<expression> <![CDATA[status in ('preliminary', 'open', 'pending', 'completed', 'cancelled', 'invalid')]]> </expression>
 	</constraint>
 
 	<customidxs object-type="column">
 		<object name="markets_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="markets_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="users" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="people"/>
@@ -162,7 +160,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="status" not-null="true">
 		<type name="varchar" length="20"/>
-		<comment><![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]></comment>
+		<comment> <![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -177,7 +175,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="users_constr_status" type="ck-constr" table="people.users">
-			<expression><![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]></expression>
+			<expression> <![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]> </expression>
 	</constraint>
 </table>
 
@@ -210,11 +208,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<customidxs object-type="column">
 		<object name="users_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="users_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="assets" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="economy"/>
@@ -225,7 +221,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="uid">
 		<type name="varchar" length="100"/>
-		<comment><![CDATA[key, uuid, upc, etc.]]></comment>
+		<comment> <![CDATA[key, uuid, upc, etc.]]> </comment>
 	</column>
 	<column name="catalog_code">
 		<type name="varchar" length="50"/>
@@ -252,11 +248,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<customidxs object-type="column">
 		<object name="collections_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="collections_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="exchanges" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="10" z-value="0">
 	<schema name="economy"/>
@@ -297,7 +291,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="prices" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="economy"/>
 	<role name="cryptoapi"/>
-	<position x="840" y="400"/>
+	<position x="840" y="380"/>
 	<column name="id" not-null="true" default-value="encode(gen_random_bytes(6), 'hex');">
 		<type name="varchar" length="12"/>
 	</column>
@@ -318,12 +312,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="currencies_id" index="1"/>
 		<object name="exchanges_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="currencies_fk" index="1"/>
 		<object name="exchanges_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="currencies" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="economy"/>
@@ -370,7 +362,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="category" not-null="true">
 		<type name="varchar" length="20"/>
-		<comment><![CDATA[in ('opening', 'credit', 'debit', 'adjustment'')]]></comment>
+		<comment> <![CDATA[in ('opening', 'credit', 'debit', 'adjustment'')]]> </comment>
 	</column>
 	<column name="title">
 		<type name="varchar" length="100"/>
@@ -397,17 +389,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="ledger_entries_cnstr_category" type="ck-constr" table="economy.wallet_entries">
-			<expression><![CDATA[category in ('opening', 'credit', 'debit', 'adjustment')]]></expression>
+			<expression> <![CDATA[category in ('opening', 'credit', 'debit', 'adjustment')]]> </expression>
 	</constraint>
 
 	<customidxs object-type="column">
 		<object name="wallets_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="wallets_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="sellers" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="economy"/>
@@ -433,12 +423,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="sales_id" index="1"/>
 		<object name="wallet_entries_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="sales_fk" index="1"/>
 		<object name="wallet_entries_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="media" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="people"/>
@@ -449,11 +437,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="name" not-null="true">
 		<type name="varchar" length="100"/>
-		<comment><![CDATA[Twitter, Discord, etc.]]></comment>
+		<comment> <![CDATA[Twitter, Discord, etc.]]> </comment>
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]></comment>
+		<comment> <![CDATA[{"web": "webpage_url", "api": "uri_for_api_calls"}]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -484,7 +472,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="status" not-null="true">
 		<type name="varchar" length="20"/>
-		<comment><![CDATA[in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]></comment>
+		<comment> <![CDATA[in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]> </comment>
 	</column>
 	<column name="email" not-null="true">
 		<type name="varchar" length="100"/>
@@ -500,7 +488,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="keys">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[store any number of keys as our design evolves]]></comment>
+		<comment> <![CDATA[store any number of keys as our design evolves]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -518,20 +506,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="email" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="identities_constr_status" type="ck-constr" table="people.identities">
-			<expression><![CDATA[status in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]></expression>
+			<expression> <![CDATA[status in ('active', 'suspended', 'forgot_password', 'cancelled', 'blocked')]]> </expression>
 	</constraint>
 	<constraint name="identities_constr_roles" type="ck-constr" table="people.identities">
-			<expression><![CDATA[role in ('user', 'partner', 'admin',  'owner')]]></expression>
+			<expression> <![CDATA[role in ('user', 'partner', 'admin',  'owner')]]> </expression>
 	</constraint>
 
 	<customidxs object-type="column">
 		<object name="users_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="users_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <table name="sessions" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="people"/>
@@ -542,7 +528,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="status" not-null="true">
 		<type name="varchar" length="20"/>
-		<comment><![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]></comment>
+		<comment> <![CDATA[in ('active', 'suspended', 'cancelled', 'blocked')]]> </comment>
 	</column>
 	<column name="begin_time" not-null="true">
 		<type name="timestamptz" length="0"/>
@@ -566,17 +552,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="sessions_constr_status" type="ck-constr" table="people.sessions">
-			<expression><![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]></expression>
+			<expression> <![CDATA[status in ('active', 'suspended', 'cancelled', 'blocked')]]> </expression>
 	</constraint>
 
 	<customidxs object-type="column">
 		<object name="identities_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="identities_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="users_has_many_wallets" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -672,7 +656,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+		<comment> <![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -739,12 +723,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="collections_id" index="2"/>
 		<object name="users_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="collections_fk" index="1"/>
 		<object name="users_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="collections_has_many_contacts" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -793,7 +775,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="name" not-null="true">
 		<type name="varchar" length="100"/>
-		<comment><![CDATA[ex: name of the group on Discord]]></comment>
+		<comment> <![CDATA[ex: name of the group on Discord]]> </comment>
 	</column>
 	<column name="abbrev">
 		<type name="varchar" length="20"/>
@@ -803,7 +785,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+		<comment> <![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -822,12 +804,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="collections_id" index="1"/>
 		<object name="media_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="collections_fk" index="1"/>
 		<object name="media_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="collections_has_many_collection_platforms" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -916,12 +896,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="assets_id" index="2"/>
 		<object name="wallets_id" index="1"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="assets_fk" index="1"/>
 		<object name="wallets_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="assets_has_many_asset_totals" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -974,11 +952,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<customidxs object-type="column">
 		<object name="currencies_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="currencies_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="currencies_has_many_currency_totals" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -1013,12 +989,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="sales_id" index="1"/>
 		<object name="wallet_entries_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="sales_fk" index="1"/>
 		<object name="wallet_entries_fk" index="2"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="sales_has_many_sellers" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -1137,7 +1111,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="endpoints">
 		<type name="jsonb" length="0"/>
-		<comment><![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]></comment>
+		<comment> <![CDATA[object {foo: bar, foo2: bar2, ...} of related URLs]]> </comment>
 	</column>
 	<column name="more">
 		<type name="jsonb" length="0"/>
@@ -1156,12 +1130,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="identities_id" index="1"/>
 		<object name="media_id" index="2"/>
 	</customidxs>
-
 	<customidxs object-type="constraint">
 		<object name="identities_fk" index="2"/>
 		<object name="media_fk" index="1"/>
-	</customidxs>
-</table>
+	</customidxs></table>
 
 <relationship name="media_has_many_media_identities" type="rel1n" layers="0"
 	 src-col-pattern="{st}_{sc}"
@@ -1209,11 +1181,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<textbox name="cryptoconcept_desc" layers="0" z-value="0" font-size="11">
-	<position x="120" y="120"/>
-	<comment><![CDATA[[ cryptoconcept database ]
+<textbox name="cryptoconcept_desc" layers="0" z-value="0" width="456.547" font-size="11">
+	<position x="120" y="200"/>
+	<comment> <![CDATA[[ cryptoconcept database ]
 
-Database sample kindly provided by Peter Pierce at truenorth.us.]]></comment>
+Database sample kindly provided by Peter Pierce at truenorth.us.]]> </comment>
 </textbox>
 
 <constraint name="currency_totals_fk_wallets" type="fk-constr" alias="wallets_fk" comparison-type="MATCH FULL"

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,11 +29,41 @@ the syntax highlighter installed on it.
 #include <QWidget>
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
+#include "catalog.h"
 
-class __libgui CodeCompletionWidget: public QWidget
-{
+class __libgui CodeCompletionWidget: public QWidget {
 	private:
 		Q_OBJECT
+
+		/*! \brief This enums is used to determine DML keywords
+		 * positions in the parsed SQL command. This one is used
+		 * together with dml_kwords_pos and dml_keywords, and the
+		 * order of the items in this enums MUST have the same order
+		 * of the elements in dml_keywords string list */
+		enum DmlKeywordId: unsigned{
+			Select, Insert, Update, Delete,
+			Truncate, Alter, Drop,	From,
+			Join, Into,	As, Set, Table,
+			Only,	Where,
+			Inner, Outer, Left,	Right,
+			Full, Union, Intersect,
+			Except, Distinct,	Values, All
+		};
+
+		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
+		 *  This is used to help pgModeler retrieve columns/objects names from the database */
+		int dml_kwords_pos[All + 1];
+
+		/*! \brief Stores the extracted table aliases where the key is the alias and the
+		 * value the schema-qualified table name */
+		attribs_map tab_aliases;
+
+		//! \brief Stores the extracted table names and the position in the command they were found
+		std::map<int, QString> tab_names_pos;
+
+		static const QStringList dml_keywords;
+
+		static const QString special_chars;
 
 		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;
@@ -61,7 +91,7 @@ class __libgui CodeCompletionWidget: public QWidget
 		prev_txt_cur,
 		
 		lvl_cur;
-		
+
 		//! \brief Current typed word
 		QString word;
 		
@@ -73,6 +103,9 @@ class __libgui CodeCompletionWidget: public QWidget
 		//! \brief Stores the database model used to search for objects and list them on completion
 		DatabaseModel *db_model;
 		
+		//! \brief Catalog object used to retrieve object names from the database system catalogs
+		Catalog catalog;
+
 		/*! \brief This is used to simulate an history of selected object
 		whenever the user types the completion trigger char. An example of qualifying is access a column
 		of a table by typing the full path to it: public[0].table[1].column[2]. The numbers between brace
@@ -90,8 +123,8 @@ class __libgui CodeCompletionWidget: public QWidget
 		std::map<QString, QPixmap> custom_items;
 		
 		attribs_map custom_items_tips;
-		
-		//! \brief Puts the selected object name on the current cursor position.
+
+					 //! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 		
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items
@@ -103,6 +136,33 @@ class __libgui CodeCompletionWidget: public QWidget
 		
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);
+
+		/*! \brief If a connection is configured, populates the list with the columns of
+		 *  tables, tables, schemas and functions listed in FROM/JOIN clauses */
+		bool updateObjectsList();
+
+		//! \brief Reset the DML keywords positions in the current typed code
+		void resetKeywordsPos();
+
+		/*! \brief Retrieve the column names from the database based on the current
+		 *  typed DML command (SELECT, UPDATE, DELETE) and the position of the cursor */
+		bool retrieveColumnNames();
+
+		/*! \brief Retrive the names of tables, views, foreign tables, functions, procedures and aggregates
+		 *  depending o the current position of the cursor in the typed DML command */
+		bool retrieveObjectNames();
+
+		//! \brief Parses the entire command in order to extract the table names and aliases
+		void extractTableNames();
+
+		/*! \brief Returns a list of extracted table names based upon the start_pos (cursor position).
+		 *  The stop_pos forces the method to return the list once the position of any searched table
+		 *  exceeds the specified value */
+		QStringList getTableNames(int start_pos, int stop_pos);
+
+		int getTablePosition(const QString &name);
+
+		QStringList getTableAliases(const QString &name);
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);
@@ -110,7 +170,7 @@ class __libgui CodeCompletionWidget: public QWidget
 		/*! \brief Configures the completion. If an syntax highlighter is specified, the completion widget will
 		retrive the keywords and the trigger char from it. The keyword group name can be also specified in case the
 		highlighter uses an different configuration */
-		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp=QString("keywords"));
+		void configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl=nullptr, const QString &keywords_grp="keywords");
 		
 		//! \brief Inserts a custom named item on the list with a custom icon. Custom item will always appear at the beggining of the list
 		void insertCustomItem(const QString &name, const QString &tooltip, const QPixmap &icon);
@@ -123,6 +183,9 @@ class __libgui CodeCompletionWidget: public QWidget
 		
 		//! \brief Clear the custom added items
 		void clearCustomItems();
+
+		//! \brief Sets the connection params used to retrive column names
+		void setConnection(Connection conn);
 		
 	public slots:
 		//! \brief Updates the completion list based upon the typed word
@@ -138,6 +201,8 @@ class __libgui CodeCompletionWidget: public QWidget
 		void selectItem();
 		
 		void showItemTooltip();
+
+		void adjustNameListSize();
 		
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.

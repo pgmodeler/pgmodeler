@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,22 +18,19 @@
 
 #include "objectdepsrefswidget.h"
 #include "guiutilsns.h"
-#include "objectfinderwidget.h"
 
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
 	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
-
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
 
-	connect(exc_ind_deps_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	connect(inc_ind_refs_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
-	connect(dependences_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
-	connect(references_tbw, &QTableWidget::itemDoubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(inc_indirect_links_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(unique_results_chk,	&QCheckBox::toggled, this, &ObjectDepsRefsWidget::updateObjectTables);
+	connect(dependencies_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
+	connect(references_view, &QTableView::doubleClicked, this, &ObjectDepsRefsWidget::handleItemSelection);
 
 	setMinimumSize(580, 350);
 }
@@ -57,7 +54,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj)
 {
 	if(!model_wgt)
-		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		return;
 
 	this->model_wgt=model_wgt;
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);
@@ -68,44 +65,22 @@ void ObjectDepsRefsWidget::applyConfiguration()
 	emit s_closeRequested();
 }
 
-void ObjectDepsRefsWidget::clearTables()
-{
-	dependences_tbw->clearContents();
-	dependences_tbw->setRowCount(0);
-
-	references_tbw->clearContents();
-	references_tbw->setRowCount(0);
-}
-
 void ObjectDepsRefsWidget::updateObjectTables()
 {
-	std::vector<BaseObject *> objs;
-	model->getObjectDependecies(object, objs, !exc_ind_deps_chk->isChecked());
+	GuiUtilsNs::populateObjectsTable(dependencies_view,
+																	this->object->getDependencies(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 
-	/* As the list of dependencies include the this->object itself is necessary
-	to remove only for semantics reasons */
-	objs.erase(std::find(objs.begin(), objs.end(), this->object));
-	GuiUtilsNs::updateObjectTable(dependences_tbw, objs);
-
-	objs.clear();
-	if(!inc_ind_refs_chk->isChecked())
-		model->getObjectReferences(object, objs);
-	else
-		model->__getObjectReferences(object, objs);
-
-	GuiUtilsNs::updateObjectTable(references_tbw, objs);
-
-	references_tbw->resizeColumnsToContents();
-	dependences_tbw->resizeColumnsToContents();
+	GuiUtilsNs::populateObjectsTable(references_view,
+																	this->object->getReferences(inc_indirect_links_chk->isChecked(), {}, unique_results_chk->isChecked()));
 }
 
-void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
+void ObjectDepsRefsWidget::handleItemSelection(const QModelIndex& index)
 {
-	BaseObject *sel_obj=nullptr, *parent=nullptr;
-	Table *parent_tab=nullptr;
-	View *parent_view=nullptr;
+	BaseObject *sel_obj = nullptr, *parent = nullptr;
+	Table *parent_tab = nullptr;
+	View *parent_view = nullptr;
 
-	sel_obj=reinterpret_cast<BaseObject*>(item->data(Qt::UserRole).value<void *>());
+	sel_obj = reinterpret_cast<BaseObject*>(index.data(Qt::UserRole).value<void *>());
 
 	if(sel_obj)
 	{
@@ -113,7 +88,6 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 			parent=dynamic_cast<TableObject *>(sel_obj)->getParentTable();
 
 		model_wgt->showObjectForm(sel_obj->getObjectType(), sel_obj, parent);
-		clearTables();
 
 		if(TableObject::isTableObject(this->object->getObjectType()))
 		{
@@ -133,9 +107,10 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 		}
 		else
 		{
-			references_tbw->setEnabled(false);
-			dependences_tbw->setEnabled(false);
-			exc_ind_deps_chk->setEnabled(false);
+			references_view->setEnabled(false);
+			dependencies_view->setEnabled(false);
+			inc_indirect_links_chk->setEnabled(false);
+			unique_results_chk->setEnabled(false);
 			alert_frm->setVisible(true);
 		}
 	}

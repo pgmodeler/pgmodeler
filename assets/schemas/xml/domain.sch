@@ -1,7 +1,7 @@
 # XML definition for domains
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
-[<domain name=] "{name}"
+[<domain name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br
@@ -12,7 +12,7 @@
 	#%end
 
 	[ not-null=] %if {not-null} %then "true" %else "false" %end
-	%if {default-value} %then [ default-value=] "{default-value}" %end
+	%if {default-value} %then [ default-value=] "&{default-value}" %end
 
 	%if {protected} %then
 		[ protected=] "true"

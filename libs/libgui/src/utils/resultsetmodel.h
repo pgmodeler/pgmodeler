@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,13 +29,17 @@
 #include <QAbstractTableModel>
 #include "resultset.h"
 #include "catalog.h"
+#include <QIcon>
 
 class __libgui ResultSetModel: public QAbstractTableModel {
 	private:
 		Q_OBJECT
 
 		int col_count, row_count;
+
 		QStringList item_data, header_data, tooltip_data;
+
+		QList<QIcon> header_icons;
 
 		void insertColumn(int, const QModelIndex &){}
 		void insertRow(int, const QModelIndex &){}
@@ -51,6 +55,8 @@ class __libgui ResultSetModel: public QAbstractTableModel {
 		virtual Qt::ItemFlags flags(const QModelIndex &) const;
 		void append(ResultSet &res);
 		bool isEmpty();
+
+		static QString getPgTypeIconName(const QString &type);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,50 @@
 */
 
 #include "coreutilsns.h"
-#include "databasemodel.h"
 #include <QDebug>
 #include <QHash>
+#include "relationship.h"
+#include "cast.h"
+#include "domain.h"
+#include "aggregate.h"
+#include "language.h"
+#include "sequence.h"
+#include "type.h"
+#include "conversion.h"
+#include "view.h"
+#include "eventtrigger.h"
+#include "genericsql.h"
+#include "extension.h"
+#include "foreignserver.h"
+#include "foreigntable.h"
+#include "transform.h"
+#include "procedure.h"
+#include "usermapping.h"
+#include "tablespace.h"
+#include "schema.h"
 
 namespace CoreUtilsNs {
+
+	std::vector<BaseObject *> filterObjectsByType(const std::vector<BaseObject *> &list, const std::vector<ObjectType> &excl_types)
+	{
+		if(excl_types.empty() || list.empty())
+			return list;
+
+		std::vector<BaseObject *> filtered_objs;
+
+		/* Using std::copy_if to include in the filtered_obj list only the object
+		 * which type is not in excl_types */
+		std::copy_if(list.begin(), list.end(), std::back_inserter(filtered_objs),
+								 [&excl_types](BaseObject *obj)
+								 {
+									return obj &&
+												 std::find(excl_types.begin(), excl_types.end(),
+																	 obj->getObjectType()) == excl_types.end();
+								 });
+
+		return filtered_objs;
+	}
+
 	template <class Class>
 	void copyObject(BaseObject **psrc_obj, Class *copy_obj)
 	{

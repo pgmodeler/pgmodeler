@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 */
 
 #include "basetableview.h"
+#include "schema.h"
+#include "utilsns.h"
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
@@ -39,11 +41,9 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
-	//ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
-	//columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	tag_item = new TextPolygonItem;
 	tag_item->setZValue(3);
@@ -375,7 +375,7 @@ void BaseTableView::configureTag()
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.90);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
-		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
+		tag_item->setTextColor(BaseObjectView::getFontStyle(Attributes::Tag).foreground().color());
 
 		p1=tag_item->getTextBoundingRect().topLeft();
 		p2=tag_item->getTextBoundingRect().bottomRight();
@@ -404,6 +404,8 @@ void BaseTableView::__configureObject(double width)
 	QBrush togg_brush, togg_btns_brush;
 	QPen togg_pen, togg_btns_pen;
 	double height = 0;
+
+	prepareGeometryChange();
 
 	if(tag)
 	{
@@ -458,12 +460,21 @@ void BaseTableView::__configureObject(double width)
 	attribs_toggler->setPos(title->pos().x(),
 													height - attribs_toggler->boundingRect().height());
 
-	this->table_tooltip=this->getUnderlyingObject()->getName(true) +
-						QString(" (") + this->getUnderlyingObject()->getTypeName() + QString(") \n") +
-						QString("Id: %1\n").arg(this->getUnderlyingObject()->getObjectId()) +
-						tr("Connected rels: %1").arg(this->getConnectRelsCount());
+	this->table_tooltip =
+						"`" + tab->getName(true) +
+						"' (" + tab->getTypeName() + ")" +
+						QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(tab->getObjectId())) +
+						tr("\n%1 Connected rels: %2").arg(UtilsNs::DataSeparator, QString::number(this->getConnectRelsCount()));
 
-	this->setToolTip(this->table_tooltip);
+	if(!tab->getAlias().isEmpty())
+		table_tooltip += QString("\n%1 Alias: %2").arg(UtilsNs::DataSeparator, tab->getAlias());
+
+	if(!tab->getComment().isEmpty())
+		table_tooltip += QString("\n\n%1").arg(tab->getComment());
+
+	table_tooltip = UtilsNs::formatMessage(table_tooltip);
+
+	this->setToolTip(table_tooltip);
 	this->setZValue(tab->getZValue());
 
 	configureObjectSelection();
@@ -505,6 +516,8 @@ void BaseTableView::configureObjectShadow()
 	rect_item->setBrush(getFillStyle(Attributes::ObjShadow));
 	rect_item->setRect(this->boundingRect());
 	rect_item->setPos(ObjectShadowXPos, ObjectShadowYPos);
+
+	BaseObjectView::configureObjectShadow();
 }
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()
@@ -621,4 +634,29 @@ void BaseTableView::selectRelationships()
 {
 	for(auto &rel : connected_rels)
 		dynamic_cast<BaseObjectView *>(rel->getOverlyingObject())->setSelected(true);
+}
+
+void BaseTableView::setChildSelected(TableObject *tab_obj)
+{
+	if(!tab_obj)
+		return;
+
+	TableObjectView *tab_obj_view = nullptr;
+	QList<QGraphicsItem *> items;
+
+	items.append(columns->childItems());
+	items.append(ext_attribs->childItems());
+
+	for(auto &item : items)
+	{
+		tab_obj_view = dynamic_cast<TableObjectView *>(item);
+
+		if(tab_obj_view && tab_obj_view->getUnderlyingObject() == tab_obj)
+		{
+			tab_obj_view->setFakeSelection(true);
+			sel_child_objs.append(tab_obj_view);
+			emit s_childrenSelectionChanged();
+			break;
+		}
+	}
 }

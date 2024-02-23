@@ -2,13 +2,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[<policy name=] "{name}"
+[<policy name=] "&{name}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
-[ table=] "{table}" [ command=] "{command}"
+[ table=] "&{table}" [ command=] "{command}"
 
 [ permissive=] %if {permissive} %then "true" %else "false" %end
 
@@ -21,7 +21,7 @@
 %if {prepended-sql} %then {prepended-sql} %end
 
 %if {roles} %then
-	$tb [<roles names=] "{roles}" [/>]
+	$tb [<roles names=] "&{roles}" [/>]
 %end
 
 %if {using-exp} %then

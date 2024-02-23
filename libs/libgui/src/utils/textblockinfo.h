@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,10 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 		is_closed,
 
 		//! \brief Indicates if the block was closed at least one time.
-		closed_once;
+		closed_once,
+
+		//! \brief Indicates that, when available, the code completion can be triggered when the cursor is in this block info.
+		allow_completion;
 
 	public:
 		TextBlockInfo(void);
@@ -52,11 +55,13 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 		void setGroup(const QString &grp);
 		void setClosed(bool value);
 		void setMultiExpr(bool value);
+		void setAllowCompletion(bool value);
 
 		QString getGroup();
 		bool isMultiExpr();
 		bool isClosedOnce();
 		bool isClosed();
+		bool isCompletionAllowed();
 };
 
 #endif

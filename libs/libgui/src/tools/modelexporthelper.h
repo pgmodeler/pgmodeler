@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,6 +74,9 @@ class __libgui ModelExportHelper: public QObject {
 		//! \brief Indicates if the page delimiters should be displayed during exporting to graphical format
 		show_delim,
 
+		//! \brief Indicates if the original background (canvas) color should be used in the graphics file
+		override_bg_color,
+
 		//! \brief Indicates if the export to png should be done pageby page
 		page_by_page,
 
@@ -81,7 +84,10 @@ class __libgui ModelExportHelper: public QObject {
 		split,
 
 		//! \brief Indicates if the data dictionary should be browsable (include an index)
-		browsable;
+		browsable,
+
+		//! \brief Indicates if the database must be dropped before the export
+		force_db_drop;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -168,7 +174,7 @@ class __libgui ModelExportHelper: public QObject {
 		and the method will use it instead of allocate a local one. This is a workaround to error raised by QCoreApplication::sendPostedEvents
 		when running the helper in a thread */
 		void exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim,
-										 bool page_by_page, QGraphicsView *viewp=nullptr);
+										 bool page_by_page, bool override_bg_color, QGraphicsView *viewp=nullptr);
 
 		//! \brief Exports the model to a named SVG file.
 		void exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
@@ -178,7 +184,8 @@ class __libgui ModelExportHelper: public QObject {
 		make the helper to ignore object duplicity errors.
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
-											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
+											bool forced_db_drop = false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
 		 * respectively, that the data dictionary should have an object index and the dictionary should be split
@@ -189,7 +196,8 @@ class __libgui ModelExportHelper: public QObject {
 		This form receive a database model as input and the sql code to be exported will be generated from it.
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
-															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
+															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
+															 bool force_db_drop = false);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a previously generated sql buffer to be exported the the helper */
@@ -202,7 +210,7 @@ class __libgui ModelExportHelper: public QObject {
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
 		void setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom,
-															bool show_grid, bool show_delim, bool page_by_page);
+															bool show_grid, bool show_delim, bool use_orig_bg_color, bool page_by_page);
 
 		/*! \brief Configures the SVG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, the output filename, grid options. */

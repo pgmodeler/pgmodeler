@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 
 #include <QtWidgets>
 #include "ui_baseform.h"
-#include "exception.h"
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
+#include <type_traits>
 
 class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 	private:
@@ -48,6 +48,9 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 
 		void setButtonConfiguration(Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
+		//! \brief Sets the current form size as the minimum size
+		void adjustMinimumSize();
+
 		/*! \brief Injects the specified object into the form and turns it the main widget.
 		 * The widget is reparented to the stack widget within the form. */
 		void setMainWidget(QWidget *widget);
@@ -60,10 +63,30 @@ class __libgui BaseForm: public QDialog, public Ui::BaseForm {
 		void setMainWidget(Class *widget, Slot accept_slot);
 
 		/*! \brief Injects the specified object into the form and turns it the main widget.
-				The widget is reparented to the stack widget within the form. This version of method
-				does additional configurations like signal connection, automatic sizing and
-				custom title configuration based upont the object handled by the BaseObjectWidget instance */
-		void setMainWidget(BaseObjectWidget *widget);
+		 *  The widget is reparented to the stack widget within the form. This version of method
+		 *  does additional configurations like signal connection, automatic sizing and
+		 *  custom title configuration based upont the object handled by the BaseObjectWidget instance. */
+		template <class Class, std::enable_if_t<std::is_base_of_v<BaseObjectWidget, Class>, bool> = true>
+		void setMainWidget(Class *widget)
+		{
+			if(!widget)
+				return;
+
+			if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
+				setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+			else
+				setWindowTitle(widget->windowTitle());
+
+			apply_ok_btn->setDisabled(widget->isHandledObjectProtected());
+			resizeForm(widget);
+			setButtonConfiguration(Messagebox::OkCancelButtons);
+
+			connect(cancel_btn, &QPushButton::clicked, widget, __slot(widget, Class::cancelConfiguration));
+			connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
+
+			connect(apply_ok_btn, &QPushButton::clicked, widget, __slot(widget, Class::applyConfiguration));
+			connect(widget, &BaseObjectWidget::s_closeRequested, this, &BaseForm::accept);
+		}
 };
 
 template <class Class, typename Slot>
@@ -73,7 +96,7 @@ void BaseForm::setMainWidget(Class *widget, Slot accept_slot)
 		return;
 
 	setMainWidget(widget);
-	disconnect(apply_ok_btn, nullptr, widget, nullptr);
+	disconnect(apply_ok_btn, nullptr, this, nullptr);
 	connect(apply_ok_btn, &QPushButton::clicked, widget, accept_slot);
 }
 

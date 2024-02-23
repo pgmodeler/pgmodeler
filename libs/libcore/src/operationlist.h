@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ class __libcore OperationList: public QObject {
 
 	public:
 		OperationList(DatabaseModel *model);
+
 		virtual ~OperationList();
 
 		/*! \brief Starts chaining operations.
@@ -132,8 +133,8 @@ class __libcore OperationList: public QObject {
 		//! \brief Removes all the operations from the list
 		void removeOperations();
 
-		//! \brief Gets the data from the operation with specified index
-		void getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type);
+		//! \brief Returns a const reference to the operation assoicated to the id
+		const Operation *getOperation(unsigned oper_idx);
 
 		//! \brief Sets the maximum size for the list
 		static void setMaximumSize(unsigned max);

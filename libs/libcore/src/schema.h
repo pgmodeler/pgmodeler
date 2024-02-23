@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,13 +32,20 @@
 class __libcore Schema: public BaseGraphicObject {
 	private:
 		static unsigned schema_id;
-		QColor fill_color;
+
+		QColor fill_color, name_color;
+
 		bool rect_visible;
 
 	public:
 		Schema();
 
-		void setName(const QString &name);
+	 virtual ~Schema(){}
+
+		virtual void setName(const QString &name) override;
+
+		void setNameColor(const QColor &color);
+		QColor getNameColor();
 
 		void setFillColor(const QColor &color);
 		QColor getFillColor();

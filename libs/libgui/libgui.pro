@@ -10,14 +10,15 @@ windows:DESTDIR = $$PWD
 DEFINES += GUI_SYMBOLS
 
 SOURCES += src/baseform.cpp \
+	src/dbobjects/referenceswidget.cpp \
+	src/dbobjects/simplecolumnswidget.cpp \
 src/guiutilsns.cpp \
 src/mainwindow.cpp \
 src/messagebox.cpp \
-src/pgmodelerplugin.cpp \
+src/pgmodelerguiplugin.cpp \
 src/dbobjects/aggregatewidget.cpp \
 src/dbobjects/domainwidget.cpp \
 src/dbobjects/languagewidget.cpp \
-src/dbobjects/referencewidget.cpp \
 src/dbobjects/textboxwidget.cpp \
 src/dbobjects/basefunctionwidget.cpp \
 src/dbobjects/elementwidget.cpp \
@@ -86,19 +87,21 @@ src/tools/validationinfo.cpp \
 src/tools/modelvalidationhelper.cpp \
 src/tools/swapobjectsidswidget.cpp \
 src/tools/modelvalidationwidget.cpp \
+	src/utils/customsortproxymodel.cpp \
 src/utils/deletableitemdelegate.cpp \
 src/utils/htmlitemdelegate.cpp \
+	src/utils/objectslistmodel.cpp \
 src/utils/plaintextitemdelegate.cpp \
 src/utils/resultsetmodel.cpp \
 src/utils/syntaxhighlighter.cpp \
 src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
+    src/widgets/columndatawidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
 	src/widgets/objecttypeslistwidget.cpp \
 src/widgets/operationlistwidget.cpp \
-src/widgets/bulkdataeditwidget.cpp \
 src/widgets/modelobjectswidget.cpp \
 src/widgets/objectdepsrefswidget.cpp \
 src/widgets/sceneinfowidget.cpp \
@@ -128,14 +131,15 @@ src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
 src/baseform.h \
+	src/dbobjects/referenceswidget.h \
+	src/dbobjects/simplecolumnswidget.h \
 src/guiutilsns.h \
 src/mainwindow.h \
 src/messagebox.h \
-src/pgmodelerplugin.h \
+src/pgmodelerguiplugin.h \
 src/dbobjects/aggregatewidget.h \
 src/dbobjects/domainwidget.h \
 src/dbobjects/languagewidget.h \
-src/dbobjects/referencewidget.h \
 src/dbobjects/textboxwidget.h \
 src/dbobjects/basefunctionwidget.h \
 src/dbobjects/elementwidget.h \
@@ -176,6 +180,7 @@ src/dbobjects/procedurewidget.h \
 src/dbobjects/tagwidget.h \
 src/dbobjects/elementstablewidget.h \
 src/dbobjects/columnpickerwidget.h \
+	src/qtconnectmacros.h \
 src/settings/appearanceconfigwidget.h \
 src/settings/configurationform.h \
 src/settings/generalconfigwidget.h \
@@ -204,19 +209,21 @@ src/tools/validationinfo.h \
 src/tools/modelvalidationhelper.h \
 src/tools/swapobjectsidswidget.h \
 src/tools/modelvalidationwidget.h \
+	src/utils/customsortproxymodel.h \
 src/utils/deletableitemdelegate.h \
 src/utils/htmlitemdelegate.h \
+	src/utils/objectslistmodel.h \
 src/utils/plaintextitemdelegate.h \
 src/utils/resultsetmodel.h \
 src/utils/syntaxhighlighter.h \
 src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
+    src/widgets/columndatawidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
 	src/widgets/objecttypeslistwidget.h \
 src/widgets/operationlistwidget.h \
-src/widgets/bulkdataeditwidget.h \
 src/widgets/modelobjectswidget.h \
 src/widgets/objectdepsrefswidget.h \
 src/widgets/sceneinfowidget.h \
@@ -246,6 +253,8 @@ src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
 ui/dbobjects/columnpickerwidget.ui \
+	ui/dbobjects/referenceswidget.ui \
+	ui/dbobjects/simplecolumnswidget.ui \
 ui/mainwindow.ui \
 ui/messagebox.ui \
 ui/dbobjects/aggregatewidget.ui \
@@ -287,7 +296,6 @@ ui/dbobjects/policywidget.ui \
 ui/dbobjects/tagwidget.ui \
 ui/dbobjects/databasewidget.ui \
 ui/dbobjects/indexwidget.ui \
-ui/dbobjects/referencewidget.ui \
 ui/dbobjects/textboxwidget.ui \
 ui/settings/appearanceconfigwidget.ui \
 ui/settings/connectionsconfigwidget.ui \
@@ -315,7 +323,6 @@ ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
 	ui/widgets/objecttypeslistwidget.ui \
 ui/widgets/sourcecodewidget.ui \
-ui/widgets/bulkdataeditwidget.ui \
 ui/widgets/fileselectorwidget.ui \
 ui/widgets/modeloverviewwidget.ui \
 ui/widgets/objectselectorwidget.ui \

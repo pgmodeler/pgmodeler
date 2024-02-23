@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "rule.h"
+#include "utilsns.h"
 
 Rule::Rule()
 {
@@ -38,7 +39,7 @@ void Rule::setCommandsAttribute()
 	for(i=0; i < qtd; i++)
 	{
 		str_cmds+=commands[i];
-		if(i < (qtd-1)) str_cmds+=QString(";");
+		if(i < (qtd-1)) str_cmds+=";";
 	}
 
 	attributes[Attributes::Commands]=str_cmds;
@@ -135,4 +136,10 @@ QString Rule::getSourceCode(SchemaParser::CodeType def_type)
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	return BaseObject::__getSourceCode(def_type);
+}
+
+void Rule::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + ~execution_type + ~event_type);
 }

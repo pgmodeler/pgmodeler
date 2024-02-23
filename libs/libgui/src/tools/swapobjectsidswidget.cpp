@@ -1,88 +1,69 @@
 #include "swapobjectsidswidget.h"
 #include "guiutilsns.h"
-#include "objectfinderwidget.h"
 
 const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
-	try
-	{
-		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		std::vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
-																															 ObjectType::Textbox,
-																															 ObjectType::Column,
-																															 ObjectType::Constraint });
-		setupUi(this);
+	std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Permission,
+																																	 ObjectType::Textbox,
+																																	 ObjectType::Column,
+																																	 ObjectType::Constraint });
+	setupUi(this);
 
-		//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
+	sort_column = 0;
+	sort_order = Qt::AscendingOrder;
 
-		selector_idx = 0;
-		src_object_sel=nullptr;
-		dst_object_sel=nullptr;
+	selector_idx = 0;
+	src_object_sel=nullptr;
+	dst_object_sel=nullptr;
 
-		src_object_sel=new ObjectSelectorWidget(types, this);
-		src_object_sel->enableObjectCreation(false);
+	filter_lt->setAlignment(filter_btn, Qt::AlignLeft);
 
-		dst_object_sel=new ObjectSelectorWidget(types, this);
-		dst_object_sel->enableObjectCreation(false);
+	QHBoxLayout *hbox = new QHBoxLayout(src_sel_parent);
+	hbox->setContentsMargins(0,0,0,0);
+	src_object_sel=new ObjectSelectorWidget(types, src_sel_parent);
+	src_object_sel->enableObjectCreation(false);
+	hbox->addWidget(src_object_sel);
 
-		swap_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		swap_objs_grid->setSpacing(GuiUtilsNs::LtSpacing);
+	hbox = new QHBoxLayout(dst_sel_parent);
+	hbox->setContentsMargins(0,0,0,0);
+	dst_object_sel=new ObjectSelectorWidget(types, dst_sel_parent);
+	dst_object_sel->enableObjectCreation(false);
+	hbox->addWidget(dst_object_sel);
 
-		swap_objs_grid->addWidget(create_lbl, 0, 0);
-		swap_objs_grid->addWidget(src_object_sel, 0, 1);
-		swap_objs_grid->addWidget(swap_values_tb, 0, 2, 2, 1);
-		swap_objs_grid->addWidget(src_id_lbl, 0, 3);
-		swap_objs_grid->addWidget(src_ico_lbl, 0, 4);
+	setModel(nullptr);
+	filter_wgt->setVisible(false);
 
-		swap_objs_grid->addWidget(before_lbl, 1, 0);
-		swap_objs_grid->addWidget(dst_object_sel, 1, 1);
-		swap_objs_grid->addWidget(dst_id_lbl, 1, 3);
-		swap_objs_grid->addWidget(dst_ico_lbl, 1, 4);
+	connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
 
-		swap_objs_grid->addWidget(filter_btn, 2, 0, 1, 1);
-		swap_objs_grid->addWidget(filter_wgt, 2, 1, 1, 4);
+	connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
 
-		swap_objs_grid->addWidget(objects_tbw, 3, 0, 1, 5);
-		swap_objs_grid->addWidget(alert_frm, 4, 0, 1, 5);
+	connect(swap_values_tb, &QToolButton::clicked, this, [this](){
+		BaseObject *obj = src_object_sel->getSelectedObject();
+		src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
+		dst_object_sel->setSelectedObject(obj);
+	});
 
-		setModel(nullptr);
-		filter_wgt->setVisible(false);
+	connect(objects_view, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
+		if(QApplication::mouseButtons() == Qt::LeftButton)
+			selectItem(index);
+	});
 
-		connect(filter_btn, &QToolButton::toggled, filter_wgt, &QWidget::setVisible);
-		connect(src_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_objectSelected, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(src_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
-		connect(dst_object_sel, &ObjectSelectorWidget::s_selectorCleared, this, &SwapObjectsIdsWidget::showObjectId);
+	connect(objects_view->horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [this](int index, Qt::SortOrder order){
+		sort_column = index;
+		sort_order = order;
+	});
 
-		connect(swap_values_tb, &QToolButton::clicked, this, [this](){
-			BaseObject *obj=src_object_sel->getSelectedObject();
-			src_object_sel->setSelectedObject(dst_object_sel->getSelectedObject());
-			dst_object_sel->setSelectedObject(obj);
-		});
+	connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
+	connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
+	connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
 
-		connect(objects_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
-			if(QApplication::mouseButtons() == Qt::LeftButton)
-				selectItem(item);
-		});
-
-		connect(filter_edt, &QLineEdit::textChanged, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_rels_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
-		connect(hide_sys_objs_chk, &QCheckBox::toggled, this, &SwapObjectsIdsWidget::filterObjects);
-
-		objects_tbw->installEventFilter(this);
-		setMinimumSize(640,480);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-SwapObjectsIdsWidget::~SwapObjectsIdsWidget()
-{
-
+	objects_view->installEventFilter(this);
+	setMinimumSize(640,480);
 }
 
 void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
@@ -107,9 +88,6 @@ void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject
 
 void SwapObjectsIdsWidget::fillCreationOrderGrid()
 {
-	objects_tbw->clearContents();
-	objects_tbw->setRowCount(0);
-
 	if(!model)
 		return;
 
@@ -123,59 +101,73 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid()
 		}
 	});
 
-	GuiUtilsNs::updateObjectTable(objects_tbw, objects);
-	objects_tbw->resizeColumnsToContents();
+	/* Blocking the signals of the horizontal header to avoid calling the slot
+	 * that stores the current sort column/order. The slot must be called only
+	 * the user clicks the header, not when sortByColumn() is called. */
+	objects_view->horizontalHeader()->blockSignals(true);
+	GuiUtilsNs::populateObjectsTable(objects_view, objects, "");
 
 	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
 		filterObjects();
+
+	objects_view->sortByColumn(sort_column, sort_order);
+	objects_view->horizontalHeader()->blockSignals(false);
 }
 
 bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 {
-	if(object == objects_tbw && event->type() == QEvent::KeyPress)
+	if(object == objects_view && event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
-		QTableWidgetItem *item = objects_tbw->currentItem();
-		int row = item->row();
+		QModelIndex index = objects_view->currentIndex();
+		int row = index.row();
 
 		if(k_event->key() == Qt::Key_Space)
-			selectItem(item);
-		else if((k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up) && k_event->modifiers() == Qt::ControlModifier)
+			selectItem(index);
+		else if((k_event->modifiers() == Qt::ControlModifier ||
+
+						/* Workaround for macOS: On some keyboards, Qt seems to detect that modifiers
+						 * ControlModifier and KeypadModifier are combined even only Command/Control key is held,
+						 * thus, we have to do this extra check */
+						k_event->modifiers() == (Qt::ControlModifier | Qt::KeypadModifier)) &&
+
+						(k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up))
 		{
-			QTableWidgetItem *aux_item = nullptr;
+			QAbstractItemModel *model = objects_view->model();
+			QModelIndex aux_index;
 			int key_code = k_event->key();
 
 			clearSelectors();
-			selectItem(item);
+			selectItem(index);
 
-			while(!aux_item)
+			while(!aux_index.isValid())
 			{
 				// If user presses down we get the next item below
-				if(key_code == Qt::Key_Down && row < objects_tbw->rowCount() - 1)
-					aux_item = objects_tbw->item(row + 1, 0);
+				if(key_code == Qt::Key_Down && row < model->rowCount() - 1)
+					aux_index = model->index(row + 1, 0);
 				// If user presses up we get the next item above
 				else if(key_code == Qt::Key_Up && row > 1)
-					aux_item =  objects_tbw->item(row - 1, 0);
+					aux_index = model->index(row - 1, 0);
 
 				// If we reach a hidden row we need to jump to the next one that is not hidden
-				if(aux_item && objects_tbw->isRowHidden(aux_item->row()))
+				if(aux_index.isValid() && objects_view->isRowHidden(aux_index.row()))
 				{
-					aux_item = nullptr;
+					aux_index = QModelIndex();
 					row += (key_code == Qt::Key_Down ? 1 : -1);
 				}
 
 				// Breaking if we've reached the top or down limits (avoiding swap ids with null objects)
-				if((key_code == Qt::Key_Down && row >= objects_tbw->rowCount() - 1) ||
+				if((key_code == Qt::Key_Down && row >= model->rowCount() - 1) ||
 					 (key_code == Qt::Key_Up && row == 1))
 					break;
 			}
 
-			if(aux_item)
+			if(aux_index.isValid())
 			{
-				selectItem(aux_item);
+				selectItem(aux_index);
 				swapObjectsIds();
 				clearSelectors();
-				objects_tbw->setCurrentItem(objects_tbw->item(row , 0));
+				objects_view->setCurrentIndex(objects_view->model()->index(row , 0));
 			}
 		}
 	}
@@ -235,13 +227,18 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		return;
 
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
-					(src_obj->getObjectType() != dst_obj->getObjectType()))
-		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if((src_obj->getObjectType()==ObjectType::Relationship ||
+			dst_obj->getObjectType()==ObjectType::Relationship) &&
+		 (src_obj->getObjectType() != dst_obj->getObjectType()))
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::InvRelationshipIdSwap),
+											ErrorCode::InvRelationshipIdSwap, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return;
+	}
 
 	try
 	{
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		qApp->setOverrideCursor(Qt::WaitCursor);
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		//Special id swap for relationship
@@ -273,13 +270,13 @@ void SwapObjectsIdsWidget::swapObjectsIds()
 		src_id_lbl->setText(IdLabel.arg(src_object_sel->getSelectedObject()->getObjectId()));
 		dst_id_lbl->setText(IdLabel.arg(dst_object_sel->getSelectedObject()->getObjectId()));
 
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		emit s_objectsIdsSwapped();
 	}
 	catch(Exception &e)
 	{
-		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		qApp->restoreOverrideCursor();
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -287,32 +284,41 @@ void SwapObjectsIdsWidget::filterObjects()
 {
 	BaseObject *object = nullptr;
 	bool is_rel = false, is_sys_obj = false;
-	QList<QTableWidgetItem*> items=objects_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
-	QTableWidgetItem *item = nullptr;
 
-	for(int row=0; row < objects_tbw->rowCount(); row++)
-		objects_tbw->setRowHidden(row, true);
+	QAbstractItemModel *model = objects_view->model();
+	QList<QModelIndex> indexes = model->match(model->index(0,0), Qt::DisplayRole, filter_edt->text(),	-1);
+	QModelIndex index;
 
-	while(!items.isEmpty())
+	for(int row = 0; row < objects_view->model()->rowCount(); row++)
+		objects_view->setRowHidden(row, true);
+
+	while(!indexes.isEmpty())
 	{
-		item = items.front();
-		object = reinterpret_cast<BaseObject *>(objects_tbw->item(item->row(), 0)->data(Qt::UserRole).value<void *>());
+		index = indexes.front();
+		object = reinterpret_cast<BaseObject *>(index.data(Qt::UserRole).value<void *>());
+
+		if(!object)
+		{
+			indexes.pop_front();
+			continue;
+		}
+
 		is_rel = (object->getObjectType() == ObjectType::BaseRelationship || object->getObjectType() == ObjectType::Relationship);
 		is_sys_obj = object->isSystemObject();
 
 		if((!is_rel && !is_sys_obj) ||
 			 (!hide_rels_chk->isChecked() && is_rel) ||
 			 (!hide_sys_objs_chk->isChecked() && is_sys_obj))
-			objects_tbw->setRowHidden(items.front()->row(), false);
+			objects_view->setRowHidden(indexes.front().row(), false);
 
-		items.pop_front();
+		indexes.pop_front();
 	}
 }
 
-void SwapObjectsIdsWidget::selectItem(QTableWidgetItem *item)
+void SwapObjectsIdsWidget::selectItem(const QModelIndex &index)
 {
-	QTableWidgetItem *item_aux = (item->column() == 0 ? item : objects_tbw->item(item->row(), 0));
-	BaseObject *obj = reinterpret_cast<BaseObject *>(item_aux->data(Qt::UserRole).value<void *>());
+	QModelIndex aux_index = index.column() == 0 ? index : objects_view->model()->index(index.row(), 0);
+	BaseObject *obj = reinterpret_cast<BaseObject *>(aux_index.data(Qt::UserRole).value<void *>());
 
 	if(selector_idx == 0)
 	{

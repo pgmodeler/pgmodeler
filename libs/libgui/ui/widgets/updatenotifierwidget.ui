@@ -330,6 +330,38 @@
          </spacer>
         </item>
         <item>
+         <widget class="QToolButton" name="blog_post_tb">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;p&gt;Redirects to the blog post detailing this release.&lt;/p&gt;</string>
+          </property>
+          <property name="text">
+           <string>Blog post</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../res/resources.qrc">
+            <normaloff>:/icons/icons/blogpost.png</normaloff>:/icons/icons/blogpost.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="get_binary_tb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -338,7 +370,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Redirects to purchase page.</string>
+           <string>Redirects to the purchase page.</string>
           </property>
           <property name="text">
            <string>Get binary package</string>
@@ -373,7 +405,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Redirects to GitHub source repository.</string>
+           <string>Redirects to the source code repository at GitHub.</string>
           </property>
           <property name="text">
            <string>Get source code</string>

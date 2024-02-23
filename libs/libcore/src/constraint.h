@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #define CONSTRAINT_H
 
 #include "tableobject.h"
-#include "tablespace.h"
 #include "column.h"
 #include "excludeelement.h"
 #include "pgsqltypes/constrainttype.h"
@@ -60,7 +59,10 @@ class __libcore Constraint: public TableObject{
 		bool deferrable,
 
 		//! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
-		no_inherit;
+		no_inherit,
+
+		//! \brief Indicates if null values must be distinct from each other (default is true, only for unique constraints)
+		nulls_not_distinct;
 
 		//! \brief Deferral type for the constraint (except for check contraints)
 		DeferralType deferral_type;
@@ -104,10 +106,11 @@ class __libcore Constraint: public TableObject{
 		void setDeclInTableAttribute();
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Constraint();
+
 		virtual ~Constraint();
 
 		/*! \brief Adds one column to the internal column list referenced by the
@@ -146,7 +149,7 @@ class __libcore Constraint: public TableObject{
 		void setReferencedTable(BaseTable *tab_ref);
 
 		//! \brief Defines the tablespace used by the constraint (only for primary keys and unique)
-		void setTablespace(BaseObject *tabspc);
+		virtual void setTablespace(BaseObject *tabspc) override;
 
 		/*! \brief Defines the constraint fill factor (only for primary keys and unique).
 				Values less than 10 (except 0) or above 100 will be adjusted to accepted values. To use the default
@@ -251,12 +254,6 @@ class __libcore Constraint: public TableObject{
 		 * the one in the constraint */
 		bool isColumnsExist(std::vector<Column *> columns, ColumnsId cols_id, bool strict_check);
 
-		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
-		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
-
-		//! \brief Adds an exclude element to the constraint using an expression (only exclude constraint)
-		void addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
-
 		//! \brief Adds an exclude element to the constraint using other pre-configured element (only exclude constraint)
 		void addExcludeElement(ExcludeElement elem);
 
@@ -266,20 +263,23 @@ class __libcore Constraint: public TableObject{
 		//! \brief Returns the exclude element index
 		int getExcludeElementIndex(ExcludeElement elem);
 
-		//! \brief Remove an exclude element using its index
-		void removeExcludeElement(unsigned idx_elem);
-
 		//! \brief Remove all exclude elements from the constraint
 		void removeExcludeElements();
 
 		//! \brief Toggles the not-null flag from source columns on primary key constraints. This methods has no effect in other constraint types
 		void setColumnsNotNull(bool value);
 
+		void setNullsNotDistinct(bool value);
+
+		bool isNullsNotDistinct();
+
 		QString getDataDictionary(const attribs_map &extra_attribs);
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */
-		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={});
+		virtual bool isCodeDiffersFrom(BaseObject *object, const QStringList &ignored_attribs={}, const QStringList &ignored_tags={}) override;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include "coreglobal.h"
 #include "attribsmap.h"
-#include "schemaparser.h"
 
 class __libcore ForeignObject {
 	protected:
@@ -42,6 +41,8 @@ class __libcore ForeignObject {
 		static const QString OptionValueSeparator;
 
 		ForeignObject();
+
+		virtual ~ForeignObject(){}
 
 		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);

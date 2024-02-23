@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ void OperatorClass::setElementsAttribute(SchemaParser::CodeType def_type)
 	{
 		str_elems+=elements[i].getSourceCode(def_type);
 		if(def_type==SchemaParser::SqlCode &&
-				i < count-1) str_elems+=QString(",\n");
+				i < count-1) str_elems+=",\n";
 	}
 
 	attributes[Attributes::Elements]=str_elems;
@@ -84,10 +84,6 @@ void OperatorClass::setElementsAttribute(SchemaParser::CodeType def_type)
 
 void OperatorClass::addElement(OperatorClassElement elem)
 {
-	//The operator class does not accept duplicate elements on the list
-	//if(isElementExists(elem))
-	//	throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	elements.push_back(elem);
 }
 
@@ -196,4 +192,20 @@ QString OperatorClass::getSourceCode(SchemaParser::CodeType def_type, bool reduc
 QString OperatorClass::getSignature(bool format)
 {
 	return BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type);
+}
+
+void OperatorClass::updateDependencies()
+{
+	std::vector<BaseObject *> deps, elem_deps;
+
+	deps.push_back(family);
+	deps.push_back(data_type.getObject());
+
+	for(auto &elem : elements)
+	{
+		elem_deps = elem.getDependencies();
+		deps.insert(deps.cend(), elem_deps.begin(), elem_deps.end());
+	}
+
+	BaseObject::updateDependencies(deps);
 }

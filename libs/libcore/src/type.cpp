@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "type.h"
 #include "defaultlanguages.h"
-#include "utilsns.h"
 
 Type::Type()
 {
@@ -176,14 +175,14 @@ void Type::setConfiguration(TypeConfig conf)
 	setCollation(nullptr);
 	subtype_opclass=nullptr;
 
-	alignment=QString("integer");
+	alignment="integer";
 	delimiter='\0';
 	storage=StorageType::Plain;
-	element=QString("\"any\"");
+	element="\"any\"";
 	internal_len=0;
 	category=CategoryType::UserDefined;
 	preferred=collatable=by_value=false;
-	like_type=QString("\"any\"");
+	like_type="\"any\"";
 
 	this->config=conf;
 	setCodeInvalidated(true);
@@ -242,15 +241,15 @@ void Type::setFunction(FunctionId func_id, Function *func)
 		 OUTPUT and TPMOD_OUT should return cstring.
 		 The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
 		 respectively. Raises an error if some of conditions above is not satisfied. */
-		else if((func_id==InputFunc && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==OutputFunc && func->getReturnType()!=QString("cstring")) ||
-				(func_id==RecvFunc && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==SendFunc && func->getReturnType()!=QString("bytea")) ||
-				(func_id==TpmodInFunc && func->getReturnType()!=QString("integer")) ||
-				(func_id==TpmodOutFunc && func->getReturnType()!=QString("cstring")) ||
-				(func_id==AnalyzeFunc && func->getReturnType()!=QString("boolean")) ||
-				(func_id==CanonicalFunc && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==SubtypeDiffFunc && func->getReturnType()!=QString("double precision")))
+		else if((func_id==InputFunc && func->getReturnType()!="\"any\"") ||
+				(func_id==OutputFunc && func->getReturnType()!="cstring") ||
+				(func_id==RecvFunc && func->getReturnType()!="\"any\"") ||
+				(func_id==SendFunc && func->getReturnType()!="bytea") ||
+				(func_id==TpmodInFunc && func->getReturnType()!="integer") ||
+				(func_id==TpmodOutFunc && func->getReturnType()!="cstring") ||
+				(func_id==AnalyzeFunc && func->getReturnType()!="boolean") ||
+				(func_id==CanonicalFunc && func->getReturnType()!="\"any\"") ||
+				(func_id==SubtypeDiffFunc && func->getReturnType()!="double precision"))
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(ObjectType::Type)),
@@ -266,19 +265,20 @@ void Type::setFunction(FunctionId func_id, Function *func)
 		 The ANALYZE function must have a parameter of type (internal).
 		 Raises an error if some of above conditions is not satisfied.*/
 		else if((func_id==InputFunc &&
-				 (func->getParameter(0).getType()!=QString("cstring") ||
+				 (func->getParameter(0).getType()!="cstring" ||
 				  (param_count==3 &&
-				   (func->getParameter(1).getType()!=QString("oid") ||
-					func->getParameter(2).getType()!=QString("integer"))))) ||
+					 (func->getParameter(1).getType()!="oid" ||
+					func->getParameter(2).getType()!="integer")))) ||
 				(func_id==RecvFunc &&
-				 (func->getParameter(0).getType()!=QString("internal") ||
+				 (func->getParameter(0).getType()!="internal" ||
 				  (param_count==3 &&
-				   (func->getParameter(1).getType()!=QString("oid") ||
-					func->getParameter(2).getType()!=QString("integer"))))) ||
-				((func_id==SendFunc || func_id==CanonicalFunc || func_id==OutputFunc) && func->getParameter(0).getType()!=QString("\"any\"")) ||
-				(func_id==TpmodInFunc && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
-				(func_id==TpmodOutFunc && func->getParameter(0).getType()!=QString("integer")) ||
-				(func_id==AnalyzeFunc && func->getParameter(0).getType()!=QString("internal")) ||
+					 (func->getParameter(1).getType()!="oid" ||
+					func->getParameter(2).getType()!="integer")))) ||
+				((func_id==SendFunc || func_id==CanonicalFunc || func_id==OutputFunc) &&
+				 func->getParameter(0).getType()!="\"any\"") ||
+				(func_id==TpmodInFunc && *(func->getParameter(0).getType())!="cstring[]") ||
+				(func_id==TpmodOutFunc && func->getParameter(0).getType()!="integer") ||
+				(func_id==AnalyzeFunc && func->getParameter(0).getType()!="internal") ||
 				(func_id==SubtypeDiffFunc &&
 				 (func->getParameter(0).getType()!=this->subtype ||
 				  func->getParameter(1).getType()!=this->subtype)))
@@ -319,7 +319,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				}
 				else
 				{
-					param.setType(PgSqlType(QString("\"any\"")));
+					param.setType(PgSqlType("\"any\""));
 					func->addParameter(param);
 				}
 			}
@@ -328,7 +328,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 				if(!inverse_conv)
 					func->setReturnType(PgSqlType(this));
 				else
-					func->setReturnType(PgSqlType(QString("\"any\"")));
+					func->setReturnType(PgSqlType("\"any\""));
 			}
 		}
 	}
@@ -353,7 +353,7 @@ void Type::setAlignment(PgSqlType type)
 	QString tp=(*type);
 
 	//Raises an error if the type assigned to the alignment is invalid according to the rule
-	if(tp!=QString("char") && tp!=QString("smallint") && tp!=QString("integer") && tp!=QString("double precision"))
+	if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidAlignmentType).arg(this->getName(true)),
 						ErrorCode::AsgInvalidAlignmentType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -380,8 +380,8 @@ void Type::setElement(PgSqlType elem)
 	if(PgSqlType::getUserTypeIndex(this->getName(true), this) == !elem)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvUserTypeSelfReference).arg(this->getName(true)),
 						ErrorCode::InvUserTypeSelfReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(elem!=QString("\"any\"") &&
-			(elem.isOIDType() || elem.isPseudoType() ||
+	else if(elem!="\"any\"" &&
+			(elem.isOidType() || elem.isPseudoType() ||
 			 elem.isUserType() || elem.isArrayType()))
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidElementType).arg(this->getName(true)),
 						ErrorCode::AsgInvalidElementType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -629,7 +629,7 @@ QString Type::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 		attributes[Attributes::BaseType]=Attributes::True;
 
 		if(internal_len==0 && def_type==SchemaParser::SqlCode)
-			attributes[Attributes::InternalLength]=QString("VARIABLE");
+			attributes[Attributes::InternalLength]="VARIABLE";
 		else
 			attributes[Attributes::InternalLength]=QString("%1").arg(internal_len);
 
@@ -638,7 +638,7 @@ QString Type::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 		attributes[Attributes::Storage]=(~storage);
 		attributes[Attributes::DefaultValue]=default_value;
 
-		if(element!=QString("\"any\""))
+		if(element!="\"any\"")
 			attributes[Attributes::Element]=(*element);
 
 		if(delimiter!='\0')
@@ -649,7 +649,7 @@ QString Type::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 		attributes[Attributes::Preferred]=(preferred ? Attributes::True : "");
 		attributes[Attributes::Collatable]=(collatable ? Attributes::True : "");
 
-		if(like_type!=QString("\"any\""))
+		if(like_type!="\"any\"")
 		{
 			if(def_type==SchemaParser::SqlCode)
 				attributes[Attributes::LikeType]=(*like_type);
@@ -823,5 +823,17 @@ void Type::operator = (Type &type)
 	}
 
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
+}
+
+void Type::updateDependencies()
+{
+	std::vector<BaseObject *> deps = {
+		like_type.getObject(), subtype.getObject(), subtype_opclass
+	};
+
+	for(auto &tp_attr : type_attribs)
+		deps.push_back(tp_attr.getType().getObject());
+
+	BaseObject::updateDependencies(deps);
 }
 

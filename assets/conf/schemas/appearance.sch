@@ -28,10 +28,11 @@ $sp delimiters-color="{delimiters-color}" $br
 $sp min-object-opacity="{min-object-opacity}"
 $sp attribs-per-page="{attribs-per-page}"
 $sp ext-attribs-per-page="{ext-attribs-per-page}"
+$sp expansion-factor="{expansion-factor}"
 [/>] $br
 
 $br $tb <code
-$sp font="{font}" 
+$sp font="&{font}" 
 $sp font-size="{font-size}"
 $sp tab-width="{tab-width}" $br
 {spc} display-line-numbers=" %if {display-line-numbers} %then true %else false %end "

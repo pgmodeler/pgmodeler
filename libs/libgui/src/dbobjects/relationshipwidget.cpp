@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,176 +24,170 @@
 #include "settings/relationshipconfigwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "coreutilsns.h"
+#include "guiutilsns.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Relationship)
 {
-	try
+	Ui_RelationshipWidget::setupUi(this);
+
+	QStringList list;
+	QGridLayout *grid=nullptr;
+	QVBoxLayout *vlayout=nullptr;
+	QFrame *frame=nullptr;
+	QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+								 src_fk_pattern_txt, dst_fk_pattern_txt,
+								 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
+
+	table1_hl=nullptr;
+	table1_hl=new SyntaxHighlighter(ref_table_txt, true, false, font().pointSizeF());
+	table1_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
+	table2_hl=nullptr;
+	table2_hl=new SyntaxHighlighter(recv_table_txt, true, false, font().pointSizeF());
+	table2_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+
+	for(int i=0; i < pattern_fields.size(); i++)
 	{
-		Ui_RelationshipWidget::setupUi(this);
-
-		QStringList list;
-		QGridLayout *grid=nullptr;
-		QVBoxLayout *vlayout=nullptr;
-		QFrame *frame=nullptr;
-		QWidgetList pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
-									 src_fk_pattern_txt, dst_fk_pattern_txt,
-									 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-
-		table1_hl=nullptr;
-		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
-		table1_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-
-		table2_hl=nullptr;
-		table2_hl=new SyntaxHighlighter(recv_table_txt, true);
-		table2_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-
-		for(int i=0; i < pattern_fields.size(); i++)
-		{
-			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
-		}
-
-		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-											 (ObjectsTableWidget::UpdateButton |
-											  ObjectsTableWidget::MoveButtons), true, this);
-
-		constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons  ^
-											  (ObjectsTableWidget::UpdateButton |
-											   ObjectsTableWidget::MoveButtons), true, this);
-
-		advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, true, this);
-
-		attributes_tab->setColumnCount(2);
-		attributes_tab->setHeaderLabel(tr("Attribute"), 0);
-		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		attributes_tab->setHeaderLabel(tr("Type"), 1);
-		attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-
-		constraints_tab->setColumnCount(2);
-		constraints_tab->setHeaderLabel(tr("Constraint"), 0);
-		constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("constraint")),0);
-		constraints_tab->setHeaderLabel(tr("Type"), 1);
-		constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-
-		advanced_objs_tab->setColumnCount(2);
-		advanced_objs_tab->setHeaderLabel(tr("Name"), 0);
-		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
-		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
-		advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
-
-		connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
-
-		grid=new QGridLayout;
-		grid->addWidget(attributes_tab, 0,0,1,1);
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
-
-		grid=new QGridLayout;
-		grid->addWidget(constraints_tab, 0,0,1,1);
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
-
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
-		frame=generateInformationFrame(tr("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
-
-		grid->addWidget(frame, 1, 0, 1, 1);
-		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
-
-		grid=new QGridLayout;
-		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-
-		grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
-
-		frame=generateInformationFrame(tr("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
-		grid->addWidget(frame, 1, 0, 1, 1);
-
-		rel_attribs_tbw->widget(AdvancedTab)->setLayout(grid);
-
-		color_picker=new ColorPickerWidget(1,this);
-		color_picker->setEnabled(false);
-		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GeneralTab)->layout());
-		grid->addWidget(color_picker, 0, 1);
-
-		configureFormLayout(relationship_grid, ObjectType::Relationship);
-
-		deferral_cmb->addItems(DeferralType::getTypes());
-
-		frame=generateInformationFrame(tr("Available tokens to define name patterns:<br/>\
-					<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
-					<strong>%2</strong> = Reference (source) table name.<br/> \
-					<strong>%3</strong> = Receiver (destination) table name.<br/> \
-					<strong>%4</strong> = Generated table name. <em>(Only for n:n relationships)</em>")
-					.arg(Relationship::SrcColToken)
-					.arg(Relationship::SrcTabToken)
-					.arg(Relationship::DstTabToken)
-					.arg(Relationship::GenTabToken));
-		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
-		vlayout->addWidget(frame);
-
-		list = ActionType::getTypes();
-		list.push_front(tr("Default"));
-		del_action_cmb->addItems(list);
-		upd_action_cmb->addItems(list);
-
-		tabs={ nullptr, rel_attribs_tbw->widget(SettingsTab),
-					 rel_attribs_tbw->widget(AttributesTab), rel_attribs_tbw->widget(ConstraintsTab),
-					 rel_attribs_tbw->widget(SpecialPkTab), rel_attribs_tbw->widget(AdvancedTab) };
-
-		tab_labels=QStringList{ "", rel_attribs_tbw->tabText(SettingsTab),
-							 rel_attribs_tbw->tabText(AttributesTab), rel_attribs_tbw->tabText(ConstraintsTab),
-							 rel_attribs_tbw->tabText(SpecialPkTab), rel_attribs_tbw->tabText(AdvancedTab)};
-
-		part_bound_expr_txt=new NumberedTextEditor(this, true);
-		part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
-		part_bound_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
-		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
-
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
-		connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
-
-		connect(identifier_chk, &QCheckBox::toggled, this, [this](){
-			table1_mand_chk->setDisabled(identifier_chk->isChecked());
-			table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
-																	this->object &&
-																	dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
-		});
-
-		connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
-
-		connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, &RelationshipWidget::removeObjects);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, &RelationshipWidget::addObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::editObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, &RelationshipWidget::removeObject);
-		connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, &RelationshipWidget::duplicateObject);
-
-		connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
-
-		connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-		connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
-
-		connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
-
-		connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
-		connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
-		connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
-		connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
-
-		setMinimumSize(600, 380);
+		patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true, false, font().pointSizeF());
+		patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+
+	attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+										 (ObjectsTableWidget::UpdateButton |
+											ObjectsTableWidget::MoveButtons), true, this);
+
+	constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons  ^
+											(ObjectsTableWidget::UpdateButton |
+											 ObjectsTableWidget::MoveButtons), true, this);
+
+	advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, true, this);
+
+	attributes_tab->setColumnCount(2);
+	attributes_tab->setHeaderLabel(tr("Attribute"), 0);
+	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
+	attributes_tab->setHeaderLabel(tr("Type"), 1);
+	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+
+	constraints_tab->setColumnCount(2);
+	constraints_tab->setHeaderLabel(tr("Constraint"), 0);
+	constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("constraint")),0);
+	constraints_tab->setHeaderLabel(tr("Type"), 1);
+	constraints_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+
+	advanced_objs_tab->setColumnCount(2);
+	advanced_objs_tab->setHeaderLabel(tr("Name"), 0);
+	advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")),0);
+	advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
+	advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+
+	connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
+
+	grid=new QGridLayout;
+	grid->addWidget(attributes_tab, 0,0,1,1);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	rel_attribs_tbw->widget(AttributesTab)->setLayout(grid);
+
+	grid=new QGridLayout;
+	grid->addWidget(constraints_tab, 0,0,1,1);
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
+
+	grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
+	frame=generateInformationFrame(tr("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
+
+	grid->addWidget(frame, 1, 0, 1, 1);
+	frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
+
+	grid=new QGridLayout;
+	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+
+	grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
+
+	frame=generateInformationFrame(tr("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
+	grid->addWidget(frame, 1, 0, 1, 1);
+
+	rel_attribs_tbw->widget(AdvancedTab)->setLayout(grid);
+
+	color_picker=new ColorPickerWidget(1,this);
+	color_picker->setEnabled(false);
+	grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(GeneralTab)->layout());
+	grid->addWidget(color_picker, 0, 1);
+
+	configureFormLayout(relationship_grid, ObjectType::Relationship);
+
+	deferral_cmb->addItems(DeferralType::getTypes());
+
+	frame=generateInformationFrame(tr("Available tokens to define name patterns:<br/>\
+				<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
+				<strong>%2</strong> = Reference (source) table name.<br/> \
+				<strong>%3</strong> = Receiver (destination) table name.<br/> \
+				<strong>%4</strong> = Generated table name. <em>(Only for n:n relationships)</em>")
+				.arg(Relationship::SrcColToken)
+				.arg(Relationship::SrcTabToken)
+				.arg(Relationship::DstTabToken)
+				.arg(Relationship::GenTabToken));
+	vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
+	vlayout->addWidget(frame);
+
+	list = ActionType::getTypes();
+	list.push_front(tr("Default"));
+	del_action_cmb->addItems(list);
+	upd_action_cmb->addItems(list);
+
+	tabs={ nullptr, rel_attribs_tbw->widget(SettingsTab),
+				 rel_attribs_tbw->widget(AttributesTab), rel_attribs_tbw->widget(ConstraintsTab),
+				 rel_attribs_tbw->widget(SpecialPkTab), rel_attribs_tbw->widget(AdvancedTab) };
+
+	tab_labels=QStringList{ "", rel_attribs_tbw->tabText(SettingsTab),
+						 rel_attribs_tbw->tabText(AttributesTab), rel_attribs_tbw->tabText(ConstraintsTab),
+						 rel_attribs_tbw->tabText(SpecialPkTab), rel_attribs_tbw->tabText(AdvancedTab)};
+
+	part_bound_expr_txt=new NumberedTextEditor(this, true);
+	part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
+	part_bound_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
+
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_cmb, &QComboBox::setEnabled);
+	connect(deferrable_chk, &QCheckBox::toggled, deferral_lbl, &QLabel::setEnabled);
+
+	connect(identifier_chk, &QCheckBox::toggled, this, [this](){
+		table1_mand_chk->setDisabled(identifier_chk->isChecked());
+		table2_mand_chk->setEnabled(!identifier_chk->isChecked() &&
+																this->object &&
+																dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
+	});
+
+	connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+	connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+	connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+	connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+	connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
+
+	connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+	connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+	connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+	connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+	connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
+
+	connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(excluding_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
+
+	connect(defaults_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(constraints_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(comments_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(indexes_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(storage_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+	connect(all_chk, &QCheckBox::toggled, this, &RelationshipWidget::selectCopyOptions);
+
+	connect(custom_color_chk, &QCheckBox::toggled, color_picker, &ColorPickerWidget::setEnabled);
+
+	connect(fk_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::useFKGlobalSettings);
+	connect(patterns_gconf_chk, &QCheckBox::toggled, this, &RelationshipWidget::usePatternGlobalSettings);
+	connect(gen_bound_expr_tb, &QToolButton::clicked, this, &RelationshipWidget::generateBoundingExpr);
+	connect(default_part_chk, &QCheckBox::toggled, part_bound_expr_txt, &NumberedTextEditor::setDisabled);
+
+	setMinimumSize(600, 380);
 }
 
 void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, BaseRelationship::RelType rel_type)
@@ -668,52 +662,59 @@ void RelationshipWidget::listAdvancedObjects()
 
 void RelationshipWidget::showAdvancedObject(int row)
 {
-	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
-	Table *tab=nullptr;
-	Constraint *constr=nullptr;
-	Column *col=nullptr;
-	ObjectType obj_type=object->getObjectType();
-	bool is_protected = false;
-
-	if(obj_type==ObjectType::Column)
+	try
 	{
-		col=dynamic_cast<Column *>(object);
-		is_protected = col->isProtected();
-		openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
-	}
-	else if(obj_type==ObjectType::Constraint)
-	{
-		constr=dynamic_cast<Constraint *>(object);
+		BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
+		Table *tab=nullptr;
+		Constraint *constr=nullptr;
+		Column *col=nullptr;
+		ObjectType obj_type=object->getObjectType();
+		bool is_protected = false;
 
-		if(!constr->isAddedByRelationship())
+		if(obj_type==ObjectType::Column)
 		{
-			is_protected = constr->isProtected();
-			constr->setProtected(true);
+			col=dynamic_cast<Column *>(object);
+			is_protected = col->isProtected();
+			openEditingForm<Column,ColumnWidget>(col, col->getParentTable());
 		}
+		else if(obj_type==ObjectType::Constraint)
+		{
+			constr=dynamic_cast<Constraint *>(object);
 
-		openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+			if(!constr->isAddedByRelationship())
+			{
+				is_protected = constr->isProtected();
+				constr->setProtected(true);
+			}
 
-		if(!constr->isAddedByRelationship())
-			constr->setProtected(is_protected);
+			openEditingForm<Constraint, ConstraintWidget>(constr, constr->getParentTable());
+
+			if(!constr->isAddedByRelationship())
+				constr->setProtected(is_protected);
+		}
+		else
+		{
+			TableWidget *table_wgt=new TableWidget;
+			BaseForm editing_form(this);
+
+			tab=dynamic_cast<Table *>(object);
+			tab->setProtected(true);
+
+			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+																tab,	tab->getPosition().x(), tab->getPosition().y());
+
+			editing_form.setMainWidget(table_wgt);
+
+			GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+			editing_form.exec();
+			GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+
+			tab->setProtected(false);
+		}
 	}
-	else
+	catch(Exception &e)
 	{
-		TableWidget *table_wgt=new TableWidget;
-		BaseForm editing_form(this);
-
-		tab=dynamic_cast<Table *>(object);
-		tab->setProtected(true);
-
-		table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
-														 tab,	tab->getPosition().x(), tab->getPosition().y());
-
-		editing_form.setMainWidget(table_wgt);
-
-		GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-		editing_form.exec();
-		GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
-
-		tab->setProtected(false);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -803,7 +804,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 			object = reinterpret_cast<BaseObject *>(tab->getRowData(curr_row).value<void *>());
 
 		CoreUtilsNs::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
+		dup_object->setName(CoreUtilsNs::generateUniqueName(dup_object, obj_list, false, "_cp"));
 		op_id=op_list->registerObject(dup_object, Operation::ObjCreated, new_row, rel);
 
 		dynamic_cast<TableObject*>(dup_object)->setParentTable(nullptr);
@@ -898,7 +899,6 @@ void RelationshipWidget::removeObjects()
 			obj_type=ObjectType::Constraint;
 			count=rel->getConstraintCount();
 		}
-
 
 		op_count=op_list->getCurrentSize();
 
@@ -1024,7 +1024,7 @@ void RelationshipWidget::listSpecialPkColumns()
 		for(idx=0; idx < count; idx++)
 		{
 			rel_columns_lst->addItem(cols[idx]->getName().toUtf8() +
-									 QString(" (") + *cols[idx]->getType() + QString(")"));
+									 " (" + *cols[idx]->getType() + ")");
 			item=rel_columns_lst->item(idx);
 			item->setCheckState(Qt::Unchecked);
 		}
@@ -1159,17 +1159,15 @@ void RelationshipWidget::applyConfiguration()
 						rel->isIdentifier())
 					model->checkRelationshipRedundancy(rel);
 
-				if(rel_type!=BaseRelationship::RelationshipFk)
+				if(rel_type != BaseRelationship::RelationshipFk)
 					model->validateRelationships();
 
 				rel->blockSignals(false);
 			}
 			catch(Exception &e)
 			{
-				Messagebox msg_box;
-
 				if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-					msg_box.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			}
@@ -1181,7 +1179,7 @@ void RelationshipWidget::applyConfiguration()
 	catch(Exception &e)
 	{
 		model->validateRelationships();
-		QApplication::restoreOverrideCursor();
+		qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

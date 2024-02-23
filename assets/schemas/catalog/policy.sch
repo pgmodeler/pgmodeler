@@ -9,7 +9,7 @@
 		%set {signature} {parent-name} [ || '.' || ]
 	%end
 
-	[ SELECT pl.oid, polname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+	[ SELECT pl.oid, polname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type, NULL AS extra_info
 	FROM pg_policy AS pl
 	LEFT JOIN pg_class AS tb ON pl.polrelid = tb.oid
 	LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace ]

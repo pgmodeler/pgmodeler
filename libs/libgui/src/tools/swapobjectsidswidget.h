@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,14 @@ class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWi
 		Q_OBJECT
 
 		static const QString IdLabel;
+
 		unsigned selector_idx = 0;
+
+		//! \brief The sort mode (asc|desc) applied to a column
+		Qt::SortOrder sort_order;
+
+		//! \brief The current column in which the sort is applied
+		int sort_column;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -47,14 +54,13 @@ class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWi
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		virtual ~SwapObjectsIdsWidget();
 		void setModel(DatabaseModel *model);
 		void setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct);
 
 	private slots:
 		void showObjectId();
 		void filterObjects();
-		void selectItem(QTableWidgetItem *item);
+		void selectItem(const QModelIndex &index);
 		void clearSelectors();
 
 	public slots:

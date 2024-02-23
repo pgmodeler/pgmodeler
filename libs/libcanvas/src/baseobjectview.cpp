@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,15 +17,16 @@
 */
 
 #include "baseobjectview.h"
-#include "textboxview.h"
 #include "roundedrectitem.h"
 #include "objectsscene.h"
+#include "utilsns.h"
 
 std::map<QString, QTextCharFormat> BaseObjectView::font_config;
 std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
 unsigned BaseObjectView::global_sel_order=1;
 bool BaseObjectView::use_placeholder=true;
 bool BaseObjectView::compact_view=false;
+bool BaseObjectView::hide_shadow=false;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
@@ -292,6 +293,16 @@ bool BaseObjectView::isCompactViewEnabled()
 	return compact_view;
 }
 
+void BaseObjectView::setShadowHidden(bool value)
+{
+	hide_shadow = value;
+}
+
+bool BaseObjectView::isShadowHidden()
+{
+	return hide_shadow;
+}
+
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	if(change==ItemPositionHasChanged)
@@ -344,6 +355,16 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 		obj_graf->setModified(true);
 }
 
+void BaseObjectView::configureObjectShadow()
+{
+	if(obj_shadow)
+	{
+		obj_shadow->setVisible(!hide_shadow);
+		obj_shadow->setFlag(QGraphicsItem::ItemHasNoContents, hide_shadow);
+		obj_shadow->setFlag(QGraphicsItem::ItemSendsGeometryChanges, !hide_shadow);
+	}
+}
+
 void BaseObjectView::configureObjectSelection()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
@@ -369,7 +390,7 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
 		pos_info_item->setFont(fnt);
-		pos_info_item->setTextBrush(font_config[Attributes::PositionInfo].foreground());
+		pos_info_item->setTextColor(font_config[Attributes::PositionInfo].foreground().color());
 
 		pos_info_item->setText(QString(" x:%1 y:%2 ").arg(round(pos.x())).arg(round(pos.y())));
 		pos_info_item->setPolygon(QPolygonF(pos_info_item->getTextBoundingRect()));
@@ -394,7 +415,7 @@ void BaseObjectView::configureSQLDisabledInfo()
 
 			sql_disabled_item->setFont(char_fmt.font());
 			sql_disabled_item->setText(tr("SQL off"));
-			sql_disabled_item->setTextBrush(char_fmt.foreground());
+			sql_disabled_item->setTextColor(char_fmt.foreground().color());
 
 			sql_disabled_item->setPolygon(QRectF(QPointF(0,0), sql_disabled_item->getTextBoundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));
 			sql_disabled_item->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
@@ -473,9 +494,9 @@ void BaseObjectView::__configureObject()
 	if(graph_obj)
 	{
 		this->setPos(graph_obj->getPosition());
-		this->setToolTip(graph_obj->getName(true) +
-						 QString(" (") + graph_obj->getTypeName() +
-						 QString(") ") + QString("\nId: %1").arg(graph_obj->getObjectId()));
+		this->setToolTip(UtilsNs::formatMessage(
+											QString("`%1' (%2)").arg(graph_obj->getName(true), graph_obj->getTypeName()) +
+											QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(graph_obj->getObjectId()))));
 		this->configurePositionInfo(graph_obj->getPosition());
 		this->configureProtectedIcon();
 	}
@@ -508,15 +529,9 @@ void BaseObjectView::togglePlaceholder(bool visible)
 			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 			placeholder->setPen(pen);
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
-			placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-		}
-		else
-		{
-			placeholder->setRect(QRectF());
-			placeholder->setPos(0, 0);
 		}
 
-		placeholder->setFlag(QGraphicsItem::ItemHasNoContents, !visible);
+		placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
 		placeholder->setVisible(visible);
 	}
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 */
 
 #include "tabledatawidget.h"
-#include "utils/htmlitemdelegate.h"
-#include "bulkdataeditwidget.h"
 #include "tools/sqlexecutionwidget.h"
-#include "utilsns.h"
+#include "guiutilsns.h"
+#include "csvparser.h"
+#include "utils/plaintextitemdelegate.h"
 
 const QString TableDataWidget::PlaceholderColumn("$placeholder$");
 
@@ -80,22 +80,24 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	});
 
 	connect(paste_tb, &QToolButton::clicked, this, [this](){
-		csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
-																	CsvDocument::Separator,
-																	CsvDocument::TextDelimiter,
-																	true);
-		populateDataGrid(csv_load_wgt->getCsvDocument());
-		qApp->clipboard()->clear();
-		paste_tb->setEnabled(false);
+		__trycatch(
+			CsvDocument csv_doc = csv_load_wgt->loadCsvFromBuffer(qApp->clipboard()->text(),
+																														CsvDocument::Separator,
+																														CsvDocument::TextDelimiter,
+																														true);
+			populateDataGrid(csv_doc);
+			qApp->clipboard()->clear();
+			paste_tb->setEnabled(false);
+		)
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, this, [this](){
-		GuiUtilsNs::bulkDataEdit(data_tbw);
+		GuiUtilsNs::openColumnDataForm(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, this, [this](){
 		SQLExecutionWidget::copySelection(data_tbw, false, true);
-		paste_tb->setEnabled(true);
+		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
 	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
@@ -352,7 +354,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 	Column *column = nullptr;
 	CsvDocument ini_data_csv;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	clearRows(false);
 
 	if(!csv_doc.isEmpty())
@@ -367,7 +369,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 		}
 		catch(Exception &e)
 		{
-			QApplication::restoreOverrideCursor();
+			qApp->restoreOverrideCursor();
 
 			Messagebox msgbox;
 			msgbox.show(e,
@@ -379,13 +381,14 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 			{
 				try
 				{
-					GuiUtilsNs::saveFile(table->getInitialData().toUtf8(),
+					GuiUtilsNs::selectAndSaveFile(table->getInitialData().toUtf8(),
 															 tr("Save CSV to file..."), QFileDialog::AnyFile,
 															 {}, {"text/csv", "application/octet-stream"}, "csv");
 				}
 				catch(Exception &e)
 				{
-					msgbox.show(e);
+					//msgbox.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -461,7 +464,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 	add_row_tb->setEnabled(!columns.isEmpty());
 	clear_cols_tb->setEnabled(!columns.isEmpty());
 	configureColumnNamesMenu();
-	QApplication::restoreOverrideCursor();
+	qApp->restoreOverrideCursor();
 
 }
 
@@ -505,7 +508,7 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 	if(item)
 	{
 		item->setData(Qt::UserRole, item->background());
-		item->setBackground(QColor(QString("#FFC0C0")));
+		item->setBackground(QColor("#FFC0C0"));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }

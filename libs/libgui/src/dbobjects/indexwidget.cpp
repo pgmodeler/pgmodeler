@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,47 +17,41 @@
 */
 
 #include "indexwidget.h"
+#include "guiutilsns.h"
 
 IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Index)
 {
-	try
-	{
-		QGridLayout *grid=nullptr;
-		std::map<QString, std::vector<QWidget *> > fields_map;
-		std::map<QWidget *, std::vector<QString> > values_map;
+	QGridLayout *grid=nullptr;
+	std::map<QString, std::vector<QWidget *> > fields_map;
+	std::map<QWidget *, std::vector<QString> > values_map;
 
-		Ui_IndexWidget::setupUi(this);
+	Ui_IndexWidget::setupUi(this);
 
-		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-		predicate_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+	predicate_hl=new SyntaxHighlighter(predicate_txt, false, true, font().pointSizeF());
+	predicate_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-		elements_tab = new ElementsTableWidget(this);
+	elements_tab = new ElementsTableWidget(this);
 
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->addWidget(elements_tab,0,0);
-		attributes_tbw->widget(1)->setLayout(grid);
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->addWidget(elements_tab,0,0);
+	attributes_tbw->widget(1)->setLayout(grid);
 
-		incl_cols_picker_wgt = new ColumnPickerWidget(this);
-		QVBoxLayout *vbox = new QVBoxLayout(attributes_tbw->widget(2));
-		vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		vbox->addWidget(incl_cols_picker_wgt);
+	incl_cols_picker_wgt = new ColumnPickerWidget(this);
+	QVBoxLayout *vbox = new QVBoxLayout(attributes_tbw->widget(2));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(incl_cols_picker_wgt);
 
-		configureFormLayout(index_grid, ObjectType::Index);
-		indexing_cmb->addItems(IndexingType::getTypes());
+	configureFormLayout(index_grid, ObjectType::Index);
+	indexing_cmb->addItems(IndexingType::getTypes());
 
-		connect(indexing_cmb, &QComboBox::currentIndexChanged, this, &IndexWidget::selectIndexingType);
-		connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
+	connect(indexing_cmb, &QComboBox::currentIndexChanged, this, &IndexWidget::selectIndexingType);
+	connect(fill_factor_chk, &QCheckBox::toggled, fill_factor_sb, &QSpinBox::setEnabled);
 
-		configureTabOrder();
-		selectIndexingType();
+	configureTabOrder();
+	selectIndexingType();
 
-		setMinimumSize(570, 550);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(570, 550);
 }
 
 void IndexWidget::selectIndexingType()
@@ -99,6 +93,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FastUpdate));
 		unique_chk->setChecked(index->getIndexAttribute(Index::Unique));
 		buffering_chk->setChecked(index->getIndexAttribute(Index::Buffering));
+		nulls_not_distinct_chk->setChecked(index->getIndexAttribute(Index::NullsNotDistinct));
 		predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
@@ -125,6 +120,7 @@ void IndexWidget::applyConfiguration()
 		index->setIndexAttribute(Index::Concurrent, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::Unique, unique_chk->isChecked());
 		index->setIndexAttribute(Index::Buffering, buffering_chk->isChecked());
+		index->setIndexAttribute(Index::NullsNotDistinct, nulls_not_distinct_chk->isChecked());
 		index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 

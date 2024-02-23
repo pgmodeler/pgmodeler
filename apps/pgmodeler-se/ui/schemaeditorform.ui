@@ -48,7 +48,7 @@
       <number>5</number>
      </property>
      <property name="childrenCollapsible">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <widget class="QFrame" name="frame">
       <layout class="QGridLayout" name="gridLayout">

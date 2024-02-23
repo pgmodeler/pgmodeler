@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,53 +19,46 @@
 #include "sourcecodewidget.h"
 #include "taskprogresswidget.h"
 #include "guiutilsns.h"
-#include "utilsns.h"
+#include "pgsqlversions.h"
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
-	try
-	{
-		Ui_SourceCodeWidget::setupUi(this);
-		configureFormLayout(codigofonte_grid, ObjectType::BaseObject);
-		comment_lbl->setVisible(false);
-		comment_edt->setVisible(false);
+	Ui_SourceCodeWidget::setupUi(this);
+	configureFormLayout(codigofonte_grid, ObjectType::BaseObject);
+	comment_lbl->setVisible(false);
+	comment_edt->setVisible(false);
 
-		hl_sqlcode=nullptr;
-		hl_xmlcode=nullptr;
+	hl_sqlcode=nullptr;
+	hl_xmlcode=nullptr;
 
-		sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
-		sqlcode_txt->setReadOnly(true);
+	sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
+	sqlcode_txt->setReadOnly(true);
 
-		xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
-		xmlcode_txt->setReadOnly(true);
+	xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
+	xmlcode_txt->setReadOnly(true);
 
-		name_edt->setReadOnly(true);
-		version_cmb->addItems(PgSqlVersions::AllVersions);
+	name_edt->setReadOnly(true);
+	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-		connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-		connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+	connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+	connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
+	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
+	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
-		find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
-		find_wgt_parent->setVisible(false);
+	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
+	find_wgt_parent->setVisible(false);
 
-		QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
-		vbox->addWidget(find_sql_wgt);
-		vbox->setContentsMargins(0,0,0,0);
+	QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+	vbox->addWidget(find_sql_wgt);
+	vbox->setContentsMargins(0,0,0,0);
 
-		connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-		connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
 
-		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
-		hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
+	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
+	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
-		setMinimumSize(640, 540);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(640, 540);
 }
 
 void SourceCodeWidget::setSourceCodeTab(int)
@@ -85,22 +78,18 @@ void SourceCodeWidget::setSourceCodeTab(int)
 
 void SourceCodeWidget::saveSQLCode()
 {
-	QFileDialog file_dlg;
-
-	file_dlg.setWindowTitle(tr("Save SQL code as..."));
-
-	file_dlg.setFileMode(QFileDialog::AnyFile);
-	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-	file_dlg.setModal(true);
-	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
-	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
-
-	GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-	if(file_dlg.exec() == QFileDialog::Accepted && !file_dlg.selectedFiles().isEmpty())
-		UtilsNs::saveFile(file_dlg.selectedFiles().at(0), sqlcode_txt->toPlainText().toUtf8());
-
-	GuiUtilsNs::saveFileDialogState(&file_dlg);
+	try
+	{
+		GuiUtilsNs::selectAndSaveFile(sqlcode_txt->toPlainText().toUtf8(),
+																	 tr("Save SQL code as..."),
+																	 QFileDialog::AnyFile,
+																	 { tr("SQL code (*.sql)"), tr("All files (*.*)") }, {}, "sql",
+																	 QString("%1-%2.sql").arg(object->getSchemaName(), object->getName()));
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 void SourceCodeWidget::generateSourceCode(int)
@@ -112,6 +101,8 @@ void SourceCodeWidget::generateSourceCode(int)
 	{
 		sqlcode_txt->clear();
 		xmlcode_txt->clear();
+
+		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		obj_type=object->getObjectType();
 		if(obj_type!=ObjectType::Textbox ||
@@ -173,16 +164,21 @@ void SourceCodeWidget::generateSourceCode(int)
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
+
+		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
+		qApp->restoreOverrideCursor();
+
 		if(task_prog_wgt)
 		{
 			task_prog_wgt->close();
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
 			delete task_prog_wgt;
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -220,7 +216,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
 }

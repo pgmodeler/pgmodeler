@@ -8,33 +8,43 @@
 [-->] $br
 <dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
 
-%if {author} %then [ author=] "{author}" %end
+%if {author} %then 
+	[ author=] "&{author}" 
+%end
 
 %if {protected} %then
 	[ protected=] "true"
-%end
-
-%if {last-position} %then
-	[ last-position=] "{last-position}"
-%end
-
-%if {last-zoom} %then
-	[ last-zoom=] "{last-zoom}"
 %end
 
 %if {max-obj-count} %then
 	[ max-obj-count=] "{max-obj-count}"
 %end
 
+%if {last-position} %or {last-position} %or {scene-rect} %then
+	$br $tb
+
+	%if {last-position} %then
+		[ last-position=] "{last-position}"
+	%end
+
+	%if {last-zoom} %then
+		[ last-zoom=] "{last-zoom}"
+	%end
+
+	%if {scene-rect} %then
+		[ scene-rect=] "{scene-rect}"
+	%end	
+%end
+
 %if {default-schema} %or {default-owner} %then
 	$br $tb
 
 	%if {default-schema} %then
-		[ default-schema=] "{default-schema}"
+		[ default-schema=] "&{default-schema}"
 	%end
 
 	%if {default-owner} %then
-		[ default-owner=] "{default-owner}"
+		[ default-owner=] "&{default-owner}"
 	%end
 %end
 
@@ -42,17 +52,17 @@
 	$br $tb
 
 	%if {default-collation} %then
-		[ default-collation=] "{default-collation}"
+		[ default-collation=] "&{default-collation}"
 	%end
 
 	%if {default-tablespace} %then
-		[ default-tablespace=] "{default-tablespace}"
+		[ default-tablespace=] "&{default-tablespace}"
 	%end
 %end
 
 %if {layers} %then
 	$br $tb
-	[ layers]="{layers}"
+	[ layers]="&{layers}"
 
 	$br $tb [ active-layers]=
 

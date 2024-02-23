@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,10 +25,7 @@
 #ifndef TABLE_TITLE_VIEW_H
 #define TABLE_TITLE_VIEW_H
 
-#include "view.h"
-#include "table.h"
 #include "baseobjectview.h"
-#include "textboxview.h"
 #include "roundedrectitem.h"
 
 class __libcanvas TableTitleView: public BaseObjectView {

@@ -20,8 +20,7 @@
 	ELSE array_to_string(proargtypes::regtype] $ob $cb [,',')
 	END || ')' AS name,
 
-	ns.nspname AS parent,
-	'schema' AS parent_type
+	ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 
 	FROM pg_proc AS pr
 	LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]

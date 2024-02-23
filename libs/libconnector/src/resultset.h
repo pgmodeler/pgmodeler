@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ It the resultset contains data the user must call ResultSet::accessTuple() to ac
 #define RESULTSET_H
 
 #include "connectorglobal.h"
-#include "exception.h"
 #include "attribsmap.h"
 #include <libpq-fe.h>
 #include <cstdlib>
@@ -99,6 +98,9 @@ class __libconnector ResultSet {
 
 		//! \brief Returns the name of the column specified by it's index
 		QString getColumnName(int column_idx);
+
+		//! \brief Returns a list containing the name of the columns in this result set
+		QStringList getColumnNames();
 
 		//! \brief Returns the type OID of the column specified by it's index
 		unsigned getColumnTypeId(int column_idx);

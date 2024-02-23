@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,17 +32,20 @@ class __libcore ExcludeElement: public Element {
 
 	public:
 		ExcludeElement();
-		virtual ~ExcludeElement(void) {}
+
+		virtual ~ExcludeElement() {}
 
 		//! \brief Defines the operator used by the exclude element
-		void setOperator(Operator *oper);
+		virtual void setOperator(Operator *oper) override;
 
 		//! \brief Returns the operator used by the exclude element
-		Operator *getOperator();
+		virtual Operator *getOperator() override;
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		bool operator == (ExcludeElement &elem);
+
+		virtual std::vector<BaseObject *> getDependencies() override;
 };
 
 /* Registering the ExcludeElement class as a Qt MetaType in order to make

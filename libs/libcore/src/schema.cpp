@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ Schema::Schema()
 	fill_color = QColor(225,225,225, 80);
 	rect_visible = false;
 	attributes[Attributes::FillColor] = "";
+	attributes[Attributes::NameColor] = "";
 	attributes[Attributes::RectVisible] = "";
 }
 
@@ -41,6 +42,17 @@ void Schema::setName(const QString &name)
 						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
+}
+
+void Schema::setNameColor(const QColor &color)
+{
+	setCodeInvalidated(name_color != color);
+	name_color = color;
+}
+
+QColor Schema::getNameColor()
+{
+ return name_color;
 }
 
 void Schema::setFillColor(const QColor &color)
@@ -71,6 +83,7 @@ QString Schema::getSourceCode(SchemaParser::CodeType def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::FillColor]=fill_color.name();
+	attributes[Attributes::NameColor]=name_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : "");
 
 	setFadedOutAttribute();

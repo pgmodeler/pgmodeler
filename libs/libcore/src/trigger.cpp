@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	for(auto &arg : arguments)
 	{
 		if(def_type==SchemaParser::SqlCode)
-			str_args.append(QString("'") + arg + QString("'"));
+			str_args.append("'" + arg + "'");
 		else
 			str_args.append(arg);
 	}
@@ -107,8 +107,8 @@ void Trigger::setFunction(Function *func)
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
-		if(func->getReturnType()!=QString("trigger"))
-			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(func->getReturnType()!="trigger")
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg("trigger"),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
@@ -386,7 +386,7 @@ void Trigger::setBasicAttributes(SchemaParser::CodeType def_type)
 				{
 					attributes[Attributes::Columns]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-						attributes[Attributes::Columns]+=QString(",");
+						attributes[Attributes::Columns]+=",";
 				}
 			}
 		}
@@ -395,7 +395,7 @@ void Trigger::setBasicAttributes(SchemaParser::CodeType def_type)
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
 	if(def_type==SchemaParser::SqlCode && !attributes[Attributes::Columns].isEmpty())
-		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
+		str_aux+=" OF " + attributes[Attributes::Columns];
 
 	attributes[Attributes::Events]=str_aux;
 
@@ -540,4 +540,25 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void Trigger::updateDependencies()
+{
+	std::vector<BaseObject *> deps = { function, referenced_table };
+
+	for(auto &col : upd_columns)
+		deps.push_back(col);
+
+	TableObject::updateDependencies(deps);
+}
+
+void Trigger::generateHashCode()
+{
+	QString str_events;
+	TableObject::generateHashCode();
+
+	for(auto &itr : events)
+		str_events.append(QString::number(isExecuteOnEvent(itr.first)));
+
+	hash_code = UtilsNs::getStringHash(hash_code + ~firing_type + str_events);
 }

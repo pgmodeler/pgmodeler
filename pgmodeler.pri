@@ -8,6 +8,8 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+contains(CONFIG, debug):DEFINES+=PGMODELER_DEBUG
+
 # Disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
@@ -50,6 +52,11 @@ LIBUTILS = libutils
 LIBUTILS_ROOT = $$absolute_path($$PWD/libs/$$LIBUTILS)
 LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 LIBUTILS_INC = $$LIBUTILS_ROOT/src
+
+LIBCLI = libcli
+LIBCLI_ROOT = $$absolute_path($$PWD/libs/$$LIBCLI)
+LIBCLI_LIB = -L$$LIBCLI_ROOT -lcli
+LIBCLI_INC = $$LIBCLI_ROOT/src
 
 # Set the flag passed to compiler to indicate a snapshot build
 isEqual(SNAPSHOT_BUILD, true): DEFINES+=SNAPSHOT_BUILD
@@ -231,8 +238,8 @@ linux: {
 }
 
 macx {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/14/lib/libpq.dylib
-  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/14/include
+	!defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/15/lib/libpq.dylib
+	!defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/15/include
   !defined(XML_INC, var): XML_INC = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
   !defined(XML_LIB, var): XML_LIB = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd
   INCLUDEPATH += "$$PGSQL_INC" "$$XML_INC"
@@ -294,9 +301,9 @@ defineTest(printBuildDetails) {
  log("  LANGDIR       = $$LANGDIR $$LB")
  log("  SAMPLESDIR    = $$SAMPLESDIR $$LB")
  log("  SCHEMASDIR    = $$SCHEMASDIR $$LB $$LB")
- log("* To change a variable value run qmake again setting the desired value e.g.: $$LB")
+ log("* To change a variable value run qmake again by setting the new desired value, e.g.: $$LB")
  log("  > qmake PREFIX+=/usr/local -r pgmodeler.pro $$LB $$LB")
- log("* Proceed with build process by running: $$LB")
+ log("* To proceed with build process by running: $$LB")
  log("  >  make && make install $$LB")
  log($$LB)
  return(true)

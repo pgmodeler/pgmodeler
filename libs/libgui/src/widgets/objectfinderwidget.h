@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,14 +34,6 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 	private:
 		Q_OBJECT
 
-		/*! \brief Store in a unordered list the attributes in order to allow the user
-		 * select which attribute will be used to search objects */
-		static const QStringList search_attribs,
-
-		/*! \brief Store in a unordered list the attributes in a translated way in order to
-		 * populate the combo box used to select which attribute will be used to search objects */
-		search_attribs_i18n;
-
 		std::vector<BaseObject *> found_objs,
 
 		selected_objs;
@@ -70,10 +62,6 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 	public:
 		ObjectFinderWidget(QWidget *parent = nullptr);
 
-		/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
-		 * The parameter search_attr is used to display the attribute value in which the search was performed. */
-		//static void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
-		
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
 

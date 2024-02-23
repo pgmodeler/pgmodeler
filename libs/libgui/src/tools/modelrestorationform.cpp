@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,14 +17,12 @@
 */
 
 #include "modelrestorationform.h"
-#include "guiutilsns.h"
 #include "utilsns.h"
+#include "globalattributes.h"
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-
-	//GuiUtilsNs::configureWidgetFont(message_lbl, GuiUtilsNs::MediumFontFactor);
 
 	connect(restore_btn, &QPushButton::clicked, this, &ModelRestorationForm::accept);
 	connect(cancel_btn, &QPushButton::clicked, this, &ModelRestorationForm::reject);
@@ -109,7 +107,7 @@ bool ModelRestorationForm::hasTemporaryModels()
 void ModelRestorationForm::removeTemporaryFiles()
 {
 	QDir tmp_file;
-	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), QString("*"),
+	QStringList tmp_files = QDir(GlobalAttributes::getTemporaryPath(), "*",
 															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 
 	for(auto &file : tmp_files)

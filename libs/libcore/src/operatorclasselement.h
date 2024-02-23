@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #ifndef OPERATOR_CLASS_ELEMENT_H
 #define OPERATOR_CLASS_ELEMENT_H
 
-#include "baseobject.h"
 #include "operator.h"
 #include "function.h"
 #include "operatorfamily.h"
@@ -68,7 +67,8 @@ class __libcore OperatorClassElement {
 
 	public:
 		OperatorClassElement();
-		virtual ~OperatorClassElement(void){}
+
+		virtual ~OperatorClassElement(){}
 
 		//! \brief Defines the element as a function clause
 		void setFunction(Function *func, unsigned stg_number);
@@ -108,6 +108,8 @@ class __libcore OperatorClassElement {
 
 		//! \brief Operator to compare two elements, returns true when all atributes has the same configuration
 		bool operator == (OperatorClassElement &elem);
+
+		std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the OperatorClassElement class as a Qt MetaType in order to make

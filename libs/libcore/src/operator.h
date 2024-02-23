@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,6 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "schema.h"
-#include "role.h"
 
 class __libcore Operator: public BaseObject {
 	private:
@@ -45,7 +43,7 @@ class __libcore Operator: public BaseObject {
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		enum FunctionId: unsigned {
@@ -66,8 +64,10 @@ class __libcore Operator: public BaseObject {
 
 		Operator();
 
+		virtual ~Operator(){}
+
 		//! \brief Defines the name of the operator
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICT])
 		void setFunction(Function *func, FunctionId func_id);
@@ -107,7 +107,9 @@ class __libcore Operator: public BaseObject {
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		//! \brief Returns the operator signature
-		virtual QString getSignature(bool format_name=true);
+		virtual QString getSignature(bool format_name=true) override;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,20 +30,13 @@
 #include "ui_mainwindow.h"
 #include "widgets/modelwidget.h"
 #include "widgets/aboutwidget.h"
-#include "messagebox.h"
-#include "baseform.h"
 #include "tools/modelrestorationform.h"
 #include "widgets/operationlistwidget.h"
 #include "widgets/modelobjectswidget.h"
-#include "pgmodelerplugin.h"
 #include "widgets/modeloverviewwidget.h"
 #include "tools/modelvalidationwidget.h"
 #include "widgets/objectfinderwidget.h"
-#include "tools/modelexportform.h"
-#include "tools/databaseimportform.h"
-#include "tools/modeldatabasediffform.h"
 #include "tools/sqltoolwidget.h"
-#include "tools/modelfixform.h"
 #include "widgets/updatenotifierwidget.h"
 #include "widgets/modelnavigationwidget.h"
 #include "widgets/welcomewidget.h"
@@ -127,7 +120,10 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelWidget *current_model;
 
 		//! \brief Stores the model objects tree state for each opened model
-		std::map<ModelWidget *, std::vector<BaseObject *> > model_tree_states;
+		QMap<ModelWidget *, QStringList> model_tree_states;
+
+		//! \brief Stores the model objects tree vertical scrollbar position for each opened model
+		QMap<ModelWidget *, int> model_tree_v_pos;
 
 		//! \brief Stores the defaul window title
 		QString window_title;
@@ -149,10 +145,19 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		more_actions_menu,
 
-		fix_menu;
+		fix_menu,
+
+		plugins_config_menu,
+
+		expand_canvas_menu;
+
+		QAction *action_expand_canvas;
 
 		//! \brief Stores the loaded plugins toolbar actions
 		QList<QAction *> plugins_tb_acts;
+
+		//! \brief Stores the loaded plugins tool buttons
+		QList<QToolButton *> plugins_tool_btns;
 
 		QMap<QString, QIcon> recent_models_icons;
 
@@ -198,6 +203,10 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		void configureMenusActionsWidgets();
 
 		void setPluginsActions(ModelWidget *model_wgt);
+
+		void dragEnterEvent(QDragEnterEvent *event);
+
+		void dropEvent(QDropEvent *event);
 
 		/*! \brief Tries to restore the default configuration files and restart pgModeler
 		 *  in case of any configuration file is broken or missing */
@@ -258,13 +267,20 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Adds an entry to the recent models menu
 		void registerRecentModel(const QString &filename);
 
+		//! \brief Adds several entries to the recent models menu
+		void registerRecentModels(const QStringList &filenames);
+
+		//! \brief Register an icon for a specific file extension (suffix) in the recent models menu
 		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
 
-				//! \brief Updates the window title taking into account the current model filename
+		//! \brief Updates the window title taking into account the current model filename
 		void updateWindowTitle();
 
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
 		void updateModelTabName();
+
+		//! \brief Updates the connections list of the validator widget
+		void updateConnections(bool force = false);
 
 	private slots:
 		void showMainMenu();
@@ -322,9 +338,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu();
 
-		//! \brief Updates the connections list of the validator widget
-		void updateConnections(bool force = false);
-
 		//! \brief Save the temp files for all opened models
 		void saveTemporaryModels();
 
@@ -359,9 +372,14 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleLayersWidget(bool show);
 		void toggleChangelogWidget(bool show);
 
+		void expandSceneRect();
+
 		#ifdef	DEMO_VERSION
 		void showDemoVersionWarning(bool exit_msg = false);
 		#endif
+
+		bool mimeDataHasModelFiles(const QMimeData *mime_data);
+		void loadModelsFromMimeData(const QMimeData *mime_data);
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ QString IndexElement::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attributes;
 
-	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
+	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion(), BaseObject::isDbVersionIgnored());
 	attributes[Attributes::Collation]="";
 	configureAttributes(attributes, def_type);
 
@@ -50,5 +50,15 @@ QString IndexElement::getSourceCode(SchemaParser::CodeType def_type)
 	}
 
 	return schparser.getSourceCode(Attributes::IndexElement, attributes, def_type);
+}
+
+std::vector<BaseObject *> IndexElement::getDependencies()
+{
+	std::vector<BaseObject *> deps = Element::getDependencies();
+
+	if(collation)
+		deps.push_back(collation);
+
+	return deps;
 }
 

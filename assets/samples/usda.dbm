@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.0-alpha" use-changelog="false" last-position="0,0" last-zoom="0.75" max-obj-count="12"
+<dbmodel pgmodeler-ver="1.1.0-alpha1" use-changelog="false" last-position="0,0" last-zoom="0.75" max-obj-count="12"
 	 layers="Default layer"
 	 active-layers="0"
 	 layer-name-colors="#000000"
@@ -14,7 +14,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<tablespace name="pg_default"/>
 </database>
 
-<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
 </schema>
 
 <table name="data_src" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
@@ -356,19 +356,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<textbox name="usda_desc" layers="0" z-value="0" font-size="11">
-	<position x="40" y="40"/>
-	<comment><![CDATA[[ usda sample database ]
+<textbox name="usda_desc" layers="0" z-value="0" width="564.594" font-size="11">
+	<position x="40" y="60"/>
+	<comment> <![CDATA[[ usda sample database ]
 
 The USDA Food Database is published by the US Department of Agriculture.
 
 Citation:
 
-U.S. Department of Agriculture, Agricultural Research Service. 2005. USDA Nutrient Database for Standard Reference,
-Release 18. Nutrient Data Laboratory Home Page, http://www.ars.usda.gov/ba/bhnrc/ndl
+U.S. Department of Agriculture, Agricultural Research Service. 2005. USDA Nutrient Database for Standard Reference, Release 18. Nutrient Data Laboratory Home Page, http://www.ars.usda.gov/ba/bhnrc/ndl
 
-USDA food composition data is in the public domain and there is no copyright. They would appreciate it if you would list
-them as the source of the data and when possible they would like to see the product which uses the data or be notified of its use.]]></comment>
+USDA food composition data is in the public domain and there is no copyright. They would appreciate it if you would list them as the source of the data and when possible they would like to see the product which uses the data or be notified of its use.]]> </comment>
 </textbox>
 
 <constraint name="datsrcln_datasrc_id_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"

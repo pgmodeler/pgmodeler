@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,10 +19,18 @@
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
 #include "widgets/objectstablewidget.h"
+#include "customuistyle.h"
+#include "guiutilsns.h"
+#include "relationshipview.h"
+#include "tableview.h"
+#include "styledtextboxview.h"
+#include "graphicalview.h"
 
 std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
 QPalette AppearanceConfigWidget::system_pal;
+
+QString AppearanceConfigWidget::UiThemeId;
 
 std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },
@@ -109,6 +117,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 {
 	setupUi(this);
 	storeSystemUiColors();
+	show_grid = show_delimiters = false;
 
 	QStringList conf_ids={
 	/* 00 */	Attributes::Global,
@@ -196,7 +205,6 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
-	scene->setSceneRect(QRectF(0,0,500,500));
 	placeholder=new RoundedRectItem;
 
 	viewp=new QGraphicsView(scene);
@@ -242,11 +250,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	font_preview_txt->setPlainText(
-"-- object: public.foo | type: TABLE --\n \
+"-- object: public.foo | type: TABLE --\n\
 CREATE TABLE public.table_b (\n \
 \tid serial NOT NULL,\n \
 \tsku integer NOT NULL,\n \
-\tCONSTRAINT foo_pk PRIMARY KEY (id)\n \
+\tCONSTRAINT foo_pk PRIMARY KEY (id)\n\
 );\n");
 
 	font_preview_hl = new SyntaxHighlighter(font_preview_txt, false, true);
@@ -263,6 +271,7 @@ CREATE TABLE public.table_b (\n \
 	ui_theme_cmb->addItem(tr("System default"), Attributes::System);
 	ui_theme_cmb->addItem(tr("Light"), Attributes::Light);
 	ui_theme_cmb->addItem(tr("Dark"), Attributes::Dark);
+	ui_theme_cmb->addItem(tr("InkSaver"), Attributes::InkSaver);
 
 	icons_size_cmb->addItem(tr("Big"), Attributes::Big);
 	icons_size_cmb->addItem(tr("Medium"), Attributes::Medium);
@@ -306,8 +315,8 @@ CREATE TABLE public.table_b (\n \
 	connect(grid_size_spb, &QSpinBox::textChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 	connect(grid_pattern_cmb, &QComboBox::currentIndexChanged, this, &AppearanceConfigWidget::previewCanvasColors);
 
-	connect(ui_theme_cmb, &QComboBox::activated, this, &AppearanceConfigWidget::previewUiSettings);
-	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, &AppearanceConfigWidget::previewUiSettings);
+	connect(ui_theme_cmb, &QComboBox::activated, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
+	connect(icons_size_cmb, &QComboBox::currentTextChanged, this, __slot(this, AppearanceConfigWidget::previewUiSettings));
 
 	connect(custom_scale_chk, &QCheckBox::toggled, this, [this](bool toggled){
 		custom_scale_spb->setEnabled(toggled);
@@ -315,6 +324,10 @@ CREATE TABLE public.table_b (\n \
 	});
 
 	connect(custom_scale_spb, &QDoubleSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
+	connect(expansion_factor_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
 
@@ -333,7 +346,9 @@ CREATE TABLE public.table_b (\n \
 
 AppearanceConfigWidget::~AppearanceConfigWidget()
 {
+	scene->blockSignals(true);
 	scene->removeItem(placeholder);
+	scene->blockSignals(false);
 
 	delete placeholder;
 	delete viewp;
@@ -341,35 +356,36 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 	delete model;
 }
 
+void AppearanceConfigWidget::showEvent(QShowEvent *)
+{
+	/* We store the current changed state of the configurations
+	 * because the call to previewCanvasColors() always set
+	 * the settings as changed and since the show event
+	 * doens't need to change settings we do a small workaround.
+	 *
+	 * This will avoid reload appearance settings when the user
+	 * just displayed the appearance settings but don't changed
+	 * anything. */
+	bool conf_changed = isConfigurationChanged();
+
+	// Store the current state of grid/delimiters display
+	show_grid = ObjectsScene::isShowGrid();
+	show_delimiters = ObjectsScene::isShowPageDelimiters();
+	previewCanvasColors();
+
+	setConfigurationChanged(conf_changed);
+}
+
+void AppearanceConfigWidget::hideEvent(QHideEvent *)
+{
+	// Restore the original state of grid/delimiters display
+	ObjectsScene::setShowGrid(show_grid);
+	ObjectsScene::setShowPageDelimiters(show_delimiters);
+}
+
 std::map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return config_params;
-}
-
-void AppearanceConfigWidget::updateDropShadows()
-{
-	QColor color(0, 0, 0, 80);
-	int radius = 6, x = 1, y = 1;
-	QGraphicsDropShadowEffect *shadow = nullptr;
-	QString class_name = "QToolButton";
-
-	if(getUiThemeId() == Attributes::Light)
-	{
-		radius = 1;
-		color.setRgb(225, 225, 225);
-		color.setAlpha(255);
-	}
-
-	for(auto &wgt : qApp->allWidgets())
-	{
-		if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
-		{
-			shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
-			shadow->setColor(color);
-			shadow->setOffset(x, y);
-			shadow->setBlurRadius(radius);
-		}
-	}
 }
 
 void AppearanceConfigWidget::loadExampleModel()
@@ -379,74 +395,67 @@ void AppearanceConfigWidget::loadExampleModel()
 		if(model->getObjectCount() != 0)
 			return;
 
-		RelationshipView *rel=nullptr;
-		StyledTextboxView *txtbox=nullptr;
-		TableView *tab=nullptr;
-		GraphicalView *view=nullptr;
+		RelationshipView *rel = nullptr;
+		StyledTextboxView *txtbox = nullptr;
+		TableView *tab = nullptr;
+		GraphicalView *view = nullptr;
 		unsigned count = 0, i = 0;
-		QList<BaseObjectView *> graph_objs;
 
 		model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
 
-		count=model->getObjectCount(ObjectType::Table);
+		count = model->getObjectCount(ObjectType::Table);
 		for(i=0; i < count; i++)
 		{
-			tab=new TableView(model->getTable(i));
-			tab->setSelected(i==1);
+			tab = new TableView(model->getTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::ForeignTable);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::ForeignTable);
+		for(i = 0; i < count; i++)
 		{
-			tab=new TableView(model->getForeignTable(i));
+			tab = new TableView(model->getForeignTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::View);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::View);
+		for(i = 0; i < count; i++)
 		{
-			view=new GraphicalView(model->getView(i));
+			view = new GraphicalView(model->getView(i));
 			scene->addItem(view);
-			graph_objs.append(view);
+			view->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Relationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Relationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::BaseRelationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::BaseRelationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Textbox);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Textbox);
+		for(i = 0; i < count; i++)
 		{
-			txtbox=new StyledTextboxView(model->getTextbox(i));
-			txtbox->setSelected(i==0);
+			txtbox = new StyledTextboxView(model->getTextbox(i));
 			scene->addItem(txtbox);
-			graph_objs.append(txtbox);
+			txtbox->setEnabled(false);
 		}
 
-		for(auto &obj : graph_objs)
-			obj->setEnabled(false);
-
-		placeholder->setRect(QRectF(400, 280, 200, 150));
+		placeholder->setRect(QRectF(400, 150, 200, 150));
 		updatePlaceholderItem();
 		scene->addItem(placeholder);
 		scene->setActiveLayers(QList<unsigned>({0}));
 		scene->setSceneRect(scene->itemsBoundingRect(false));
-
 	}
 	catch(Exception &e)
 	{
@@ -485,8 +494,10 @@ void AppearanceConfigWidget::loadConfiguration()
 
 		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
 		custom_scale_spb->setValue(config_params[GlobalAttributes::AppearanceConf][Attributes::CustomScale].toDouble());
+		expansion_factor_spb->setValue(config_params[Attributes::Design][Attributes::ExpansionFactor].toUInt());
 
 		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -624,6 +635,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::GridColor] = grid_color_cp->getColor(0).name();
 		attribs[Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
 		attribs[Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
+		attribs[Attributes::ExpansionFactor] = QString::number(expansion_factor_spb->value());
+
 		config_params[Attributes::Design] = attribs;
 		attribs.clear();
 
@@ -635,6 +648,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		attribs[Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 		attribs[Attributes::TabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+
 		config_params[Attributes::Code] = attribs;
 		attribs.clear();
 
@@ -683,7 +697,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		config_params[Attributes::Objects] = attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::AppearanceConf, config_params);
 
-		QString hl_theme = getUiThemeId();
+		QString hl_theme = __getUiThemeId();
 
 		/* Copying the syntax highilighting files from the selected theme folder to the user's storage
 		 * in order to reflect the new syntax highlighting setting in the whole application */
@@ -717,6 +731,8 @@ void AppearanceConfigWidget::saveConfiguration()
 												tr("The template file `%1' could not be accessed!").arg(theme_hl_files[i]) : "");
 			}
 		}
+
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -817,6 +833,8 @@ void AppearanceConfigWidget::applyConfiguration()
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+	ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 
 	loadExampleModel();
 	model->setObjectsModified();
@@ -884,12 +902,17 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 
 void AppearanceConfigWidget::previewCanvasColors()
 {
+	ObjectsScene::setShowGrid(true);
+	ObjectsScene::setShowPageDelimiters(true);
+
 	ObjectsScene::setCanvasColor(canvas_color_cp->getColor(0));
 	ObjectsScene::setGridPattern(grid_pattern_cmb->currentIndex() == 0 ?
 																 ObjectsScene::SquarePattern : ObjectsScene::DotPattern);
+
 	ObjectsScene::setGridColor(grid_color_cp->getColor(0));
-	ObjectsScene::setDelimitersColor(delimiters_color_cp->getColor(0));
+	ObjectsScene::setPageDelimitersColor(delimiters_color_cp->getColor(0));
 	ObjectsScene::setGridSize(grid_size_spb->value());
+
 	scene->update();
 	setConfigurationChanged(true);
 }
@@ -899,19 +922,23 @@ void AppearanceConfigWidget::applyUiTheme()
 	std::map<QString, std::map<QPalette::ColorRole, QStringList> *> color_maps = {
 		{ { Attributes::System }, { &system_ui_colors } },
 		{ { Attributes::Dark }, { &dark_ui_colors } },
-		{ { Attributes::Light }, { &light_ui_colors } }
+		{ { Attributes::Light }, { &light_ui_colors } },
+		{ { Attributes::InkSaver }, { &light_ui_colors } }
 	};
 
 	std::map<QString, QStringList *> item_color_lists = {
 		{ { Attributes::System }, { &light_tab_item_colors } },
 		{ { Attributes::Dark }, { &dark_tab_item_colors } },
-		{ { Attributes::Light }, { &light_tab_item_colors } }
+		{ { Attributes::Light }, { &light_tab_item_colors } },
+		{ { Attributes::InkSaver }, { &light_tab_item_colors } },
 	};
 
-	QString ui_theme = getUiThemeId();
+	QString ui_theme = __getUiThemeId();
 	std::map<QPalette::ColorRole, QStringList> *color_map = color_maps[ui_theme];
 	QStringList *item_colors = item_color_lists[ui_theme];
 	QPalette pal = system_pal;
+
+	UiThemeId = ui_theme;
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
@@ -940,20 +967,49 @@ void AppearanceConfigWidget::applyUiTheme()
 	setConfigurationChanged(true);
 }
 
+QString AppearanceConfigWidget::__getUiThemeId()
+{
+	if(ui_theme_cmb->currentIndex() > 0)
+		return ui_theme_cmb->currentData(Qt::UserRole).toString();
+
+	/* If the user chose the "System default" theme
+	 * we check if the system is using dark theme (text color lightness greater
+	 * than window color lightness) or light theme */
+	return getUiLightness(system_pal);
+}
+
+QString AppearanceConfigWidget::getUiThemeId()
+{
+	return UiThemeId;
+}
+
+QString AppearanceConfigWidget::getUiLightness(const QPalette &pal)
+{
+	if(pal.color(QPalette::WindowText).lightness() >
+			pal.color(QPalette::Window).lightness())
+		return Attributes::Dark;
+
+	return Attributes::Light;
+}
+
 void AppearanceConfigWidget::previewUiSettings()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 	applyUiTheme();
 	applyDesignCodeTheme();
-	updateDropShadows();
-	QApplication::restoreOverrideCursor();
+
+	model->setObjectsModified();
+	scene->update();
+
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
+	qApp->restoreOverrideCursor();
 }
 
 void AppearanceConfigWidget::applySyntaxHighlightTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		getUiThemeId(),
+																																				__getUiThemeId(),
 																																		GlobalAttributes::SQLHighlightConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -973,7 +1029,7 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 {
 	QString filename = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																		GlobalAttributes::DirSeparator +
-																																		getUiThemeId(),
+																																				__getUiThemeId(),
 																																		GlobalAttributes::AppearanceConf +
 																																		GlobalAttributes::ConfigurationExt);
 
@@ -990,21 +1046,6 @@ void AppearanceConfigWidget::applyDesignCodeTheme()
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-}
-
-QString AppearanceConfigWidget::getUiThemeId()
-{
-	if(ui_theme_cmb->currentIndex() > 0)
-		return ui_theme_cmb->currentData(Qt::UserRole).toString();
-
-	/* If the user chose the "System default" theme
-	 * we check if the system is using dark theme (text color lightness greater than window color lightness)
-	 * or light theme */
-	if(system_pal.color(QPalette::WindowText).lightness() >
-			system_pal.color(QPalette::Window).lightness())
-		return Attributes::Dark;
-
-	return Attributes::Light;
 }
 
 void AppearanceConfigWidget::applyUiStyleSheet()
@@ -1024,10 +1065,12 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 	else
 	{
 		QByteArray ui_stylesheet = ui_style.readAll();
-		QString ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
-																																						"icons-" + icons_size_cmb->currentData().toString().toLower() +
-																																						GlobalAttributes::ConfigurationExt);
-		QString ui_theme = getUiThemeId(), extra_style_conf;
+
+		QString icon_size = icons_size_cmb->currentData().toString().toLower(),
+				ico_style_conf = GlobalAttributes::getTmplConfigurationFilePath("",
+																																				"icons-" + icon_size +
+																																				GlobalAttributes::ConfigurationExt);
+		QString ui_theme = __getUiThemeId(), extra_style_conf;
 
 		extra_style_conf = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ThemesDir +
 																																			GlobalAttributes::DirSeparator +
@@ -1052,13 +1095,25 @@ void AppearanceConfigWidget::applyUiStyleSheet()
 			{
 				Messagebox msg;
 				msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ico_style_conf),
-													 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+														ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
-				ui_stylesheet.append(ico_style.readAll());		
+				ui_stylesheet.append(ico_style.readAll());
 		}
 
 		qApp->setStyleSheet(ui_stylesheet);
+
+		// Overriding pixel metrics of small icons in table headers, menu icons, etc
+		int small_ico_sz = 0;
+
+		if(icon_size == Attributes::Small)
+			small_ico_sz = 16;
+		else if(icon_size == Attributes::Medium)
+			small_ico_sz = 18;
+		else
+			small_ico_sz = 20;
+
+		CustomUiStyle::setPixelMetricValue(QStyle::PM_SmallIconSize, small_ico_sz);
 	}
 }
 

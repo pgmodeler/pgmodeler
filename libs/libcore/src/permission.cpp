@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 */
 
 #include "permission.h"
+#include "column.h"
+#include "utilsns.h"
 
 const QString Permission::priv_codes("rawdDxtCcTXU");
 
@@ -361,7 +363,6 @@ void Permission::generatePermissionId()
 {
 	QStringList values;
 	QString hash_id = object->getSignature(true);
-	QCryptographicHash hash(QCryptographicHash::Md5);
 
 	for(auto &role : roles)
 		values.append(role->getName());
@@ -376,8 +377,7 @@ void Permission::generatePermissionId()
 		hash_id += "000000";
 
 	//Generates an unique name for the permission through md5 hash
-	hash.addData(QByteArray(hash_id.toStdString().c_str()));
-	hash_id = hash.result().toHex();
+	hash_id = UtilsNs::getStringHash(hash_id);
 	this->obj_name = (!revoke ? "grant_" : "revoke_") + getPermissionString() + '_' + hash_id.mid(0, 10);
 }
 
@@ -406,7 +406,7 @@ QString Permission::getSourceCode(SchemaParser::CodeType def_type)
 			//Views, Tables and foreign tables use the same keyword when setting permission (TABLE)
 			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
 		else if(obj_type == ObjectType::ForeignServer)
-			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();
+			attributes[Attributes::Type] = "FOREIGN " + object->getSQLName();
 		else
 			attributes[Attributes::Type] = BaseObject::getSQLName(obj_type);
 	}
@@ -452,7 +452,7 @@ QString Permission::getSourceCode(SchemaParser::CodeType def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-		attributes[Attributes::Roles]+=roles[i]->getName(true) + QString(",");
+		attributes[Attributes::Roles]+=roles[i]->getName(true) + ",";
 
 	attributes[Attributes::Roles].remove(attributes[Attributes::Roles].size()-1,1);
 
@@ -482,4 +482,14 @@ QString Permission::getDropCode(bool cascade)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void Permission::updateDependencies()
+{
+	std::vector<BaseObject *> deps = { object };
+
+	for(auto &role : roles)
+		deps.push_back(role);
+
+	BaseObject::updateDependencies(deps);
 }

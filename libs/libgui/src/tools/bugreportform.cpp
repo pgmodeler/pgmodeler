@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,11 +33,13 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 
 	output_sel = new FileSelectorWidget(this);
 	output_sel->setWindowTitle(tr("Select report output folder"));
-	output_sel->setFileMode(QFileDialog::Directory);
+	output_sel->setDirectoryMode(true);
 	output_sel->setAllowFilenameInput(true);
+	output_sel->setFileMustExist(true);
 	output_sel->setSelectedFile(GlobalAttributes::getTemporaryPath());
 
 	output_lt->addWidget(output_sel);
+
 	connect(close_btn, &QPushButton::clicked, this, &BugReportForm::close);
 	connect(create_btn, &QPushButton::clicked, this, qOverload<>(&BugReportForm::generateReport));
 	connect(attach_mod_chk, &QCheckBox::toggled, attach_tb, &QToolButton::setEnabled);
@@ -95,7 +97,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	QFileInfo fi(QString(output_sel->getSelectedFile() +
 											 GlobalAttributes::DirSeparator +
 											 GlobalAttributes::BugReportFile)
-											.arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm"))));
+											.arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm")));
 	QString filename=fi.absoluteFilePath();
 
 	//Opens the file for writting
@@ -123,26 +125,20 @@ void BugReportForm::generateReport(const QByteArray &buf)
 
 void BugReportForm::attachModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
-		file_dlg.setWindowTitle(tr("Load model"));
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setFileMode(QFileDialog::ExistingFile);
-		file_dlg.setModal(true);
+		QStringList sel_files = GuiUtilsNs::selectFiles(
+															tr("Load model"),
+															QFileDialog::ExistingFiles,	QFileDialog::AcceptOpen,
+															{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																tr("All files (*.*)") }, {},
+															GlobalAttributes::DbModelExt);
 
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			attachModel(file_dlg.selectedFiles().at(0));
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		if(!sel_files.isEmpty())
+			attachModel(sel_files.at(0));
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

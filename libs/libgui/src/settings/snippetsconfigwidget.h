@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,10 +51,10 @@ class __libgui SnippetsConfigWidget: public BaseConfigWidget, public Ui::Snippet
 		//! \brief Validates the specified snippet atributes against the current loaded ones
 		bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
 
-		void hideEvent(QHideEvent *);
+		virtual void hideEvent(QHideEvent *) override;
 
 		/* Disable methods */
-		void applyConfiguration(void){}
+		virtual void applyConfiguration(void) override {}
 
 		//! \brief Parse the snippet map by using the 'attribs' attributes referenced in the snippet code (for parsable snippets)
 		static QString parseSnippet(attribs_map snippet, attribs_map attribs);
@@ -65,8 +65,10 @@ class __libgui SnippetsConfigWidget: public BaseConfigWidget, public Ui::Snippet
 	public:
 		SnippetsConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration();
-		void loadConfiguration();
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
+
 		static std::map<QString, attribs_map> getConfigurationParams();
 
 		//! \brief Returns the snippet attributes related to the identified snippet snip_id
@@ -108,7 +110,7 @@ class __libgui SnippetsConfigWidget: public BaseConfigWidget, public Ui::Snippet
 		void parseSnippet();
 
 	public slots:
-		void restoreDefaults();
+		virtual void restoreDefaults() override;
 
 		friend class ConfigurationForm;
 };

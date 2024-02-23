@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,72 +17,66 @@
 */
 
 #include "operatorclasswidget.h"
+#include "guiutilsns.h"
 
 OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpClass)
 {
-	try
-	{
-		QGridLayout *grid=nullptr;
-		Ui_OperatorClassWidget::setupUi(this);
+	QGridLayout *grid=nullptr;
+	Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
-		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
-		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
-		function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-		storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
-		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
+	data_type=new PgSQLTypeWidget(this);
+	operator_sel=new ObjectSelectorWidget(ObjectType::Operator, this);
+	elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
+	storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
+	elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		elements_tab->setColumnCount(4);
-		elements_tab->setHeaderLabel(tr("Object"),0);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("table")),0);
+	elements_tab->setColumnCount(4);
+	elements_tab->setHeaderLabel(tr("Object"),0);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("table")),0);
 
-		elements_tab->setHeaderLabel(tr("Type"),1);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
+	elements_tab->setHeaderLabel(tr("Type"),1);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
-		elements_tab->setHeaderLabel(tr("Support/Strategy"),2);
-		elements_tab->setHeaderLabel(tr("Operator Family"),3);
-		elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("opfamily")),3);
+	elements_tab->setHeaderLabel(tr("Support/Strategy"),2);
+	elements_tab->setHeaderLabel(tr("Operator Family"),3);
+	elements_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("opfamily")),3);
 
-		grid=new QGridLayout;
-		grid->setContentsMargins(0,0,0,0);
-		grid->addWidget(def_class_lbl,0,2,1,1);
-		grid->addWidget(def_class_chk,0,3,1,1);
-		grid->addWidget(indexing_lbl,0,0,1,1);
-		grid->addWidget(indexing_cmb,0,1,1,1);
-		grid->addWidget(family_lbl,2,0,1,1);
-		grid->addWidget(family_sel,2,1,1,4);
-		grid->addWidget(data_type,4,0,1,5);
-		grid->addWidget(elements_grp,5,0,1,5);
-		this->setLayout(grid);
-		configureFormLayout(grid, ObjectType::OpClass);
+	grid=new QGridLayout;
+	grid->setContentsMargins(0,0,0,0);
+	grid->addWidget(def_class_lbl,0,2,1,1);
+	grid->addWidget(def_class_chk,0,3,1,1);
+	grid->addWidget(indexing_lbl,0,0,1,1);
+	grid->addWidget(indexing_cmb,0,1,1,1);
+	grid->addWidget(family_lbl,2,0,1,1);
+	grid->addWidget(family_sel,2,1,1,4);
+	grid->addWidget(data_type,4,0,1,5);
+	grid->addWidget(elements_grp,5,0,1,5);
+	this->setLayout(grid);
+	configureFormLayout(grid, ObjectType::OpClass);
 
-		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
-		grid->addWidget(function_sel, 1,1,1,4);
-		grid->addWidget(operator_sel, 2,1,1,4);
-		grid->addWidget(elem_family_sel, 3,1,1,4);
-		grid->addWidget(storage_type, 5,0,1,5);
-		grid->addWidget(elements_tab, 6,0,1,4);
+	grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
+	grid->addWidget(function_sel, 1,1,1,4);
+	grid->addWidget(operator_sel, 2,1,1,4);
+	grid->addWidget(elem_family_sel, 3,1,1,4);
+	grid->addWidget(storage_type, 5,0,1,5);
+	grid->addWidget(elements_tab, 6,0,1,4);
 
-		connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
-		connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &OperatorClassWidget::handleElement);
-		connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, &OperatorClassWidget::handleElement);
-		connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
+	connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
+	connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, OperatorClassWidget::handleElement));
+	connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, OperatorClassWidget::handleElement));
+	connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
 
-		selectElementType(0);
-		indexing_cmb->addItems(IndexingType::getTypes());
+	selectElementType(0);
+	indexing_cmb->addItems(IndexingType::getTypes());
 
-		setRequiredField(elements_grp);
-		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type,
-												elements_tab });
+	setRequiredField(elements_grp);
+	configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
+											operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type,
+											elements_tab });
 
-		setMinimumSize(640, 730);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	setMinimumSize(640, 730);
 }
 
 void OperatorClassWidget::selectElementType(int elem_type)
@@ -143,7 +137,7 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	if(elem_type!=OperatorClassElement::StorageElem)
 		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
-		elements_tab->setCellText(QString(" "), lin_idx, 2);
+		elements_tab->setCellText(" ", lin_idx, 2);
 
 	if(elem_type==OperatorClassElement::OperatorElem && elem.getOperatorFamily())
 		elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);

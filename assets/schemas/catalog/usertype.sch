@@ -7,7 +7,8 @@
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
 
-	[SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, 
+     ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	FROM pg_type AS tp
 	LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
@@ -43,6 +44,13 @@
 %else
 	%if {attribs} %then
 		[SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
+
+		# Create a bool column that indicates if the type is a extension child object
+		[(SELECT CASE WHEN count(objid) > 0 THEN true ELSE false END
+		  FROM pg_depend
+		  WHERE deptype = 'e' AND 
+		  classid::regclass::text = 'pg_type' AND
+		  objid = tp.oid) AS is_ext_type_bool],
 
 		#Retrieve the OID for table/view/sequence that generates the composite type
 		[

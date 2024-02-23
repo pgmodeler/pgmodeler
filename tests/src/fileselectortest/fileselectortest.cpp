@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ void FileSelectorTest::testFileSelection()
   QHBoxLayout *layout = new QHBoxLayout(dlg);
   FileSelectorWidget *selector = new FileSelectorWidget;
 
-	selector->setFileMode(QFileDialog::ExistingFile);
+	//selector->setFileMode(QFileDialog::ExistingFile);
+	selector->setFileMustExist(true);
 	selector->setAcceptMode(QFileDialog::AcceptOpen);
 	//selector->setNameFilters({"Database model file (*.dbm)", "All files (*.*)"});
 	selector->setFileDialogTitle("Select *.dbm file...");

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 #include "operationlist.h"
 #include "messagebox.h"
 #include "objectsscene.h"
-#include "taskprogresswidget.h"
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 
@@ -79,7 +78,10 @@ class __libgui ModelWidget: public QWidget {
 		curr_show_delim,
 
 		//! \brief Indicates if the canvas panning move is being made via mouse wheel
-		wheel_move;
+		wheel_move,
+
+		//! \brief Indicates if the scene is being moved by either panning move or via mouse wheel
+		scene_moving;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -337,7 +339,11 @@ class __libgui ModelWidget: public QWidget {
 		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
-		QMenu *rels_menu;
+		QMenu *rels_menu,
+
+		copy_menu,
+
+		cut_menu;
 
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -371,11 +377,20 @@ class __libgui ModelWidget: public QWidget {
 		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
+		template<class WidgetClass>
+		int openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
-		rect when some object is out of bound */
-		void adjustSceneSize();
+		 * rect when some object is out of bound. The parameter use_model_rect, when true, uses
+		 * the rect stored in the database model (retrieved from the dbm file loading) to resize
+		 * the scene rect. The parameter expand_only, when true, indicates that the method must
+		 * only expand the scene rect, If the recalculated rect is smaller the the current
+		 * scene rect that no operation is done. */
+		void adjustSceneRect(bool use_model_rect, bool expand_only = false);
+
+		/*! \brief Expand the scene rect to the specified direction.
+		 * The size expanded is determined by the current page layout used by the scene. */
+		void expandSceneRect(ObjectsScene::ExpandDirection exp_dir);
 
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);
@@ -515,13 +530,13 @@ class __libgui ModelWidget: public QWidget {
 		void removeObjects(bool cascade = false);
 
 		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-		void removeObjectsCascade();
+		//void removeObjectsCascade();
 
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects();
 
 		//! \brief Copies all the selected objects
-		void copyObjects(bool duplicate_mode = false);
+		void copyObjects(bool duplicate_mode, bool copy_deps);
 
 		//! \brief Paste all the objects copied previously
 		void pasteObjects(bool duplicate_mode = false);
@@ -530,7 +545,7 @@ class __libgui ModelWidget: public QWidget {
 		void duplicateObject();
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
-		void cutObjects();
+		void cutObjects(bool copy_deps);
 
 		//! \brief Converts a Many to Many relationship generating a table and two additional relationships.
 		void convertRelationshipNN();
@@ -597,11 +612,11 @@ class __libgui ModelWidget: public QWidget {
 
 		void showMagnifierArea(bool show);
 
-		//! \brief Prepares the viewport to a panning move by hiding grid/delimiters
-		void startPanningMove();
+		//! \brief Prepares the viewport to a move by hiding grid/delimiters
+		void startSceneMove();
 
-		//! \brief Restores the previous grid/delimiter visibility state after finishing a panning move
-		void finishPanningMove();
+		//! \brief Restores the previous grid/delimiter visibility state after finishing a scene move
+		void finishSceneMove();
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -646,6 +661,10 @@ class __libgui ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the scene suffered an interaction.
 		 * This version carries the amount objects selected and their bounding rects */
 		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
+
+		/*! \brief Signal emitted whenever the scene suffered a successful drag & drop event.
+		 * It passes the mime data when the event occurred */
+		void s_sceneDragDropped(const QMimeData *mime_data);
 
 		friend class MainWindow;
 		friend class ModelExportForm;

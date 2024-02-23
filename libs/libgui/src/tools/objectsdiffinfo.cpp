@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,26 +63,26 @@ QString ObjectsDiffInfo::getInfoMessage()
 		return "";
 	else if(diff_type==DropObject)
 	{
-		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
+		msg=msg.arg("<font color=\"#e00000\"><strong>DROP</strong></font>")
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==CreateObject)
 	{
-		msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
+		msg=msg.arg("<font color=\"#008000\"><strong>CREATE</strong></font>")
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
 	else if(diff_type==AlterObject)
 	{
-		msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
+		msg=msg.arg("<font color=\"#ff8000\"><strong>ALTER</strong></font>")
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 
 	}
 	else if(diff_type==IgnoreObject)
 	{
-		msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
+		msg=msg.arg("<font color=\"#606060\"><strong>IGNORE</strong></font>")
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 
@@ -96,13 +96,13 @@ QString ObjectsDiffInfo::getDiffTypeString()
 	if(diff_type==NoDifference)
 		return "";
 	else if(diff_type==DropObject)
-		return QString("DROP");
+		return "DROP";
 	else if(diff_type==CreateObject)
-		return QString("CREATE");
+		return "CREATE";
 	else if(diff_type==AlterObject)
-		return QString("ALTER");
+		return "ALTER";
 	else
-		return QString("IGNORE");
+		return "IGNORE";
 }
 
 BaseObject *ObjectsDiffInfo::getObject()

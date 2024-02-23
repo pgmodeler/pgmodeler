@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 */
 
 #include "objectstablewidget.h"
+#include "exception.h"
+#include "messagebox.h"
 
 QColor ObjectsTableWidget::item_colors[12] = { QColor("#ffb4b4"), QColor("#303030"),
 																							 QColor("#a4f9b0"), QColor("#303030"),
@@ -274,7 +276,38 @@ QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
 
 QString ObjectsTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	return getItem(row_idx, col_idx)->text();
+	try
+	{
+		return getItem(row_idx, col_idx)->text();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QStringList ObjectsTableWidget::getCellTexts(unsigned int section_idx, Qt::Orientation orientation)
+{
+	QStringList texts;
+	bool use_cols = (orientation == Qt::Horizontal);
+	unsigned end_idx = (use_cols ? getColumnCount() : getRowCount());
+
+	try
+	{
+		for(unsigned idx = 0; idx < end_idx; idx++)
+		{
+			if(use_cols)
+				texts.append(getCellText(section_idx, idx));
+			else
+				texts.append(getCellText(idx, section_idx));
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	return texts;
 }
 
 Qt::CheckState ObjectsTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)

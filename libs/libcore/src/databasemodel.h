@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,9 +84,21 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * differently from OperationList class, it's data persisted in the database model file. */
 		std::vector<std::tuple<QDateTime,QString,ObjectType,QString>> changelog;
 
-		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
+		/*! \brief Stores the references to all object lists of each type. This map is used by getObjectList() in order
 		 * to return the list according to the provided type */
 		std::map<ObjectType, std::vector<BaseObject *> *> obj_lists;
+
+		/*! \brief Stores the references to the methods that create objects from XML code. This map is used by createObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<BaseObject*(void)>> create_methods;
+
+		/*! \brief Stores the references to the methods that add objects from database. This map is used by addObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<void(BaseObject *, int)>> add_methods;
+
+		/*! \brief Stores the references to the methods that remove objects from database. This map is used by removeObject() in order
+		 * to return the created object */
+		std::map<ObjectType, std::function<void(BaseObject *, int)>> remove_methods;
 
 		static unsigned dbmodel_id;
 
@@ -102,6 +114,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		layer_rect_colors;
 
 		QList<unsigned> active_layers;
+
+		/*! \brief The current scene (canvas) geometry that is restored when the database
+		 * model is rendered by a scene for the first time after loading the model. */
+		QRectF scene_rect;
 
 		//! \brief Stores the layer information of FK relationships during the model loading
 		std::map<QString, QStringList> fk_rel_layers;
@@ -219,22 +235,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Removes an user defined type (domain or type)
 		void removeUserType(BaseObject *object, int obj_idx);
 
-		/*! \brief Returns the object on the model that represents the base pgsql type. The possible
-		 returned object can be: table, sequence, domain or type */
-		BaseObject *getObjectPgSQLType(PgSqlType type);
-
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
 		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo();
-
-		/*! \brief This method forces the indication that the model is being loaded or not by setting the attribute loading_model.
-		 * The attribute loading_model causes the model perform certain operations only when model starts/ends the loading process,
-		 * for instance, if loading_model = true graphical objects will be rendered only when the loading process finishes (loading_model =false)
-		 * otherwise the objects are rendered as they are added to the model. The drawback of this approach is, depending on the operation being used after
-		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
-		void setLoadingModel(bool value);
 
 		/*! \brief This method forces the breaking of the code generation/saving in the methods getSourceCode, saveModel and saveSplitModel.
 		 *  This method is used only by the export helper in such a way to allow the user to abort any export to file in a threaded operation. */
@@ -242,45 +247,6 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Set the initial capacity of the objects list for a optimized memory usage
 		void setObjectListsCapacity(unsigned capacity);
-
-		void getViewReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode);
-		void getPhysicalTableReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getFunctionReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getSchemaReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getUserDefTypesReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getRoleReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getTablespaceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getLanguageReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOpClassReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOperatorReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getCollationReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getOpFamilyReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getColumnReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getTagReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getSequenceReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getFdwReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-		void getServerReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
-
-		void getOpClassDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getDomainDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getCastDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getProcedureDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getFunctionDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getAggregateDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getLanguageDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getOperatorDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getRoleDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getRelationshipDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getSequenceDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getColumnDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTriggerDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getIndexDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getPolicyDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getPhysicalTableDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTypeDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getViewDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getGenericSQLDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
-		void getTransformDependencies(BaseObject *object, std::vector<BaseObject *> &deps, bool inc_indirect_deps);
 
 		/*! \brief Configures all the shell types related to base user-defined base. By default, this method will convert
 		 * parameters of functions that are part of a user defined type and return the shell types SQL code. If the parameter reset_config
@@ -306,7 +272,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Restore the layer information of FK relationship during loading process
 		void restoreFKRelationshipLayers();
 
-protected:
+	protected:
 		//! \brief Set the layer names (only to be written in the XML definition)
 		void setLayers(const QStringList &layers);
 
@@ -336,14 +302,19 @@ protected:
 		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
 		void addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date);
 
-		//! \brief Returns the XML code for the changelog
-		QString getChangelogDefinition();
-
 		//! \brief Loads the basic attributes, common between all children of BaseObject, from XML code
 		void setBasicAttributes(BaseObject *object);
 
 		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
 		void setBasicFunctionAttributes(BaseFunction *func);
+
+		//! \brief Updates (creating/removing) in the model the extension data types
+		bool updateExtensionTypes(Extension *ext);
+
+		void removeExtensionTypes(Extension *ext);
+
+		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
+		void setRelTablesModified(BaseRelationship *rel);
 
 	public:
 		/*! \brief Constants used to determine the code generation mode:
@@ -396,8 +367,10 @@ protected:
 		 by relationship) in order to be reconstructed in a posterior moment */
 		void storeSpecialObjectsXML();
 
-		//! \brief Validates all the relationship, propagating all column modifications over the tables
-		void validateRelationships();
+		/*! \brief Validates all relationships, propagating all column modifications over the tables when needed.
+		 *  This method returns false when no relationship was invalid and true when the method validated (reconnected)
+		 *  at least one relationship */
+		bool validateRelationships();
 
 		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
 		 * If the types list is empty the method will return nullptr. */
@@ -781,36 +754,12 @@ protected:
 		//! \brief Updates the fk relationships for all table on the model
 		void updateTablesFKRelationships();
 
-		/*! \brief Validates the removal of the specified column raising errors when the passed object
-		 is still being referecend */
-		void validateColumnRemoval(Column *column);
-
 		//! \brief Validates the relationship to reflect the modifications on the column/constraint of the passed table
 		void validateRelationships(TableObject *object, Table *parent_tab);
 
 		/*! \brief Checks if from the passed relationship some redundacy is found. Redundancy generates infinite column
 		 propagation over the tables. This method raises an error when found some. */
 		void checkRelationshipRedundancy(Relationship *rel);
-
-		/*! \brief Returns all the objects that the object depends on. The boolean paramenter is used to include the
-		 indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
-		 the informed object, e.g., a schema linked to a table that is referenced in a view */
-		void getObjectDependecies(BaseObject *objeto, std::vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
-
-		/*! \brief Recursive version of getObjectDependencies. Returns all the dependencies of the specified object but
-		additionally its children objects (for schemas, tables or views) as well permissions.
-		This method is less efficient than the non recursive version and is used only as an auxiliary operation for
-		getCreationOrder(BaseObject *object) */
-		void __getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs);
-
-		/*! \brief Returns all the objects that references the passed object. The boolean exclusion_mode is used to performance purpose,
-		 generally applied when excluding objects, this means that the method will stop the search when the first
-		 reference is found. The exclude_perms parameter when true will not include permissions in the references list. */
-		void getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclusion_mode=false, bool exclude_perms=false);
-
-		/*! \brief Recursive version of getObjectReferences. The only difference here is that the method does not runs in exclusion mode,
-		meaning that ALL objects directly or inderectly linked to the 'object' are retrieved. */
-		void __getObjectReferences(BaseObject *object, std::vector<BaseObject *> &refs, bool exclude_perms=false);
 
 		/*! \brief Marks the graphical objects of the provided types as modified forcing their redraw. User can specify only a set of
 	 graphical objects to be marked */
@@ -835,16 +784,17 @@ protected:
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
 		std::vector<BaseObject *> findObjects(const QString &pattern, std::vector<ObjectType> types,
-																		 bool case_sensitive, bool is_regexp, bool exact_match,
-																		 const QString &search_attr = Attributes::Name);
+																					bool case_sensitive, bool is_regexp, bool exact_match,
+																					const QString &search_attr = Attributes::Name);
 
 		/*! \brief Returns a list of objects searching them by using the filter syntax [type]:[pattern]:[mode]
 		 * The provided list of filter strings is composed by:
 		 * > The object type (schema name, see BaseObject::getSchemaName())
 		 * > The search pattern itself
 		 * > The pattern mode (regexp | wildcard)
-		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name) */
-		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
+		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name)
+		 * The parameter any_incl_cols indicates if the any filter type must filter columns too */
+		std::vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name, bool any_incl_cols = false);
 
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition();
@@ -896,7 +846,7 @@ protected:
 		QDateTime getFirstChangelogDate();
 
 		//! \brief Returns the amount of entries in the changelog
-		unsigned getChangelogLength();
+		unsigned getChangelogLength(Operation::OperType op_type = Operation::NoOperation);
 
 		QStringList getLayers();
 		QStringList getLayerNameColors();
@@ -909,6 +859,14 @@ protected:
 		/*! \brief Fills the provided attributes map with the database model attributes only.
 		 *  The result varies according to the code_type provided */
 		void setDatabaseModelAttributes(attribs_map &attribs, SchemaParser::CodeType code_type);
+
+		//! \brief Returns the XML code for the changelog
+		QString getChangelogDefinition(bool csv_format = false);
+
+		/*! \brief Defines the current scene rectangle in which the model is being rendered
+		 *  This is used to restore the original scene geometry when the model is loaded from file */
+		void setSceneRect(const QRectF &rect);
+		QRectF getSceneRect();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
@@ -926,6 +884,7 @@ protected:
 	friend class PgModelerCliApp;
 	friend class OperationList;
 	friend class PermissionWidget;
+	friend class ExtensionWidget;
 };
 
 #endif

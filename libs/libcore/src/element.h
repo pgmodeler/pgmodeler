@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "collation.h"
 
 class __libcore Element {
-	private:
+	protected:
 		/*! \brief Column referenced by the  element. This attribute is
 		 mutually exclusive with the expression attribute and simple column */
 		Column *column;
@@ -56,7 +56,8 @@ class __libcore Element {
 		//! \brief Compares the attributes of provided element against this returning true/false if the match or not
 		bool isEqualsTo(Element &elem);
 
-	protected:
+		BaseObject *parent_obj;
+
 		SchemaParser schparser;
 
 		void configureAttributes(attribs_map &attributes, SchemaParser::CodeType def_type);
@@ -69,7 +70,8 @@ class __libcore Element {
 		};
 
 		Element();
-		virtual ~Element(void) {}
+
+		virtual ~Element() {}
 
 		//! \brief Element configuration methods
 		virtual void setColumn(Column *column);
@@ -96,8 +98,11 @@ class __libcore Element {
 		bool isSortingEnabled();
 
 		virtual QString getSourceCode(SchemaParser::CodeType) { return ""; }
+
 		bool operator == (Element &elem);
 		bool operator ==(const Element &elem);
+
+		virtual std::vector<BaseObject *> getDependencies();
 };
 
 #endif

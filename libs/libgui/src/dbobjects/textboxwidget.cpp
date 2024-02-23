@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,6 +78,9 @@ void TextboxWidget::applyConfiguration()
 		txtbox->setTextAttribute(Textbox::UnderlineText, underline_chk->isChecked());
 		txtbox->setTextColor(color_select_tb->palette().color(QPalette::Button));
 		txtbox->setFontSize(font_size_sb->value());
+
+		if(txtbox->getTextWidth() <= 0)
+			txtbox->setTextWidth(text_txt->viewport()->width());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

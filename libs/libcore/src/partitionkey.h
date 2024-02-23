@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ class __libcore PartitionKey: public Element {
 	public:
 		PartitionKey();
 
+		virtual ~PartitionKey(){}
+
 		//! \brief Defines the collation referenced by the element
 		void setCollation(Collation *collation);
 
@@ -42,6 +44,8 @@ class __libcore PartitionKey: public Element {
 
 		//! \brief Returns the SQL / XML code definition for the partition key
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+
+		virtual std::vector<BaseObject *> getDependencies();
 };
 
 /* Registering the PartitionKey class as a Qt MetaType in order to make

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "policy.h"
+#include "utilsns.h"
 
 Policy::Policy() : TableObject()
 {
@@ -126,7 +127,7 @@ QString Policy::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::Permissive] = (permissive ? Attributes::True : "");
 	attributes[Attributes::UsingExp] = using_expr;
 	attributes[Attributes::CheckExp] = check_expr;
-	attributes[Attributes::Roles] = rol_names.join(QString(", "));
+	attributes[Attributes::Roles] = rol_names.join(", ");
 
 	return BaseObject::__getSourceCode(def_type);
 }
@@ -163,8 +164,8 @@ QString Policy::getAlterCode(BaseObject *object)
 
 		if(!rol_names.isEmpty() && aux_rol_names.isEmpty())
 			attribs[Attributes::Roles] = Attributes::Unset;
-		else if(rol_names.join(QString(", ")) != aux_rol_names.join(QString(", ")))
-			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
+		else if(rol_names.join(", ") != aux_rol_names.join(", "))
+			attribs[Attributes::Roles] = aux_rol_names.join(", ");
 
 		copyAttributes(attribs);
 		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
@@ -179,4 +180,20 @@ bool Policy::isRoleExists(Role *role)
 {
 	if(!role)	return false;
 	return (std::find(roles.begin(), roles.end(), role) != roles.end());
+}
+
+void Policy::updateDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	for(auto &rl : roles)
+		deps.push_back(rl);
+
+	TableObject::updateDependencies(deps);
+}
+
+void Policy::generateHashCode()
+{
+	TableObject::generateHashCode();
+	hash_code = UtilsNs::getStringHash(hash_code + QString::number(permissive) + ~policy_cmd);
 }

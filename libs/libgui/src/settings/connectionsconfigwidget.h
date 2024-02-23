@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "ui_connectionsconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "connection.h"
-#include "messagebox.h"
 
 class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
@@ -46,16 +45,17 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn, bool is_update);
 
-		void hideEvent(QHideEvent *);
-		void showEvent(QShowEvent *);
+		virtual void hideEvent(QHideEvent *event) override;
+		virtual void showEvent(QShowEvent *event) override;
 		void updateConnectionsCombo();
 		
 	public:
 		ConnectionsConfigWidget(QWidget * parent = nullptr);
 		virtual ~ConnectionsConfigWidget();
 		
-		void saveConfiguration();
-		void loadConfiguration();
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
 		
 		static std::map<QString, attribs_map> getConfigurationParams();
 		
@@ -68,7 +68,9 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		//! \brief Fills the passed combobox with all the loaded connections
 		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, Connection::ConnOperation check_def_for=Connection::OpNone);
 		
-		//! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones */
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
 
 		//! \brief Returns the first connection found which is defined as the default for the specified operation
@@ -78,7 +80,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		void destroyConnections();
 		
 	public slots:
-		void restoreDefaults();
+		virtual void restoreDefaults() override;
 		
 	private slots:
 		void newConnection();
@@ -89,7 +91,7 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		void removeConnection();
 		void enableCertificates();
 		void enableConnectionTest();
-		void applyConfiguration(void){}
+		virtual void applyConfiguration(void) override {}
 		
 		friend class ConfigurationForm;
 };

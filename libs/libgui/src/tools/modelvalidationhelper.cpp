@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void ModelValidationHelper::generateValidationInfo(ValidationInfo::ValType val_t
 	}
 }
 
-void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
+void ModelValidationHelper::resolveConflict(ValidationInfo &info)
 {
 	try
 	{
@@ -286,7 +286,7 @@ void ModelValidationHelper::validateModel()
 		std::map<QString, std::vector<BaseObject *> > dup_objects;
 		std::map<QString, std::vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
-		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), ObjectType::Extension) >= 0;
+		bool postgis_exists = db_model->getObjectIndex("postgis", ObjectType::Extension) >= 0;
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -336,14 +336,20 @@ void ModelValidationHelper::validateModel()
 					}
 					else
 					{
-						db_model->getObjectReferences(object, refs);
+						refs = object->getReferences();
 
-						while(!refs.empty() && !valid_canceled)
+						auto itr= refs.begin();
+						BaseObject *obj = nullptr;
+
+						while(itr != refs.end() && !valid_canceled)
 						{
 							//Checking if the referrer object is a table object. In this case its parent table is considered
-							tab_obj=dynamic_cast<TableObject *>(refs.back());
-							constr=dynamic_cast<Constraint *>(tab_obj);
-							col=dynamic_cast<Column *>(tab_obj);
+							obj = *itr;
+							itr++;
+
+							tab_obj = dynamic_cast<TableObject *>(obj);
+							constr = dynamic_cast<Constraint *>(tab_obj);
+							col = dynamic_cast<Column *>(tab_obj);
 
 							/*
 							 * If the current referrer object has an id less than reference object's id
@@ -351,22 +357,20 @@ void ModelValidationHelper::validateModel()
 							 * There's an exception which is that foreign keys are completely discarded from any validation
 							 * since they are always created at end of code definition being free of any reference breaking.
 							 */
-							if(object != refs.back() &&
+							if(object != obj &&
 								 (
 									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
 										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId()))
+									 (!constr && !col && obj->getObjectId() <= object->getObjectId()))
 								 )
 							{
 								if(col || constr)
-									refer_obj=tab_obj->getParentTable();
+									refer_obj = tab_obj->getParentTable();
 								else
-									refer_obj=refs.back();
+									refer_obj = obj;
 
 								refs_aux.push_back(refer_obj);
 							}
-
-							refs.pop_back();
 						}
 
 						/* Validating a special object. The validation made here is to check if the special object
@@ -447,7 +451,7 @@ void ModelValidationHelper::validateModel()
 							{
 								Column *col = nullptr;
 
-								for(auto &ref_obj : gen_sql->getReferencedObjects())
+								for(auto &ref_obj : gen_sql->getDependencies())
 								{
 									col = dynamic_cast<Column *>(ref_obj);
 									if(!col || !col->isAddedByRelationship()) continue;
@@ -499,7 +503,7 @@ void ModelValidationHelper::validateModel()
 					tab_obj=dynamic_cast<TableObject *>(base_tab->getObject(i1, tab_obj_types[i]));
 
 					//Configures the full name of the object including the parent name
-					name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
+					name=tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
 					//name=tab_obj->TableObject::getSignature(true);
 					name.remove('"');
 
@@ -631,7 +635,7 @@ void ModelValidationHelper::validateModel()
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -656,8 +660,17 @@ void ModelValidationHelper::applyFixes()
 				if(!found_broken_rels)
 					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenRelConfig);
 
-				if(!valid_canceled)
-					resolveConflict(val_infos[i]);
+				try
+				{
+					if(!valid_canceled)
+						resolveConflict(val_infos[i]);
+				}
+				catch(Exception &e)
+				{
+					emit s_fixFailed(e);
+					cancelValidation();
+					return;
+				}
 			}
 
 			emit s_fixApplied();

@@ -1,6 +1,7 @@
 #include "modelexporthelper.h"
+#include "utilsns.h"
 #include <QSvgGenerator>
-#include "guiutilsns.h"
+#include "pgsqlversions.h"
 
 ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 {
@@ -11,7 +12,7 @@ void ModelExportHelper::resetExportParams()
 {
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=false;
+	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=force_db_drop=false;
 	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 	db_model=nullptr;
 	connection=nullptr;
@@ -102,20 +103,16 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	disconnect(db_model, nullptr, this, nullptr);
 }
 
-void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, QGraphicsView *viewp)
+void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color, QGraphicsView *viewp)
 {
 	if(!scene)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		QPixmap pix;
-		bool prev_show_grd, prev_show_dlm;
+		bool prev_show_grd = false, prev_show_dlm = false;
 		QGraphicsView *view = nullptr;
-		QList<QRectF> pages;
-		unsigned v_cnt=0, h_cnt=0, page_idx=1;
-		QString tmpl_filename, file;
-		QColor bg_color = ObjectsScene::getCanvasColor();
+		QColor bg_color;
 
 		/* If an external view is specified it will be used instead of creating a local one,
 		 * this is a workaround to the error below when running the helper in a separated thread
@@ -134,27 +131,38 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		bg_color = ObjectsScene::getCanvasColor();
 
 		//Sets the options passed by the user
-		ObjectsScene::setCanvasColor(QColor(255,255,255));
+		if(override_bg_color)
+			ObjectsScene::setCanvasColor(QColor(255,255,255));
+
 		ObjectsScene::setShowGrid(show_grid);
 		ObjectsScene::setShowPageDelimiters(show_delim);
 		scene->setShowSceneLimits(false);
 
+		QPixmap pix;
+		QList<QRectF> pages;
+		unsigned v_cnt=0, h_cnt=0, page_idx=1;
+		QString tmpl_filename, file;
+
 		if(page_by_page)
 		{
 			QFileInfo fi(filename);
+			QString suffix = fi.completeSuffix();
 
-			//Calculates the page count to be exported
-			pages = scene->getPagesForPrinting(h_cnt, v_cnt, zoom);
+			if(!suffix.isEmpty())
+				suffix.prepend('.');
+
+			//Calculates the page dimensions and the page count (horizontally and vertically) to be exported
+			pages = scene->getPagesForPrinting(h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename = fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1") + suffix;
 		}
 		else
 		{
 			QRectF rect = scene->itemsBoundingRect(true, false, true);
 
 			//Give some margin to the resulting image
-			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
+			QSizeF margin = QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
 			rect.setTopLeft(rect.topLeft() - QPointF(margin.width(), margin.height()));
 			rect.setSize(rect.size() + margin);
 
@@ -182,7 +190,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 			rect = view->mapFromScene(pg_rect).boundingRect();
 			pix = QPixmap(rect.size());
-			pix.fill();
+			pix.fill(ObjectsScene::getCanvasColor());
 
 			//Setting optimizations on the painter
 			painter.begin(&pix);
@@ -193,7 +201,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
 														 tr("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
-			view->render(&painter, QRect(), rect);
+			view->scene()->render(&painter, QRect(), pg_rect);
 			painter.end();
 
 			if(page_by_page)
@@ -203,7 +211,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			if(!pix.save(file))
 			{
 				//Restoring the scene settings before throw error
-				ObjectsScene::setCanvasColor(bg_color);
+				if(override_bg_color)
+					ObjectsScene::setCanvasColor(bg_color);
+
 				ObjectsScene::setShowGrid(prev_show_grd);
 				ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 				scene->update();
@@ -214,7 +224,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		}
 
 		//Restoring the scene settings
-		ObjectsScene::setCanvasColor(bg_color);
+		if(override_bg_color)
+			ObjectsScene::setCanvasColor(bg_color);
+
 		ObjectsScene::setShowGrid(prev_show_grd);
 		ObjectsScene::setShowPageDelimiters(prev_show_dlm);
 		scene->setShowSceneLimits(true);
@@ -327,7 +339,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	emit s_exportFinished();
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names, bool forced_db_drop)
 {
 	int type_id = 0, pos = -1;
 	QString  version, sql_cmd, buf, sql_cmd_comment;
@@ -335,7 +347,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	unsigned i, count;
 	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
-	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
+	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + ")";
 	QRegularExpression comm_regexp;
 	QRegularExpressionMatch match;
 
@@ -416,7 +428,12 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 			try
 			{
-				sql_cmd = QString("DROP DATABASE IF EXISTS %1;").arg(db_model->getName(true));
+				QString extra_drop_opt;
+
+				if(version >= PgSqlVersions::PgSqlVersion130 && forced_db_drop)
+					extra_drop_opt = "WITH (FORCE)";
+
+				sql_cmd = QString("DROP DATABASE IF EXISTS %1 %2;").arg(db_model->getName(true), extra_drop_opt);
 				conn.executeDDLCommand(sql_cmd);
 			}
 			catch(Exception &e)
@@ -728,10 +745,9 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QString tmp_name, old_name;
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
-	QCryptographicHash hash(QCryptographicHash::Md5);
-	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
-											{ ObjectType::Role, QString("rl_")},
-											{ ObjectType::Tablespace, QString("tb_")} };
+	std::map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, "db_" },
+											{ ObjectType::Role, "rl_"},
+											{ ObjectType::Tablespace, "tb_"} };
 
 	orig_obj_names.clear();
 	orig_obj_names[db_model]=db_model->getName();
@@ -748,14 +764,12 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 			orig_obj_names[tabspc]=tabspc->getName();
 	}
 
-
 	for(auto &obj : orig_obj_names)
 	{
-		stream << reinterpret_cast<unsigned *>(obj.first) << QString("_") << dt.toMSecsSinceEpoch();
+		stream << reinterpret_cast<unsigned *>(obj.first) << "_" << dt.toMSecsSinceEpoch();
 
 		//Generates an unique name for the object through md5 hash
-		hash.addData(QByteArray(tmp_name.toStdString().c_str()));
-		tmp_name=obj_suffixes[obj.first->getObjectType()] + hash.result().toHex();
+		tmp_name = obj_suffixes[obj.first->getObjectType()] + UtilsNs::getStringHash(tmp_name);
 
 		old_name=obj.first->getName();
 		obj.first->setName(tmp_name.mid(0,15));
@@ -796,9 +810,9 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
 
 	 Reference:
 	  http://www.postgresql.org/docs/current/static/errcodes-appendix.html*/
-	static QStringList err_codes = {QString("42P04"), QString("42723"), QString("42P06"),
-									QString("42P07"), QString("42710"), QString("42701"),
-									QString("42P16")};
+	static QStringList err_codes = {"42P04", "42723", "42P06",
+																	"42P07", "42710", "42701",
+																	"42P16"};
 
 	return err_codes.contains(error_code);
 }
@@ -808,7 +822,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	Connection aux_conn;
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
 			obj_name, obj_tp_name, tab_name, orig_conn_db_name,
-			alter_tab=QString("ALTER TABLE");
+			alter_tab="ALTER TABLE";
 	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;
@@ -1101,16 +1115,17 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender() == db_model);
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop)
 {
-	this->db_model=db_model;
-	this->connection=conn;
-	this->pgsql_ver=pgsql_ver;
-	this->ignore_dup=ignore_dup;
-	this->simulate=simulate;
-	this->drop_db=drop_db && !drop_objs;
-	this->drop_objs=drop_objs && !drop_db;
-	this->use_tmp_names=use_rand_names;
+	this->db_model = db_model;
+	this->connection = conn;
+	this->pgsql_ver = pgsql_ver;
+	this->ignore_dup = ignore_dup;
+	this->simulate = simulate;
+	this->drop_db = drop_db && !drop_objs;
+	this->drop_objs = drop_objs && !drop_db;
+	this->use_tmp_names = use_rand_names;
+	this->force_db_drop = drop_db && force_db_drop;
 	this->sql_buffer.clear();
 	this->db_name.clear();
 	this->errors.clear();
@@ -1118,13 +1133,13 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 
 void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
 {
-	this->sql_buffer=sql_buffer;
-	this->connection=conn;
-	this->db_name=db_name;
-	this->ignore_dup=ignore_dup;
-	this->simulate=false;
-	this->drop_db=false;
-	this->use_tmp_names=false;
+	this->sql_buffer = sql_buffer;
+	this->connection = conn;
+	this->db_name = db_name;
+	this->ignore_dup = ignore_dup;
+	this->simulate = false;
+	this->drop_db = false;
+	this->use_tmp_names = false;
 	this->errors.clear();
 }
 
@@ -1137,7 +1152,7 @@ void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QStr
 	this->code_gen_mode=code_gen_mode;
 }
 
-void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page)
+void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color)
 {
 	this->scene=scene;
 	this->viewp=viewp;
@@ -1146,6 +1161,7 @@ void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView 
 	this->show_grid=show_grid;
 	this->show_delim=show_delim;
 	this->page_by_page=page_by_page;
+	this->override_bg_color=override_bg_color;
 }
 
 void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
@@ -1169,7 +1185,10 @@ void ModelExportHelper::exportToDBMS()
 	if(connection)
 	{
 		if(sql_buffer.isEmpty())
-			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db, drop_objs, simulate, use_tmp_names);
+		{
+			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db,
+									 drop_objs, simulate, use_tmp_names, force_db_drop);
+		}
 		else
 		{
 			try
@@ -1194,7 +1213,7 @@ void ModelExportHelper::exportToPNG()
 {
 	try
 	{
-		exportToPNG(scene, filename, zoom, show_grid, show_delim, page_by_page, viewp);
+		exportToPNG(scene, filename, zoom, show_grid, show_delim, page_by_page, override_bg_color, viewp);
 		resetExportParams();
 	}
 	catch(Exception &e)

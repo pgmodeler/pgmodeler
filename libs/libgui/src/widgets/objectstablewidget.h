@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ of rows on the table.
 #define OBJECT_TABLE_WIDGET_H
 
 #include "ui_objectstablewidget.h"
-#include "messagebox.h"
-#include "dbobjects/baseobjectwidget.h"
+#include "guiglobal.h"
 
 class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 	private:
@@ -141,6 +140,16 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 
 		//! \brief Returns the specified cell text
 		QString getCellText(unsigned row_idx, unsigned col_idx);
+
+		/*! \brief Returns the specified cell texts.
+		 * The section_idx parameter indicates the section (row/column) in which the texts must be retrieved.
+		 *
+		 * If the orientation is Qt::Horizontal then section_idx will refer to the row and the returned
+		 * list will contain the texts of all columns (cells) in that row.
+		 *
+		 * If the orientation is Qt::Vertical then section_idx will refer to the column and the returned
+		 * list will contain the texts of all rows in that column. */
+		QStringList getCellTexts(unsigned section_idx, Qt::Orientation orientation = Qt::Horizontal);
 
 		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
 

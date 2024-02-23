@@ -1,19 +1,39 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
 #include "guiutilsns.h"
 #include "messagebox.h"
-#include "databasemodel.h"
 #include "widgets/numberedtexteditor.h"
 #include "baseform.h"
-#include "widgets/bulkdataeditwidget.h"
+#include "widgets/columndatawidget.h"
 #include "utilsns.h"
-#include "objectstablewidget.h"
+#include "generalconfigwidget.h"
+#include "appearanceconfigwidget.h"
+#include "objectslistmodel.h"
+#include "customsortproxymodel.h"
 
 namespace GuiUtilsNs {
 
-	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
+	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files, qreal custom_fnt_size)
 	{
-		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files);
+		NumberedTextEditor *editor=new NumberedTextEditor(parent, handle_ext_files, custom_fnt_size);
 
 		if(parent && !parent->layout())
 		{
@@ -81,7 +101,7 @@ namespace GuiUtilsNs {
 			QLabel *label=new QLabel;
 			int txt_height = 0;
 
-			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+			txt_height = output_lst->fontMetrics().height() * text.count("<br/>");
 
 			if(txt_height == 0)
 				txt_height = output_lst->fontMetrics().height() * 1.25;
@@ -108,6 +128,7 @@ namespace GuiUtilsNs {
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
 			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
 
 			if(object->isSystemObject())
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
@@ -148,6 +169,22 @@ namespace GuiUtilsNs {
 						constr->setSQLDisabled(disable);
 				}
 			}
+
+			// If its a graphical object, we force the visual update of it
+			if(graph_obj)
+			{
+				BaseRelationship *base_rel = dynamic_cast<BaseRelationship *>(graph_obj);
+				graph_obj->setModified(true);
+
+				if(base_rel)
+				{
+					base_rel->getTable(BaseRelationship::SrcTable)->setModified(true);
+
+					if(!base_rel->isSelfRelationship())
+						base_rel->getTable(BaseRelationship::DstTable)->setModified(true);
+				}
+			}
+
 		}
 	}
 
@@ -155,70 +192,27 @@ namespace GuiUtilsNs {
 	{
 		if(object && object->getDatabase())
 		{
-			std::vector<BaseObject *> refs;
-			TableObject *tab_obj=nullptr;
-			DatabaseModel *model=dynamic_cast<DatabaseModel *>(object->getDatabase());
+			TableObject *tab_obj = nullptr;
 
-			model->getObjectReferences(object, refs);
-
-			while(!refs.empty())
+			for(auto &obj : object->getReferences())
 			{
-				tab_obj=dynamic_cast<TableObject *>(refs.back());
+				tab_obj = dynamic_cast<TableObject *>(obj);
 
 				//If the object is a relationship added does not do anything since the relationship itself will be disabled
-				if(refs.back()->getObjectType()!=ObjectType::BaseRelationship &&
+				if(obj->getObjectType()!=ObjectType::BaseRelationship &&
 						(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 				{
-					refs.back()->setSQLDisabled(object->isSQLDisabled());
+					obj->setSQLDisabled(object->isSQLDisabled());
 
 					//Update the parent table graphical representation to show the disabled child object
 					if(tab_obj)
 						tab_obj->getParentTable()->setModified(true);
 
 					//Disable the references of the current object too
-					disableReferencesSQL(refs.back());
+					disableReferencesSQL(obj);
 				}
-
-				refs.pop_back();
 			}
 		}
-	}
-
-	QString formatMessage(const QString &msg)
-	{
-		QString fmt_msg=msg;
-		QChar start_chrs[2]={'`','('},
-				end_chrs[2]={'\'', ')'};
-		QStringList start_tags={ QString("<strong>"), QString("<em>(") },
-				end_tags={ QString("</strong>"), QString(")</em>") };
-		int pos=-1, pos1=-1;
-
-		// Replacing the form `' by <strong></strong> and () by <em></em>
-		for(int chr_idx=0; chr_idx < 2; chr_idx++)
-		{
-			pos=0;
-			do
-			{
-				pos=fmt_msg.indexOf(start_chrs[chr_idx], pos);
-				pos1=fmt_msg.indexOf(end_chrs[chr_idx], pos);
-
-				if(pos >= 0 && pos1 >=0)
-				{
-					fmt_msg.replace(pos, 1 , start_tags[chr_idx]);
-					pos1 += start_tags[chr_idx].length() - 1;
-					fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
-				}
-				else
-					break;
-
-				pos=pos1;
-			}
-			while(pos >= 0 && pos < fmt_msg.size());
-		}
-
-		fmt_msg.replace(QString("\n"), QString("<br/>"));
-
-		return fmt_msg;
 	}
 
 	void configureWidgetFont(QWidget *widget, FontFactorId factor_id)
@@ -285,7 +279,10 @@ namespace GuiUtilsNs {
 			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet("color: #ff0000;");
 
 			if(!itr->getExtraInfo().isEmpty())
+			{
 				child_item=createOutputTreeItem(exceptions_trw, itr->getExtraInfo(), QPixmap(getIconPath("info")), item, false, true);
+				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet("font-style: italic;");
+			}
 
 			idx++; itr++;
 
@@ -293,7 +290,7 @@ namespace GuiUtilsNs {
 			 * the production or reduntant/useless information on the exception message box */
 			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
 			{
-				text = QT_TR_NOOP("Another %1 error(s) were suppressed due to stacktrace size limits.");
+				text = QT_TR_NOOP("Other %1 error(s) were suppressed due to stacktrace size limits.");
 				text = text.arg(list.size() - idx);
 				createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("alert")), item, false, false);
 				break;
@@ -306,9 +303,50 @@ namespace GuiUtilsNs {
 		return QString(":/icons/icons/%1.png").arg(icon);
 	}
 
-	QString getIconPath(ObjectType obj_type)
+	QString getIconPath(ObjectType obj_type, int sub_type)
 	{
-		return getIconPath(BaseObject::getSchemaName(obj_type));
+		QString suffix;
+
+		if(sub_type >= 0)
+		{
+			if(obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Relationship)
+			{
+				BaseRelationship::RelType rel_type = static_cast<BaseRelationship::RelType>(sub_type);
+
+				if(obj_type == ObjectType::BaseRelationship)
+				{
+					if(rel_type==BaseRelationship::RelationshipFk)
+						suffix = "fk";
+					else
+						suffix = "tv";
+				}
+				else if(rel_type == BaseRelationship::Relationship11)
+					suffix = "11";
+				else if(rel_type == BaseRelationship::Relationship1n)
+					suffix = "1n";
+				else if(rel_type == BaseRelationship::RelationshipNn)
+					suffix = "nn";
+				else if(rel_type == BaseRelationship::RelationshipDep)
+					suffix = "dep";
+				else if(rel_type == BaseRelationship::RelationshipGen)
+					suffix = "gen";
+			}
+			else if(obj_type==ObjectType::Constraint)
+			{
+				if(sub_type == ConstraintType::PrimaryKey)
+					suffix = QString("_%1").arg(TableObjectView::TextPrimaryKey);
+				else if(sub_type == ConstraintType::ForeignKey)
+					suffix = QString("_%1").arg(TableObjectView::TextForeignKey);
+				else if(sub_type == ConstraintType::Check)
+					suffix = QString("_%1").arg(TableObjectView::TextCheck);
+				else if(sub_type == ConstraintType::Unique)
+					suffix = QString("_%1").arg(TableObjectView::TextUnique);
+				else if(sub_type == ConstraintType::Exclude)
+					suffix = QString("_%1").arg(TableObjectView::TextExclude);
+			}
+		}
+
+		return getIconPath(BaseObject::getSchemaName(obj_type) + suffix);
 	}
 
 	void resizeDialog(QWidget *widget)
@@ -316,20 +354,12 @@ namespace GuiUtilsNs {
 		if(!widget)
 			return;
 
-		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0;
-		QScreen *screen=qApp->primaryScreen();
-		/* double dpi_factor = 0;
-		double pixel_ratio = 0;
+		QScreen *screen = qApp->primaryScreen();
+		QSize min_size = widget->minimumSize(),
+				screen_sz = screen->size();
 
-		dpi_factor = screen->logicalDotsPerInch() / 96.0;
-		pixel_ratio = screen->devicePixelRatio(); */
-
-		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		/* if(dpi_factor <= 1.01)
-			return; */
-
-		max_h = screen->size().height() * 0.70;
+		max_h = screen_sz.height() * 0.70;
 
 		/* If the widget's minimum size is zero then we need to do
 				a size adjustment on the widget prior to insert it into the dialog */
@@ -353,30 +383,56 @@ namespace GuiUtilsNs {
 		/* curr_w *= dpi_factor * pixel_ratio;
 		curr_h *= dpi_factor * pixel_ratio; */
 
-		if(curr_w > screen->size().width())
-			curr_w = screen->size().width() * 0.80;
+		if(curr_w > screen_sz.width())
+			curr_w = screen_sz.width() * 0.80;
 
-		if(curr_h > screen->size().height())
-			curr_h = screen->size().height() * 0.80;
+		if(curr_h > screen_sz.height())
+			curr_h = screen_sz.height() * 0.80;
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
-		widget->adjustSize();
+		//widget->adjustSize();
 	}
 
-	void bulkDataEdit(QTableWidget *results_tbw)
+	void openColumnDataForm(const QModelIndex &index)
+	{
+		if(!index.isValid())
+			return;
+
+		BaseForm base_form;
+		ColumnDataWidget *col_data_wgt = new ColumnDataWidget;
+
+		base_form.setMainWidget(col_data_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkButton);
+
+		col_data_wgt->setData(index.data().toString());
+		col_data_wgt->setReadOnly(true);
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_wgt->metaObject()->className());
+	}
+
+	void openColumnDataForm(QTableWidget *results_tbw)
 	{
 		if(!results_tbw)
 			return;
 
-		BaseForm base_frm;
-		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+		BaseForm base_form;
+		ColumnDataWidget *col_data_edit_wgt = new ColumnDataWidget;
 
-		base_frm.setMainWidget(bulkedit_wgt);
-		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
-		base_frm.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
+		base_form.setMainWidget(col_data_edit_wgt);
+		base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+		base_form.apply_ok_btn->setShortcut(QKeySequence("Ctrl+Return"));
 
-		if(base_frm.exec() == QDialog::Accepted)
+		if(results_tbw->selectedItems().size() == 1)
+			col_data_edit_wgt->setData(results_tbw->currentItem()->text());
+
+		GeneralConfigWidget::restoreWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
+		base_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&base_form, col_data_edit_wgt->metaObject()->className());
+
+		if(base_form.result() == QDialog::Accepted)
 		{
 			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 
@@ -386,26 +442,14 @@ namespace GuiUtilsNs {
 				{
 					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
 					{
-						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+						results_tbw->item(row, col)->setText(col_data_edit_wgt->getData());
 					}
 				}
 			}
 		}
 	}
 
-	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
-	{
-		QGraphicsDropShadowEffect *shadow=nullptr;
-
-		shadow=new QGraphicsDropShadowEffect(wgt);
-		shadow->setXOffset(x_offset);
-		shadow->setYOffset(y_offset);
-		shadow->setBlurRadius(radius);
-		shadow->setColor(color);
-		wgt->setGraphicsEffect(shadow);
-	}
-
-	void handleFileDialogSatate(QFileDialog *file_dlg, bool save_state)
+	void handleFileDialogState(QFileDialog *file_dlg, bool save_state)
 	{
 		if(!file_dlg)
 			return;
@@ -436,190 +480,165 @@ namespace GuiUtilsNs {
 
 	void saveFileDialogState(QFileDialog *file_dlg)
 	{
-		handleFileDialogSatate(file_dlg, true);
+		handleFileDialogState(file_dlg, true);
 	}
 
 	void restoreFileDialogState(QFileDialog *file_dlg)
 	{
-		handleFileDialogSatate(file_dlg, false);
+		handleFileDialogState(file_dlg, false);
 	}
 
-	void updateObjectTable(QTableWidget *tab_wgt, std::vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
+	void populateObjectsTable(QTableView *table_vw, const std::vector<BaseObject *> &objects, const QString &search_attr)
 	{
-		if(!tab_wgt || tab_wgt->columnCount() == 0)
+		if(!table_vw)
 			return;
 
-		unsigned lin_idx = 0, i = 0;
-		QTableWidgetItem *tab_item=nullptr;
-		BaseObject *parent_obj=nullptr;
-		QFont fnt;
-		QString str_aux;
-		bool new_row = false;
-
-		tab_wgt->setUpdatesEnabled(false);
-		tab_wgt->setSortingEnabled(false);
-
-		for(lin_idx=0, i=0; i < objs.size(); i++)
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
 		{
-			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
-				str_aux = QString("tv");
-			else
-				str_aux.clear();
-
-			new_row = false;
-
-			if(static_cast<int>(lin_idx) >= tab_wgt->rowCount())
-			{
-				tab_wgt->insertRow(lin_idx);
-				new_row = true;
-			}
-
-			//First column: Object name
-			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
-			fnt=tab_item->font();
-
-			tab_item->setText(objs[i]->getName());
-			tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
-			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
-			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
-
-			if(objs[i]->isProtected() || objs[i]->isSystemObject())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-			}
-			else if(dynamic_cast<TableObject *>(objs[i]) &&
-					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
-			{
-				fnt.setItalic(true);
-				tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
-			}
-			else
-				fnt.setItalic(false);
-
-			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
-			tab_item->setFont(fnt);
-			fnt.setStrikeOut(false);
-
-			//Second column: Object type
-			if(tab_wgt->columnCount() > 1)
-			{
-				fnt.setItalic(true);
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
-				tab_item->setFont(fnt);
-				tab_item->setText(objs[i]->getTypeName());
-				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
-			}
-
-			//Third column: Object id
-			if(tab_wgt->columnCount() > 2)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
-				tab_item->setText(QString::number(objs[i]->getObjectId()));
-				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
-			}
-
-			//Fourth column: Parent object name
-			if(tab_wgt->columnCount() > 3)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 3));
-
-				if(dynamic_cast<TableObject *>(objs[i]))
-					parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
-				else if(objs[i]->getSchema())
-					parent_obj=objs[i]->getSchema();
-				else if(dynamic_cast<Permission *>(objs[i]))
-					parent_obj=dynamic_cast<Permission *>(objs[i])->getObject();
-				else
-					parent_obj=objs[i]->getDatabase();
-
-				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
-				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
-				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
-
-				if(parent_obj)
-				{
-					if(parent_obj->isProtected() || parent_obj->isSystemObject())
-					{
-						fnt.setItalic(true);
-						tab_item->setForeground(ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
-					}
-					else
-						fnt.setItalic(false);
-
-					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(GuiUtilsNs::getIconPath(parent_obj->getObjectType())));
-				}
-			}
-
-			//Fifth column: Parent object type
-			if(tab_wgt->columnCount() > 4)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
-				fnt.setItalic(true);
-				tab_item->setFont(fnt);
-				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
-				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
-			}
-
-			//Sixth column: object comment
-			if(tab_wgt->columnCount() > 5)
-			{
-				attribs_map search_attribs = objs[i]->getSearchAttributes();
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
-				fnt.setItalic(false);
-				tab_item->setFont(fnt);
-
-				if(search_attr != Attributes::Name &&
-					 search_attr != Attributes::Schema &&
-					 search_attr != Attributes::Comment)
-					tab_item->setText(search_attribs[search_attr]);
-				else
-					tab_item->setText(objs[i]->getComment());
-
-				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
-			}
-
-			lin_idx++;
+			table_vw->model()->deleteLater();
+			table_vw->setModel(nullptr);
 		}
 
-		if(static_cast<int>(objs.size()) != tab_wgt->rowCount())
-			tab_wgt->setRowCount(objs.size());
-
-		tab_wgt->setUpdatesEnabled(true);
-		tab_wgt->setSortingEnabled(true);
-		tab_wgt->resizeColumnsToContents();
-
-		tab_wgt->resizeRowsToContents();
-	}
-
-	void saveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
-								const QStringList &name_filters, const QStringList &mime_filters,
-								const QString &default_suffix)
-	{
-		if(file_mode != QFileDialog::ExistingFile &&
-			 file_mode != QFileDialog::AnyFile)
+		if(objects.empty())
 			return;
 
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
+
+		// Create a proxy model for sorting purposes
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(objects, search_attr, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
+		table_vw->setUpdatesEnabled(true);
+		table_vw->setSortingEnabled(true);
+	}
+
+	void populateObjectsTable(QTableView *table_vw, const std::vector<attribs_map> &attribs)
+	{
+		if(!table_vw)
+			return;
+
+		// Scheduling the destruction of the current table view model
+		if(table_vw->model())
+		{
+			table_vw->model()->deleteLater();
+			table_vw->setModel(nullptr);
+		}
+
+		if(attribs.empty())
+			return;
+
+		table_vw->setUpdatesEnabled(false);
+		table_vw->setSortingEnabled(false);
+
+		// Create a proxy model for sorting purposes
+		CustomSortProxyModel *proxy_model = new CustomSortProxyModel(table_vw);
+		ObjectsListModel *model = new ObjectsListModel(attribs, proxy_model);
+
+		proxy_model->setSourceModel(model);
+		table_vw->setModel(proxy_model);
+
+		table_vw->resizeColumnsToContents();
+		table_vw->resizeRowsToContents();
+		table_vw->sortByColumn(0, Qt::AscendingOrder);
+		table_vw->setUpdatesEnabled(true);
+		table_vw->setSortingEnabled(true);
+	}
+
+	QStringList selectFiles(const QString &title, QFileDialog::FileMode file_mode, QFileDialog::AcceptMode accept_mode,
+													const QStringList &name_filters, const QStringList &mime_filters, const QString &default_suffix,
+													const QString &selected_file)
+	{
 		QFileDialog file_dlg;
 
 		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
 		file_dlg.setWindowTitle(title);
 		file_dlg.setDefaultSuffix(default_suffix);
-		file_dlg.setNameFilters(name_filters);
-		file_dlg.setMimeTypeFilters(mime_filters);
+		file_dlg.selectFile(selected_file);
+
+		if(!name_filters.isEmpty())
+		 file_dlg.setNameFilters(name_filters);
+
+		if(!mime_filters.isEmpty())
+			file_dlg.setMimeTypeFilters(mime_filters);
+
 		file_dlg.setFileMode(file_mode);
-		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+		file_dlg.setAcceptMode(accept_mode);
 		file_dlg.setModal(true);
+
+		GuiUtilsNs::restoreFileDialogState(&file_dlg);
+		file_dlg.exec();
+		GuiUtilsNs::saveFileDialogState(&file_dlg);
+
+		if(file_dlg.result() == QDialog::Accepted)
+			return file_dlg.selectedFiles();
+
+		return QStringList();
+	}
+
+	void populateTable(QTableWidget *tab_wgt, const CsvDocument &csv_doc)
+	{
+		if(!tab_wgt || csv_doc.isEmpty())
+			return;
+
+		int col = 0;
+		QTableWidgetItem *item = nullptr;
+
+		tab_wgt->setUpdatesEnabled(false);
+		tab_wgt->clear();
+		tab_wgt->setColumnCount(csv_doc.getColumnCount());
+
+		// Populating the header
+		for(auto &col_name : csv_doc.getColumnNames())
+		{
+			item = new QTableWidgetItem(col_name);
+			tab_wgt->setHorizontalHeaderItem(col++, item);
+		}
+
+		//Populating the grid with the data
+		for(int row = 0; row < csv_doc.getRowCount(); row++)
+		{
+			tab_wgt->insertRow(tab_wgt->rowCount());
+
+			for(int col = 0; col < csv_doc.getColumnCount(); col++)
+			{
+				item = new QTableWidgetItem(csv_doc.getValue(row, col));
+				tab_wgt->setItem(row, col, item);
+			}
+		}
+
+		tab_wgt->resizeColumnsToContents();
+		tab_wgt->setUpdatesEnabled(true);
+	}
+
+	bool selectAndSaveFile(const QByteArray &buffer, const QString &title, QFileDialog::FileMode file_mode,
+												 const QStringList &name_filters, const QStringList &mime_filters,
+												 const QString &default_suffix, const QString &selected_file)
+	{
+		if(file_mode != QFileDialog::ExistingFile &&
+			 file_mode != QFileDialog::AnyFile)
+			return false;
 
 		try
 		{
-			if(file_dlg.exec() == QDialog::Accepted &&
-				 !file_dlg.selectedFiles().isEmpty())
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptSave,
+																					name_filters, mime_filters, default_suffix,
+																					selected_file);
+
+			if(!sel_files.isEmpty())
 			{
-				return UtilsNs::saveFile(file_dlg.selectedFiles().at(0), buffer);
+				UtilsNs::saveFile(sel_files.at(0), buffer);
+				return true;
 			}
+
+			return false;
 		}
 		catch(Exception &e)
 		{
@@ -627,35 +646,130 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	QByteArray loadFile(const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters, const QStringList &mime_filters)
+	bool selectAndLoadFile(QByteArray &buffer,
+												 const QString &title, QFileDialog::FileMode file_mode, const QStringList &name_filters,
+												 const QStringList &mime_filters, const QString &selected_file)
 	{
+		buffer.clear();
+
 		if(file_mode != QFileDialog::ExistingFile &&
 			 file_mode != QFileDialog::AnyFile)
-			return QByteArray();
-
-		QFileDialog file_dlg;
-
-		file_dlg.setWindowIcon(QIcon(getIconPath("pgmodeler_logo")));
-		file_dlg.setWindowTitle(title);
-		file_dlg.setNameFilters(name_filters);
-		file_dlg.setMimeTypeFilters(mime_filters);
-		file_dlg.setFileMode(file_mode);
-		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-		file_dlg.setModal(true);
+			return false;
 
 		try
 		{
-			if(file_dlg.exec() == QDialog::Accepted &&
-				 !file_dlg.selectedFiles().isEmpty())
+			QStringList sel_files = selectFiles(title, file_mode, QFileDialog::AcceptOpen,
+																					name_filters, mime_filters, "", selected_file);
+
+			if(!sel_files.isEmpty())
 			{
-				return UtilsNs::loadFile(file_dlg.selectedFiles().at(0));
+				buffer = UtilsNs::loadFile(sel_files.at(0));
+				return true;
 			}
 
-			return QByteArray();
+			return false;
 		}
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 		}
+	}
+
+	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(wgt);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(color);
+		wgt->setGraphicsEffect(shadow);
+	}
+
+	void updateDropShadow(QWidget *wgt)
+	{
+		QColor color(0, 0, 0, 80);
+		int radius = 6, x = 1, y = 1;
+
+		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light ||
+				AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
+		{
+			radius = 1;
+			color.setRgb(225, 225, 225);
+			color.setAlpha(255);
+		}
+
+		if(!wgt->graphicsEffect())
+			createDropShadow(wgt, x, y, radius, color);
+		else
+		{
+			QGraphicsDropShadowEffect *shadow =
+					qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+
+			shadow->setColor(color);
+			shadow->setOffset(x, y);
+			shadow->setBlurRadius(radius);
+		}
+	}
+
+	void updateDropShadows(QWidgetList widgets, const QString &class_name)
+	{
+		for(auto &wgt : widgets)
+		{
+			if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
+				updateDropShadow(wgt);
+		}
+	}
+
+	void createPasswordShowAction(QLineEdit *parent_edt)
+	{
+		if(!parent_edt ||
+				parent_edt->echoMode() != QLineEdit::Password)
+			return;
+
+		/* Appeding an action to the line edit which in turn creates a tool button.
+		 * That toolbutton that is used to handle the visiblity of the password */
+		parent_edt->addAction(new QAction(parent_edt), QLineEdit::TrailingPosition);
+
+		/* After creating the tool button we have to get the list of child tool buttons
+		 * If the flag clearButtonEnabled is true, we'll have a list with two elements
+		 * being the first the clear button and the last the recently added button
+		 * to control password visiblity */
+		QList<QToolButton *> btns = parent_edt->findChildren<QToolButton *>();
+		QToolButton *btn = nullptr;
+
+		btn = btns.last();
+		btn->setObjectName("password_show_btn"); // This is the name of the button referenced in the UI stylesheets
+		btn->setVisible(false);
+
+		/* Setting a custom property in the button to control the
+		 * icon state and echo mode of the parent input. This is changed
+		 * when the user clicks the password visibility icon */
+		static const char pass_attr[] = "pass_visible";
+		btn->setProperty(pass_attr, false);
+
+		// Hiding the password automatically when parent_edt loses focus
+		QObject::connect(qApp, &QApplication::focusChanged, parent_edt, [parent_edt, btn](QWidget *old_obj, QWidget *){
+			if(old_obj != parent_edt)
+				return;
+
+			btn->setIcon(QIcon(getIconPath("hidepwd")));
+			parent_edt->setEchoMode(QLineEdit::Password);
+			btn->setProperty(pass_attr, false);
+		});
+
+		// Hiding the icon when the text is empty
+		QObject::connect(parent_edt, &QLineEdit::textChanged, parent_edt, [btn](const QString &txt){
+			btn->setHidden(txt.isEmpty());
+		});
+
+		// Toggles the password visiblity when the user clicks the action
+		QObject::connect(btn, &QToolButton::clicked, parent_edt, [parent_edt, btn](){
+			bool pass_visible = btn->property(pass_attr).toBool();
+			btn->setProperty(pass_attr, !pass_visible);
+			btn->setIcon(QIcon(getIconPath(pass_visible ? "hidepwd" : "showpwd")));
+			parent_edt->setEchoMode(pass_visible ? QLineEdit::Password : QLineEdit::Normal);
+		});
 	}
 }

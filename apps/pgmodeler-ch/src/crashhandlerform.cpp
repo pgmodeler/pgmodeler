@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "crashhandlerform.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
-#include "utilsns.h"
+#include "qtconnectmacros.h"
 
 const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
@@ -75,14 +75,14 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	input_sel = new FileSelectorWidget(this);
 	input_sel->setFileDialogTitle(tr("Select bug report file"));
-	input_sel->setFileMode(QFileDialog::ExistingFile);
+	input_sel->setFileMustExist(true);
 	input_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_sel->setNameFilters({ tr("pgModeler bug report (*.bug)"), tr("All files (*.*)") });
 	input_sel->setToolTip(tr("Load report file for analysis"));
 	layout->addWidget(input_sel);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(GuiUtilsNs::getIconPath("save")));
+	save_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
 	save_tb->setSizePolicy(attach_tb->sizePolicy());
 	save_tb->setToolButtonStyle(attach_tb->toolButtonStyle());
 	save_tb->setIconSize(attach_tb->iconSize());
@@ -101,14 +101,15 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, &CrashHandlerForm::loadReport);
+	connect(input_sel, &FileSelectorWidget::s_fileSelected, this, __slot_n(this, CrashHandlerForm::loadReport));
+	connect(save_tb, &QToolButton::clicked, this, __slot(this, CrashHandlerForm::saveModel));
+
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, model_txt, &QPlainTextEdit::clear);
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, details_txt, &QPlainTextEdit::clear);
 	connect(input_sel, &FileSelectorWidget::s_selectorCleared, stack_txt, &QPlainTextEdit::clear);
-	connect(save_tb, &QToolButton::clicked, this, &CrashHandlerForm::saveModel);
 
 	connect(model_txt, &QPlainTextEdit::textChanged, this, [this](){
-			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
+		save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
 	});
 }
 
@@ -167,28 +168,19 @@ void CrashHandlerForm::loadReport(QString filename)
 
 void CrashHandlerForm::saveModel()
 {
-	QFileDialog file_dlg;
-
 	try
 	{
-		file_dlg.setDefaultSuffix(GlobalAttributes::DbModelExt);
-		file_dlg.setWindowTitle(tr("Save model"));
-		file_dlg.setNameFilter(tr("Database model (*%1);;All files (*.*)").arg(GlobalAttributes::DbModelExt));
-		file_dlg.setFileMode(QFileDialog::AnyFile);
-		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-		file_dlg.setModal(true);
-
-		GuiUtilsNs::restoreFileDialogState(&file_dlg);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-			UtilsNs::saveFile(file_dlg.selectedFiles().at(0), model_txt->toPlainText().toUtf8());
-
-		GuiUtilsNs::saveFileDialogState(&file_dlg);
+		GuiUtilsNs::selectAndSaveFile(model_txt->toPlainText().toUtf8(),
+																	tr("Save model"), QFileDialog::AnyFile,
+																	{ tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt),
+																		tr("All files (*.*)") }, {},
+																	GlobalAttributes::DbModelExt);
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

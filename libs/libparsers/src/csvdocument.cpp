@@ -1,5 +1,6 @@
 #include "csvdocument.h"
 #include "utilsns.h"
+#include "exception.h"
 
 const QChar CsvDocument::TextDelimiter = '"';
 const QChar CsvDocument::Separator = ';';

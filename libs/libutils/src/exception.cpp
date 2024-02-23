@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,10 +16,11 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "exception.h"
+#include "enumtype.h"
 #include <QApplication>
 
 QString Exception::messages[Exception::ErrorCount][2]={
-	{"Custom", QString(" ")},
+	{"Custom", " "},
 	{"AsgPseudoTypeColumn", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 	{"AsgInvalidPrecision", QT_TR_NOOP("Assignment of a precision greater than the length of the type!")},
 	{"AsgInvalidPrecisionTimestamp", QT_TR_NOOP("Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!")},
@@ -157,7 +158,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvGroupDeclarationNotDefined", QT_TR_NOOP("The group `%1' has been declared but not built!")},
 	{"RefColObjectTabInvalidIndex", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"RefRowObjectTabInvalidIndex", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
-	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!")},
+	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is a protected object which is present in the database model only to be used as dependency of other objects!")},
 	{"InvFuncConfigInvalidatesObject", QT_TR_NOOP("The new configuration of the function invalidates the object `%1' (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!")},
 	{"InvSQLScopeViewReference", QT_TR_NOOP("A view reference should be used in at least one of these SQL scopes: View Definition, SELECT, FROM, WHERE or GROUP/HAVING!")},
 	{"InvConstratintNoColumns", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
@@ -218,7 +219,6 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidOpClassObject", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
 	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions must be between %2 and %3.")},
 	{"ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
-	{"ExtensionHandlingTypeImmutable", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"RefInvalidNamePatternId", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
@@ -260,7 +260,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidColumnPartitionKey", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
 	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
 	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")},
-	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
+	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name or alias to the object reference!")},
 	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
 	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
 	{"ModelFileInvalidSize", QT_TR_NOOP("An empty file was detected after saving the database model to `%1'. In order to avoid data loss, the original contents of the file prior to the last saving was saved to `%2'!")},
@@ -284,6 +284,10 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"MalformedCsvMissingDelim", QT_TR_NOOP("Malformed CSV document detected! Missing close text delimiter `%1' row `%2'!")},
 	{"RefInvCsvDocumentValue", QT_TR_NOOP("Trying to get a value from the CSV document in an invalid position: row `%1', column `%2'!")},
 	{"ModelFileSaveFailure", QT_TR_NOOP("Failed to save the database model to file `%1'! In order to avoid data loss, the backup file `%2' was restored. Note that the backup file will not be erased automatically, the user must delete it manually or, if preferred, copy it to a safe place to have an extra security copy!")},
+	{"RemExtRefChildObject", QT_TR_NOOP("The extension `%1' can't be removed because its child object `%2' (%3) is being referenced by `%4' (%5)!")},
+	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
+	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
+	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
 };
 
 Exception::Exception()
@@ -294,7 +298,7 @@ Exception::Exception()
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	configureException(msg,ErrorCode::Custom, method, file, line, extra_info);
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -303,15 +307,15 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
-						 error_code, method, file, line, extra_info);
+										 error_code, method, file, line, extra_info);
 
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
 {
 	configureException(msg,error_code, method, file, line, extra_info);
-	if(exception) addException(*exception);
+	addException(exception);
 }
 
 Exception::Exception(ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions, const QString &extra_info)
@@ -322,13 +326,13 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
 	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
-						 error_code, method, file, line, extra_info);
+										 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
 	itr_end=exceptions.end();
 	while(itr!=itr_end)
 	{
-		addException((*itr));
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -343,7 +347,7 @@ Exception::Exception(const QString &msg, const QString &method, const QString &f
 	itr_end=exceptions.end();
 	while(itr!=itr_end)
 	{
-		addException((*itr));
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -356,7 +360,7 @@ Exception::Exception(const QString &msg, ErrorCode error_code, const QString &me
 
 	while(itr!=exceptions.end())
 	{
-		addException(*itr);
+		addException(&(*itr));
 		itr++;
 	}
 }
@@ -414,32 +418,27 @@ QString Exception::getExtraInfo()
 	return extra_info;
 }
 
-void Exception::addException(Exception &exception)
+void Exception::addException(Exception *exception)
 {
-	std::vector<Exception>::iterator itr, itr_end;
+	if(!exception)
+		return;
 
-	itr=exception.exceptions.begin();
-	itr_end=exception.exceptions.end();
-
-	for(auto &itr : exception.exceptions)
+	for(auto &ex : exception->exceptions)
 	{
-		this->exceptions.push_back(Exception(itr.error_msg,itr.error_code,
-																				 itr.method, itr.file, itr.line, nullptr,
-																				 itr.extra_info));
+		this->exceptions.push_back(Exception(ex.error_msg,ex.error_code,
+																				 ex.method, ex.file, ex.line, nullptr,
+																				 ex.extra_info));
 	}
 
-	exception.exceptions.clear();
-
-	this->exceptions.push_back(Exception(exception.error_msg,exception.error_code,
-																			 exception.method,exception.file,exception.line,
-																			 nullptr,exception.extra_info));
+	this->exceptions.push_back(*exception);
+	//exception->exceptions.clear();
 }
 
 void Exception::getExceptionsList(std::vector<Exception> &list)
 {
 	list.assign(this->exceptions.begin(), this->exceptions.end());
 	list.push_back(Exception(this->error_msg,this->error_code,
-							 this->method,this->file,this->line,nullptr,this->extra_info));
+													 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
 QString Exception::getExceptionsText()
@@ -472,7 +471,7 @@ QString Exception::getExceptionsText()
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());
 		else
-			exceptions_txt+=QString("\n");
+			exceptions_txt+="\n";
 
 		itr++; idx++;
 

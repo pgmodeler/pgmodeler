@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
 
 #include "ui_sqltoolwidget.h"
 #include "utils/syntaxhighlighter.h"
-#include "connection.h"
-#include "databaseimportform.h"
-#include "datamanipulationform.h"
-#include "widgets/findreplacewidget.h"
-#include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "databaseexplorerwidget.h"
 #include "sqlexecutionwidget.h"
@@ -40,14 +35,19 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
 		Q_OBJECT
 
+		QVBoxLayout *corner_wgt_lt;
+
+		QList<QToolButton *> plugins_btns;
+
 		QToolButton *sql_exec_corner_btn;
 
 		NumberedTextEditor *sourcecode_txt;
 
 		SyntaxHighlighter *sourcecode_hl;
 
-		//! \brief Database import helper used to list objects from current connection
-		DatabaseImportHelper import_helper;
+		QWidget *corner_wgt;
+
+		bool ignore_auto_browse_flag;
 
 		/*! \brief Controls the link between a database explorer instance and SQL execution widgets.
 		When a database explorer is closed all the SQL execution panes related to it are closed too.
@@ -56,8 +56,16 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		bool eventFilter(QObject *object, QEvent *event);
 
+	protected:
+		void setPluginsButtons(const QList<QToolButton *> &list);
+
+		void resizeEvent(QResizeEvent *);
+
+		void setCornerButtonPos();
+
 	public:
 		SQLToolWidget(QWidget * parent = nullptr);
+
 		virtual ~SQLToolWidget();
 
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
@@ -66,6 +74,22 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Indicates if there is at least one database being browsed through explorer widget
 		bool hasDatabasesBrowsed();
 
+		//! \brief Indicates if there is at least one SQL execution panel with typed commands
+		bool hasSQLExecutionPanels();
+
+		//! \brief Returns the list of execution tabs associated to the specified database explorer widget
+		QWidgetList getExecutionTabs(DatabaseExplorerWidget *db_expl_wgt);
+
+		/*! \brief Moves the execution widgets stored in the internal list of sql_exec_wgts related to the current database
+		 * explorer widget when the user moves the tabs. */
+		void moveExecutionTab(DatabaseExplorerWidget *db_expl_wgt, int from_idx, int to_idx);
+
+		/*! \brief Indicates if SQL tool must ignore the auto-browse flag of the connections.
+		 * This causes a selected connection with auto-browse=true to not open an instance of
+		 * the maintanance database. Also, it causes the selected database in database_cmb to not
+		 * create an empty SQL explorer tab */
+		void ignoreAutoBrowseFlag(bool value);
+
 	public slots:
 		void configureSnippets();
 		void clearDatabases();
@@ -73,9 +97,15 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
 		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = "");
 
+		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
+		void closeDatabaseExplorer(int idx, bool confirm_close);
+
 	protected slots:
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
 		void addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file);
+
+		//! \brief Force all SQL execution widget to reload the syntax highlight configuration
+		void reloadHighlightConfigs();
 
 	private slots:
 		//! \brief Opens a connection to the selected server
@@ -91,13 +121,10 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void showSnippet(const QString &snip);
 
 		//! \brief Show the provided code in the source panel
-		void showSourceCode(const QString &source);
-
-		//! \brief Close the database explorer specified by its index. Also, closes any SQL exec. tab related to it
-		void closeDatabaseExplorer(int idx);
+		void showSourceCode(const QString &source, bool force_display);
 
 		//! \brief Close the SQL execution tab specified by its index
-		void closeSQLExecutionTab(int idx);
+		void closeSQLExecutionTab(int idx, bool confirm_close);
 
 		//! \brief Drops the database selected in the database combo
 		void dropDatabase(int database_idx);

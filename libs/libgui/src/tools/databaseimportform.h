@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,6 +120,9 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		
 		//! \brief Fills a combo box with all available databases according to the configurations of the specified import helper
 		static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
+
+		//! \brief Fills a combo box with all available databases by using the provided connection to retrieve information from catalogs
+		static void listDatabases(Connection conn, QComboBox *dbcombo);
 		
 		/*! \brief Fills a tree widget with all available database objects according to the configurations of the specified import helper.
 		The parameter 'disable_empty_grps' will make empty group items disabled. The parameter 'create_db_item' will create the root
@@ -131,7 +134,7 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 
 		/*! \brief Fills a table widget by searching only objects matching the filters configured in the provided import helper
 		 * This method will force the first item of each row to be checkable also it'll adjust the column count to fit all info retrieved from catalog */
-		static void listFilteredObjects(DatabaseImportHelper &import_hlp, QTableWidget *flt_objects_tbw);
+		static void listFilteredObjects(DatabaseImportHelper &import_hlp, QTableView* flt_objects_view);
 		
 		/*! \brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */

@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 %if {reduced-form} %then $tb %end
-[<role name=] "{name}"
+[<role name=] "&{name}"
 
 %if {reduced-form} %then
 	/> $br
@@ -16,7 +16,7 @@
 	%if {bypassrls} %then $br [ bypassrls="true"] %end
 	%if {connlimit} %then $br [ connlimit=]"{connlimit}" %end
 	%if {validity} %then $br [ validity=]"{validity}" %end
-	%if {password} %then $br [ password=]"{password}" %end
+	%if {password} %then $br [ password=]"&{password}" %end
 
 	%if {protected} %then
 		$br [ protected="true"]
@@ -32,8 +32,8 @@
 	%if {appended-sql} %then {appended-sql} %end
 	%if {prepended-sql} %then {prepended-sql} %end
 
-	%if {member-roles} %then $tb [<roles names=] "{member-roles}" [ role-type="member" />] $br %end
-	%if {admin-roles} %then $tb [<roles names=] "{admin-roles}" [ role-type="admin" />] $br %end
+	%if {member-roles} %then $tb [<roles names=] "&{member-roles}" [ role-type="member" />] $br %end
+	%if {admin-roles} %then $tb [<roles names=] "&{admin-roles}" [ role-type="admin" />] $br %end
 
 	</role> $br $br
 %end

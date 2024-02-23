@@ -3,7 +3,7 @@
 # Code generation can be broken if incorrect changes are made.
 
 [ SELECT count(oid) AS objcount FROM pg_class
-WHERE relkind IN ('r','i','S','v','m','c','f','p') ]
+WHERE relkind IN ('r','i','S','v','m','c','f','p','I') ]
 
 %if {last-sys-oid} %then
 	[ AND oid > ] {last-sys-oid}

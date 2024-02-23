@@ -4,7 +4,7 @@
 
 %if {list} %then
 	[SELECT oid, evtname AS name,
-	current_database() AS parent, 'database' AS parent_type
+	current_database() AS parent, 'database' AS parent_type, NULL AS extra_info
 	FROM pg_event_trigger AS et ]
 
 	%if {last-sys-oid} %then

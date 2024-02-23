@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,13 +62,15 @@ class __libcore  Cast: public BaseObject {
 		bool is_in_out;
 
 	protected:
-		virtual void configureSearchAttributes();
+		virtual void configureSearchAttributes() override;
 
 	public:
 		Cast();
 
+	 virtual ~Cast(){}
+
 		//! \brief This method has a hardcoded way to generated the cast's name. It'll reject any value passed by its parameter
-		virtual void setName(const QString &);
+		virtual void setName(const QString &) override;
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
@@ -103,6 +105,8 @@ class __libcore  Cast: public BaseObject {
 		virtual QString getSignature(bool=false) final;
 
 		QString getDropCode(bool cascade) final;
+
+		virtual void updateDependencies() override;
 };
 
 #endif

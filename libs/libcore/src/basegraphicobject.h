@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,6 +62,8 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		 it in the QGraphcisScene) */
 		QObject *receiver_object;
 
+		static bool updates_enabled;
+
 	protected:
 		//! \brief This attribute holds the layers in which the object is visible.
 		QList<unsigned> layers;
@@ -85,26 +87,27 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		MinZValue = -50;
 
 		BaseGraphicObject();
-		~BaseGraphicObject(void){}
+
+		virtual ~BaseGraphicObject() {}
 
 		/*! \brief Sets whether the object is protected or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the signal s_objectProtected() */
-		virtual void setProtected(bool value);
+		virtual void setProtected(bool value) override;
 
 		/*! \brief Sets whether the object is system or not (method overloading
 		 from base class BaseObject) the difference is that this method
 		 emits the same signal s_objectProtected() */
-		virtual void setSystemObject(bool value);
+		virtual void setSystemObject(bool value) override;
 
 		//! \brief Sets the object's position
-		void setPosition(QPointF pos);
+		virtual void setPosition(const QPointF &pos);
 
 		/*! \brief Sets if the objects is modified or not.
 		 This method emits the signal s_objectModified() */
 		virtual void setModified(bool value);
 
-		virtual void setSQLDisabled(bool value);
+		virtual void setSQLDisabled(bool value) override;
 
 		//! \brief Sets the fade out status of the receiver object
 		void setFadedOut(bool value);
@@ -125,7 +128,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
-		virtual QString getSourceCode(SchemaParser::CodeType)=0;
+		virtual QString getSourceCode(SchemaParser::CodeType) override = 0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);
@@ -154,6 +157,10 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		virtual void setZValue(int z_value);
 
 		int getZValue();
+
+		static void setUpdatesEnabled(bool value);
+
+		static bool isUpdatesEnabled();
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method

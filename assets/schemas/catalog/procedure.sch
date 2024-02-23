@@ -10,10 +10,23 @@
 			%set {signature} [ ns.nspname || '.' || ]
 		%end
 
-		[ SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
-		ns.nspname AS parent, 'schema' AS parent_type
-		FROM pg_proc AS pr
-		LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
+		[SELECT pr.oid, pr.proname || '(' ||
+			CASE
+			WHEN array_length(pr.proargtypes, 1) = 0 THEN ''
+			ELSE
+			  array_to_string(
+				(SELECT array_agg(
+					CASE ns.nspname
+					WHEN 'pg_catalog' then ''
+					ELSE ns.nspname || '.' 
+					END || tp.typname )
+				 FROM (SELECT unnest(proargtypes) AS oid FROM pg_proc WHERE oid = pr.oid) AS atp
+				 LEFT JOIN pg_type AS tp ON tp.oid = atp.oid
+				 LEFT JOIN pg_namespace AS ns ON ns.oid = tp.typnamespace),',')
+			END || ')' AS name,
+		    ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info	
+		 FROM pg_proc AS pr
+	 	 LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
 		%if {schema} %then
 			[ WHERE ] {is-procedure} [ AND ns.nspname = ] '{schema}'

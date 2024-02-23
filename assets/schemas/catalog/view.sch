@@ -7,7 +7,7 @@
 		%set {signature} [ ns.nspname || '.' || ]
 	%end
 
-	[SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type, NULL AS extra_info
 	 FROM pg_class AS vw
  	 LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace 
 	 WHERE vw.relkind IN ('v','m') ]
@@ -47,7 +47,7 @@
 		AND dv.classid = 'pg_rewrite'::regclass::oid AND dv.deptype = 'i'
 		AND dv.objid = dt.objid AND dv.refobjid <> dt.refobjid AND dt.classid = 'pg_rewrite'::regclass::oid
 		AND dt.refclassid = 'pg_class'::regclass::oid AND dt.refobjid = t.oid
-		AND t.relnamespace = nt.oid AND t.relkind IN ('r', 'p', 'f')
+		AND t.relnamespace = nt.oid AND t.relkind IN ('r', 'p', 'f', 'v','m')
 		AND v.oid = ] vw.oid [) AS ref_tables, ]
 
 		[ CASE

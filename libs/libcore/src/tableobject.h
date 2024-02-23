@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ class __libcore TableObject: public BaseObject {
 		bool decl_in_table;
 
 	protected:
+		QString hash_code;
+
 		//! \brief Defines that the object is included by relationship (1-1, 1-n, n-n)
 		void setAddedByLinking(bool value);
 
@@ -59,13 +61,15 @@ class __libcore TableObject: public BaseObject {
 		void setAddedByCopy(bool value);
 
 		/*! \brief Defines that the object's SQL code must be created inside parent's
-	table declaration, this is true by default. This attribute is only changed
-	on export operations. This attribute is used only by columns and constraints, other
-	types of child objects will ignore it */
+		 * table declaration, this is true by default. This attribute is only changed
+		 * on export operations. This attribute is used only by columns and constraints, other
+		 * types of child objects will ignore it */
 		void setDeclaredInTable(bool value);
 
 	public:
 		TableObject();
+
+		virtual ~TableObject(){}
 
 		//! \brief Defines the parent table for the object
 		virtual void setParentTable(BaseTable *table);
@@ -74,13 +78,13 @@ class __libcore TableObject: public BaseObject {
 		BaseTable *getParentTable();
 
 		/*! \brief This method is purely virtual to force the derived classes
-	overload this method. This also makes class TableObject
-	not instantiable */
-		virtual QString getSourceCode(SchemaParser::CodeType def_type)=0;
+		 *  overload this method. This also makes class TableObject
+		 *  not instantiable */
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override = 0;
 
-		virtual QString getDropCode(bool cascade);
+		virtual QString getDropCode(bool cascade) override;
 
-		virtual QString getSignature(bool format = true);
+		virtual QString getSignature(bool format = true) override;
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking();
@@ -100,9 +104,13 @@ class __libcore TableObject: public BaseObject {
 		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
 		static bool isTableObject(ObjectType type);
 
-		void setCodeInvalidated(bool value);
+		virtual void setCodeInvalidated(bool value) override;
 
 		void operator = (TableObject &object);
+
+		virtual void generateHashCode();
+
+		QString getHashCode();
 
 		friend class Relationship;
 		friend class PhysicalTable;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "rolewidget.h"
 #include "widgets/modelobjectswidget.h"
+#include "guiutilsns.h"
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Role)
 {
@@ -104,7 +105,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		passwd_edt->setText(role->getPassword());
 
 		validity_chk->setChecked(!role->getValidity().isEmpty());
-		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), QString("yyyy-MM-dd hh:mm:ss")));
+		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), "yyyy-MM-dd hh:mm:ss"));
 
 		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
 		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));
@@ -175,38 +176,42 @@ void RoleWidget::fillMembersTable()
 
 void RoleWidget::showSelectedRoleData()
 {
-	unsigned idx_tab;
-	int lin, idx_lin=-1;
-	BaseObject *obj_sel=nullptr;
-	Messagebox msg_box;
-
-	//Get the selected role
-	obj_sel=object_selection_wgt->getSelectedObject();
-
-	//Gets the index of the table where the role data is displayed
-	idx_tab=members_twg->currentIndex();
-	lin=members_tab[idx_tab]->getSelectedRow();
-
-	if(obj_sel)
-		idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
-
-	if(obj_sel && idx_lin < 0)
-		showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
-	else
+	try
 	{
-		/* If the current row does not has a value indicates that it is recently added and does not have
-			 data, in this case it will be removed */
-		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
-			members_tab[idx_tab]->removeRow(lin);
+		unsigned idx_tab = 0;
+		int lin = 0, idx_lin = -1;
+		BaseObject *obj_sel=nullptr;
 
-		//Raises an error if the role already is in the table
-		if(obj_sel && idx_lin >= 0)
+					 //Get the selected role
+		obj_sel=object_selection_wgt->getSelectedObject();
+
+					 //Gets the index of the table where the role data is displayed
+		idx_tab=members_twg->currentIndex();
+		lin=members_tab[idx_tab]->getSelectedRow();
+
+		if(obj_sel)
+			idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
+
+		if(obj_sel && idx_lin < 0)
+			showRoleData(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
+		else
 		{
-			msg_box.show( Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
-															.arg(obj_sel->getName())
-															.arg(name_edt->text()),
-															ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			/* If the current row does not has a value indicates that it is recently added and does not have
+				 data, in this case it will be removed */
+			if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
+				members_tab[idx_tab]->removeRow(lin);
+
+			//Raises an error if the role already is in the table
+			if(obj_sel && idx_lin >= 0)
+			{
+				Messagebox::error(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole).arg(obj_sel->getName(), name_edt->text()),
+													ErrorCode::InsDuplicatedRole, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
 		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -257,7 +262,8 @@ void RoleWidget::applyConfiguration()
 			 * its permanet protection status. May be changed in future releases */
 			if(aux_role->isSystemObject())
 			{
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject).arg(role->getName(), role->getTypeName()),
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+												.arg(aux_role->getName(), aux_role->getTypeName()),
 												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 

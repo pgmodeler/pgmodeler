@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void ObjectSelectorWidget::configureSelector()
 	connect(sel_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::showObjectView);
 	connect(rem_object_tb, &QToolButton::clicked, this, &ObjectSelectorWidget::clearSelector);
 	connect(obj_view_wgt, qOverload<BaseObject*, bool>(&ModelObjectsWidget::s_visibilityChanged),
-					this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
+						 this, qOverload<BaseObject*, bool>(&ObjectSelectorWidget::showSelectedObject));
 
 	obj_name_edt->installEventFilter(this);
 }
@@ -107,23 +107,6 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 	}
 	else
 		clearSelector();
-}
-
-void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType obj_type)
-{
-	try
-	{
-		BaseObject *object=nullptr;
-
-		if(model && std::find(sel_obj_types.begin(), sel_obj_types.end(),obj_type)!=sel_obj_types.end())
-			object=model->getObject(obj_name, obj_type);
-
-		setSelectedObject(object);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
 }
 
 void ObjectSelectorWidget::setModel(DatabaseModel *modelo)

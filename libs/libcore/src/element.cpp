@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 Element::Element()
 {
+	parent_obj = nullptr;
 	column=nullptr;
 	operator_class=nullptr;
 	sorting_attibs[NullsFirst]=false;
@@ -122,9 +123,9 @@ void Element::configureAttributes(attribs_map &attributes, SchemaParser::CodeTyp
 	else if(simple_col.isValid())
 	{
 		if(def_type == SchemaParser::SqlCode)
-			attributes[Attributes::Column] = BaseObject::formatName(simple_col.name);
+			attributes[Attributes::Column] = BaseObject::formatName(simple_col.getName());
 		else
-			attributes[Attributes::Column] = simple_col.name;
+			attributes[Attributes::Column] = simple_col.getName();
 	}
 	else
 		attributes[Attributes::Expression]=expression;
@@ -152,6 +153,19 @@ bool Element::isEqualsTo(Element &elem)
 bool Element::operator == (Element &elem)
 {
 	return isEqualsTo(elem);
+}
+
+std::vector<BaseObject *> Element::getDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	if(operator_class)
+		deps.push_back(operator_class);
+
+	if(column)
+		deps.push_back(column);
+
+	return deps;
 }
 
 bool Element::operator == (const Element &elem)

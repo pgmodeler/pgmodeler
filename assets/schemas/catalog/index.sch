@@ -9,7 +9,8 @@
 		%set {signature} {parent-name} [ || '.' || ]
 	%end
 
-	[SELECT id.indexrelid AS oid, cl.relname AS name, ] {parent-name} [ AS parent, 'table' AS parent_type
+	[SELECT id.indexrelid AS oid, cl.relname AS name, ] {parent-name} [ AS parent,
+     'table' AS parent_type, NULL AS extra_info
 	FROM pg_index AS id
 	LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid
 	LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
@@ -19,7 +20,7 @@
 		[ WHERE nspname= ] '{schema}'
 
 		%if {table} %then
-			[ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
+			[ AND ((tb.relkind = 'r' OR tb.relkind = 'm' OR tb.relkind = 'p') AND tb.relname = ] '{table}' [)]
 		%end
 	%end
 
@@ -39,8 +40,10 @@
 		[ AND ]
 	%end
 
-	[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) AND
-	 ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+	# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+	[ cl.relispartition IS FALSE
+	  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) 
+      AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 	%if {not-ext-object} %then
 		[ AND ]( {not-ext-object} )
@@ -70,6 +73,12 @@
 			[ id.indnatts AS elements_count, ]
 		%end
 
+		%if ({pgsql-ver} >=f "15.0") %then
+			[ id.indnullsnotdistinct AS nulls_not_distinct_bool, ]
+		%else
+			[ FALSE AS nulls_not_distinct_bool, ]
+		%end
+
 		({comment}) [ AS comment ]
 
 		[
@@ -84,7 +93,7 @@
 			WHERE ns.nspname= ] '{schema}'
 
 			%if {table} %then
-				[ AND ((tb.relkind = 'r' OR tb.relkind = 'm') AND tb.relname = ] '{table}' [)]
+				[ AND ((tb.relkind = 'r' OR tb.relkind = 'm' OR tb.relkind = 'p') AND tb.relname = ] '{table}' [)]
 			%end
 		%end
 
@@ -114,7 +123,9 @@
 			[ AND ]
 		%end
 
-		[ (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
+		# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+		[ cl.relispartition IS FALSE
+		  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
 		  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
 
 		%if {not-ext-object} %then

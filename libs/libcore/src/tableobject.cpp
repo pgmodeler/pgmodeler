@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "tableobject.h"
+#include "utilsns.h"
 
 TableObject::TableObject()
 {
@@ -27,6 +28,7 @@ TableObject::TableObject()
 
 void TableObject::setParentTable(BaseTable *table)
 {
+	setCodeInvalidated(table != parent_table);
 	parent_table=table;
 }
 
@@ -103,12 +105,26 @@ void TableObject::operator = (TableObject &object)
 	this->decl_in_table=object.decl_in_table;
 }
 
+void TableObject::generateHashCode()
+{
+	hash_code = UtilsNs::getStringHash(obj_name + QString::number(sql_disabled));
+}
+
+QString TableObject::getHashCode()
+{
+	return hash_code;
+}
+
 void TableObject::setCodeInvalidated(bool value)
 {
 	if(parent_table)
+	{
 		parent_table->BaseObject::setCodeInvalidated(value);
+		parent_table->resetHashCode();
+	}
 
 	BaseObject::setCodeInvalidated(value);
+	generateHashCode();
 }
 
 QString TableObject::getDropCode(bool cascade)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,29 +18,30 @@
 
 #include "schemaview.h"
 #include "objectsscene.h"
+#include "databasemodel.h"
+#include "utilsns.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
 	connect(schema, &Schema::s_objectModified, this, &SchemaView::configureObject);
 
-	sch_name=new QGraphicsSimpleTextItem;
+	sch_name = new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
+	this->addToGroup(sch_name);
 
-	box=new RoundedRectItem;
+	box = new RoundedRectItem;
 	box->setZValue(0);
+	this->addToGroup(box);
 
-	obj_selection=new RoundedRectItem;
-	obj_selection->setVisible(false);
+	obj_selection = new RoundedRectItem;
 	obj_selection->setZValue(4);
+	obj_selection->setVisible(false);
 	this->addToGroup(obj_selection);
 
-	this->addToGroup(box);
-	this->addToGroup(sch_name);
 	this->setZValue(-200);
-
 	this->configureObject();
-	all_selected=false;
 
+	all_selected = false;
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
@@ -169,12 +170,17 @@ void SchemaView::moveTo(QPointF new_pos)
 
 void SchemaView::configureObject()
 {
-	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
+	if(!BaseGraphicObject::isUpdatesEnabled())
+		return;
+
+	Schema *schema = dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();
 
+	if(!schema->isRectVisible() || children.isEmpty())
+		this->setVisible(false);
 	/* Only configures the schema view if the rectangle is visible and there are
 		children objects. Otherwise the schema view is hidden */
-	if(schema->isRectVisible() && !children.isEmpty())
+	else if(schema->isRectVisible() && !children.isEmpty())
 	{
 		QColor color;
 		QRectF rect;
@@ -183,9 +189,9 @@ void SchemaView::configureObject()
 		x1=1000000, y1=1000000, x2=-1000000, y2=-1000000, width=0,
 		height = 0, size_inc = 0, left_inc = 0, top_inc = 0;
 		QList<BaseObjectView *>::Iterator itr=children.begin();
-		BaseObjectView *obj_view = nullptr;
-		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		BaseObjectView *obj_view = nullptr;		
 		QFontMetricsF fm(LayerItem::getDefaultFont());
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
 		QList<unsigned> act_layers = scene->getActiveLayersIds();
 		int num_layers = 0;
 
@@ -238,10 +244,13 @@ void SchemaView::configureObject()
 		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
+		sch_name->setBrush(schema->getNameColor());
 		sch_name->setPos(HorizSpacing, VertSpacing);
 		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
+		prepareGeometryChange();
+
 		sp_h=(4 * HorizSpacing);
 		sp_v=(4 * VertSpacing) + txt_h;
 
@@ -274,9 +283,14 @@ void SchemaView::configureObject()
 		this->bounding_rect=rect;
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
-		this->setToolTip(schema->getName(true) +
-										 QString(" (") + schema->getTypeName() + QString(")") +
-										 QString("\nId: %1").arg(schema->getObjectId()));
+
+		QString tooltip = QString("`%1' (%2)").arg(schema->getName(true), schema->getTypeName()) +
+											QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(schema->getObjectId()));
+
+		if(!schema->getComment().isEmpty())
+			tooltip += "\n\n" + schema->getComment();
+
+		this->setToolTip(UtilsNs::formatMessage(tooltip));
 		sch_name->setToolTip(this->toolTip());
 
 		this->protected_icon->setPos(QPointF(sch_name->boundingRect().width() + sp_h ,
@@ -287,6 +301,4 @@ void SchemaView::configureObject()
 		this->configurePositionInfo(this->pos());
 		this->configureSQLDisabledInfo();
 	}
-	else
-		this->setVisible(false);
 }

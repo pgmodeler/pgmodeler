@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ QFont LayerItem::getDefaultFont()
 	QFont font = BaseObjectView::getFontStyle(Attributes::Global).font();
 
 	font.setItalic(false);
-	font.setPointSizeF(font.pointSizeF() * 0.60);
+	font.setPointSizeF(font.pointSizeF() * 0.725);
 
 	return font;
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 	else
 	{
 		RelationshipView *rel_view = dynamic_cast<RelationshipView *>(object);
-		QRectF rect = rel_view ? rel_view->__boundingRect() :
-														 QRectF(object->pos().x(),
-																		object->pos().y(),
-																		object->boundingRect().width(),
-																		object->boundingRect().height());
+		QRectF rect = rel_view ? rel_view->boundingRect() :
+											QRectF(object->pos().x(),
+														 object->pos().y(),
+														 object->boundingRect().width(),
+														 object->boundingRect().height());
 
 		obj_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
 		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));

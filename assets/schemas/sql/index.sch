@@ -32,6 +32,10 @@ $br ( {elements} $br )
 	$br ({expression}) $sp
 %end
 
+%if ({pgsql-ver} >=f "15.0") %and {nulls-not-distinct} %then
+	$br [NULLS NOT DISTINCT]
+%end
+
 %if ({pgsql-ver} >=f "11.0") %and {include-cols} %then
 	$br [INCLUDE ] ({include-cols})
 %end

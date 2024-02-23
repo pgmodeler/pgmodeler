@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,69 +17,64 @@
 */
 
 #include "modelvalidationwidget.h"
-#include "settings/configurationform.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
+#include "connectionsconfigwidget.h"
+#include "pgsqlversions.h"
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
-	try
-	{
-		setupUi(this);
+	setupUi(this);
 
-		output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
-		output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
-		output_btn->setMenu(&output_menu);
+	output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+	output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
+	output_btn->setMenu(&output_menu);
 
-		htmlitem_del=new HtmlItemDelegate(this);
-		output_trw->setItemDelegateForColumn(0, htmlitem_del);
+	htmlitem_del=new HtmlItemDelegate(this);
+	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-		version_cmb->addItem(tr("Autodetect"));
-		version_cmb->addItems(PgSqlVersions::AllVersions);
+	version_cmb->addItem(tr("Autodetect"));
+	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		options_frm->setVisible(false);
-		curr_step=0;
+	options_frm->setVisible(false);
+	curr_step=0;
 
-		validation_thread=nullptr;
-		validation_helper=nullptr;
-		this->setModel(nullptr);
+	validation_thread=nullptr;
+	validation_helper=nullptr;
+	this->setModel(nullptr);
 
-		connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
-		connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
-		connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
-		connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
-		connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
-		connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
-		connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
-		connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
-		connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
-		connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
+	connect(hide_tb, &QToolButton::clicked, this, &ModelValidationWidget::hide);
+	connect(options_btn, &QToolButton::toggled, options_frm, &QFrame::setVisible);
+	connect(sql_validation_chk, &QCheckBox::toggled, connections_cmb, &QComboBox::setEnabled);
+	connect(sql_validation_chk, &QCheckBox::toggled, version_cmb, &QComboBox::setEnabled);
+	connect(sql_validation_chk, &QCheckBox::toggled, use_tmp_names_chk, &QCheckBox::setEnabled);
+	connect(validate_btn, &QToolButton::clicked, this, &ModelValidationWidget::validateModel);
+	connect(fix_btn, &QToolButton::clicked, this, &ModelValidationWidget::applyFixes);
+	connect(cancel_btn, &QToolButton::clicked, this, &ModelValidationWidget::cancelValidation);
+	connect(connections_cmb, &QComboBox::activated, this, &ModelValidationWidget::editConnections);
+	connect(swap_ids_btn, &QToolButton::clicked, this, &ModelValidationWidget::swapObjectsIds);
 
-		connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(sql_validation_chk, &QCheckBox::toggled, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(use_tmp_names_chk, &QCheckBox::toggled, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(connections_cmb, &QComboBox::currentTextChanged, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
-			configureValidation();
-			clearOutput();
-		});
+	connect(version_cmb, &QComboBox::currentTextChanged, this, [this](){
+		configureValidation();
+		clearOutput();
+	});
 
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 }
 
 bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)
@@ -138,6 +133,7 @@ void ModelValidationWidget::createThread()
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, this, &ModelValidationWidget::clearOutput, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_fixApplied, prog_info_wgt, &QWidget::show, Qt::QueuedConnection);
 		connect(validation_helper, &ModelValidationHelper::s_relsValidationRequested, this, &ModelValidationWidget::validateRelationships);
+		connect(validation_helper, &ModelValidationHelper::s_fixFailed, this, &ModelValidationWidget::handleFixFailed, Qt::QueuedConnection);
 
 		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, this, [this](){
 			emit s_validationCanceled();
@@ -298,7 +294,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		if(tab_obj)
 		{
 			table=tab_obj->getParentTable();
-			ref_name=table->getName(true).remove('"') + QString(".") + val_info.getObject()->getName(true).remove('"');
+			ref_name=table->getName(true).remove('"') + "." + val_info.getObject()->getName(true).remove('"');
 		}
 		else
 			ref_name=val_info.getObject()->getName(true).remove('"');
@@ -392,7 +388,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				ref_name=ref_obj->getName(true);
 
 				if(tab_obj)
-					ref_name=dynamic_cast<TableObject *>(ref_obj)->getParentTable()->getName(true) + QString(".") + ref_name;
+					ref_name=dynamic_cast<TableObject *>(ref_obj)->getParentTable()->getName(true) + "." + ref_name;
 
 				if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 				{
@@ -515,7 +511,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	{
 		QPixmap ico;
 
-		msg=GuiUtilsNs::formatMessage(msg);
+		msg=UtilsNs::formatMessage(msg);
 
 		if(obj_type!=ObjectType::BaseObject)
 			ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
@@ -544,7 +540,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	object_lbl->setText(tr("Processing object: %1").arg(GuiUtilsNs::formatMessage(obj_name)));
+	object_lbl->setText(tr("Processing object: %1").arg(UtilsNs::formatMessage(obj_name)));
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(obj_type)));
 }
 
@@ -593,8 +589,7 @@ void ModelValidationWidget::validateRelationships()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
@@ -622,8 +617,8 @@ void ModelValidationWidget::editConnections()
 {
 	if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 	{
-		ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
-		emit s_connectionsUpdateRequest();
+		if(ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+			emit s_connectionsUpdateRequest();
 	}
 }
 
@@ -659,6 +654,21 @@ void ModelValidationWidget::selectObject()
 void ModelValidationWidget::copyTextOutput()
 {
 	qApp->clipboard()->setText(generateOutputText());
+}
+
+void ModelValidationWidget::handleFixFailed(Exception e)
+{
+	QTreeWidgetItem *root = nullptr, *child = nullptr;
+
+	root = GuiUtilsNs::createOutputTreeItem(output_trw, tr("Failed to apply one or more fixes. Operation aborted!"), GuiUtilsNs::getIconPath("error"));
+	child = new QTreeWidgetItem(root);
+
+	QLabel *label = new QLabel;
+	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+	label->setText(e.getErrorMessage());
+
+	output_trw->setItemWidget(child, 0, label);
 }
 
 QString ModelValidationWidget::generateOutputText()

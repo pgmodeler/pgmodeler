@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -177,6 +177,9 @@ class __libcanvas BaseTableView: public BaseObjectView {
 
 		//! \brief Selects all the relationships connected to the table
 		void selectRelationships();
+
+		//! \brief Selects the child item view in the table view that is related to tab_obj
+		void setChildSelected(TableObject *tab_obj);
 
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged

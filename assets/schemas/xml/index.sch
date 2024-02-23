@@ -2,10 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[<index name=] "{name}" [ table=] "{table}"
+[<index name=] "&{name}" [ table=] "&{table}"
 
 %if {alias} %then
-	$sp alias="{alias}"
+	$sp alias="&{alias}"
 %end
 
 $br $tb
@@ -13,6 +13,7 @@ $br $tb
 [ unique=] %if {unique} %then "true" %else "false" %end
 [ fast-update=] %if {fast-update} %then "true" %else "false" %end
 [ buffering=] %if {buffering} %then "true" %else "false" %end
+[ nulls-not-distinct=] %if {nulls-not-distinct} %then "true" %else "false" %end
 
 $br $tb
 [ index-type=] "{index-type}"
@@ -40,7 +41,7 @@ $br $tb
 %end
 
 %if {include-cols} %then
-	$tb [<columns names="] {include-cols} ["/>] $br
+	$tb [<columns names="] &{include-cols} ["/>] $br
 %end
 
 </index> $br $br

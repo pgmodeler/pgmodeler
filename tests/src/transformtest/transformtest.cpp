@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -351,13 +351,16 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 		dbmodel.addObject(&to_sql_func);
 		dbmodel.addObject(&transf);
 
-		dbmodel.getObjectReferences(&from_sql_func, refs);
+		//dbmodel.getObjectReferences(&from_sql_func, refs);
+		refs = from_sql_func.getReferences();
 		from_sql_refs = refs.size();
 
-		dbmodel.getObjectReferences(&to_sql_func, refs);
+		//dbmodel.getObjectReferences(&to_sql_func, refs);
+		refs = to_sql_func.getReferences();
 		to_sql_refs = refs.size();
 
-		dbmodel.getObjectDependecies(&transf, deps);
+		//dbmodel.getObjectDependecies(&transf, deps);
+		deps = transf.getDependencies();
 		transf_deps = deps.size();
 
 		dbmodel.removeObject(&transf);

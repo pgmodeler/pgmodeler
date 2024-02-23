@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ class __libgui LineNumbersWidget : public QWidget {
 
 		QPlainTextEdit *parent_edt;
 
+		qreal custom_fnt_size;
+
 		bool has_selection;
 
 		//! \brief The first line number that must be drawn
@@ -45,6 +47,9 @@ class __libgui LineNumbersWidget : public QWidget {
 
 		//! \brief The y axis increment to start drawn the line number
 		dy,
+
+		//! \brief The block height for each line number indicator
+		block_height,
 
 		start_sel_line, start_sel_pos;
 
@@ -64,13 +69,17 @@ class __libgui LineNumbersWidget : public QWidget {
 		explicit LineNumbersWidget(QPlainTextEdit *parent);
 
 		/*! \brief Draw the lines starting from 'first_line' and stoping at fisrt_line + line_count -1.
-		The dy param. defines an initial Y translation before drawn lines */
-		void drawLineNumbers(int first_line, int line_count, int dy);
+		 * The dy parameter defines an initial Y translation before drawn lines.
+		 * The blk_height defines the height of the initial block, this will be used to drawn the line names
+		 * at uniform heights */
+		void drawLineNumbers(int first_line, int line_count, int dy, int blk_height);
 
 		//! \brief Configures the lines for both font and widget's background
 		static void setColors(const QColor &font_color, const QColor &bg_color);
 
 		static QColor getBackgroundColor();
+
+		static QColor getFontColor();
 };
 
 #endif

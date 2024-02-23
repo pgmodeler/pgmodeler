@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "tableview.h"
+#include "utilsns.h"
 
 TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
@@ -26,6 +27,16 @@ TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 
 void TableView::configureObject()
 {
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
+
+	if(!BaseGraphicObject::isUpdatesEnabled() ||
+			(!pending_geom_update &&
+			 !curr_hash_code.isEmpty() &&
+			 (curr_hash_code == table->getHashCode())))
+		return;
+
+	curr_hash_code = table->getHashCode();
+
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
 	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
@@ -35,7 +46,6 @@ void TableView::configureObject()
 		return;
 	}
 
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
@@ -243,21 +253,19 @@ void TableView::configureObject()
 	BaseTableView::__configureObject(width);
 
 	if(table->isPartitioned())
-		table_tooltip += QString("\n%1 (%2)").arg(tr("Partitioned")).arg(~table->getPartitioningType());
+		table_tooltip += UtilsNs::formatMessage(QString("\n%1 %2 (%3)")
+																						.arg(UtilsNs::DataSeparator,
+																									tr("Partitioned"), ~table->getPartitioningType()));
 
 	if(table->isPartition())
 	{
-		table_tooltip += QString("\n%1 of %2").arg(tr("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+		table_tooltip += UtilsNs::formatMessage(QString("\n%1 %2 of `%3'")
+																						.arg(UtilsNs::DataSeparator, tr("Partition"),
+																									table->getPartitionedTable()->getSignature(true)));
 		pen = attribs_toggler->pen();
 		pen.setStyle(Qt::DashLine);
 		attribs_toggler->setPen(pen);
 	}
-
-	if(!table->getAlias().isEmpty())
-		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());
-
-	if(!table->getComment().isEmpty())
-		table_tooltip += QString("\n---\n%1").arg(table->getComment());
 
 	BaseObjectView::__configureObject();
 	configureTag();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 #include <QThread>
 #include "utilsns.h"
 #include <QDate>
-#include "catalog.h"
+#include "connection.h"
+#include "pgsqlversions.h"
 
 const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 
@@ -746,14 +747,15 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 				}
 
 				/* If the info is for DROP, generate the drop for referer objects of the
-		 one marked to be dropped */
+				 * one marked to be dropped */
 				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
 					ObjectType obj_type=object->getObjectType();
 
-					imported_model->getObjectReferences(object, ref_objs);
+					//imported_model->getObjectReferences(object, ref_objs);
+					ref_objs = object->getReferences();
 
 					for(auto &obj : ref_objs)
 					{
@@ -822,6 +824,7 @@ void ModelsDiffHelper::processDiffInfos()
 	try
 	{
 		//Overriding the global PostgreSQL version so the diff code can match the destination server version
+		BaseObject::setIgnoreDbVersion(Connection::isDbVersionIgnored());
 		BaseObject::setPgSQLVersion(pgsql_version);
 
 		if(!diff_infos.empty())
@@ -1086,7 +1089,7 @@ void ModelsDiffHelper::processDiffInfos()
 				attribs[Attributes::AlterCmds]+=itr.second;
 
 			//Generating the whole diff buffer
-			schparser.setPgSQLVersion(pgsql_version);
+			schparser.setPgSQLVersion(pgsql_version, Connection::isDbVersionIgnored());
 			diff_def=schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Diff),
 																					 attribs);
 		}
@@ -1119,27 +1122,32 @@ QString ModelsDiffHelper::getSourceCode(BaseObject *object, bool drop_cmd)
 
 		/* For columns and constraints it is needed to force the generation of
 	   ALTER commands on the parent table */
-		if(tab_obj && (tab_obj->getObjectType()==ObjectType::Column || tab_obj->getObjectType()==ObjectType::Constraint))
+		if(tab_obj && (tab_obj->getObjectType() == ObjectType::Column || tab_obj->getObjectType() == ObjectType::Constraint))
 		{
 			bool gen_alter=false;
 			PhysicalTable *table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
 
-			gen_alter=table->isGenerateAlterCmds();
-			table->setGenerateAlterCmds(true);
+			gen_alter = table->isGenerateAlterCmds();
+
+			/* Using the method __setGenerateAlterCmds() instead of setGenerateAlterCmds()
+			 * because the first it doesn't check if the table is a partition/partitioned
+			 * table allowing the generation of ALTER...ADD commands for columns and constraints anyway.
+			 * This is needed for the proper generation of diffs for partitioned tables. */
+			table->__setGenerateAlterCmds(true);
 
 			if(drop_cmd)
-				cmd=tab_obj->getDropCode(diff_opts[OptCascadeMode]);
+				cmd = tab_obj->getDropCode(diff_opts[OptCascadeMode]);
 			else
-				cmd=tab_obj->getSourceCode(SchemaParser::SqlCode);
+				cmd = tab_obj->getSourceCode(SchemaParser::SqlCode);
 
-			table->setGenerateAlterCmds(gen_alter);
+			table->__setGenerateAlterCmds(gen_alter);
 		}
 		else
 		{
 			if(drop_cmd)
-				cmd=object->getDropCode(diff_opts[OptCascadeMode]);
+				cmd = object->getDropCode(diff_opts[OptCascadeMode]);
 			else
-				cmd=object->getSourceCode(SchemaParser::SqlCode);
+				cmd = object->getSourceCode(SchemaParser::SqlCode);
 		}
 
 		return cmd;
@@ -1172,7 +1180,7 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 			object->getObjectType()!=ObjectType::Database)
 	{
 		std::vector<BaseObject *> ref_objs;
-		BaseObject *aux_obj=nullptr;
+		BaseObject *aux_obj = nullptr;
 
 		/* If the specified object is not a table's child object,
 	   try to get an object from database which name is the same as 'object' */
@@ -1193,7 +1201,8 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 		}
 
 		//Get all references to the retrieved object on the database
-		imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
+		//imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
+		ref_objs = aux_obj->getReferences(false, { ObjectType::Permission });
 
 		/* If the to-be recreate object is a constraint check if it's a pk,
 		 if so, the fk's linked to it need to be recreated as well */
@@ -1210,12 +1219,14 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 				for(i=0; i < col_cnt; i++)
 				{
 					//Get the objects referencing the source columns of the pk
-					imported_model->getObjectReferences(constr->getColumn(i, Constraint::SourceCols), ref_aux, false, true);
+					//imported_model->getObjectReferences(constr->getColumn(i, Constraint::SourceCols), ref_aux, false, true);
+					ref_aux = constr->getColumn(i, Constraint::SourceCols)->getReferences(false, { ObjectType::Permission });
 
 					//Selecting only fks from the references list
-					for(BaseObject *obj : ref_aux)
+					for(auto &obj : ref_aux)
 					{
-						aux_constr=dynamic_cast<Constraint *>(obj);
+						aux_constr = dynamic_cast<Constraint *>(obj);
+
 						if(aux_constr && aux_constr->getConstraintType()==ConstraintType::ForeignKey)
 							ref_objs.push_back(aux_constr);
 					}

@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,6 @@
 
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "messagebox.h"
-#include "widgets/colorpickerwidget.h"
-#include "widgets/numberedtexteditor.h"
 #include "widgets/fileselectorwidget.h"
 
 class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
@@ -62,16 +59,31 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 			UnitCentimeters
 		};
 
+	protected:
+		void showEvent(QShowEvent *) override;
+
 	public:
 		//! \brief Maximum number of files listed as recent models
 		static constexpr int MaxRecentModels=15;
 
 		GeneralConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration();
-		void loadConfiguration();
-		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
-		static void removeConfigurationParam(const QRegularExpression &param_reg);
+		virtual void saveConfiguration() override;
+
+		virtual void loadConfiguration() override;
+
+		/*! \brief Fills the configuration section section_id with the provided attributes map.
+		 *  This method replaces an entire configuration section, if you need to just append
+		 *  a configuration parameter without erasing the existing ones use appendConfigurationParam() */
+		static void setConfigurationSection(const QString &section_id, const attribs_map &params);
+
+		//! \brief Removes a configuration section by matching its name with the provided regular expression
+		static void removeConfigurationSection(const QRegularExpression &section_regex);
+
+		//! \brief Appends/overwrites a configuration parameter of the provided configuration section
+		static void appendConfigurationSection(const QString &section_id, const attribs_map &params);
+
+		//! \brief Returns a map containing all the configuration parameters
 		static std::map<QString, attribs_map> getConfigurationParams();
 
 		/*! \brief Returns a single value of a configuration param in the specified section id.
@@ -82,13 +94,15 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = "");
 
 	public slots:
-		void applyConfiguration();
-		void restoreDefaults();
+		virtual void applyConfiguration() override;
+		virtual void restoreDefaults() override;
 		void selectPaperSize();
 
 	private slots:
+		void setConfigurationChanged(bool changed = true) override;
 		void convertMarginUnity();
 		void resetDialogsSizes();
+		void resetAlertChoices();
 };
 
 #endif

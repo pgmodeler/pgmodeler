@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,12 +17,15 @@
 */
 
 #include "index.h"
+#include "utilsns.h"
 
 Index::Index()
 {
 	obj_type=ObjectType::Index;
-	index_attribs[Unique]=index_attribs[Concurrent]=
-			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
+
+	for(unsigned idx = Unique; idx <= NullsNotDistinct; idx++)
+		index_attribs[idx] = false;
+
 	fill_factor=90;
 	attributes[Attributes::Unique]="";
 	attributes[Attributes::Concurrent]="";
@@ -41,6 +44,7 @@ Index::Index()
 	attributes[Attributes::Buffering]="";
 	attributes[Attributes::StorageParams]="";
 	attributes[Attributes::IncludedCols]="";
+	attributes[Attributes::NullsNotDistinct]="";
 }
 
 void Index::setIndexElementsAttribute(SchemaParser::CodeType def_type)
@@ -203,7 +207,7 @@ unsigned Index::getIndexElementCount()
 
 void Index::setIndexAttribute(IndexAttrib attrib_id, bool value)
 {
-	if(attrib_id > Buffering)
+	if(attrib_id > NullsNotDistinct)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(index_attribs[attrib_id] != value);
@@ -236,7 +240,7 @@ unsigned Index::getFillFactor()
 
 bool Index::getIndexAttribute(IndexAttrib attrib_id)
 {
-	if(attrib_id > Buffering)
+	if(attrib_id > NullsNotDistinct)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return index_attribs[attrib_id];
@@ -411,6 +415,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 	setIndexElementsAttribute(def_type);
 	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : "");
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : "");
+	attributes[Attributes::NullsNotDistinct]=(index_attribs[NullsNotDistinct] ? Attributes::True : "");
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Predicate]=predicate;
 	attributes[Attributes::StorageParams]="";
@@ -435,7 +440,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 		attributes[Attributes::StorageParams]=Attributes::True;
 	}
 	else if(def_type==SchemaParser::XmlCode)
-		attributes[Attributes::Factor]=QString("0");
+		attributes[Attributes::Factor]="0";
 
 	QStringList incl_cols;
 
@@ -443,7 +448,7 @@ QString Index::getSourceCode(SchemaParser::CodeType def_type)
 		incl_cols.append(col->getName(true));
 
 	for(auto &col : incl_simple_cols)
-		incl_cols.append(BaseObject::formatName(col.name));
+		incl_cols.append(BaseObject::formatName(col.getName()));
 
 	attributes[Attributes::IncludedCols] = incl_cols.join(',');
 
@@ -532,7 +537,7 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 			if(elem.getColumn())
 				col_names.append(elem.getColumn()->getName());
 			else if(elem.getSimpleColumn().isValid())
-				col_names.append(elem.getSimpleColumn().name);
+				col_names.append(elem.getSimpleColumn().getName());
 			else
 				exprs.append(elem.getExpression());
 		}
@@ -548,4 +553,31 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void Index::updateDependencies()
+{
+	std::vector<BaseObject *> deps, aux_deps;
+
+	for(auto &elem : idx_elements)
+	{
+		aux_deps = elem.getDependencies();
+		deps.insert(deps.end(), aux_deps.begin(), aux_deps.end());
+	}
+
+	for(auto &col : included_cols)
+		deps.push_back(col);
+
+	TableObject::updateDependencies(deps);
+}
+
+void Index::generateHashCode()
+{
+	QString str_attr;
+	TableObject::generateHashCode();
+
+	for(auto &attr : index_attribs)
+		str_attr.append(QString::number(attr));
+
+	hash_code = UtilsNs::getStringHash(hash_code + str_attr);
 }

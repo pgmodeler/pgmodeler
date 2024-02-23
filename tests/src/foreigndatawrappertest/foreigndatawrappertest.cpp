@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -233,16 +233,19 @@ void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW()
 		model.addForeignDataWrapper(&fdw);
 
 		std::vector<BaseObject *> deps;
-		model.getObjectDependecies(&fdw, deps);
+		//model.getObjectDependecies(&fdw, deps);
+		deps = fdw.getDependencies();
 
 		QVERIFY(deps.size() >= 3);
 
 		deps.clear();
-		model.getObjectReferences(&func_validator, deps);
+		//model.getObjectReferences(&func_validator, deps);
+		deps = func_validator.getReferences();
 		QVERIFY(deps.size() == 1);
 
 		deps.clear();
-		model.getObjectReferences(&func_handler, deps);
+		//model.getObjectReferences(&func_handler, deps);
+		deps = func_handler.getReferences();
 		QVERIFY(deps.size() == 1);
 
 		model.removeForeignDataWrapper(&fdw);

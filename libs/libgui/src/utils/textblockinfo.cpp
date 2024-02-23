@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ void TextBlockInfo::reset(void)
 	is_multi_expr = false;
 	is_closed = false;
 	closed_once = false;
+	allow_completion = false;
 }
 
 void TextBlockInfo::setGroup(const QString &grp)
@@ -49,6 +50,11 @@ void TextBlockInfo::setMultiExpr(bool value)
 	is_multi_expr = value;
 }
 
+void TextBlockInfo::setAllowCompletion(bool value)
+{
+	allow_completion = value;
+}
+
 QString TextBlockInfo::getGroup()
 {
 	return group;
@@ -67,4 +73,9 @@ bool TextBlockInfo::isClosedOnce()
 bool TextBlockInfo::isClosed()
 {
 	return is_closed;
+}
+
+bool TextBlockInfo::isCompletionAllowed()
+{
+	return allow_completion;
 }

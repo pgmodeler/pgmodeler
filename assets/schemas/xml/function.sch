@@ -10,9 +10,9 @@
 		[ ref-type=] "{ref-type}"
 	%end
 
-	[ signature=] "{signature}"
+	[ signature=] "&{signature}"
 %else
-	[ name=] "{name}"
+	[ name=] "&{name}"
 %end
 
 %if {reduced-form} %then
@@ -58,7 +58,7 @@
 	$tb </return-type> $br
 
 	%if {transform-types} %then
-		$tb [<transform-types names=] "{transform-types}" /> $br
+		$tb [<transform-types names=] "&{transform-types}" /> $br
 	%end
 
 	%if {config-params} %then
@@ -69,10 +69,10 @@
 
 
 	%if {library} %then
-		$tb [<definition library=] "{library}"
+		$tb [<definition library=] "&{library}"
 
 		%if {symbol} %then
-			[ symbol=] "{symbol}"
+			[ symbol=] "&{symbol}"
 		%end
 
 		/> $br

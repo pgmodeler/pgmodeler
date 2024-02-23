@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,12 +45,14 @@ class __libcore Tag: public BaseObject {
 	public:
 		Tag();
 
+	 virtual ~Tag(){}
+
 		/*! \brief Set the tag name. Different from regular database model object there is no rule
 	when setting the name. The only exception is that the name cannot be greater than
 	BaseObject::OBJECT_NAME_MAX_LENGTH */
-		void setName(const QString &name) final;
+		virtual void setName(const QString &name) final;
 
-		QString getName(bool=false, bool=false) final;
+		virtual QString getName(bool=false, bool=false) final;
 
 		//! \brief Set the specified element id color
 		void setElementColor(const QString &elem_id, const QColor &color, ColorId color_id);
@@ -67,8 +69,8 @@ class __libcore Tag: public BaseObject {
 	an error if the current element does not have at least 2 colors configured */
 		QLinearGradient getFillStyle(const QString &elem_id);
 
-		QString getSourceCode(SchemaParser::CodeType def_type);
-		QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) override;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool reduced_form) final;
 
 		static QStringList getColorAttributes(void);
 

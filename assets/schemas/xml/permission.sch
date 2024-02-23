@@ -18,14 +18,14 @@
 > $br
 
 
-$tb [<object name=] "{object}"
+$tb [<object name=] "&{object}"
 
-%if {parent} %then [ parent=] "{parent}" %end
+%if {parent} %then [ parent=] "&{parent}" %end
 
 [ type=] "{type}" [/>] $br
 
 %if {roles} %then
-	$tb [<roles names=] "{roles}" [/>] $br
+	$tb [<roles names=] "&{roles}" [/>] $br
 %end
 
 $tb [<privileges]

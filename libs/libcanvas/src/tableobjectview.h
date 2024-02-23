@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@
 #ifndef TABLE_OBJECT_VIEW_H
 #define TABLE_OBJECT_VIEW_H
 
-#include "view.h"
-#include "table.h"
 #include "baseobjectview.h"
+#include "column.h"
+#include "simplecolumn.h"
+#include "pgsqltypes/constrainttype.h"
+#include "pgsqltypes/pgsqltype.h"
 
 class __libcanvas TableObjectView: public BaseObjectView {
 	private:
@@ -80,10 +82,8 @@ class __libcanvas TableObjectView: public BaseObjectView {
 		};
 
 		TableObjectView(TableObject *object=nullptr);
-		virtual ~TableObjectView();
 
-		//! \brief Configures the object as a view reference
-		void configureObject(Reference reference);
+		virtual ~TableObjectView();
 
 		//! \brief Configures a item from a SimpleColumn instance
 		void configureObject(const SimpleColumn &col);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 */
 
 #include "baserelationship.h"
+#include "table.h"
+#include "doublenan.h"
 #include <QApplication>
 
 BaseRelationship::BaseRelationship(BaseRelationship *rel)
@@ -45,11 +47,12 @@ BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTab
 		this->connected=false;
 		this->src_mandatory=src_mandatory;
 		this->dst_mandatory=dst_mandatory;
-		this->src_table=src_tab;
-		this->dst_table=dst_tab;
 		this->rel_type=rel_type;
 		this->custom_color=QColor(Qt::transparent);
 		this->reference_fk=nullptr;
+		this->src_table=src_tab;
+		this->dst_table=dst_tab;
+
 
 		for(unsigned i=0; i < 3; i++)
 		{
@@ -159,11 +162,17 @@ void BaseRelationship::configureRelationship()
 
 BaseRelationship::~BaseRelationship()
 {
-	disconnectRelationship();
+	//disconnectRelationship();
 
 	//Unallocates the labels
-	for(unsigned i=0; i<3; i++)
-		if(lables[i]) delete lables[i];
+	for(unsigned i = 0; i < 3; i++)
+	{
+		if(lables[i])
+		{
+			delete lables[i];
+			lables[i] = nullptr;
+		}
+	}
 }
 
 void BaseRelationship::setName(const QString &name)
@@ -215,17 +224,17 @@ void BaseRelationship::setMandatoryTable(TableId table_id, bool value)
 		label_id=DstCardLabel;
 	}
 
-	if(!value) cmin=QString("0");
-	else cmin=QString("1");
+	if(!value) cmin="0";
+	else cmin="1";
 
 	if(lables[label_id])
 	{
 		if(rel_type==Relationship11)
-			lables[label_id]->setComment(cmin + QString(":1"));
+			lables[label_id]->setComment(cmin + ":1");
 		else if(rel_type==Relationship1n)
 		{
-			aux=(table_id==SrcTable ? QString("1") : QString("n"));
-			lables[label_id]->setComment(cmin + QString(":") + aux);
+			aux=(table_id==SrcTable ? "1" : "n");
+			lables[label_id]->setComment(cmin + ":" + aux);
 		}
 		else if(rel_type==RelationshipFk)
 		{
@@ -276,22 +285,7 @@ bool BaseRelationship::isTableMandatory(TableId table_id)
 
 void BaseRelationship::setConnected(bool value)
 {
-	connected=value;
-
-	if(!this->signalsBlocked())
-	{
-		src_table->setModified(true);
-
-		if(dst_table!=src_table)
-			dst_table->setModified(true);
-
-		dynamic_cast<Schema *>(src_table->getSchema())->setModified(true);
-
-		if(dst_table->getSchema()!=src_table->getSchema())
-			dynamic_cast<Schema *>(dst_table->getSchema())->setModified(true);
-
-		this->setModified(true);
-	}
+	connected = value;
 }
 
 void BaseRelationship::disconnectRelationship()
@@ -309,6 +303,11 @@ void BaseRelationship::connectRelationship()
 	{
 		setConnected(true);
 		setCodeInvalidated(true);
+
+		src_table->setModified(true);
+
+		if(src_table != dst_table)
+			dst_table->setModified(true);
 	}
 }
 
@@ -455,7 +454,7 @@ bool BaseRelationship::canSimulateRelationship11()
 
 QString BaseRelationship::getSourceCode(SchemaParser::CodeType def_type)
 {
-	QString code_def=getCachedCode(def_type);
+	QString code_def = getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlCode)
@@ -508,6 +507,7 @@ QPointF BaseRelationship::getLabelDistance(LabelId label_id)
 void BaseRelationship::setCustomColor(const QColor &color)
 {
 	custom_color=color;
+	setCodeInvalidated(color != custom_color);
 }
 
 QColor BaseRelationship::getCustomColor()
@@ -600,14 +600,18 @@ QString BaseRelationship::getRelationshipTypeName()
 	return getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View);
 }
 
+void BaseRelationship::updateDependencies()
+{
+	BaseObject::updateDependencies({ src_table, dst_table });
+}
+
 void BaseRelationship::setCodeInvalidated(bool value)
 {
-	BaseObject::setCodeInvalidated(value);
-
 	if(src_table)
 		src_table->setCodeInvalidated(value);
 
 	if(dst_table)
 		dst_table->setCodeInvalidated(value);
-}
 
+	BaseGraphicObject::setCodeInvalidated(value);
+}

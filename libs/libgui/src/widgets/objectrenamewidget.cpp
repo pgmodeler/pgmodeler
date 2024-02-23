@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,23 +19,26 @@
 #include "objectrenamewidget.h"
 #include "guiutilsns.h"
 #include "coreutilsns.h"
+#include "messagebox.h"
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
 	op_list = nullptr;
 	model = nullptr;
+	paste_mode = false;
 
 	setupUi(this);
-	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	connect(new_name_edt, &QLineEdit::returnPressed, apply_tb, &QToolButton::click);
-	connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming);
 	connect(cancel_tb, &QToolButton::clicked, this, &ObjectRenameWidget::reject);
 
 	connect(new_name_edt, &QLineEdit::textChanged, this, [this](){
 		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
 	});
+
+	handle_lbl->installEventFilter(this);
 }
 
 void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
@@ -47,42 +50,103 @@ void ObjectRenameWidget::setAttributes(std::vector<BaseObject *> objs, DatabaseM
 		tab_obj = dynamic_cast<TableObject *>(obj);
 
 		if(obj->isSystemObject())
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-												.arg(obj->getName()).arg(obj->getTypeName()),
-												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+												 .arg(obj->getName(), obj->getTypeName()),
+											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(tab_obj && tab_obj->isAddedByRelationship())
-				throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
-												.arg(tab_obj->getName())
-												.arg(tab_obj->getTypeName()),
-												ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
+											.arg(tab_obj->getName(), tab_obj->getTypeName()),
+											ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 	}
 
-	if(objs.size() == 1)
-	{
-		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(objs[0]->getSchemaName())));
-		obj_icon_lbl->setToolTip(objs[0]->getTypeName());
-		obj_name_lbl->setText(objs[0]->getName());
-		new_name_edt->setText(objs[0]->getName());
-	}
-	else
-	{
-		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectall")));
-		obj_icon_lbl->setToolTip("");
-		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objs.size()));
-		to_lbl->setVisible(false);
-		obj_name_lbl->setVisible(false);
-	}
-
-	adjustSize();
+	paste_mode = false;
 	objects = objs;
 	this->op_list = op_list;
 	this->model = model;
+
+	updateLabelsButtons();
+	adjustSize();
+}
+
+void ObjectRenameWidget::updateLabelsButtons()
+{
+	if(objects.size() == 1)
+	{
+		BaseObject *obj = objects.front();
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(obj->getSchemaName())));
+		obj_icon_lbl->setToolTip(obj->getTypeName());
+		new_name_edt->setText(obj->getName());
+		rename_lbl->setText(tr("Rename %1 <strong>%2</strong> to:").arg(obj->getTypeName().toLower(), obj->getName()));
+	}
+	else
+	{
+		new_name_edt->setText("");
+		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("objects")));
+		obj_icon_lbl->setToolTip("");
+		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objects.size()));
+	}
+
+	use_defaults_chk->setVisible(paste_mode);
+	alert_frm->setVisible(paste_mode);
+
+	if(!paste_mode)
+	{
+		cancel_tb->setText(tr("Cancel"));
+		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("close1")));
+
+		disconnect(apply_tb, nullptr, this, nullptr);
+		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::applyRenaming, Qt::UniqueConnection);
+	}
+	else
+	{
+		cancel_tb->setText(tr("Ignore"));
+		cancel_tb->setIcon(QIcon(GuiUtilsNs::getIconPath("cancel")));
+
+		disconnect(apply_tb, nullptr, this, nullptr);
+		connect(apply_tb, &QToolButton::clicked, this, &ObjectRenameWidget::validateName, Qt::UniqueConnection);
+	}
+}
+
+bool ObjectRenameWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == handle_lbl && event->type() == QEvent::MouseMove)
+	{
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
+
+		move(m_event->globalPosition().x() - width() + (handle_lbl->width() / 2),
+				 m_event->globalPosition().y() - (height() - (handle_lbl->height() / 2)));
+
+		return true;
+	}
+
+	return QDialog::eventFilter(object, event);
+}
+
+void ObjectRenameWidget::setAttributes(BaseObject *object)
+{
+	if(!object)
+		return;
+
+	paste_mode = true;
+	objects.clear();
+	objects.push_back(object);
+	updateLabelsButtons();
+	adjustSize();
+}
+
+QString ObjectRenameWidget::getNewName()
+{
+	return new_name_edt->text();
 }
 
 int ObjectRenameWidget::exec()
 {
-	if(!objects.empty() && op_list)
+	if(paste_mode || (!objects.empty() && op_list))
 		return QDialog::exec();
 
 	return QDialog::Rejected;
@@ -92,8 +156,6 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 {
 	op_list = nullptr;
 	model = nullptr;
-	new_name_edt->clear();
-	obj_name_lbl->clear();
 }
 
 void ObjectRenameWidget::applyRenaming()
@@ -120,7 +182,7 @@ void ObjectRenameWidget::applyRenaming()
 			std::map<unsigned, BaseObject *>::reverse_iterator itr;
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
-			QString fmt_name, new_name;
+			QString prev_name, new_name;
 			std::vector<BaseObject *> ref_objs, obj_list;
 			std::vector<TableObject *> tab_objs;
 			std::map<ObjectType, std::vector<BaseObject *>> obj_map;
@@ -137,6 +199,7 @@ void ObjectRenameWidget::applyRenaming()
 			for(itr = sel_objs_map.rbegin(); itr != sel_objs_map.rend(); itr++)
 			{
 				object = itr->second;
+				prev_name = object->getName();
 				new_name = new_name_edt->text();
 				obj_type = object->getObjectType();
 				graph_obj = dynamic_cast<BaseGraphicObject *>(object);
@@ -183,8 +246,7 @@ void ObjectRenameWidget::applyRenaming()
 				//If the renamed object is a graphical one, set as modified to force its redraw
 				if(object->getObjectType() == ObjectType::Schema)
 				{
-					model->validateSchemaRenaming(dynamic_cast<Schema *>(object), new_name);
-					dynamic_cast<Schema *>(object)->setModified(true);
+					model->validateSchemaRenaming(dynamic_cast<Schema *>(object), prev_name);
 				}
 				else if(graph_obj)
 				{
@@ -208,16 +270,10 @@ void ObjectRenameWidget::applyRenaming()
 					dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 				}
 
-				Column *col = nullptr;
-				model->getObjectReferences(object, ref_objs);
-
-				for(auto &obj : ref_objs)
+				for(auto &obj : object->getReferences())
 				{
-					if(obj->getObjectType()==ObjectType::Column)
-					{
-						col=dynamic_cast<Column *>(obj);
-						col->getParentTable()->setModified(true);
-					}
+					if(obj->getObjectType() == ObjectType::Column)
+						dynamic_cast<Column *>(obj)->getParentTable()->setModified(true);
 				}
 
 				renamed_objs++;
@@ -232,16 +288,27 @@ void ObjectRenameWidget::applyRenaming()
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		if(obj_type != ObjectType::Database)
 			op_list->removeLastOperation();
-
-		msg_box.show(e);
 
 		if(renamed_objs > 0)
 			accept();
 		else
 			reject();
 	}
+}
+
+void ObjectRenameWidget::validateName()
+{
+	if(!BaseObject::isValidName(new_name_edt->text()))
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::AsgInvalidNameObject),
+											ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+		return;
+	}
+
+	accept();
 }

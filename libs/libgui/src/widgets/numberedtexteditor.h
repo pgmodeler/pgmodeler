@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,13 +67,17 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 		QLabel *msg_lbl;
 
-		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
+		QToolButton *load_file_btn, *edit_src_btn, *clear_btn, *save_file_btn, *word_wrap_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
 
 		//! \brief The process object that holds the source code editor app
 		QProcess src_editor_proc;
+
+		/*! \brief Determines a custom font size used by the text editor widget as well as the line numbers widget
+		 * The default is to use the font size of the default font (see setDefaultFont) */
+		qreal custom_fnt_size;
 
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
@@ -83,13 +87,15 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void keyPressEvent(QKeyEvent *event);
 
 	public:
-		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false);
+		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false, qreal custom_fnt_size = 0);
 		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
 		static void setLineNumbersVisible(bool value);
 		static void setHighlightLines(bool value);
+		static bool isHighlightLines();
 		static void setLineHighlightColor(const QColor &color);
+		static QColor getLineHighlightColor();
 		static void setTabDistance(double value);
 		static double getTabDistance();
 		static void setSourceEditorApp(const QString &app);
@@ -103,6 +109,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	private slots:
 		void showContextMenu();
 
+		void pasteCode();
+
 		void changeSelectionToLower();
 		void changeSelectionToUpper();
 		void changeSelectionCase(bool lower);
@@ -112,8 +120,9 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void identSelection(bool ident_right);
 
 		void loadFile();
+		void saveFile();
 		void editSource();
-		void updateSource(int exit_code);
+		void updateSource(int exit_code, QProcess::ExitStatus);
 		void handleProcessStart();
 		void handleProcessError();
 		void enableEditor();

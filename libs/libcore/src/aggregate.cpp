@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -94,11 +94,11 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 	else return true;
 }
 
-void Aggregate::setStateType(PgSqlType state_type)
+void Aggregate::setStateType(PgSqlType st_type)
 {
-	state_type.reset();
-	setCodeInvalidated(this->state_type != state_type);
-	this->state_type=state_type;
+	st_type.reset();
+	setCodeInvalidated(state_type != st_type);
+	state_type = st_type;
 }
 
 void Aggregate::setInitialCondition(const QString &cond)
@@ -170,7 +170,8 @@ void Aggregate::removeDataType(unsigned type_idx)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Removes the type at the specified position
-	data_types.erase(data_types.begin() + type_idx);
+	auto type_itr = data_types.begin() + type_idx;
+	data_types.erase(type_itr);
 	setCodeInvalidated(true);
 }
 
@@ -291,7 +292,7 @@ QString Aggregate::getSignature(bool format)
 	QStringList types;
 
 	if(data_types.empty())
-		types.push_back(QString("*"));
+		types.push_back("*");
 	else
 	{
 		for(auto &tp : data_types)
@@ -311,4 +312,17 @@ void Aggregate::configureSearchAttributes()
 		list += *type;
 
 	search_attribs[Attributes::Type] = list.join("; ");
+}
+
+void Aggregate::updateDependencies()
+{
+	std::vector<BaseObject *> dep_objs = {
+		functions[FinalFunc], functions[TransitionFunc],
+		sort_operator, state_type.getObject()
+	};
+
+	for(auto &type : data_types)
+		dep_objs.push_back(type.getObject());
+
+	BaseObject::updateDependencies(dep_objs);
 }

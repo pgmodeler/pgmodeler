@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,6 +129,9 @@ class __libgui ModelValidationHelper: public QObject {
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
 		void s_fixApplied();
+
+		//! \brief This signal is emitted when the validator failed to apply some fix via resolveConflict
+		void s_fixFailed(Exception e);
 
 		//! \brief This signal is emitted when the validator changes some objects id by swapping or update operations
 		void s_objectIdChanged(BaseObject *object);

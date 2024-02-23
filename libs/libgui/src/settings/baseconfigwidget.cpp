@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,16 +20,28 @@
 #include "messagebox.h"
 #include <QDate>
 #include "utilsns.h"
+#include "attributes.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {
 	config_changed=false;
 }
 
-void BaseConfigWidget::addConfigurationParam(std::map<QString, attribs_map> &config_params, const QString &param, const attribs_map &attribs)
+void BaseConfigWidget::setConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params)
 {
-	if(!param.isEmpty() && !attribs.empty())
-		config_params[param]=attribs;
+	if(section_id.isEmpty() || params.empty())
+		return;
+
+	config_params[section_id]=params;
+}
+
+void BaseConfigWidget::appendConfigurationSection(std::map<QString, attribs_map> &config_params, const QString &section_id, const attribs_map &params)
+{
+	if(section_id.isEmpty() || params.empty())
+		return;
+
+	for(auto &itr : params)
+		config_params[section_id][itr.first] = itr.second;
 }
 
 void BaseConfigWidget::showEvent(QShowEvent *)
@@ -65,7 +77,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, std::map<QStrin
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		UtilsNs::saveFile(cfg_filename, XmlParser::convertCharsToXMLEntities(schparser.getSourceCode(sch_filename, attribs)).toUtf8());
+		UtilsNs::saveFile(cfg_filename, schparser.getSourceCode(sch_filename, attribs).toUtf8());
 
 		config_params.erase(conf_id);
 	}
@@ -176,7 +188,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, std::map<QStrin
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 

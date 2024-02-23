@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class __libcore Index: public TableObject{
 		IndexingType indexing_type;
 
 		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE, BUFFERING)
-		bool index_attribs[4];
+		bool index_attribs[5];
 
 		//! \brief Formats the elements string used by the SchemaParser
 		void setIndexElementsAttribute(SchemaParser::CodeType def_type);
@@ -65,10 +65,13 @@ class __libcore Index: public TableObject{
 			Unique,
 			Concurrent,
 			FastUpdate,
-			Buffering
+			Buffering,
+			NullsNotDistinct
 		};
 
 		Index();
+
+		virtual ~Index(){}
 
 		//! \brief Adds an element to the index using an column
 		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
@@ -170,6 +173,10 @@ class __libcore Index: public TableObject{
 		std::vector<SimpleColumn> getSimpleColumns();
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
+
+		virtual void generateHashCode() override;
 };
 
 #endif

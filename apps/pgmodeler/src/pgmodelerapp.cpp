@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
+#include "customuistyle.h"
 #include <QScreen>
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
@@ -34,19 +35,10 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msgbox;
-		msgbox.show(e);
+		//Messagebox msgbox;
+		//msgbox.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
-
-	//Checking if the user specified another widget style using the -style param
-	bool using_style=false;
-
-	for(int i=0; i < argc && !using_style; i++)
-		using_style=QString(argv[i]).contains("-style");
-
-	//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
-	if(!using_style)
-		setStyle(GlobalAttributes::DefaultQtStyle);
 
 	//Changing the current working dir to the executable's directory in
 	QDir::setCurrent(this->applicationDirPath());
@@ -75,27 +67,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	if(lang_id.isEmpty())
 		lang_id = QLocale::system().name();
 
-	loadTranslation(lang_id);
-
-	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::getPluginsPath() +
-								GlobalAttributes::DirSeparator,
-								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
-
-	while(!dir_list.isEmpty())
-	{
-		plugin_name=dir_list.front();
-		dir_list.pop_front();
-
-		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::getPluginsPath() +
-					  GlobalAttributes::DirSeparator + plugin_name +
-					  GlobalAttributes::DirSeparator + QString("lang") +
-					  GlobalAttributes::DirSeparator;
-
-		plug_lang_file=plugin_name + QString(".") + lang_id;
-		loadTranslation(plug_lang_file, plug_lang_dir);
-	}
+	loadTranslations(lang_id, true);
 }
 
 bool PgModelerApp::notify(QObject *receiver, QEvent *event)
@@ -106,14 +78,13 @@ bool PgModelerApp::notify(QObject *receiver, QEvent *event)
 	}
 	catch(Exception &e)
 	{
-		Messagebox msg_box;
-		msg_box.show(e);
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		return false;
 	}
 	catch(...)
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
+		Messagebox::error(tr("Unknown exception caught!"), ErrorCode::Custom,
+											__PRETTY_FUNCTION__, __FILE__, __LINE__);
 		return false;
 	}
 }

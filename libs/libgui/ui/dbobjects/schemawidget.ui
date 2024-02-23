@@ -32,9 +32,6 @@
       <string>&amp;Attributes</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
       <property name="leftMargin">
        <number>5</number>
       </property>
@@ -57,6 +54,19 @@
         </property>
         <property name="text">
          <string>Fill color:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="fill_color_lbl_2">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Name color:</string>
         </property>
        </widget>
       </item>

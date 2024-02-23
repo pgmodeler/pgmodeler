@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "updatenotifierwidget.h"
 #include "guiutilsns.h"
+#include "messagebox.h"
 
 UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {
@@ -38,6 +39,10 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 
 	connect(get_binary_tb, &QToolButton::clicked, this, [this](){
 		activateLink(GlobalAttributes::PgModelerDownloadURL);
+	});
+
+	connect(blog_post_tb, &QToolButton::clicked, this, [this](){
+		activateLink(blogpost);
 	});
 
 	connect(hide_tb, &QToolButton::clicked, this,	[this](){
@@ -145,8 +150,12 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 						date=json_obj.value(Attributes::Date).toString();
 				bool upd_found=(!version.isEmpty() && version!=Attributes::False);
 
+				blogpost.clear();
+
 				if(upd_found)
 				{
+					blogpost = json_obj.value(Attributes::BlogPost).toString();
+					blog_post_tb->setVisible(!blogpost.isEmpty());
 					ver_num_lbl->setText(version);
 					changelog_txt->setText(changelog);
 					ver_date_lbl->setText(date);

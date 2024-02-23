@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 #define RELATIONSHIP_VIEW_H
 
 #include "textboxview.h"
-#include "tableview.h"
-#include "relationship.h"
+#include "baserelationship.h"
+#include "basetableview.h"
 #include "beziercurveitem.h"
 
 class __libcanvas RelationshipView: public BaseObjectView {
@@ -43,6 +43,10 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 		//! \brief Graphical point radius
 		static constexpr double GraphicPointRadius=6.0;
+
+		/*! \brief The width of the path stroke used to select relationship line
+		 *  as well as add points to it */
+		static constexpr double LineSelStrokeWidth=15;
 
 		//! \brief Length of the lines linked to fk/pk columns
 		static constexpr double ConnLineLength=20.0;
@@ -73,6 +77,8 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 		//! \brief Stores the graphical representation for the participant tables
 		BaseTableView *tables[2];
+
+		QString tab_hashes[2];
 
 		/*! \brief Stores the points on tables where the relationship line is connected.
 		This attribute is updated every time the configureLine() method is called.
@@ -123,6 +129,9 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		//! \brief Configures the labels positioning
 		void configureLabels();
 
+		//! \brief Configures the relationship tooltip
+		void configureToolTip();
+
 		//! \brief Configures the descriptor form and positioning
 		void configureDescriptor();
 
@@ -142,12 +151,15 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		 * whether the relationship is identifier or not */
 		double getDefaultPenWidth();
 
+		QPainterPath rel_shape;
+
 	protected:
-		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
+		virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 		/*! \brief (Re)connects the tables to the relationship changing the signals captured.
 		This method is called whenever the placeholder usage is toggled. If the placeholders are on
@@ -159,10 +171,13 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 	public:
 		RelationshipView(BaseRelationship *rel);
+
 		virtual ~RelationshipView();
 
+		virtual QPainterPath shape() const override;
+
 		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
-		QRectF __boundingRect();
+		void configureBoundingRect();
 
 		//! \brief Returns the relationship that generates the graphical representation
 		BaseRelationship *getUnderlyingObject();
@@ -211,7 +226,7 @@ class __libcanvas RelationshipView: public BaseObjectView {
 
 	private slots:
 		//! \brief Makes the comple relationship configuration
-		void configureObject();
+		virtual void configureObject() override;
 
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);

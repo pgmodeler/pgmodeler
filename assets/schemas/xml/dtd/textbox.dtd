@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
@@ -13,3 +13,4 @@
 <!ATTLIST textbox color CDATA #IMPLIED>
 <!ATTLIST textbox faded-out (false|true) "false">
 <!ATTLIST textbox z-value CDATA #IMPLIED>
+<!ATTLIST textbox width CDATA #IMPLIED>

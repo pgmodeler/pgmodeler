@@ -19,7 +19,7 @@ QString ExcludeElement::getSourceCode(SchemaParser::CodeType def_type)
 {
 	attribs_map attributes;
 
-	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
+	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion(), BaseObject::isDbVersionIgnored());
 	attributes[Attributes::Operator]="";
 	configureAttributes(attributes, def_type);
 
@@ -38,4 +38,14 @@ bool ExcludeElement::operator == (ExcludeElement &elem)
 {
 	return (this->_operator==elem._operator &&
 					*(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
+}
+
+std::vector<BaseObject *> ExcludeElement::getDependencies()
+{
+	std::vector<BaseObject *> deps = Element::getDependencies();
+
+	if(_operator)
+		deps.push_back(_operator);
+
+	return deps;
 }

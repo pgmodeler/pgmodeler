@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include "schemaparser.h"
-#include "exception.h"
 #include <stack>
 #include <iostream>
+#include "parsersglobal.h"
+#include <QString>
 #include "attribsmap.h"
 
 class __libparsers XmlParser {
@@ -89,16 +89,6 @@ class __libparsers XmlParser {
 			NextElement,
 			PreviousElement
 		};
-
-		static const QString CharAmp, //! \brief & = &amp;
-		CharLt, //! \brief  < = &lt;
-		CharGt, //! \brief  < = &gt;
-		CharQuot, //! \brief  " = &quot;
-		CharApos, //! \brief  ' = &apos;
-		CdataStart, //! \brief Constant that indicates <![CDATA instruction start
-		CdataEnd, //! \brief Constant that indicates <![CDATA instruction end (]]>)
-		CommentStart, //! \brief Constant that indicates xml comments start
-		CommentEnd; //! \brief Constant that indicates xml comments end
 
 		XmlParser();
 		~XmlParser();
@@ -168,10 +158,6 @@ class __libparsers XmlParser {
 		/*! \brief Reset all the parser attributes, deallocating the element tree. The user have to
 		 reload the file to analyze it again */
 		void restartParser();
-
-		/*! \brief Converts any chars (operators) < > " to the respective XML entities.
-		 * This method will not convert chars between XML comments <!-- --> as well <![CDATA ]]> entity */
-		static QString convertCharsToXMLEntities(QString buf);
 };
 
 #endif

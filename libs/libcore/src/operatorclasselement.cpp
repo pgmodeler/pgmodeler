@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -189,3 +189,21 @@ bool OperatorClassElement::operator == (OperatorClassElement &elem)
 					this->op_family == elem.op_family);
 }
 
+std::vector<BaseObject *> OperatorClassElement::getDependencies()
+{
+	std::vector<BaseObject *> deps;
+
+	if(function)
+		deps.push_back(function);
+
+	if(_operator)
+		deps.push_back(_operator);
+
+	if(op_family)
+		deps.push_back(op_family);
+
+	if(storage.getObject())
+		deps.push_back(storage.getObject());
+
+	return deps;
+}

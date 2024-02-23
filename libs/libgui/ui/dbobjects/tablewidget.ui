@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
+    <width>873</width>
     <height>428</height>
    </rect>
   </property>
@@ -33,168 +33,6 @@
     <number>5</number>
    </property>
    <item row="1" column="0" colspan="2">
-    <widget class="QGroupBox" name="attributes_gb">
-     <property name="title">
-      <string>&amp;Attributes</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <item row="2" column="0" colspan="2">
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="topMargin">
-         <number>5</number>
-        </property>
-        <property name="spacing">
-         <number>5</number>
-        </property>
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="unlogged_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Unlogged</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="with_oids_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>With OID</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="enable_rls_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Enable row level security</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QCheckBox" name="gen_alter_cmds_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Generate ALTER for columns/constraints</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="force_rls_chk">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Force RLS for owner</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1">
-       <widget class="QWidget" name="tag_sel_parent" native="true"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="tag_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Tag:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="server_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Server:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QWidget" name="server_wgt" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>20</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
     <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
       <number>0</number>
@@ -205,7 +43,215 @@
        <height>22</height>
       </size>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="general_tab">
+      <attribute name="icon">
+       <iconset resource="../../res/resources.qrc">
+        <normaloff>:/icons/icons/attribute.png</normaloff>:/icons/icons/attribute.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item row="2" column="0" colspan="3">
+        <widget class="QGroupBox" name="attributes_gb">
+         <property name="title">
+          <string>Attributes</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <item row="2" column="0" colspan="2">
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="topMargin">
+             <number>5</number>
+            </property>
+            <property name="spacing">
+             <number>5</number>
+            </property>
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="unlogged_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Unlogged</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="with_oids_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>With OID</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="enable_rls_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Enable row level security</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="gen_alter_cmds_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Generate ALTER for columns/constraints</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="force_rls_chk">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Force RLS for owner</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="tag_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Tag:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="server_lbl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Server:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QWidget" name="server_wgt" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QWidget" name="tag_sel_parent" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="columns_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/column.png</normaloff>:/icons/icons/column.png</iconset>
@@ -214,7 +260,7 @@
        <string>&amp;Columns</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="constraints_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/constraint.png</normaloff>:/icons/icons/constraint.png</iconset>
@@ -223,7 +269,7 @@
        <string>Co&amp;nstraints</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_5">
+     <widget class="QWidget" name="triggers_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/trigger.png</normaloff>:/icons/icons/trigger.png</iconset>
@@ -232,7 +278,7 @@
        <string>Tri&amp;ggers</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_6">
+     <widget class="QWidget" name="rules_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/rule.png</normaloff>:/icons/icons/rule.png</iconset>
@@ -241,7 +287,7 @@
        <string>&amp;Rules</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="indexes_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/index.png</normaloff>:/icons/icons/index.png</iconset>
@@ -250,7 +296,7 @@
        <string>&amp;Indexes</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_7">
+     <widget class="QWidget" name="policies_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/policy.png</normaloff>:/icons/icons/policy.png</iconset>
@@ -259,7 +305,7 @@
        <string>&amp;Policies</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_8">
+     <widget class="QWidget" name="part_keys_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/partitionkey.png</normaloff>:/icons/icons/partitionkey.png</iconset>
@@ -334,7 +380,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tables_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
@@ -343,7 +389,7 @@
        <string>&amp;Tables</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_9">
+     <widget class="QWidget" name="options_tab">
       <attribute name="icon">
        <iconset resource="../../res/resources.qrc">
         <normaloff>:/icons/icons/config.png</normaloff>:/icons/icons/config.png</iconset>

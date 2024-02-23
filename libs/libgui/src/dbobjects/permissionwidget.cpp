@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "permissionwidget.h"
+#include "guiutilsns.h"
 
 PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Permission)
 {
@@ -78,7 +79,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
 
 		check=new QCheckBox;
-		check->setText(QString("GRANT OPTION"));
+		check->setText("GRANT OPTION");
 		check->setEnabled(false);
 		privileges_tbw->setCellWidget(i,1,check);
 		connect(check, &QCheckBox::clicked, this, &PermissionWidget::checkPrivilege);
@@ -101,8 +102,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
 
 	connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
-	connect(add_perm_tb, &QToolButton::clicked, this, &PermissionWidget::addPermission);
-	connect(upd_perm_tb, &QToolButton::clicked, this, &PermissionWidget::updatePermission);
+	connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
+	connect(upd_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::updatePermission));
 
 	connect(revoke_rb, &QRadioButton::toggled, cascade_chk, &QCheckBox::setEnabled);
 	connect(revoke_rb, &QRadioButton::toggled, this, &PermissionWidget::disableGrantOptions);
@@ -132,9 +133,12 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		unsigned priv;
 		QCheckBox *chk=nullptr, *chk1=nullptr;
 
-		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PermissionWidget::showSelectedRoleData);
+		connect(object_selection_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](){
+			__trycatch( showSelectedRoleData(); )
+		});
+
 		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
-		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, &PermissionWidget::removePermissions);
+		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
@@ -150,6 +154,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
 			privileges_tbw->setRowHidden(priv, !Permission::acceptsPermission(object->getObjectType(), priv));
 		}
+
+		privileges_tbw->resizeColumnsToContents();
 
 		listPermissions();
 		permissions_tab->blockSignals(true);
@@ -224,7 +230,7 @@ void PermissionWidget::listPermissions()
 			for(i1=0; i1 < count1; i1++)
 			{
 				str_aux+=perm->getRole(i1)->getName();
-				str_aux+=QString(",");
+				str_aux+=",";
 			}
 			str_aux.remove(str_aux.size()-1,1);
 			permissions_tab->setCellText(str_aux,i,1);
@@ -262,7 +268,7 @@ void PermissionWidget::showSelectedRoleData()
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObjectContainer)
 											.arg(role->getName())
 											.arg(role->getTypeName())
-											.arg(roles_gb->title()),
+											.arg(roles_gb->title().remove('&')),
 											ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}

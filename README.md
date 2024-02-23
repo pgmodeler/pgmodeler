@@ -12,7 +12,7 @@ An **open-source, multiplatform database modeler for PostgreSQL**. This project 
 Its feature-rich interface allows quick data modeling and fast code deployment on a server. It also supports reverse engineering by creating a visual representation of existing databases. Besides, pgModeler can also generate SQL scripts to sync a model and a database through the process called diff.
 This tool is not about modeling only, it also counts with a minimalist but functional database server administration module that allows the execution of any sort of SQL commands, and provides database browsing and data handling in a simple and intuitive UI.
 
-For more details about additional features, screenshots, and other useful information, please, visit the [project's official website](https://pgmodeler.io). For any feedback about the software visit the [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes, and releases.
+For more details about additional features, screenshots, and other useful information, please, visit the [project's official website](https://pgmodeler.io). For any feedback about the software visit the [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionally, follow pgModeler on [X](https://x.com/pgmodeler), [Bluesky](https://bsky.app/profile/pgmodeler.io) or [Mastodon](https://mastodon.social/@pgmodeler) and be up-to-date with new features, fixes, and releases.
 
 :hammer_and_wrench: Building & Installing
 ----------------------
@@ -28,12 +28,12 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
+See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/main/LICENSE) for details.
 
 :heart: pgModeler needs your support!
 -------------------
 
-* :coin: **Financial support:** a lot of knowledge and effort is being put into this project during the last **16 years** so that a reliable and constantly improved product can be delivered to the community. pgModeler is an independent project and has no sponsorship, living exclusively from [donations](https://pgmodeler.io/#donationForm) and [pre-compiled packages purchases](http://www.pgmodeler.io/purchase). If you like pgModeler and think it deserves a financial contribution, go ahead and help it!
+* :moneybag: **Financial support:** a lot of knowledge and effort is being put into this project during the last **17 years** so that a reliable and constantly improved product can be delivered to the community. pgModeler is an independent project and has no sponsorship, living exclusively from [donations](https://pgmodeler.io/#donationForm) and [pre-compiled packages purchases](https://www.pgmodeler.io/purchase). If you like pgModeler and think it deserves a financial contribution, go ahead and help it!
 
 * :man_technologist: **Developers:** pgModeler has reached a state where its solo developer can't handle all the modifications and new feature requests by himself anymore in a reasonable time. So if you know how to code in C++ using the Qt framework, and want to contribute to the development, let me know! I'll be grateful for any help with the project maintenance!
 
@@ -42,7 +42,7 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 :bookmark_tabs: Changelog
 ----------
 
-The detailed changelog can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The detailed changelog can be seen on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/main/CHANGELOG.md) file.
 
 :card_file_box: Older Releases & Code
 -------------------

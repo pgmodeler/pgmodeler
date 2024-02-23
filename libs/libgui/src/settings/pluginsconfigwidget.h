@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
 #include "widgets/objectstablewidget.h"
-#include "pgmodelerplugin.h"
+#include "pgmodelerguiplugin.h"
 #include "widgets/fileselectorwidget.h"
 
 class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
@@ -36,7 +36,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		Q_OBJECT
 
 		//! \brief Loaded plugins
-		std::vector<PgModelerPlugin *> plugins;
+		QList<PgModelerGuiPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
@@ -44,9 +44,9 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		FileSelectorWidget *root_dir_sel;
 
 		/* Disabled methods */
-		void applyConfiguration(void){}
-		void saveConfiguration(void){}
-		void restoreDefaults(void){}
+		virtual void applyConfiguration() override {}
+		virtual void saveConfiguration() override {}
+		virtual void restoreDefaults() override {}
 		void addConfigurationParam(const QString &, const attribs_map &){}
 
 	public:
@@ -55,11 +55,12 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
-		void loadConfiguration();
+		virtual void loadConfiguration() override;
 
-		/*! \brief Installs the plugins's ocnfiguration action in the provided menu.
-		 *  Additionally, it returns a list of actions that is meant to be placed in a toolbar. */
-		QList<QAction *> installPluginsActions(QMenu *menu);
+		/*! \brief Installs the plugins's configuration action in the provided menu.
+		 *  Additionally, it fills a list of actions that is meant to be placed in a toolbar,
+		 *  as well as a list of toolbuttons that is put in all database explorer widget instances. */
+		void installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns);
 
 		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);

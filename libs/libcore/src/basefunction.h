@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,11 +24,7 @@
 #ifndef BASE_FUNCTION_H
 #define BASE_FUNCTION_H
 
-#include "schema.h"
-#include "role.h"
 #include "parameter.h"
-#include "pgsqltypes/behaviortype.h"
-#include "pgsqltypes/functiontype.h"
 #include "pgsqltypes/securitytype.h"
 
 class __libcore BaseFunction: public BaseObject {
@@ -75,6 +71,8 @@ class __libcore BaseFunction: public BaseObject {
 		static const QRegularExpression ConfigParamPattern;
 
 		BaseFunction();
+
+		virtual ~BaseFunction() {}
 
 		//! \brief Sets the function name updating its signature
 		void setName(const QString &name);
@@ -166,6 +164,12 @@ class __libcore BaseFunction: public BaseObject {
 		 to adequately format the function and parameters names. By default
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
+
+		virtual void updateDependencies() = 0 ;
+
+		void updateDependencies(const std::vector<BaseObject *> &deps, const std::vector<BaseObject *> &old_deps = {});
+
+		static bool isBaseFunction(ObjectType obj_tp);
 
 		virtual QString getSourceCode(SchemaParser::CodeType def_type, bool) = 0;
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) = 0;

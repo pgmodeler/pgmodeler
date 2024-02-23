@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1075</width>
-    <height>1002</height>
+    <width>812</width>
+    <height>731</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>660</width>
-    <height>550</height>
+    <width>800</width>
+    <height>730</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -287,34 +287,12 @@
                    <number>5</number>
                   </property>
                   <item>
-                   <widget class="QCheckBox" name="drop_chk">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>If &lt;strong&gt;DB&lt;/strong&gt; is checked pgModeler will destroy the database if already exists on the server. When &lt;strong&gt;Objects&lt;/strong&gt; is checked pgModeler will execute the DROP command attached to SQL-enabled objects. &lt;strong&gt;WARNING:&lt;/strong&gt; this option leads to data loss so make sure to have a backup before exporting.</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Drop:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
                    <widget class="QRadioButton" name="drop_db_rb">
                     <property name="enabled">
                      <bool>false</bool>
                     </property>
                     <property name="text">
-                     <string>DB</string>
+                     <string>Database</string>
                     </property>
                     <property name="checked">
                      <bool>true</bool>
@@ -331,6 +309,19 @@
                     </property>
                     <property name="text">
                      <string>Ob&amp;jects</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="force_db_drop_chk">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;If the current user has the proper permissions, this option causes the termination of all existing connections to the target database before dropping it. This option takes effect only on &lt;strong&gt;PostgreSQL 13+&lt;strong&gt;, thus it'll be ignored on older versions.&lt;/p&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Force drop</string>
                     </property>
                    </widget>
                   </item>
@@ -453,6 +444,28 @@
                     <width>22</width>
                     <height>22</height>
                    </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="drop_chk">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;If &lt;strong&gt;Database&lt;/strong&gt; is checked pgModeler will destroy the database if already exists on the server. When &lt;strong&gt;Objects&lt;/strong&gt; is checked pgModeler will execute the DROP command attached to SQL-enabled objects. &lt;strong&gt;WARNING:&lt;/strong&gt; this option leads to data loss so make sure to have a backup before exporting.&lt;/p&gt;</string>
+                  </property>
+                  <property name="statusTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>Drop:</string>
                   </property>
                  </widget>
                 </item>
@@ -711,7 +724,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
+                     <string>&lt;p&gt;&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code for each object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create a single object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code of a single object. This option is used only for schemas, tables, and views.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -895,6 +908,73 @@
                 <property name="spacing">
                  <number>5</number>
                 </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="image_lbl_2">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Type:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QRadioButton" name="svg_rb">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>&amp;Vectorial (SVG)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="png_rb">
+                  <property name="text">
+                   <string>I&amp;mage (PNG)</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="image_lbl">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>File:</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="zoom_lbl">
                   <property name="enabled">
@@ -922,74 +1002,26 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="image_lbl_2">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Type:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QRadioButton" name="svg_rb">
+                <item row="0" column="3">
+                 <widget class="QCheckBox" name="override_bg_color_chk">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <property name="text">
-                   <string>&amp;Vectorial (SVG)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="image_lbl">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;By checking this option, pgModeler ignores the original canvas background color and the exported image background will be set to white so the file can be print-ready. The default behavior is to create an output image in which the background follows the canvas background color. In some cases, this behavior may not be desirable mainly if the generated image is for printing. &lt;/p&gt;</string>
                   </property>
                   <property name="text">
-                   <string>File:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QRadioButton" name="png_rb">
-                  <property name="text">
-                   <string>I&amp;mage (PNG)</string>
+                   <string>Override background color</string>
                   </property>
                   <property name="checked">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1" colspan="2">
+                <item row="2" column="1" colspan="3">
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
                   <property name="spacing">
                    <number>5</number>
@@ -1645,7 +1677,6 @@
   <tabstop>pgsqlvers_chk</tabstop>
   <tabstop>pgsqlvers1_cmb</tabstop>
   <tabstop>ignore_error_codes_chk</tabstop>
-  <tabstop>drop_chk</tabstop>
   <tabstop>drop_db_rb</tabstop>
   <tabstop>drop_objs_rb</tabstop>
   <tabstop>error_codes_edt</tabstop>

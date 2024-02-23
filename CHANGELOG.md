@@ -1,13 +1,310 @@
 Changelog
 ---------
 
+v1.1.0
+------
+<em>Release date: February 23, 2024</em><br/>
+
+* [New] Created the method Application::loadTranslations.
+* [New] FindReplaceWidget now accepts ENTER/RETURN to search texts.
+* [New] Added the method MainWindow::registerRecentModels.
+* [New] Adding support for table name completion on ALTER/DROP commands in CodeCompletionWidget.
+* [New] Added the methods PgModelerCliApp::(set|get)ParsedOptValue.
+* [New] pgModeler CLI now supports plugins.
+* [New] Created the method GuiUtils::updateDropShadow.
+* [New] Create the method BaseFunction::isBaseFunction.
+* [New] Now during object copy/paste or duplication, in case of name conflict, the user is asked to type a new name for each conflicting object.
+* [New] Adding the ability to restore the scene rect from the database model file.
+* [New] Adding support to expand canvas rect via the main window.
+* [New] Added the method FileSelectorWidget::setAppendSuffix.
+* [New] Added support for infinite canvas.
+* [Change] Minor adjustment in BaseObjectWidget::configureFormFields.
+* [Change] Moved the code that loads plugins' translations from PgModelerApp to Application::loadTranslations.
+* [Change] Updated the pgmodeler-intl.pro
+* [Change] The libutils/PgModelerPlugin class is now a base class of the new classes libgui/PgModelerGuiPlugin and libcli/PgModelerCliPlugin.
+* [Change] The subproject pgmodeler-cli now uses the classes in libcli.
+* [Change] Moved PgModelerCliApp to a dedicated library (libcli) to allow the proper creation of plugins for pgmodeler-cli.
+* [Change] Removed extra frames in pluginsconfigwidget.ui, connectionsconfigwidget.ui and snippetsconfigwidget.ui.
+* [Change] Minor adjustment in GeneralConfigWidget to change the enabled state of the "Reset alerts" button on the widget show.
+* [Change] Removed the confirmation dialog in ModelWidget::copyObjects related to copying dependencies. Now the copy of dependencies during the copy of an object is triggered by the shortcut Ctrl+Shift+C (copy selection and dependencies) or Ctrl+Shift+X (cut selection and dependencies).
+* [Change] Removed unneeded throw instruction in widget ctors.
+* [Change] Minor improvement in ModelObjectsWidget::saveTreeState/restoreTreeState to correctly restore the vertical scrollbar position.
+* [Change] Minor adjustment in MainWindow::applyConfigurations to correctly update grid settings on the current model.
+* [Change] Minor adjustment in ModelWidget::finishSceneMove.
+* [Change] Minor adjustment in ObjectsScene::setSceneRect to emit s_sceneRectChanged only when the new rect differs from the current one.
+* [Change] Removed unneeded calls to QGraphicsView::resetCachedContent in ModelWidget.
+* [Change] Forcing the drop shadows update in MainWindow::setCurrentModel every time the current model changes.
+* [Change] Minor adjustment in debug message related to model loading time.
+* [Change] Minor adjustment in ModelWidget::pasteObjects to avoid showing the rename widget when pasting table child objects.
+* [Change] Moved the function GuiUtilsNs::formatMessage to UtilsNs.
+* [Change] Minor adjustment in the example.dbm.
+* [Change] Minor adjustment in ObjectsScene::getPagesForPrinting to return the correct page size so the page delimiters can be displayed on all edges.
+* [Change] Refactored the method ObjectsScene::adjustSceneRect to get more accurate results.
+* [Change] Adjusted the default size of StyledTextboxView.
+* [Change] Changed the method FileSelectorWidget::getSelectedFile in such a way as to append the default suffix when the user types a filename that has no extension.
+* [Change] Minor adjument in FileSelectorWidget usage in ModelDatabaseDiffForm, ModelExportForm and ModelFixForm.
+* [Change] Changed the parent class of RoundedRectItem from QGraphicsRectItem to QAbstractGraphicsShapeItem due to the incorrect bounding rect returned when the rounded rect is null (all coordinates set to 0). This was causing undesired results when retrieving scene items' bounding rect.
+* [Change] Adjusted the method ObjectsScene::getPagesForPrinting to cover infinite canvas.
+* [Change] Minor adjustment in the stylesheet of NewObjectOverlayWidget.
+* [Change] Removed the origin point locks at (0,0) in ObjectsScene.
+* [Change] Changes in ModelOverviewWidget to handle the infinite canvas.
+* [Fix] Fixed the plugins' loading process by ignoring the ones that don't implement the correct interface (PgModelerCliPlugin or PgModelerGuiPlugin).
+* [Fix] Fixed a bug in MainWindow::loadModel that was not registering the loaded file as a recent model.
+* [Fix] Fixed a malformed diff code when adding a column to a partitioned table.
+* [Fix] Fixed a bug in MainWindow::updateRecentModelsMenu.
+* [Fix] Fixed a bug in GeneralConfigWidget::loadConfiguration to reset alerts when the parameter "use default disambiguation" is absent.
+* [Fix] Minor fix in ConnectionsConfigWidget that was preventing connections from being updated in MainWindow after editing them.
+* [Fix] Minor fix in ModelWidget to build in Qt 6.2.x.
+* [Fix] Minor fix in ModelWidget::pasetObjects to correctly paste table/view child objects in the destination parent table/view.
+* [Fix] Fixed the disconnect call in ObjectRenameWidget::setAttributes.
+* [Fix] Minor fix in ModelWidget::startSceneMove to reset viewport cached content.
+* [Fix] Minor fix on ObjectsScene::drawBackground in order to draw the canvas background in the correct color defined in the settings.
+* [Fix] Minor fix on all classes derived from BaseConfigWidget to correctly control the config changed status on loadConfiguration and saveConfiguration.
+* [Fix] Fixed a bug that was preventing tables and schemas from being updated graphically when adding/removing relationships in some circumstances.
+* [Fix] Fixed a bug in ModelWidget::copyObjects related to copying/pasting multiple objects.
+* [Fix] Minor fix in ModelWidget::pasteObjects when pasting copied functions.
+* [Fix] Minor fix in graphical objects tooltips in libcanvas.
+* [Fix] Fixed the trigger catalog query to avoid referencing tgparentoid field when importing from PostgreSQL 12 or below.
+* [Fix] Minor fix in MainWindow to adjust the scene size every time an operation (undo/redo) is performed in the operation list.
+* [Fix] Minor fix in ObjectsScene::drawBackground to avoid the undesired shifting on the page delimiters.
+* [Fix] Minor fix in SchemaView to avoid leaving the selection rectangle visible in the constructor.
+* [Fix] Minor fix in ObjectsScene::expandSceneRect.
+* [Fix] Fixed the PNG export process in GUI and CLI to handle infinite canvas.
+* [Fix] Fixed a bug in ModelFixForm that was not locating pgmodeler-cli on Windows.
+* [Fix] Fixed a bug in ObjectsFilterWidget that was setting wrong object types when doing a partial diff using filters generated from the changelog.
+* [Fix] Minor fix in CodeCompletionWidget in order to list columns of tables non-schema qualified. In that case, pg_catalog and public will be used as default schemas.
+* [Fix] Columns marked as PK are now restored when handling them in TableWidget.
+
+v1.1.0-beta1
+------
+<em>Release date: December 30, 2023</em><br/>
+
+* [New] Added the method Operation::getOperationInfo that returns some info (in the form of a struct) of an operation in read-only format.
+* [New] Created static methods error, info, and alert in Messagebox.
+* [New] Added support for custom font size in NumberedTextEditor/SyntaxHighlighter. This way UI elements that use objects of these classes in database object forms can keep the font size uniform even if the user has configured a different font size for source code inputs in SQL tool, for example.
+* [New] Added support for displaying a "Blog post" button in UpdateNotifierWidget.
+* [New] Added the method SQLToolWidget::moveExecutionTab.
+* [Change] Minor adjustment in ConnectionsConfigWidget openConnectionsConfiguration to return true when the user applies new connection settings or restores original connections by clicking "Cancel".
+* [Change] Adjusted the usage of ConnectionsConfigWidget::openConnectionsConfiguration on DatabaseImportForm, ModelDatabaseDiffForm, ModelValidationWidget and SQLToolWidget.
+* [Change] Minor improvement on SwapObjectsIdsWidget to preserve the sorting parameters after swapping object ids.
+* [Change] Minor change in ConnectionsConfigWidget, ModelExportForm, ModelValidationWidget related to the use of ConnectionsConfigWidget::openConnectionsConfiguration.
+* [Change] Minor improvement in Messagebox::error method in order to allow the user to specify the local in the code where the error occurred using __PRETTY_FUNCTION__, __FILE__ and __LINE__.
+* [Change] Moved the definition of template method BaseForm::setMainWidget to the outside of the class definition.
+* [Change] Refactored OperationListWidget::updateOperationList to use OperationInfo struct.
+* [Change] Minor change in operationlistwidget.ui to use icons instead of labels for operation list size and current history position.
+* [Change] Refactored the method ModelWidget::openEditingForm(QWidget*,Messagebox::ButtonId) turning it into a template method so the internal call to BaseForm::setMainWidget can be correctly used.
+* [Change] Changed the method BaseForm::setMainWidget that takes a BaseObjectWidget instance to be enabled only if a class that is inherited from BaseObjectWidget is passed as a parameter.
+* [Change] Refactored signal/slot connections that needed exception handling all over the tool.
+* [Change] Minor adjustment in MainWindow::addModel to avoid marking the model as invalidated even if it's new/empty.
+* [Change] Minor adjustment in CodeCompletionWidget to include sequences when listing living db objects.
+* [Fix] Fixed the catalog query operator.sch so argument data types can have the schema name prepended.
+* [Fix] Fixed a crash when trying to display function/procedure source code that references a domain in the parameters.
+* [Fix] Fixed the catalog queries for function and procedure to correctly format parameters' data type signatures.
+* [Fix] Fixed a problem in SwapObjectsIdsWidget::eventFilter that was not capturing arrow key press on macOS.
+* [Fix] Fixed a bug in the importing of partitioned table indexes which was affecting the results produced by the diff process.
+* [Fix] Fixed a bug in CodeCompletionWidget that was crashing when trying to list columns of an alias related to a table not schema-qualified.
+* [Fix] Fixed a bug in reverse engineering related to the importing of partition tables hierarchy.
+* [Fix] Fixed a bug in diff that was generating false-positive results for columns with the same user-defined type.
+* [Fix] Fixed a bug in LineNumbersWidget that was not aligning the line numbers with their respective lines when the font size was different from the default.
+* [Fix] Minor fix in XmlParser::readBuffer to use a const xmlError * instance instead of non-const.
+* [Fix] Minor fix in CodeCompletionWidget to avoid the displaying of the widget in a position that extrapolates the screen limits.
+* [Fix] Minor fix in the icon positioning in HtmlItemDelegate.
+
+v1.1.0-beta
+------
+<em>Release date: November 17, 2023</em><br/>
+
+* [New] Added a compatibility code in pgmodeler-cli to enable the conversion of views in the legacy structure to the newer one.
+* [New] Added support for handling object references in ViewWidget.
+* [New] Added support for NULLS NOT DISTINCT attribute in unique constraints and indexes.
+* [New] Added support for overriding the bg color when exporting the model to PNG.
+* [New] Added a grid widget in ExtensionWidget to inform the child data type names.
+* [New] Added a new method for the application path relocation by using an auxiliary file pgmpaths.conf that holds the env variables that customize assets/executables paths in pgModeler.
+* [New] Added a SQL definition tab and a new References tab that will work like references in GenericSqlWidget in ViewWidget.
+* [New] Added a step in PgModelerCliApp::fixObjectAttributes to add a <type name="ext-name"> tag in <extension> that has the deprecated handle-type attribute.
+* [New] Added missing pseudo-types.
+* [New] Added the class SimpleColumnsWidget to handle the view's columns.
+* [New] Added the methods isReferenced and hasDependencies in BaseObject.
+* [New] Added the method BaseObject::isDependingOn and BaseObject::isReferencedBy.
+* [New] Added the method GenericSQL::addObjectReferences.
+* [New] Added the method GenericSQL::setHideDescription that toggles the SQL code comment that indicates the object name/type.
+* [New] Added the method ObjectsTableWidget::getCellTextss.
+* [New] Added version descriptor for PostgreSQL 16.
+* [New] Adding field ref_alias to GenericSQL::ObjectReference.
+* [New] Created the method GlobalAttributes::init and added a call to it on all executable subprojects.
+* [New] Created the widget ObjectReferencesWidget that handles GenericSQL references.
+* [New] DatabaseImportHelper now imports extensions with the child types attached.
+* [New] Extension object now stores the name of the child types.
+* [New] In DatabaseModel, extension data types are automatically added/removed as the parent extension is added/removed from the model.
+* [New] The corner button in SQLToolWidget which adds a new SQL execution tab is now positioned aside from the last tab open.
+* [New] Validating the extension child types before adding the extension to the database model.
+* [Change] Adjusted objectdepsrefswidget.ui to make the "Display unique results" option checked by default.
+* [Change] Adjusted the class GenericSQL::Reference to use reference alias.
+* [Change] Adjusted the class ObjectReferencesWidget to use reference aliases.
+* [Change] Adjusted the CSV pasting in TableDataWidget.
+* [Change] Adjusted the DatabaseExplorerWidget::formatExtensionAttribs to display types related to an extension.
+* [Change] Adjusted the DLL export symbols to Reference and SimpleColumn (windows only).
+* [Change] Adjusted the DTD and schema file for tag <object>
+* [Change] Adjusted the DTD files view.dtd, genericsql.dtd, dbmodel.dtd, object.dtd
+* [Change] Adjusted the methods formatOidAttribs, getObjectName, getObjectNames in DatabaseExplorerWidget to accept a list of types.
+* [Change] Adjusted the SCH files view.sch, genericsql.sch, reference.sch, object.sch.
+* [Change] Changed the struct SimpleColumn into a class due to the increase in the code complexity
+* [Change] CodeCompletionWidget now resizes according to the displayed items' width.
+* [Change] Code completion will not display a "no items found" popup if no element is found matching the word at the cursor's position.
+* [Change] DatabaseModel::updateViewRelationships now use the new view references to create relationships.
+* [Change] GenericSQL class now uses tags <reference> instead of <object> to store references in XML.
+* [Change] GenericSQL::ObjectReferece renamed to GenericSQL::Reference and turned into a class.
+* [Change] In relationshipconfigwidget.ui the images change with the selected theme.
+* [Change] Minor adjustment in icons-*.conf
+* [Change] Minor adjustment in ReferencesWidget to always display the signature of the object in the grid instead of the name.
+* [Change] Minor adjustment in the behavior of source code display in DatabaseExplorerWidget.
+* [Change] Minor adjustment in themes' appearance.conf
+* [Change] Minor adjustment on ui style conf files.
+* [Change] Minor change in reverse engineering to avoid importing extension child types into the model since the extension itself, when imported, already creates the types.
+* [Change] Minor default size adjustment in TableWidget and ViewWidget.
+* [Change] Minor refactor in DatabaseModel::createGenericSQL.
+* [Change] Minor refactor in GenericSQL, GenericSQLWidget, ObjectReferencesWidget to use getters of GenericSQL::Reference.
+* [Change] Minor refactor in ObjectReferencesWidget/GenericSQL::Referece to use a flag that indicates that view columns must be generated from the references.
+* [Change] Minor refactor on View, Reference, and ReferenceWidget classes.
+* [Change] Moved GenericSQL::Reference to dedicated source files.
+* [Change] Moved the code that set the Qt UI style to the Application class.
+* [Change] Refactored GenericSQLWidget in such a way to use ObjectReferencesWidget.
+* [Change] Refactored View::generateColumns to generate columns from the new reference object.
+* [Change] Removed CTE tab from ViewWidget.
+* [Change] Removed deprecated method GenericSQL::getReferencedObjects.
+* [Change] Removed the const UserTypeConfig::ExtensionType.
+* [Change] Renamed ObjectReferencesWidget.(h|cpp) to ReferencesWidget.(h|cpp)
+* [Change] Updated View XML definition to store simple column's code.
+* [Fix] Fixed settings storing for the grid options in MainWindow.
+* [Fix] Fix a crash that happens only on Windows.
+* [Fix] Fixed a bug in the generation of diff commands for identity columns.
+* [Fix] Fixed a bug in HtmlItemDelegate::paint that was causing the rendering of artifacts.
+* [Fix] Fixed a bug in pgmodeler-cli that was aborting the fix process during the parsing of the model changelog.
+* [Fix] Fixed a bug in SchemaParser that would cause an infinite loop when defining attributes via %set instruction combined with plain text operator []
+* [Fix] Fixed a crash when trying to load an invalid model from the recent model's menu.
+* [Fix] Fixed sample model structure to the new view's format.
+* [Fix] Fixed several bugs in CodeCompletionWidget when completing using live database object names.
+* [Fix] Fixed the method BaseTable::updateDependencies() to avoid duplicating dependencies.
+* [Fix] Fixed the method DatabaseImportHelper::createView in such a way as to create references to tables/views and the columns that the view owns.
+* [Fix] Minor fix in DatabaseImportHelper to correctly make a view reference another.
+* [Fix] Minor fix in MainWindow::loadModels.
+* [Fix] Minor fix on DatabaseModel::createRelationship to create a relationship between two views.
+
 v1.0.6
 ------
+<em>Release date: October 17, 2023</em><br/>
+
 * [New] Added version descriptor for PostgreSQL 16.
 * [Fix] Fixed a crash when trying to load an invalid model from recents models menu.
 * [Fix] Fixed a bug in generation of diff commands for identity columns.
 * [Fix] Minor fix in PgModelerCliApp::extractObjectXML to restore correctly the layers names and count.
 * [Fix] Fixed a crash when double-clicking the overview widget.
+
+v1.1.0-alpha1
+------
+<em>Release date: September 29, 2023</em><br/>
+
+* [New] Added version descriptor for PostgreSQL 16.
+* [New] Added support for highlighting table child objects in ObjectFinderWidget.
+* [New] Added the method BaseTableView::setChildSelected.
+* [New] Added support for resizing the text boxes in the model using Shift + mouse movement.
+* [New] Created the method generateHashCode in TableObject and its derived classes.
+* [New] Added the method BaseObject::getLinkedObjects.
+* [New] Added the method AppearanceConfigWidget::getUiLightness.
+* [New] Created the utility function CoreUtilsNs::filterObjectsByType.
+* [New] Added the method BaseObject::setClearDepsInDtor to determine whether the dependencies/references should be undone when destroying an object.
+* [New] Created a simplified mechanism for mapping dependencies and references between objects improving the performance of several parts of the tool.
+* [New] Created the function UtilsNs::getStringHash and replaced all uses of QCryptographicHash by that function.
+* [New] Added an option to ObjectDepsRefsWidget that toggles the display of unique results.
+* [New] Created the class CustomSortProxyModel that preserves the vertical header line number when sorting an ObjectsListModel.
+* [New] Created the method GuiUtilsNs::updateObjectsTable(QTableView *, std::vector<attribs_map>).
+* [New] Created the method ObjectsListModel::fillModel.
+* [New] Added the methods BaseObject::getSearchAttributeI18N and BaseObject::getSearchAttributesI18N.
+* [New] Added the method BaseObject::acceptsComment.
+* [New] Added support for caching the object names to avoid unnecessary formatting/validation.
+* [New] Added the method BaseGraphicObject::setUpdatesEnabled to control whether the *::configureObject must be called to configure the graphical objects.
+* [New] Added support for inksaver color theme.
+* [New] Added support for using object comments as aliases in database import.
+* [New] Added an option in GeneralConfigWidget to reset the exit alert display status.
+* [New] Added the method GeneralConfigWidget::appendConfigurationSection.
+* [New] Created the class ObjectsListModel to be used by any QTableView that is supposed to display objects listing.
+* [New] Add support for remembering decisions on the alerts regarding unsaved models/open SQL tabs.
+* [New] Added the method SQLToolWidget::ignoreAutoBrowseFlag.
+* [New] Added the method SQLExecutionWidget::getSQLCommand.
+* [New] Added the methods SQLToolWidget::getExecutionTabs.
+* [New] pgModeler now asks the user about closing SQL execution tabs that are not empty (with typed commands).
+* [New] Added a basic form to inspect changelog XML code.
+* [New] Added a static method AppearanceConfigWidget::getUiThemeId that returns the current configured theme.
+* [New] Added missing multirange types.
+* [New] Added shortcuts Shift+Up and Shift+Down to control the Z-stack operations in ModelWidget.
+* [Change] Adjusted the objects' movement using arrow keys in the object scene.
+* [Change] Adjusted the PostgreSQL Version to 15 in pgmodeler.pri (only macos).
+* [Change] Minor adjustment in ModelDatabaseDiffForm to exclude columns when using "any" filter.
+* [Change] Replaced the use of DatabaseModel::getObjectReferences by BaseObject::getReferences
+* [Change] All objects' dependencies/references retrieval methods were removed from DatabaseModel due to the new way to control/retrieve dependencies/references via the BaseObject class.
+* [Change] Refactored DatabaseImportHelper::destroyDetachedColumns to use BaseObject::getReferences.
+* [Change] Removed the method DatabaseModel::validateColumnRemoval.
+* [Change] Changed DatabaseModel::__removeObject to use the new BaseObject::getReference.
+* [Change] Changed ModelValidationHelper::validateModel to use BaseObject::getReference.
+* [Change] Changed ModelWidget::copyObjects to use BaseObject::getDependencies.
+* [Change] Minor adjustment in ModelWidget destructor.
+* [Change] Minor adjustment in DatabaseModel destructor.
+* [Change] Adjusted several virtual methods signatures.
+* [Change] Refactored UserTypeConfig and PgSqlType to make use of BaseObject/DatabaseModel pointers instead of raw (void) pointers to configure user-defined types based on database model objects.
+* [Change] Adjusted the font size for layer rects.
+* [Change] Minor adjustment in DatabaseModel::validateSchemaRenaming.
+* [Change] Improved the relationship point addition via mouse clicks.
+* [Change] Minor adjustment in DatabaseModel::setObjectsModified.
+* [Change] The "dot" grid mode is now the default in the appearance.conf file due to better drawing performance.
+* [Change] Created a mechanism in Relationship to reuse allocated objects instead of deleting them and allocating them again every time the relationship is connected/disconnected.
+* [Change] Improved the scene background (grid, delimiter, limits) drawing speed for big models.
+* [Change] Refactored DatabaseImportForm in such a way as to use QTableView instead of QTableWidget to list filter results.
+* [Change] Refactored ModelDatabaseDiffForm in such a way as to use QTableView instead of QTableWidget to list filter results.
+* [Change] Minor adjustment in ObjectsListModel to accept a list of attributes map to fill the table model.
+* [Change] Refactored SwapObjectsIdsWidget in such a way as to use QTableView instead of QTableView.
+* [Change] Refactored ObjectDepsRefsWidget by replacing QTableWidget with QTableView to display model objects.
+* [Change] Minor adjustment in ObjectFinderWidget filter items order.
+* [Change] Minor adjustment in GuiUtilsNs::updateObjectsTable(QTableView *) to create a QSortFilterProxyModel in the QTableView allowing sorting.
+* [Change] Refactored ObjectFinderWidget to use QTableView instead of QTableWidget to display search results.
+* [Change] Removed the QTableWidget instance in ModelObjectsWidget for performance reasons and for being a widget almost unused.
+* [Change] Minor adjustment in BaseRelationship::connectRelationship.
+* [Change] Adjusted BaseObjectWidget::applyConfiguration to avoid crashing when the general attributes of the widget are in a non-visible tab like in TableWidget.
+* [Change] Reduced the number of times BaseGraphicObject::setModified is called consequently reducing the excessive objects' rendering.
+* [Change] Minor adjustment in ObjectsScene::drawBackground to avoid rendering the grid and page delimiters during corner/scene move.
+* [Change] Moved the table's general attributes to a dedicated tab which opened more space for displaying columns and other children's objects.
+* [Change] Refactored GuiUtilsNs::updateObjectTable to accept a QTableView instead of QTableWidget.
+* [Change] Updated the pgmodeler-cli menu to include the "any" filter explanation.
+* [Change] Removed the plugin's configuration menu from the main toolbar.
+* [Change] Improving the objects' filtering in reverse engineering by adding an "any" filter type.
+* [Change] Minor adjustment on SQLToolWidget
+* [Change] Improved the import error message when it's not possible to create/import permission that references a predefined PostgreSQL role.
+* [Change] Minor improvement on ChangelogWidget layout.
+* [Change] Minor code refactor in ObjectsScene and DatabaseModel.
+* [Change] DataManipulationForm now shows a confirmation message before closing when items are pending save.
+* [Change] Moved the method AppearanceConfigWidget::updateDropShadows to GuiUtilsNs::updateDropShadows
+* [Change] Refactored the usage of AppearanceConfigWidget::updateDropShadows to use GuiUtilsNs::updateDropShadows
+* [Change] Minor adjustments in swapobjectsidswidget.ui layout.
+* [Change] Several minor widget adjustments.
+* [Change] Renamed the methods startPanningMove and finishPanningMove to, respectively, startSceneMove and finishSceneMove.
+* [Fix] Minor fix in ObjectFinderWidget to avoid disconnecting a null selection model in findObjects.
+* [Fix] Minor fix in ModelWidget to hide new objects overlay when moving a selection of objects.
+* [Fix] Minor fix in GuiUtilsNs::disableObjectSQL.
+* [Fix] Minor fix in RelationshipView::configureBoundingRect and RelationshipView::configureLine.
+* [Fix] Minor fix in ModelWidget::removeObjects that was not erasing an object in case it shared the same name or other objects in the same schema.
+* [Fix] Minor fix in DatabaseModel::__addObject that validates the layer of the object being added. If one or more layers are invalid the object will be moved to the default layer 0
+* [Fix] Fixed the bounding rect calculation for RelationshipView.
+* [Fix] Fixed a bug in DatabaseModel::findObject that was not parsing correctly the search filters with the "any" keyword.
+* [Fix] Fixed the icons-*.conf to include QTableView class.
+* [Fix] Minor fix in PgModelerCliApp::extractObjectXML to restore correctly the layers name/count.
+* [Fix] Fixed a bug in partial reverse engineering that was not correctly importing functions in some specific conditions.
+* [Fix] Fixed a bug in partial reverse engineering that was not importing some dependencies correctly.
+* [Fix] Fixed a bug in AppearanceConfigWidget that was not updating the example model colors when changing the UI theme.
+* [Fix] Fixed a crash when double-clicking the overview widget.
+* [Fix] Fixed data dictionaries schema files for tables and views.
+* [Fix] Fixed a bug in DatabaseModel that was causing FK relationships of a hidden layer to be displayed after loading the model.
+* [Fix] Fixed a bug in MainWindow that was causing the plugin's config action icon to disappear when triggering validation.
+* [Fix] Fixed the headers inclusion chain in all subproject sources.
+* [Fix] Fixed a bug in scene move that was causing the grid to not be displayed after a panning/wheel move.
 
 v1.0.5
 ------
@@ -21,6 +318,87 @@ v1.0.5
 * [Fix] Fixed a bug in DatabaseModel that was causing FK relationships of a hidden layer to be displayed after loading the model.
 * [Fix] Fixed a bug in MainWindow that was causing the plugins config action icon to disappear when triggering validation.
 * [Fix] Fixed a bug in PgModelerCliApp::fixModel that was causing the generation of empty models when the input file had no tag <role>.
+
+v1.1.0-alpha
+------
+<em>Release date: June 09, 2023</em><br/>
+
+* [New] Added support for drag & drop files in the main window to load models.
+* [New] Added NOBYPASSRLS keyword to sql-highlight.conf.
+* [New] Added OS type information in AboutWidget.
+* [New] Added support for hiding objects' shadows in the settings.
+* [New] Added support for installing tool buttons created by plugins in DatabaseExplorerWidget.
+* [New] Added support for code completion based on living database object names in CodeCompletionWidget. It is now possible to list column/table names in the middle of the INSERT/DELETE/TRUNCATE/UPDATE commands.
+* [New] Added support for exporting results in CSV and plain text format in DataManipulationForm and SQLExecutionWidget.
+* [New] Added support for highlighting enclosing characters (),{},{} in SyntaxHighlighter.
+* [New] Added the action NumberedTextEditor::pasteCode which tries to remove unneeded string concatenation chars ", ', + and . in the clipboard text before inserting it in the input field. This is useful for developers that copy SQL code in the middle of a programming language source code and want to test it in the database.
+* [New] Added the button id Messagebox::CloseButton that creates a message box with only a close button.
+* [New] Added the class CustomUiStyle to control global settings for pixel metrics of UI elements.
+* [New] Added the method BaseForm::adjustMinimumSize.
+* [New] Added the method CodeCompletionWidget::setConnectionParams.
+* [New] Added the method PgModelerPlugin::getTmplPluginFilePath.
+* [New] Added the methods setFileMustExist, setCheckExecutionFlag, setFileIsMandatory, and setNamePattern to FileSelectorWidget.
+* [New] Added the options in GeneralConfigWidget that controls the column data truncation in the results grid.
+* [New] Added support for setup name color of schema objects.
+* [New] Added support to convert to XML entities the characters in attribute values in SchemaParser.
+* [New] Added support for switching the current user when successfully connecting to a database via SET ROLE command.
+* [New] Created the method DatabaseImportForm::listDatabases(Connection,QComboBox).
+* [New] Enabling the displaying of byta column data in the results grid.
+* [New] Now any SQL result grid header will display an icon according to the data type of each column.
+* [New] Removed the method FileSelectorWidget::setFileMode and created to FileSelectorWidget::setDirectoryMode that toggles the selection of directories instead of files (the default behavior).
+* [Change] Minor adjustment in FileSelectorWidget::validateSelectedFile.
+* [Change] Added a wait cursor during the code preview in SourceCodeWidget.
+* [Change] Added a wait cursor while searching objects in ObjectFinderWidget.
+* [Change] Adjusted the access modifier in PgModelerPlugin methods.
+* [Change] Adjusted the object catalog queries to include a general-purpose field named extra_info in the object list catalog query.
+* [Change] Adjusted the warning icon size in FileSelectorWidget.
+* [Change] Disabled the usage of keywords in the code completion instance of DataManipulationForm filter field.
+* [Change] Dropped the use of syntax-hl-theme in appearance.conf.
+* [Change] Improved the behavior of the "System default" UI theme.
+* [Change] Improved the methods GuiUtilsNs::selectAndSaveFile, GuiUtilsNs::selectAndLoadFile.
+* [Change] Improvements in LineNumbersWidget and NumberedTextEditor to correctly draw line numbers on text with the word wrap option activated.
+* [Change] In data manipulation form when editing a single element with column data edit dialog, the form will display the current column's value.
+* [Change] Change to medium the UI icons size of default settings.
+* [Change] Minor adjustment in aboutsewidget.ui and aboutwidget.ui.
+* [Change] Minor adjustment in the minimum size of Messagebox.
+* [Change] Minor adjustment in Catalog::isConnectionValid.
+* [Change] Minor adjustment in file coreutilsns.cpp.
+* [Change] Minor adjustment in ModelFixForm to display pgmodeler-cli selector when the provided path to the executable is not valid.
+* [Change] Minor adjustment in generalconfigwidget.ui.
+* [Change] Minor adjustment in ObjectFinderWidget.
+* [Change] Minor adjustment in schemaeditorform.ui.
+* [Change] Minor refactor in TableObjectView, Connection, SchemaParser.
+* [Change] Moved the copy actions in SQL results grid context menu to an action named the "Selection" in the same menu. 
+* [Change] Now the ColumnDataEditWidget instances have their geometry saved/restored.
+* [Change] Replace the QPlainTextEdit by NumberedTextEditor in ColumnDataWidget.
+* [Change] Refactored DatabaseImportHelper::createObject in such a way to use a map of bind methods to perform operations instead of using a long list of switch/case to determine which method must be called to create the object during reverse engineering.
+* [Change] Refactored DatabaseModel::createObject, DatabaseModel::addObject, and DatabaseModel::removeObject in such a way to use a map of bind methods to perform operations instead of using a long list of if/else to determine which method must be called.
+* [Change] Removed the get*Action and getDbExplorerButton methods in PgModelerPlugin and created the methods getAction and getWidget instead.
+* [Change] Removed the method Catalog::getObjectCount(bool) and created a version that accepts a list of object types.
+* [Change] Removed unneeded use of QString("").
+* [Change] Removed unused frame in modelfixform.ui.
+* [Change] Renamed BulkDataEditWidget to ColumnDataWidget
+* [Change] Replaced QApplication::setOverrideCursor/restoreOverrideCursor by qApp- >setOverrideCursor/restoreOverrideCursor.
+* [Change] The method DatabaseExplorerWidget::addPluginToolButton passes the current connection id and database name as the plugin button property to be read in the click/triggered slots implemented in the plugin.
+* [Change] Update all schema files that generate XML code to use &{} attribute form where there's the need to convert chars to their XML entities counterparts.
+* [Change] When retrieving objects from the database CodeCompletionWidget will not display keywords and snippets in the popup list.
+* [Fix] Addition fix in CodeCompletionWidget in such a way to preserve cursor position when inserting the selected word after a special char.
+* [Fix] Fix a bug in PgModelerCliApp::fixModel that was causing the generation of empty models when the input file had no tag <role>
+* [Fix] Fixed a bug in Catalog::getObjectsCount.
+* [Fix] Fixed a bug in DatabaseModel that could lead to an "unknown exception caught" error.
+* [Fix] Fixed a bug in NumberedTextEditor::identSelection.
+* [Fix] Fixed a bug in SqlExecutionWidget::fillResultsTable.
+* [Fix] Fixed a bug in TableDataWidget::generateDataBuffer that was causing the generation of malformed CSV in some circumstances.
+* [Fix] Fixed a crash in the SQL tool when closing a database explorer instance that owns a plugin tool button.
+* [Fix] Fixed CodeCompletionWidget::retrieveColumnNames when referencing a table via an alias.
+* [Fix] Fixed problems with comments on a database having the same OIDs of different types of objects
+* [Fix] Fixed the diff process on legacy database versions.
+* [Fix] Fixed the line selection operation in LineNumbersWidget.
+* [Fix] Fixed the undefined reference error when building on Windows.
+* [Fix] Minor fixes in the catalog queries for column, cast, collation, and role.
+* [Fix] Minor fix in GeneralConfigWidget when using NO_UPDATE_CHECK.
+* [Fix] Minor fix in process output capturing in ModelFixForm.
+* [Fix] Minor tooltip fix in DataManipulationForm.
 
 v1.0.4
 ------

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 */
 
 #include "genericsqlwidget.h"
-
-const QRegularExpression GenericSQLWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
-																													.arg(SchemaParser::CharStartAttribute)
-																													.arg(SchemaParser::CharEndAttribute));
+#include "guiutilsns.h"
 
 GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::GenericSql)
 {
@@ -28,6 +25,18 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
+
+	// Configuring the object types accepted by object references
+	types = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::GenericSql,
+																							 ObjectType::Permission, ObjectType::Relationship,
+																							 ObjectType::Tag, ObjectType::Textbox });
+	types.push_back(ObjectType::Column);
+	obj_refs_wgt = new ReferencesWidget(types, false, this);
+
+	QVBoxLayout *vbox = new QVBoxLayout(references_tab);
+	vbox->addWidget(obj_refs_wgt);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
 	definition_txt = GuiUtilsNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
@@ -48,50 +57,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	attribs_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
-	// Configuring the object types accepted by object references
-	types = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::GenericSql,
-																							ObjectType::Permission, ObjectType::Relationship,
-																							ObjectType::Tag, ObjectType::Textbox });
-	types.push_back(ObjectType::Column);
-
-	object_sel = new ObjectSelectorWidget(types, this);
-
-	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
-	references_grid->addWidget(object_sel, 0, 1, 1, 1);
-	references_grid->addWidget(objects_refs_tab, 2, 0, 1, 2);
-
-	objects_refs_tab->setColumnCount(5);
-	objects_refs_tab->setHeaderLabel(tr("Ref. name"), 0);
-	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
-
-	objects_refs_tab->setHeaderLabel(tr("Object"), 1);
-	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
-
-	objects_refs_tab->setHeaderLabel(tr("Type"), 2);
-	objects_refs_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
-
-	objects_refs_tab->setHeaderLabel(tr("Signature"), 3);
-	objects_refs_tab->setHeaderLabel(tr("Format name"), 4);
-
 	setMinimumSize(700, 500);
-
-	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool selected){
-			sel_obj_icon_lbl->setPixmap(selected ? GuiUtilsNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
-			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
-	});
-
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAdded, this, &GenericSQLWidget::addObjectReference);
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowEdited, this, &GenericSQLWidget::editObjectReference);
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowUpdated, this, &GenericSQLWidget::updateObjectReference);
-
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, this, [this](int row){
-		QString ref_name = objects_refs_tab->getCellText(row, 0);
-		dummy_gsql.removeObjectReference(ref_name);
-	});
-
-	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
-		dummy_gsql.removeObjectReferences();
-	});
 
 	connect(attribs_tbw, &QTabWidget::currentChanged, this, [this](int idx){
 		if(idx == attribs_tbw->count() - 1)
@@ -102,84 +68,17 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)
 {
 	BaseObjectWidget::setAttributes(model, op_list, genericsql);
+	std::vector<Reference> refs;
 
 	if(genericsql)
 	{
 		dummy_gsql = *genericsql;
 		definition_txt->setPlainText(genericsql->getDefinition());
-		objects_refs_tab->blockSignals(true);
-
-		for(auto &ref : genericsql->getObjectsReferences())
-		{
-			objects_refs_tab->addRow();
-			showObjectReferenceData(objects_refs_tab->getRowCount() - 1,
-															ref.object, ref.ref_name, ref.use_signature, ref.format_name);
-		}
-
-		objects_refs_tab->blockSignals(false);
+		refs = genericsql->getObjectsReferences();
 	}
 
-	object_sel->setModel(model);
+	obj_refs_wgt->setAttributes(this->model, refs);
 	definition_cp->configureCompletion(model, definition_hl);
-}
-
-void GenericSQLWidget::addObjectReference(int row)
-{
-	try
-	{
-		QString ref_name = ref_name_edt->text().remove(AttrDelimRegexp);
-		BaseObject *object = object_sel->getSelectedObject();
-		bool use_signature = use_signature_chk->isChecked(),
-				format_name = format_name_chk->isChecked();
-
-		dummy_gsql.addObjectReference(object, ref_name, use_signature, format_name);
-		showObjectReferenceData(row, object, ref_name, use_signature, format_name);
-		clearObjectReferenceForm();
-	}
-	catch(Exception &e)
-	{
-		objects_refs_tab->blockSignals(true);
-		objects_refs_tab->removeRow(row);
-		objects_refs_tab->blockSignals(false);
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void GenericSQLWidget::editObjectReference(int row)
-{
-	ref_name_edt->setText(objects_refs_tab->getCellText(row, 0));
-	use_signature_chk->setChecked(objects_refs_tab->getCellText(row, 3) == tr("Yes"));
-	format_name_chk->setChecked(objects_refs_tab->getCellText(row, 4) == tr("Yes"));
-	object_sel->setSelectedObject(reinterpret_cast<BaseObject *>(objects_refs_tab->getRowData(row).value<void *>()));
-}
-
-void GenericSQLWidget::updateObjectReference(int row)
-{
-	QString ref_name = objects_refs_tab->getCellText(row, 0),
-			new_ref_name = ref_name_edt->text().remove(AttrDelimRegexp);
-	BaseObject *object = object_sel->getSelectedObject();
-	bool use_signature = use_signature_chk->isChecked(),
-			format_name = format_name_chk->isChecked();
-
-	try
-	{
-		dummy_gsql.updateObjectReference(ref_name, object, new_ref_name, use_signature, format_name);
-		showObjectReferenceData(row, object, new_ref_name, use_signature, format_name);
-		clearObjectReferenceForm();
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}
-
-void GenericSQLWidget::clearObjectReferenceForm()
-{
-	object_sel->clearSelector();
-	ref_name_edt->clear();
-	use_signature_chk->setChecked(false);
-	format_name_chk->setChecked(false);
-	objects_refs_tab->clearSelection();
 }
 
 void GenericSQLWidget::updateCodePreview()
@@ -191,6 +90,8 @@ void GenericSQLWidget::updateCodePreview()
 			if(!name_edt->text().isEmpty())
 				dummy_gsql.setName(name_edt->text());
 
+			dummy_gsql.removeObjectReferences();
+			dummy_gsql.addReferences(obj_refs_wgt->getObjectReferences());
 			dummy_gsql.setDefinition(definition_txt->toPlainText());
 			dummy_gsql.setCodeInvalidated(true);
 			preview_txt->setPlainText(dummy_gsql.getSourceCode(SchemaParser::SqlCode));
@@ -204,16 +105,6 @@ void GenericSQLWidget::updateCodePreview()
 	}
 }
 
-void GenericSQLWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
-{
-	objects_refs_tab->setCellText(ref_name, row, 0);
-	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
-	objects_refs_tab->setCellText(object->getTypeName(), row, 2);
-	objects_refs_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 3);
-	objects_refs_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 4);
-	objects_refs_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(object)), row);
-}
-
 void GenericSQLWidget::applyConfiguration()
 {
 	try
@@ -223,6 +114,8 @@ void GenericSQLWidget::applyConfiguration()
 		startConfiguration<GenericSQL>();
 		genericsql=dynamic_cast<GenericSQL *>(this->object);
 		dummy_gsql.setDefinition(definition_txt->toPlainText());
+		dummy_gsql.removeObjectReferences();
+		dummy_gsql.addReferences(obj_refs_wgt->getObjectReferences());
 		*genericsql = dummy_gsql;
 
 		BaseObjectWidget::applyConfiguration();

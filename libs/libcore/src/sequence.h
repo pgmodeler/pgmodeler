@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
-#include "baseobject.h"
-#include "table.h"
+#include "physicaltable.h"
 
 class __libcore Sequence: public BaseObject {
 	private:
@@ -78,6 +77,8 @@ class __libcore Sequence: public BaseObject {
 
 		Sequence();
 
+		virtual ~Sequence(){}
+
 		//! \brief Defines if the sequence is a cycle
 		void setCycle(bool value);
 
@@ -95,12 +96,12 @@ class __libcore Sequence: public BaseObject {
 		void setOwnerColumn(Column *column);
 
 		//! \brief Sets the sequence name
-		void setName(const QString &name);
+		virtual void setName(const QString &name) override;
 
 		/*! \brief Sets the schema that the sequence belongs. This method raises an error
 		 when there is a owner column and the schema to be set is different from
 		 the column parent table schema */
-		void setSchema(BaseObject *schema);
+		virtual void setSchema(BaseObject *schema) override;
 
 		bool isCycle();
 		QString getMaxValue();
@@ -126,6 +127,8 @@ class __libcore Sequence: public BaseObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		QString getDataDictionary(const attribs_map &extra_attribs = {});
+
+		virtual void updateDependencies() override;
 };
 
 #endif

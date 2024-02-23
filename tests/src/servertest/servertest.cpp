@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -110,9 +110,12 @@ void ServerTest::modelReturnsDepsAndRefsForServer()
 		model.addForeignServer(&server);
 
 		std::vector<BaseObject *> refs, deps;
-		model.getObjectDependecies(&server, deps);
+		//model.getObjectDependecies(&server, deps);
+		deps = server.getDependencies();
 
-		model.getObjectReferences(&fdw, refs);
+		//model.getObjectReferences(&fdw, refs);
+		refs = fdw.getReferences();
+
 		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);

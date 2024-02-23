@@ -3,7 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-	[SELECT ex.oid, extname AS name, ns.nspname AS parent, 'schema' AS parent_type
+	[SELECT ex.oid, extname AS name, ns.nspname AS parent, 
+     'schema' AS parent_type, NULL AS extra_info
 	FROM pg_extension AS ex
 	LEFT JOIN pg_namespace AS ns ON ex.extnamespace = ns.oid ]
 
@@ -33,16 +34,12 @@
 %else
 	%if {attribs} %then
 		[SELECT ex.oid, ex.extname AS name, ex.extversion AS cur_version, NULL AS old_version,
-		ex.extowner AS owner, ex.extnamespace AS schema,
-		(SELECT CASE
-		WHEN count(objid) >= 1 THEN TRUE
-		ELSE FALSE
-		END
-		FROM pg_depend AS _dp
-		LEFT JOIN pg_extension AS _ex ON _ex.oid=_dp.objid
-		WHERE _dp.refobjid = ex.oid AND _dp.objid::regtype::text 
-		SIMILAR TO '(' ||  ex.extnamespace::regnamespace::text || '.)?(' || ex.extname || ')'
-		AND _dp.classid::regclass::text = 'pg_type') AS handles_type_bool, ]
+		ex.extowner AS owner, ex.extnamespace AS schema, ]
+
+		[ (SELECT array_agg(objid::regtype::text)
+		   FROM pg_depend AS _dp
+		   LEFT JOIN pg_extension AS _ex ON _ex.oid =_dp.objid
+		   WHERE _dp.refobjid = ex.oid AND classid::regclass::text = 'pg_type') AS types, ]
 
 		({comment}) [ AS comment ]
 

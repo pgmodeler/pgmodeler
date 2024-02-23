@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,12 +88,8 @@ void TagWidget::applyConfiguration()
 									.arg(color_pickers[attr]->getColor(enum_t(ColorId::BorderColor)).name()));
 		}
 
-		model->getObjectReferences(tag, tagged_tabs);
-		while(!tagged_tabs.empty())
-		{
-			dynamic_cast<BaseTable *>(tagged_tabs.back())->setModified(true);
-			tagged_tabs.pop_back();
-		}
+		for(auto &obj : tag->getReferences())
+			dynamic_cast<BaseTable *>(obj)->setModified(true);
 
 		finishConfiguration();
 	}

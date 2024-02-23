@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_operationlistwidget.h"
 #include "modelwidget.h"
-#include "messagebox.h"
 
 class __libgui OperationListWidget: public QWidget, public Ui::OperationListWidget {
 	private:

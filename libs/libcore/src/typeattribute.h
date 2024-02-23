@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,17 +32,19 @@ class __libcore TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 
-		QString getSourceCode(SchemaParser::CodeType, bool){ return ""; }
+		virtual QString getSourceCode(SchemaParser::CodeType, bool) override { return ""; }
 
 	public:
 		TypeAttribute();
 		TypeAttribute(const TypeAttribute &type_attr);
 
+		virtual ~TypeAttribute(){}
+
 		void setType(PgSqlType type);
 		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
+		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;		
 		void operator = (const TypeAttribute &tpattrib);
 };
 

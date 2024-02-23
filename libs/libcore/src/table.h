@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ class __libcore Table: public PhysicalTable {
 
 	public:
 		Table();
+
 		virtual ~Table();
 
 		//! \brief Defines if the table is unlogged
@@ -73,13 +74,13 @@ class __libcore Table: public PhysicalTable {
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs();
 
-		void addObject(BaseObject *object, int obj_idx = -1);
+		virtual void addObject(BaseObject *object, int obj_idx = -1) override;
 
-		void removeObject(unsigned obj_idx, ObjectType obj_type);
+		virtual void removeObject(unsigned obj_idx, ObjectType obj_type) override;
 
-		void removeObject(const QString &name, ObjectType obj_type);
+		virtual void removeObject(const QString &name, ObjectType obj_type) override;
 
-		void removeObject(BaseObject *obj);
+		virtual void removeObject(BaseObject *obj) override;
 
 		//! \brief Adds a index to table (optionally the user can add the object at the specified index 'idx')
 		void addIndex(Index *ind, int idx=-1);
@@ -156,17 +157,11 @@ class __libcore Table: public PhysicalTable {
 		void operator = (Table &tabela);
 
 		//! \brief Returns the specified object type list
-		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual std::vector<TableObject *> *getObjectList(ObjectType obj_type) override;
 
 		/*! \brief Returns if some of the foreign keys references the specified table. This method only considers the foreign keys
 		 created by the user. Relationship created foreign keys are discarded from the search. */
 		bool isReferTableOnForeignKey(Table *ref_tab);
-
-		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
-		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
-		 deletion of the object, getting only the first reference to the object candidate for deletion.
-		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
-		void getColumnReferences(Column *column, std::vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
 		virtual QString getAlterCode(BaseObject *object) final;
@@ -180,7 +175,9 @@ class __libcore Table: public PhysicalTable {
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
 		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
 
-		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {});
+		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {}) override;
+
+		virtual void updateDependencies() override;
 
 		friend class Relationship;
 		friend class OperationList;

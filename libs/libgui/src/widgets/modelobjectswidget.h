@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
-#include "messagebox.h"
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
@@ -51,10 +50,6 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 
 		//! \brief Stores the objects currently selected on the tree/list
 		std::vector<BaseObject *> selected_objs;
-
-		/*! \brief Stores the  initial splitter size to be used in conjunction with the
-		object type visualization buttons */
-		QSettings widgets_conf;
 
 		//! \brief Reference model widget. This is the object used to populate the tree and list
 		ModelWidget *model_wgt;
@@ -84,10 +79,13 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void updateDatabaseTree();
 
 		//! \brief Updates the whole object list
-		void updateObjectsList();
+		void updateObjectsTable();
 
 		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);
+
+		//! \brief Returns an item from the tree related to the specified item id
+		QTreeWidgetItem *getTreeItem(const QString &item_id);
 
 		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
@@ -109,11 +107,13 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void enableObjectCreation(bool value);
 
 	protected:
-		//! \brief Saves the currently expanded items on the specified vector
-		void saveTreeState(std::vector<BaseObject *> &tree_items);
+		/*! \brief Saves the currently expanded items on the specified vector.
+		 *  The vertical scrollbar position is stored in v_scroll_pos */
+		void saveTreeState(QStringList &exp_items_ids, int &v_scroll_pos);
 
-		//! \brief Restores the tree at a previous state when the specified items were expanded
-		void restoreTreeState(std::vector<BaseObject *> &tree_items);
+		/*! \brief Restores the tree at a previous state when the specified items were expanded
+		 *  as well as to a vertical scrollbar position */
+		void restoreTreeState(const QStringList &exp_items_ids, int v_scroll_pos);
 
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);

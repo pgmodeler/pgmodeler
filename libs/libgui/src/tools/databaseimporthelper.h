@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,7 +78,10 @@ class __libgui DatabaseImportHelper: public QObject {
 		rand_rel_colors,
 		
 		//! \brief Indicates to the importer that the relationship update step must be executed
-		update_fk_rels;
+		update_fk_rels,
+
+		//! \brief Indicates to the importer that object comments must be used as object aliases
+		comments_as_aliases;
 		
 		//! \brief Stores the selected objects oids to be imported
 		std::map<ObjectType, std::vector<unsigned>> object_oids;
@@ -130,6 +133,9 @@ class __libgui DatabaseImportHelper: public QObject {
 		dettached from parent columns on the resulting model before the inheritances creation they
 		will be removed from their related tables if there is no object referencing them */
 		std::vector<Column *> inherited_cols;
+
+		//! \brief Stores the references to the methods that create objects from database catalogs.
+		std::map<ObjectType, std::function<void(attribs_map&)>> create_methods;
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
@@ -250,7 +256,8 @@ class __libgui DatabaseImportHelper: public QObject {
 		void setSelectedOIDs(DatabaseModel *db_model, const std::map<ObjectType, std::vector<unsigned>> &obj_oids, const std::map<unsigned, std::vector<unsigned>> &col_oids);
 		
 		//! \brief Configures the import parameters
-		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode, bool rand_rel_colors, bool update_fk_rels);
+		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode,
+													bool rand_rel_colors, bool update_fk_rels, bool comments_as_aliases);
 		
 		//! \brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID();
