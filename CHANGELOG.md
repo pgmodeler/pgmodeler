@@ -3,7 +3,7 @@ Changelog
 
 v1.1.0
 ------
-<em>Release date: February 29, 2024</em><br/>
+<em>Release date: February 23, 2024</em><br/>
 
 * [New] Created the method Application::loadTranslations.
 * [New] FindReplaceWidget now accepts ENTER/RETURN to search texts.

@@ -1,6 +1,6 @@
 v1.1.0
 ------
-<em>Release date: February 29, 2024</em><br/>
+<em>Release date: February 23, 2024</em><br/>
 <em>Changes since: <strong>v1.0.6</strong></em><br/>
 
 <em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.1.0 causing a break in backward compatibility with pgModeler 1.0.x settings. This way, at the first start of the newer version, pgModeler will try to migrate the older settings to the newer ones automatically!</em><br/><br/>
