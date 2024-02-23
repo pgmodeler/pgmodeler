@@ -110,7 +110,7 @@
      <property name="midLineWidth">
       <number>0</number>
      </property>
-     <widget class="QFrame" name="window_frm">
+     <widget class="QFrame" name="viewport_frm">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -144,7 +144,7 @@
        <number>0</number>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="scene_bg_lbl">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -169,8 +169,8 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <zorder>label</zorder>
-     <zorder>window_frm</zorder>
+     <zorder>scene_bg_lbl</zorder>
+     <zorder>viewport_frm</zorder>
     </widget>
    </item>
   </layout>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 
 	setupUi(this);
 	text_edt = txt_edit;
+
+	find_edt->installEventFilter(this);
 
 	search_info_lbl = new QLabel(txt_edit);
 	search_info_lbl->setAutoFillBackground(true);
@@ -68,6 +70,22 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
 
 	connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
+}
+
+bool FindReplaceWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::KeyPress && object == find_edt)
+	{
+		QKeyEvent *kevent = dynamic_cast<QKeyEvent *>(event);
+
+		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
+		{
+			next_tb->click();
+			return true;
+		}
+	}
+
+	return QWidget::eventFilter(object, event);
 }
 
 void FindReplaceWidget::showEvent(QShowEvent *)

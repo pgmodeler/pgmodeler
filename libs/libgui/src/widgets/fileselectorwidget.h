@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,16 +33,16 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 	private:
 		Q_OBJECT
 
-		QString default_ext;
-
-		QFileDialog file_dlg;
-
+		QStringList name_filters, mime_filters;
+		QString file_dlg_title, def_suffix;
+		QFileDialog::AcceptMode accept_mode;
 		QFileDialog::FileMode file_mode;
 
 		QLabel *warn_ico_lbl;
 
 		bool allow_filename_input, read_only,
-		check_exec_flag, file_is_mandatory, file_must_exist;
+		check_exec_flag, file_is_mandatory,
+		file_must_exist, append_suffix;
 
 		QRegularExpression name_regexp;
 
@@ -89,8 +89,12 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 		//! \brief Configures the mime filters of the internal QFileDialog (see QFileDialog::setMimeTypeFilters)
 		void setMimeTypeFilters(const QStringList &filters);
 
-		//! \brief Defined the default suffix (extension) of the selected file if not provided
+		//! \brief Defines the default suffix (extension) of the selected file if not provided
 		void setDefaultSuffix(const QString &suffix);
+
+		/*! \brief Defines if the default suffix (extension) should be appended to the selected file if not present
+		 *  Applies only to file path typed by the user. Those selected via file dialog are not changed */
+		void setAppendSuffix(bool append);
 
 		//! \brief Returns if the selector is in warning state (the warning icon is visible due to any inconsistency)
 		bool hasWarning();

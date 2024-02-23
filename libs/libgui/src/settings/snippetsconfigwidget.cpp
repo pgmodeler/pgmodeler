@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,15 +55,8 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
 
-	try
-	{
-		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
+	snippet_hl=new SyntaxHighlighter(snippet_txt);
+	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
 
 	enableEditMode(false);
 
@@ -286,6 +279,7 @@ void SnippetsConfigWidget::loadConfiguration()
 			config_params.erase(id);
 
 		fillSnippetsCombo(config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -464,6 +458,7 @@ void SnippetsConfigWidget::saveConfiguration()
 
 		config_params[GlobalAttributes::SnippetsConf]=attribs;
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::SnippetsConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{

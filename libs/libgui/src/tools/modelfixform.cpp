@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,13 @@
 #include "attributes.h"
 #include "settings/appearanceconfigwidget.h"
 
-const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli(
+#ifdef Q_OS_WIN
+	"pgmodeler-cli.exe"
+#else
+	"pgmodeler-cli"
+#endif
+);
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -30,11 +36,11 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 
 	input_file_sel = new FileSelectorWidget(this);
-	//input_file_sel->setFileMode(QFileDialog::ExistingFile);
 	input_file_sel->setFileMustExist(true);
 	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 	input_file_sel->setAllowFilenameInput(true);
+	input_file_sel->setFileIsMandatory(true);
 	input_file_sel->setWindowTitle(tr("Select input file"));
 	model_fix_grid->addWidget(input_file_sel, 1, 2);
 
@@ -43,7 +49,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	output_file_sel->setDefaultSuffix(GlobalAttributes::DbModelExt);
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 	output_file_sel->setAllowFilenameInput(true);
-	input_file_sel->setWindowTitle(tr("Select output file"));
+	output_file_sel->setFileIsMandatory(true);
+	output_file_sel->setWindowTitle(tr("Select output file"));
 	model_fix_grid->addWidget(output_file_sel, 2, 2);
 
 	pgmodeler_cli_sel = new FileSelectorWidget(this);
@@ -90,7 +97,7 @@ void ModelFixForm::resetFixForm()
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
 	output_file_sel->clearSelector();
-	output_txt->setPlainText(tr("Waiting process to start..."));
+	output_txt->setPlainText(tr("Waiting for the process to start..."));
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
 	progress_pb->setVisible(false);

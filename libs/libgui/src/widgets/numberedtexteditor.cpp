@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include "messagebox.h"
+#include "utilsns.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -528,7 +529,7 @@ void NumberedTextEditor::handleProcessStart()
 {
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(GuiUtilsNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
+		msg_lbl->setText(UtilsNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
 																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
@@ -542,7 +543,7 @@ void NumberedTextEditor::handleProcessError()
 {
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	Messagebox::error(GuiUtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	Messagebox::error(UtilsNs::formatMessage(tr("Failed to run the source code editor <strong>%1</strong>! Make to sure that the application path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
 																						.arg(errors.join("\n\n"))));
 

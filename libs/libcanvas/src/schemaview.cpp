@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,24 +25,23 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
 	connect(schema, &Schema::s_objectModified, this, &SchemaView::configureObject);
 
-	sch_name=new QGraphicsSimpleTextItem;
+	sch_name = new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
+	this->addToGroup(sch_name);
 
-	box=new RoundedRectItem;
+	box = new RoundedRectItem;
 	box->setZValue(0);
+	this->addToGroup(box);
 
-	obj_selection=new RoundedRectItem;
-	obj_selection->setVisible(false);
+	obj_selection = new RoundedRectItem;
 	obj_selection->setZValue(4);
+	obj_selection->setVisible(false);
 	this->addToGroup(obj_selection);
 
-	this->addToGroup(box);
-	this->addToGroup(sch_name);
 	this->setZValue(-200);
-
 	this->configureObject();
-	all_selected=false;
 
+	all_selected = false;
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
@@ -284,9 +283,14 @@ void SchemaView::configureObject()
 		this->bounding_rect=rect;
 		this->setVisible(scene && scene->isLayersActive(schema->getLayers()));
 
-		this->setToolTip(schema->getName(true) +
-										 " (" + schema->getTypeName() + ")" +
-										 QString("\nId: %1").arg(schema->getObjectId()));
+
+		QString tooltip = QString("`%1' (%2)").arg(schema->getName(true), schema->getTypeName()) +
+											QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(schema->getObjectId()));
+
+		if(!schema->getComment().isEmpty())
+			tooltip += "\n\n" + schema->getComment();
+
+		this->setToolTip(UtilsNs::formatMessage(tooltip));
 		sch_name->setToolTip(this->toolTip());
 
 		this->protected_icon->setPos(QPointF(sch_name->boundingRect().width() + sp_h ,

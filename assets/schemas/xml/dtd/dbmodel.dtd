@@ -95,6 +95,7 @@
 <!ATTLIST dbmodel protected (false|true) "false">
 <!ATTLIST dbmodel last-position CDATA #IMPLIED>
 <!ATTLIST dbmodel last-zoom CDATA #IMPLIED>
+<!ATTLIST dbmodel scene-rect CDATA #IMPLIED>
 <!ATTLIST dbmodel default-schema CDATA #IMPLIED>
 <!ATTLIST dbmodel default-owner CDATA #IMPLIED>
 <!ATTLIST dbmodel default-collation CDATA #IMPLIED>

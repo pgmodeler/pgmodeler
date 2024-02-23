@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,6 +120,9 @@ class __libcore PhysicalTable: public BaseTable {
 
 		//! \brief Performs the destruction of all children objects and internal lists clearing
 		void destroyObjects();
+
+		//! \brief Toggles the generation of columns and constraints in form of ALTER commands
+		void __setGenerateAlterCmds(bool value);
 
 	public:
 		PhysicalTable();
@@ -286,7 +289,8 @@ class __libcore PhysicalTable: public BaseTable {
 		//! \brief Protects the table and its aggregated objects against modification
 		virtual void setProtected(bool value) override;
 
-		//! \brief Toggles the generation of columns and constraints in form of ALTER commands
+		/*! \brief Toggles the generation of columns and constraints in form of ALTER commands.
+		 *  This method ignores the value when true if the table is a partitioned or partition. */
 		void setGenerateAlterCmds(bool value);
 
 		//! \brief Returns the current status of generation of ALTER commands for columns and constraints
@@ -368,6 +372,7 @@ class __libcore PhysicalTable: public BaseTable {
 
 		friend class Relationship;
 		friend class OperationList;
+		friend class ModelsDiffHelper;
 };
 
 #endif

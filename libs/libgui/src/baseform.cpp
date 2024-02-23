@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "baseform.h"
 #include "guiutilsns.h"
-#include "qtconnectmacros.h"
 
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -48,6 +47,8 @@ void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
 
 		cancel_btn->setVisible(false);
 	}
+
+	apply_ok_btn->setDefault(button_conf != Messagebox::CloseButton);
 }
 
 void BaseForm::adjustMinimumSize()

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "metadatahandlingform.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 
 MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -172,7 +173,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 			connect(extract_model, &DatabaseModel::s_objectLoaded, this, &MetadataHandlingForm::updateProgress, Qt::UniqueConnection);
 
 			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
-																										GuiUtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
+																										UtilsNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			extract_model->saveObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
@@ -181,7 +182,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 			{
 				root_item->setExpanded(false);
 				root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
-																											GuiUtilsNs::formatMessage(tr("Saving backup metadata to file `%1'").arg(backup_file_sel->getSelectedFile())),
+																											UtilsNs::formatMessage(tr("Saving backup metadata to file `%1'").arg(backup_file_sel->getSelectedFile())),
 																											QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_sel->getSelectedFile());
@@ -198,12 +199,12 @@ void MetadataHandlingForm::handleObjectsMetada()
 		if(!extract_only_rb->isChecked())
 		{
 			root_item=GuiUtilsNs::createOutputTreeItem(output_trw,
-																										GuiUtilsNs::formatMessage(tr("Applying metadata from file `%1'").arg(metadata_file)),
+																										UtilsNs::formatMessage(tr("Applying metadata from file `%1'").arg(metadata_file)),
 																										QPixmap(GuiUtilsNs::getIconPath("info")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
 			model_wgt->getDatabaseModel()->loadObjectsMetadata(metadata_file, static_cast<DatabaseModel::MetaAttrOptions>(options));
-			model_wgt->adjustSceneSize();
+			model_wgt->adjustSceneRect(false);
 			model_wgt->updateSceneLayers();
 			model_wgt->restoreLastCanvasPosition();
 			model_wgt->setUpdatesEnabled(true);
@@ -228,7 +229,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 			disconnect(extract_model, nullptr, this, nullptr);
 
 		GuiUtilsNs::createOutputTreeItem(output_trw,
-																				GuiUtilsNs::formatMessage(e.getErrorMessage()),
+																				UtilsNs::formatMessage(e.getErrorMessage()),
 																				icon, nullptr);
 
 		ico_lbl->setPixmap(icon);
@@ -266,7 +267,7 @@ void MetadataHandlingForm::configureSelector()
 void MetadataHandlingForm::updateProgress(int progress, QString msg, unsigned int type_id)
 {
 	ObjectType obj_type=static_cast<ObjectType>(type_id);
-	QString fmt_msg=GuiUtilsNs::formatMessage(msg);
+	QString fmt_msg=UtilsNs::formatMessage(msg);
 	QPixmap icon;
 
 	if(obj_type==ObjectType::BaseObject)

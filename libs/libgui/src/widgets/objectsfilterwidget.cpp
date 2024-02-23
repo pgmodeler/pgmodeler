@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,11 +129,13 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 		addFilter();
 		row = filters_tbw->rowCount() - 1;
 
+		// Object type combo
 		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0));
-		combo->setCurrentIndex(types.indexOf(values[0]));
+		combo->setCurrentIndex(types.indexOf(values[0]) + 1);
 
 		filters_tbw->item(row, 1)->setText(values[1]);
 
+		// Filter mode combo (wildcard, regexp, etc)
 		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
 		combo->setCurrentText(values[2]);
 	}

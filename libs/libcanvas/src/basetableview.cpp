@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "basetableview.h"
 #include "schema.h"
+#include "utilsns.h"
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
@@ -459,12 +460,21 @@ void BaseTableView::__configureObject(double width)
 	attribs_toggler->setPos(title->pos().x(),
 													height - attribs_toggler->boundingRect().height());
 
-	this->table_tooltip=this->getUnderlyingObject()->getName(true) +
-						" (" + this->getUnderlyingObject()->getTypeName() + ") \n" +
-						QString("Id: %1\n").arg(this->getUnderlyingObject()->getObjectId()) +
-						tr("Connected rels: %1").arg(this->getConnectRelsCount());
+	this->table_tooltip =
+						"`" + tab->getName(true) +
+						"' (" + tab->getTypeName() + ")" +
+						QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(tab->getObjectId())) +
+						tr("\n%1 Connected rels: %2").arg(UtilsNs::DataSeparator, QString::number(this->getConnectRelsCount()));
 
-	this->setToolTip(this->table_tooltip);
+	if(!tab->getAlias().isEmpty())
+		table_tooltip += QString("\n%1 Alias: %2").arg(UtilsNs::DataSeparator, tab->getAlias());
+
+	if(!tab->getComment().isEmpty())
+		table_tooltip += QString("\n\n%1").arg(tab->getComment());
+
+	table_tooltip = UtilsNs::formatMessage(table_tooltip);
+
+	this->setToolTip(table_tooltip);
 	this->setZValue(tab->getZValue());
 
 	configureObjectSelection();

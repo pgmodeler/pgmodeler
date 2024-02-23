@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,12 +42,12 @@ class __libgui CodeCompletionWidget: public QWidget {
 		 * of the elements in dml_keywords string list */
 		enum DmlKeywordId: unsigned{
 			Select, Insert, Update, Delete,
-			Truncate, From, Join, Into,
-			As, Set, Table, Only,
-			Where, Inner, Outer, Left,
-			Right, Full, Union,
-			Intersect, Except, Distinct,
-			Values, All
+			Truncate, Alter, Drop,	From,
+			Join, Into,	As, Set, Table,
+			Only,	Where,
+			Inner, Outer, Left,	Right,
+			Full, Union, Intersect,
+			Except, Distinct,	Values, All
 		};
 
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
@@ -124,7 +124,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		attribs_map custom_items_tips;
 
-		//! \brief Puts the selected object name on the current cursor position.
+					 //! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 		
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items

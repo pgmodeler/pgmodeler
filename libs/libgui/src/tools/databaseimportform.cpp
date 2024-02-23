@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "widgets/taskprogresswidget.h"
 #include "widgets/taskprogresswidget.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "defaultlanguages.h"
 #include "settings/connectionsconfigwidget.h"
 #include "objectslistmodel.h"
@@ -215,7 +216,7 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 {
 	QPixmap ico;
 
-	msg=GuiUtilsNs::formatMessage(msg);
+	msg=UtilsNs::formatMessage(msg);
 	progress_lbl->setText(msg);
 	progress_pb->setValue(progress);
 
@@ -554,7 +555,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	ico=QPixmap(GuiUtilsNs::getIconPath("error"));
 	ico_lbl->setPixmap(ico);
 
-	item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
+	item=GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(e.getErrorMessage()), ico, nullptr, false, true);
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
 
 	//Destroy the current import thread and helper to avoid reuse

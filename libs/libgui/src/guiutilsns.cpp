@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -213,43 +213,6 @@ namespace GuiUtilsNs {
 				}
 			}
 		}
-	}
-
-	QString formatMessage(const QString &msg)
-	{
-		QString fmt_msg=msg;
-		QChar start_chrs[2]={'`','('},
-				end_chrs[2]={'\'', ')'};
-		QStringList start_tags={ "<strong>", "<em>(" },
-				end_tags={ "</strong>", ")</em>" };
-		int pos=-1, pos1=-1;
-
-		// Replacing the form `' by <strong></strong> and () by <em></em>
-		for(int chr_idx=0; chr_idx < 2; chr_idx++)
-		{
-			pos=0;
-			do
-			{
-				pos=fmt_msg.indexOf(start_chrs[chr_idx], pos);
-				pos1=fmt_msg.indexOf(end_chrs[chr_idx], pos);
-
-				if(pos >= 0 && pos1 >=0)
-				{
-					fmt_msg.replace(pos, 1 , start_tags[chr_idx]);
-					pos1 += start_tags[chr_idx].length() - 1;
-					fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
-				}
-				else
-					break;
-
-				pos=pos1;
-			}
-			while(pos >= 0 && pos < fmt_msg.size());
-		}
-
-		fmt_msg.replace("\n", "<br/>");
-
-		return fmt_msg;
 	}
 
 	void configureWidgetFont(QWidget *widget, FontFactorId factor_id)
@@ -486,18 +449,6 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
-	{
-		QGraphicsDropShadowEffect *shadow=nullptr;
-
-		shadow=new QGraphicsDropShadowEffect(wgt);
-		shadow->setXOffset(x_offset);
-		shadow->setYOffset(y_offset);
-		shadow->setBlurRadius(radius);
-		shadow->setColor(color);
-		wgt->setGraphicsEffect(shadow);
-	}
-
 	void handleFileDialogState(QFileDialog *file_dlg, bool save_state)
 	{
 		if(!file_dlg)
@@ -724,30 +675,101 @@ namespace GuiUtilsNs {
 		}
 	}
 
-	void updateDropShadows(QWidgetList widgets)
+	void createDropShadow(QWidget *wgt, int x_offset, int y_offset, int radius, const QColor &color)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(wgt);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(color);
+		wgt->setGraphicsEffect(shadow);
+	}
+
+	void updateDropShadow(QWidget *wgt)
 	{
 		QColor color(0, 0, 0, 80);
 		int radius = 6, x = 1, y = 1;
-		QGraphicsDropShadowEffect *shadow = nullptr;
-		QString class_name = "QToolButton";
 
 		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light ||
-			 AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
+				AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
 		{
 			radius = 1;
 			color.setRgb(225, 225, 225);
 			color.setAlpha(255);
 		}
 
+		if(!wgt->graphicsEffect())
+			createDropShadow(wgt, x, y, radius, color);
+		else
+		{
+			QGraphicsDropShadowEffect *shadow =
+					qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
+
+			shadow->setColor(color);
+			shadow->setOffset(x, y);
+			shadow->setBlurRadius(radius);
+		}
+	}
+
+	void updateDropShadows(QWidgetList widgets, const QString &class_name)
+	{
 		for(auto &wgt : widgets)
 		{
 			if(wgt->metaObject()->className() == class_name && wgt->graphicsEffect())
-			{
-				shadow = qobject_cast<QGraphicsDropShadowEffect *>(wgt->graphicsEffect());
-				shadow->setColor(color);
-				shadow->setOffset(x, y);
-				shadow->setBlurRadius(radius);
-			}
+				updateDropShadow(wgt);
 		}
+	}
+
+	void createPasswordShowAction(QLineEdit *parent_edt)
+	{
+		if(!parent_edt ||
+				parent_edt->echoMode() != QLineEdit::Password)
+			return;
+
+		/* Appeding an action to the line edit which in turn creates a tool button.
+		 * That toolbutton that is used to handle the visiblity of the password */
+		parent_edt->addAction(new QAction(parent_edt), QLineEdit::TrailingPosition);
+
+		/* After creating the tool button we have to get the list of child tool buttons
+		 * If the flag clearButtonEnabled is true, we'll have a list with two elements
+		 * being the first the clear button and the last the recently added button
+		 * to control password visiblity */
+		QList<QToolButton *> btns = parent_edt->findChildren<QToolButton *>();
+		QToolButton *btn = nullptr;
+
+		btn = btns.last();
+		btn->setObjectName("password_show_btn"); // This is the name of the button referenced in the UI stylesheets
+		btn->setVisible(false);
+
+		/* Setting a custom property in the button to control the
+		 * icon state and echo mode of the parent input. This is changed
+		 * when the user clicks the password visibility icon */
+		static const char pass_attr[] = "pass_visible";
+		btn->setProperty(pass_attr, false);
+
+		// Hiding the password automatically when parent_edt loses focus
+		QObject::connect(qApp, &QApplication::focusChanged, parent_edt, [parent_edt, btn](QWidget *old_obj, QWidget *){
+			if(old_obj != parent_edt)
+				return;
+
+			btn->setIcon(QIcon(getIconPath("hidepwd")));
+			parent_edt->setEchoMode(QLineEdit::Password);
+			btn->setProperty(pass_attr, false);
+		});
+
+		// Hiding the icon when the text is empty
+		QObject::connect(parent_edt, &QLineEdit::textChanged, parent_edt, [btn](const QString &txt){
+			btn->setHidden(txt.isEmpty());
+		});
+
+		// Toggles the password visiblity when the user clicks the action
+		QObject::connect(btn, &QToolButton::clicked, parent_edt, [parent_edt, btn](){
+			bool pass_visible = btn->property(pass_attr).toBool();
+			btn->setProperty(pass_attr, !pass_visible);
+			btn->setIcon(QIcon(getIconPath(pass_visible ? "hidepwd" : "showpwd")));
+			parent_edt->setEchoMode(pass_visible ? QLineEdit::Password : QLineEdit::Normal);
+		});
 	}
 }

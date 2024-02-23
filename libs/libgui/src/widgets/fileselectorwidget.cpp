@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	file_is_mandatory = check_exec_flag = false;
 	file_must_exist = false;
 	file_mode = QFileDialog::AnyFile;
-
-	file_dlg.setWindowIcon(QPixmap(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
@@ -104,18 +102,17 @@ void FileSelectorWidget::setDirectoryMode(bool dir_mode)
 			file_mode = QFileDialog::AnyFile;
 	}
 
-	file_dlg.setFileMode(file_mode);
 	validateSelectedFile();
 }
 
 void FileSelectorWidget::setAcceptMode(QFileDialog::AcceptMode accept_mode)
 {
-	file_dlg.setAcceptMode(accept_mode);
+	this->accept_mode = accept_mode;
 }
 
 void FileSelectorWidget::setNameFilters(const QStringList &filters)
 {
-	file_dlg.setNameFilters(filters);
+	name_filters = filters;
 }
 
 void FileSelectorWidget::setNamePattern(const QString &pattern)
@@ -131,6 +128,7 @@ void FileSelectorWidget::setCheckExecutionFlag(bool value)
 void FileSelectorWidget::setFileIsMandatory(bool value)
 {
 	file_is_mandatory = value;
+	validateSelectedFile();
 }
 
 void FileSelectorWidget::setFileMustExist(bool value)
@@ -138,17 +136,14 @@ void FileSelectorWidget::setFileMustExist(bool value)
 	file_must_exist = value;
 
 	if(file_must_exist && file_mode == QFileDialog::AnyFile)
-	{
 		file_mode = QFileDialog::ExistingFile;
-		file_dlg.setFileMode(file_mode);
-	}
 
 	validateSelectedFile();
 }
 
 void FileSelectorWidget::setFileDialogTitle(const QString &title)
 {
-	file_dlg.setWindowTitle(title);
+	file_dlg_title = title;
 }
 
 void FileSelectorWidget::setSelectedFile(const QString &file)
@@ -158,22 +153,38 @@ void FileSelectorWidget::setSelectedFile(const QString &file)
 
 void FileSelectorWidget::setMimeTypeFilters(const QStringList &filters)
 {
-	file_dlg.setMimeTypeFilters(filters);
+	mime_filters = filters;
 }
 
 void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 {
-	file_dlg.setDefaultSuffix(suffix);
+	def_suffix = suffix;
+}
+
+void FileSelectorWidget::setAppendSuffix(bool append)
+{
+	append_suffix = append;
 }
 
 bool FileSelectorWidget::hasWarning()
 {
-	QString str = warn_ico_lbl->toolTip();
 	return !warn_ico_lbl->toolTip().isEmpty();
 }
 
 QString FileSelectorWidget::getSelectedFile()
 {
+	if(append_suffix && allow_filename_input &&
+		 file_mode != QFileDialog::Directory &&
+		 !def_suffix.isEmpty())
+	{
+		QString filename = filename_edt->text();
+
+		if(QFileInfo(filename).completeSuffix().isEmpty())
+			filename.append("." + def_suffix);
+
+		return filename;
+	}
+
 	return filename_edt->text();
 }
 
@@ -217,8 +228,17 @@ void FileSelectorWidget::setCustomWarning(const QString &warn_msg)
 
 void FileSelectorWidget::openFileDialog()
 {
+	QFileDialog file_dlg;
+
 	filename_edt->clearFocus();
+	file_dlg.setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 	file_dlg.selectFile(filename_edt->text());
+	file_dlg.setFileMode(file_mode);
+	file_dlg.setAcceptMode(accept_mode);
+	file_dlg.setNameFilters(name_filters);
+	file_dlg.setWindowTitle(file_dlg_title);
+	file_dlg.setMimeTypeFilters(mime_filters);
+	file_dlg.setDefaultSuffix(def_suffix);
 
 	GuiUtilsNs::restoreFileDialogState(&file_dlg);
 	file_dlg.exec();
@@ -238,7 +258,7 @@ void FileSelectorWidget::openFileExternally()
 
 void FileSelectorWidget::showWarning()
 {
-	QPalette pal;
+	QColor color = qApp->palette().color(QPalette::Text);
 	int padding = 0;
 	bool has_warn = !warn_ico_lbl->toolTip().isEmpty();
 
@@ -246,14 +266,12 @@ void FileSelectorWidget::showWarning()
 
 	if(has_warn)
 	{
-		pal.setColor(QPalette::Text, QColor(255, 0, 0));
+		color.setRgb(255, 0, 0);
 		padding = warn_ico_lbl->width();
 	}
-	else
-		pal = qApp->palette();
 
-	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px").arg(padding));
-	filename_edt->setPalette(pal);
+	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px; color: %2")
+															.arg(QString::number(padding), color.name()));
 }
 
 void FileSelectorWidget::validateSelectedFile()
@@ -263,12 +281,13 @@ void FileSelectorWidget::validateSelectedFile()
 	warn_ico_lbl->setToolTip("");
 	rem_file_tb->setEnabled(!filename_edt->text().isEmpty());
 
-	if(file_is_mandatory && fi.absoluteFilePath().isEmpty())
+	if((file_is_mandatory && fi.absoluteFilePath().isEmpty()) ||
+		 (!fi.absoluteFilePath().isEmpty() && !fi.isAbsolute()))
 	{
 		if(file_mode == QFileDialog::Directory)
-			warn_ico_lbl->setToolTip(tr("A path to a directory must be provided!"));
+			warn_ico_lbl->setToolTip(tr("An absolute path to a directory must be provided!"));
 		else
-			warn_ico_lbl->setToolTip(tr("A path to a file must be provided!"));
+			warn_ico_lbl->setToolTip(tr("An absolute path to a file must be provided!"));
 	}
 	else if(!fi.absoluteFilePath().isEmpty())
 	{

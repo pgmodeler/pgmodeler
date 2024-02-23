@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
 #include "widgets/objectstablewidget.h"
-#include "pgmodelerplugin.h"
+#include "pgmodelerguiplugin.h"
 #include "widgets/fileselectorwidget.h"
 
 class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
@@ -36,7 +36,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		Q_OBJECT
 
 		//! \brief Loaded plugins
-		std::vector<PgModelerPlugin *> plugins;
+		QList<PgModelerGuiPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;

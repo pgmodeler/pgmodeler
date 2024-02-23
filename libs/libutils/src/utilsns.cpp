@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -79,5 +79,42 @@ namespace UtilsNs {
 		QCryptographicHash hash_gen(QCryptographicHash::Md5);
 		hash_gen.addData(string.toUtf8());
 		return hash_gen.result().toHex();
+	}
+
+	QString formatMessage(const QString &msg)
+	{
+		QString fmt_msg=msg;
+		QChar start_chrs[2]={'`','('},
+				end_chrs[2]={'\'', ')'};
+		QStringList start_tags={ "<strong>", "<em>(" },
+				end_tags={ "</strong>", ")</em>" };
+		int pos=-1, pos1=-1;
+
+					 // Replacing the form `' by <strong></strong> and () by <em></em>
+		for(int chr_idx=0; chr_idx < 2; chr_idx++)
+		{
+			pos=0;
+			do
+			{
+				pos=fmt_msg.indexOf(start_chrs[chr_idx], pos);
+				pos1=fmt_msg.indexOf(end_chrs[chr_idx], pos);
+
+				if(pos >= 0 && pos1 >=0)
+				{
+					fmt_msg.replace(pos, 1 , start_tags[chr_idx]);
+					pos1 += start_tags[chr_idx].length() - 1;
+					fmt_msg.replace(pos1, 1, end_tags[chr_idx]);
+				}
+				else
+					break;
+
+				pos=pos1;
+			}
+			while(pos >= 0 && pos < fmt_msg.size());
+		}
+
+		fmt_msg.replace("\n", "<br/>");
+
+		return fmt_msg;
 	}
 }

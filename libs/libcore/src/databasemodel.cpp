@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1017,6 +1017,29 @@ void DatabaseModel::removeExtensionTypes(Extension *ext)
 	}
 }
 
+void DatabaseModel::setRelTablesModified(BaseRelationship *rel)
+{
+	if(!rel)
+		return;
+
+	BaseTable *src_table = rel->getTable(BaseRelationship::SrcTable),
+			*dst_table = rel->getTable(BaseRelationship::DstTable);
+
+	src_table->setModified(true);
+
+	if(!rel->isSelfRelationship())
+		dst_table->setModified(true);
+
+	BaseObject *src_sch = src_table->getSchema(),
+			*dst_sch = dst_table->getSchema();
+
+	if(src_sch)
+		dynamic_cast<BaseGraphicObject *>(src_sch)->setModified(true);
+
+	if(dst_sch && dst_sch != src_sch)
+		dynamic_cast<BaseGraphicObject *>(dst_sch)->setModified(true);
+}
+
 bool DatabaseModel::updateExtensionTypes(Extension *ext)
 {
 	if(!ext)
@@ -1809,7 +1832,7 @@ void DatabaseModel::updateRelsGeneratedObjects()
 	}
 }
 
-void DatabaseModel::validateRelationships()
+bool DatabaseModel::validateRelationships()
 {
 	Relationship *rel = nullptr;
 	BaseRelationship *base_rel = nullptr;
@@ -1818,7 +1841,7 @@ void DatabaseModel::validateRelationships()
 	std::vector<Relationship *> failed_rels;
 
 	if(!hasInvalidRelatioships())
-		return;
+		return false;
 
 	if(!loading_model)
 		BaseGraphicObject::setUpdatesEnabled(false);
@@ -1924,6 +1947,8 @@ void DatabaseModel::validateRelationships()
 
 	if(!errors.empty())
 		throw Exception(ErrorCode::RemInvalidatedObjects,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+
+	return true;
 }
 
 void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
@@ -2319,7 +2344,12 @@ void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 		if(rel->getObjectType()==ObjectType::Relationship)
 		{
 			dynamic_cast<Relationship *>(rel)->connectRelationship();
-			validateRelationships();
+
+			/* If no relationship was validated means that the relationship we are adding
+			 * is the first one in the model, so we force the modification of the involved
+			 * tables so they can be properly updated graphically */
+			if(!validateRelationships())
+				setRelTablesModified(rel);
 		}
 		else
 			rel->connectRelationship();
@@ -2359,8 +2389,12 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 
 			__removeObject(rel, obj_idx);
 
-			if(rel->getObjectType()==ObjectType::Relationship)
-				validateRelationships();
+			/* If no relationship was validated means that the relationship we are removing
+			 * was the only one in the model, so we force the modification of the involved
+			 * tables so they can be properly updated graphically */
+			if(rel->getObjectType() == ObjectType::Relationship &&
+				 !validateRelationships())
+				setRelTablesModified(rel);
 
 			//Updating the fk relationships for the receiver table after removing the old relationship
 			if(recv_tab && recv_tab->getObjectType() == ObjectType::Table)
@@ -3327,15 +3361,27 @@ void DatabaseModel::loadModel(const QString &filename)
 
 		setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 
-		this->author=attribs[Attributes::ModelAuthor];
+		this->author = attribs[Attributes::ModelAuthor];
 
-		pos_str=attribs[Attributes::LastPosition].split(',');
+		pos_str = attribs[Attributes::LastPosition].split(',');
 
-		if(pos_str.size()>=2)
-			this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
+		if(pos_str.size() >= 2)
+			this->last_pos = QPoint(pos_str[0].toInt(),pos_str[1].toInt());
 
-		this->last_zoom=attribs[Attributes::LastZoom].toDouble();
-		if(this->last_zoom <= 0) this->last_zoom=1;
+		this->last_zoom = attribs[Attributes::LastZoom].toDouble();
+
+		if(this->last_zoom <= 0)
+			this->last_zoom=1;
+
+		pos_str = attribs[Attributes::SceneRect].split(',');
+
+		if(pos_str.size() == 4)
+		{
+			scene_rect.setLeft(pos_str[0].toDouble());
+			scene_rect.setTop(pos_str[1].toDouble());
+			scene_rect.setWidth(pos_str[2].toDouble());
+			scene_rect.setHeight(pos_str[3].toDouble());
+		}
 
 		this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
 		this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
@@ -7596,12 +7642,6 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
-		/*else
-		{
-			//Configuring the changelog attributes when generating XML code
-			attribs_aux[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
-			attribs_aux[Attributes::Changelog] = getChangelogDefinition();
-		} */
 
 		setDatabaseModelAttributes(attribs_aux, def_type);
 
@@ -7680,33 +7720,6 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		}
 
 		attribs_aux[Attributes::SearchPath]=search_path;
-		/*attribs_aux[Attributes::ModelAuthor]=author;
-		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
-
-		if(def_type==SchemaParser::XmlCode)
-		{
-			QStringList act_layers;
-
-			for(auto &layer_id : active_layers)
-				act_layers.push_back(QString::number(layer_id));
-
-			attribs_aux[Attributes::Layers]=layers.join(',');
-			attribs_aux[Attributes::ActiveLayers]=act_layers.join(',');
-			attribs_aux[Attributes::LayerNameColors]=layer_name_colors.join(',');
-			attribs_aux[Attributes::LayerRectColors]=layer_rect_colors.join(',');
-			attribs_aux[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
-			attribs_aux[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
-			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
-			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-			attribs_aux[Attributes::LastZoom]=QString::number(last_zoom);
-			attribs_aux[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
-			attribs_aux[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
-			attribs_aux[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
-			attribs_aux[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
-		}
-		else
-			configureShellTypes(true); */
 
 		if(def_type == SchemaParser::SqlCode)
 			configureShellTypes(true);
@@ -7754,20 +7767,31 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 		for(auto &layer_id : active_layers)
 			act_layers.push_back(QString::number(layer_id));
 
-		attribs[Attributes::Layers]=layers.join(',');
-		attribs[Attributes::ActiveLayers]=act_layers.join(',');
-		attribs[Attributes::LayerNameColors]=layer_name_colors.join(',');
-		attribs[Attributes::LayerRectColors]=layer_rect_colors.join(',');
-		attribs[Attributes::ShowLayerNames]=(is_layer_names_visible ? Attributes::True : Attributes::False);
-		attribs[Attributes::ShowLayerRects]=(is_layer_rects_visible ? Attributes::True : Attributes::False);
-		attribs[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-		attribs[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
-		attribs[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-		attribs[Attributes::LastZoom]=QString::number(last_zoom);
-		attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
-		attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
-		attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
-		attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
+		attribs[Attributes::Layers] = layers.join(',');
+		attribs[Attributes::ActiveLayers] = act_layers.join(',');
+		attribs[Attributes::LayerNameColors] = layer_name_colors.join(',');
+		attribs[Attributes::LayerRectColors] = layer_rect_colors.join(',');
+		attribs[Attributes::ShowLayerNames] = (is_layer_names_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::ShowLayerRects] = (is_layer_rects_visible ? Attributes::True : Attributes::False);
+		attribs[Attributes::MaxObjCount] = QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attribs[Attributes::Protected] = (this->is_protected ? Attributes::True : "");
+		attribs[Attributes::LastPosition] = QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+		attribs[Attributes::LastZoom] = QString::number(last_zoom);
+		attribs[Attributes::DefaultSchema] = (default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
+		attribs[Attributes::DefaultOwner] = (default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
+		attribs[Attributes::DefaultTablespace] = (default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
+		attribs[Attributes::DefaultCollation] = (default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
+
+		if(!scene_rect.isValid())
+			attribs[Attributes::SceneRect] = "";
+		else
+		{
+			attribs[Attributes::SceneRect] = QString("%1,%2,%3,%4")
+																					 .arg(scene_rect.left())
+																					 .arg(scene_rect.top())
+																					 .arg(scene_rect.width())
+																					 .arg(scene_rect.height());
+		}
 	}
 }
 
@@ -8416,7 +8440,8 @@ void DatabaseModel::setObjectsModified(std::vector<BaseObject *> &objects)
 
 void DatabaseModel::setObjectsModified(std::vector<ObjectType> types)
 {
-	ObjectType obj_types[]={ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
+	ObjectType obj_types[]={
+							ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
 	std::vector<BaseObject *>::iterator itr, itr_end;
@@ -10123,4 +10148,18 @@ QString DatabaseModel::getChangelogDefinition(bool csv_format)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void DatabaseModel::setSceneRect(const QRectF &rect)
+{
+	if(!rect.isValid())
+		return;
+
+	setCodeInvalidated(rect != scene_rect);
+	scene_rect = rect;
+}
+
+QRectF DatabaseModel::getSceneRect()
+{
+	return scene_rect;
 }

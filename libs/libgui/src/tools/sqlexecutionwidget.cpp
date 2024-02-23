@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -403,7 +403,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	msgoutput_lst->clear();
 
 	GuiUtilsNs::createOutputListItem(msgoutput_lst,
-										GuiUtilsNs::formatMessage(QString("%1 %2").arg(time_str).arg(e.getErrorMessage())),
+										UtilsNs::formatMessage(QString("%1 %2").arg(time_str).arg(e.getErrorMessage())),
 										QPixmap(GuiUtilsNs::getIconPath("error")));
 
 	if(e.getErrorCode()==ErrorCode::ConnectionTimeout ||
@@ -493,7 +493,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		}
 
 		GuiUtilsNs::createOutputListItem(msgoutput_lst,
-																				GuiUtilsNs::formatMessage(tr("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
+																				UtilsNs::formatMessage(tr("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
 																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
 																																		 .arg(!res_model ? tr("Rows affected") :  tr("Rows retrieved"))

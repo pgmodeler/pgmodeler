@@ -15,7 +15,7 @@ SOURCES += src/baseform.cpp \
 src/guiutilsns.cpp \
 src/mainwindow.cpp \
 src/messagebox.cpp \
-src/pgmodelerplugin.cpp \
+src/pgmodelerguiplugin.cpp \
 src/dbobjects/aggregatewidget.cpp \
 src/dbobjects/domainwidget.cpp \
 src/dbobjects/languagewidget.cpp \
@@ -136,7 +136,7 @@ src/baseform.h \
 src/guiutilsns.h \
 src/mainwindow.h \
 src/messagebox.h \
-src/pgmodelerplugin.h \
+src/pgmodelerguiplugin.h \
 src/dbobjects/aggregatewidget.h \
 src/dbobjects/domainwidget.h \
 src/dbobjects/languagewidget.h \

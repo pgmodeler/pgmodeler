@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 		QStringList args = app.arguments();
 		SchemaEditorForm syntaxchk;
 
-		app.loadTranslation(QLocale::system().name());
+		app.loadTranslations(QLocale::system().name(), false);
 
 		args.pop_front();
 		syntaxchk.loadFiles(args);

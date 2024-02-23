@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,7 +120,10 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelWidget *current_model;
 
 		//! \brief Stores the model objects tree state for each opened model
-		std::map<ModelWidget *, std::vector<BaseObject *> > model_tree_states;
+		QMap<ModelWidget *, QStringList> model_tree_states;
+
+		//! \brief Stores the model objects tree vertical scrollbar position for each opened model
+		QMap<ModelWidget *, int> model_tree_v_pos;
 
 		//! \brief Stores the defaul window title
 		QString window_title;
@@ -144,7 +147,11 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		fix_menu,
 
-		plugins_config_menu;
+		plugins_config_menu,
+
+		expand_canvas_menu;
+
+		QAction *action_expand_canvas;
 
 		//! \brief Stores the loaded plugins toolbar actions
 		QList<QAction *> plugins_tb_acts;
@@ -260,9 +267,13 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Adds an entry to the recent models menu
 		void registerRecentModel(const QString &filename);
 
+		//! \brief Adds several entries to the recent models menu
+		void registerRecentModels(const QStringList &filenames);
+
+		//! \brief Register an icon for a specific file extension (suffix) in the recent models menu
 		void registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon);
 
-				//! \brief Updates the window title taking into account the current model filename
+		//! \brief Updates the window title taking into account the current model filename
 		void updateWindowTitle();
 
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
@@ -360,6 +371,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
 		void toggleChangelogWidget(bool show);
+
+		void expandSceneRect();
 
 		#ifdef	DEMO_VERSION
 		void showDemoVersionWarning(bool exit_msg = false);

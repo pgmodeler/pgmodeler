@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,6 +59,9 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 			UnitCentimeters
 		};
 
+	protected:
+		void showEvent(QShowEvent *) override;
+
 	public:
 		//! \brief Maximum number of files listed as recent models
 		static constexpr int MaxRecentModels=15;
@@ -96,9 +99,10 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 		void selectPaperSize();
 
 	private slots:
+		void setConfigurationChanged(bool changed = true) override;
 		void convertMarginUnity();
 		void resetDialogsSizes();
-		void resetExitAlerts();
+		void resetAlertChoices();
 };
 
 #endif

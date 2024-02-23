@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "relationshipview.h"
 #include "relationship.h"
 #include "tableview.h"
+#include "utilsns.h"
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
@@ -570,7 +571,7 @@ void RelationshipView::configureObject()
 	if(!rel_base->isSelfRelationship())
 		tables[dst_tab]->addConnectedRelationship(rel_base);
 
-	configureLine();	
+	configureLine();
 	connectTables();
 
 	connect(rel_base, &BaseRelationship::s_objectModified, this, &RelationshipView::configureLine);
@@ -591,6 +592,8 @@ void RelationshipView::configureLine()
 	BaseRelationship *base_rel = this->getUnderlyingObject();
 	BaseRelationship::TableId src_tab = BaseRelationship::SrcTable,
 			dst_tab = BaseRelationship::DstTable;
+
+	configureToolTip();
 
 	/* We skip the line configuration if the line is still being configured, or the bounding rectangles
 	 * of the involved tables are not valid (they wasn't rendered/configured yet) or the
@@ -1236,46 +1239,55 @@ void RelationshipView::configureLine()
 	configureBoundingRect();
 
 	configuring_line=false;
+}
+
+void RelationshipView::configureToolTip()
+{
+	BaseRelationship *base_rel = this->getUnderlyingObject();
+	QString tool_tip;
 
 	/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 	for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
-	if(rel_type==BaseRelationship::RelationshipFk)
-		tool_tip=base_rel->getName(true) +
-				 " (" + BaseObject::getTypeName(ObjectType::Relationship) + ")";
+	if(base_rel->getRelationshipType() == BaseRelationship::RelationshipFk)
+		tool_tip = QString("`%1' (%2)").arg(base_rel->getName(), BaseObject::getTypeName(ObjectType::Relationship));
 	else
-		tool_tip=base_rel->getName(true) +
-				 " (" + base_rel->getTypeName() + ")";
+		tool_tip = QString("`%1' (%2)").arg(base_rel->getName(), base_rel->getTypeName());
 
-	tool_tip += QString("\nId: %1\n").arg(base_rel->getObjectId()) +
-							TableObjectView::ConstrDelimStart +
-							QString(" %1 ").arg(base_rel->getRelationshipTypeName()) +
-							TableObjectView::ConstrDelimEnd;
+	tool_tip +=	QString("\n%1 Id: %2").arg(UtilsNs::DataSeparator, QString::number(base_rel->getObjectId())) +
+							QString("\n%1 Src table: `%2'").arg(UtilsNs::DataSeparator, base_rel->getTable(BaseRelationship::SrcTable)->getSignature()) +
+							QString("\n%1 Dst table: `%2'").arg(UtilsNs::DataSeparator, base_rel->getTable(BaseRelationship::DstTable)->getSignature());
 
 	if(!base_rel->getAlias().isEmpty())
-		tool_tip += QString("\nAlias: %1").arg(base_rel->getAlias());
+		tool_tip += QString("\n%1 Alias: %2").arg(UtilsNs::DataSeparator, base_rel->getAlias());
+
+	tool_tip += QString("\n%1 %2 %3").arg(TableObjectView::ConstrDelimStart, base_rel->getRelationshipTypeName(), TableObjectView::ConstrDelimEnd);
+	tool_tip = UtilsNs::formatMessage(tool_tip);
 
 	this->setToolTip(tool_tip);
 
-	for(i=0; i < 3; i++)
+	for(int i = 0; i < 3; i++)
 	{
 		if(labels[i])
 			labels[i]->setToolTip(tool_tip);
 	}
 
-	descriptor->setToolTip(tool_tip);
+	if(descriptor)
+		descriptor->setToolTip(tool_tip);
 
 	for(auto &curve : curves)
-		curve->setToolTip(tool_tip);
+	{
+		if(curve)
+			curve->setToolTip(tool_tip);
+	}
 
 	for(int i = 0; i < 2; i++)
 	{
-	 if(cf_descriptors[i])
-		 cf_descriptors[i]->setToolTip(tool_tip);
+		if(cf_descriptors[i])
+			cf_descriptors[i]->setToolTip(tool_tip);
 
-	 if(round_cf_descriptors[i])
-		 round_cf_descriptors[i]->setToolTip(tool_tip);
+		if(round_cf_descriptors[i])
+			round_cf_descriptors[i]->setToolTip(tool_tip);
 	}
-
 }
 
 void RelationshipView::configureDescriptor()

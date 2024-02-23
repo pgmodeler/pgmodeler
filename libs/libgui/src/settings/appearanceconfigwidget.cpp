@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -205,7 +205,6 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 
 	model=new DatabaseModel;
 	scene=new ObjectsScene;
-	scene->setSceneRect(QRectF(0,0,500,500));
 	placeholder=new RoundedRectItem;
 
 	viewp=new QGraphicsView(scene);
@@ -328,6 +327,10 @@ CREATE TABLE public.table_b (\n \
 		setConfigurationChanged(true);
 	});
 
+	connect(expansion_factor_spb, &QSpinBox::valueChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
+
 	connect(min_obj_opacity_spb, &QSpinBox::valueChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
@@ -355,10 +358,22 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 
 void AppearanceConfigWidget::showEvent(QShowEvent *)
 {
+	/* We store the current changed state of the configurations
+	 * because the call to previewCanvasColors() always set
+	 * the settings as changed and since the show event
+	 * doens't need to change settings we do a small workaround.
+	 *
+	 * This will avoid reload appearance settings when the user
+	 * just displayed the appearance settings but don't changed
+	 * anything. */
+	bool conf_changed = isConfigurationChanged();
+
 	// Store the current state of grid/delimiters display
 	show_grid = ObjectsScene::isShowGrid();
 	show_delimiters = ObjectsScene::isShowPageDelimiters();
 	previewCanvasColors();
+
+	setConfigurationChanged(conf_changed);
 }
 
 void AppearanceConfigWidget::hideEvent(QHideEvent *)
@@ -380,74 +395,67 @@ void AppearanceConfigWidget::loadExampleModel()
 		if(model->getObjectCount() != 0)
 			return;
 
-		RelationshipView *rel=nullptr;
-		StyledTextboxView *txtbox=nullptr;
-		TableView *tab=nullptr;
-		GraphicalView *view=nullptr;
+		RelationshipView *rel = nullptr;
+		StyledTextboxView *txtbox = nullptr;
+		TableView *tab = nullptr;
+		GraphicalView *view = nullptr;
 		unsigned count = 0, i = 0;
-		QList<BaseObjectView *> graph_objs;
 
 		model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
 
-		count=model->getObjectCount(ObjectType::Table);
+		count = model->getObjectCount(ObjectType::Table);
 		for(i=0; i < count; i++)
 		{
-			tab=new TableView(model->getTable(i));
-			tab->setSelected(i==1);
+			tab = new TableView(model->getTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::ForeignTable);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::ForeignTable);
+		for(i = 0; i < count; i++)
 		{
-			tab=new TableView(model->getForeignTable(i));
+			tab = new TableView(model->getForeignTable(i));
 			scene->addItem(tab);
-			graph_objs.append(tab);
+			tab->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::View);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::View);
+		for(i = 0; i < count; i++)
 		{
-			view=new GraphicalView(model->getView(i));
+			view = new GraphicalView(model->getView(i));
 			scene->addItem(view);
-			graph_objs.append(view);
+			view->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Relationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Relationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::Relationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::BaseRelationship);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::BaseRelationship);
+		for(i = 0; i < count; i++)
 		{
-			rel=new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
+			rel = new RelationshipView(model->getRelationship(i, ObjectType::BaseRelationship));
 			scene->addItem(rel);
-			graph_objs.append(rel);
+			rel->setEnabled(false);
 		}
 
-		count=model->getObjectCount(ObjectType::Textbox);
-		for(i=0; i < count; i++)
+		count = model->getObjectCount(ObjectType::Textbox);
+		for(i = 0; i < count; i++)
 		{
-			txtbox=new StyledTextboxView(model->getTextbox(i));
-			txtbox->setSelected(i==0);
+			txtbox = new StyledTextboxView(model->getTextbox(i));
 			scene->addItem(txtbox);
-			graph_objs.append(txtbox);
+			txtbox->setEnabled(false);
 		}
 
-		for(auto &obj : graph_objs)
-			obj->setEnabled(false);
-
-		placeholder->setRect(QRectF(400, 280, 200, 150));
+		placeholder->setRect(QRectF(400, 150, 200, 150));
 		updatePlaceholderItem();
 		scene->addItem(placeholder);
 		scene->setActiveLayers(QList<unsigned>({0}));
 		scene->setSceneRect(scene->itemsBoundingRect(false));
-
 	}
 	catch(Exception &e)
 	{
@@ -486,8 +494,10 @@ void AppearanceConfigWidget::loadConfiguration()
 
 		custom_scale_chk->setChecked(config_params[GlobalAttributes::AppearanceConf].count(Attributes::CustomScale));
 		custom_scale_spb->setValue(config_params[GlobalAttributes::AppearanceConf][Attributes::CustomScale].toDouble());
+		expansion_factor_spb->setValue(config_params[Attributes::Design][Attributes::ExpansionFactor].toUInt());
 
 		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -625,6 +635,8 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::GridColor] = grid_color_cp->getColor(0).name();
 		attribs[Attributes::CanvasColor] = canvas_color_cp->getColor(0).name();
 		attribs[Attributes::DelimitersColor] = delimiters_color_cp->getColor(0).name();
+		attribs[Attributes::ExpansionFactor] = QString::number(expansion_factor_spb->value());
+
 		config_params[Attributes::Design] = attribs;
 		attribs.clear();
 
@@ -636,6 +648,7 @@ void AppearanceConfigWidget::saveConfiguration()
 		attribs[Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		attribs[Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 		attribs[Attributes::TabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+
 		config_params[Attributes::Code] = attribs;
 		attribs.clear();
 
@@ -718,6 +731,8 @@ void AppearanceConfigWidget::saveConfiguration()
 												tr("The template file `%1' could not be accessed!").arg(theme_hl_files[i]) : "");
 			}
 		}
+
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -818,6 +833,8 @@ void AppearanceConfigWidget::applyConfiguration()
 	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
 	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	ModelWidget::setMinimumObjectOpacity(min_obj_opacity_spb->value());
+	ObjectsScene::setExpansionFactor(expansion_factor_spb->value());
+	GuiUtilsNs::updateDropShadows(qApp->allWidgets());
 
 	loadExampleModel();
 	model->setObjectsModified();

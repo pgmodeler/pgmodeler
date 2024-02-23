@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,10 +78,12 @@ void StyledTextboxView::configureObject()
 
 	QFontMetricsF fm(text_item->getFont());
 	Textbox *txtbox = dynamic_cast<Textbox *>(getUnderlyingObject());
-	double txt_width = txtbox->getTextWidth() <= 0 ? DefaultWidth : txtbox->getTextWidth();
 
-	rect = fm.boundingRect(QRectF(0,0, txt_width + (4 * HorizSpacing), 0),
+	rect = fm.boundingRect(QRectF(0,0, txtbox->getTextWidth() + (4 * HorizSpacing), 0),
 													Qt::TextWordWrap, txtbox->getComment());
+
+	if(rect.width() < DefaultWidth)
+		rect.setWidth(DefaultWidth);
 
 	txtbox->setTextWidth(rect.width());
 

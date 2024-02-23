@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -208,8 +208,37 @@ void MainWindow::configureMenusActionsWidgets()
 	act_arrange_objs->setIcon(QIcon(GuiUtilsNs::getIconPath("arrangetables")));
 	act_arrange_objs->setEnabled(false);
 	model_acts_tb->insertAction(action_compact_view, act_arrange_objs);
-
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+	expand_canvas_menu.addAction(tr("Expand to top"),
+															 this, &MainWindow::expandSceneRect,
+															 QKeySequence("Ctrl+Shift+Up"))->setData(ObjectsScene::ExpandTop);
+
+	expand_canvas_menu.addAction(tr("Expand to left"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Left"))->setData(ObjectsScene::ExpandLeft);
+
+	expand_canvas_menu.addAction(tr("Expand to bottom"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Down"))->setData(ObjectsScene::ExpandBottom);
+
+	expand_canvas_menu.addAction(tr("Expand to right"),
+															this, &MainWindow::expandSceneRect,
+															QKeySequence("Ctrl+Shift+Right"))->setData(ObjectsScene::ExpandRight);
+
+	expand_canvas_menu.addSeparator();
+	expand_canvas_menu.addAction(tr("Reset geometry"),
+																this, &MainWindow::expandSceneRect,
+																QKeySequence("Ctrl+Shift+="))->setData(-1);
+
+	action_expand_canvas = expand_canvas_menu.menuAction();
+	action_expand_canvas->setEnabled(false);
+	action_expand_canvas->setText(tr("Expand canvas"));
+	action_expand_canvas->setToolTip(tr("Expand the canvas geometry to a specific direction"));
+	action_expand_canvas->setIcon(QIcon(GuiUtilsNs::getIconPath("expandcanvas")));
+	model_acts_tb->insertAction(act_arrange_objs, action_expand_canvas);
+	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(action_expand_canvas));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
 	arrange_menu.addAction(tr("Grid"), this, &MainWindow::arrangeObjects);
@@ -493,12 +522,12 @@ void MainWindow::loadConfigurations()
 				//Storing the file of a previous session
 				if(itr.first.contains(Attributes::File) &&
 						!itr.second[Attributes::Path].isEmpty())
-					prev_session_files.push_back(itr.second[Attributes::Path]);
+					prev_session_files.append(itr.second[Attributes::Path]);
 
 				//Creating the recent models menu
 				else if(itr.first.contains(Attributes::Recent) &&
 						!itr.second[Attributes::Path].isEmpty())
-					recent_models.push_back(itr.second[Attributes::Path]);
+					recent_models.append(itr.second[Attributes::Path]);
 			}
 		}
 	}
@@ -565,6 +594,14 @@ void MainWindow::connectSignalsToSlots()
 	connect(action_save_all, &QAction::triggered, this, &MainWindow::saveAllModels);
 	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, &MainWindow::updateDockWidgets);
 	connect(oper_list_wgt, &OperationListWidget::s_operationListUpdated, this, &MainWindow::__updateToolsState);
+
+	connect(oper_list_wgt, &OperationListWidget::s_operationExecuted, this, [this]() {
+		/* Everytime an operation is executed in the operation history
+		 * we have to adjust (update) the scene rect to reflect an eventual
+		 * new scene size due to the restoration of objects' positions */
+		if(current_model)
+			current_model->adjustSceneRect(false);
+	});
 
 	connect(action_undo, &QAction::triggered, oper_list_wgt, &OperationListWidget::undoOperation);
 	connect(action_redo, &QAction::triggered, oper_list_wgt, &OperationListWidget::redoOperation);
@@ -881,7 +918,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	else
 	{
 		GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-		std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
+		//std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
 		GeneralConfigWidget::saveWidgetGeometry(this);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
@@ -910,7 +947,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					model_names.push_back(QString("<strong>%1</strong>").arg(model->getDatabaseModel()->getName()));
 			}
 
-			if(!model_names.isEmpty() && confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False)
+			if(!model_names.isEmpty() &&
+					conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertUnsavedModels) != Attributes::False
+					/* confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False */)
 			{
 				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
@@ -930,7 +969,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		// Warning the user about non empty sql execution panels
 		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels() &&
-				confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False)
+				conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertOpenSqlTabs) != Attributes::False
+				/* confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False */)
 		{
 			action_manage->trigger();
 			msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
@@ -1027,16 +1067,16 @@ void MainWindow::updateConnections(bool force)
 			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::ConnectionsConfWgt));
 
 	if(force || (!force && (conn_cfg_wgt->isConfigurationChanged() ||
-							model_valid_wgt->connections_cmb->count()==0 ||
-							sql_tool_wgt->connections_cmb->count()==0)))
+													model_valid_wgt->connections_cmb->count() == 0 ||
+													sql_tool_wgt->connections_cmb->count() == 0)))
 	{
-		if(sender()!=sql_tool_wgt)
+		if(sender() != sql_tool_wgt)
 		{
 			ConnectionsConfigWidget::fillConnectionsComboBox(sql_tool_wgt->connections_cmb, true);
 			sql_tool_wgt->clearDatabases();
 		}
 
-		if(sender()!=model_valid_wgt)
+		if(sender() != model_valid_wgt)
 			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OpValidation);
 	}
 }
@@ -1096,7 +1136,10 @@ void MainWindow::updateRecentModelsMenu()
 	recent_models_menu->clear();
 	recent_models.removeDuplicates();
 
-	for(int i=0; i < recent_models.size() && i < GeneralConfigWidget::MaxRecentModels; i++)
+	while(recent_models.size() > GeneralConfigWidget::MaxRecentModels)
+		recent_models.pop_front();
+
+	for(int i = 0; i < recent_models.size(); i++)
 	{
 		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
@@ -1145,11 +1188,7 @@ void MainWindow::loadModelFromAction()
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
 			else
-			{
-				//Messagebox msgbox;
-				//msgbox.show(e);
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-			}
 		}
 	}
 }
@@ -1165,7 +1204,7 @@ void MainWindow::addModel(const QString &filename)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model creation limit."
 	if(models_tbw->count()==1)
-		throw Exception(tr("The demonstration version can create only `one' instance of database model!"),
+		throw Exception(tr("The demonstration version can create only `one' instance of a database model!"),
 										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #endif
 
@@ -1339,7 +1378,7 @@ void MainWindow::setCurrentModel()
 
 	//Restore the tree state
 	if(current_model)
-		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
+		model_objs_wgt->saveTreeState(model_tree_states[current_model], model_tree_v_pos[current_model]);
 
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
@@ -1398,7 +1437,7 @@ void MainWindow::setCurrentModel()
 			font = btn->font();
 			font.setWeight(QFont::Normal);
 			btn->setFont(font);
-			GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
+			GuiUtilsNs::updateDropShadow(btn);
 		}
 
 		edit_menu->addAction(current_model->action_copy);
@@ -1477,7 +1516,8 @@ void MainWindow::setCurrentModel()
 	changelog_wgt->setModel(current_model);
 
 	if(current_model)
-		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
+		model_objs_wgt->restoreTreeState(model_tree_states[current_model],
+																		 model_tree_v_pos[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
 	resizeGeneralToolbarButtons();
@@ -1581,7 +1621,8 @@ void MainWindow::closeModel(int model_id)
 				(model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
 			model_nav_wgt->removeModel(model_id);
-			model_tree_states.erase(model);
+			model_tree_states.remove(model);
+			model_tree_v_pos.remove(model);
 
 			disconnect(model, nullptr, nullptr, nullptr);
 
@@ -1667,7 +1708,7 @@ void MainWindow::applyConfigurations()
 		}
 
 		if(current_model)
-			current_model->update();
+			setGridOptions();
 
 		updateConnections();
 		sql_tool_wgt->configureSnippets();
@@ -1978,7 +2019,7 @@ void MainWindow::printModel()
 				current_model->printModel(printer,
 																	conf_wgt->print_grid_chk->isChecked(),
 																	conf_wgt->print_pg_num_chk->isChecked(),
-																	true);
+																	action_lock_delim->isChecked());
 			}
 		}
 	}
@@ -2017,6 +2058,7 @@ void MainWindow::loadModels(const QStringList &files)
 		return;
 
 	int i = -1;
+	QStringList loaded_files;
 
 	try
 	{
@@ -2033,10 +2075,10 @@ void MainWindow::loadModels(const QStringList &files)
 			}
 
 			addModel(file);
-			recent_models.push_front(file);
+			loaded_files.append(file);
 		}
 
-		updateRecentModelsMenu();
+		registerRecentModels(loaded_files);
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -2108,6 +2150,7 @@ void MainWindow::updateToolsState(bool model_closed)
 	action_redo->setEnabled(enabled);
 	action_compact_view->setEnabled(enabled);
 	action_magnifier->setEnabled(enabled && current_model->getCurrentZoom() < 1);
+	action_expand_canvas->setEnabled(enabled);
 
 	action_handle_metadata->setEnabled(enabled);
 
@@ -2528,6 +2571,20 @@ void MainWindow::toggleChangelogWidget(bool show)
 	layers_btn->blockSignals(false);
 }
 
+void MainWindow::expandSceneRect()
+{
+	if(!current_model)
+		return;
+
+	QAction *act = qobject_cast<QAction *>(sender());
+	int expand_dir = act->data().toInt();
+
+	if(expand_dir < 0)
+		current_model->adjustSceneRect(false);
+	else
+		current_model->expandSceneRect(static_cast<ObjectsScene::ExpandDirection>(expand_dir));
+}
+
 void MainWindow::configureMoreActionsMenu()
 {
 	if(!current_model)
@@ -2584,6 +2641,20 @@ void MainWindow::registerRecentModel(const QString &filename)
 
 	recent_models.append(filename);
 	updateRecentModelsMenu();
+}
+
+void MainWindow::registerRecentModels(const QStringList &filenames)
+{
+	int curr_cnt = recent_models.size();
+
+	for(auto &filename : filenames)
+	{
+		if(QFileInfo::exists(filename))
+			recent_models.append(filename);
+	}
+
+	if(curr_cnt < recent_models.size())
+		updateRecentModelsMenu();
 }
 
 void MainWindow::registerRecentModelIcon(const QString &suffix, const QIcon &file_type_icon)

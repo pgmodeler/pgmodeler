@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -109,8 +109,34 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::UseCurvedLines]="";
 	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]="";
 	config_params[Attributes::Configuration][Attributes::LowVerbosity]="";
+	config_params[Attributes::Configuration][Attributes::DefaultSchema]="";
 
 	selectPaperSize();
+
+#ifdef NO_UPDATE_CHECK
+	check_update_chk->setChecked(false);
+	check_update_chk->setVisible(false);
+	check_versions_cmb->setVisible(false);
+#endif
+
+	//Retrieving the available UI dictionaries
+	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
+													 GlobalAttributes::DirSeparator,
+													 "*.qm", QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
+
+	langs.replaceInStrings(".qm", "");
+	ui_language_cmb->addItem(tr("System default"));
+	QString native_lang;
+
+	for(auto &lang : langs)
+	{
+		native_lang = QLocale(lang).nativeLanguageName();
+		native_lang[0] = native_lang[0].toUpper();
+		ui_language_cmb->addItem(QString("%1 (%2 : %3)")
+														 .arg(native_lang)
+														 .arg(QLocale::languageToString(QLocale(lang).language()))
+														 .arg(lang), lang);
+	}
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
 	QList<QSpinBox *> spin_boxes=this->findChildren<QSpinBox *>();
@@ -121,7 +147,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QCheckBox *chk : chk_boxes)
 	{
 		child_wgts.push_back(chk);
-		connect(chk, &QCheckBox::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(chk, &QCheckBox::toggled, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
 
 	for(QSpinBox *spin : spin_boxes)
@@ -145,39 +171,24 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(QRadioButton *radio : radios)
 	{
 		child_wgts.push_back(radio);
-		connect(radio, &QRadioButton::clicked, this, &GeneralConfigWidget::setConfigurationChanged);
+		connect(radio, &QRadioButton::toggled, this, &GeneralConfigWidget::setConfigurationChanged);
 	}
+
+	connect(source_editor_sel, &FileSelectorWidget::s_selectorChanged, this, &GeneralConfigWidget::setConfigurationChanged);
 
 	connect(clear_sql_history_tb, &QToolButton::clicked, this, [](){
 		SQLExecutionWidget::destroySQLHistory();
 	});
 
-	connect(reset_exit_alerts_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetExitAlerts);
+	connect(reset_alerts_choices_tb, &QToolButton::clicked, this, &GeneralConfigWidget::resetAlertChoices);
+}
 
-#ifdef NO_UPDATE_CHECK
-	check_update_chk->setChecked(false);
-	check_update_chk->setVisible(false);
-	check_versions_cmb->setVisible(false);
-#endif
+void GeneralConfigWidget::showEvent(QShowEvent *)
+{
+	reset_alerts_choices_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
+																			 config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True ||
+																			 config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] == Attributes::True);
 
-	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::getLanguagesPath() +
-													 GlobalAttributes::DirSeparator,
-													 "*.qm", QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
-
-	langs.replaceInStrings(".qm", "");
-	ui_language_cmb->addItem(tr("System default"));
-	QString native_lang;
-
-	for(QString lang : langs)
-	{
-		native_lang = QLocale(lang).nativeLanguageName();
-		native_lang[0] = native_lang[0].toUpper();
-		ui_language_cmb->addItem(QString("%1 (%2 : %3)")
-														 .arg(native_lang)
-														 .arg(QLocale::languageToString(QLocale(lang).language()))
-														 .arg(lang), lang);
-	}
 }
 
 void GeneralConfigWidget::loadConfiguration()
@@ -194,11 +205,9 @@ void GeneralConfigWidget::loadConfiguration()
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, { Attributes::Id });
 
 		if(!config_params[Attributes::Configuration].count(Attributes::AlertUnsavedModels) ||
-			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs))
-			resetExitAlerts();
-
-		reset_exit_alerts_tb->setEnabled(config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::True ||
-																		 config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::True);
+			 !config_params[Attributes::Configuration].count(Attributes::AlertOpenSqlTabs) ||
+			 !config_params[Attributes::Configuration].count(Attributes::UseDefDisambiguation))
+			resetAlertChoices();
 
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
@@ -274,7 +283,7 @@ void GeneralConfigWidget::loadConfiguration()
 			wgt->blockSignals(false);
 
 		widgets_geom.clear();
-		for(auto itr : config_params)
+		for(auto &itr : config_params)
 		{
 			if(itr.second.count(Attributes::XPos))
 			{
@@ -287,7 +296,8 @@ void GeneralConfigWidget::loadConfiguration()
 			}
 		}
 
-		this->applyConfiguration();
+		applyConfiguration();
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -332,10 +342,9 @@ void GeneralConfigWidget::appendConfigurationSection(const QString &section_id, 
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
 {
-  if(config_params.count(section_id) &&
-	 config_params[section_id].count(param_name))
-	return config_params[section_id][param_name];
-  else
+	if(config_params.count(section_id) &&	config_params[section_id].count(param_name))
+		return config_params[section_id][param_name];
+
 	return "";
 }
 
@@ -539,6 +548,7 @@ void GeneralConfigWidget::saveConfiguration()
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::GeneralConf, config_params);
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -616,8 +626,8 @@ void GeneralConfigWidget::restoreDefaults()
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::XMLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SQLHighlightConf, true);
 		BaseConfigWidget::restoreDefaults(GlobalAttributes::SchHighlightConf, true);
-		this->loadConfiguration();
-		this->applyConfiguration();
+		loadConfiguration();
+		applyConfiguration();
 		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
@@ -660,6 +670,14 @@ void GeneralConfigWidget::selectPaperSize()
 	height_spb->setVisible(visible);
 }
 
+void GeneralConfigWidget::setConfigurationChanged(bool changed)
+{
+	if(child_wgts.contains(sender()))
+		BaseConfigWidget::setConfigurationChanged(true);
+	else
+		BaseConfigWidget::setConfigurationChanged(changed);
+}
+
 void GeneralConfigWidget::resetDialogsSizes()
 {
 	Messagebox msg_box;
@@ -670,9 +688,10 @@ void GeneralConfigWidget::resetDialogsSizes()
 		widgets_geom.clear();
 }
 
-void GeneralConfigWidget::resetExitAlerts()
+void GeneralConfigWidget::resetAlertChoices()
 {
 	config_params[Attributes::Configuration][Attributes::AlertUnsavedModels] = Attributes::True;
 	config_params[Attributes::Configuration][Attributes::AlertOpenSqlTabs] = Attributes::True;
-	reset_exit_alerts_tb->setEnabled(false);
+	config_params[Attributes::Configuration][Attributes::UseDefDisambiguation] = Attributes::False;
+	reset_alerts_choices_tb->setEnabled(false);
 }

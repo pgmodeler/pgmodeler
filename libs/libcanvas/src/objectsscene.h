@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,15 +108,21 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static bool align_objs_grid, show_grid, show_page_delim;
 
 		//! \brief Scene grid size
-		static unsigned grid_size;
+		static unsigned grid_size,
 
-		//! \brief Used to store the custom paper size. This attribute is used only when paper_size=QPrinter::Custom
-		static QSizeF custom_paper_size;
+		//! \brief The number of pages in which the scene rect is expanded
+		expansion_factor;
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
 		static QPageLayout page_layout;
 
 		static double delimiter_scale;
+
+		//! \brief The minimum scene width is defined to be width of the current page layout * 2
+		static double min_scene_width,
+
+		//! \brief The minimum scene height is defined to be height of the current page layout * 2
+		min_scene_height;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -188,7 +194,19 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		 * The parameter reset_objs_layers is used to define if the objects should be moved to the default layer or not. */
 		void removeLayers(bool reset_obj_layers);
 
+		/*! \brief Adjusts the current scene rectangle based upon the items bounding rect.
+		 *  The method returns the new scene rectangle. */
+		QRectF adjustSceneRect(bool expand_only);
+
 	public:
+		//! \brief This enum controls the direction to where the scene must be expanded.
+		enum ExpandDirection {
+			ExpandTop,
+			ExpandLeft,
+			ExpandRight,
+			ExpandBottom
+		};
+
 		enum LayerAttrColor: unsigned {
 			LayerNameColor,
 			LayerRectColor
@@ -196,9 +214,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static constexpr double MinScaleFactor = 0.100000,
 		MaxScaleFactor = 5.000001;
-
-		static constexpr double MinSceneWidth = 2000,
-				MinSceneHeight = 1500;
 
 		static constexpr unsigned DefaultLayer = 0;
 
@@ -212,6 +227,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		DefaultDelimitersColor;
 
 		ObjectsScene();
+
 		virtual ~ObjectsScene();
 
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
@@ -300,6 +316,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
+
+		/*! \brief Define the geometry of the scene. If the rectangle is invalid or
+		 *  the size is below the minimum specificed by min_scene_width/min_scene_height
+		 *  it will be adjusted to the minimum acceptable size. */
 		void setSceneRect(const QRectF &rect);
 
 		//! \brief Aligns the specified point in relation to the grid
@@ -324,8 +344,9 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		QList<QRectF> getPagesForPrinting(const QPageLayout &page_lt, unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
 
 		/*! \brief Returns a vector containing all the page rects considering the current scene's page layout settings
-		 * A scale factor can be provided so the method returns the amount of pages in a certain zoom factor (scale) */
-		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt, double scale);
+		 * This version always uses scale = 1. If the user need to apply a scale in the pages, it must be done in the viewport
+		 * attached to the scene */
+		QList<QRectF> getPagesForPrinting(unsigned &h_page_cnt, unsigned &v_page_cnt);
 
 		bool isRangeSelectionEnabled();
 		bool isRangeSelectionTriggerInverted();
@@ -344,8 +365,15 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		static void setPageDelimitersColor(const QColor &value);
 		static QColor getPageDelimitersColor();
 
+		static void setExpansionFactor(unsigned factor);
+		static unsigned getExpansionFactor();
+
 		bool isLayerRectsVisible();
 		bool isLayerNamesVisible();
+
+		/*! \brief Expand the scene rect to the specified direction.
+		 * The size expanded is determined by the current page layout used by the scene. */
+		void expandSceneRect(ExpandDirection exp_dir);
 
 	public slots:
 		//! \brief Force the update of all layer rectangles
@@ -409,7 +437,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		void s_objectsSelectedInRange();
 
 		//! \brief Signal emitted when a blank area of the canvas is pressed
-		void s_objectsScenePressed(Qt::MouseButtons);
+		void s_scenePressed(Qt::MouseButtons);
 
 		//! \brief Signal emitted when the active layers change
 		void s_activeLayersChanged();
@@ -422,6 +450,15 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		//! \brief Signal emitted when tables children objects have their selection statuses changed
 		void s_childrenSelectionChanged();
+
+		/*! \brief Signal emitted when one of the dimensions of the scene rect changes after moving one or more object
+		 * The signal argument is the selected object rectangles united in one single bounding rect.
+		 * This signal is used to indicated that the viewport attached to the scene must center/ensure visible the
+		 * passed rectagle causing the object recently move to be visible */
+		void s_ensureVisibleRequested(QRectF);
+
+		//! \brief Signal emitted when the scene rect changes
+		void s_sceneRectChanged(QRectF);
 
 		friend class ModelWidget;
 		friend class PgModelerCliApp;

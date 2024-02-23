@@ -8,22 +8,32 @@
 [-->] $br
 <dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
 
-%if {author} %then [ author=] "&{author}" %end
+%if {author} %then 
+	[ author=] "&{author}" 
+%end
 
 %if {protected} %then
 	[ protected=] "true"
 %end
 
-%if {last-position} %then
-	[ last-position=] "{last-position}"
-%end
-
-%if {last-zoom} %then
-	[ last-zoom=] "{last-zoom}"
-%end
-
 %if {max-obj-count} %then
 	[ max-obj-count=] "{max-obj-count}"
+%end
+
+%if {last-position} %or {last-position} %or {scene-rect} %then
+	$br $tb
+
+	%if {last-position} %then
+		[ last-position=] "{last-position}"
+	%end
+
+	%if {last-zoom} %then
+		[ last-zoom=] "{last-zoom}"
+	%end
+
+	%if {scene-rect} %then
+		[ scene-rect=] "{scene-rect}"
+	%end	
 %end
 
 %if {default-schema} %or {default-owner} %then

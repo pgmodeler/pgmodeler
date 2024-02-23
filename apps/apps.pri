@@ -7,18 +7,21 @@ unix|windows: LIBS += $$LIBGUI_LIB \
 		      $$LIBCONNECTOR_LIB \
 		      $$LIBCORE_LIB \
 		      $$LIBPARSERS_LIB \
-		      $$LIBUTILS_LIB
+					$$LIBUTILS_LIB \
+					$$LIBCLI_LIB
 
 INCLUDEPATH += $$LIBGUI_INC \
 	       $$LIBCANVAS_INC \
 	       $$LIBCONNECTOR_INC \
 	       $$LIBCORE_INC \
 	       $$LIBPARSERS_INC \
-	       $$LIBUTILS_INC
+				 $$LIBUTILS_INC \
+				 $$LIBCLI_INC
 
 DEPENDPATH += $$LIBGUI_ROOT \
 	      $$LIBCANVAS_ROOT \
 	      $$LIBCONNECTOR_ROOT \
 	      $$LIBCORE_ROOT \
 	      $$LIBPARSERS_ROOT \
-	      $$LIBUTILS_ROOT
+				$$LIBUTILS_ROOT \
+				$$LIBCLI_ROOT

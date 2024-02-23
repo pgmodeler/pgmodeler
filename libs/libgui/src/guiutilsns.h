@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,9 +70,6 @@ namespace GuiUtilsNs {
 	//! \brief Recursively toggles the specified object's references SQL
 	extern __libgui void disableReferencesSQL(BaseObject *object);
 
-	//! \brief Replaces the sequence of chars [`'] by html tags <strong></strong> and [()] by <em></em>
-	extern __libgui QString formatMessage(const QString &msg);
-
 	/*! \brief Fills a tree widget with all the stack trace provided by the passed Exception. A root item
 	can be specified so all created child items are appended to it */
 	extern __libgui void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root);
@@ -98,8 +95,11 @@ namespace GuiUtilsNs {
 	//! \brief Creates drop shadown on a widget
 	extern __libgui void createDropShadow(QWidget *wgt, int x_offset = 2, int y_offset = 2, int radius = 5, const QColor &color = QColor(0, 0, 0, 100));
 
-	//! \brief Changes the tool buttons drop shadows color and offset to match the current theme.
-	extern __libgui void updateDropShadows(QWidgetList widgets);
+	//! \brief Creates drop shadown on a widget based on the current UI theme
+	extern __libgui void updateDropShadow(QWidget *wgt);
+
+	//! \brief Changes drop shadows color and offset to match the current theme.
+	extern __libgui void updateDropShadows(QWidgetList widgets, const QString &class_name = "QToolButton");
 
 	/*! \brief Handles the currently provided file dialog state to file.
 	 * If save_state is true, then the dialog's state is saved to file
@@ -144,6 +144,9 @@ namespace GuiUtilsNs {
 	extern __libgui  bool selectAndLoadFile(QByteArray &buffer,
 																					const QString &title = QT_TR_NOOP("Load file..."), QFileDialog::FileMode file_mode = QFileDialog::AnyFile,
 																					const QStringList &name_filters = {}, const QStringList &mime_filters = {}, const QString &selected_file = "");
+
+	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
+	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
 }
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "connectionsconfigwidget.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "baseform.h"
 
 std::vector<Connection *> ConnectionsConfigWidget::connections;
@@ -27,6 +28,7 @@ const QString ConnectionsConfigWidget::DefaultFor("default-for-%1");
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
+	GuiUtilsNs::createPasswordShowAction(passwd_edt);
 
 	connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
 
@@ -57,16 +59,20 @@ ConnectionsConfigWidget::~ConnectionsConfigWidget()
 
 }
 
-void ConnectionsConfigWidget::hideEvent(QHideEvent *)
+void ConnectionsConfigWidget::hideEvent(QHideEvent *event)
 {
-	this->newConnection();
+	if(!event->spontaneous())
+		this->newConnection();
 }
 
-void ConnectionsConfigWidget::showEvent(QShowEvent *)
+void ConnectionsConfigWidget::showEvent(QShowEvent *event)
 {
-	updateConnectionsCombo();
-	newConnection();
-	conn_attribs_tbw->setCurrentIndex(0);
+	if(!event->spontaneous())
+	{
+		updateConnectionsCombo();
+		newConnection();
+		conn_attribs_tbw->setCurrentIndex(0);
+	}
 }
 
 void ConnectionsConfigWidget::updateConnectionsCombo()
@@ -137,6 +143,7 @@ void ConnectionsConfigWidget::loadConfiguration()
 
 		edit_tb->setEnabled(!connections.empty());
 		remove_tb->setEnabled(!connections.empty());
+		setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -177,6 +184,7 @@ void ConnectionsConfigWidget::newConnection()
 	host_edt->clear();
 	port_sbp->setValue(5432);
 	passwd_edt->clear();
+	passwd_edt->clearFocus();
 	other_params_edt->clear();
 	set_role_edt->clear();
 
@@ -422,7 +430,7 @@ void ConnectionsConfigWidget::testConnection()
 		conn.connect();
 		srv_info=conn.getServerInfo();
 		msg_box.show(tr("Success"),
-					 GuiUtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+					 UtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
@@ -442,13 +450,13 @@ void ConnectionsConfigWidget::restoreDefaults()
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
-			this->removeConnection();
+			removeConnection();
 
 		//Reloads the configuration
-		this->loadConfiguration();
+		loadConfiguration();
 
 		updateConnectionsCombo();
-		this->setConfigurationChanged(true);
+		setConfigurationChanged(true);
 	}
 	catch(Exception &e)
 	{
@@ -513,6 +521,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 		schparser.ignoreUnkownAttributes(true);
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::ConnectionsConf, config_params);
 		schparser.ignoreUnkownAttributes(false);
+		//setConfigurationChanged(false);
 	}
 	catch(Exception &e)
 	{
@@ -599,11 +608,6 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 
 	try
 	{
-		conn_cfg_wgt.frame->setFrameShape(QFrame::NoFrame);
-		conn_cfg_wgt.layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
-																							GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
-		conn_cfg_wgt.frame->layout()->setContentsMargins(0,0,0,0);
-
 		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &conns_changed]() {
 			if(conn_cfg_wgt.isConfigurationChanged())
 			{

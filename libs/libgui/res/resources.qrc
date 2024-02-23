@@ -33,7 +33,6 @@
         <file>icons/codesnippet.png</file>
         <file>icons/collapse.png</file>
         <file>icons/collation.png</file>
-        <file>icons/colors.png</file>
         <file>icons/column.png</file>
         <file>icons/compactview.png</file>
         <file>icons/config.png</file>
@@ -270,6 +269,9 @@
         <file>icons/blogpost.png</file>
         <file>icons/ophistorypos.png</file>
         <file>icons/ophistory.png</file>
+        <file>icons/expandcanvas.png</file>
+        <file>icons/showpwd.png</file>
+        <file>icons/hidepwd.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
@@ -292,5 +294,7 @@
         <file>images/rel_crows_foot_dark.png</file>
         <file>images/rel_center_pnts_light.png</file>
         <file>images/rel_center_pnts_dark.png</file>
+        <file>images/handle_dark.png</file>
+        <file>images/handle_light.png</file>
     </qresource>
 </RCC>

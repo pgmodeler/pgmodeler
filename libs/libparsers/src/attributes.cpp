@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -223,6 +223,7 @@ namespace Attributes {
 	ExecutionCost("execution-cost"),
 	ExecutPriv("execute"),
 	ExistingValue("existing-value"),
+	ExpansionFactor("expansion-factor"),
 	Explicit("explicit"),
 	Export("export"),
 	ExportToFile("export-to-file"),
@@ -561,6 +562,7 @@ namespace Attributes {
 	Rules("rules"),
 	SaveLastPosition("save-last-position"),
 	SaveRestoreGeometry("save-restore-geometry"),
+	SceneRect("scene-rect"),
 	Schema("schema"),
 	SchemaOid("schema-oid"),
 	SearchPath("search-path"),
@@ -694,6 +696,7 @@ namespace Attributes {
 	UseChangelog("use-changelog"),
 	UseColumns("use-columns"),
 	UseCurvedLines("use-curved-lines"),
+	UseDefDisambiguation("use-def-disambiguation"),
 	UsePlaceholders("use-placeholders"),
 	UseSignature("use-signature"),
 	UseSorting("use-sorting"),

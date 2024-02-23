@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "modelexportform.h"
 #include "guiutilsns.h"
+#include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
@@ -31,15 +32,25 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	sql_file_sel = new FileSelectorWidget(this);
 	sql_file_sel->setFileDialogTitle(tr("Export model to SQL file"));
+	sql_file_sel->setAcceptMode(QFileDialog::AcceptSave);
+	sql_file_sel->setAllowFilenameInput(true);
+	sql_file_sel->setFileIsMandatory(false);
+	sql_file_sel->setAppendSuffix(true);
 	export_to_file_grid->addWidget(sql_file_sel, 1, 1);
 
 	img_file_sel = new FileSelectorWidget(this);
 	img_file_sel->setFileDialogTitle(tr("Export model to graphics file"));
 	img_file_sel->setAcceptMode(QFileDialog::AcceptSave);
+	img_file_sel->setAllowFilenameInput(true);
+	img_file_sel->setFileIsMandatory(false);
+	img_file_sel->setAppendSuffix(true);
 	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
+	dict_file_sel->setAllowFilenameInput(true);
+	dict_file_sel->setFileIsMandatory(false);
+	dict_file_sel->setAppendSuffix(true);
 	export_to_dict_grid->addWidget(dict_file_sel, 1, 1, 1, 5);
 
 	htmlitem_del=new HtmlItemDelegate(this);
@@ -53,10 +64,15 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_to_dict_gb->setFocusProxy(export_to_dict_rb);
 	export_to_img_gb->setFocusProxy(export_to_img_rb);
 
+	connect(sql_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(sql_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(sql_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+
+	connect(img_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(img_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(img_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
+
+	connect(dict_file_sel, &FileSelectorWidget::s_selectorChanged, this, &ModelExportForm::enableExport);
 	connect(dict_file_sel, &FileSelectorWidget::s_fileSelected, this, &ModelExportForm::enableExport);
 	connect(dict_file_sel, &FileSelectorWidget::s_selectorCleared, this, &ModelExportForm::enableExport);
 
@@ -150,13 +166,13 @@ void ModelExportForm::setLowVerbosity(bool value)
 
 void ModelExportForm::exec(ModelWidget *model)
 {
-	if(model)
-	{
-		this->model=model;
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
-		selectExportMode();
-		QDialog::exec();
-	}
+	if(!model)
+		return;
+
+	this->model = model;
+	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
+	selectExportMode();
+	QDialog::exec();
 }
 
 void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QString cmd)
@@ -166,7 +182,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 	item=GuiUtilsNs::createOutputTreeItem(output_trw, tr("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
 																					 QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
 
-	GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(err_msg),
+	GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(err_msg),
 																			QPixmap(GuiUtilsNs::getIconPath("alert")),	item, false, true);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false, true);
@@ -175,7 +191,7 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	QTreeWidgetItem *item=nullptr;
-	QString text=GuiUtilsNs::formatMessage(msg);
+	QString text=UtilsNs::formatMessage(msg);
 	QPixmap ico;
 
 	progress_lbl->setText(text);
@@ -294,13 +310,17 @@ void ModelExportForm::selectExportMode()
 		rb->blockSignals(false);
 	}
 
+	sql_file_sel->setFileIsMandatory(export_to_file_rb->isChecked());
+	img_file_sel->setFileIsMandatory(export_to_img_rb->isChecked());
+	dict_file_sel->setFileIsMandatory(export_to_dict_rb->isChecked());
+
 	pgsqlvers1_cmb->setEnabled(export_to_dbms_rb->isChecked() && pgsqlvers_chk->isChecked());
 	enableExport();
 }
 
 void ModelExportForm::captureThreadError(Exception e)
 {
-	QTreeWidgetItem *item=GuiUtilsNs::createOutputTreeItem(output_trw, GuiUtilsNs::formatMessage(e.getErrorMessage()),
+	QTreeWidgetItem *item=GuiUtilsNs::createOutputTreeItem(output_trw, UtilsNs::formatMessage(e.getErrorMessage()),
 																														QPixmap(GuiUtilsNs::getIconPath("error")), nullptr, false, true);
 
 	GuiUtilsNs::createExceptionsTree(output_trw, e, item);
@@ -388,10 +408,11 @@ void ModelExportForm::editConnections()
 
 void ModelExportForm::enableExport()
 {
-	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex() != connections_cmb->count()-1) ||
-												 (export_to_file_rb->isChecked() && !sql_file_sel->getSelectedFile().isEmpty()) ||
-												 (export_to_img_rb->isChecked() && !img_file_sel->getSelectedFile().isEmpty()) ||
-												 (export_to_dict_rb->isChecked() && !dict_file_sel->getSelectedFile().isEmpty()));
+	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 &&
+													 connections_cmb->currentIndex() != connections_cmb->count()-1) ||
+												 (export_to_file_rb->isChecked() && !sql_file_sel->hasWarning()) ||
+												 (export_to_img_rb->isChecked() && !img_file_sel->hasWarning()) ||
+												 (export_to_dict_rb->isChecked() && !dict_file_sel->hasWarning()));
 }
 
 void ModelExportForm::selectImageFormat()

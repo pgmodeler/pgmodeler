@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -114,6 +114,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		layer_rect_colors;
 
 		QList<unsigned> active_layers;
+
+		/*! \brief The current scene (canvas) geometry that is restored when the database
+		 * model is rendered by a scene for the first time after loading the model. */
+		QRectF scene_rect;
 
 		//! \brief Stores the layer information of FK relationships during the model loading
 		std::map<QString, QStringList> fk_rel_layers;
@@ -308,6 +312,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		bool updateExtensionTypes(Extension *ext);
 
 		void removeExtensionTypes(Extension *ext);
+
+		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
+		void setRelTablesModified(BaseRelationship *rel);
+
 	public:
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
@@ -359,8 +367,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 by relationship) in order to be reconstructed in a posterior moment */
 		void storeSpecialObjectsXML();
 
-		//! \brief Validates all the relationship, propagating all column modifications over the tables
-		void validateRelationships();
+		/*! \brief Validates all relationships, propagating all column modifications over the tables when needed.
+		 *  This method returns false when no relationship was invalid and true when the method validated (reconnected)
+		 *  at least one relationship */
+		bool validateRelationships();
 
 		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
 		 * If the types list is empty the method will return nullptr. */
@@ -852,6 +862,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the XML code for the changelog
 		QString getChangelogDefinition(bool csv_format = false);
+
+		/*! \brief Defines the current scene rectangle in which the model is being rendered
+		 *  This is used to restore the original scene geometry when the model is loaded from file */
+		void setSceneRect(const QRectF &rect);
+		QRectF getSceneRect();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

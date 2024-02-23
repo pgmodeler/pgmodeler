@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,9 +80,10 @@ void ConfigurationForm::changeCurrentView()
 	confs_stw->setCurrentIndex(btn_sender->property(Attributes::ObjectId.toStdString().c_str()).toInt());
 }
 
-void ConfigurationForm::hideEvent(QHideEvent *)
+void ConfigurationForm::hideEvent(QHideEvent *event)
 {
-	general_tb->setChecked(true);
+	if(!event->spontaneous())
+		general_tb->setChecked(true);
 }
 
 void ConfigurationForm::showEvent(QShowEvent *)
@@ -96,7 +97,7 @@ void ConfigurationForm::reject()
 	{
 		if(sender() == cancel_btn)
 		{
-			QWidgetList wgt_list={ appearance_conf, connections_conf, snippets_conf };
+			QWidgetList wgt_list={ general_conf, appearance_conf, connections_conf, snippets_conf };
 			BaseConfigWidget *conf_wgt=nullptr;
 
 			qApp->setOverrideCursor(Qt::WaitCursor);
@@ -125,9 +126,9 @@ void ConfigurationForm::applyConfiguration()
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
 
-	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
+	for(int i = GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
-		conf_wgt=qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
+		conf_wgt = qobject_cast<BaseConfigWidget *>(confs_stw->widget(i));
 
 		if(conf_wgt->isConfigurationChanged())
 			conf_wgt->saveConfiguration();
@@ -156,11 +157,8 @@ void ConfigurationForm::loadConfiguration()
 		}
 		catch(Exception &e)
 		{
-			//Messagebox msg_box;
-
 			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
-				//msg_box.show(e);
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 			else

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,22 +22,12 @@
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {
 	setupUi(this);
-	scrollarea = nullptr;
-	this->model=nullptr;
-	zoom_factor=1;
-	curr_resize_factor=ResizeFactor;
-	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-	QVBoxLayout *vbox = new QVBoxLayout;
-	scrollarea=new QScrollArea(frame);
-	scrollarea->setWidgetResizable(true);
-	scrollarea->setFrameStyle(QFrame::Box);
-	scrollarea->setFrameShadow(QFrame::Plain);
-	scrollarea->setVisible(false);
-	vbox->addWidget(scrollarea);
-	vbox->setContentsMargins(0,0,0,0);
-	frame->setLayout(vbox);
-	label->setStyleSheet("QLabel#label{ border: 0px; }");
+	model = nullptr;
+	zoom_factor = 1;
+	curr_resize_factor = ResizeFactor;
+	moving_frame = false;
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	scene_bg_lbl->setStyleSheet("QLabel#scene_bg_lbl{ border: 0px; }");
 }
 
 void ModelOverviewWidget::show(ModelWidget *model)
@@ -59,11 +49,11 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model, &ModelWidget::s_objectModified, this, qOverload<>(&ModelOverviewWidget::updateOverview));
 		connect(this->model, &ModelWidget::s_zoomModified, this, &ModelOverviewWidget::updateZoomFactor);
 		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeOverview);
-		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeWindowFrame);
+		connect(this->model, &ModelWidget::s_modelResized, this, &ModelOverviewWidget::resizeViewportFrame);
 		connect(this->model, &ModelWidget::s_modelResized, this, qOverload<>(&ModelOverviewWidget::updateOverview));
 
-		connect(this->model->viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
-		connect(this->model->viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeWindowFrame);
+		connect(this->model->viewport->horizontalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeViewportFrame);
+		connect(this->model->viewport->verticalScrollBar(), &QScrollBar::valueChanged, this, &ModelOverviewWidget::resizeViewportFrame);
 
 		connect(this->model->scene, &ObjectsScene::selectionChanged, this, qOverload<>(&ModelOverviewWidget::updateOverview));
 		connect(this->model->scene, &ObjectsScene::sceneRectChanged,this, &ModelOverviewWidget::resizeOverview);
@@ -136,8 +126,8 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 
 		if(!p.isActive())
 		{
-			label->setPixmap(QPixmap());
-			label->setText(tr("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
+			scene_bg_lbl->setPixmap(QPixmap());
+			scene_bg_lbl->setText(tr("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
 										 .arg(pixmap_size.width()).arg(pixmap_size.height()));
 			frame->setEnabled(false);
 		}
@@ -147,137 +137,81 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 
 			p.setRenderHints(QPainter::Antialiasing, false);
 			p.setRenderHints(QPainter::TextAntialiasing, false);
-			this->model->scene->render(&p, QRect(), scene_rect);
+			model->scene->render(&p, QRect(), scene_rect);
 
 			//Resizes the pixmap to the previous configured QSize
-			label->setPixmap(pix);
+			scene_bg_lbl->setPixmap(pix);
 		}
 
-		label->resize(curr_size.toSize());
+		scene_bg_lbl->resize(curr_size.toSize());
 		qApp->restoreOverrideCursor();
 	}
 }
 
-void ModelOverviewWidget::resizeWindowFrame()
+void ModelOverviewWidget::resizeViewportFrame()
 {
-	if(this->model)
-	{
-		QSizeF size;
-		double factor=curr_resize_factor/zoom_factor;
-		QScrollBar *h_scroll=this->model->viewport->horizontalScrollBar(),
-				*v_scroll=this->model->viewport->verticalScrollBar();
+	if(!model || moving_frame)
+		return;
 
-		//Resizes the window frame based upon the model's viewport dimensions
-		size=this->model->viewport->geometry().size();
-		size.setWidth(size.width() * factor);
-		size.setHeight(size.height() * factor);
-		window_frm->resize(size.toSize());
+	QSizeF size;
+	double factor = curr_resize_factor / zoom_factor;
+	QScrollBar *h_scroll = model->viewport->horizontalScrollBar(),
+			*v_scroll = model->viewport->verticalScrollBar();
 
-		//Set the frame position based upon the viewport scroll bar values
-		window_frm->move(QPoint(h_scroll->value() * factor - (scrollarea->isVisible() ? scrollarea->horizontalScrollBar()->value() : 0),
-								v_scroll->value() * factor - (scrollarea->isVisible() ? scrollarea->verticalScrollBar()->value() : 0)));
+	//Resizes the window frame based upon the model's viewport dimensions
+	size = model->viewport->geometry().size();
+	size.setWidth(size.width() * factor);
+	size.setHeight(size.height() * factor);
+	viewport_frm->resize(size.toSize());
 
-		if(scrollarea->isVisible())
-		{
-		  if(window_frm->geometry().bottom() > frame->geometry().bottom())
-			 scrollarea->verticalScrollBar()->setValue(scrollarea->verticalScrollBar()->value() + (scrollarea->verticalScrollBar()->maximum() * 0.30));
-		  else if(window_frm->geometry().top() < 0)
-			scrollarea->verticalScrollBar()->setValue(scrollarea->verticalScrollBar()->value() - (scrollarea->verticalScrollBar()->maximum() * 0.30));
+	//Set the frame position based upon the viewport scroll bar values
+	QPoint pnt(h_scroll->value(), v_scroll->value()),
+			p_aux = QPoint(abs(h_scroll->minimum()), abs(v_scroll->minimum())) + pnt;
 
-		  if(window_frm->geometry().right() > frame->geometry().right())
-			 scrollarea->horizontalScrollBar()->setValue(scrollarea->horizontalScrollBar()->value() + (scrollarea->horizontalScrollBar()->maximum() * 0.30));
-		  else if(window_frm->geometry().left() < 0)
-			scrollarea->horizontalScrollBar()->setValue(scrollarea->horizontalScrollBar()->value() - (scrollarea->horizontalScrollBar()->maximum() * 0.30));
-		}
-	}
+	viewport_frm->move(p_aux.x() * factor, p_aux.y() * factor);
 }
 
 void ModelOverviewWidget::resizeOverview()
 {
-	if(this->model)
+	if(!model)
+		return;
+
+	QRect screen_rect = this->screen()->geometry();
+
+	//Make an initial calculation of the overview window size
+	scene_rect = model->scene->sceneRect();
+	curr_size = scene_rect.size();
+	curr_size.setWidth(curr_size.width() * ResizeFactor);
+	curr_size.setHeight(curr_size.height() * ResizeFactor);
+
+	//If the size exceeds the screen's width or height in 50%
+	if(curr_size.height() > screen_rect.height() * ScreenSzThreshold ||
+		 curr_size.width() > screen_rect.width() * ScreenSzThreshold)
 	{
-		QRect screen_rect = this->screen()->geometry();
+		double h_ratio = (screen_rect.height() * ScreenSzThreshold) / scene_rect.height(),
+				w_ratio = (screen_rect.width() * ScreenSzThreshold) / scene_rect.width();
 
-		//Make an initial calculation of the overview window size
-		scene_rect=this->model->scene->sceneRect();
-		curr_size=scene_rect.size();
-		curr_size.setWidth(curr_size.width() * ResizeFactor);
-		curr_size.setHeight(curr_size.height() * ResizeFactor);
-
-		//If the size exceeds the screen's width or height in 90%
-		if(curr_size.width() > screen_rect.width() * 0.90 ||
-			 curr_size.height() > screen_rect.height() * 0.90)
-		{
-			int max_val = std::max(scene_rect.width(), scene_rect.height());
-
-			//Reduce the resize factor and recalculates the new size
-			if(max_val >= 16384)
-			{
-				curr_resize_factor=screen_rect.width()/static_cast<double>(max_val);
-				pixmap_size.setWidth(scene_rect.size().width() * (curr_resize_factor * 10));
-				pixmap_size.setHeight(scene_rect.size().height() * (curr_resize_factor * 10));
-			}
-			else
-			{
-				curr_resize_factor=ResizeFactor/2;
-				pixmap_size=scene_rect.size().toSize();
-			}
-
-			curr_size=scene_rect.size();
-			curr_size.setWidth(curr_size.width() * curr_resize_factor);
-			curr_size.setHeight(curr_size.height() * curr_resize_factor);
-		}
-		else
-		{
-			curr_resize_factor=ResizeFactor;
-			pixmap_size=scene_rect.size().toSize();
-		}
-
-		QSize size = curr_size.toSize();
-		bool show_scrollarea = false;
-
-		if(curr_size.width() > screen_rect.width() * 0.90 )
-		{
-		  size.setWidth(screen_rect.width() * 0.90);
-		  show_scrollarea = true;
-		}
-
-		if(curr_size.height() > screen_rect.height() * 0.90)
-		{
-		  size.setHeight(screen_rect.height() * 0.90);
-		  show_scrollarea = true;
-		}
-
-		if(show_scrollarea && !scrollarea->isVisible())
-		{
-		  frame->setStyleSheet("QFrame#frame{ border: 0px; }");
-		  frame->layout()->removeWidget(label);
-		  frame->layout()->addWidget(scrollarea);
-		  scrollarea->setVisible(true);
-		  scrollarea->setWidget(label);
-		  window_frm->setParent(scrollarea);
-		}
-		else if(!show_scrollarea)
-		{
-		  frame->setStyleSheet("");
-		  scrollarea->setVisible(false);
-		  scrollarea->takeWidget();
-		  frame->layout()->removeWidget(scrollarea);
-		  frame->layout()->addWidget(label);
-		  window_frm->setParent(frame);
-		}
-
-		window_frm->setVisible(true);
-		this->resize(size);
-		this->setMaximumSize(size);
-		this->setMinimumSize(size);
+		curr_resize_factor = std::min(w_ratio, h_ratio);
+		curr_size.setHeight(scene_rect.height() * curr_resize_factor);
+		curr_size.setWidth(scene_rect.width() * curr_resize_factor);
+		pixmap_size = scene_rect.size().toSize();
 	}
+	else
+	{
+		curr_resize_factor = ResizeFactor;
+		pixmap_size = scene_rect.size().toSize();
+	}
+
+	viewport_frm->setVisible(true);
+	resize(curr_size.toSize());
+	setMaximumSize(curr_size.toSize());
+	setMinimumSize(curr_size.toSize());
 }
 
 void ModelOverviewWidget::updateZoomFactor(double zoom)
 {
-	this->zoom_factor=zoom;
-	this->resizeWindowFrame();
+	zoom_factor = zoom;
+	resizeViewportFrame();
 }
 
 void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
@@ -285,13 +219,16 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 	if(!frame->isEnabled())
 		return;
 
-	if(event->buttons()==Qt::LeftButton)
+	if(event->buttons() == Qt::LeftButton)
 	{
-		QRect rect=window_frm->geometry(), rect1;
-		int width = 0, height = 0, x=event->pos().x(), y=event->pos().y() + scrollarea->verticalScrollBar()->value();
+		QRect bg_rect = scene_bg_lbl->geometry(), rect = viewport_frm->geometry();
+		QScrollBar *h_scroll = model->viewport->horizontalScrollBar(),
+				*v_scroll = model->viewport->verticalScrollBar();
 
-		width=rect.width()/2;
-		height=rect.height()/2;
+		int width = rect.width() / 2,
+				height = rect.height() / 2,
+				x = event->pos().x(),
+				y = event->pos().y();
 
 		//Configures a rectangle having as central point the event position
 		rect.setLeft(x - width);
@@ -299,29 +236,55 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		rect.setRight(x + width);
 		rect.setBottom(y + height);
 
-		rect1=label->geometry();
-		this->model->viewport->horizontalScrollBar()->setValue(ceil(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceil(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
+		// Do not allow the viewport rectangle extrapolates the bg_rect limits
+		if(rect.left() < 0)
+			rect.moveLeft(0);
+
+		if(rect.top() < 0)
+			rect.moveTop(0);
+
+		if(rect.right() > bg_rect.right())
+			rect.moveRight(bg_rect.right());
+
+		if(rect.bottom() > bg_rect.bottom())
+			rect.moveBottom(bg_rect.bottom());
+
+		viewport_frm->move(rect.topLeft());
+
+		/* Determine the horizontal and vertical factors by divinding the rect left/top
+		 * by the background rect width / height. These factors are used to determine
+		 * the new position of the viewport by changing the scroll bars values */
+		double h_factor = (rect.left() / static_cast<double>(bg_rect.width())),
+				v_factor = (rect.top() / static_cast<double>(bg_rect.height()));
+
+		// Calculates the new scene position based upon the viewport rectangle.
+		QPointF pnt;
+		pnt.setX((scene_rect.left() + (scene_rect.width() * h_factor)) * zoom_factor);
+		pnt.setY((scene_rect.top() + (scene_rect.height() * v_factor)) * zoom_factor);
+
+		h_scroll->setValue(pnt.x());
+		v_scroll->setValue(pnt.y());
 	}
 }
 
 void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
 {
-	if(event->button()==Qt::LeftButton)
+	if(event->button() == Qt::LeftButton)
 	{
-		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
-		this->setCursor(QCursor(Qt::OpenHandCursor));
+		moving_frame = true;
+		viewport_frm->setCursor(QCursor(Qt::OpenHandCursor));
+		setCursor(QCursor(Qt::OpenHandCursor));
 		model->startSceneMove();
 	}
 }
 
 void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(event->button()==Qt::LeftButton)
+	if(event->button() == Qt::LeftButton)
 	{
-		window_frm->setCursor(QCursor(Qt::ArrowCursor));
-		this->setCursor(QCursor(Qt::ArrowCursor));
+		viewport_frm->setCursor(QCursor(Qt::ArrowCursor));
+		setCursor(QCursor(Qt::ArrowCursor));
 		model->finishSceneMove();
+		moving_frame = false;
 	}
 }
-

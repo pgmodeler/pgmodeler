@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,15 +29,8 @@ ColumnDataWidget::ColumnDataWidget(bool use_syntax_hl, const QString &hl_conf, Q
 
 	if(use_syntax_hl)
 	{
-		try
-		{
-			SyntaxHighlighter *value_hl	= new SyntaxHighlighter(value_txt, false, false, font().pointSizeF());
-			value_hl->loadConfiguration(hl_conf);
-		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
-		}
+		SyntaxHighlighter *value_hl	= new SyntaxHighlighter(value_txt, false, false, font().pointSizeF());
+		value_hl->loadConfiguration(hl_conf);
 	}
 
 	vbox->addWidget(value_txt);

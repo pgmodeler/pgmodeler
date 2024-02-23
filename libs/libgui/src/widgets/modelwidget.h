@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -339,7 +339,11 @@ class __libgui ModelWidget: public QWidget {
 		std::map<ObjectType, QAction *> actions_new_objects;
 
 		//! \brief Stores the relationship types menu
-		QMenu *rels_menu;
+		QMenu *rels_menu,
+
+		copy_menu,
+
+		cut_menu;
 
 		void resizeEvent(QResizeEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -377,8 +381,16 @@ class __libgui ModelWidget: public QWidget {
 		int openEditingForm(WidgetClass *widget, Messagebox::ButtonsId button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
-		rect when some object is out of bound */
-		void adjustSceneSize();
+		 * rect when some object is out of bound. The parameter use_model_rect, when true, uses
+		 * the rect stored in the database model (retrieved from the dbm file loading) to resize
+		 * the scene rect. The parameter expand_only, when true, indicates that the method must
+		 * only expand the scene rect, If the recalculated rect is smaller the the current
+		 * scene rect that no operation is done. */
+		void adjustSceneRect(bool use_model_rect, bool expand_only = false);
+
+		/*! \brief Expand the scene rect to the specified direction.
+		 * The size expanded is determined by the current page layout used by the scene. */
+		void expandSceneRect(ObjectsScene::ExpandDirection exp_dir);
 
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);
@@ -524,7 +536,7 @@ class __libgui ModelWidget: public QWidget {
 		void selectAllObjects();
 
 		//! \brief Copies all the selected objects
-		void copyObjects(bool duplicate_mode = false);
+		void copyObjects(bool duplicate_mode, bool copy_deps);
 
 		//! \brief Paste all the objects copied previously
 		void pasteObjects(bool duplicate_mode = false);
@@ -533,7 +545,7 @@ class __libgui ModelWidget: public QWidget {
 		void duplicateObject();
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
-		void cutObjects();
+		void cutObjects(bool copy_deps);
 
 		//! \brief Converts a Many to Many relationship generating a table and two additional relationships.
 		void convertRelationshipNN();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,6 +50,9 @@ class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		QTimer search_info_timer;
 
 		void showSearchInfo(const QString &msg);
+
+	protected:
+		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
 		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);

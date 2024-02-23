@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2023 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "utils/textblockinfo.h"
 
 const QStringList CodeCompletionWidget::dml_keywords = {
-	/* ATTENTION: the key words in this list MUST have a counter part in
+	/* ATTENTION: the keywords in this list MUST have a counter part in
 	 * DmlKeywordId. Also, the list MUST follow the same item order
 	 * in DmlKeywordId.
 	 *
@@ -32,8 +32,9 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	 * in order to call retriveColumnNames() and retrieveObjectsName().
 	 * New keywords here need a new entry in DmlKeywordId enum */
 	"select", "insert", "update", "delete",
-	"truncate", "from", "join", "into", "as",
-	"set", "table", "only", "where",
+	"truncate", "alter", "drop", "from",
+	"join",	"into", "as", "set", "table",
+	"only", "where",
 
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
@@ -233,7 +234,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
+	//std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
 
 	name_list->clear();
 	word.clear();
@@ -242,7 +243,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True)
+	if(GeneralConfigWidget::getConfigurationParam(Attributes::Configuration,
+																								Attributes::CodeCompletion) == Attributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);
@@ -334,10 +336,10 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type == ObjectType::Function)
+		if(BaseFunction::isBaseFunction(obj_type))
 		{
-			dynamic_cast<Function *>(obj)->createSignature(false);
-			obj_name = dynamic_cast<Function *>(obj)->getSignature();
+			dynamic_cast<BaseFunction *>(obj)->createSignature(false);
+			obj_name = dynamic_cast<BaseFunction *>(obj)->getSignature();
 		}
 		else if(obj_type == ObjectType::Operator)
 			obj_name = dynamic_cast<Operator *>(obj)->getSignature(false);
@@ -555,28 +557,49 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	}
 
 	QStringList aux_names, aliases;
+	QList<QStringList> split_tab_names;
 	QListWidgetItem *item = nullptr;
 	attribs_map filter, attribs;
-	QString sch_name, tab_name, key;
+	QString sch_name, tab_name, key, orig_name;
 	bool cols_added = false;
 	int tab_pos = -1;
 	std::map<QString, QListWidgetItem *> items;
 
 	for(auto &name : tab_names)
 	{
-		if(!found_alias && curr_word.isEmpty())
-			aliases = getTableAliases(name);
-
-		tab_pos = getTablePosition(name);
 		aux_names = name.split(completion_trigger);
 
-		/* If the table name is not schema qualified or
+		/* If the table name is empty or
 		 * have extra qualifications (dots) we discard it */
-		if(aux_names.size() != 2)
+		if(aux_names.isEmpty() || aux_names.size() > 2)
 			continue;
 
-		sch_name = aux_names[0].trimmed();
-		tab_name = aux_names[1].trimmed();
+		/* If the table name has only the table name without a schema name attached
+		 * we create two elements containing { pg_catalog | public, table name, original table name (typed by the user) }
+		 * This is used further to retrieve the column names. */
+		if(aux_names.size() == 1)
+		{
+			split_tab_names.append({ "pg_catalog", aux_names[0].trimmed(), name });
+			split_tab_names.append({ "public", aux_names[0].trimmed(), name });
+		}
+		else
+			// Otherwise we just create an element in form { schema, table, original table name (typed by the user) }
+			split_tab_names.append({ aux_names[0].trimmed(), aux_names[1].trimmed(), name });
+	}
+
+	for(auto &names : split_tab_names)
+	{
+		/* The third element of the split name is the original table name typed by the
+		 * user we use it to retrive the table alias if needed */
+		orig_name = names[2];
+
+		if(!found_alias && curr_word.isEmpty())
+			aliases = getTableAliases(orig_name);
+
+		tab_pos = getTablePosition(orig_name);
+		sch_name = names[0];
+		tab_name = names[1];
+
 		catalog.setQueryFilter(Catalog::ListAllObjects);
 
 		if(!tab_name.isEmpty())
@@ -810,7 +833,21 @@ void CodeCompletionWidget::extractTableNames()
 
 				if(!extract_alias && !special_chars.contains(curr_word))
 				{
-					if(tab_name.endsWith(completion_trigger))
+					QTextCursor aux_tc = tc;
+					QString next_char;
+
+					/* Moving the cursor to the end of the current word so we can retrieve
+					 * the next character right after it. If the character is empty means
+					 * that the table name was fully retrieved (with or without schema name) */
+					aux_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
+					aux_tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+					next_char = aux_tc.selectedText();
+
+					/* If the tab_name ends with the completion trigger char (.) it means that
+					 * we have a schema qualified name but it still lacks the real name of the table.
+					 * Thus the current word will be used as the table name, being appended to the current
+					 * value of tab_name, creating the full, schema-qualified name of the table. */
+					if(tab_name.endsWith(completion_trigger) || next_char.isEmpty())
 						tab_name_extracted = true;
 
 					tab_name.append(curr_word);
@@ -824,15 +861,7 @@ void CodeCompletionWidget::extractTableNames()
 					// Register the alias only if it does not exist and a table name is fully specified
 					if(extract_alias &&
 						 !special_chars.contains(curr_word) && !tab_aliases.count(curr_word) &&
-							!tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0)// &&
-
-							/* Special case of INSERT command: if the cursor is between the "( ) VALUES"
-							 * of the command we discard the current word to avoid associating it as a
-							 * table alias */
-							/*(into_idx < 0 || ins_cols_ini < 0 ||
-							 (into_idx >= 0 &&
-								((tc.position() < ins_cols_ini) ||
-									(ins_cols_end >= 0 && tc.position() > ins_cols_end))))) */
+							!tab_name.isEmpty() && curr_word.compare("as", Qt::CaseInsensitive) != 0)
 					{
 						alias.append(curr_word);
 						tab_aliases[alias] = tab_name;
@@ -905,7 +934,7 @@ bool CodeCompletionWidget::updateObjectsList()
 																							QTextDocument::FindBackward),
 																						 QTextDocument::FindWholeWords };
 
-	dml_cmds = dml_keywords.mid(Select, 5);
+	dml_cmds = dml_keywords.mid(Select, 7);
 	orig_tc = tc = code_field_txt->textCursor();
 	resetKeywordsPos();
 
@@ -1329,11 +1358,11 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 			code_field_txt->setTextCursor(lvl_cur);
 		}
 	}
-	else if(obj_type==ObjectType::Function)
+	else if(BaseFunction::isBaseFunction(obj_type))
 	{
-		Function *func=dynamic_cast<Function *>(obj);
+		BaseFunction *func = dynamic_cast<BaseFunction *>(obj);
 		func->createSignature(true, sch_qualified);
-		name=func->getSignature();
+		name = func->getSignature();
 	}
 	else if(obj_type==ObjectType::Cast)
 	{
