@@ -769,7 +769,7 @@ void CodeCompletionWidget::extractTableNames()
 	}
 
 	QString curr_word, tab_name, alias;
-	bool extract_alias = false, tab_name_extracted = false;
+	bool extract_alias = false, tab_name_extracted = false, is_special_char = false;
 	TextBlockInfo *blk_info = nullptr;
 
 	tab_aliases.clear();
@@ -821,10 +821,22 @@ void CodeCompletionWidget::extractTableNames()
 					continue;
 
 				// If we found a DML keyword or special char, we abort the table name/alias extraction
-				if(special_chars.contains(curr_word) ||
+				is_special_char = special_chars.contains(curr_word);
+				if(is_special_char ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
 						dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
+				{
+					/* If we found a special character and the table name was extracted but not yet
+					 * registered, we force the name registration. This happens for example on
+					 * INSERT INTO tablename (), where table name is processed but a ( is found,
+					 * so to avoid breaking the name extration without registering a valid name
+					 * we forcibly register it before break the routine. */
+					if(is_special_char &&
+						 !tab_name_extracted && !tab_name.isEmpty() && !tab_name.endsWith(completion_trigger))
+						tab_names_pos[tc.position() - tab_name.length()] = tab_name;
+
 					break;
+				}
 
 				// If we find an AS keyword after extracting the table name we switch to alias extraction
 				if(!extract_alias && !curr_word.isEmpty() &&
@@ -841,13 +853,14 @@ void CodeCompletionWidget::extractTableNames()
 					 * that the table name was fully retrieved (with or without schema name) */
 					aux_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 					aux_tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-					next_char = aux_tc.selectedText();
+					next_char = aux_tc.selectedText().trimmed();
 
 					/* If the tab_name ends with the completion trigger char (.) it means that
 					 * we have a schema qualified name but it still lacks the real name of the table.
 					 * Thus the current word will be used as the table name, being appended to the current
 					 * value of tab_name, creating the full, schema-qualified name of the table. */
-					if(tab_name.endsWith(completion_trigger) || next_char.isEmpty())
+					if(tab_name.endsWith(completion_trigger) ||
+							(next_char.isEmpty() && curr_word != completion_trigger))
 						tab_name_extracted = true;
 
 					tab_name.append(curr_word);
