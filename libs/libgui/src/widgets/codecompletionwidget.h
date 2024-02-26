@@ -92,6 +92,11 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		lvl_cur;
 
+		/*! \brief Stores the initial cursor position in the code field when the widget was displayed,
+		 *  this is used to determine whether the object names must be retrived again from the database
+		 *  or we can reuse the current listing and just filter it (see updateList()) */
+		int ini_cur_pos;
+
 		//! \brief Current typed word
 		QString word;
 		
@@ -140,6 +145,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 		/*! \brief If a connection is configured, populates the list with the columns of
 		 *  tables, tables, schemas and functions listed in FROM/JOIN clauses */
 		bool updateObjectsList();
+
+		//! \brief Adjusts the position and size of the widget after listing items
+		void updateWidgetPosSize();
 
 		//! \brief Reset the DML keywords positions in the current typed code
 		void resetKeywordsPos();

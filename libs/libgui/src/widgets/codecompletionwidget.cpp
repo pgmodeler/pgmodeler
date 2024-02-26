@@ -88,6 +88,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
+	ini_cur_pos = -1;
 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
@@ -234,8 +235,6 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	//std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
-
 	name_list->clear();
 	word.clear();
 	setQualifyingLevel(nullptr);
@@ -363,7 +362,9 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
+	ini_cur_pos = prev_txt_cur.position();
 	updateList();
+
 	popup_timer.stop();
 
 	if(name_list->count() == 0)
@@ -1009,6 +1010,22 @@ bool CodeCompletionWidget::updateObjectsList()
 	}
 }
 
+void CodeCompletionWidget::updateWidgetPosSize()
+{
+	//Sets the list position right below of text cursor
+	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
+	QSize screen_sz = completion_wgt->screen()->size();
+
+	// Adjust the position of the widget if it extrapolates the screen limits
+	if((pos.x() + completion_wgt->width()) > screen_sz.width())
+		pos.setX(pos.x() - completion_wgt->width());
+
+	completion_wgt->move(pos);
+	name_list->scrollToTop();
+	name_list->setFocus();
+	adjustNameListSize();
+}
+
 void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
@@ -1019,11 +1036,11 @@ void CodeCompletionWidget::updateList()
 																																			ObjectType::BaseRelationship });
 	QTextCursor tc;
 
+	new_txt_cur = tc = code_field_txt->textCursor();
+
 	qApp->setOverrideCursor(Qt::WaitCursor);
 
-	name_list->clear();
 	word.clear();
-	new_txt_cur=tc=code_field_txt->textCursor();
 
 	/* Try to move the cursor to the previous char in order to check if the user is
 	calling the completion without an attached word */
@@ -1115,8 +1132,33 @@ void CodeCompletionWidget::updateList()
 		populateNameList(objects, word);
 	}
 
+	/* If the current cursor position is after the initial position (when the completion was first shown)
+	 * we filter the items already retrieved before, this avoids keep querying the system catalogs
+	 * repeatdly to retrieve the same items. */
+	if(catalog.isConnectionValid() &&
+			ini_cur_pos >= 0 && tc.position() >= ini_cur_pos)
+	{
+		QList<QListWidgetItem *> list = name_list->findItems(word, Qt::MatchStartsWith);
+
+		name_list->setUpdatesEnabled(false);
+
+		for(auto &item : name_list->findItems("*", Qt::MatchWildcard))
+			item->setHidden(true);
+
+		for(auto &item : list)
+			item->setHidden(false);
+
+		name_list->setUpdatesEnabled(true);
+
+		qApp->restoreOverrideCursor();
+		updateWidgetPosSize();
+
+		return;
+	}
+
 	// Retrieving object names from the database if a valid connection is configured
 	bool db_objs_retrieved = false;
+	name_list->clear();
 
 	if(catalog.isConnectionValid())
 		db_objs_retrieved = updateObjectsList();
@@ -1127,6 +1169,8 @@ void CodeCompletionWidget::updateList()
 	if(!db_objs_retrieved && qualifying_level < 0 && !auto_triggered)
 	{
 		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
+
+		name_list->setUpdatesEnabled(false);
 
 		//If there are custom items, they wiill be placed at the very beggining of the list
 		if(!custom_items.empty())
@@ -1155,6 +1199,8 @@ void CodeCompletionWidget::updateList()
 			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
+
+		name_list->setUpdatesEnabled(true);
 	}
 
 	if(name_list->count()==0)
@@ -1163,19 +1209,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	qApp->restoreOverrideCursor();
-
-	//Sets the list position right below of text cursor
-	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
-	QSize screen_sz = completion_wgt->screen()->size();
-
-	// Adjust the position of the widget if it extrapolates the screen limits
-	if((pos.x() + completion_wgt->width()) > screen_sz.width())
-		pos.setX(pos.x() - completion_wgt->width());
-
-	completion_wgt->move(pos);
-	name_list->scrollToTop();
-	name_list->setFocus();
-	adjustNameListSize();
+	updateWidgetPosSize();
 }
 
 void CodeCompletionWidget::selectItem()
@@ -1296,7 +1330,8 @@ void CodeCompletionWidget::adjustNameListSize()
 	name_list->setMinimumHeight(item_h);
 
 	QRect rect = name_list->viewport()->contentsRect(), brect;
-	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() +
+	QListWidgetItem *item = nullptr,
+			*first_item = name_list->itemAt(rect.topLeft() +
 																									QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
 			*last_item = name_list->itemAt(rect.bottomLeft() +
 																		 QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
@@ -1312,7 +1347,12 @@ void CodeCompletionWidget::adjustNameListSize()
 
 	for(int row = first_row; row <= last_row; row++)
 	{
-		brect = fm.boundingRect(name_list->item(row)->text().
+		item = name_list->item(row);
+
+		if(item->isHidden())
+			continue;
+
+		brect = fm.boundingRect(item->text().
 														remove(HtmlItemDelegate::TagRegExp));
 
 		item_w = brect.width() +
@@ -1333,6 +1373,7 @@ void CodeCompletionWidget::adjustNameListSize()
 void CodeCompletionWidget::close()
 {
 	name_list->clearSelection();
+	ini_cur_pos = -1;
 	completion_wgt->close();
 	auto_triggered=false;
 	QToolTip::hideText();
