@@ -1314,8 +1314,21 @@ void CodeCompletionWidget::showItemTooltip()
 
 void CodeCompletionWidget::adjustNameListSize()
 {
-	int item_h = 0;
-	item_h = (name_list->iconSize().height() + GuiUtilsNs::LtMargin) * name_list->count();
+	int item_h = 0,
+			item_base_h = name_list->iconSize().height() + GuiUtilsNs::LtMargin,
+			item_cnt = 0;
+
+	/* Determining the number of visible items, this will determine
+	 * the maximum completion widget height */
+	for(auto &item : name_list->findItems("*", Qt::MatchWildcard))
+	{
+		if(item->isHidden())
+			continue;
+
+		item_cnt++;
+	}
+
+	item_h = item_base_h * item_cnt;
 	item_h += 2 * GuiUtilsNs::LtMargin;
 
 	if(item_h < completion_wgt->minimumHeight())
@@ -1327,8 +1340,6 @@ void CodeCompletionWidget::adjustNameListSize()
 						 (4 * GuiUtilsNs::LtMargin);
 	}
 
-	name_list->setMinimumHeight(item_h);
-
 	QRect rect = name_list->viewport()->contentsRect(), brect;
 	QListWidgetItem *item = nullptr,
 			*first_item = name_list->itemAt(rect.topLeft() +
@@ -1337,7 +1348,7 @@ void CodeCompletionWidget::adjustNameListSize()
 																		 QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
 	int first_row = name_list->row(first_item),
 			last_row = name_list->row(last_item),
-			list_w = 0, item_w = 0;
+			list_w = 0, item_w = 0, vis_item_cnt = 0;
 	QFontMetrics fm(name_list->font());
 
 	if(first_row >= 0 && last_row < 0)
@@ -1345,12 +1356,15 @@ void CodeCompletionWidget::adjustNameListSize()
 	else if(first_row < 0 && last_row < 0)
 		return;
 
+	// Determining the maximum width of the visible items
 	for(int row = first_row; row <= last_row; row++)
 	{
 		item = name_list->item(row);
 
 		if(item->isHidden())
 			continue;
+
+		vis_item_cnt++;
 
 		brect = fm.boundingRect(item->text().
 														remove(HtmlItemDelegate::TagRegExp));
@@ -1365,6 +1379,9 @@ void CodeCompletionWidget::adjustNameListSize()
 
 	name_list->setFixedWidth(list_w < always_on_top_chk->width() ?
 													 always_on_top_chk->width() : list_w);
+
+	if(vis_item_cnt <= 10)
+		name_list->setFixedHeight(item_h);
 
 	completion_wgt->adjustSize();
 	adjustSize();
