@@ -343,7 +343,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="autoScroll">
       <bool>true</bool>
