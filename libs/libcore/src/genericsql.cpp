@@ -25,6 +25,7 @@ GenericSQL::GenericSQL()
 	attributes[Attributes::Definition] = "";
 	attributes[Attributes::Objects] = "";
 	attributes[Attributes::HideDescription] = "";
+	attributes[Attributes::References] = "";
 	hide_description = false;
 }
 
