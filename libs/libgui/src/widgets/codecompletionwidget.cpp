@@ -1314,9 +1314,7 @@ void CodeCompletionWidget::showItemTooltip()
 
 void CodeCompletionWidget::adjustNameListSize()
 {
-	int item_h = 0,
-			item_base_h = name_list->iconSize().height() + GuiUtilsNs::LtMargin,
-			item_cnt = 0;
+	int item_cnt = 0;
 
 	/* Determining the number of visible items, this will determine
 	 * the maximum completion widget height */
@@ -1328,33 +1326,29 @@ void CodeCompletionWidget::adjustNameListSize()
 		item_cnt++;
 	}
 
-	item_h = item_base_h * item_cnt;
-	item_h += 2 * GuiUtilsNs::LtMargin;
-
-	if(item_h < completion_wgt->minimumHeight())
-		item_h = completion_wgt->minimumHeight();
-	else if(item_h > completion_wgt->maximumHeight())
-	{
-		item_h = completion_wgt->maximumHeight() -
-						 always_on_top_chk->height() -
-						 (4 * GuiUtilsNs::LtMargin);
-	}
-
 	QRect rect = name_list->viewport()->contentsRect(), brect;
 	QListWidgetItem *item = nullptr,
 			*first_item = name_list->itemAt(rect.topLeft() +
-																									QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
+																			QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
 			*last_item = name_list->itemAt(rect.bottomLeft() +
 																		 QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
 	int first_row = name_list->row(first_item),
 			last_row = name_list->row(last_item),
-			list_w = 0, item_w = 0, vis_item_cnt = 0;
+			list_w = 0, item_w = 0, vis_item_cnt = 0,
+			margin = 2 * GuiUtilsNs::LtMargin;
+
 	QFontMetrics fm(name_list->font());
 
 	if(first_row >= 0 && last_row < 0)
 		last_row = name_list->count() - 1;
+	// In case the list is empty
 	else if(first_row < 0 && last_row < 0)
+	{
+		name_list->setFixedHeight(completion_wgt->minimumHeight() + margin);
+		completion_wgt->adjustSize();
+		adjustSize();
 		return;
+	}
 
 	// Determining the maximum width of the visible items
 	for(int row = first_row; row <= last_row; row++)
@@ -1370,7 +1364,7 @@ void CodeCompletionWidget::adjustNameListSize()
 														remove(HtmlItemDelegate::TagRegExp));
 
 		item_w = brect.width() +
-						 name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 2) +
+						 name_list->iconSize().width() + margin +
 						 name_list->verticalScrollBar()->width();
 
 		if(item_w > list_w)
@@ -1379,6 +1373,20 @@ void CodeCompletionWidget::adjustNameListSize()
 
 	name_list->setFixedWidth(list_w < always_on_top_chk->width() ?
 													 always_on_top_chk->width() : list_w);
+
+	int item_h = 0,
+			base_h = name_list->iconSize().height() + GuiUtilsNs::LtMargin;
+
+	item_h = base_h * item_cnt;
+	item_h += margin;
+
+	if(item_h < completion_wgt->minimumHeight())
+		item_h = completion_wgt->minimumHeight() + margin;
+	else if(item_h > completion_wgt->maximumHeight())
+	{
+		item_h = completion_wgt->maximumHeight() -
+						 always_on_top_chk->height() - (2 * margin);
+	}
 
 	if(vis_item_cnt <= 10)
 		name_list->setFixedHeight(item_h);
