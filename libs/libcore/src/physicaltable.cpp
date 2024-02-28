@@ -293,12 +293,12 @@ void PhysicalTable::setConstraintsAttribute(SchemaParser::CodeType def_type)
 		if(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 
 				((def_type==SchemaParser::SqlCode &&
-					((!constr->isReferRelationshipAddedColumn() && constr->getConstraintType()!=ConstraintType::Check) ||
+					((!constr->isReferRelationshipAddedColumns() && constr->getConstraintType()!=ConstraintType::Check) ||
 					 (constr->getConstraintType()==ConstraintType::Check && !constr->isAddedByGeneralization()) ||
 					 constr->getConstraintType()==ConstraintType::PrimaryKey)) ||
 
 				 (def_type==SchemaParser::XmlCode && !constr->isAddedByRelationship() &&
-					((constr->getConstraintType()!=ConstraintType::PrimaryKey && !constr->isReferRelationshipAddedColumn()) ||
+					((constr->getConstraintType()!=ConstraintType::PrimaryKey && !constr->isReferRelationshipAddedColumns()) ||
 					 (constr->getConstraintType()==ConstraintType::PrimaryKey)))))
 		{
 			inc_added_by_rel=(def_type==SchemaParser::SqlCode);

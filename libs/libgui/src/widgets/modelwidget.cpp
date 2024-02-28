@@ -1620,12 +1620,16 @@ void ModelWidget::convertRelationship1N()
 		Column *column = nullptr;
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
 		std::vector<Column *> columns;
-		QString pk_name, orig_name, rel_name = rel->getName();
+		QString pk_name, rel_name = rel->getName();
 		bool register_pk = false;
 		QColor rel_color = rel->getCustomColor();
+		QList<unsigned> layers = rel->getLayers();
 
-		// Storing the XML definition of table's PK
-		if(pk && (pk->isReferRelationshipAddedColumn() || pk->isAddedByRelationship()))
+		/* Storing the XML definition of table's PK if it was added by the relationship being converted
+		 * or the PK wasn't created by a relationship but references columns that were added by the relationship */
+		if(pk &&
+				((!pk->isAddedByRelationship() && pk->isReferRelationshipAddedColumns(rel->getGeneratedColumns())) ||
+					(pk->isAddedByRelationship() && pk->getParentRelationship() == rel)))
 		{
 			/* This flag indicates that the pk removal (further in this method) should be registered in the operations list
 			 * This will happen only if the pk wasn't added by the relationship */
@@ -1722,6 +1726,7 @@ void ModelWidget::convertRelationship1N()
 		BaseRelationship *fk_rel = db_model->getRelationship(recv_tab, ref_tab);
 		fk_rel->setName(rel_name);
 		fk_rel->setCustomColor(rel_color);
+		fk_rel->setLayers(layers);
 		fk_rel->setModified(true);
 
 		op_list->registerObject(fk_rel, Operation::ObjModified);
@@ -2772,7 +2777,7 @@ void ModelWidget::copyObjects(bool duplicate_mode, bool copy_deps)
 						 (!constr ||	(((constr &&
 								 (constr->getConstraintType()==ConstraintType::ForeignKey ||
 									(constr->getConstraintType()==ConstraintType::Unique &&
-									 constr->isReferRelationshipAddedColumn()))))))))
+									 constr->isReferRelationshipAddedColumns()))))))))
 				{
 					sel_obj_deps.push_back(tab_obj);
 				}
@@ -4493,21 +4498,23 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 	action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 	TableObject *tab_obj = dynamic_cast<TableObject *>(obj);
 
-	if(tab_obj &&  tab_obj->getObjectType()==ObjectType::Column)
+	if(tab_obj &&
+			(tab_obj->getObjectType() == ObjectType::Column ||
+			 tab_obj->getObjectType() == ObjectType::Constraint))
 	{
-		Column *col=dynamic_cast<Column *>(tab_obj);
+		Column *col = dynamic_cast<Column *>(tab_obj);
 
 		if(tab_obj->isAddedByRelationship())
 		{
-			action_parent_rel->setData(QVariant::fromValue<void *>(dynamic_cast<Column *>(tab_obj)->getParentRelationship()));
+			action_parent_rel->setData(QVariant::fromValue<void *>(tab_obj->getParentRelationship()));
 			popup_menu.addAction(action_parent_rel);
 		}
-		else if(col->getType().isSerialType())
+		else if(col && col->getType().isSerialType())
 		{
 			action_create_seq_col->setData(QVariant::fromValue<void *>(col));
 			popup_menu.addAction(action_create_seq_col);
 		}
-		else if(col->getType().isIntegerType())
+		else if(col && col->getType().isIntegerType())
 		{
 			action_conv_int_serial->setData(QVariant::fromValue<void *>(col));
 			popup_menu.addAction(action_conv_int_serial);
