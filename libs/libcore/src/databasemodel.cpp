@@ -1524,7 +1524,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		idx = 0;
 		while(itr != itr_end)
 		{
-						rel = dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
 					(rel->getTable(BaseRelationship::SrcTable)==table ||
@@ -2102,7 +2102,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 							 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
 									 constr->isReferRelationshipAddedColumns() &&
-									 constr->getConstraintType()!=ConstraintType::PrimaryKey);
+									 constr->getConstraintType() != ConstraintType::PrimaryKey);
 
 						//When found some special object, stores is xml definition
 						if(found)
