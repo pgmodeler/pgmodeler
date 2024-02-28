@@ -2713,10 +2713,6 @@ void ModelWidget::protectObject()
 
 void ModelWidget::cutObjects(bool copy_deps)
 {
-	/* Store the source model as 'this'. This attribute is used on the paste method
-	to remove the selected object and updated the source model */
-	ModelWidget::src_model=this;
-
 	//Set the flag indicating that a cut operation started
 	ModelWidget::cut_operation=true;
 	copyObjects(false, copy_deps);
@@ -2730,6 +2726,11 @@ void ModelWidget::copyObjects(bool duplicate_mode, bool copy_deps)
 	TableObject *tab_obj = nullptr;
 	BaseTable *table = nullptr;
 	Constraint *constr = nullptr;
+
+	/* Store the source model as 'this'. This attribute is used on the paste method
+	 * to remove the selected object and updated the source model when a cut operation
+	 * is active */
+	ModelWidget::src_model = this;
 
 	if(selected_objects.size()==1)
 	{
@@ -2827,6 +2828,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	unsigned pos = 0;
 	TaskProgressWidget task_prog_wgt(this);
 	ObjectRenameWidget obj_rename_wgt(this);
+	bool discard_input_obj = duplicate_mode || (src_model == this);
 
 	task_prog_wgt.setWindowTitle(tr("Pasting objects..."));
 	task_prog_wgt.show();
@@ -2949,20 +2951,20 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_table->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, duplicate_mode));
+																																 false, "_cp", true, discard_input_obj));
 							}
 							else
 							{
 								tab_obj->setName(CoreUtilsNs::generateUniqueName(tab_obj,
 																																 *sel_view->getObjectList(tab_obj->getObjectType()),
-																																 false, "_cp", true, duplicate_mode));
+																																 false, "_cp", true, discard_input_obj));
 							}
 						}
 						else
 						{
 							object->setName(CoreUtilsNs::generateUniqueName(object,
 																															*db_model->getObjectList(object->getObjectType()),
-																															true, "_cp", true, false));
+																															true, "_cp", true, discard_input_obj));
 						}
 					}
 				}
@@ -3157,15 +3159,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	}
 
 	if(!ModelWidget::cut_operation)
-	{
-		//copied_objects.clear();
 		emit s_objectCreated();
-	}
-	//If its a cut operatoin
 	else
 	{
 		//Remove the objects from the source model
-		ModelWidget::src_model->selected_objects=ModelWidget::cut_objects;
+		ModelWidget::src_model->selected_objects = ModelWidget::cut_objects;
 		ModelWidget::src_model->removeObjects(false);
 
 		//Uncheck the cut operation flag
@@ -3174,12 +3172,11 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		copied_objects.clear();
 		cut_objects.clear();
 
-		if(this!=ModelWidget::src_model)
+		if(this != ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
-
-		ModelWidget::src_model=nullptr;
 	}
 
+	ModelWidget::src_model = nullptr;
 	this->configurePopupMenu();
 	setModified(true);
 
