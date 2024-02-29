@@ -6767,7 +6767,6 @@ Collation *DatabaseModel::createCollation()
 {
 	Collation *collation=nullptr;
 	BaseObject *copy_coll=nullptr;
-	EncodingType encoding;
 	attribs_map attribs;
 
 	try

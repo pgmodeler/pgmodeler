@@ -57,7 +57,6 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	lccollate_cmb->addItems(loc_list);
 	lcctype_cmb->addItems(loc_list);
-	locale_cmb->addItems(loc_list);
 
 	providers = ProviderType::getTypes();
 	providers.push_front(tr("Default"));
@@ -65,7 +64,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(collation_sel, &ObjectSelectorWidget::s_objectSelected, this, &CollationWidget::resetFields);
 	connect(collation_sel, &ObjectSelectorWidget::s_selectorCleared, this, &CollationWidget::resetFields);
-	connect(locale_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
+	connect(locale_edt, &QLineEdit::textChanged, this, &CollationWidget::resetFields);
 	connect(lcctype_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
 	connect(lccollate_cmb, &QComboBox::currentIndexChanged, this, &CollationWidget::resetFields);
 
@@ -89,17 +88,16 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 		if(!collation_sel->getSelectedObject())
 		{
-			idx=locale_cmb->findText(collation->getLocale());
-			locale_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+			locale_edt->setText(collation->getLocale());
 			locale_mod_edt->setText(collation->getModifier(Collation::Locale));
 
-			if(locale_cmb->currentIndex()==0)
+			if(collation->getLocale().isEmpty())
 			{
-				idx=lcctype_cmb->findText(collation->getLocalization(Collation::LcCtype));
+				idx = lcctype_cmb->findText(collation->getLocalization(Collation::LcCtype));
 				lcctype_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 				lcctype_mod_edt->setText(collation->getModifier(Collation::LcCtype));
 
-				idx=lccollate_cmb->findText(collation->getLocalization(Collation::LcCollate));
+				idx = lccollate_cmb->findText(collation->getLocalization(Collation::LcCollate));
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 				lccollate_mod_edt->setText(collation->getModifier(Collation::LcCollate));
 			}
@@ -114,15 +112,15 @@ void CollationWidget::resetFields()
 {
 	//Block object's signals to evict an infinite call to this method
 	collation_sel->blockSignals(true);
-	locale_cmb->blockSignals(true);
+	locale_edt->blockSignals(true);
 	lccollate_cmb->blockSignals(true);
 	lcctype_cmb->blockSignals(true);
 
 	//If there is no sender reset all fields
 	if(!sender())
 	{
+		locale_edt->clear();
 		collation_sel->clearSelector();
-		locale_cmb->setCurrentIndex(0);
 		lccollate_cmb->setCurrentIndex(0);
 		lcctype_cmb->setCurrentIndex(0);
 	}
@@ -131,12 +129,12 @@ void CollationWidget::resetFields()
 			(lccollate_cmb->currentIndex() > 0 || lcctype_cmb->currentIndex() > 0))
 	{
 		collation_sel->clearSelector();
-		locale_cmb->setCurrentIndex(0);
+		locale_edt->clear();
 		locale_mod_edt->clear();
 	}
 	//Resetting the lc_??? combos
-	else if((sender()==collation_sel || sender()==locale_cmb) &&
-			(collation_sel->getSelectedObject()!=nullptr || locale_cmb->currentIndex() > 0))
+	else if((sender()==collation_sel || sender()==locale_edt) &&
+					 (collation_sel->getSelectedObject()!=nullptr || !locale_edt->text().isEmpty()))
 	{
 		lccollate_cmb->setCurrentIndex(0);
 		lcctype_cmb->setCurrentIndex(0);
@@ -145,17 +143,17 @@ void CollationWidget::resetFields()
 
 		//Additionally resets the collation selector or locale combo depending on sender()
 		if(sender()==collation_sel && collation_sel->getSelectedObject()!=nullptr)
-			locale_cmb->setCurrentIndex(0);
+			locale_edt->clear();
 		else
 			collation_sel->clearSelector();
 	}
 
 	lcctype_mod_edt->setEnabled(lcctype_cmb->currentIndex() > 0);
 	lccollate_mod_edt->setEnabled(lccollate_cmb->currentIndex() > 0);
-	locale_mod_edt->setEnabled(locale_cmb->currentIndex() > 0);
+	locale_mod_edt->setEnabled(!locale_edt->text().isEmpty());
 
 	collation_sel->blockSignals(false);
-	locale_cmb->blockSignals(false);
+	locale_edt->blockSignals(false);
 	lccollate_cmb->blockSignals(false);
 	lcctype_cmb->blockSignals(false);
 }
@@ -174,9 +172,9 @@ void CollationWidget::applyConfiguration()
 		if(encoding_cmb->currentIndex() > 0)
 			collation->setEncoding(EncodingType(encoding_cmb->currentText()));
 
-		if(locale_cmb->currentIndex() > 0)
+		if(!locale_edt->text().isEmpty())
 		{
-			collation->setLocale(locale_cmb->currentText());
+			collation->setLocale(locale_edt->text());
 			collation->setModifier(Collation::Locale, locale_mod_edt->text());
 		}
 
