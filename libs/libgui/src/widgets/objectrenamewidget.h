@@ -50,6 +50,8 @@ class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget
 
 		void updateLabelsButtons();
 
+		void showEvent(QShowEvent *event) override;
+
 	protected:
 		bool eventFilter(QObject *object, QEvent *event) override;
 
