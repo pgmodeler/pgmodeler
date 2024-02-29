@@ -1622,8 +1622,6 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -1633,13 +1631,15 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 	if(!item || item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toInt() < 0)
 		return;
 
+	ObjectType obj_type = static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
+	QString signature = item->text(0);
+
 	try
 	{
 		QTreeWidgetItem *root=nullptr, *parent=nullptr, *aux_item=nullptr;
-		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 		unsigned obj_id=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
-		QString sch_name, tab_name;
 		std::vector<QTreeWidgetItem *> gen_items;
+		QString sch_name, tab_name;
 
 		qApp->setOverrideCursor(Qt::WaitCursor);
 
@@ -1681,6 +1681,12 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 					}
 				}
 			}
+
+			if(!tab_name.isEmpty() && !BaseTable::isBaseTable(obj_type))
+				signature.prepend(tab_name + ".");
+
+			if(!sch_name.isEmpty())
+				signature.prepend(sch_name + ".");
 
 			configureImportHelper();
 
@@ -1727,7 +1733,10 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 		objects_trw->blockSignals(false);
 		objects_trw->setUpdatesEnabled(true);
 		qApp->restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+
+		throw Exception(tr("Failed to load the subitems of the object <strong>%1</strong> <em>(%2)</em>! Try to reload them manually by hitting <strong>F6</strong> on each one.")
+										.arg(signature, BaseObject::getTypeName(obj_type)),
+										ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 

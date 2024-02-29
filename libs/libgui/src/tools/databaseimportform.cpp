@@ -949,6 +949,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 				group=new QTreeWidgetItem(root);
 				group->setIcon(0, QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
 				group->setFont(0, grp_fnt);
+				group->setText(0, BaseObject::getTypeName(grp_type) + " (0)");
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
 				group->setData(ObjectId, Qt::UserRole, 0);
