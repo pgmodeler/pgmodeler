@@ -1074,39 +1074,17 @@ attribs_map Catalog::getServerAttributes()
 	return attribs;
 }
 
-/* unsigned Catalog::getObjectCount(bool incl_sys_objs)
+bool Catalog::isServerSupported()
 {
-	unsigned count = 0;
-
 	try
 	{
-		ResultSet res = ResultSet();
-		QString sql, attr_name;
-		attribs_map tuple, attribs;
-
-		if(!incl_sys_objs)
-			attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
-
-		loadCatalogQuery(Attributes::ObjCount);
-		schparser.ignoreUnkownAttributes(true);
-		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getSourceCode(attribs).simplified();
-		connection.executeDMLCommand(sql, res);
-
-		if(res.accessTuple(ResultSet::FirstTuple))
-		{
-			tuple = res.getTupleValues();
-			count = tuple[Attributes::ObjCount].toUInt();
-		}
+		return connection.isServerSupported();
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog", QString("catalog: %1").arg(Attributes::ObjCount).toStdString().c_str(), "", -1));
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	return count;
-} */
+}
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {

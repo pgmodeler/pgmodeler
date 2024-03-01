@@ -110,7 +110,7 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 
 		int diff_progress, curr_step, total_steps;
 
-		bool process_paused;
+		bool process_paused, src_server_supported, server_supported;
 
 		void closeEvent(QCloseEvent *event);
 		void showEvent(QShowEvent *);

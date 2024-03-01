@@ -34,6 +34,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	model_wgt=nullptr;
 	create_model=true;
 
+	pg_version_alert_frm->setVisible(false);
+
 	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
 	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
@@ -507,11 +509,16 @@ void DatabaseImportForm::listDatabases()
 			//List the available databases using the selected connection
 			import_helper->setConnection(*conn);
 			DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+
+			pg_version_alert_frm->setVisible(
+					Connection::isDbVersionIgnored() &&
+					!import_helper->getCatalog().isServerSupported());
 		}
 		else
 		{
 			database_cmb->clear();
 			buttons_wgt->setEnabled(false);
+			pg_version_alert_frm->setVisible(false);
 		}
 
 		db_objects_tw->clear();

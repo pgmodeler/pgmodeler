@@ -147,7 +147,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	version_alert_frm->setVisible(false);
+	pg_version_alert_frm->setVisible(false);
 	curr_scroll_value = 0;
 	filter_parent->setVisible(false);
 	sort_column = 0;
@@ -1104,17 +1104,10 @@ void DatabaseExplorerWidget::listObjects()
 		configureImportHelper();
 		objects_trw->blockSignals(true);
 
-
 		/* If the database version is ignored we display the
 		 * alert message if the current db version is unsupported */
-		if(Connection::isDbVersionIgnored())
-		{
-			attribs_map server_attr = catalog.getServerAttributes();
-			QStringList list = server_attr[Attributes::ServerVersion].split('.');
-
-			if(list[0].toDouble() < PgSqlVersions::PgSqlVersion100.toDouble())
-				version_alert_frm->setVisible(true);
-		}
+		pg_version_alert_frm->setVisible(Connection::isDbVersionIgnored() &&
+																		 !catalog.isServerSupported());
 
 		saveTreeState();
 		clearObjectProperties();

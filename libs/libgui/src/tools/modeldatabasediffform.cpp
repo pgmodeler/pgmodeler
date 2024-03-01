@@ -32,6 +32,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	setupUi(this);
 	setWindowFlags(flags);
 
+	src_server_supported = server_supported = false;
+	pg_version_alert_frm->setVisible(false);
+
 	dates_wgt->setVisible(false);
 	start_date_dt->setDateTime(QDateTime::currentDateTime());
 	end_date_dt->setDateTime(QDateTime::currentDateTime());
@@ -432,6 +435,7 @@ void ModelDatabaseDiffForm::listDatabases()
 	QComboBox *conn_cmb = (sender() == src_connections_cmb ? src_connections_cmb : connections_cmb),
 			*db_cmb = (conn_cmb == src_connections_cmb ? src_database_cmb : database_cmb);
 	QLabel *db_lbl = (conn_cmb == src_connections_cmb ? src_database_lbl : database_lbl);
+	bool *srv_supp = (conn_cmb == src_connections_cmb ? &src_server_supported : &server_supported);
 
 	try
 	{
@@ -451,12 +455,18 @@ void ModelDatabaseDiffForm::listDatabases()
 			DatabaseImportHelper imp_helper;
 			imp_helper.setConnection(*conn);
 			DatabaseImportForm::listDatabases(imp_helper, db_cmb);
+			(*srv_supp) = imp_helper.getCatalog().isServerSupported();
 		}
 		else
+		{
+			(*srv_supp) = true;
 			db_cmb->clear();
+		}
 
 		db_cmb->setEnabled(db_cmb->count() > 0);
 		db_lbl->setEnabled(db_cmb->isEnabled());
+		pg_version_alert_frm->setVisible(Connection::isDbVersionIgnored() &&
+																		 (!src_server_supported || !server_supported));
 	}
 	catch(Exception &e)
 	{
