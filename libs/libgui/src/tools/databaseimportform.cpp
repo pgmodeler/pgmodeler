@@ -204,7 +204,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		obj_attrs = import_hlp.getObjects(types);
 		GuiUtilsNs::populateObjectsTable(flt_objects_view, obj_attrs);
-		flt_objects_view->setEnabled(flt_objects_view->model()->rowCount() > 0);
+		flt_objects_view->setEnabled(flt_objects_view->model() && flt_objects_view->model()->rowCount() > 0);
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)

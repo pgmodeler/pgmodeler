@@ -1383,9 +1383,9 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 														 pd_filter_wgt->isMatchSignature()) ?
 																Attributes::Signature : Attributes::Name;
 
-			std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
+			std::vector<BaseObject *> flt_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
 
-			GuiUtilsNs::populateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
+			GuiUtilsNs::populateObjectsTable(filtered_objs_view, flt_objs, search_attr);
 			getFilteredObjects(filtered_objs);
 		}
 		else if(src_connections_cmb->currentIndex() > 0 &&
@@ -1433,7 +1433,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &objects)
 {
 	QAbstractItemModel *model = filtered_objs_view->model();
-	int row_cnt = model->rowCount();
+	int row_cnt = model ? model->rowCount() : 0;
 	QModelIndex index;
 	BaseObject *obj = nullptr;
 
@@ -1450,27 +1450,3 @@ void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &object
 		objects.push_back(obj);
 	}
 }
-
-/*void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
-{
-	ObjectType obj_type;
-	QAbstractItemModel *model = filtered_objs_view->model();
-	int row_cnt = model->rowCount(); //filtered_objs_tbw->rowCount();
-	//QTableWidgetItem *oid_item = nullptr, *type_item  = nullptr;
-	QModelIndex oid_index, type_index, index;
-	BaseObject *object = nullptr;
-
-	obj_oids.clear();
-
-	for(int row = 0; row < row_cnt; row++)
-	{
-		//oid_item = filtered_objs_tbw->item(row, 0);
-		//type_item = filtered_objs_tbw->item(row, 2);
-		//oid_index = model->item(row, ObjectsListModel::ObjName);
-		//type_index = model->item(row, ObjectsListModel::ObjType);
-		index =
-		object = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
-		obj_type = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
-		obj_oids[obj_type].push_back(oid_index->data(Qt::UserRole).toUInt());
-	}
-}*/

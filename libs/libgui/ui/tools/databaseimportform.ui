@@ -980,7 +980,7 @@
                      <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderStretchLastSection">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                    </widget>
                   </item>

@@ -313,14 +313,11 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 				pattern = list.join(any_str);
 			}
-			else
-			{
-				/* If the pattern is wildcard mode but has not wildcard char we
-				 * assume that the matching should be exact so we prepend ^ and append $
-				 * in order to force a regular expression with exact match */
-				pattern.prepend('^');
-				pattern.append('$');
-			}
+
+			/* In wildcard mode the pattern matching must be exact, so we prepend ^ and append $
+			 * in order to force a regular expression with exact match. */
+			pattern.prepend('^');
+			pattern.append('$');
 		}
 
 		parsed_filters[obj_type].append(QString("(%1)").arg(pattern));
@@ -773,6 +770,12 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 					fmt_attr_name = QString(col_name).replace('_', '-');
 					attribs[fmt_attr_name] = res.getColumnValue(col_name);
 				}
+
+				// Creating a signature attribute by joining the parent name and the object name.
+				if(!attribs[Attributes::Parent].isEmpty())
+					attribs[Attributes::Signature] = attribs[Attributes::Parent] + ".";
+
+				attribs[Attributes::Signature] += attribs[Attributes::Name];
 
 				objects.push_back(attribs);
 				attribs.clear();
