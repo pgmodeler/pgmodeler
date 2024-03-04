@@ -273,7 +273,9 @@ void ObjectFinderWidget::findObjects()
 		disconnect(result_view->selectionModel(), nullptr, this, nullptr);
 
 	GuiUtilsNs::populateObjectsTable(result_view, found_objs, search_attr);
-	connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
+
+	if(result_view->selectionModel())
+		connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
 
 	clear_res_btn->setEnabled(!found_objs.empty());
 	select_btn->setEnabled(!found_objs.empty());
