@@ -52,6 +52,10 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 
 		ObjectTypesListWidget *obj_types_lst;
 
+		QComboBox *_search_attrs_cmb;
+
+		QLabel *_search_attrs_lbl;
+
 		//! \brief Captures the ENTER press to execute search
 		bool eventFilter(QObject *object, QEvent *event);
 
@@ -67,7 +71,7 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 
 	signals:
 		void s_hideRequested();
-		
+
 	public slots:
 		void hide();
 		void clearResult();

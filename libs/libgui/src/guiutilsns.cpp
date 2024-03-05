@@ -772,4 +772,24 @@ namespace GuiUtilsNs {
 			parent_edt->setEchoMode(pass_visible ? QLineEdit::Password : QLineEdit::Normal);
 		});
 	}
+
+	void resizeChildToolButtons(QWidget *wgt, const QSize &new_size)
+	{
+		if(!wgt)
+			return;
+
+		Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon;
+
+		if(new_size.width() < wgt->baseSize().width())
+			style = Qt::ToolButtonIconOnly;
+
+		QList<QToolButton *> tool_btns = wgt->findChildren<QToolButton *>();
+
+		for(auto &btn : tool_btns)
+		{
+			if(btn->objectName() != "hide_tb" && btn->toolButtonStyle() != style)
+				btn->setToolButtonStyle(style);
+		}
+	}
+
 }

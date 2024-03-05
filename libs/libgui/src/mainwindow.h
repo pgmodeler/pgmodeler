@@ -162,9 +162,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		QMap<QString, QIcon> recent_models_icons;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
-		void closeEvent(QCloseEvent *event);
+		void closeEvent(QCloseEvent *event) override;
 
-		void resizeEvent(QResizeEvent *);
+		void resizeEvent(QResizeEvent *) override;
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
@@ -204,15 +204,15 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void setPluginsActions(ModelWidget *model_wgt);
 
-		void dragEnterEvent(QDragEnterEvent *event);
+		void dragEnterEvent(QDragEnterEvent *event) override;
 
-		void dropEvent(QDropEvent *event);
+		void dropEvent(QDropEvent *event) override;
 
 		/*! \brief Tries to restore the default configuration files and restart pgModeler
 		 *  in case of any configuration file is broken or missing */
 		void handleInitializationFailure(Exception &e);
 
-	public:
+public:
 		enum MWViewsId {
 			WelcomeView,
 			DesignView,
