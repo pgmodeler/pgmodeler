@@ -221,7 +221,7 @@
                  <property name="autoFillBackground">
                   <bool>true</bool>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                   <property name="spacing">
                    <number>5</number>
                   </property>
@@ -238,24 +238,23 @@
                    <number>5</number>
                   </property>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_3">
-                    <property name="spacing">
-                     <number>5</number>
+                   <widget class="QSplitter" name="splitter">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
                     </property>
-                    <item>
-                     <widget class="QWidget" name="model_valid_parent" native="true"/>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="obj_finder_parent" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                    <property name="childrenCollapsible">
+                     <bool>false</bool>
+                    </property>
+                    <widget class="QWidget" name="model_valid_parent" native="true"/>
+                    <widget class="QWidget" name="obj_finder_parent" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
