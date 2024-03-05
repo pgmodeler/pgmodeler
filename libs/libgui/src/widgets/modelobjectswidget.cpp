@@ -93,6 +93,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	}
 	else
 	{
+		model_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																				GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);

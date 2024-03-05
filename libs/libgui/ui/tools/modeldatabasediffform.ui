@@ -134,12 +134,12 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>5</number>
+             <number>4</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
             </property>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <layout class="QVBoxLayout" name="main_opts_lt">
               <property name="spacing">
                <number>5</number>
@@ -991,7 +991,7 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <layout class="QVBoxLayout" name="diff_opts_lt">
               <property name="spacing">
                <number>5</number>
@@ -1498,7 +1498,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="handleWidth">
-             <number>5</number>
+             <number>4</number>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>

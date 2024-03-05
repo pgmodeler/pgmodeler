@@ -41,9 +41,9 @@
   <property name="floating" stdset="0">
    <bool>false</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
+  <layout class="QGridLayout" name="model_objs_grid">
    <property name="leftMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
     <number>5</number>
@@ -52,7 +52,7 @@
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="spacing">
     <number>5</number>
@@ -425,7 +425,7 @@
        <number>5</number>
       </property>
       <property name="topMargin">
-       <number>5</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
        <number>0</number>

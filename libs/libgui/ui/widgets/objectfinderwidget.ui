@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1458</width>
-    <height>1334</height>
+    <height>502</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -33,13 +33,13 @@
     <number>5</number>
    </property>
    <property name="topMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
     <number>5</number>
    </property>
    <property name="bottomMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -418,16 +418,6 @@
      <attribute name="verticalHeaderHighlightSections">
       <bool>false</bool>
      </attribute>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
   </layout>
