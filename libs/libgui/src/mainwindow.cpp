@@ -2085,12 +2085,10 @@ void MainWindow::loadModels(const QStringList &files)
 	{
 		qApp->restoreOverrideCursor();
 
-		if( files[i].endsWith(GlobalAttributes::DbModelExt))
+		if(files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
 		else
 		{
-			//Messagebox msgbox;
-			//msgbox.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -2107,7 +2105,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 							 tr("Fix model"), tr("Cancel"), "",
 							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.result() == QDialog::Accepted)
 		fixModel(filename);
 }
 

@@ -180,9 +180,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Restore the dock widget configurations from the parameters loaded from main configuration file
 		void restoreDockWidgetsSettings();
 
-		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
-		void showFixMessage(Exception &e, const QString &filename);
-
 		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
 		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
 		 * the current button toggle state. */
@@ -281,6 +278,9 @@ public:
 
 		//! \brief Updates the connections list of the validator widget
 		void updateConnections(bool force = false);
+
+		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
+		void showFixMessage(Exception &e, const QString &filename);
 
 	private slots:
 		void showMainMenu();

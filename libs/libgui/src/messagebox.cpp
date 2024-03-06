@@ -125,10 +125,14 @@ void Messagebox::error(Exception &e, const QString &method, const QString &file,
 	error(e.getErrorMessage(), e.getErrorCode(), method, file, line, &e);
 }
 
-void Messagebox::alert(const QString &msg)
+void Messagebox::alert(const QString &msg, Exception *ex)
 {
 	Messagebox msgbox;
-	msgbox.show(msg, AlertIcon);
+
+	if(ex)
+		msgbox.show(*ex, msg, AlertIcon);
+	else
+		msgbox.show(msg, AlertIcon);
 }
 
 void Messagebox::info(const QString &msg)
