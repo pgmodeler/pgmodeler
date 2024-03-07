@@ -2100,7 +2100,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 
 	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
 												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 tr("Could not load the database model file `%1'! Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
 							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
