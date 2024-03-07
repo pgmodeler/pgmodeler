@@ -162,9 +162,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		QMap<QString, QIcon> recent_models_icons;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
-		void closeEvent(QCloseEvent *event);
+		void closeEvent(QCloseEvent *event) override;
 
-		void resizeEvent(QResizeEvent *);
+		void resizeEvent(QResizeEvent *) override;
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
@@ -179,9 +179,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Restore the dock widget configurations from the parameters loaded from main configuration file
 		void restoreDockWidgetsSettings();
-
-		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
-		void showFixMessage(Exception &e, const QString &filename);
 
 		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
 		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
@@ -204,15 +201,15 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		void setPluginsActions(ModelWidget *model_wgt);
 
-		void dragEnterEvent(QDragEnterEvent *event);
+		void dragEnterEvent(QDragEnterEvent *event) override;
 
-		void dropEvent(QDropEvent *event);
+		void dropEvent(QDropEvent *event) override;
 
 		/*! \brief Tries to restore the default configuration files and restart pgModeler
 		 *  in case of any configuration file is broken or missing */
 		void handleInitializationFailure(Exception &e);
 
-	public:
+public:
 		enum MWViewsId {
 			WelcomeView,
 			DesignView,
@@ -281,6 +278,9 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Updates the connections list of the validator widget
 		void updateConnections(bool force = false);
+
+		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
+		void showFixMessage(Exception &e, const QString &filename);
 
 	private slots:
 		void showMainMenu();

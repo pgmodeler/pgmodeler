@@ -147,6 +147,8 @@ namespace GuiUtilsNs {
 
 	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
 	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
+
+	extern __libgui void resizeChildToolButtons(QWidget *wgt, const QSize &new_size);
 }
 
 #endif

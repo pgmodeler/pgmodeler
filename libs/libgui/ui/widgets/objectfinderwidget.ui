@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1458</width>
-    <height>502</height>
+    <width>644</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,13 +30,13 @@
     <number>5</number>
    </property>
    <property name="leftMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
     <number>0</number>
@@ -66,12 +66,6 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="text">
         <string>Pattern:</string>
        </property>
@@ -93,19 +87,6 @@
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="search_attrs_cmb">
-       <property name="toolTip">
-        <string>The attribute of the objects in which the search will occur</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>28</width>
-         <height>28</height>
-        </size>
        </property>
       </widget>
      </item>
@@ -424,7 +405,6 @@
  </widget>
  <tabstops>
   <tabstop>pattern_edt</tabstop>
-  <tabstop>search_attrs_cmb</tabstop>
   <tabstop>find_btn</tabstop>
   <tabstop>filter_btn</tabstop>
   <tabstop>clear_res_btn</tabstop>

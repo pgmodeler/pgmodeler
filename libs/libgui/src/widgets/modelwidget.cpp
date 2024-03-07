@@ -747,9 +747,21 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 				panning_mode = false;
 			}
 
+			/* If the vertical scroll bar is the receiver of the wheel event but the shift key is held
+			 * we redirect the event to horizontal scroll bar so the viewport can be scrolled horizontally */
+			if(object == viewport->verticalScrollBar() && w_event->modifiers() == Qt::ShiftModifier)
+			{
+				QWheelEvent we(w_event->position(), w_event->globalPosition(), w_event->pixelDelta(),
+												w_event->angleDelta(), w_event->buttons(), Qt::NoModifier,
+												w_event->phase(), w_event->inverted());
+				qApp->sendEvent(viewport->horizontalScrollBar(), &we);
+				return true;
+			}
+
 			if(w_event->modifiers() != Qt::ControlModifier)
 				return false;
 
+			// Zooming in/out the scene when the control key is held
 			double zoom_inc = round(fabs(w_event->angleDelta().y()/120.0)) * ZoomIncrement;
 
 			if(w_event->angleDelta().y() < 0)

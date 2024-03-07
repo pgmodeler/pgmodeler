@@ -38,11 +38,22 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	case_sensitive_chk = new QCheckBox(this);
 	case_sensitive_chk->setText(tr("Case sensitive"));
 
+	_search_attrs_cmb = new QComboBox(this);
+	_search_attrs_lbl = new QLabel(this);
+	_search_attrs_lbl->setText(tr("Search field:"));
+	_search_attrs_lbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	QHBoxLayout *hbox = new QHBoxLayout;
+	hbox->addWidget(_search_attrs_lbl);
+	hbox->addWidget(_search_attrs_cmb);
+
 	QVBoxLayout *vbox = new QVBoxLayout(filter_wgt);
+	vbox->addLayout(hbox);
 	vbox->addWidget(obj_types_lst);
 	vbox->addWidget(regexp_chk);
 	vbox->addWidget(exact_match_chk);
 	vbox->addWidget(case_sensitive_chk);
+
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->setSpacing(GuiUtilsNs::LtSpacing);
 	filter_wgt->setLayout(vbox);
@@ -78,8 +89,11 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 			exact_match_chk->setChecked(false);
 	});
 
+	//for(auto &attr : BaseObject::getSearchAttributesNames())
+	//	search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
+
 	for(auto &attr : BaseObject::getSearchAttributesNames())
-		search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
+		_search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
@@ -113,19 +127,7 @@ void ObjectFinderWidget::showEvent(QShowEvent *)
 
 void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 {
-	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
-
-	if(event->size().width() < this->baseSize().width())
-		style=Qt::ToolButtonIconOnly;
-
-	if(find_btn->toolButtonStyle()!=style)
-	{
-		filter_btn->setToolButtonStyle(style);
-		find_btn->setToolButtonStyle(style);
-		clear_res_btn->setToolButtonStyle(style);
-		select_btn->setToolButtonStyle(style);
-		fade_btn->setToolButtonStyle(style);
-	}
+	GuiUtilsNs::resizeChildToolButtons(this, event->size());
 }
 
 void ObjectFinderWidget::fadeObjects()
@@ -246,7 +248,8 @@ void ObjectFinderWidget::findObjects()
 		return;
 
 	std::vector<ObjectType> types;
-	QString search_attr = search_attrs_cmb->currentData().toString();
+	//QString search_attr = search_attrs_cmb->currentData().toString();
+	QString search_attr = _search_attrs_cmb->currentData().toString();
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
 	clearResult();

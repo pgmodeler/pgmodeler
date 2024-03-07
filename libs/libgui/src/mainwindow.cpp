@@ -2085,12 +2085,10 @@ void MainWindow::loadModels(const QStringList &files)
 	{
 		qApp->restoreOverrideCursor();
 
-		if( files[i].endsWith(GlobalAttributes::DbModelExt))
+		if(files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
 		else
 		{
-			//Messagebox msgbox;
-			//msgbox.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -2102,12 +2100,12 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 
 	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
 												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 tr("Could not load the database model file `%1'! Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
 							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.result() == QDialog::Accepted)
 		fixModel(filename);
 }
 
