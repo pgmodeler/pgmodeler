@@ -1429,12 +1429,12 @@ void PgModelerCliApp::recreateObjects()
 		}
 		catch(Exception &e)
 		{
-			if(obj_type!=ObjectType::Database)
+			if(obj_type != ObjectType::Database)
 			{
 				QString error = tr("** WARNING: Failed to recreate the object!");
 
 				fail_objs.push_back(xml_def);
-				printText(QString("\n** %1\n ** %2").arg(error, e.getErrorMessage()));
+				printText(QString("%1\n** %2\n").arg(error, e.getErrorMessage()));
 				error += QString("%1\n\n%2\n***").arg(e.getExceptionsText(), xml_def);
 
 				// Store the error in the log file as well as the XML code of the failed object
