@@ -2874,7 +2874,7 @@ void PgModelerCliApp::runPluginsPreOperations()
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
-											tr("Plug-in id:").arg(plugin->getPluginName()));
+											tr("Plug-in id: %1").arg(plugin->getPluginName()));
 		}
 	}
 }
@@ -2890,7 +2890,7 @@ void PgModelerCliApp::runPluginsOperations()
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
-											tr("Plug-in id:").arg(plugin->getPluginName()));
+											tr("Plug-in id: %1").arg(plugin->getPluginName()));
 		}
 	}
 }
@@ -2906,7 +2906,7 @@ void PgModelerCliApp::runPluginsPostOperations()
 		catch(Exception &e)
 		{
 			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e,
-											tr("Plug-in id:").arg(plugin->getPluginName()));
+											tr("Plug-in id: %1").arg(plugin->getPluginName()));
 		}
 	}
 }
