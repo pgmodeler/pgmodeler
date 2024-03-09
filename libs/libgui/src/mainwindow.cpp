@@ -883,6 +883,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_sel->setSelectedFile(fi.absoluteFilePath());
+		model_fix_form.input_file_sel->setReadOnly(true);
 		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + "_fixed." + fi.suffix());
 	}
 
@@ -2041,8 +2042,6 @@ void MainWindow::loadModel()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
