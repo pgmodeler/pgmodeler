@@ -1007,6 +1007,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 		{
 			scene->addItem(item);
 			setModified(true);
+			emit s_objectAdded(graph_obj);
 		}
 	}
 }

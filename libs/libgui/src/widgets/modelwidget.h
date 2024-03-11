@@ -529,9 +529,6 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
 
-		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-		//void removeObjectsCascade();
-
 		//! \brief Selects all the graphical objects on the scene
 		void selectAllObjects();
 
@@ -628,6 +625,7 @@ class __libgui ModelWidget: public QWidget {
 		void sendToBack();
 
 	signals:
+		void s_objectAdded(BaseGraphicObject *object);
 		void s_objectModified();
 		void s_objectsMoved();
 		void s_objectCreated();

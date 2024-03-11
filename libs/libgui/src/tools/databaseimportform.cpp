@@ -24,11 +24,15 @@
 #include "defaultlanguages.h"
 #include "settings/connectionsconfigwidget.h"
 #include "objectslistmodel.h"
+#include "schemaview.h"
 
 bool DatabaseImportForm::low_verbosity = false;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+	std::random_device rand_seed;
+	rand_num_engine.seed(rand_seed());
+
 	setupUi(this);
 
 	model_wgt=nullptr;
@@ -38,7 +42,8 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
 	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
-	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 	vbox->addWidget(objs_filter_wgt);
 
 	htmlitem_del=new HtmlItemDelegate(this);
@@ -107,7 +112,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	});
 
 	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
-		create_model=!checked;
+		create_model = !checked;
+		rand_obj_pos_chk->setEnabled(checked);
+
+		if(!checked)
+			rand_obj_pos_chk->setChecked(false);
 	});
 
 	connect(database_cmb, &QComboBox::currentTextChanged, this, [this]() {
@@ -264,6 +273,32 @@ void DatabaseImportForm::setItemsCheckState()
 	import_btn->setEnabled(chk_state == Qt::Checked);
 }
 
+void DatabaseImportForm::setObjectPosition(BaseGraphicObject *graph_obj)
+{
+	if(rand_obj_pos_chk->isChecked() && BaseTable::isBaseTable(graph_obj->getObjectType()))
+	{
+		Schema *schema = dynamic_cast<Schema *>(graph_obj->getSchema());
+		QRectF rect;
+
+		if(schema && schema->isRectVisible())
+		{
+			SchemaView *sch_view = dynamic_cast<SchemaView *>(schema->getOverlyingObject());
+			rect = sch_view->boundingRect();
+			rect.translate(sch_view->pos());
+		}
+		else
+			rect = model_wgt->getObjectsScene()->sceneRect();
+
+		std::uniform_int_distribution<int> dist_x(rect.left(), rect.right()),
+				dist_y(rect.left(), rect.right());
+
+		BaseObjectView *obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+		QPointF pnt = QPointF(dist_x(rand_num_engine), dist_y(rand_num_engine));
+
+		obj_view->setPos(pnt);
+	}
+}
+
 void DatabaseImportForm::importDatabase()
 {
 	try
@@ -312,6 +347,9 @@ void DatabaseImportForm::importDatabase()
 		import_btn->setEnabled(false);
 		database_gb->setEnabled(false);
 		options_tbw->setEnabled(false);
+
+		if(!create_model && rand_obj_pos_chk->isChecked())
+			connect(model_wgt, &ModelWidget::s_objectAdded, this, &DatabaseImportForm::setObjectPosition);
 	}
 	catch(Exception &e)
 	{
@@ -553,8 +591,8 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	QPixmap ico;
 	QTreeWidgetItem *item=nullptr;
 
-	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid();
+	//if(!create_model)
+	//	model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(tr("Importing process aborted!"));
@@ -671,8 +709,8 @@ void DatabaseImportForm::handleImportCanceled()
 	QPixmap ico=QPixmap(GuiUtilsNs::getIconPath("alert"));
 	QString msg=tr("Importing process canceled by user!");
 
-	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid();
+	//if(create_model)
+	//	model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(msg);
@@ -689,7 +727,9 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
-	model_wgt->rearrangeSchemasInGrid();
+	//if(create_model)
+	//	model_wgt->rearrangeSchemasInGrid();
+
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
@@ -719,8 +759,16 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		model_wgt->setUpdatesEnabled(true);
 
 		if(!create_model)
+		{
 			model_wgt->getOperationList()->removeOperations();
+			model_wgt->getObjectsScene()->adjustSceneRect(true);
+		}
+		else
+			model_wgt->rearrangeSchemasInGrid();
 	}
+
+	if(!create_model && rand_obj_pos_chk->isChecked())
+		disconnect(model_wgt, nullptr, this, nullptr);
 }
 
 void DatabaseImportForm::showEvent(QShowEvent *)
