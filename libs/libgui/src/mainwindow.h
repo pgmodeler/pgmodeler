@@ -35,7 +35,7 @@
 #include "widgets/modelobjectswidget.h"
 #include "widgets/modeloverviewwidget.h"
 #include "tools/modelvalidationwidget.h"
-#include "widgets/objectfinderwidget.h"
+#include "widgets/objectsearchwidget.h"
 #include "tools/sqltoolwidget.h"
 #include "widgets/updatenotifierwidget.h"
 #include "widgets/modelnavigationwidget.h"
@@ -108,7 +108,7 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		ModelRestorationForm *restoration_form;
 
 		//! \brief Object finder used as dock widget
-		ObjectFinderWidget *obj_finder_wgt;
+		ObjectSearchWidget *obj_finder_wgt;
 
 		//! \brief Update notifier popup widget
 		UpdateNotifierWidget *update_notifier_wgt;

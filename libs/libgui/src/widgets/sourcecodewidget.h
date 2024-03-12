@@ -28,7 +28,7 @@
 #include "ui_sourcecodewidget.h"
 #include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "utils/syntaxhighlighter.h"
 
 class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {

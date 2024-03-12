@@ -485,7 +485,7 @@ void MainWindow::createMainWidgets()
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
-		obj_finder_wgt=new ObjectFinderWidget;
+		obj_finder_wgt=new ObjectSearchWidget;
 	}
 	catch(Exception &e)
 	{
@@ -676,10 +676,10 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
 	connect(search_obj_btn, &QToolButton::toggled, obj_search_parent, &QWidget::setVisible);
-	connect(search_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
+	connect(search_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectSearchWidget::setVisible);
 	connect(search_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
-	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, search_obj_btn, &QToolButton::toggle);
-	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
+	connect(obj_finder_wgt, &ObjectSearchWidget::s_hideRequested, search_obj_btn, &QToolButton::toggle);
+	connect(obj_finder_wgt, &ObjectSearchWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this->main_menu_mb, &QMenu::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_acts_tb, &QToolBar::setDisabled);
@@ -687,7 +687,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, oper_list_wgt, &OperationListWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_objs_wgt, &ModelObjectsWidget::setDisabled);
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectFinderWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectSearchWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this, &MainWindow::stopTimers);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_btn, &QToolButton::setDisabled);

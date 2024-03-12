@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "findreplacewidget.h"
+#include "searchreplacewidget.h"
 #include <QRegularExpression>
 #include <QTimer>
 #include "exception.h"

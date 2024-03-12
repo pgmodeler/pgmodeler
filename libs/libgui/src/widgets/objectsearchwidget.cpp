@@ -16,11 +16,11 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "objectfinderwidget.h"
+#include "objectsearchwidget.h"
 #include "guiutilsns.h"
 #include "objectslistmodel.h"
 
-ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
+ObjectSearchWidget::ObjectSearchWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
@@ -63,24 +63,24 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	filter_menu.addAction(wgt_act_filter);
 	filter_btn->setMenu(&filter_menu);
 
-	select_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::selectObjects);
-	select_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::selectObjects);
+	select_menu.addAction(tr("Listed"), this, &ObjectSearchWidget::selectObjects);
+	select_menu.addAction(tr("Not listed"), this, &ObjectSearchWidget::selectObjects);
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(tr("Listed"), this, &ObjectFinderWidget::fadeObjects);
-	fade_menu.addAction(tr("Not listed"), this, &ObjectFinderWidget::fadeObjects);
+	fade_menu.addAction(tr("Listed"), this, &ObjectSearchWidget::fadeObjects);
+	fade_menu.addAction(tr("Not listed"), this, &ObjectSearchWidget::fadeObjects);
 	fade_btn->setMenu(&fade_menu);
 
 	connect(pattern_edt, &QLineEdit::textChanged, this, [this](const QString &txt) {
-		find_btn->setEnabled(!txt.isEmpty());
+		search_btn->setEnabled(!txt.isEmpty());
 	});
 
-	connect(find_btn, &QToolButton::clicked, this, &ObjectFinderWidget::findObjects);
-	connect(hide_tb, &QToolButton::clicked, this, &ObjectFinderWidget::hide);
-	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectFinderWidget::clearResult);
+	connect(search_btn, &QToolButton::clicked, this, &ObjectSearchWidget::findObjects);
+	connect(hide_tb, &QToolButton::clicked, this, &ObjectSearchWidget::hide);
+	connect(clear_res_btn, &QToolButton::clicked, this, &ObjectSearchWidget::clearResult);
 
-	connect(result_view, &QTableView::doubleClicked, this, &ObjectFinderWidget::editObject);
-	connect(result_view, &QTableView::pressed, this, &ObjectFinderWidget::showObjectMenu);
+	connect(result_view, &QTableView::doubleClicked, this, &ObjectSearchWidget::editObject);
+	connect(result_view, &QTableView::pressed, this, &ObjectSearchWidget::showObjectMenu);
 
 	connect(regexp_chk, &QCheckBox::toggled, this, [this](bool checked){
 		exact_match_chk->setEnabled(checked);
@@ -99,7 +99,7 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	pattern_edt->installEventFilter(this);
 }
 
-bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
+bool ObjectSearchWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
@@ -107,30 +107,30 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::KeyRelease &&
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
-		find_btn->click();
+		search_btn->click();
 		return true;
 	}
 
 	return QWidget::eventFilter(object, event);
 }
 
-void ObjectFinderWidget::hide()
+void ObjectSearchWidget::hide()
 {
 	QWidget::hide();
 	emit s_hideRequested();
 }
 
-void ObjectFinderWidget::showEvent(QShowEvent *)
+void ObjectSearchWidget::showEvent(QShowEvent *)
 {
 	pattern_edt->setFocus();
 }
 
-void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
+void ObjectSearchWidget::resizeEvent(QResizeEvent *event)
 {
 	GuiUtilsNs::resizeChildToolButtons(this, event->size());
 }
 
-void ObjectFinderWidget::fadeObjects()
+void ObjectSearchWidget::fadeObjects()
 {
 	if(!model_wgt)
 		return;
@@ -162,7 +162,7 @@ void ObjectFinderWidget::fadeObjects()
 	model_wgt->fadeObjects(other_objs, fade_listed);
 }
 
-void ObjectFinderWidget::selectObjects()
+void ObjectSearchWidget::selectObjects()
 {
 	if(!model_wgt)
 		return;
@@ -214,7 +214,7 @@ void ObjectFinderWidget::selectObjects()
 	model_wgt->configureObjectSelection();
 }
 
-void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
+void ObjectSearchWidget::setModel(ModelWidget *model_wgt)
 {
 	bool enable=model_wgt!=nullptr;
 
@@ -223,11 +223,11 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	filter_btn->setEnabled(enable);
 	pattern_edt->setEnabled(enable);
 	pattern_lbl->setEnabled(enable);
-	find_btn->setEnabled(enable && !pattern_edt->text().isEmpty());
+	search_btn->setEnabled(enable && !pattern_edt->text().isEmpty());
 	result_view->setEnabled(enable);
 }
 
-void ObjectFinderWidget::clearResult()
+void ObjectSearchWidget::clearResult()
 {
 	selected_obj=nullptr;
 	found_objs.clear();
@@ -242,7 +242,7 @@ void ObjectFinderWidget::clearResult()
 	fade_btn->setEnabled(false);
 }
 
-void ObjectFinderWidget::findObjects()
+void ObjectSearchWidget::findObjects()
 {
 	if(!model_wgt)
 		return;
@@ -278,7 +278,7 @@ void ObjectFinderWidget::findObjects()
 	GuiUtilsNs::populateObjectsTable(result_view, found_objs, search_attr);
 
 	if(result_view->selectionModel())
-		connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectFinderWidget::selectObject);
+		connect(result_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ObjectSearchWidget::selectObject);
 
 	clear_res_btn->setEnabled(!found_objs.empty());
 	select_btn->setEnabled(!found_objs.empty());
@@ -286,7 +286,7 @@ void ObjectFinderWidget::findObjects()
 	qApp->restoreOverrideCursor();
 }
 
-void ObjectFinderWidget::selectObject()
+void ObjectSearchWidget::selectObject()
 {
 	selected_obj = nullptr;
 	selected_objs.clear();
@@ -355,13 +355,13 @@ void ObjectFinderWidget::selectObject()
 	model_wgt->emitSceneInteracted();
 }
 
-void ObjectFinderWidget::showObjectMenu()
+void ObjectSearchWidget::showObjectMenu()
 {
 	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton)
 		model_wgt->showObjectMenu();
 }
 
-void ObjectFinderWidget::editObject()
+void ObjectSearchWidget::editObject()
 {
 	if(selected_obj)
 	{

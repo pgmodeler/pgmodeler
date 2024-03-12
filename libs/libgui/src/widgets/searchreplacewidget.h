@@ -22,8 +22,8 @@
 \brief Implements the operations to find and replace text on a QTextEdit
 */
 
-#ifndef FIND_REPLACE_WIDGET_H
-#define FIND_REPLACE_WIDGET_H
+#ifndef SEARCH_REPLACE_WIDGET_H
+#define SEARCH_REPLACE_WIDGET_H
 
 #include "guiglobal.h"
 #include "ui_searchreplacewidget.h"

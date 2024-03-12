@@ -35,7 +35,7 @@
 #include "settings/baseconfigwidget.h"
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include <QThread>
 
 class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {

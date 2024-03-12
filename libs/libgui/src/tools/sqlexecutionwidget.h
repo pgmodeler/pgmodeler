@@ -28,10 +28,10 @@
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
