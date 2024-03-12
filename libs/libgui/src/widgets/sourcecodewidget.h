@@ -36,12 +36,13 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 		Q_OBJECT
 
 		NumberedTextEditor *sqlcode_txt,
-		*xmlcode_txt;
+				*xmlcode_txt;
 
 		SyntaxHighlighter *hl_sqlcode,
-		*hl_xmlcode;
+				*hl_xmlcode;
 
-		FindReplaceWidget *find_sql_wgt;
+		FindReplaceWidget *find_sql_wgt,
+				*find_xml_wgt;
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);

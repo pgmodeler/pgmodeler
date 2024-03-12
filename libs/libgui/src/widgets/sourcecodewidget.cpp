@@ -45,15 +45,25 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
 	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
-	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
-	find_wgt_parent->setVisible(false);
+	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_sql_wgt_parent);
+	find_sql_wgt_parent->setVisible(false);
 
-	QVBoxLayout *vbox = new QVBoxLayout(find_wgt_parent);
+	QVBoxLayout *vbox = new QVBoxLayout(find_sql_wgt_parent);
 	vbox->addWidget(find_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
-	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	find_xml_wgt = new FindReplaceWidget(xmlcode_txt, find_xml_wgt_parent);
+	find_xml_wgt_parent->setVisible(false);
+
+	vbox = new QVBoxLayout(find_xml_wgt_parent);
+	vbox->addWidget(find_xml_wgt);
+	vbox->setContentsMargins(0,0,0,0);
+
+	connect(find_sql_tb, &QToolButton::toggled, find_sql_wgt_parent, &QWidget::setVisible);
+	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_sql_tb, &QToolButton::toggle);
+
+	connect(find_xml_tb, &QToolButton::toggled, find_xml_wgt_parent, &QWidget::setVisible);
+	connect(find_xml_wgt, &FindReplaceWidget::s_hideRequested, find_xml_tb, &QToolButton::toggle);
 
 	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
