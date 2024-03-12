@@ -66,6 +66,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		__trycatch( listObjects(); )
 	});
 
+	connect(database_cmb, &QComboBox::currentIndexChanged, this, [this](int idx){
+		enableImportControls(idx > 0);
+	});
+
 	connect(import_sys_objs_chk, &QCheckBox::clicked, this, [this](){
 		__trycatch( listObjects(); )
 	});
@@ -511,19 +515,19 @@ Do you really want to proceed?"),
 			}
 		}
 
-		enableImportControls();
+		enableImportControls(true);
 	}
 	catch(Exception &e)
 	{
 		db_objects_tw->clear();
-		enableImportControls();
+		enableImportControls(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
-void DatabaseImportForm::enableImportControls()
+void DatabaseImportForm::enableImportControls(bool enable)
 {
-	bool enable = db_objects_tw->topLevelItemCount() > 0;
+	enable = enable && db_objects_tw->topLevelItemCount() > 0;
 
 	if(database_cmb->currentIndex() <= 0)
 	{
@@ -577,12 +581,12 @@ void DatabaseImportForm::listDatabases()
 			pg_version_alert_frm->setVisible(false);
 		}
 
-		enableImportControls();
+		enableImportControls(true);
 	}
 	catch(Exception &e)
 	{
 		database_cmb->clear();
-		enableImportControls();
+		enableImportControls(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -606,9 +610,6 @@ void DatabaseImportForm::captureThreadError(Exception e)
 {
 	QPixmap ico;
 	QTreeWidgetItem *item=nullptr;
-
-	//if(!create_model)
-	//	model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(tr("Importing process aborted!"));

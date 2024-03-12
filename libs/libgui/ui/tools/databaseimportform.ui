@@ -460,6 +460,9 @@
                       </item>
                       <item>
                        <widget class="QComboBox" name="scattering_lvl_cmb">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
                         <property name="toolTip">
                          <string>&lt;p&gt;Determines the amount of space used to scatter the tables in the canvas increasing the distance between them.&lt;/p&gt;</string>
                         </property>

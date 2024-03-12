@@ -92,8 +92,6 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		//! \brief Filters and list in a different way the objects that matches the user provided filters
 		void listFilteredObjects();
 
-		void enableImportControls();
-
 	public:
 		//! \brief Constants used to access the tree widget items data
 		enum ObjectAttrId {
@@ -160,6 +158,7 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 																											 const QString &schema="", const QString &table="");
 
 	private slots:
+		void enableImportControls(bool enable);
 		void importDatabase();
 		void listObjects();
 		void listDatabases();
