@@ -113,7 +113,7 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 		bool process_paused, src_server_supported, server_supported;
 
 		void closeEvent(QCloseEvent *event);
-		void showEvent(QShowEvent *);
+		void showEvent(QShowEvent *event);
 
 		//! \brief Creates the helpers and threads
 		void createThread(ThreadId thread_id);

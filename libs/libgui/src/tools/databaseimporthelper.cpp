@@ -697,11 +697,13 @@ void DatabaseImportHelper::importDatabase()
 	}
 	catch(Exception &e)
 	{
+		BaseGraphicObject::setUpdatesEnabled(true);
+		dbmodel->setObjectsModified();
 		resetImportParameters();
 
 		/* When running in a separated thread (other than the main application thread)
-		redirects the error in form of signal */
-		if(this->thread() && this->thread()!=qApp->thread())
+		 * redirects the error in form of signal */
+		if(this->thread() && this->thread() != qApp->thread())
 			emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
 		else
 			//Redirects any error to the user

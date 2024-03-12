@@ -32,7 +32,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	setupUi(this);
 	setWindowFlags(flags);
 
-	src_server_supported = server_supported = false;
+	src_server_supported = server_supported = true;
 	pg_version_alert_frm->setVisible(false);
 
 	dates_wgt->setVisible(false);
@@ -269,8 +269,11 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 		event_loop.quit();
 }
 
-void ModelDatabaseDiffForm::showEvent(QShowEvent *)
+void ModelDatabaseDiffForm::showEvent(QShowEvent *event)
 {
+	if(event->spontaneous())
+		return;
+
 	//Doing the form configuration in the first show in order to populate the connections combo
 	if(!isThreadsRunning() && connections_cmb->count() == 0)
 	{
@@ -456,6 +459,9 @@ void ModelDatabaseDiffForm::listDatabases()
 			imp_helper.setConnection(*conn);
 			DatabaseImportForm::listDatabases(imp_helper, db_cmb);
 			(*srv_supp) = imp_helper.getCatalog().isServerSupported();
+
+			if(conn->isAutoBrowseDB())
+				db_cmb->setCurrentText(conn->getConnectionParam(Connection::ParamDbName));
 		}
 		else
 		{
@@ -1172,8 +1178,8 @@ void ModelDatabaseDiffForm::selectPreset()
 	src_model_rb->setChecked(src_model_rb->isEnabled() && conf[Attributes::CurrentModel] == Attributes::True);
 
 	src_database_rb->setChecked(!conf[Attributes::InputDatabase].isEmpty());
-	src_connections_cmb->setCurrentIndex(0);
-	src_connections_cmb->activated(0);
+	//src_connections_cmb->setCurrentIndex(0);
+	//src_connections_cmb->activated(0);
 	db_name = conf[Attributes::InputDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1189,8 +1195,8 @@ void ModelDatabaseDiffForm::selectPreset()
 	}
 
 	// Selecting the database to compare
-	connections_cmb->setCurrentIndex(0);
-	connections_cmb->activated(0);
+	//connections_cmb->setCurrentIndex(0);
+	//connections_cmb->activated(0);
 	db_name = conf[Attributes::CompareToDatabase].split('@');
 
 	if(db_name.size() > 1)
