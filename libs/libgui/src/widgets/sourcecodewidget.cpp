@@ -45,25 +45,25 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
 	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 
-	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_sql_wgt_parent);
-	find_sql_wgt_parent->setVisible(false);
+	search_sql_wgt = new SearchReplaceWidget(sqlcode_txt, search_sql_wgt_parent);
+	search_sql_wgt_parent->setVisible(false);
 
-	QVBoxLayout *vbox = new QVBoxLayout(find_sql_wgt_parent);
-	vbox->addWidget(find_sql_wgt);
+	QVBoxLayout *vbox = new QVBoxLayout(search_sql_wgt_parent);
+	vbox->addWidget(search_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
-	find_xml_wgt = new FindReplaceWidget(xmlcode_txt, find_xml_wgt_parent);
-	find_xml_wgt_parent->setVisible(false);
+	search_xml_wgt = new SearchReplaceWidget(xmlcode_txt, search_xml_wgt_parent);
+	search_xml_wgt_parent->setVisible(false);
 
-	vbox = new QVBoxLayout(find_xml_wgt_parent);
-	vbox->addWidget(find_xml_wgt);
+	vbox = new QVBoxLayout(search_xml_wgt_parent);
+	vbox->addWidget(search_xml_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
-	connect(find_sql_tb, &QToolButton::toggled, find_sql_wgt_parent, &QWidget::setVisible);
-	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_sql_tb, &QToolButton::toggle);
+	connect(search_sql_tb, &QToolButton::toggled, search_sql_wgt_parent, &QWidget::setVisible);
+	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_sql_tb, &QToolButton::toggle);
 
-	connect(find_xml_tb, &QToolButton::toggled, find_xml_wgt_parent, &QWidget::setVisible);
-	connect(find_xml_wgt, &FindReplaceWidget::s_hideRequested, find_xml_tb, &QToolButton::toggle);
+	connect(search_xml_tb, &QToolButton::toggled, search_xml_wgt_parent, &QWidget::setVisible);
+	connect(search_xml_wgt, &SearchReplaceWidget::s_hideRequested, search_xml_tb, &QToolButton::toggle);
 
 	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);

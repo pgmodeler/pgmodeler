@@ -21,7 +21,7 @@
 #include <QTimer>
 #include "exception.h"
 
-FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
+SearchReplaceWidget::SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
 {
 	if(!txt_edit)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -46,9 +46,9 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 
-	connect(replace_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceText);
-	connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
-	connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
+	connect(replace_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceText);
+	connect(replace_find_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceFindText);
+	connect(replace_all_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceAll);
 
 	connect(next_tb, &QToolButton::clicked, this, [this]() {
 		findText(false, true);
@@ -67,12 +67,12 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_find_tb->setEnabled(enable);
 	});
 
-	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
+	connect(hide_tb, &QToolButton::clicked, this, &SearchReplaceWidget::s_hideRequested);
 
 	connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
 }
 
-bool FindReplaceWidget::eventFilter(QObject *object, QEvent *event)
+bool SearchReplaceWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(event->type() == QEvent::KeyPress && object == find_edt)
 	{
@@ -88,7 +88,7 @@ bool FindReplaceWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void FindReplaceWidget::showEvent(QShowEvent *)
+void SearchReplaceWidget::showEvent(QShowEvent *)
 {
 	find_edt->setFocus();
 	replace_btns_parent->setVisible(!text_edt->isReadOnly());
@@ -96,7 +96,7 @@ void FindReplaceWidget::showEvent(QShowEvent *)
 	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
-void FindReplaceWidget::showSearchInfo(const QString &msg)
+void SearchReplaceWidget::showSearchInfo(const QString &msg)
 {
 	search_info_lbl->setText(msg);
 	search_info_lbl->setVisible(true);
@@ -105,7 +105,7 @@ void FindReplaceWidget::showSearchInfo(const QString &msg)
 	search_info_timer.start();
 }
 
-void FindReplaceWidget::replaceText()
+void SearchReplaceWidget::replaceText()
 {
 	QTextCursor cursor=text_edt->textCursor();
 
@@ -116,7 +116,7 @@ void FindReplaceWidget::replaceText()
 	}
 }
 
-void FindReplaceWidget::replaceAll()
+void SearchReplaceWidget::replaceAll()
 {
 	QTextCursor orig_cursor, cursor=text_edt->textCursor();
 	int replacements = 0;
@@ -139,7 +139,7 @@ void FindReplaceWidget::replaceAll()
 		showSearchInfo(tr("No replacements made!"));
 }
 
-void FindReplaceWidget::replaceFindText()
+void SearchReplaceWidget::replaceFindText()
 {
 	if(text_edt->textCursor().hasSelection())
 	{
@@ -148,7 +148,7 @@ void FindReplaceWidget::replaceFindText()
 	}
 }
 
-bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
+bool SearchReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
 {
 	if(regexp)
 	{
@@ -163,7 +163,7 @@ bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument
 	return text_edt->find(text, flags);
 }
 
-bool FindReplaceWidget::findText(bool backward, bool cyclic)
+bool SearchReplaceWidget::findText(bool backward, bool cyclic)
 {
 	QTextDocument::FindFlags flags;
 	QTextCursor cursor;

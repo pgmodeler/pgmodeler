@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FindReplaceWidget</class>
- <widget class="QWidget" name="FindReplaceWidget">
+ <class>SearchReplaceWidget</class>
+ <widget class="QWidget" name="SearchReplaceWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -36,7 +36,7 @@
     <number>5</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="find_lbl">
+    <widget class="QLabel" name="search_lbl">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -44,7 +44,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Find:</string>
+      <string>Search:</string>
      </property>
     </widget>
    </item>

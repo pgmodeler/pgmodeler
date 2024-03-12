@@ -52,15 +52,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
-	find_wgt_parent->setVisible(false);
+	search_sql_wgt = new SearchReplaceWidget(sqlcode_txt, search_wgt_parent);
+	search_wgt_parent->setVisible(false);
 
-	vbox = new QVBoxLayout(find_wgt_parent);
-	vbox->addWidget(find_sql_wgt);
+	vbox = new QVBoxLayout(search_wgt_parent);
+	vbox->addWidget(search_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
-	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
+	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 
 	file_sel = new FileSelectorWidget(this);
 	file_sel->setAllowFilenameInput(true);

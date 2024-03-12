@@ -322,12 +322,12 @@ ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
 	ui/widgets/objecttypeslistwidget.ui \
+	ui/widgets/searchreplacewidget.ui \
 ui/widgets/sourcecodewidget.ui \
 ui/widgets/fileselectorwidget.ui \
 ui/widgets/modeloverviewwidget.ui \
 ui/widgets/objectselectorwidget.ui \
 ui/widgets/changelogwidget.ui \
-ui/widgets/findreplacewidget.ui \
 ui/widgets/objectsfilterwidget.ui \
 ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \

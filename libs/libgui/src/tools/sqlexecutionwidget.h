@@ -67,11 +67,11 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		QAction *action_save, *action_save_as, *action_load;
 
-		FindReplaceWidget *find_replace_wgt;
+		SearchReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
 
-		FindReplaceWidget *find_history_wgt;
+		SearchReplaceWidget *search_history_wgt;
 
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */

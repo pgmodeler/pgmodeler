@@ -50,7 +50,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="find_parent" native="true">
+    <widget class="QWidget" name="search_parent" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -168,7 +168,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="find_tb">
+      <widget class="QToolButton" name="search_tb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -185,7 +185,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Find</string>
+        <string>Search</string>
        </property>
        <property name="icon">
         <iconset resource="../../../libs/libgui/res/resources.qrc">

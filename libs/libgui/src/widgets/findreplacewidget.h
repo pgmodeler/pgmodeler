@@ -18,7 +18,7 @@
 
 /**
 \ingroup libgui
-\class FindReplaceWidget
+\class SearchReplaceWidget
 \brief Implements the operations to find and replace text on a QTextEdit
 */
 
@@ -26,11 +26,11 @@
 #define FIND_REPLACE_WIDGET_H
 
 #include "guiglobal.h"
-#include "ui_findreplacewidget.h"
+#include "ui_searchreplacewidget.h"
 #include <QPlainTextEdit>
 #include <QTimer>
 
-class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class __libgui SearchReplaceWidget: public QWidget, public Ui::SearchReplaceWidget {
 	private:
 		Q_OBJECT
 		
@@ -55,7 +55,7 @@ class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
+		SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		
 	public slots:
 		void replaceText();

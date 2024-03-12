@@ -49,7 +49,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		SyntaxHighlighter *editor_hl;
 
-		FindReplaceWidget *find_wgt;
+		SearchReplaceWidget *search_wgt;
 
 		QString filename, curr_sytax_cfg;
 

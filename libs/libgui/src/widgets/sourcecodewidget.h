@@ -41,8 +41,8 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 		SyntaxHighlighter *hl_sqlcode,
 				*hl_xmlcode;
 
-		FindReplaceWidget *find_sql_wgt,
-				*find_xml_wgt;
+		SearchReplaceWidget *search_sql_wgt,
+				*search_xml_wgt;
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);
