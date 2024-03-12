@@ -286,7 +286,7 @@ void MainWindow::configureMenusActionsWidgets()
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
-	obj_finder_parent->setVisible(false);
+	obj_search_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
@@ -313,7 +313,7 @@ void MainWindow::configureMenusActionsWidgets()
 	hlayout=new QHBoxLayout;
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
-	obj_finder_parent->setLayout(hlayout);
+	obj_search_parent->setLayout(hlayout);
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -675,10 +675,10 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, validation_btn, &QToolButton::toggle);
 	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
-	connect(find_obj_btn, &QToolButton::toggled, obj_finder_parent, &QWidget::setVisible);
-	connect(find_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
-	connect(find_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
-	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, find_obj_btn, &QToolButton::toggle);
+	connect(search_obj_btn, &QToolButton::toggled, obj_search_parent, &QWidget::setVisible);
+	connect(search_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
+	connect(search_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
+	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, search_obj_btn, &QToolButton::toggle);
 	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this->main_menu_mb, &QMenu::setDisabled);

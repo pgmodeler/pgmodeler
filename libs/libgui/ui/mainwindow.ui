@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1668</width>
-    <height>1162</height>
+    <width>1078</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -246,7 +246,7 @@
                      <bool>false</bool>
                     </property>
                     <widget class="QWidget" name="model_valid_parent" native="true"/>
-                    <widget class="QWidget" name="obj_finder_parent" native="true">
+                    <widget class="QWidget" name="obj_search_parent" native="true">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                        <horstretch>0</horstretch>
@@ -398,7 +398,7 @@
                   <string>Toogle the model validation widget</string>
                  </property>
                  <property name="text">
-                  <string>Validation</string>
+                  <string>&amp;Validation</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -409,9 +409,6 @@
                    <width>25</width>
                    <height>25</height>
                   </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Alt+V</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -425,7 +422,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="find_obj_btn">
+                <widget class="QToolButton" name="search_obj_btn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -433,10 +430,10 @@
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Toggle the object finder</string>
+                  <string>Toggle the object search widget</string>
                  </property>
                  <property name="text">
-                  <string>Find objects</string>
+                  <string>Sea&amp;rch</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -447,9 +444,6 @@
                    <width>25</width>
                    <height>25</height>
                   </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Ctrl+F</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -474,7 +468,7 @@
                   <string>Toggle the layers editor</string>
                  </property>
                  <property name="text">
-                  <string>Layers</string>
+                  <string>&amp;Layers</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -509,7 +503,7 @@
                   <string>Handle the changelog settings</string>
                  </property>
                  <property name="text">
-                  <string>Changelog</string>
+                  <string>C&amp;hangelog</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -576,7 +570,7 @@
                   <string>Toggle the model objects widget</string>
                  </property>
                  <property name="text">
-                  <string>Objects</string>
+                  <string>O&amp;bjects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -587,9 +581,6 @@
                    <width>25</width>
                    <height>25</height>
                   </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Alt+B</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -614,7 +605,7 @@
                   <string>Toggle the operation history widget</string>
                  </property>
                  <property name="text">
-                  <string>Operations</string>
+                  <string>&amp;Operations</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -625,9 +616,6 @@
                    <width>25</width>
                    <height>25</height>
                   </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Alt+O</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -748,7 +736,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1668</width>
+     <width>1078</width>
      <height>27</height>
     </rect>
    </property>
