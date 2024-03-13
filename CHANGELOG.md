@@ -1,6 +1,48 @@
 Changelog
 ---------
 
+v1.1.1
+------
+<em>Release date: March 14, 2024</em><br/>
+
+* [New] Added an XML code searching widget in SourceCodeWidget.
+* [New] Added an option to place in random positions objects that are imported to a working model.
+* [New] Created the methods Connection::isServerSupported and Catalog::isServerSupported.
+* [New] Added alerts on DatabaseImportForm and ModelDatabaseDiffForm about unsupported server versions.
+* [Change] Renamed ObjectFinderWidget to ObjectSearchWidget for better semantics.
+* [Change] Renamed the button "Find objects" to "Search" in MainWindow.
+* [Change] Renamed the widget FindReplaceWidget to SearchReplaceWidget for better semantics.
+* [Change] pgModeler will not change the positions of the original objects in a model when importing new objects to that model.
+* [Change] Adjusted the split layout that resizes ModelValidationWidget and ObjectFinderWidget in MainWindow.
+* [Change] Adjusted the splitters handlers appearance via stylesheets.
+* [Change] Minor adjustments on some widgets' layout margins.
+* [Change] Minor layout adjustment in modeldatabasediffform.ui by moving the export and import options to dedicated group boxes.
+* [Change] Minor improvement in Catalog::getObjectNames to include a signature attribute in the returned attributes map of each object.
+* [Change] Minor adjustment in DatabaseExplorerWidget::updateItem.
+* [Change] Moved the (set|get)ParentRelationship methods from Column to TableObject.
+* [Change] Now in CodeCompletionWidget::adjustNameListSize when the list is empty the widget size will have a minimum size.
+* [Change] Minor improvement in CodeCompletionWidget to avoid repeatedly querying system catalogs having the list already filled. The list is cleared and repopulated only if the cursor position gets back to the initial position when the method show() was called.
+* [Change] Set the horizontal scroll bar off in the tree widget of ModelObjectsWidget.
+* [Fix] Fixed the code generation for policies.
+* [Fix] Minor adjustment in the enabled status toggling of several widgets in DatabaseImportForm.
+* [Fix] Fixed the behavior of the "Auto browse" attribute of connections in DatabaseImportForm and ModelDatabaseDiffForm.
+* [Fix] Fixed the method ModelWidget::eventFilter to force horizontal scene movement when the Shift key is held and the mouse wheel movement is made.
+* [Fix] Minor layout fix in referenceswidget.ui.
+* [Fix] Minor error message fix on MainWindow::showFixMessage.
+* [Fix] Minor fix in MainWindow::loadModels.
+* [Fix] Minor fix in Messagebox::alert to include an optional exception to be displayed.
+* [Fix] Fixed a crash in TableWidget when handling foreign tables.
+* [Fix] Fixed a QObject::connect warning regarding null parameter in ObjectSearchWidget::findObjects.
+* [Fix] Fixed the partial diff/import filtering which was ignoring a wildcard pattern and listing all objects.
+* [Fix] Minor fix in NumberedTextEditor::pasteCode.
+* [Fix] Fixed a bug when importing collations with the ICU provider.
+* [Fix] Minor workaround in ObjectRenameWidget to be displayed with the name input focused but the contents of that field deselected.
+* [Fix] Minor fix in ModelWidget::pasteObjects.
+* [Fix] Fixed the relationship conversion feature to preserve the original layer and line color information on the converted objects.
+* [Fix] Minor fix in Relationship class to set the parent relationship attribute on all generated constraints.
+* [Fix] Minor fix in CodeCompletionWidget to properly list column names when using non-schema-qualified table names in INSERT/DELETE commands.
+* [Fix] Fixed a bug in code generation of generic SQL objects.
+
 v1.1.0
 ------
 <em>Release date: February 23, 2024</em><br/>
