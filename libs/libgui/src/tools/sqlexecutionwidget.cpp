@@ -63,11 +63,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
-	find_replace_wgt=new SearchReplaceWidget(sql_cmd_txt, find_wgt_parent);
-	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
+	find_replace_wgt=new SearchReplaceWidget(sql_cmd_txt, search_wgt_parent);
+	QHBoxLayout *hbox=new QHBoxLayout(search_wgt_parent);
 	hbox->setContentsMargins(0,0,0,0);
 	hbox->addWidget(find_replace_wgt);
-	find_wgt_parent->setVisible(false);
+	search_wgt_parent->setVisible(false);
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
@@ -142,7 +142,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
 	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
 
-	connect(search_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
+	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
 	connect(find_replace_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 	connect(search_history_wgt, &SearchReplaceWidget::s_hideRequested, search_history_parent, &QWidget::hide);
 
@@ -1094,7 +1094,7 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		search_tb->setEnabled(enable);
-		find_wgt_parent->setEnabled(enable);
+		search_wgt_parent->setEnabled(enable);
 	}
 	catch(Exception &e)
 	{

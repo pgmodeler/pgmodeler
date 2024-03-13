@@ -175,13 +175,13 @@ bool SearchReplaceWidget::searchText(bool backward, bool cyclic)
 	if(backward)
 		flags=QTextDocument::FindBackward;
 
-	if(case_sensitive_chk->isChecked())
+	if(case_sensitive_tb->isChecked())
 		flags=flags | QTextDocument::FindCaseSensitively;
 
-	if(all_words_chk->isChecked())
+	if(all_words_tb->isChecked())
 		flags=flags | QTextDocument::FindWholeWords;
 
-	found=searchText(search_edt->text(), regexp_chk->isChecked(), flags);
+	found=searchText(search_edt->text(), regexp_tb->isChecked(), flags);
 
 	if(!found && cyclic)
 	{
@@ -194,7 +194,7 @@ bool SearchReplaceWidget::searchText(bool backward, bool cyclic)
 
 		text_edt->setTextCursor(cursor);
 
-		found = searchText(search_edt->text(), regexp_chk->isChecked(), flags);
+		found = searchText(search_edt->text(), regexp_tb->isChecked(), flags);
 
 		if(!found)
 			showSearchInfo(tr("No occurencies found!"));
