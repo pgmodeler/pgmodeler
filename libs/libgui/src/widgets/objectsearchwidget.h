@@ -18,19 +18,19 @@
 
 /**
 \ingroup libgui
-\class ObjectFinderWidget
+\class ObjectSearchWidget
 \brief Implements the operations to find objects over the model
 */
 
-#ifndef OBJECT_FINDER_WIDGET_H
-#define OBJECT_FINDER_WIDGET_H
+#ifndef OBJECT_SEARCH_WIDGET_H
+#define OBJECT_SEARCH_WIDGET_H
 
-#include "ui_objectfinderwidget.h"
+#include "ui_objectsearchwidget.h"
 #include "modelwidget.h"
 #include "objecttypeslistwidget.h"
 #include <QWidget>
 
-class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
+class __libgui ObjectSearchWidget : public QWidget, public Ui::ObjectSearchWidget {
 	private:
 		Q_OBJECT
 
@@ -64,7 +64,7 @@ class __libgui ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidge
 		void resizeEvent(QResizeEvent *event);
 
 	public:
-		ObjectFinderWidget(QWidget *parent = nullptr);
+		ObjectSearchWidget(QWidget *parent = nullptr);
 
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);

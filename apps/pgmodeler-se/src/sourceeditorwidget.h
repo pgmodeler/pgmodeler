@@ -29,7 +29,7 @@
 #include "ui_sourceeditorwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/fileselectorwidget.h"
 
@@ -49,7 +49,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		SyntaxHighlighter *editor_hl;
 
-		FindReplaceWidget *find_wgt;
+		SearchReplaceWidget *search_wgt;
 
 		QString filename, curr_sytax_cfg;
 

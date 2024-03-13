@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ObjectFinderWidget</class>
- <widget class="QWidget" name="ObjectFinderWidget">
+ <class>ObjectSearchWidget</class>
+ <widget class="QWidget" name="ObjectSearchWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -91,7 +91,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="find_btn">
+      <widget class="QToolButton" name="search_btn">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -108,7 +108,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Find</string>
+        <string>Search</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
@@ -405,7 +405,7 @@
  </widget>
  <tabstops>
   <tabstop>pattern_edt</tabstop>
-  <tabstop>find_btn</tabstop>
+  <tabstop>search_btn</tabstop>
   <tabstop>filter_btn</tabstop>
   <tabstop>clear_res_btn</tabstop>
   <tabstop>select_btn</tabstop>

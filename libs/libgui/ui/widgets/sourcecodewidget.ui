@@ -199,7 +199,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="find_sql_tb">
+          <widget class="QToolButton" name="search_sql_tb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -210,7 +210,7 @@
             <string>Perform text search on the SQL code.</string>
            </property>
            <property name="text">
-            <string>Find</string>
+            <string>Search</string>
            </property>
            <property name="icon">
             <iconset resource="../../res/resources.qrc">
@@ -278,7 +278,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2">
-        <widget class="QWidget" name="find_sql_wgt_parent" native="true"/>
+        <widget class="QWidget" name="search_sql_wgt_parent" native="true"/>
        </item>
       </layout>
      </widget>
@@ -317,7 +317,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2">
-        <widget class="QWidget" name="find_xml_wgt_parent" native="true">
+        <widget class="QWidget" name="search_xml_wgt_parent" native="true">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -340,7 +340,7 @@
         </spacer>
        </item>
        <item row="2" column="1">
-        <widget class="QToolButton" name="find_xml_tb">
+        <widget class="QToolButton" name="search_xml_tb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -351,7 +351,7 @@
           <string>Perform text search on the SQL code.</string>
          </property>
          <property name="text">
-          <string>Find</string>
+          <string>Search</string>
          </property>
          <property name="icon">
           <iconset resource="../../res/resources.qrc">

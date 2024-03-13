@@ -671,7 +671,7 @@ class __libgui ModelWidget: public QWidget {
 		friend class ModelOverviewWidget;
 		friend class ModelValidationWidget;
 		friend class DatabaseImportForm;
-		friend class ObjectFinderWidget;
+		friend class ObjectSearchWidget;
 		friend class NewObjectOverlayWidget;
 		friend class LayersConfigWidget;
 		friend class MetadataHandlingForm;
