@@ -29,7 +29,7 @@ SearchReplaceWidget::SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget *pare
 	setupUi(this);
 	text_edt = txt_edit;
 
-	find_edt->installEventFilter(this);
+	search_edt->installEventFilter(this);
 
 	search_info_lbl = new QLabel(txt_edit);
 	search_info_lbl->setAutoFillBackground(true);
@@ -47,24 +47,24 @@ SearchReplaceWidget::SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget *pare
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 
 	connect(replace_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceText);
-	connect(replace_find_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceFindText);
+	connect(replace_search_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceFindText);
 	connect(replace_all_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceAll);
 
 	connect(next_tb, &QToolButton::clicked, this, [this]() {
-		findText(false, true);
+		searchText(false, true);
 	});
 
 	connect(previous_tb, &QToolButton::clicked, this, [this]() {
-		findText(true, true);
+		searchText(true, true);
 	});
 
-	connect(find_edt, &QLineEdit::textChanged, this, [this]() {
-		bool enable=!find_edt->text().isEmpty();
+	connect(search_edt, &QLineEdit::textChanged, this, [this]() {
+		bool enable=!search_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
-		replace_find_tb->setEnabled(enable);
+		replace_search_tb->setEnabled(enable);
 	});
 
 	connect(hide_tb, &QToolButton::clicked, this, &SearchReplaceWidget::s_hideRequested);
@@ -74,7 +74,7 @@ SearchReplaceWidget::SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget *pare
 
 bool SearchReplaceWidget::eventFilter(QObject *object, QEvent *event)
 {
-	if(event->type() == QEvent::KeyPress && object == find_edt)
+	if(event->type() == QEvent::KeyPress && object == search_edt)
 	{
 		QKeyEvent *kevent = dynamic_cast<QKeyEvent *>(event);
 
@@ -90,7 +90,7 @@ bool SearchReplaceWidget::eventFilter(QObject *object, QEvent *event)
 
 void SearchReplaceWidget::showEvent(QShowEvent *)
 {
-	find_edt->setFocus();
+	search_edt->setFocus();
 	replace_btns_parent->setVisible(!text_edt->isReadOnly());
 	replace_lbl->setVisible(!text_edt->isReadOnly());
 	replace_edt->setVisible(!text_edt->isReadOnly());
@@ -125,7 +125,7 @@ void SearchReplaceWidget::replaceAll()
 	cursor.setPosition(0);
 	text_edt->setTextCursor(cursor);
 
-	while(findText(false, false))
+	while(searchText(false, false))
 	{
 		text_edt->textCursor().insertText(replace_edt->text());
 		replacements++;
@@ -144,11 +144,11 @@ void SearchReplaceWidget::replaceFindText()
 	if(text_edt->textCursor().hasSelection())
 	{
 		replaceText();
-		findText(false, true);
+		searchText(false, true);
 	}
 }
 
-bool SearchReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
+bool SearchReplaceWidget::searchText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
 {
 	if(regexp)
 	{
@@ -163,7 +163,7 @@ bool SearchReplaceWidget::findText(const QString &text, bool regexp, QTextDocume
 	return text_edt->find(text, flags);
 }
 
-bool SearchReplaceWidget::findText(bool backward, bool cyclic)
+bool SearchReplaceWidget::searchText(bool backward, bool cyclic)
 {
 	QTextDocument::FindFlags flags;
 	QTextCursor cursor;
@@ -181,7 +181,7 @@ bool SearchReplaceWidget::findText(bool backward, bool cyclic)
 	if(all_words_chk->isChecked())
 		flags=flags | QTextDocument::FindWholeWords;
 
-	found=findText(find_edt->text(), regexp_chk->isChecked(), flags);
+	found=searchText(search_edt->text(), regexp_chk->isChecked(), flags);
 
 	if(!found && cyclic)
 	{
@@ -194,7 +194,7 @@ bool SearchReplaceWidget::findText(bool backward, bool cyclic)
 
 		text_edt->setTextCursor(cursor);
 
-		found = findText(find_edt->text(), regexp_chk->isChecked(), flags);
+		found = searchText(search_edt->text(), regexp_chk->isChecked(), flags);
 
 		if(!found)
 			showSearchInfo(tr("No occurencies found!"));

@@ -2559,7 +2559,7 @@
              <string>Perform text search on the SQL code.</string>
             </property>
             <property name="text">
-             <string>Find</string>
+             <string>Search</string>
             </property>
             <property name="icon">
              <iconset resource="../../res/resources.qrc">

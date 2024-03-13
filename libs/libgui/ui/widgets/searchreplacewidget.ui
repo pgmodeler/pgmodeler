@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>894</width>
+    <width>668</width>
     <height>70</height>
    </rect>
   </property>
@@ -49,7 +49,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="find_edt">
+    <widget class="QLineEdit" name="search_edt">
      <property name="clearButtonEnabled">
       <bool>true</bool>
      </property>
@@ -169,7 +169,7 @@
      <item>
       <widget class="QCheckBox" name="all_words_chk">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -178,22 +178,6 @@
         <string>Whole words</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>98</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <widget class="QToolButton" name="hide_tb">
@@ -312,7 +296,7 @@
            <string>Replace all occurrences</string>
           </property>
           <property name="text">
-           <string>Replace All</string>
+           <string>Replace all</string>
           </property>
           <property name="iconSize">
            <size>
@@ -326,7 +310,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="replace_find_tb">
+         <widget class="QToolButton" name="replace_search_tb">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -340,7 +324,7 @@
            <string>Replace the selection and find the next one</string>
           </property>
           <property name="text">
-           <string>Replace &amp;&amp; Find</string>
+           <string>Replace &amp;&amp; search</string>
           </property>
           <property name="iconSize">
            <size>
@@ -374,7 +358,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>find_edt</tabstop>
+  <tabstop>search_edt</tabstop>
   <tabstop>previous_tb</tabstop>
   <tabstop>next_tb</tabstop>
   <tabstop>case_sensitive_chk</tabstop>
@@ -383,7 +367,7 @@
   <tabstop>replace_edt</tabstop>
   <tabstop>replace_tb</tabstop>
   <tabstop>replace_all_tb</tabstop>
-  <tabstop>replace_find_tb</tabstop>
+  <tabstop>replace_search_tb</tabstop>
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>
