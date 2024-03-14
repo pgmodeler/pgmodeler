@@ -352,6 +352,7 @@ void Relationship::createSpecialPrimaryKey()
 		pk_special->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_special->setConstraintType(ConstraintType::PrimaryKey);
 		pk_special->setAddedByLinking(true);
+		pk_special->setParentRelationship(this);
 		pk_special->setProtected(true);
 		pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
 
@@ -594,6 +595,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 
 		//Defines the parent table for the object only for validation
 		tab_obj->setParentTable(src_table);
+		tab_obj->setParentRelationship(this);
 
 		//Generates the code for the object only for validation
 		if(obj_type==ObjectType::Column)
@@ -909,6 +911,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 		{
 			constr=dynamic_cast<Constraint *>(rel_constraints[constr_id]);
 			constr->setAddedByLinking(true);
+			constr->setParentRelationship(this);
 
 			//Breaks the iteration if the constraist has a parent
 			if(constr->getParentTable())
@@ -1280,6 +1283,7 @@ void Relationship::addCheckConstrsRelGenPart()
 					ck_constr = createObject<Constraint>();
 					(*ck_constr)=(*constr);
 					ck_constr->setParentTable(nullptr);
+					ck_constr->setParentRelationship(this);
 					ck_constr->setAddedByGeneralization(true);
 					child_tab->addConstraint(ck_constr);
 					ck_constraints.push_back(ck_constr);
@@ -1485,6 +1489,7 @@ void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 				pk = createObject<Constraint>();
 				pk->setConstraintType(ConstraintType::PrimaryKey);
 				pk->setAddedByLinking(true);
+				pk->setParentRelationship(this);
 				pk->setDeferrable(this->deferrable);
 				pk->setDeferralType(this->deferral_type);
 				this->pk_relident=pk;
@@ -1547,6 +1552,7 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 			uq->setDeferralType(this->deferral_type);
 			uq->setConstraintType(ConstraintType::Unique);
 			uq->setAddedByLinking(true);
+			uq->setParentRelationship(this);
 			uq_rel11=uq;
 		}
 
@@ -1608,6 +1614,7 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 			fk->setDeferralType(this->deferral_type);
 			fk->setConstraintType(ConstraintType::ForeignKey);
 			fk->setAddedByLinking(true);
+			fk->setParentRelationship(this);
 
 			//The reference table is the table referenced by the foreign key
 			fk->setReferencedTable(ref_tab);
@@ -2075,6 +2082,7 @@ void Relationship::addColumnsRelNn()
 			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
 			pk_col->setType(PgSqlType("serial"));
 			pk_col->setAddedByLinking(true);
+			pk_col->setParentRelationship(this);
 			table_relnn->addColumn(pk_col);
 		}
 
@@ -2085,6 +2093,7 @@ void Relationship::addColumnsRelNn()
 		pk_tabnn->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_tabnn->setConstraintType(ConstraintType::PrimaryKey);
 		pk_tabnn->setAddedByLinking(true);
+		pk_tabnn->setParentRelationship(this);
 
 		if(!single_pk_column)
 		{
@@ -2237,7 +2246,7 @@ void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 		constr=table->getConstraint(i);
 		if(!constr->isAddedByRelationship() &&
 				constr->getConstraintType()!=ConstraintType::PrimaryKey &&
-				constr->isReferRelationshipAddedColumn())
+				constr->isReferRelationshipAddedColumns())
 		{
 			table->removeObject(constr);
 			delete constr;

@@ -29,36 +29,32 @@
 #include <QString>
 
 namespace UtilsNs {
-	static const QString EntityAmp("&amp;");
-
-	static const QString EntityLt("&lt;");
-
-	static const QString EntityGt("&gt;");
-
-	static const QString EntityQuot("&quot;");
-
-	static const QString EntityApos("&apos;");
+	static const QString EntityAmp("&amp;"),
+	EntityLt("&lt;"),
+	EntityGt("&gt;"),
+	EntityQuot("&quot;"),
+	EntityApos("&apos;"),
 
 	//! \brief Default char for data/value separator for special usage
-	static const QString DataSeparator("•");
-
-	//! \brief Default char used as unescaped value start delimiter
-	static const QChar UnescValueStart='/';
-
-	//! \brief Default char used as unescaped value end delimiter
-	static const QChar	UnescValueEnd='/';
-
-	//! \brief Indicates the default wildcard character expected to be found in wildcard patterns
-	static const QChar WildcardChar('*');
-
-	//! \brief Indicates the character used to separate filter fields in the filtering string
-	static const QChar FilterSeparator = ':';
+	DataSeparator("•"),
 
 	//! \brief Indicates the wildcard filtering mode in the object listing
-	static const QString FilterWildcard("wildcard"),
+	FilterWildcard("wildcard"),
 
 	//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
 	FilterRegExp("regexp");
+
+	//! \brief Default char used as unescaped value start delimiter
+	static const QChar UnescValueStart='/',
+
+	//! \brief Default char used as unescaped value end delimiter
+	UnescValueEnd='/',
+
+	//! \brief Indicates the default wildcard character expected to be found in wildcard patterns
+	WildcardChar('*'),
+
+	//! \brief Indicates the character used to separate filter fields in the filtering string
+	FilterSeparator = ':';
 
 	/*! \brief Writes the provided buffer to the file specified by its filename
 	 * Raises an exception in case of the file couldn,t be open */

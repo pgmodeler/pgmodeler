@@ -291,7 +291,7 @@ void NumberedTextEditor::pasteCode()
 			"(%1)(\\s)*(\\%2)",
 			"(\\%2)(\\s)*(%1)"
 		},
-			opers = { "\"+", "'.", "'+", "\"." };
+			opers = { "\"+", "'.", "'+", "\".", "\";", "\';" };
 	QChar concat_opr = '+', str_delim = '"';
 	QRegularExpression regexp;
 

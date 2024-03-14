@@ -28,6 +28,7 @@
 #include "ui_databaseexplorerwidget.h"
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
+#include <QMenu>
 
 class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:

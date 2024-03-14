@@ -28,10 +28,10 @@
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
-#include "widgets/findreplacewidget.h"
+#include "widgets/searchreplacewidget.h"
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
@@ -67,11 +67,11 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		QAction *action_save, *action_save_as, *action_load;
 
-		FindReplaceWidget *find_replace_wgt;
+		SearchReplaceWidget *find_replace_wgt;
 
 		CodeCompletionWidget *code_compl_wgt;
 
-		FindReplaceWidget *find_history_wgt;
+		SearchReplaceWidget *search_history_wgt;
 
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */

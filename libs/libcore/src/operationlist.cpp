@@ -422,7 +422,7 @@ int OperationList::registerObject(BaseObject *object, Operation::OperType op_typ
 
 			if(((obj_type==ObjectType::Trigger && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 				(obj_type==ObjectType::Index && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
-				(obj_type==ObjectType::Constraint && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
+				(obj_type==ObjectType::Constraint && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumns())))
 			{
 				if(op_type==Operation::ObjRemoved)
 					tab_obj->setParentTable(parent_tab);

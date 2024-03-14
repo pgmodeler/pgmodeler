@@ -272,6 +272,9 @@
         <file>icons/expandcanvas.png</file>
         <file>icons/showpwd.png</file>
         <file>icons/hidepwd.png</file>
+        <file>icons/wholeword.png</file>
+        <file>icons/regexp.png</file>
+        <file>icons/casesensitive.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
@@ -296,5 +299,9 @@
         <file>images/rel_center_pnts_dark.png</file>
         <file>images/handle_dark.png</file>
         <file>images/handle_light.png</file>
+        <file>images/hsplitter_handle_dark.png</file>
+        <file>images/vsplitter_handle_dark.png</file>
+        <file>images/vsplitter_handle_light.png</file>
+        <file>images/hsplitter_handle_light.png</file>
     </qresource>
 </RCC>

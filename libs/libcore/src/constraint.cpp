@@ -429,77 +429,67 @@ bool Constraint::isNoInherit()
 	return no_inherit;
 }
 
-bool Constraint::isReferRelationshipAddedColumn()
+bool Constraint::isReferRelationshipAddedColumns(const std::vector<Column *> &cols)
 {
-	std::vector<Column *>::iterator itr, itr_end;
-	std::vector<ExcludeElement>::iterator itr1, itr1_end;
-	Column *col=nullptr;
-	bool found=false;
+	std::vector<Column *> rel_cols = getRelationshipAddedColumns(cols.empty());
 
-	//First iterates over the source columns list
-	itr=columns.begin();
-	itr_end=columns.end();
-
-	while(itr!=itr_end && !found)
+	if(!cols.empty())
 	{
-		col=(*itr);
-		//Check if the current column were added by relationship
-		found=col->isAddedByRelationship();
-		itr++;
+		auto find_cols = [&rel_cols, &cols]() {
+			for(auto &col : cols)
+			{
+				if(std::find(rel_cols.begin(), rel_cols.end(), col) != rel_cols.end())
+					return true;
+			}
 
-		/* Case the source column list is completely iterated steps to
-		 the referenced columns list iteration */
-		if(itr==itr_end && itr_end!=ref_columns.end() && !found)
-		{
-			itr=ref_columns.begin();
-			itr_end=ref_columns.end();
-		}
+			return false;
+		};
+
+		return find_cols();
 	}
 
-	//Iterates over the exclude elements
-	itr1=excl_elements.begin();
-	itr1_end=excl_elements.end();
+	return !rel_cols.empty();
+}
 
-	while(itr1!=itr1_end && !found)
+std::vector<Column *> Constraint::getRelationshipAddedColumns(bool first_col_only)
+{
+	std::vector<Column *> rel_cols;
+	Column *col = nullptr;
+
+	std::for_each(columns.begin(), columns.end(), [&rel_cols](auto &col) {
+		if(col->isAddedByRelationship())
+			rel_cols.push_back(col);
+	});
+
+	if(!first_col_only || (first_col_only && rel_cols.empty()))
 	{
-		col=(*itr1).getColumn();
-		found=(col && col->isAddedByRelationship());
-		itr1++;
+		std::for_each(ref_columns.begin(), ref_columns.end(), [&rel_cols](auto &col) {
+			if(col->isAddedByRelationship())
+				rel_cols.push_back(col);
+		});
 	}
 
-	return found;
+	if(!first_col_only || (first_col_only && rel_cols.empty()))
+	{
+		std::for_each(excl_elements.begin(), excl_elements.end(), [&rel_cols, &col](auto &elem) {
+			col = elem.getColumn();
+			if(col && col->isAddedByRelationship())
+				rel_cols.push_back(col);
+		});
+	}
+
+	return rel_cols;
 }
 
 std::vector<Column *> Constraint::getRelationshipAddedColumns()
 {
-	Column *column=nullptr;
-	std::vector<Column *> cols;
-	std::vector<std::vector<Column *> *> lists = { &columns, &ref_columns };
-
-	for(auto &p_lst : lists)
-	{
-		for(auto &col : (*p_lst))
-		{
-			if(col->isAddedByRelationship())
-				cols.push_back(col);
-		}
-	}
-
-	for(auto &excl_elem : excl_elements)
-	{
-		column=excl_elem.getColumn();
-		if(column && column->isAddedByRelationship())
-			cols.push_back(column);
-	}
-
-	return cols;
+	return getRelationshipAddedColumns(false);
 }
 
 MatchType Constraint::getMatchType()
 {
 	return match_type;
 }
-
 
 int Constraint::getExcludeElementIndex(ExcludeElement elem)
 {
@@ -627,7 +617,7 @@ void Constraint::setDeclInTableAttribute()
 {
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
 		attributes[Attributes::DeclInTable]="";
-	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::PrimaryKey)
+	else if(!isReferRelationshipAddedColumns() || constr_type==ConstraintType::PrimaryKey)
 		attributes[Attributes::DeclInTable]=Attributes::True;
 }
 

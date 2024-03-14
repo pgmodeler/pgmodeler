@@ -313,14 +313,11 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 				pattern = list.join(any_str);
 			}
-			else
-			{
-				/* If the pattern is wildcard mode but has not wildcard char we
-				 * assume that the matching should be exact so we prepend ^ and append $
-				 * in order to force a regular expression with exact match */
-				pattern.prepend('^');
-				pattern.append('$');
-			}
+
+			/* In wildcard mode the pattern matching must be exact, so we prepend ^ and append $
+			 * in order to force a regular expression with exact match. */
+			pattern.prepend('^');
+			pattern.append('$');
 		}
 
 		parsed_filters[obj_type].append(QString("(%1)").arg(pattern));
@@ -774,6 +771,12 @@ std::vector<attribs_map> Catalog::getObjectsNames(std::vector<ObjectType> obj_ty
 					attribs[fmt_attr_name] = res.getColumnValue(col_name);
 				}
 
+				// Creating a signature attribute by joining the parent name and the object name.
+				if(!attribs[Attributes::Parent].isEmpty())
+					attribs[Attributes::Signature] = attribs[Attributes::Parent] + ".";
+
+				attribs[Attributes::Signature] += attribs[Attributes::Name];
+
 				objects.push_back(attribs);
 				attribs.clear();
 				fmt_attr_name.clear();
@@ -1074,39 +1077,17 @@ attribs_map Catalog::getServerAttributes()
 	return attribs;
 }
 
-/* unsigned Catalog::getObjectCount(bool incl_sys_objs)
+bool Catalog::isServerSupported()
 {
-	unsigned count = 0;
-
 	try
 	{
-		ResultSet res = ResultSet();
-		QString sql, attr_name;
-		attribs_map tuple, attribs;
-
-		if(!incl_sys_objs)
-			attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
-
-		loadCatalogQuery(Attributes::ObjCount);
-		schparser.ignoreUnkownAttributes(true);
-		schparser.ignoreEmptyAttributes(true);
-		sql = schparser.getSourceCode(attribs).simplified();
-		connection.executeDMLCommand(sql, res);
-
-		if(res.accessTuple(ResultSet::FirstTuple))
-		{
-			tuple = res.getTupleValues();
-			count = tuple[Attributes::ObjCount].toUInt();
-		}
+		return connection.isServerSupported();
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog", QString("catalog: %1").arg(Attributes::ObjCount).toStdString().c_str(), "", -1));
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-
-	return count;
-} */
+}
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
 {

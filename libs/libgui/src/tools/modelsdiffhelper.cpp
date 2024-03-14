@@ -945,7 +945,7 @@ void ModelsDiffHelper::processDiffInfos()
 										* these objects are not created in the parent table's definition, instead, the are created via separated
 										* ALTER TABLE command. */
 										(create_objs.count(constr->getParentTable()->getObjectId()) &&
-										 constr->isReferRelationshipAddedColumn() && constr->getConstraintType() == ConstraintType::Unique))
+										 constr->isReferRelationshipAddedColumns() && constr->getConstraintType() == ConstraintType::Unique))
 							create_constrs[constr->getObjectId()]=getSourceCode(constr, false);
 					}
 					else

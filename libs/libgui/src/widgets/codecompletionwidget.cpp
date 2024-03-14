@@ -88,6 +88,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
+	ini_cur_pos = -1;
 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
@@ -234,8 +235,6 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
 {
-	//std::map<QString, attribs_map> confs=GeneralConfigWidget::getConfigurationParams();
-
 	name_list->clear();
 	word.clear();
 	setQualifyingLevel(nullptr);
@@ -363,7 +362,9 @@ void CodeCompletionWidget::populateNameList(std::vector<BaseObject *> &objects, 
 void CodeCompletionWidget::show()
 {
 	prev_txt_cur = code_field_txt->textCursor();
+	ini_cur_pos = prev_txt_cur.position();
 	updateList();
+
 	popup_timer.stop();
 
 	if(name_list->count() == 0)
@@ -769,7 +770,7 @@ void CodeCompletionWidget::extractTableNames()
 	}
 
 	QString curr_word, tab_name, alias;
-	bool extract_alias = false, tab_name_extracted = false;
+	bool extract_alias = false, tab_name_extracted = false, is_special_char = false;
 	TextBlockInfo *blk_info = nullptr;
 
 	tab_aliases.clear();
@@ -821,10 +822,22 @@ void CodeCompletionWidget::extractTableNames()
 					continue;
 
 				// If we found a DML keyword or special char, we abort the table name/alias extraction
-				if(special_chars.contains(curr_word) ||
+				is_special_char = special_chars.contains(curr_word);
+				if(is_special_char ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
 						dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
+				{
+					/* If we found a special character and the table name was extracted but not yet
+					 * registered, we force the name registration. This happens for example on
+					 * INSERT INTO tablename (), where table name is processed but a ( is found,
+					 * so to avoid breaking the name extration without registering a valid name
+					 * we forcibly register it before break the routine. */
+					if(is_special_char &&
+						 !tab_name_extracted && !tab_name.isEmpty() && !tab_name.endsWith(completion_trigger))
+						tab_names_pos[tc.position() - tab_name.length()] = tab_name;
+
 					break;
+				}
 
 				// If we find an AS keyword after extracting the table name we switch to alias extraction
 				if(!extract_alias && !curr_word.isEmpty() &&
@@ -841,13 +854,14 @@ void CodeCompletionWidget::extractTableNames()
 					 * that the table name was fully retrieved (with or without schema name) */
 					aux_tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
 					aux_tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-					next_char = aux_tc.selectedText();
+					next_char = aux_tc.selectedText().trimmed();
 
 					/* If the tab_name ends with the completion trigger char (.) it means that
 					 * we have a schema qualified name but it still lacks the real name of the table.
 					 * Thus the current word will be used as the table name, being appended to the current
 					 * value of tab_name, creating the full, schema-qualified name of the table. */
-					if(tab_name.endsWith(completion_trigger) || next_char.isEmpty())
+					if(tab_name.endsWith(completion_trigger) ||
+							(next_char.isEmpty() && curr_word != completion_trigger))
 						tab_name_extracted = true;
 
 					tab_name.append(curr_word);
@@ -996,6 +1010,22 @@ bool CodeCompletionWidget::updateObjectsList()
 	}
 }
 
+void CodeCompletionWidget::updateWidgetPosSize()
+{
+	//Sets the list position right below of text cursor
+	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
+	QSize screen_sz = completion_wgt->screen()->size();
+
+	// Adjust the position of the widget if it extrapolates the screen limits
+	if((pos.x() + completion_wgt->width()) > screen_sz.width())
+		pos.setX(pos.x() - completion_wgt->width());
+
+	completion_wgt->move(pos);
+	name_list->scrollToTop();
+	name_list->setFocus();
+	adjustNameListSize();
+}
+
 void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
@@ -1006,11 +1036,11 @@ void CodeCompletionWidget::updateList()
 																																			ObjectType::BaseRelationship });
 	QTextCursor tc;
 
+	new_txt_cur = tc = code_field_txt->textCursor();
+
 	qApp->setOverrideCursor(Qt::WaitCursor);
 
-	name_list->clear();
 	word.clear();
-	new_txt_cur=tc=code_field_txt->textCursor();
 
 	/* Try to move the cursor to the previous char in order to check if the user is
 	calling the completion without an attached word */
@@ -1102,8 +1132,33 @@ void CodeCompletionWidget::updateList()
 		populateNameList(objects, word);
 	}
 
+	/* If the current cursor position is after the initial position (when the completion was first shown)
+	 * we filter the items already retrieved before, this avoids keep querying the system catalogs
+	 * repeatdly to retrieve the same items. */
+	if(catalog.isConnectionValid() &&
+			ini_cur_pos >= 0 && tc.position() >= ini_cur_pos)
+	{
+		QList<QListWidgetItem *> list = name_list->findItems(word, Qt::MatchStartsWith);
+
+		name_list->setUpdatesEnabled(false);
+
+		for(auto &item : name_list->findItems("*", Qt::MatchWildcard))
+			item->setHidden(true);
+
+		for(auto &item : list)
+			item->setHidden(false);
+
+		name_list->setUpdatesEnabled(true);
+
+		qApp->restoreOverrideCursor();
+		updateWidgetPosSize();
+
+		return;
+	}
+
 	// Retrieving object names from the database if a valid connection is configured
 	bool db_objs_retrieved = false;
+	name_list->clear();
 
 	if(catalog.isConnectionValid())
 		db_objs_retrieved = updateObjectsList();
@@ -1114,6 +1169,8 @@ void CodeCompletionWidget::updateList()
 	if(!db_objs_retrieved && qualifying_level < 0 && !auto_triggered)
 	{
 		QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
+
+		name_list->setUpdatesEnabled(false);
 
 		//If there are custom items, they wiill be placed at the very beggining of the list
 		if(!custom_items.empty())
@@ -1142,6 +1199,8 @@ void CodeCompletionWidget::updateList()
 			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
+
+		name_list->setUpdatesEnabled(true);
 	}
 
 	if(name_list->count()==0)
@@ -1150,19 +1209,7 @@ void CodeCompletionWidget::updateList()
 		name_list->item(0)->setSelected(true);
 
 	qApp->restoreOverrideCursor();
-
-	//Sets the list position right below of text cursor
-	QPoint pos = code_field_txt->viewport()->mapToGlobal(code_field_txt->cursorRect().bottomLeft());
-	QSize screen_sz = completion_wgt->screen()->size();
-
-	// Adjust the position of the widget if it extrapolates the screen limits
-	if((pos.x() + completion_wgt->width()) > screen_sz.width())
-		pos.setX(pos.x() - completion_wgt->width());
-
-	completion_wgt->move(pos);
-	name_list->scrollToTop();
-	name_list->setFocus();
-	adjustNameListSize();
+	updateWidgetPosSize();
 }
 
 void CodeCompletionWidget::selectItem()
@@ -1267,43 +1314,57 @@ void CodeCompletionWidget::showItemTooltip()
 
 void CodeCompletionWidget::adjustNameListSize()
 {
-	int item_h = 0;
-	item_h = (name_list->iconSize().height() + GuiUtilsNs::LtMargin) * name_list->count();
-	item_h += 2 * GuiUtilsNs::LtMargin;
+	int item_cnt = 0;
 
-	if(item_h < completion_wgt->minimumHeight())
-		item_h = completion_wgt->minimumHeight();
-	else if(item_h > completion_wgt->maximumHeight())
+	/* Determining the number of visible items, this will determine
+	 * the maximum completion widget height */
+	for(auto &item : name_list->findItems("*", Qt::MatchWildcard))
 	{
-		item_h = completion_wgt->maximumHeight() -
-						 always_on_top_chk->height() -
-						 (4 * GuiUtilsNs::LtMargin);
+		if(item->isHidden())
+			continue;
+
+		item_cnt++;
 	}
 
-	name_list->setMinimumHeight(item_h);
-
 	QRect rect = name_list->viewport()->contentsRect(), brect;
-	QListWidgetItem *first_item = name_list->itemAt(rect.topLeft() +
-																									QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
+	QListWidgetItem *item = nullptr,
+			*first_item = name_list->itemAt(rect.topLeft() +
+																			QPoint(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin)),
 			*last_item = name_list->itemAt(rect.bottomLeft() +
 																		 QPoint(GuiUtilsNs::LtMargin, -GuiUtilsNs::LtMargin));
 	int first_row = name_list->row(first_item),
 			last_row = name_list->row(last_item),
-			list_w = 0, item_w = 0;
+			list_w = 0, item_w = 0, vis_item_cnt = 0,
+			margin = 2 * GuiUtilsNs::LtMargin;
+
 	QFontMetrics fm(name_list->font());
 
 	if(first_row >= 0 && last_row < 0)
 		last_row = name_list->count() - 1;
+	// In case the list is empty
 	else if(first_row < 0 && last_row < 0)
+	{
+		name_list->setFixedHeight(completion_wgt->minimumHeight() + margin);
+		completion_wgt->adjustSize();
+		adjustSize();
 		return;
+	}
 
+	// Determining the maximum width of the visible items
 	for(int row = first_row; row <= last_row; row++)
 	{
-		brect = fm.boundingRect(name_list->item(row)->text().
+		item = name_list->item(row);
+
+		if(item->isHidden())
+			continue;
+
+		vis_item_cnt++;
+
+		brect = fm.boundingRect(item->text().
 														remove(HtmlItemDelegate::TagRegExp));
 
 		item_w = brect.width() +
-						 name_list->iconSize().width() + (GuiUtilsNs::LtMargin * 2) +
+						 name_list->iconSize().width() + margin +
 						 name_list->verticalScrollBar()->width();
 
 		if(item_w > list_w)
@@ -1313,6 +1374,23 @@ void CodeCompletionWidget::adjustNameListSize()
 	name_list->setFixedWidth(list_w < always_on_top_chk->width() ?
 													 always_on_top_chk->width() : list_w);
 
+	int item_h = 0,
+			base_h = name_list->iconSize().height() + GuiUtilsNs::LtMargin;
+
+	item_h = base_h * item_cnt;
+	item_h += margin;
+
+	if(item_h < completion_wgt->minimumHeight())
+		item_h = completion_wgt->minimumHeight() + margin;
+	else if(item_h > completion_wgt->maximumHeight())
+	{
+		item_h = completion_wgt->maximumHeight() -
+						 always_on_top_chk->height() - (2 * margin);
+	}
+
+	if(vis_item_cnt <= 10)
+		name_list->setFixedHeight(item_h);
+
 	completion_wgt->adjustSize();
 	adjustSize();
 }
@@ -1320,6 +1398,7 @@ void CodeCompletionWidget::adjustNameListSize()
 void CodeCompletionWidget::close()
 {
 	name_list->clearSelection();
+	ini_cur_pos = -1;
 	completion_wgt->close();
 	auto_triggered=false;
 	QToolTip::hideText();

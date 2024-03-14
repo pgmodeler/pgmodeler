@@ -25,10 +25,12 @@
 #ifndef DATABASE_IMPORT_HELPER_H
 #define DATABASE_IMPORT_HELPER_H
 
+
+#include <guiglobal.h>
 #include <QObject>
 #include <QThread>
 #include "catalog.h"
-#include "widgets/modelwidget.h"
+#include "databasemodel.h"
 #include <random>
 
 class __libgui DatabaseImportHelper: public QObject {

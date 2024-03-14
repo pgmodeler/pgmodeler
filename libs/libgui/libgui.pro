@@ -100,19 +100,19 @@ src/widgets/aboutwidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
+	src/widgets/objectsearchwidget.cpp \
 	src/widgets/objecttypeslistwidget.cpp \
 src/widgets/operationlistwidget.cpp \
 src/widgets/modelobjectswidget.cpp \
 src/widgets/objectdepsrefswidget.cpp \
 src/widgets/sceneinfowidget.cpp \
+	src/widgets/searchreplacewidget.cpp \
 src/widgets/welcomewidget.cpp \
 src/widgets/changelogwidget.cpp \
 src/widgets/fileselectorwidget.cpp \
 src/widgets/modeloverviewwidget.cpp \
-src/widgets/objectfinderwidget.cpp \
 src/widgets/sourcecodewidget.cpp \
 src/widgets/codecompletionwidget.cpp \
-src/widgets/findreplacewidget.cpp \
 src/widgets/objectrenamewidget.cpp \
 src/widgets/colorpickerwidget.cpp \
 src/widgets/layersconfigwidget.cpp \
@@ -222,19 +222,19 @@ src/widgets/aboutwidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
+	src/widgets/objectsearchwidget.h \
 	src/widgets/objecttypeslistwidget.h \
 src/widgets/operationlistwidget.h \
 src/widgets/modelobjectswidget.h \
 src/widgets/objectdepsrefswidget.h \
 src/widgets/sceneinfowidget.h \
+	src/widgets/searchreplacewidget.h \
 src/widgets/welcomewidget.h \
 src/widgets/changelogwidget.h \
 src/widgets/fileselectorwidget.h \
 src/widgets/modeloverviewwidget.h \
-src/widgets/objectfinderwidget.h \
 src/widgets/sourcecodewidget.h \
 src/widgets/codecompletionwidget.h \
-src/widgets/findreplacewidget.h \
 src/widgets/objectrenamewidget.h \
 src/widgets/colorpickerwidget.h \
 src/widgets/layersconfigwidget.h \
@@ -321,13 +321,14 @@ ui/widgets/aboutwidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
+	ui/widgets/objectsearchwidget.ui \
 	ui/widgets/objecttypeslistwidget.ui \
+	ui/widgets/searchreplacewidget.ui \
 ui/widgets/sourcecodewidget.ui \
 ui/widgets/fileselectorwidget.ui \
 ui/widgets/modeloverviewwidget.ui \
 ui/widgets/objectselectorwidget.ui \
 ui/widgets/changelogwidget.ui \
-ui/widgets/findreplacewidget.ui \
 ui/widgets/objectsfilterwidget.ui \
 ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \
@@ -342,7 +343,6 @@ ui/widgets/operationlistwidget.ui \
 ui/widgets/updatenotifierwidget.ui \
 ui/widgets/customsqlwidget.ui \
 ui/widgets/modelnavigationwidget.ui \
-ui/widgets/objectfinderwidget.ui \
 ui/widgets/sceneinfowidget.ui \
 ui/widgets/welcomewidget.ui
 

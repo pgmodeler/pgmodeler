@@ -40,7 +40,7 @@ Column::Column()
 	attributes[Attributes::Cache]="";
 	attributes[Attributes::Cycle]="";
 
-	parent_rel=sequence=nullptr;
+	sequence=nullptr;
 	identity_type = IdentityType::Null;
 }
 
@@ -166,19 +166,6 @@ QString Column::getOldName(bool format)
 		return BaseObject::formatName(old_name);
 	else
 		return old_name;
-}
-
-void Column::setParentRelationship(BaseObject *parent_rel)
-{
-	if(parent_rel && parent_rel->getObjectType()!=ObjectType::Relationship)
-		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	this->parent_rel=parent_rel;
-}
-
-BaseObject *Column::getParentRelationship()
-{
-	return parent_rel;
 }
 
 void Column::setSequence(BaseObject *seq)
@@ -429,7 +416,6 @@ void Column::operator = (Column &col)
 
 	this->not_null=col.not_null;
 	this->generated=col.generated;
-	this->parent_rel=col.parent_rel;
 	this->sequence=col.sequence;
 	this->identity_type=col.identity_type;
 
@@ -445,6 +431,7 @@ void Column::operator = (Column &col)
 	this->setAddedByGeneralization(false);
 	this->setAddedByLinking(false);
 	this->setCodeInvalidated(true);
+	this->setParentRelationship(col.getParentRelationship());
 }
 
 QString Column::getDataDictionary(const attribs_map &extra_attribs)

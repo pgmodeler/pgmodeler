@@ -21,6 +21,7 @@
 
 TableObject::TableObject()
 {
+	parent_rel=nullptr;
 	parent_table=nullptr;
 	decl_in_table=true;
 	add_by_linking=add_by_generalization=add_by_copy=false;
@@ -29,7 +30,7 @@ TableObject::TableObject()
 void TableObject::setParentTable(BaseTable *table)
 {
 	setCodeInvalidated(table != parent_table);
-	parent_table=table;
+	parent_table = table;
 }
 
 BaseTable *TableObject::getParentTable()
@@ -143,4 +144,17 @@ QString TableObject::getSignature(bool format)
 		return BaseObject::getSignature(format);
 
 	return QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format));
+}
+
+void TableObject::setParentRelationship(BaseObject *parent_rel)
+{
+	if(parent_rel && parent_rel->getObjectType()!=ObjectType::Relationship)
+		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->parent_rel = parent_rel;
+}
+
+BaseObject *TableObject::getParentRelationship()
+{
+	return parent_rel;
 }

@@ -34,6 +34,9 @@ class __libcore TableObject: public BaseObject {
 		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;
 
+		//! \brief Stores a reference to the relationship that generates the object
+		BaseObject *parent_rel;
+
 		/*! \brief Indicates that the object was included automaticaly by "one to many",
 		 "one to many", "many to many" relationships */
 		bool add_by_linking;
@@ -76,6 +79,10 @@ class __libcore TableObject: public BaseObject {
 
 		//! \brief Returns the object parent table
 		BaseTable *getParentTable();
+
+		virtual void setParentRelationship(BaseObject *parent_rel);
+
+		BaseObject *getParentRelationship();
 
 		/*! \brief This method is purely virtual to force the derived classes
 		 *  overload this method. This also makes class TableObject

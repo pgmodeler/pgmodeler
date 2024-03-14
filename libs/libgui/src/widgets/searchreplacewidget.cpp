@@ -16,12 +16,12 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "findreplacewidget.h"
+#include "searchreplacewidget.h"
 #include <QRegularExpression>
 #include <QTimer>
 #include "exception.h"
 
-FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
+SearchReplaceWidget::SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent): QWidget(parent)
 {
 	if(!txt_edit)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -29,7 +29,7 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	setupUi(this);
 	text_edt = txt_edit;
 
-	find_edt->installEventFilter(this);
+	search_edt->installEventFilter(this);
 
 	search_info_lbl = new QLabel(txt_edit);
 	search_info_lbl->setAutoFillBackground(true);
@@ -46,35 +46,35 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 	next_tb->setToolTip(next_tb->toolTip() + QString(" (%1)").arg(next_tb->shortcut().toString()));
 	previous_tb->setToolTip(previous_tb->toolTip() + QString(" (%1)").arg(previous_tb->shortcut().toString()));
 
-	connect(replace_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceText);
-	connect(replace_find_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceFindText);
-	connect(replace_all_tb, &QToolButton::clicked, this, &FindReplaceWidget::replaceAll);
+	connect(replace_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceText);
+	connect(replace_search_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceFindText);
+	connect(replace_all_tb, &QToolButton::clicked, this, &SearchReplaceWidget::replaceAll);
 
 	connect(next_tb, &QToolButton::clicked, this, [this]() {
-		findText(false, true);
+		searchText(false, true);
 	});
 
 	connect(previous_tb, &QToolButton::clicked, this, [this]() {
-		findText(true, true);
+		searchText(true, true);
 	});
 
-	connect(find_edt, &QLineEdit::textChanged, this, [this]() {
-		bool enable=!find_edt->text().isEmpty();
+	connect(search_edt, &QLineEdit::textChanged, this, [this]() {
+		bool enable=!search_edt->text().isEmpty();
 		next_tb->setEnabled(enable);
 		previous_tb->setEnabled(enable);
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
-		replace_find_tb->setEnabled(enable);
+		replace_search_tb->setEnabled(enable);
 	});
 
-	connect(hide_tb, &QToolButton::clicked, this, &FindReplaceWidget::s_hideRequested);
+	connect(hide_tb, &QToolButton::clicked, this, &SearchReplaceWidget::s_hideRequested);
 
 	connect(&search_info_timer, &QTimer::timeout, search_info_lbl, &QLabel::hide);
 }
 
-bool FindReplaceWidget::eventFilter(QObject *object, QEvent *event)
+bool SearchReplaceWidget::eventFilter(QObject *object, QEvent *event)
 {
-	if(event->type() == QEvent::KeyPress && object == find_edt)
+	if(event->type() == QEvent::KeyPress && object == search_edt)
 	{
 		QKeyEvent *kevent = dynamic_cast<QKeyEvent *>(event);
 
@@ -88,15 +88,15 @@ bool FindReplaceWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void FindReplaceWidget::showEvent(QShowEvent *)
+void SearchReplaceWidget::showEvent(QShowEvent *)
 {
-	find_edt->setFocus();
+	search_edt->setFocus();
 	replace_btns_parent->setVisible(!text_edt->isReadOnly());
 	replace_lbl->setVisible(!text_edt->isReadOnly());
 	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
-void FindReplaceWidget::showSearchInfo(const QString &msg)
+void SearchReplaceWidget::showSearchInfo(const QString &msg)
 {
 	search_info_lbl->setText(msg);
 	search_info_lbl->setVisible(true);
@@ -105,7 +105,7 @@ void FindReplaceWidget::showSearchInfo(const QString &msg)
 	search_info_timer.start();
 }
 
-void FindReplaceWidget::replaceText()
+void SearchReplaceWidget::replaceText()
 {
 	QTextCursor cursor=text_edt->textCursor();
 
@@ -116,7 +116,7 @@ void FindReplaceWidget::replaceText()
 	}
 }
 
-void FindReplaceWidget::replaceAll()
+void SearchReplaceWidget::replaceAll()
 {
 	QTextCursor orig_cursor, cursor=text_edt->textCursor();
 	int replacements = 0;
@@ -125,7 +125,7 @@ void FindReplaceWidget::replaceAll()
 	cursor.setPosition(0);
 	text_edt->setTextCursor(cursor);
 
-	while(findText(false, false))
+	while(searchText(false, false))
 	{
 		text_edt->textCursor().insertText(replace_edt->text());
 		replacements++;
@@ -139,16 +139,16 @@ void FindReplaceWidget::replaceAll()
 		showSearchInfo(tr("No replacements made!"));
 }
 
-void FindReplaceWidget::replaceFindText()
+void SearchReplaceWidget::replaceFindText()
 {
 	if(text_edt->textCursor().hasSelection())
 	{
 		replaceText();
-		findText(false, true);
+		searchText(false, true);
 	}
 }
 
-bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
+bool SearchReplaceWidget::searchText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
 {
 	if(regexp)
 	{
@@ -163,7 +163,7 @@ bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument
 	return text_edt->find(text, flags);
 }
 
-bool FindReplaceWidget::findText(bool backward, bool cyclic)
+bool SearchReplaceWidget::searchText(bool backward, bool cyclic)
 {
 	QTextDocument::FindFlags flags;
 	QTextCursor cursor;
@@ -175,13 +175,13 @@ bool FindReplaceWidget::findText(bool backward, bool cyclic)
 	if(backward)
 		flags=QTextDocument::FindBackward;
 
-	if(case_sensitive_chk->isChecked())
+	if(case_sensitive_tb->isChecked())
 		flags=flags | QTextDocument::FindCaseSensitively;
 
-	if(all_words_chk->isChecked())
+	if(all_words_tb->isChecked())
 		flags=flags | QTextDocument::FindWholeWords;
 
-	found=findText(find_edt->text(), regexp_chk->isChecked(), flags);
+	found=searchText(search_edt->text(), regexp_tb->isChecked(), flags);
 
 	if(!found && cyclic)
 	{
@@ -194,7 +194,7 @@ bool FindReplaceWidget::findText(bool backward, bool cyclic)
 
 		text_edt->setTextCursor(cursor);
 
-		found = findText(find_edt->text(), regexp_chk->isChecked(), flags);
+		found = searchText(search_edt->text(), regexp_tb->isChecked(), flags);
 
 		if(!found)
 			showSearchInfo(tr("No occurencies found!"));

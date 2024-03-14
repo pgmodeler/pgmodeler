@@ -44,12 +44,12 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	output_tbw->widget(2)->installEventFilter(this);
 
-	find_history_wgt = new FindReplaceWidget(cmd_history_txt, find_history_parent);
+	search_history_wgt = new SearchReplaceWidget(cmd_history_txt, search_history_parent);
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
-	layout->addWidget(find_history_wgt);
-	find_history_parent->setLayout(layout);
-	find_history_parent->setVisible(false);
+	layout->addWidget(search_history_wgt);
+	search_history_parent->setLayout(layout);
+	search_history_parent->setVisible(false);
 
 	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
 	sql_cmd_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -63,18 +63,18 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
-	find_replace_wgt=new FindReplaceWidget(sql_cmd_txt, find_wgt_parent);
-	QHBoxLayout *hbox=new QHBoxLayout(find_wgt_parent);
+	find_replace_wgt=new SearchReplaceWidget(sql_cmd_txt, search_wgt_parent);
+	QHBoxLayout *hbox=new QHBoxLayout(search_wgt_parent);
 	hbox->setContentsMargins(0,0,0,0);
 	hbox->addWidget(find_replace_wgt);
-	find_wgt_parent->setVisible(false);
+	search_wgt_parent->setVisible(false);
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
 	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
-	find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
+	search_tb->setToolTip(search_tb->toolTip() + QString(" (%1)").arg(search_tb->shortcut().toString()));
 	filter_tb->setToolTip(filter_tb->toolTip() + QString(" (%1)").arg(filter_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
@@ -142,9 +142,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
 	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
 
-	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-	connect(find_replace_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
-	connect(find_history_wgt, &FindReplaceWidget::s_hideRequested, find_history_parent, &QWidget::hide);
+	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
+	connect(find_replace_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
+	connect(search_history_wgt, &SearchReplaceWidget::s_hideRequested, search_history_parent, &QWidget::hide);
 
 	connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
 		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
@@ -269,7 +269,7 @@ QString SQLExecutionWidget::getSQLCommand()
 void SQLExecutionWidget::enableCommandButtons()
 {
 	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
-	find_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
+	search_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
 	clear_btn->setEnabled(run_sql_tb->isEnabled());
 }
 
@@ -291,7 +291,7 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 		file_tb->setToolButtonStyle(style);
 		run_sql_tb->setToolButtonStyle(style);
 		clear_btn->setToolButtonStyle(style);
-		find_tb->setToolButtonStyle(style);
+		search_tb->setToolButtonStyle(style);
 		snippets_tb->setToolButtonStyle(style);
 		export_tb->setToolButtonStyle(style);
 		output_tb->setToolButtonStyle(style);
@@ -607,14 +607,14 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	run_sql_tb->setVisible(!value);
 	stop_tb->setVisible(value);
 	file_tb->setEnabled(!value);
-	find_tb->setEnabled(!value);
+	search_tb->setEnabled(!value);
 	clear_btn->setEnabled(!value);
 	snippets_tb->setEnabled(!value);
 	export_tb->setEnabled(!value);
 	output_tb->setEnabled(!value);
 	sql_cmd_txt->setEnabled(!value);
 	cmd_history_parent->setEnabled(!value);
-	find_history_parent->setEnabled(!value);
+	search_history_parent->setEnabled(!value);
 	filter_tb->setEnabled(!value);
 
 	if(value)
@@ -1093,8 +1093,8 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 		snippets_tb->setEnabled(enable);
 		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
-		find_tb->setEnabled(enable);
-		find_wgt_parent->setEnabled(enable);
+		search_tb->setEnabled(enable);
+		search_wgt_parent->setEnabled(enable);
 	}
 	catch(Exception &e)
 	{
@@ -1111,7 +1111,7 @@ void SQLExecutionWidget::showHistoryContextMenu()
 			*action_toggle_find = nullptr,
 			*exec_act = nullptr;
 
-	if(!find_history_parent->isVisible())
+	if(!search_history_parent->isVisible())
 		action_toggle_find = new QAction(QPixmap(GuiUtilsNs::getIconPath("findtext")), tr("Find in history"), ctx_menu);
 	else
 		action_toggle_find = new QAction(tr("Hide find tool"), ctx_menu);
@@ -1148,7 +1148,7 @@ void SQLExecutionWidget::showHistoryContextMenu()
 		cmd_history_hl->rehighlight();
 	}
 	else if(exec_act == action_toggle_find)
-		find_history_parent->setVisible(!find_history_parent->isVisible());
+		search_history_parent->setVisible(!search_history_parent->isVisible());
 
 	delete ctx_menu;
 }

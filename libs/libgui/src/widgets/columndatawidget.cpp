@@ -24,6 +24,8 @@ ColumnDataWidget::ColumnDataWidget(bool use_syntax_hl, const QString &hl_conf, Q
 {
 	QVBoxLayout *vbox = new QVBoxLayout(this);
 
+	setWindowTitle(tr("Edit column data"));
+
 	value_txt = new NumberedTextEditor(this, true);
 	value_txt->installEventFilter(this);
 

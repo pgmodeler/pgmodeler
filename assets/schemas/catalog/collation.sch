@@ -57,7 +57,7 @@
 			[ CASE
 				WHEN collprovider = 'i' THEN 'icu'
 				WHEN collprovider = 'c' THEN 'libc'
-				ELSE ''
+				ELSE 'default'
 			END AS provider, ]
 		%else
 			[ '' AS provider, ]
@@ -67,6 +67,12 @@
 			[ collisdeterministic AS deterministic_bool, ]
 		%else
 			[ false AS deterministic_bool, ]
+		%end
+
+		%if ({pgsql-ver} >=f "15.0") %then
+			[ colliculocale AS locale, ]
+		%else
+			[ null AS locale, ]
 		%end
 
 		({comment}) [ AS comment ]
