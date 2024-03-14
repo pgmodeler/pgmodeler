@@ -1524,7 +1524,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		idx = 0;
 		while(itr != itr_end)
 		{
-						rel = dynamic_cast<BaseRelationship *>(*itr);
+			rel = dynamic_cast<BaseRelationship *>(*itr);
 
 			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
 					(rel->getTable(BaseRelationship::SrcTable)==table ||
@@ -2101,8 +2101,8 @@ void DatabaseModel::storeSpecialObjectsXML()
 							 relationship added column and the constraint itself was not added by
 							 relationship (created manually by the user) */
 						found=(!constr->isAddedByRelationship() &&
-									 constr->isReferRelationshipAddedColumn() &&
-									 constr->getConstraintType()!=ConstraintType::PrimaryKey);
+									 constr->isReferRelationshipAddedColumns() &&
+									 constr->getConstraintType() != ConstraintType::PrimaryKey);
 
 						//When found some special object, stores is xml definition
 						if(found)
@@ -6767,7 +6767,6 @@ Collation *DatabaseModel::createCollation()
 {
 	Collation *collation=nullptr;
 	BaseObject *copy_coll=nullptr;
-	EncodingType encoding;
 	attribs_map attribs;
 
 	try
@@ -7885,7 +7884,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 		configuration, foreign keys are discarded in this iteration because on the end of the method
 		they have the definition generated */
 			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
-					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumn())))
+					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
 				objects_map[constr->getObjectId()]=constr;
 			else if(constr->getConstraintType()==ConstraintType::ForeignKey && !constr->isAddedByLinking())
 				fkeys.push_back(constr);
@@ -8071,7 +8070,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 						 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
 							(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 							 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
-						   constr->isReferRelationshipAddedColumn()))))
+						   constr->isReferRelationshipAddedColumns()))))
 				{
 					__getObjectDependencies(child, objs);
 
@@ -8158,7 +8157,7 @@ std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bo
 							 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
 								(constr->getConstraintType()!=ConstraintType::ForeignKey &&
 								 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
-							   constr->isReferRelationshipAddedColumn()))))
+							   constr->isReferRelationshipAddedColumns()))))
 					{
 						objs_aux.push_back(child);
 					}

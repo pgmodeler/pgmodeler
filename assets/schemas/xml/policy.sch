@@ -14,7 +14,7 @@
 
 %if {protected} %then [ protected=] "true" %end
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
-> $br
+> 
 
 %if {comment} %then {comment} %end
 %if {appended-sql} %then {appended-sql} %end
@@ -32,6 +32,4 @@
 	$br $tb [<expression type="check-exp">] $sp <! $ob CDATA $ob {check-exp} $cb $cb > $sp </expression>
 %end
 
-$br
-
-</policy>
+$br </policy> $br $br

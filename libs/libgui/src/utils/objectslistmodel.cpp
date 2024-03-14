@@ -45,7 +45,7 @@ ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, co
 
 ObjectsListModel::ObjectsListModel(const std::vector<attribs_map> &attr_list, QObject* parent) : QAbstractTableModel(parent)
 {
-	col_count = 5;
+	col_count = 6;
 	row_count = attr_list.size();
 	insertColumns(0, col_count);
 	insertRows(0, row_count);
@@ -281,7 +281,9 @@ void ObjectsListModel::fillModel(const std::vector<attribs_map> &attr_list)
 	ObjectType obj_type, parent_type;
 	auto [ h_margin, h_margin_no_ico, v_margin ] = getIndexMargins();
 
-	configureHeader();
+	/* When configuring a list of object attributes the extra column (sixth one)
+	 * will always be the signature */
+	configureHeader(Attributes::Signature);
 
 	for(auto &attribs : attr_list)
 	{
@@ -325,6 +327,12 @@ void ObjectsListModel::fillModel(const std::vector<attribs_map> &attr_list)
 		item_dt.obj_type = parent_type;
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 		item_dt.italic = true;
+		item_data.append(item_dt);
+
+		//Sixth column: Object signature
+		item_dt.clear();
+		item_dt.text = attribs.at(Attributes::Signature);
+		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin, v_margin);
 		item_data.append(item_dt);
 	}
 }

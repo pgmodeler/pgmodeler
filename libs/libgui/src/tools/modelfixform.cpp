@@ -36,6 +36,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 
 	input_file_sel = new FileSelectorWidget(this);
+	input_file_sel->setObjectName("input_file_sel");
 	input_file_sel->setFileMustExist(true);
 	input_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	input_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
@@ -45,6 +46,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	model_fix_grid->addWidget(input_file_sel, 1, 2);
 
 	output_file_sel = new FileSelectorWidget(this);
+	output_file_sel->setObjectName("output_file_sel");
 	output_file_sel->setNameFilters({tr("Database model (*%1)").arg(GlobalAttributes::DbModelExt), tr("All files (*.*)")});
 	output_file_sel->setDefaultSuffix(GlobalAttributes::DbModelExt);
 	output_file_sel->setAcceptMode(QFileDialog::AcceptSave);
@@ -54,6 +56,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	model_fix_grid->addWidget(output_file_sel, 2, 2);
 
 	pgmodeler_cli_sel = new FileSelectorWidget(this);
+	pgmodeler_cli_sel->setObjectName("pgmodeler_cli_sel");
 	pgmodeler_cli_sel->setFileMustExist(true);
 	pgmodeler_cli_sel->setNameFilters({tr("pgModeler command line tool (%1)").arg(PgModelerCli)});
 	pgmodeler_cli_sel->setAcceptMode(QFileDialog::AcceptOpen);
@@ -89,6 +92,11 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	});
 
 	resetFixForm();
+}
+
+void ModelFixForm::setExtraCliArgs(const QStringList &extra_args)
+{
+	extra_cli_args = extra_args;
 }
 
 void ModelFixForm::resetFixForm()
@@ -153,6 +161,7 @@ void ModelFixForm::fixModel()
 	args.append(input_file_sel->getSelectedFile());
 	args.append("--output");
 	args.append(output_file_sel->getSelectedFile());
+	args.append(extra_cli_args);
 
 	output_txt->clear();
 	pgmodeler_cli_proc.blockSignals(false);

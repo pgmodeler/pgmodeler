@@ -24,19 +24,27 @@
 #include "defaultlanguages.h"
 #include "settings/connectionsconfigwidget.h"
 #include "objectslistmodel.h"
+#include "schemaview.h"
 
 bool DatabaseImportForm::low_verbosity = false;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
+	std::random_device rand_seed;
+	rand_num_engine.seed(rand_seed());
+
 	setupUi(this);
 
 	model_wgt=nullptr;
 	create_model=true;
+	scene_size_incr = 0;
+
+	pg_version_alert_frm->setVisible(false);
 
 	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
 	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
-	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 	vbox->addWidget(objs_filter_wgt);
 
 	htmlitem_del=new HtmlItemDelegate(this);
@@ -56,6 +64,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 	connect(database_cmb, &QComboBox::activated, this, [this](){
 		__trycatch( listObjects(); )
+	});
+
+	connect(database_cmb, &QComboBox::currentIndexChanged, this, [this](int idx){
+		enableImportControls(idx > 0);
 	});
 
 	connect(import_sys_objs_chk, &QCheckBox::clicked, this, [this](){
@@ -105,23 +117,17 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	});
 
 	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
-		create_model=!checked;
+		create_model = !checked;
+		rand_obj_pos_chk->setEnabled(checked);
+
+		if(!checked)
+			rand_obj_pos_chk->setChecked(false);
 	});
 
-	connect(database_cmb, &QComboBox::currentTextChanged, this, [this]() {
-		bool enable = database_cmb->currentIndex() > 0;
-
-		if(database_cmb->currentIndex()==0)
-		{
-			db_objects_tw->clear();
-			GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
-		}
-
-		import_btn->setEnabled(enable);
-		objs_parent_wgt->setEnabled(enable);
-		filtered_objs_view->setEnabled(enable);
+	connect(rand_obj_pos_chk, &QCheckBox::toggled, this, [this](bool checked){
+		scattering_lvl_lbl->setEnabled(checked);
+		scattering_lvl_cmb->setEnabled(checked);
 	});
-
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in reverse engineering due to the object count limit."
@@ -202,7 +208,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		obj_attrs = import_hlp.getObjects(types);
 		GuiUtilsNs::populateObjectsTable(flt_objects_view, obj_attrs);
-		flt_objects_view->setEnabled(flt_objects_view->model()->rowCount() > 0);
+		flt_objects_view->setEnabled(flt_objects_view->model() && flt_objects_view->model()->rowCount() > 0);
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -262,6 +268,38 @@ void DatabaseImportForm::setItemsCheckState()
 	import_btn->setEnabled(chk_state == Qt::Checked);
 }
 
+void DatabaseImportForm::setObjectPosition(BaseGraphicObject *graph_obj)
+{
+	if(rand_obj_pos_chk->isChecked() && BaseTable::isBaseTable(graph_obj->getObjectType()))
+	{
+		QRectF rect;
+		double factor = 1, scatter_lvl = 0.20;
+
+		if(scattering_lvl_cmb->currentIndex() == 1)
+			scatter_lvl = 0.50;
+		else if(scattering_lvl_cmb->currentIndex() == 2)
+			scatter_lvl = 0.80;
+
+		rect = model_wgt->getObjectsScene()->sceneRect();
+		rect.setHeight(rect.height() + 50);
+
+		factor += scene_size_incr;
+		scene_size_incr += (0.0125 * (scattering_lvl_cmb->currentIndex() + 1));
+
+		BaseObjectView *obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+
+		std::uniform_int_distribution<int> dist_x(rect.left(), rect.right() + (rect.width() * scatter_lvl) * factor),
+				dist_y(rect.bottom(), rect.bottom() + (rect.height() * scatter_lvl) * factor);
+
+		/* The new position's X coordinate will be between the rectangle's left and right with an additional value
+		 * to allow the canvas to grow horizontally.
+		 *
+		 * The new position's Y coordinate will receive a value that start below the canvas rectangle's bottom
+		 * to grow vertically without colliding with the existing objects. */
+		obj_view->setPos(QPointF(dist_x(rand_num_engine), dist_y(rand_num_engine)));
+	}
+}
+
 void DatabaseImportForm::importDatabase()
 {
 	try
@@ -310,6 +348,9 @@ void DatabaseImportForm::importDatabase()
 		import_btn->setEnabled(false);
 		database_gb->setEnabled(false);
 		options_tbw->setEnabled(false);
+
+		if(!create_model && rand_obj_pos_chk->isChecked())
+			connect(model_wgt, &ModelWidget::s_objectAdded, this, &DatabaseImportForm::setObjectPosition);
 	}
 	catch(Exception &e)
 	{
@@ -474,17 +515,30 @@ Do you really want to proceed?"),
 			}
 		}
 
-		import_btn->setEnabled(hasObjectsToImport());
-		buttons_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0);
+		enableImportControls(true);
 	}
 	catch(Exception &e)
 	{
-		import_btn->setEnabled(false);
-		objs_parent_wgt->setEnabled(false);
-		buttons_wgt->setEnabled(false);
-		filtered_objs_view->setEnabled(false);
+		db_objects_tw->clear();
+		enableImportControls(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void DatabaseImportForm::enableImportControls(bool enable)
+{
+	enable = enable && db_objects_tw->topLevelItemCount() > 0;
+
+	if(database_cmb->currentIndex() <= 0)
+	{
+		db_objects_tw->clear();
+		GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
+	}
+
+	database_cmb->setEnabled(database_cmb->count() > 1);
+	import_btn->setEnabled(hasObjectsToImport());
+	buttons_wgt->setEnabled(enable);
+	objs_parent_wgt->setEnabled(enable);
 }
 
 void DatabaseImportForm::listDatabases()
@@ -493,6 +547,7 @@ void DatabaseImportForm::listDatabases()
 	{
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
+		db_objects_tw->clear();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
@@ -507,21 +562,31 @@ void DatabaseImportForm::listDatabases()
 			//List the available databases using the selected connection
 			import_helper->setConnection(*conn);
 			DatabaseImportForm::listDatabases(*import_helper, database_cmb);
+
+			pg_version_alert_frm->setVisible(
+					Connection::isDbVersionIgnored() &&
+					!import_helper->getCatalog().isServerSupported());
+
+			if(conn->isAutoBrowseDB())
+			{
+				database_cmb->blockSignals(true);
+				database_cmb->setCurrentText(conn->getConnectionParam(Connection::ParamDbName));
+				listObjects();
+				database_cmb->blockSignals(false);
+			}
 		}
 		else
 		{
 			database_cmb->clear();
-			buttons_wgt->setEnabled(false);
+			pg_version_alert_frm->setVisible(false);
 		}
 
-		db_objects_tw->clear();
-		database_cmb->setEnabled(database_cmb->count() > 1);
+		enableImportControls(true);
 	}
 	catch(Exception &e)
 	{
-		db_objects_tw->clear();
 		database_cmb->clear();
-		database_cmb->setEnabled(false);
+		enableImportControls(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -545,9 +610,6 @@ void DatabaseImportForm::captureThreadError(Exception e)
 {
 	QPixmap ico;
 	QTreeWidgetItem *item=nullptr;
-
-	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid();
 
 	destroyModelWidget();
 	finishImport(tr("Importing process aborted!"));
@@ -664,9 +726,6 @@ void DatabaseImportForm::handleImportCanceled()
 	QPixmap ico=QPixmap(GuiUtilsNs::getIconPath("alert"));
 	QString msg=tr("Importing process canceled by user!");
 
-	if(!create_model)
-		model_wgt->rearrangeSchemasInGrid();
-
 	destroyModelWidget();
 	finishImport(msg);
 	ico_lbl->setPixmap(ico);
@@ -682,7 +741,6 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
-	model_wgt->rearrangeSchemasInGrid();
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
 	ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("info")));
@@ -712,17 +770,37 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		model_wgt->setUpdatesEnabled(true);
 
 		if(!create_model)
+		{
 			model_wgt->getOperationList()->removeOperations();
+			model_wgt->getObjectsScene()->adjustSceneRect(true);
+		}
+		else
+			model_wgt->rearrangeSchemasInGrid();
 	}
+
+	if(!create_model && rand_obj_pos_chk->isChecked())
+		disconnect(model_wgt, nullptr, this, nullptr);
 }
 
-void DatabaseImportForm::showEvent(QShowEvent *)
+void DatabaseImportForm::showEvent(QShowEvent *event)
 {
+	if(event->spontaneous())
+		return;
+
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpImport);
 	createThread();
 
-	if(connections_cmb->currentIndex() > 0)
-		listDatabases();
+	/* In case the current connection is the default for import
+	 * and the auto browse flag is set for the connected database */
+	try
+	{
+		if(connections_cmb->currentIndex() > 0)
+			listDatabases();
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }
 
 ModelWidget *DatabaseImportForm::getModelWidget()
@@ -949,6 +1027,7 @@ std::vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImp
 				group=new QTreeWidgetItem(root);
 				group->setIcon(0, QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(grp_type))));
 				group->setFont(0, grp_fnt);
+				group->setText(0, BaseObject::getTypeName(grp_type) + " (0)");
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
 				group->setData(ObjectId, Qt::UserRole, 0);

@@ -105,6 +105,11 @@ class __libcore Constraint: public TableObject{
 
 		void setDeclInTableAttribute();
 
+		/*! \brief Returns the list of all columns that is created by relationships.
+		 * The parameter first_col_only will return as soon as the first column added
+		 * by a relationship is found. */
+		std::vector<Column *> getRelationshipAddedColumns(bool first_col_only);
+
 	protected:
 		virtual void configureSearchAttributes() override;
 
@@ -212,16 +217,16 @@ class __libcore Constraint: public TableObject{
 		bool isNoInherit();
 
 		/*! \brief Returns whether the constraint references columns added
-		 by relationship. This method is used as auxiliary
-		 to control which constraints reference columns added by the
-		 relationship in order to avoid referece breaking due constants
-		 connections and disconnections of relationships */
-		bool isReferRelationshipAddedColumn();
+		 * by relationship. This method is used as auxiliary to control which
+		 * constraints reference columns added by the relationship in order to
+		 * avoid referece breaking due constants connections and disconnections
+		 * of relationships */
+		bool isReferRelationshipAddedColumns(const std::vector<Column *> &cols = {});
 
 		/*! \brief Returns the list of all columns that is created by relationships.
-	This method is slower than isReferRelationshipAddedColumn() so it's not
-	recommended to use it only check if the object is referencing columns
-	added by relationship */
+		 * this method is slower than isReferRelationshipAddedColumn() so it's not
+		 * recommended to use it only to check if the object is referencing columns
+		 * added by relationship. */
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the matching type adopted by the constraint

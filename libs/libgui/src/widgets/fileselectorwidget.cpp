@@ -235,9 +235,14 @@ void FileSelectorWidget::openFileDialog()
 	file_dlg.selectFile(filename_edt->text());
 	file_dlg.setFileMode(file_mode);
 	file_dlg.setAcceptMode(accept_mode);
-	file_dlg.setNameFilters(name_filters);
-	file_dlg.setWindowTitle(file_dlg_title);
-	file_dlg.setMimeTypeFilters(mime_filters);
+
+	if(!mime_filters.isEmpty())
+		file_dlg.setMimeTypeFilters(mime_filters);
+
+	if(!name_filters.isEmpty())
+		file_dlg.setNameFilters(name_filters);
+
+	file_dlg.setWindowTitle(file_dlg_title);	
 	file_dlg.setDefaultSuffix(def_suffix);
 
 	GuiUtilsNs::restoreFileDialogState(&file_dlg);

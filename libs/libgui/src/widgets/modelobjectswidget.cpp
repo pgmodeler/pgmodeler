@@ -93,6 +93,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	}
 	else
 	{
+		model_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																				GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -611,7 +613,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 		QString str_aux;
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font;
-		std::vector<BaseObject *> ref_list, /* tree_state, */ obj_list;
+		std::vector<BaseObject *> obj_list;
 		std::vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
 		int tree_v_pos = 0;
 		QStringList tree_state;

@@ -27,8 +27,8 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	def_editor_pal = editor_txt->palette();
 
 	editor_hl = new SyntaxHighlighter(editor_txt);
-	find_wgt = new FindReplaceWidget(editor_txt, find_parent);
-	find_parent->setVisible(false);
+	search_wgt = new SearchReplaceWidget(editor_txt, search_parent);
+	search_parent->setVisible(false);
 
 	code_compl_wgt = new CodeCompletionWidget(editor_txt);
 	code_compl_wgt->configureCompletion(nullptr, editor_hl);
@@ -44,9 +44,9 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	for(auto &itr : snippets)
 		code_compl_wgt->insertCustomItem(itr.first, itr.second, QPixmap(GuiUtilsNs::getIconPath("codesnippet")));
 
-	vbox = new QVBoxLayout(find_parent);
+	vbox = new QVBoxLayout(search_parent);
 	vbox->setContentsMargins(0, 0, 0, GuiUtilsNs::LtMargin);
-	vbox->addWidget(find_wgt);
+	vbox->addWidget(search_wgt);
 
 	indent_tb->setMenu(&indent_opts_menu);
 	act_break_inline_ifs = indent_opts_menu.addAction(tr("Break inline ifs"));
@@ -54,13 +54,13 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setChecked(false);
 
 	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
-	connect(find_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
 	connect(indent_tb, &QToolButton::clicked, this, &SourceEditorWidget::applyIndentation);
 	connect(editor_txt, &NumberedTextEditor::modificationChanged, this, &SourceEditorWidget::restoreEditorPalette);
 	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
 	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
-	connect(find_tb, &QToolButton::toggled, find_parent, &QWidget::setVisible);
+	connect(search_tb, &QToolButton::toggled, search_parent, &QWidget::setVisible);
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)

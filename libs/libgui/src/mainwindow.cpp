@@ -286,7 +286,7 @@ void MainWindow::configureMenusActionsWidgets()
 	models_tbw->setVisible(false);
 	model_objs_parent->setVisible(false);
 	oper_list_parent->setVisible(false);
-	obj_finder_parent->setVisible(false);
+	obj_search_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
@@ -313,7 +313,7 @@ void MainWindow::configureMenusActionsWidgets()
 	hlayout=new QHBoxLayout;
 	hlayout->setContentsMargins(0,0,0,0);
 	hlayout->addWidget(obj_finder_wgt);
-	obj_finder_parent->setLayout(hlayout);
+	obj_search_parent->setLayout(hlayout);
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -485,7 +485,7 @@ void MainWindow::createMainWidgets()
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
-		obj_finder_wgt=new ObjectFinderWidget;
+		obj_finder_wgt=new ObjectSearchWidget;
 	}
 	catch(Exception &e)
 	{
@@ -675,11 +675,11 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, validation_btn, &QToolButton::toggle);
 	connect(model_valid_wgt, &ModelValidationWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
-	connect(find_obj_btn, &QToolButton::toggled, obj_finder_parent, &QWidget::setVisible);
-	connect(find_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectFinderWidget::setVisible);
-	connect(find_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
-	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, find_obj_btn, &QToolButton::toggle);
-	connect(obj_finder_wgt, &ObjectFinderWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
+	connect(search_obj_btn, &QToolButton::toggled, obj_search_parent, &QWidget::setVisible);
+	connect(search_obj_btn, &QToolButton::toggled, obj_finder_wgt, &ObjectSearchWidget::setVisible);
+	connect(search_obj_btn, &QToolButton::toggled, this, &MainWindow::showBottomWidgetsBar);
+	connect(obj_finder_wgt, &ObjectSearchWidget::s_hideRequested, search_obj_btn, &QToolButton::toggle);
+	connect(obj_finder_wgt, &ObjectSearchWidget::s_hideRequested, this, &MainWindow::showBottomWidgetsBar);
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this->main_menu_mb, &QMenu::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_acts_tb, &QToolBar::setDisabled);
@@ -687,7 +687,7 @@ void MainWindow::connectSignalsToSlots()
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, oper_list_wgt, &OperationListWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, model_objs_wgt, &ModelObjectsWidget::setDisabled);
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectFinderWidget::setDisabled);
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, obj_finder_wgt, &ObjectSearchWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, models_tbw, &QTabWidget::setDisabled);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, this, &MainWindow::stopTimers);
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationInProgress, layers_btn, &QToolButton::setDisabled);
@@ -883,6 +883,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_sel->setSelectedFile(fi.absoluteFilePath());
+		model_fix_form.input_file_sel->setReadOnly(true);
 		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + "_fixed." + fi.suffix());
 	}
 
@@ -2041,8 +2042,6 @@ void MainWindow::loadModel()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2085,12 +2084,10 @@ void MainWindow::loadModels(const QStringList &files)
 	{
 		qApp->restoreOverrideCursor();
 
-		if( files[i].endsWith(GlobalAttributes::DbModelExt))
+		if(files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
 		else
 		{
-			//Messagebox msgbox;
-			//msgbox.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -2102,12 +2099,12 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 
 	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
 												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 tr("Could not load the database model file `%1'! Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
 							 tr("Fix model"), tr("Cancel"), "",
 							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.result() == QDialog::Accepted)
 		fixModel(filename);
 }
 

@@ -681,7 +681,7 @@ void DatabaseImportHelper::importDatabase()
 					while(itr!=itr_end)
 					{
 						rel=dynamic_cast<BaseRelationship *>(*itr);
-						//rel->setPoints({});
+
 						rel->setCustomColor(QColor(dist(rand_num_engine),
 																			 dist(rand_num_engine),
 																			 dist(rand_num_engine)));
@@ -697,11 +697,13 @@ void DatabaseImportHelper::importDatabase()
 	}
 	catch(Exception &e)
 	{
+		BaseGraphicObject::setUpdatesEnabled(true);
+		dbmodel->setObjectsModified();
 		resetImportParameters();
 
 		/* When running in a separated thread (other than the main application thread)
-		redirects the error in form of signal */
-		if(this->thread() && this->thread()!=qApp->thread())
+		 * redirects the error in form of signal */
+		if(this->thread() && this->thread() != qApp->thread())
 			emit s_importAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
 		else
 			//Redirects any error to the user
@@ -879,9 +881,6 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 		{
 			for(auto &itr : extra_attribs)
 				obj_attr[itr.first] = itr.second;
-
-
-
 
 			/* If the attributes of the dependency exists but it was not created yet,
 				 pgModeler will create it and it's dependencies recursively */

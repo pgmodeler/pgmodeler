@@ -203,11 +203,14 @@ class __libconnector Connection {
 		//! \brief Request the cancel of the running commands on a opened connection
 		void requestCancel();
 
+		//! \brief Returns true when the server version is supported
+		bool isServerSupported();
+
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);
 
 		//! \brief Returns the full parameter map
-		attribs_map getConnectionParams(void) const;
+		attribs_map getConnectionParams() const;
 
 		//! \brief Returns a map containing some server's info
 		attribs_map getServerInfo();

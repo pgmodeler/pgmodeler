@@ -410,7 +410,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		void s_objectsMoved(bool end_moviment);
 
 		//! \brief Signal emitted when a object is modified on scene
-		void s_objectModified(BaseGraphicObject *objeto);
+		void s_objectModified(BaseGraphicObject *object);
 
 		//! \brief Signal emitted when the user toggles a table's collapse mode in the scene
 		void s_collapseModeChanged();
@@ -462,6 +462,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		friend class ModelWidget;
 		friend class PgModelerCliApp;
+		friend class DatabaseImportForm;
 };
 
 #endif

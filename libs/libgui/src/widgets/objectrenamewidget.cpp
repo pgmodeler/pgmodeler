@@ -152,6 +152,19 @@ int ObjectRenameWidget::exec()
 	return QDialog::Rejected;
 }
 
+void ObjectRenameWidget::showEvent(QShowEvent *event)
+{
+	if(!event->spontaneous())
+	{
+		new_name_edt->setFocus();
+
+		// Workaround: Forcing the text deselection when the new input is focused
+		QTimer::singleShot(50, this, [this](){
+			new_name_edt->deselect();
+		});
+	}
+}
+
 void ObjectRenameWidget::hideEvent(QHideEvent *)
 {
 	op_list = nullptr;

@@ -564,20 +564,7 @@ void ModelValidationWidget::configureValidation()
 
 void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 {
-	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
-
-	if(event->size().width() < this->baseSize().width())
-		style=Qt::ToolButtonIconOnly;
-
-	if(validate_btn->toolButtonStyle()!=style)
-	{
-		validate_btn->setToolButtonStyle(style);
-		fix_btn->setToolButtonStyle(style);
-		output_btn->setToolButtonStyle(style);
-		cancel_btn->setToolButtonStyle(style);
-		options_btn->setToolButtonStyle(style);
-		swap_ids_btn->setToolButtonStyle(style);
-	}
+	GuiUtilsNs::resizeChildToolButtons(this, event->size());
 }
 
 void ModelValidationWidget::validateRelationships()

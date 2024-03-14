@@ -277,11 +277,12 @@ void Connection::connect()
 		//Enable the notice/warnings in the connection by pushing them into the list of generated notices
 		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
 
-	// Aborts the connection is PostgreSQL 9x is detected
-	QString pgver = getPgSQLVersion(true);
-	if(!ignore_db_version && pgver.toFloat() < PgSqlVersions::PgSqlVersion100.toFloat())
+	// Aborts the connection if an unsupported version of PostgreSQL is detected
+	if(!ignore_db_version && !isServerSupported())
 	{
+		QString pgver = getPgSQLVersion(true);
 		close();
+
 		throw Exception(Exception::getErrorMessage(ErrorCode::UnsupportedPGVersion).arg(pgver),
 										ErrorCode::UnsupportedPGVersion,
 										__PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -579,5 +580,18 @@ void Connection::requestCancel()
 		char errbuf[256] = "";
 		PQcancel(cancel, errbuf, 256);
 		PQfreeCancel(cancel);
+	}
+}
+
+bool Connection::isServerSupported()
+{
+	try
+	{
+		QString version = getPgSQLVersion(true);
+		return version.toDouble() >= PgSqlVersions::MinimumVersion.toDouble();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }

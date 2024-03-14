@@ -32,6 +32,9 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	setupUi(this);
 	setWindowFlags(flags);
 
+	src_server_supported = server_supported = true;
+	pg_version_alert_frm->setVisible(false);
+
 	dates_wgt->setVisible(false);
 	start_date_dt->setDateTime(QDateTime::currentDateTime());
 	end_date_dt->setDateTime(QDateTime::currentDateTime());
@@ -49,15 +52,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-	find_sql_wgt = new FindReplaceWidget(sqlcode_txt, find_wgt_parent);
-	find_wgt_parent->setVisible(false);
+	search_sql_wgt = new SearchReplaceWidget(sqlcode_txt, search_wgt_parent);
+	search_wgt_parent->setVisible(false);
 
-	vbox = new QVBoxLayout(find_wgt_parent);
-	vbox->addWidget(find_sql_wgt);
+	vbox = new QVBoxLayout(search_wgt_parent);
+	vbox->addWidget(search_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
-	connect(find_tb, &QToolButton::toggled, find_wgt_parent, &QWidget::setVisible);
-	connect(find_sql_wgt, &FindReplaceWidget::s_hideRequested, find_tb, &QToolButton::toggle);
+	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
+	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 
 	file_sel = new FileSelectorWidget(this);
 	file_sel->setAllowFilenameInput(true);
@@ -266,8 +269,11 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 		event_loop.quit();
 }
 
-void ModelDatabaseDiffForm::showEvent(QShowEvent *)
+void ModelDatabaseDiffForm::showEvent(QShowEvent *event)
 {
+	if(event->spontaneous())
+		return;
+
 	//Doing the form configuration in the first show in order to populate the connections combo
 	if(!isThreadsRunning() && connections_cmb->count() == 0)
 	{
@@ -432,6 +438,7 @@ void ModelDatabaseDiffForm::listDatabases()
 	QComboBox *conn_cmb = (sender() == src_connections_cmb ? src_connections_cmb : connections_cmb),
 			*db_cmb = (conn_cmb == src_connections_cmb ? src_database_cmb : database_cmb);
 	QLabel *db_lbl = (conn_cmb == src_connections_cmb ? src_database_lbl : database_lbl);
+	bool *srv_supp = (conn_cmb == src_connections_cmb ? &src_server_supported : &server_supported);
 
 	try
 	{
@@ -451,12 +458,21 @@ void ModelDatabaseDiffForm::listDatabases()
 			DatabaseImportHelper imp_helper;
 			imp_helper.setConnection(*conn);
 			DatabaseImportForm::listDatabases(imp_helper, db_cmb);
+			(*srv_supp) = imp_helper.getCatalog().isServerSupported();
+
+			if(conn->isAutoBrowseDB())
+				db_cmb->setCurrentText(conn->getConnectionParam(Connection::ParamDbName));
 		}
 		else
+		{
+			(*srv_supp) = true;
 			db_cmb->clear();
+		}
 
 		db_cmb->setEnabled(db_cmb->count() > 0);
 		db_lbl->setEnabled(db_cmb->isEnabled());
+		pg_version_alert_frm->setVisible(Connection::isDbVersionIgnored() &&
+																		 (!src_server_supported || !server_supported));
 	}
 	catch(Exception &e)
 	{
@@ -1162,8 +1178,8 @@ void ModelDatabaseDiffForm::selectPreset()
 	src_model_rb->setChecked(src_model_rb->isEnabled() && conf[Attributes::CurrentModel] == Attributes::True);
 
 	src_database_rb->setChecked(!conf[Attributes::InputDatabase].isEmpty());
-	src_connections_cmb->setCurrentIndex(0);
-	src_connections_cmb->activated(0);
+	//src_connections_cmb->setCurrentIndex(0);
+	//src_connections_cmb->activated(0);
 	db_name = conf[Attributes::InputDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1179,8 +1195,8 @@ void ModelDatabaseDiffForm::selectPreset()
 	}
 
 	// Selecting the database to compare
-	connections_cmb->setCurrentIndex(0);
-	connections_cmb->activated(0);
+	//connections_cmb->setCurrentIndex(0);
+	//connections_cmb->activated(0);
 	db_name = conf[Attributes::CompareToDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1373,9 +1389,9 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 														 pd_filter_wgt->isMatchSignature()) ?
 																Attributes::Signature : Attributes::Name;
 
-			std::vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
+			std::vector<BaseObject *> flt_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
 
-			GuiUtilsNs::populateObjectsTable(filtered_objs_view, filterd_objs, search_attr);
+			GuiUtilsNs::populateObjectsTable(filtered_objs_view, flt_objs, search_attr);
 			getFilteredObjects(filtered_objs);
 		}
 		else if(src_connections_cmb->currentIndex() > 0 &&
@@ -1423,7 +1439,7 @@ void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &objects)
 {
 	QAbstractItemModel *model = filtered_objs_view->model();
-	int row_cnt = model->rowCount();
+	int row_cnt = model ? model->rowCount() : 0;
 	QModelIndex index;
 	BaseObject *obj = nullptr;
 
@@ -1440,27 +1456,3 @@ void ModelDatabaseDiffForm::getFilteredObjects(std::vector<BaseObject *> &object
 		objects.push_back(obj);
 	}
 }
-
-/*void ModelDatabaseDiffForm::getFilteredObjects(std::map<ObjectType, std::vector<unsigned>> &obj_oids)
-{
-	ObjectType obj_type;
-	QAbstractItemModel *model = filtered_objs_view->model();
-	int row_cnt = model->rowCount(); //filtered_objs_tbw->rowCount();
-	//QTableWidgetItem *oid_item = nullptr, *type_item  = nullptr;
-	QModelIndex oid_index, type_index, index;
-	BaseObject *object = nullptr;
-
-	obj_oids.clear();
-
-	for(int row = 0; row < row_cnt; row++)
-	{
-		//oid_item = filtered_objs_tbw->item(row, 0);
-		//type_item = filtered_objs_tbw->item(row, 2);
-		//oid_index = model->item(row, ObjectsListModel::ObjName);
-		//type_index = model->item(row, ObjectsListModel::ObjType);
-		index =
-		object = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
-		obj_type = static_cast<ObjectType>(type_index->data(Qt::UserRole).toUInt());
-		obj_oids[obj_type].push_back(oid_index->data(Qt::UserRole).toUInt());
-	}
-}*/

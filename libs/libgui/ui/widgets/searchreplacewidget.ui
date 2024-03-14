@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FindReplaceWidget</class>
- <widget class="QWidget" name="FindReplaceWidget">
+ <class>SearchReplaceWidget</class>
+ <widget class="QWidget" name="SearchReplaceWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>942</width>
+    <width>668</width>
     <height>70</height>
    </rect>
   </property>
@@ -36,7 +36,7 @@
     <number>5</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="find_lbl">
+    <widget class="QLabel" name="search_lbl">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -44,12 +44,12 @@
       </size>
      </property>
      <property name="text">
-      <string>Find:</string>
+      <string>Search:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="find_edt">
+    <widget class="QLineEdit" name="search_edt">
      <property name="clearButtonEnabled">
       <bool>true</bool>
      </property>
@@ -66,7 +66,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -106,7 +106,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -141,41 +141,150 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="case_sensitive_chk">
+      <widget class="QLabel" name="search_lbl_2">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Options:</string>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="indent">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="case_sensitive_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
         <string>Case sensitive</string>
        </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/resources.qrc">
+         <normaloff>:/icons/icons/casesensitive.png</normaloff>:/icons/icons/casesensitive.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>F3</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="regexp_chk">
+      <widget class="QToolButton" name="regexp_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
         <string>Regular expression</string>
        </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/resources.qrc">
+         <normaloff>:/icons/icons/regexp.png</normaloff>:/icons/icons/regexp.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>F3</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="all_words_chk">
+      <widget class="QToolButton" name="all_words_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
         <string>Whole words</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/resources.qrc">
+         <normaloff>:/icons/icons/wholeword.png</normaloff>:/icons/icons/wholeword.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>F3</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
@@ -186,7 +295,7 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>98</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
@@ -271,6 +380,12 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Replace one occurrence</string>
           </property>
@@ -293,11 +408,17 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
            <string>Replace all occurrences</string>
           </property>
           <property name="text">
-           <string>Replace All</string>
+           <string>Replace all</string>
           </property>
           <property name="iconSize">
            <size>
@@ -311,15 +432,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="replace_find_tb">
+         <widget class="QToolButton" name="replace_search_tb">
           <property name="enabled">
            <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="toolTip">
            <string>Replace the selection and find the next one</string>
           </property>
           <property name="text">
-           <string>Replace &amp;&amp; Find</string>
+           <string>Replace &amp;&amp; search</string>
           </property>
           <property name="iconSize">
            <size>
@@ -353,16 +480,13 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>find_edt</tabstop>
+  <tabstop>search_edt</tabstop>
   <tabstop>previous_tb</tabstop>
   <tabstop>next_tb</tabstop>
-  <tabstop>case_sensitive_chk</tabstop>
-  <tabstop>regexp_chk</tabstop>
-  <tabstop>all_words_chk</tabstop>
   <tabstop>replace_edt</tabstop>
   <tabstop>replace_tb</tabstop>
   <tabstop>replace_all_tb</tabstop>
-  <tabstop>replace_find_tb</tabstop>
+  <tabstop>replace_search_tb</tabstop>
   <tabstop>hide_tb</tabstop>
  </tabstops>
  <resources>

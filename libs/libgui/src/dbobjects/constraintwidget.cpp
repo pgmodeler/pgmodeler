@@ -229,7 +229,7 @@ void ConstraintWidget::applyConfiguration()
 
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
 		if(constr->getConstraintType()==ConstraintType::PrimaryKey &&
-				constr->isReferRelationshipAddedColumn())
+				constr->isReferRelationshipAddedColumns())
 			throw Exception(ErrorCode::UnsupportedPKColsAddedByRel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObjectWidget::applyConfiguration();

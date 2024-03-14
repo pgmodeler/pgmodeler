@@ -307,10 +307,10 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	unlogged_chk->setVisible(false);
 	enable_rls_chk->setVisible(false);
 	force_rls_chk->setVisible(false);
-	attributes_tbw->removeTab(3); //Removing the Index tab
-	attributes_tbw->removeTab(3); //Removing the Rule tab
-	attributes_tbw->removeTab(3); //Removing the Policies tab
-	attributes_tbw->removeTab(3); //Removing the Partition keys tab
+	attributes_tbw->removeTab(4); //Removing the Index tab
+	attributes_tbw->removeTab(4); //Removing the Rule tab
+	attributes_tbw->removeTab(4); //Removing the Policies tab
+	attributes_tbw->removeTab(4); //Removing the Partition keys tab
 	objects_tab_map[ObjectType::Column]->setHeaderVisible(0, false); //Hiding the "PK" checkbox on columns grid
 	server_sel->setModel(this->model);
 	server_sel->setSelectedObject(ftable->getForeignServer());
@@ -331,13 +331,9 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 		operation_count=op_list->getCurrentSize();
 
 		/* Listing all objects (column, constraint, trigger, index, rule) on the
-		respective table objects */
+		 * respective table objects */
 		for(auto &type : types)
-		{
 			listObjects(type);
-			/* objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
-																									(ObjectsTableWidget::UpdateButton)); */
-		}
 
 		//Listing the ancestor tables
 		count=table->getAncestorTableCount();
@@ -427,15 +423,15 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 
 void TableWidget::listObjects(ObjectType obj_type)
 {
-	ObjectsTableWidget *tab=nullptr;
+	ObjectsTableWidget *tab = nullptr;
 	PhysicalTable *table = nullptr;
 	std::vector<unsigned> pk_cols;
 
 	try
 	{
 		//Gets the object table related to the object type
-		tab=objects_tab_map[obj_type];
-		table=dynamic_cast<PhysicalTable *>(this->object);
+		tab = objects_tab_map[obj_type];
+		table = dynamic_cast<PhysicalTable *>(this->object);
 
 		tab->blockSignals(true);
 
@@ -452,11 +448,15 @@ void TableWidget::listObjects(ObjectType obj_type)
 		}
 
 		tab->removeRows();
+		std::vector<TableObject *> *list = table->getObjectList(obj_type);
 
-		for(auto &obj : *table->getObjectList(obj_type))
+		if(list)
 		{
-			tab->addRow();
-			showObjectData(obj, tab->getRowCount() - 1);
+			for(auto &obj : *list)
+			{
+				tab->addRow();
+				showObjectData(obj, tab->getRowCount() - 1);
+			}
 		}
 
 		// Restoring the check state of columns marked as primary key

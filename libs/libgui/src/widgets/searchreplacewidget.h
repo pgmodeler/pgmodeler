@@ -18,19 +18,19 @@
 
 /**
 \ingroup libgui
-\class FindReplaceWidget
+\class SearchReplaceWidget
 \brief Implements the operations to find and replace text on a QTextEdit
 */
 
-#ifndef FIND_REPLACE_WIDGET_H
-#define FIND_REPLACE_WIDGET_H
+#ifndef SEARCH_REPLACE_WIDGET_H
+#define SEARCH_REPLACE_WIDGET_H
 
 #include "guiglobal.h"
-#include "ui_findreplacewidget.h"
+#include "ui_searchreplacewidget.h"
 #include <QPlainTextEdit>
 #include <QTimer>
 
-class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
+class __libgui SearchReplaceWidget: public QWidget, public Ui::SearchReplaceWidget {
 	private:
 		Q_OBJECT
 		
@@ -38,10 +38,10 @@ class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		QPlainTextEdit *text_edt;
 		
 		//! \brief Find the text in a backward and/or cyclic way
-		bool findText(bool backward, bool cyclic);
+		bool searchText(bool backward, bool cyclic);
 		
 		//! \brief Find the text using the specified flags. The regexp param is ignored on Qt versions below 5.3
-		bool findText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
+		bool searchText(const QString &text, bool regexp, QTextDocument::FindFlags flags);
 		
 		void showEvent(QShowEvent *);
 
@@ -55,7 +55,7 @@ class __libgui FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
+		SearchReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		
 	public slots:
 		void replaceText();

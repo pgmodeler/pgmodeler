@@ -245,7 +245,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="find_tb">
+      <widget class="QToolButton" name="search_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -259,7 +259,7 @@
         <string>Search in SQL code</string>
        </property>
        <property name="text">
-        <string>Fi&amp;nd</string>
+        <string>Sea&amp;rch</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
@@ -607,7 +607,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="find_wgt_parent" native="true">
+        <widget class="QWidget" name="search_wgt_parent" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -934,7 +934,7 @@
                <number>5</number>
               </property>
               <item row="1" column="0">
-               <widget class="QWidget" name="find_history_parent" native="true"/>
+               <widget class="QWidget" name="search_history_parent" native="true"/>
               </item>
               <item row="0" column="0">
                <widget class="QWidget" name="cmd_history_parent" native="true">

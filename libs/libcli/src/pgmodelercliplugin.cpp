@@ -30,9 +30,7 @@ PgModelerCliPlugin::~PgModelerCliPlugin()
 
 bool PgModelerCliPlugin::isValidOption(const QString &opt) const
 {
-	static attribs_map short_opts = getShortOptions();
-
-	for(auto &itr : short_opts)
+	for(auto &itr : getShortOptions())
 	{
 		if(itr.first == opt)
 			return true;
