@@ -19,6 +19,8 @@
 #include "view.h"
 #include "physicaltable.h"
 
+const QString View::ExtraSCRegExp("((\\;)+(\\s|\\t)*)+$");
+
 View::View() : BaseTable()
 {
 	obj_type=ObjectType::View;
@@ -299,8 +301,13 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	if(def_type==SchemaParser::SqlCode)
 	{
 		GenericSQL view_def_obj;
+		QString fmt_sql_def = sql_definition.trimmed();
+
+		// Removing unneeded semicolons at the end of the view's definition command
+		fmt_sql_def.remove(QRegularExpression(ExtraSCRegExp));
+
 		view_def_obj.setHideDescription(true);
-		view_def_obj.setDefinition(sql_definition);
+		view_def_obj.setDefinition(fmt_sql_def);
 		view_def_obj.addReferences(references);
 		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type).trimmed();
 	}
