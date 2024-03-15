@@ -1112,9 +1112,9 @@ void SQLExecutionWidget::showHistoryContextMenu()
 			*exec_act = nullptr;
 
 	if(!search_history_parent->isVisible())
-		action_toggle_find = new QAction(QPixmap(GuiUtilsNs::getIconPath("findtext")), tr("Find in history"), ctx_menu);
+		action_toggle_find = new QAction(QPixmap(GuiUtilsNs::getIconPath("findtext")), tr("Search in history"), ctx_menu);
 	else
-		action_toggle_find = new QAction(tr("Hide find tool"), ctx_menu);
+		action_toggle_find = new QAction(tr("Hide search tool"), ctx_menu);
 
 	ctx_menu->addSeparator();
 	ctx_menu->addAction(action_toggle_find);
