@@ -478,7 +478,7 @@ QString Index::getAlterCode(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
+		attributes[Attributes::AlterCmds] = TableObject::getAlterCode(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{

@@ -144,8 +144,7 @@ QString Policy::getAlterCode(BaseObject *object)
 		QStringList rol_names, aux_rol_names;
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterCode(object);
-		attribs[Attributes::Table] = getParentTable()->getSignature(true);
+		attributes[Attributes::AlterCmds] = TableObject::getAlterCode(object);
 
 		if(this->using_expr.simplified() != policy->using_expr.simplified())
 			attribs[Attributes::UsingExp] = policy->using_expr;

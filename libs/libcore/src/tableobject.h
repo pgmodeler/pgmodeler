@@ -91,6 +91,10 @@ class __libcore TableObject: public BaseObject {
 
 		virtual QString getDropCode(bool cascade) override;
 
+		/*! \brief This version compares only the comments of two TableObject instances
+		 *  returning the proper command to modify the comment, when needed */
+		virtual QString getAlterCode(BaseObject *object) override;
+
 		virtual QString getSignature(bool format = true) override;
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
