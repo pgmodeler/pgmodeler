@@ -426,6 +426,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	output_tbw->setTabEnabled(0, false);
 
 	addToSQLHistory(sql_cmd_txt->toPlainText(), 0, e.getErrorMessage());
+	qApp->alert(this);
 }
 
 void SQLExecutionWidget::finishExecution(int rows_affected)
@@ -505,6 +506,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 	switchToExecutionMode(false);
 	sql_exec_thread.quit();
+	qApp->alert(this);
 }
 
 void SQLExecutionWidget::filterResults()
