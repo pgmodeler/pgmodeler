@@ -294,11 +294,6 @@ QString Column::getAlterCode(BaseObject *object)
 		QString def_val, alter_def;
 		bool ident_seq_changed = false;
 
-		BaseObject::setBasicAttributes(true);
-
-		if(getParentTable())
-			attribs[Attributes::Table]=getParentTable()->getName(true);
-
 		if(!this->type.isEquivalentTo(col->type) ||
 				(this->type.isEquivalentTo(col->type) &&
 
@@ -385,8 +380,8 @@ QString Column::getAlterCode(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		alter_def = BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
-		alter_def += getAlterCommentDefinition(object, attributes);
+		alter_def = TableObject::getAlterCode(col);
+		alter_def += BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 
 		return alter_def;
 	}

@@ -936,6 +936,17 @@ QStringList CodeCompletionWidget::getTableAliases(const QString &name)
 	return aliases;
 }
 
+void CodeCompletionWidget::setCurrentItem(QListWidgetItem *item)
+{
+	if(!item || (item && item->isHidden()))
+		QToolTip::hideText();
+	else if(item)
+	{
+		name_list->setCurrentItem(item);
+		item->setSelected(true);
+	}
+}
+
 bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
@@ -1139,6 +1150,7 @@ void CodeCompletionWidget::updateList()
 			ini_cur_pos >= 0 && tc.position() >= ini_cur_pos)
 	{
 		QList<QListWidgetItem *> list = name_list->findItems(word, Qt::MatchStartsWith);
+		QListWidgetItem *first_item = nullptr;
 
 		name_list->setUpdatesEnabled(false);
 
@@ -1146,11 +1158,17 @@ void CodeCompletionWidget::updateList()
 			item->setHidden(true);
 
 		for(auto &item : list)
+		{
 			item->setHidden(false);
 
-		name_list->setUpdatesEnabled(true);
+			if(!first_item)
+				first_item = item;
+		}
 
+		name_list->setUpdatesEnabled(true);
 		qApp->restoreOverrideCursor();
+
+		setCurrentItem(first_item);
 		updateWidgetPosSize();
 
 		return;
@@ -1203,12 +1221,8 @@ void CodeCompletionWidget::updateList()
 		name_list->setUpdatesEnabled(true);
 	}
 
-	if(name_list->count()==0)
-		QToolTip::hideText();
-	else
-		name_list->item(0)->setSelected(true);
-
 	qApp->restoreOverrideCursor();
+	setCurrentItem(name_list->count() == 0 ? nullptr : name_list->item(0));
 	updateWidgetPosSize();
 }
 

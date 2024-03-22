@@ -424,6 +424,14 @@ namespace CompatNs {
 		new_view->setAppendedSQL(old_view->getAppendedSQL());
 		new_view->setPrependedSQL(old_view->getPrependedSQL());
 
+		/* Forcing the generation of only the CREATE VIEW ... command
+		 * without ALTER VIEW SET OWNER and any other prepended or appended
+		 * commands, this will help to extract exactly the SQL that defines the view */
+		old_view->setOwner(nullptr);
+		old_view->setAppendedSQL("");
+		old_view->setPrependedSQL("");
+		old_view->setSQLDisabled(false);
+
 		QString sql_code = old_view->getSourceCode(SchemaParser::SqlCode);
 		sql_code.remove(0, sql_code.indexOf("\nAS") + 3);
 		sql_code.remove(sql_code.indexOf(Attributes::DdlEndToken), sql_code.length());

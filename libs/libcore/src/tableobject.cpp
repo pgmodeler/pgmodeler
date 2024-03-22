@@ -138,6 +138,29 @@ QString TableObject::getDropCode(bool cascade)
 	return BaseObject::getDropCode(cascade);
 }
 
+QString TableObject::getAlterCode(BaseObject *object)
+{
+	TableObject *tab_obj = dynamic_cast<TableObject *>(object);
+
+	if(!tab_obj)
+		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	try
+	{
+		BaseObject::setBasicAttributes(true);
+
+		if(parent_table)
+			attributes[Attributes::Table] = parent_table->getSignature();
+
+		return getAlterCommentDefinition(object, attributes);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+
+}
+
 QString TableObject::getSignature(bool format)
 {
 	if(!parent_table)

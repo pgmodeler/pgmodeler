@@ -32,6 +32,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	QVBoxLayout *vbox = nullptr;
 
 	Ui_ViewWidget::setupUi(this);
+	alert_frm->setVisible(false);
 
 	sql_definition_txt = new NumberedTextEditor(this, true);
 	sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
@@ -39,6 +40,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 	vbox = new QVBoxLayout(sql_definition_tab);
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(alert_frm);
 	vbox->addWidget(sql_definition_txt);
 
 	obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
@@ -133,6 +135,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
 	connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
 	connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+
+	connect(sql_definition_txt, &NumberedTextEditor::textChanged, this, [this]() {
+		alert_frm->setVisible(sql_definition_txt->toPlainText().contains(QRegularExpression(View::ExtraSCRegExp)));
+	});
 
 	configureFormFields(ObjectType::View);
 	baseobject_grid->setContentsMargins(0, 0, 0, 0);

@@ -171,6 +171,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 		int getTablePosition(const QString &name);
 
 		QStringList getTableAliases(const QString &name);
+
+		//! \brief Set the provided item as the one selected in the name list
+		void setCurrentItem(QListWidgetItem *item);
 		
 	public:
 		CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets = false);

@@ -476,7 +476,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Exports the input model to a data dictionary in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict));
 	printText(tr("  %1, %2\t\t    Exports the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms));
 	printText(tr("  %1, %2\t\t    Lists the available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt));
-	printText(tr("  %1, %2\t\t    Importa a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
+	printText(tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
 	printText(tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff));
 	printText(tr("  %1, %2\t\t    Tries to fix the structure of the input model file to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel));
 	printText(tr("  %1, %2\t\t    Creates the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs));
@@ -540,8 +540,8 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER must be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
 	printText(tr("  %1, %2\t\t    Makes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
 	printText(tr("  %1, %2\t\t    Makes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
-	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
-	printText(tr("  %1, %2\t\t    Runs the import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode));
+	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma-separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
+	printText(tr("  %1, %2\t\t    Runs the import in debug mode printing all queries executed on the server.").arg(short_opts[DebugMode]).arg(DebugMode));
 	printText();
 
 	printText(tr("Diff options: "));
@@ -561,17 +561,17 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop));
 	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
 	printText(tr("  %1, %2\t    Forces recreating the objects. Instead of an ALTER command, the DROP and CREATE commands are used to create new versions of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs));
-	printText(tr("  %1, %2\t    Recreates only the unmodifiable objects. These objects are the ones that can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
+	printText(tr("  %1, %2\t    Recreates only the unmodifiable objects. These objects are the ones that can't be changed via the ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
 	printText();
 
 	printText(tr("Model fix options: ") );
-	printText(tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries));
+	printText(tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count, the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries));
 	printText();
 
 #ifndef Q_OS_MAC
 	printText(tr("File association options: "));
 	printText(tr("  %1, %2\t\t    The file association to DBM files will be applied on a system-wide level instead of to the current user only.").arg(short_opts[SystemWide]).arg(SystemWide));
-	printText(tr("  %1, %2 \t\t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force));
+	printText(tr("  %1, %2 \t\t\t    Forces the mime type installation or uninstallation. ").arg(short_opts[Force]).arg(Force));
 	printText();
 #endif
 
@@ -580,9 +580,9 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
 
-	printText(tr("Plug-ins options: "));	
-	printText(tr("  %1, %2 \t\t    List the available plug-ins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
-	printText(tr("  %1, %2 \t\t    Ignore the errors of plug-ins that failed to be loaded.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("Plugins options: "));
+	printText(tr("  %1, %2 \t\t    List the available plugins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText(tr("  %1, %2 \t\t    Ignore the errors of plugins that failed to be loaded.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
 	printText();
 
 	// Displaying loaded plugin's options
@@ -604,7 +604,7 @@ void PgModelerCliApp::showMenu()
 	}
 
 	printText();
-	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
+	printText(tr("** The FILTER value in the %1 option has the form type:pattern:mode. ").arg(FilterObjects));
 	printText(tr("   * The section `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
 
 	QStringList list;
@@ -637,7 +637,7 @@ void PgModelerCliApp::showMenu()
 		}
 	}
 	printText(lines.join('\n'));
-
+	
 	printText();
 	printText(tr("   * The special type `%1' allows writing a single filter that applies to all object types.").arg(Attributes::Any));
 	printText();
@@ -648,22 +648,22 @@ void PgModelerCliApp::showMenu()
 	printText(tr("     > `%1' causes the pattern to be treated as a Perl-like regular expression while matching objects' names.").arg(UtilsNs::FilterRegExp));
 	printText();
 	printText(tr("   * The option %1 takes effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
-	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));
+	printText(tr("     Other tables eventually imported that are dependencies of the matched objects will have their children discarded."));
 	printText(tr("     The comma-separated list of table children objects accepts the values:"));
 	printText(tr("     > %1").arg(child_list) );
 	printText(tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren) );
 	printText();
-	printText(tr("   * NOTES: all comparisons during the filtering process are case insensitive."));
+	printText(tr("   * NOTES: all comparisons during the filtering process are case-insensitive."));
 	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
 	printText();
 	printText(tr("** The diff process allows the usage of all options related to the import operation."));
 	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
 	printText();
 	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
-	printText(tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
+	printText(tr("   * The options %1 and %2 accept the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
 	printText();
 	printText(tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo));
-	printText(tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison."));
+	printText(tr("   If only one connection is set, then it will be used to import the input database as well as retrieve the database used in the comparison."));
 	printText(tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above."));
 	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
 	printText();
@@ -672,7 +672,7 @@ void PgModelerCliApp::showMenu()
 	{
 		printText();
 		printText("**");
-		printText(tr("** WARNING: Failed to retrieve available plug-ins' options due to one or more errors!"));
+		printText(tr("** WARNING: Failed to retrieve available plugins' options due to one or more errors!"));
 		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get detailed info about the error(s).").arg(ListPlugins));
 		printText("**");
 		printText();
