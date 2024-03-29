@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.2" use-changelog="false" max-obj-count="16"
+	 last-position="67,-174" last-zoom="0.7" scene-rect="0,-248.985,2615.14,1850.56"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="northwind" encoding="UTF8" lc-collate="pt_BR.UTF-8" lc-ctype="pt_BR.UTF-8" is-template="false" allow-conns="true">
+	<role name="postgres"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<table name="categories" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="50" y="1075.45"/>
+	<column name="category_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="category_name" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="picture">
+		<type name="bytea" length="0"/>
+	</column>
+	<constraint name="pk_categories" type="pk-constr" table="public.categories">
+		<columns names="category_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="customer_customer_demo" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="142.59" y="95.4545"/>
+	<column name="customer_id" not-null="true">
+		<type name="character varying" length="5"/>
+	</column>
+	<column name="customer_type_id" not-null="true">
+		<type name="character varying" length="5"/>
+	</column>
+	<constraint name="pk_customer_customer_demo" type="pk-constr" table="public.customer_customer_demo">
+		<columns names="customer_id,customer_type_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="customer_demographics" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1076.16" y="-8.18182"/>
+	<column name="customer_type_id" not-null="true">
+		<type name="character varying" length="5"/>
+	</column>
+	<column name="customer_desc">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_customer_demographics" type="pk-constr" table="public.customer_demographics">
+		<columns names="customer_type_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="customers" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1599.96" y="250"/>
+	<column name="customer_id" not-null="true">
+		<type name="character varying" length="5"/>
+	</column>
+	<column name="company_name" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="contact_name">
+		<type name="character varying" length="30"/>
+	</column>
+	<column name="contact_title">
+		<type name="character varying" length="30"/>
+	</column>
+	<column name="address">
+		<type name="character varying" length="60"/>
+	</column>
+	<column name="city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="region">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="postal_code">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="country">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="24"/>
+	</column>
+	<column name="fax">
+		<type name="character varying" length="24"/>
+	</column>
+	<constraint name="pk_customers" type="pk-constr" table="public.customers">
+		<columns names="customer_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="employees" layers="0" collapse-mode="2" max-obj-count="21" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2135.66" y="317.273"/>
+	<column name="employee_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="title">
+		<type name="character varying" length="30"/>
+	</column>
+	<column name="title_of_courtesy">
+		<type name="character varying" length="25"/>
+	</column>
+	<column name="birth_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="hire_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="address">
+		<type name="character varying" length="60"/>
+	</column>
+	<column name="city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="region">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="postal_code">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="country">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="home_phone">
+		<type name="character varying" length="24"/>
+	</column>
+	<column name="extension">
+		<type name="character varying" length="4"/>
+	</column>
+	<column name="photo">
+		<type name="bytea" length="0"/>
+	</column>
+	<column name="notes">
+		<type name="text" length="0"/>
+	</column>
+	<column name="reports_to">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="photo_path">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="pk_employees" type="pk-constr" table="public.employees">
+		<columns names="employee_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="employee_territories" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1630" y="1059.65"/>
+	<column name="employee_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="territory_id" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<constraint name="pk_employee_territories" type="pk-constr" table="public.employee_territories">
+		<columns names="employee_id,territory_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="order_details" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1067.31" y="436.015"/>
+	<column name="order_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="product_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="unit_price" not-null="true">
+		<type name="real" length="0"/>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="discount" not-null="true">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="pk_order_details" type="pk-constr" table="public.order_details">
+		<columns names="order_id,product_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="orders" layers="0" collapse-mode="2" max-obj-count="16" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1021.71" y="897.833"/>
+	<column name="order_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="customer_id">
+		<type name="character varying" length="5"/>
+	</column>
+	<column name="employee_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="order_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="required_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="shipped_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="ship_via">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="freight">
+		<type name="real" length="0"/>
+	</column>
+	<column name="ship_name">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="ship_address">
+		<type name="character varying" length="60"/>
+	</column>
+	<column name="ship_city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="ship_region">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="ship_postal_code">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="ship_country">
+		<type name="character varying" length="15"/>
+	</column>
+	<constraint name="pk_orders" type="pk-constr" table="public.orders">
+		<columns names="order_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="products" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="134.747" y="372.379"/>
+	<column name="product_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="product_name" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="supplier_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="category_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="quantity_per_unit">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="unit_price">
+		<type name="real" length="0"/>
+	</column>
+	<column name="units_in_stock">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="units_on_order">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="reorder_level">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="discontinued" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="pk_products" type="pk-constr" table="public.products">
+		<columns names="product_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="region" layers="0" collapse-mode="1" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2198.57" y="1072.38"/>
+	<column name="region_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="region_description" not-null="true">
+		<type name="character varying" length="60"/>
+	</column>
+	<constraint name="pk_region" type="pk-constr" table="public.region">
+		<columns names="region_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="shippers" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="584.545" y="656.83"/>
+	<column name="shipper_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="company_name" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="24"/>
+	</column>
+	<constraint name="pk_shippers" type="pk-constr" table="public.shippers">
+		<columns names="shipper_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="suppliers" layers="0" collapse-mode="2" max-obj-count="14" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="542.063" y="1136.83"/>
+	<column name="supplier_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="company_name" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="contact_name">
+		<type name="character varying" length="30"/>
+	</column>
+	<column name="contact_title">
+		<type name="character varying" length="30"/>
+	</column>
+	<column name="address">
+		<type name="character varying" length="60"/>
+	</column>
+	<column name="city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="region">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="postal_code">
+		<type name="character varying" length="10"/>
+	</column>
+	<column name="country">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="24"/>
+	</column>
+	<column name="fax">
+		<type name="character varying" length="24"/>
+	</column>
+	<column name="homepage">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_suppliers" type="pk-constr" table="public.suppliers">
+		<columns names="supplier_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="territories" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1877.76" y="1418.65"/>
+	<column name="territory_id" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="territory_description" not-null="true">
+		<type name="character varying" length="60"/>
+	</column>
+	<column name="region_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="pk_territories" type="pk-constr" table="public.territories">
+		<columns names="territory_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="us_states" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1671.05" y="-10.4429"/>
+	<column name="state_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="state_name">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state_abbr">
+		<type name="character varying" length="2"/>
+	</column>
+	<column name="state_region">
+		<type name="character varying" length="50"/>
+	</column>
+	<constraint name="pk_usstates" type="pk-constr" table="public.us_states">
+		<columns names="state_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<textbox name="northwind_desc" layers="0" z-value="0" width="563.328" font-size="12">
+	<position x="113.333" y="-228.485"/>
+	<comment> <![CDATA[[ northwind sample database ]
+
+A representation of the famous northwind example database, adapted for PostgreSQL.
+
+This model was reverse engineered from the original database available on this link: https://github.com/pthom/northwind_psql]]> </comment>
+</textbox>
+
+<constraint name="fk_customer_customer_demo_customer_demographics" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.customer_demographics" table="public.customer_customer_demo">
+	<columns names="customer_type_id" ref-type="src-columns"/>
+	<columns names="customer_type_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_customer_customer_demo_customers" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.customers" table="public.customer_customer_demo">
+	<columns names="customer_id" ref-type="src-columns"/>
+	<columns names="customer_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employees_employees" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.employees" table="public.employees">
+	<columns names="reports_to" ref-type="src-columns"/>
+	<columns names="employee_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_territories_territories" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.territories" table="public.employee_territories">
+	<columns names="territory_id" ref-type="src-columns"/>
+	<columns names="territory_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_territories_employees" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.employees" table="public.employee_territories">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="employee_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_order_details_products" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.products" table="public.order_details">
+	<columns names="product_id" ref-type="src-columns"/>
+	<columns names="product_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_order_details_orders" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.orders" table="public.order_details">
+	<columns names="order_id" ref-type="src-columns"/>
+	<columns names="order_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_orders_customers" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.customers" table="public.orders">
+	<columns names="customer_id" ref-type="src-columns"/>
+	<columns names="customer_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_orders_employees" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.employees" table="public.orders">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="employee_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_orders_shippers" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.shippers" table="public.orders">
+	<columns names="ship_via" ref-type="src-columns"/>
+	<columns names="shipper_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_products_categories" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.categories" table="public.products">
+	<columns names="category_id" ref-type="src-columns"/>
+	<columns names="category_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_products_suppliers" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.suppliers" table="public.products">
+	<columns names="supplier_id" ref-type="src-columns"/>
+	<columns names="supplier_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_territories_region" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.region" table="public.territories">
+	<columns names="region_id" ref-type="src-columns"/>
+	<columns names="region_id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_customer_customer_demo_customer_demographics" type="relfk" layers="0"
+	 custom-color="#e411ef"
+	 src-table="public.customer_customer_demo"
+	 dst-table="public.customer_demographics" reference-fk="fk_customer_customer_demo_customer_demographics"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_customer_customer_demo_customers" type="relfk" layers="0"
+	 custom-color="#e34f0e"
+	 src-table="public.customer_customer_demo"
+	 dst-table="public.customers" reference-fk="fk_customer_customer_demo_customers"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_employees_employees" type="relfk" layers="0"
+	 custom-color="#a8d261"
+	 src-table="public.employees"
+	 dst-table="public.employees" reference-fk="fk_employees_employees"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="2518.84" y="484.581"/>
+	<position x="2518.84" y="284.273"/>
+	<position x="2369.12" y="284.273"/>
+	</line>
+</relationship>
+
+<relationship name="rel_employee_territories_territories" type="relfk" layers="0"
+	 custom-color="#402ef3"
+	 src-table="public.employee_territories"
+	 dst-table="public.territories" reference-fk="fk_employee_territories_territories"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_employee_territories_employees" type="relfk" layers="0"
+	 custom-color="#b5bde7"
+	 src-table="public.employee_territories"
+	 dst-table="public.employees" reference-fk="fk_employee_territories_employees"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_order_details_products" type="relfk" layers="0"
+	 custom-color="#3351f2"
+	 src-table="public.order_details"
+	 dst-table="public.products" reference-fk="fk_order_details_products"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_order_details_orders" type="relfk" layers="0"
+	 custom-color="#d0babc"
+	 src-table="public.order_details"
+	 dst-table="public.orders" reference-fk="fk_order_details_orders"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_orders_customers" type="relfk" layers="0"
+	 custom-color="#efab18"
+	 src-table="public.orders"
+	 dst-table="public.customers" reference-fk="fk_orders_customers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_orders_employees" type="relfk" layers="0"
+	 custom-color="#3bb00e"
+	 src-table="public.orders"
+	 dst-table="public.employees" reference-fk="fk_orders_employees"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_orders_shippers" type="relfk" layers="0"
+	 custom-color="#ddef08"
+	 src-table="public.orders"
+	 dst-table="public.shippers" reference-fk="fk_orders_shippers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_products_categories" type="relfk" layers="0"
+	 custom-color="#d747eb"
+	 src-table="public.products"
+	 dst-table="public.categories" reference-fk="fk_products_categories"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_products_suppliers" type="relfk" layers="0"
+	 custom-color="#6bb397"
+	 src-table="public.products"
+	 dst-table="public.suppliers" reference-fk="fk_products_suppliers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_territories_region" type="relfk" layers="0"
+	 custom-color="#c72e47"
+	 src-table="public.territories"
+	 dst-table="public.region" reference-fk="fk_territories_region"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>
