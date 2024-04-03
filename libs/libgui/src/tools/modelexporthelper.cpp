@@ -12,7 +12,8 @@ void ModelExportHelper::resetExportParams()
 {
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=force_db_drop=false;
+	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=false;
+	force_db_drop=gen_drop_file=false;
 	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 	db_model=nullptr;
 	connection=nullptr;
@@ -62,7 +63,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -85,7 +86,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename, code_gen_mode);
+			db_model->saveSplitSQLDefinition(filename, code_gen_mode, gen_drop_file);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
@@ -1143,13 +1144,14 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file)
 {
 	this->db_model=db_model;
 	this->filename=filename;
 	this->pgsql_ver=pgsql_ver;
 	this->split=split;
 	this->code_gen_mode=code_gen_mode;
+	this->gen_drop_file=gen_drop_file;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color)
@@ -1239,7 +1241,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode);
+		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode, gen_drop_file);
 		resetExportParams();
 	}
 	catch(Exception &e)

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>812</width>
+    <width>825</width>
     <height>731</height>
    </rect>
   </property>
@@ -744,20 +744,25 @@
                       <string>Original + children's SQL</string>
                      </property>
                     </item>
+                    <item>
+                     <property name="text">
+                      <string>Grouped by object type</string>
+                     </property>
+                    </item>
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                   <widget class="QCheckBox" name="gen_drop_file_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>158</width>
-                      <height>20</height>
-                     </size>
+                    <property name="text">
+                     <string>Create a DROP script</string>
                     </property>
-                   </spacer>
+                   </widget>
                   </item>
                  </layout>
                 </item>

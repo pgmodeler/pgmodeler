@@ -257,7 +257,8 @@ void ModelExportForm::exportModel()
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
 				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(),
 																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked(),
-																				static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex()));
+																				static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex()),
+																				gen_drop_file_chk->isChecked());
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())
@@ -462,6 +463,7 @@ void ModelExportForm::selectSQLExportMode()
 	}
 	else
 	{
+		sql_file_sel->setMimeTypeFilters({});
 		sql_file_sel->setDefaultSuffix("");
 		sql_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 		sql_file_sel->setFileMustExist(false);

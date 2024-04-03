@@ -320,11 +320,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
 		 *  DependenciesSql: generates the original SQL code + dependencies SQL
-		 *  ChildrenSql: generates the original SQL code + children SQL */
+		 *  ChildrenSql: generates the original SQL code + children SQL
+		 *  GroupedByType: generates the original SQL code but grouping them in a single file
+		 *  for each object type. */
 		enum CodeGenMode: unsigned {
 			OriginalSql,
 			DependenciesSql,
-			ChildrenSql
+			ChildrenSql,
+			GroupedByType
 		};
 
 		enum MetaAttrOptions: unsigned {
@@ -482,7 +485,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql);
+		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql, bool gen_drop_file = false);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved

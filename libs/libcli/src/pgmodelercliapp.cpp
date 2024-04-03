@@ -1986,7 +1986,7 @@ void PgModelerCliApp::exportModel()
 			printMessage(tr("Export to output directory: %1").arg(parsed_opts[Output]));
 
 		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],
-														parsed_opts.count(Split) > 0, code_gen_option);
+														parsed_opts.count(Split) > 0, code_gen_option, false);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
