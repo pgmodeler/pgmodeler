@@ -1032,6 +1032,9 @@ void TableWidget::applyConfiguration()
 				//Create the primary key if the table does not own one
 				QString pk_name = QString("%1_pk").arg(table->getName());
 
+				if(pk_name.size() > BaseObject::ObjectNameMaxLength)
+					pk_name.remove(BaseObject::ObjectNameMaxLength, pk_name.size());
+
 				pk = new Constraint;
 				pk->setName(pk_name);
 				pk->setName(CoreUtilsNs::generateUniqueName(pk, *table->getObjectList(ObjectType::Constraint)));
