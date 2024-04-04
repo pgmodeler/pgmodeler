@@ -212,7 +212,7 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 	}
 }
 
-void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols)
+void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols, bool incl_constraints)
 {
 	QStringList cols, inh_cols;
 
@@ -251,7 +251,7 @@ void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool in
 			{
 				constr = dynamic_cast<Constraint *>(obj);
 
-				if(!constr->isSQLDisabled() &&
+				if(incl_constraints && !constr->isSQLDisabled() &&
 					 constr->getConstraintType() != ConstraintType::ForeignKey)
 				{
 					has_constr_enabled = true;
@@ -1378,7 +1378,7 @@ void PhysicalTable::updateAlterCmdsStatus()
 																			 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
-void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
+void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_contraints)
 {
 	QStringList part_keys_code;
 
@@ -1408,8 +1408,11 @@ void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool inc
 	if(tag && def_type==SchemaParser::XmlCode)
 		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
-	setColumnsAttribute(def_type, incl_rel_added_objs);
-	setConstraintsAttribute(def_type);
+	setColumnsAttribute(def_type, incl_rel_added_objs, incl_contraints);
+
+	if(incl_contraints)
+		setConstraintsAttribute(def_type);
+
 	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XmlCode)

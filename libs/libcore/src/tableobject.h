@@ -127,6 +127,7 @@ class __libcore TableObject: public BaseObject {
 		friend class PhysicalTable;
 		friend class Table;
 		friend class ModelsDiffHelper;
+		friend class DatabaseModel;
 };
 
 #endif

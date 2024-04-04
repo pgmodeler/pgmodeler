@@ -351,9 +351,9 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 	return found;
 }
 
-QString Table::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
+QString Table::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_constraints)
 {
-	setTableAttributes(def_type, incl_rel_added_objs);
+	setTableAttributes(def_type, incl_rel_added_objs, incl_constraints);
 
 	attributes[Attributes::Oids]=(with_oid ? Attributes::True : "");
 	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : "");
@@ -394,7 +394,7 @@ QString Table::getSourceCode(SchemaParser::CodeType def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	return __getSourceCode(def_type, false);
+	return __getSourceCode(def_type, false, true);
 }
 
 void Table::operator = (Table &tab)

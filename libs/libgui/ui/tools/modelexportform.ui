@@ -724,7 +724,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;p&gt;&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code for each object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create a single object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code of a single object. This option is used only for schemas, tables, and views.&lt;/p&gt;</string>
+                     <string>&lt;p&gt;&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code for each object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Original + dependencies' SQL:&lt;/strong&gt; generates the original code including all dependencies needed to properly create a single object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Original + children's SQL:&lt;/strong&gt; generates the original code including all children's SQL code of a single object. This option is used only for schemas, tables, and views&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Group by object type:&lt;/strong&gt; instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -746,7 +746,7 @@
                     </item>
                     <item>
                      <property name="text">
-                      <string>Grouped by object type</string>
+                      <string>Group by object type</string>
                      </property>
                     </item>
                    </widget>
@@ -758,6 +758,9 @@
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Create a separate script containing the DROP commands to destroy objects in the database.&lt;/p&gt;</string>
                     </property>
                     <property name="text">
                      <string>Create a DROP script</string>
