@@ -321,13 +321,13 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
 		 *  DependenciesSql: generates the original SQL code + dependencies SQL
 		 *  ChildrenSql: generates the original SQL code + children SQL
-		 *  GroupedByType: generates the original SQL code but grouping them in a single file
+		 *  GroupByType: generates the original SQL code but grouping them in a single file
 		 *  for each object type. */
 		enum CodeGenMode: unsigned {
 			OriginalSql,
 			DependenciesSql,
 			ChildrenSql,
-			GroupedByType
+			GroupByType
 		};
 
 		enum MetaAttrOptions: unsigned {

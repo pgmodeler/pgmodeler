@@ -288,6 +288,7 @@ namespace Attributes {
 	General,
 	Generated,
 	Global,
+	Grant,
 	GrantOp,
 	GridSize,
 	GridColor,

@@ -274,6 +274,7 @@ namespace Attributes {
 	General("general"),
 	Generated("generated"),
 	Global("global"),
+	Grant("grant"),
 	GrantOp("grant-op"),
 	GridSize("grid-size"),
 	GridColor("grid-color"),

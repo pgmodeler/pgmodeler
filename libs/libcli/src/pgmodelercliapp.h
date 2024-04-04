@@ -253,6 +253,8 @@ class __libcli PgModelerCliApp: public Application {
 		OriginalSql,
 		DependenciesSql,
 		ChildrenSql,
+		GroupByType,
+		GenDropScript,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,

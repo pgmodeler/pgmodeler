@@ -7543,7 +7543,7 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(code_gen_mode == OriginalSql || code_gen_mode == GroupedByType)
+	if(code_gen_mode == OriginalSql || code_gen_mode == GroupByType)
 	{
 		if(object->getObjectType() == ObjectType::Database)
 			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
@@ -8274,7 +8274,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(code_gen_mode > GroupedByType)
+	if(code_gen_mode > GroupByType)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
 										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -8290,8 +8290,11 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 	QRegularExpression name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 	attribs_map attribs;
-	std::map<ObjectType, QByteArray> grouped_defs;
+	std::map<ObjectType, QByteArray> grouped_defs,
+			grouped_drops;
 	ObjectType obj_type;
+	//bool orig_gen_alter_cmd = false;
+	//PhysicalTable *tab = nullptr;
 
 	try
 	{
@@ -8341,44 +8344,28 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				shell_types.clear();
 			}
 
+			//tab = dynamic_cast<PhysicalTable *>(obj);
+
+			//if(tab && code_gen_mode == GroupByType)
+			//{
+			//	orig_gen_alter_cmd = tab->isGenerateAlterCmds();
+			//	tab->setGenerateAlterCmds(true);
+			//}
+
 			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
+
+			//if(tab && code_gen_mode == GroupByType)
+			//	tab->setGenerateAlterCmds(orig_gen_alter_cmd);
 
 			if(buffer.isEmpty())
 				continue;
 
-			/* If the object is a 1-1, 1-n or n-n relationship we name the output file
-			 * after the generated table or foreign key in order to avoid to generate
-			 * a file with the relationship's name. */
-			/* rel = dynamic_cast<Relationship *>(obj);
-
-			if(rel &&
-				 (rel->getRelationshipType() == BaseRelationship::Relationship11 ||
-					rel->getRelationshipType() == BaseRelationship::Relationship1n ||
-					rel->getRelationshipType() == BaseRelationship::RelationshipNn))
-			{
-				if(rel->getGeneratedTable())
-					obj = rel->getGeneratedTable();
-				else
-				{
-					for(auto &constr : rel->getGeneratedConstraints())
-					{
-						if(constr->getConstraintType() == ConstraintType::ForeignKey)
-						{
-							obj = constr;
-							break;
-						}
-					}
-				}
-
-				obj_type = obj->getObjectType();
-			} */
-
 			// Grouping the SQL definitions before saving to file
-			if(code_gen_mode == GroupedByType)
+			if(code_gen_mode == GroupByType)
 			{
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 														tr("Generating SQL of `%1' (%2).")
-														.arg(obj->getName())
+														.arg(obj->getSignature())
 														.arg(obj->getTypeName()),
 														enum_t(obj_type));
 
@@ -8407,7 +8394,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 									tr("Saving SQL of `%1' (%2) to file `%3'.")
-									.arg(obj->getName())
+									.arg(obj->getSignature())
 									.arg(obj->getTypeName())
 									.arg(filename),
 									enum_t(obj_type));
@@ -8442,14 +8429,21 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 		 * defintions is filled. */
 		for(auto &itr : grouped_defs)
 		{
-			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator +
-												QString("%1.sql").arg(BaseObject::getSchemaName(itr.first)), itr.second);
+			filename = QString("%1_%2.sql")
+								.arg(BaseObject::getSchemaName(itr.first),
+										 itr.first == ObjectType::Permission ?
+										 Attributes::Grant : Attributes::Create);
+
+			emit s_objectLoaded(100, tr("Saving SQL file `%1' .").arg(filename), enum_t(ObjectType::Database));
+
+			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
 		}
 
 		// Generating the file containing all DROP commands
 		if(gen_drop_file)
 		{
 			std::map<unsigned, BaseObject *>::reverse_iterator ritr = objects.rbegin();
+			QString drop_cmd;
 
 			/* We iterate over the object in reverse order because they need to be destroyed
 			 * from the last to the first */
@@ -8461,14 +8455,52 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				if(obj->isSystemObject())
 					continue;
 
-				buffer.append(obj->getDropCode(true).toUtf8());
+				drop_cmd = obj->getDropCode(true);
+
+				// Disabling the drop command if the object is also with SQL disabled
+				if(obj->isSQLDisabled())
+					drop_cmd.prepend("-- ");
+
+				if(code_gen_mode == GroupByType)
+					grouped_drops[obj->getObjectType()] += drop_cmd.toUtf8();
+				else
+					buffer.append(drop_cmd.toUtf8());
 			}
 
-			filename = QString("%1_%2.sql")
-								 .arg(QString::number(0).rightJustified(pad_size, '0'))
-								 .arg(Attributes::Drop);
+			/* If we are not generating grouped definitions
+			 * we reuse the groped_drops having a key = BaseObject
+			 * and value = buffer (whole drop commands) just to
+			 * make a single iteration in the for below to
+			 * simplify the logic */
+			if(code_gen_mode != GroupByType)
+				grouped_drops[ObjectType::BaseObject] = buffer;
 
-			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
+			// Generating the file(s) containing the drop commands
+			for(auto &itr : grouped_drops)
+			{
+				if(itr.first == ObjectType::BaseRelationship ||
+					 itr.first == ObjectType::Relationship)
+					continue;
+
+				// If we are generating a single file with all DROP commands
+				if(itr.first == ObjectType::BaseObject)
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(QString::number(0).rightJustified(pad_size, '0'), Attributes::Drop);
+				}
+				// If we are generating a DROP file per object type
+				else
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(BaseObject::getSchemaName(itr.first),
+													itr.first == ObjectType::Permission ?
+													Attributes::Revoke : Attributes::Drop);
+				}
+
+				emit s_objectLoaded(100, tr("Saving drop commands file `%1'.").arg(filename),	enum_t(ObjectType::Database));
+
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
+			}
 		}
 
 		// Saving the prepended sql file

@@ -47,6 +47,8 @@ const QString PgModelerCliApp::NoIndex("--no-index");
 const QString PgModelerCliApp::Split("--split");
 const QString PgModelerCliApp::DependenciesSql("--dependencies");
 const QString PgModelerCliApp::ChildrenSql("--children");
+const QString PgModelerCliApp::GroupByType("--group-by-type");
+const QString PgModelerCliApp::GenDropScript("--gen-drop-script");
 const QString PgModelerCliApp::Diff("--diff");
 const QString PgModelerCliApp::DropDatabase("--drop-database");
 const QString PgModelerCliApp::DropObjects("--drop-objects");
@@ -139,7 +141,8 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
-		{ CommentsAsAliases, "-cl" }, { IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
+	{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
+	{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
 };
 
 std::map<QString, bool> PgModelerCliApp::long_opts = {
@@ -164,13 +167,14 @@ std::map<QString, bool> PgModelerCliApp::long_opts = {
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
-	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false },
-		{ IgnoreFaultyPlugins, false }, { ListPlugins, false }
+	{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
+	{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
+	{ ListPlugins, false }
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
 	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
@@ -185,7 +189,7 @@ std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
+							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
 
 	{{ DbmMimeType }, { SystemWide, Force }},
 	{{ FixModel },	{ Input, Output, FixTries }},
@@ -498,6 +502,8 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
 	printText(tr("  %1, %2\t\t    Includes the object's dependencies SQL code in the generated file. (Only for split mode)").arg(short_opts[DependenciesSql]).arg(DependenciesSql));
 	printText(tr("  %1, %2\t\t    Includes the object's children SQL code in the generated file. (Only for split mode)").arg(short_opts[ChildrenSql]).arg(ChildrenSql));
+	printText(tr("  %1, %2\t\t    Instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file. (Only for split mode)").arg(short_opts[GroupByType]).arg(GroupByType));
+	printText(tr("  %1, %2\t    Create a separate script containing the DROP commands to destroy objects in the database.").arg(short_opts[GenDropScript]).arg(GenDropScript));
 	printText();
 
 	printText(tr("PNG and SVG export options: "));
@@ -823,12 +829,16 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(create_configs && opts.count(Force) && opts.count(MissingOnly))
 			throw Exception(tr("The options `%1' and `%2' can't be used together when handling configuration files!").arg(Force).arg(MissingOnly), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(opts.count(DependenciesSql) || opts.count(ChildrenSql))
+		if(opts.count(DependenciesSql) || opts.count(ChildrenSql) || opts.count(GroupByType))
 		{
+			unsigned num_opts = opts.count(DependenciesSql) ? 1 : 0;
+			num_opts += opts.count(ChildrenSql) ? 1 : 0;
+			num_opts += opts.count(GroupByType) ? 1 : 0;
+
 			if(!export_file || (export_file && !opts.count(Split)))
-				throw Exception(tr("The options `%1' and `%2' must be used together with the split mode option `%3'!").arg(DependenciesSql, ChildrenSql, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			else if(opts.count(DependenciesSql) && opts.count(ChildrenSql))
-				throw Exception(tr("The options `%1' and `%2' can't be used at the same time!").arg(DependenciesSql, ChildrenSql), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The options `%1', `%2' and `%3' must be used together with the split mode option `%4'!").arg(DependenciesSql, ChildrenSql, GroupByType, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(num_opts > 1)
+				throw Exception(tr("The options `%1', `%2' and `%3' can't be used at the same time!").arg(DependenciesSql, ChildrenSql, GroupByType), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(diff)
@@ -1979,6 +1989,8 @@ void PgModelerCliApp::exportModel()
 			code_gen_option = DatabaseModel::DependenciesSql;
 		else if(parsed_opts.count(ChildrenSql))
 			code_gen_option = DatabaseModel::ChildrenSql;
+		else if(parsed_opts.count(GroupByType))
+			code_gen_option = DatabaseModel::GroupByType;
 
 		if(!parsed_opts.count(Split))
 			printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
@@ -1986,7 +1998,9 @@ void PgModelerCliApp::exportModel()
 			printMessage(tr("Export to output directory: %1").arg(parsed_opts[Output]));
 
 		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],
-														parsed_opts.count(Split) > 0, code_gen_option, false);
+														parsed_opts.count(Split) > 0,
+														code_gen_option,
+														parsed_opts.count(GenDropScript) > 0);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
