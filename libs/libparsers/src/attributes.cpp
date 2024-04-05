@@ -282,6 +282,7 @@ namespace Attributes {
 	HandlerFunc("handler"),
 	HasChanges("has-changes"),
 	Hashes("hashes"),
+	HasOptions("has-options"),
 	HbaFile("hba-file"),
 	Height("height"),
 	HideDescription("hide-description"),
