@@ -44,6 +44,7 @@ Role::Role()
 	attributes[Attributes::Group]="";
 	attributes[Attributes::BypassRls]="";
 	attributes[Attributes::EmptyPassword]="";
+	attributes[Attributes::HasOptions]="";
 }
 
 void Role::setOption(RoleOpts op_type, bool value)
@@ -241,7 +242,7 @@ QString Role::getPassword()
 
 QString Role::getSourceCode(SchemaParser::CodeType def_type)
 {
-	return (getSourceCode(def_type, false));
+	return getSourceCode(def_type, false);
 }
 
 QString Role::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
@@ -249,23 +250,37 @@ QString Role::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
 
-	unsigned i;
-	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
-						   Attributes::CreateRole, Attributes::Inherit,
-							 Attributes::Login, Attributes::Replication,
-							 Attributes::BypassRls };
+	unsigned op_idx = 0;
+	QStringList op_attribs = { Attributes::Superuser, Attributes::CreateDb,
+														 Attributes::CreateRole, Attributes::Inherit,
+														 Attributes::Login, Attributes::Replication,
+														 Attributes::BypassRls },
+			other_attribs = { Attributes::ConnLimit, Attributes::Password ,
+												Attributes::Validity,	Attributes::MemberRoles,
+												Attributes::AdminRoles };
 
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
 
-	for(i=0; i <= OpBypassRls; i++)
-		attributes[op_attribs[i]]=(options[i] ? Attributes::True : "");
+	for(auto &op_attr : op_attribs)
+		attributes[op_attr] = (options[op_idx++] ? Attributes::True : "");
 
-	attributes[Attributes::Password]=password;
-	attributes[Attributes::Validity]=validity;
+	attributes[Attributes::Password] = password;
+	attributes[Attributes::Validity] = validity;
 
 	if(conn_limit >= 0)
-		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
+		attributes[Attributes::ConnLimit] = QString("%1").arg(conn_limit);
+
+	other_attribs.append(op_attribs);
+
+	for(auto &attr : other_attribs)
+	{
+		if(!attributes[attr].isEmpty())
+		{
+			attributes[Attributes::HasOptions] = Attributes::True;
+			break;
+		}
+	}
 
 	return BaseObject::getSourceCode(def_type, reduced_form);
 }
@@ -273,7 +288,7 @@ QString Role::getSourceCode(SchemaParser::CodeType def_type, bool reduced_form)
 QString Role::getAlterMembershipCommands(Role *imp_role, Role *ref_role, bool revoke)
 {
 	Role::RoleType role_types[] = { MemberRole, AdminRole };
-	QStringList rl_names, role_attrs = { Attributes::MemberRoles, Attributes::AdminRoles };
+	QStringList rl_names;
 	attribs_map member_attrs;
 	QString cmds;
 

@@ -298,6 +298,7 @@ namespace Attributes {
 	HandlesType,
 	HasChanges,
 	Hashes,
+	HasOptions,
 	HbaFile,
 	Height,
 	HideDescription,
