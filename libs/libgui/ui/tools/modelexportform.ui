@@ -702,7 +702,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;strong&gt;Split:&lt;/strong&gt; the SQL definition of each object is generated in separated files inside the selected directory. In this mode the files are named in such a way to reflect the correct creation order.</string>
+                     <string>&lt;strong&gt;Split:&lt;/strong&gt; the SQL definition of each object is generated in separated files inside the selected directory.</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -724,7 +724,13 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;p&gt;&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code for each object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Original + dependencies' SQL:&lt;/strong&gt; generates the original code including all dependencies needed to properly create a single object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Original + children's SQL:&lt;/strong&gt; generates the original code including all children's SQL code of a single object. This option is used only for schemas, tables, and views&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Group by object type:&lt;/strong&gt; instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file.&lt;/p&gt;</string>
+                     <string>&lt;p&gt;&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code for each object. The files will be named in such a way to reflect the correct creation order of the objects.&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Original + dependencies' SQL:&lt;/strong&gt; generates the original code including all dependencies needed to properly create a single object.&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Original + children's SQL:&lt;/strong&gt; generates the original code including all children's SQL code of a single object. This option is used only for schemas, tables, and views&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Group by object type:&lt;/strong&gt; instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>

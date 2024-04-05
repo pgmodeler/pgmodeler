@@ -499,7 +499,7 @@ void PgModelerCliApp::showMenu()
 	printText();
 
 	printText(tr("SQL file export options: "));
-	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2\t\t\t    The database model SQL code is split into several files, one per object.").arg(short_opts[Split]).arg(Split));
 	printText(tr("  %1, %2\t\t    Includes the object's dependencies SQL code in the generated file. (Only for split mode)").arg(short_opts[DependenciesSql]).arg(DependenciesSql));
 	printText(tr("  %1, %2\t\t    Includes the object's children SQL code in the generated file. (Only for split mode)").arg(short_opts[ChildrenSql]).arg(ChildrenSql));
 	printText(tr("  %1, %2\t\t    Instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file. (Only for split mode)").arg(short_opts[GroupByType]).arg(GroupByType));
@@ -609,6 +609,9 @@ void PgModelerCliApp::showMenu()
 		printText();
 	}
 
+	printText();
+	printText(tr("** When exporting to SQL file in split mode and none of the options %1, %2, and %3\
+\n   are specified then the generated files will be named in such a way to reflect the correct creation order.").arg(DependenciesSql, ChildrenSql, GroupByType));
 	printText();
 	printText(tr("** The FILTER value in the %1 option has the form type:pattern:mode. ").arg(FilterObjects));
 	printText(tr("   * The section `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
