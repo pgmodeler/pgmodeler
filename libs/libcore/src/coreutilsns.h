@@ -55,20 +55,19 @@ namespace CoreUtilsNs {
 	extern __libcore bool isReservedKeyword(const QString &word);
 
 	/*! \brief Generates an unique name based on the specified object and the list of objects of the same type.
-	 * The user can specify a suffix for the generated name as well if the comparison inside the method must be done with
-	 * formated names (schema-qualified) by using fmt_name parameter. The optinal parameter use_suf_on_conflict indicates
+	 * The user can specify a suffix for the generated name as well if the comparison inside the method must take into account
+	 * the schema names of the involved objects comp_sch_names parameter. The optinal parameter use_suf_on_conflict indicates
 	 * that the suffix should be used only in case of conflicts.
 	 * Now, the discard_input_obj is used to indicate whether the input object should be considered or not in the unique
 	 * name generation, in this case, when false the name of the input object (obj) will always be compared to itself if
 	 * it is present in the provided list. When that parameter is true the comparison is not made. */
 	template <class Class>
 	QString generateUniqueName(BaseObject *obj, std::vector<Class *> &obj_vector,
-														 bool fmt_name = false, const QString &suffix = "",
-														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
+											bool comp_sch_names = false, const QString &suffix = "",
+											bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
 		unsigned counter = 0;
-		int len = 0;
-		QString aux_name, obj_name, id;
+		QString uniq_name, obj_name, id;
 		Class *aux_obj = nullptr;
 		typename std::vector<Class *>::iterator itr = obj_vector.begin(), itr_end = obj_vector.end();
 		QChar oper_uniq_chr = '?'; //Char appended at end of operator names in order to resolve conflicts
@@ -80,51 +79,54 @@ namespace CoreUtilsNs {
 		else if(obj->getObjectType()==ObjectType::Cast || obj->getObjectType()==ObjectType::Database)
 			return(obj->getName());
 
-		obj_name = obj->getName(fmt_name);
+		obj_name = obj->getName(false);
 		obj_type = obj->getObjectType();
 
 		if(!use_suf_on_conflict && obj_type != ObjectType::Operator)
 			obj_name += suffix;
 
 		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
-		id = UtilsNs::getStringHash(obj_name).mid(0,6);
-		len = obj_name.size() + id.size();
+		uniq_name = obj_name;
 
-		//If the name length exceeds the maximum size
-		if(len > BaseObject::ObjectNameMaxLength)
-		{
-			//Remove the last chars in the count of 3 + length of id
-			obj_name.chop(id.size() + 3);
-
-			//Append the id of the object on its name (this is not applied to operators)
-			if(obj_type != ObjectType::Operator)
-				obj_name += "_" + id;
-		}
-
-		obj_name.remove('"');
-		aux_name = obj_name;
-
-		//Check if the object's new name conflicts with some of the objects within the list
+					 //Check if the object's new name conflicts with some of the objects within the list
 		while(itr != itr_end)
 		{
+			//If the name length exceeds the maximum size we need to truncate it
+			if(uniq_name.size() > BaseObject::ObjectNameMaxLength)
+			{
+				/* Generating the hash of the current timestamp (in msecs) so we can extract
+				 * the first 6 characters to use as a temporary disambiguation suffix */
+				id = UtilsNs::getStringHash(QString::number(QDateTime::currentMSecsSinceEpoch())).mid(0,6);
+
+				/* Truncates the name until 7 bytes before the maximum allowed length
+				 * so we can append the id properly */
+				uniq_name.truncate(BaseObject::ObjectNameMaxLength - id.size() - 1);
+
+							 //Append the id of the object on its name (this is not applied to operators)
+				if(obj_type != ObjectType::Operator)
+					uniq_name += "_" + id;
+			}
+
 			aux_obj = (*itr);
 			itr++;
 
 			if(discard_input_obj && aux_obj == obj)
 				continue;
 
-			//If a conflicting object is found
-			if(aux_obj->getName(fmt_name).remove('"') == aux_name)
+						 //If a conflicting object is found
+			if(aux_obj->getName() == uniq_name &&
+					((!comp_sch_names) ||
+					 (comp_sch_names && aux_obj->getSchema() == obj->getSchema())))
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type == ObjectType::Operator)
-					aux_name = QString("%1%2").arg(obj_name, QString("").leftJustified(counter++, oper_uniq_chr));
+					uniq_name = QString("%1%2").arg(obj_name, QString("").leftJustified(counter++, oper_uniq_chr));
 				else
 				{
-					aux_name = QString("%1%2%3")
-										.arg(obj_name,
-										use_suf_on_conflict ? suffix : "",
-										use_suf_on_conflict && counter == 0 ? "" : QString::number(counter));
+					uniq_name = QString("%1%2%3")
+													.arg(obj_name,
+																use_suf_on_conflict ? suffix : "",
+																use_suf_on_conflict && counter == 0 ? "" : QString::number(counter));
 					counter++;
 				}
 
@@ -132,14 +134,7 @@ namespace CoreUtilsNs {
 			}
 		}
 
-		if(aux_name != obj_name)
-			obj_name = aux_name;
-
-		// If using name formatting option we need to strip the schema name from the generated name
-		if(fmt_name && obj->getSchema())
-			obj_name.remove(QString("%1.").arg(obj->getSchema()->getName()));
-
-		return(obj_name);
+		return uniq_name;
 	}
 }
 

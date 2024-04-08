@@ -39,12 +39,10 @@ $br
 [AS ] $br {definition}
 
 %if {materialized} %and {with-no-data} %then
-	$br [WITH NO DATA;]
-%else
-	[;]
+	$br [WITH NO DATA]
 %end
 
-{ddl-end}
+[;] {ddl-end}
 
 %if {comment} %then {comment} %end
 %if {owner} %then {owner} %end

@@ -1,6 +1,24 @@
 Changelog
 ---------
 
+v1.1.2
+------
+<em>Release date: April 08, 2024</em><br/>
+
+* [New] Added a sample model of the famous northwind database ported to PostgreSQL.
+* [Change] Updated the sample model pagila.dbm. Now it uses the table partition feature.
+* [Change] Minor adjustment in the SQL execution widget to notify the OS and blink the taskbar after running a SQL command while the main window is minimized.
+* [Change] The command-line interface tool had its menu texts reviewed.
+* [Change] The view editing form now displays an alert regarding extra semicolons at the end of the definition command.
+* [Change] Disabled the cached object code in DatabaseExplorerWidget::loadObjectSource.
+* [Fix] Minor text correction in SQLExecutionWidget.
+* [Fix] Fixed a bug in the generation of SQL for roles when no option is set.
+* [Fix] Fixed a bug in the automatic name truncation/disambiguation for long names in CoreUtilsNs::generateUniqueName.
+* [Fix] Minor fix in the code completion widget to select the first visible item in the list.
+* [Fix] Fixed a bug in the generation of the command COMMENT ON CONSTRAINT.
+* [Fix] Minor fix in libcli/CompatNs::convertToNewView to correctly extract the SQL definition of views with disabled code.
+* [Fix] Fixed the generation of view's SQL to ignore extra semicolons at the end of the command.
+
 v1.1.1
 ------
 <em>Release date: March 14, 2024</em><br/>
