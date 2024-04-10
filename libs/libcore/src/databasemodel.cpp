@@ -8424,6 +8424,17 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 			if(buffer.isEmpty())
 				continue;
 
+			/* If the object type is one of those that accept CREATE OR REPLACE command
+			 * we inject the keywords "OR REPLACE" right after the CREATE command */
+			if((obj_type == ObjectType::View && !dynamic_cast<View *>(obj)->isMaterialized()) ||
+				 obj_type ==ObjectType::Function || obj_type == ObjectType::Procedure ||
+				 obj_type ==ObjectType::Trigger || obj_type == ObjectType::Rule ||
+				 obj_type ==ObjectType::Transform || obj_type ==ObjectType::Aggregate ||
+				 obj_type ==ObjectType::Language)
+			{
+				buffer.replace("CREATE", "CREATE OR REPLACE");
+			}
+
 			// Grouping the SQL definitions before saving to file
 			if(group_by_type)
 			{
