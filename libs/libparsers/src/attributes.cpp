@@ -79,6 +79,7 @@ namespace Attributes {
 	Change("change"),
 	Changelog("changelog"),
 	CheckExp("check-exp"),
+	CheckOption("check-option"),
 	CheckUpdate("check-update"),
 	CheckVersions("check-versions"),
 	CkConstr("ck-constr"),

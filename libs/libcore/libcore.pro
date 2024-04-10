@@ -48,6 +48,7 @@ HEADERS += src/coreglobal.h \
 	   src/pgsqltypes/storagetype.h \
 	   src/pgsqltypes/templatetype.h \
 	   src/pgsqltypes/usertypeconfig.h \
+		 src/pgsqltypes/checkoptiontype.h \
 	   src/procedure.h \
 	   src/role.h \
 	   src/constraint.h \
@@ -119,6 +120,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/securitytype.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \
+			src/pgsqltypes/checkoptiontype.cpp \
 	    src/procedure.cpp \
 	src/reference.cpp \
 	src/simplecolumn.cpp \

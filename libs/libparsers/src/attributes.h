@@ -92,6 +92,7 @@ namespace Attributes {
 	Change,
 	Changelog,
 	CheckExp,
+	CheckOption,
 	CheckUpdate,
 	CheckVersions,
 	CkConstr,

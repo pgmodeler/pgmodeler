@@ -36,6 +36,7 @@ View::View() : BaseTable()
 	attributes[Attributes::Recursive]="";
 	attributes[Attributes::WithNoData]="";
 	attributes[Attributes::Columns]="";
+	attributes[Attributes::CheckOption]="";
 }
 
 View::~View()
@@ -75,21 +76,31 @@ void View::setProtected(bool value)
 void View::setMaterialized(bool value)
 {
 	setCodeInvalidated(materialized != value);
-	materialized=value;
-	if(materialized) recursive=false;
+	materialized = value;
+
+	if(materialized)
+		recursive = false;
 }
 
 void View::setRecursive(bool value)
 {
 	setCodeInvalidated(recursive != value);
-	recursive=value;
-	if(recursive) materialized=false;
+	recursive = value;
+
+	if(recursive)
+		materialized=false;
 }
 
 void View::setWithNoData(bool value)
 {
 	setCodeInvalidated(materialized && with_no_data != value);
 	with_no_data=(materialized ? value : false);
+}
+
+void View::setCheckOption(CheckOptionType check_opt)
+{
+	setCodeInvalidated(check_option != check_opt);
+	check_option = check_opt;
 }
 
 bool View::isMaterialized()
@@ -271,16 +282,17 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Materialized]=(materialized ? Attributes::True : "");
-	attributes[Attributes::Recursive]=(recursive ? Attributes::True : "");
-	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
-	attributes[Attributes::Columns]="";
-	attributes[Attributes::Tag]="";
+	attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
+	attributes[Attributes::Recursive] = (recursive ? Attributes::True : "");
+	attributes[Attributes::WithNoData] = (with_no_data ? Attributes::True : "");
+	attributes[Attributes::CheckOption] = ~check_option;
+	attributes[Attributes::Columns] = "";
+	attributes[Attributes::Tag] = "";
 	attributes[Attributes::References] = "";
-	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
-	attributes[Attributes::CollapseMode]=QString::number(collapse_mode);
-	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
-	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
+	attributes[Attributes::Pagination] = (pagination_enabled ? Attributes::True : "");
+	attributes[Attributes::CollapseMode] = QString::number(collapse_mode);
+	attributes[Attributes::AttribsPage] = (pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
+	attributes[Attributes::ExtAttribsPage] = (pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	setSQLObjectAttribute();
 	setLayersAttribute();
@@ -323,8 +335,8 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		setFadedOutAttribute();
 
 		attributes[Attributes::Definition] = sql_definition;
-		attributes[Attributes::ZValue]=QString::number(z_value);
-		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::ZValue] = QString::number(z_value);
+		attributes[Attributes::MaxObjCount] = QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
 	return BaseObject::__getSourceCode(def_type);

@@ -34,6 +34,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	Ui_ViewWidget::setupUi(this);
 	alert_frm->setVisible(false);
 
+	check_option_cmb->addItems(CheckOptionType::getTypes());
+	check_option_cmb->insertItem(0, "NONE");
+	check_option_cmb->setCurrentIndex(0);
+
 	sql_definition_txt = new NumberedTextEditor(this, true);
 	sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
 	sql_definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -503,6 +507,7 @@ void ViewWidget::applyConfiguration()
 
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
+		view->setCheckOption(check_option_cmb->currentIndex() > 0 ? check_option_cmb->currentText() : "");
 		view->setMaterialized(materialized_rb->isChecked());
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());

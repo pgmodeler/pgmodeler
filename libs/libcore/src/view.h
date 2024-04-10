@@ -30,6 +30,7 @@
 #include "rule.h"
 #include "index.h"
 #include "genericsql.h"
+#include "pgsqltypes/checkoptiontype.h"
 
 class __libcore View: public BaseTable {
 	private:
@@ -52,6 +53,8 @@ class __libcore View: public BaseTable {
 		//! \brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
 		recursive;
 
+		CheckOptionType check_option;
+
 		void setSQLObjectAttribute();
 
 		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
@@ -70,6 +73,7 @@ class __libcore View: public BaseTable {
 		void setMaterialized(bool value);
 		void setRecursive(bool value);
 		void setWithNoData(bool value);
+		void setCheckOption(CheckOptionType check_opt);
 
 		bool isMaterialized();
 		bool isRecursive();

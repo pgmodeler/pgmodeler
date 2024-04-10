@@ -42,6 +42,10 @@ $br
 	$br [WITH NO DATA]
 %end
 
+%if %not {materialized} %and {check-option} %then
+	$br [WITH ] {check-option} [ OPTION]
+%end
+
 [;] {ddl-end}
 
 %if {comment} %then {comment} %end
