@@ -72,7 +72,7 @@ std::map<ObjectType, QString> Catalog::obj_relnames={
 	{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
 	{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
 	{ObjectType::Role, "pg_authid"},	{ObjectType::Rule, "pg_rewrite"},
-	{ObjectType::Schema, "pg_namespace"},	{ObjectType::Sequence, "pg_sequence"},
+	{ObjectType::Schema, "pg_namespace"},	{ObjectType::Sequence, "pg_class"},
 	{ObjectType::ForeignServer, "pg_foreign_server"},	{ObjectType::Table, "pg_class"},
 	{ObjectType::Tablespace, "pg_tablespace"},	{ObjectType::Transform, "pg_transform"},
 	{ObjectType::Trigger, "pg_trigger"},	{ObjectType::Type, "pg_type"},
