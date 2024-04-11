@@ -569,6 +569,8 @@ namespace Attributes {
 	Schema("schema"),
 	SchemaOid("schema-oid"),
 	SearchPath("search-path"),
+	SecurityBarrier("security-barrier"),
+	SecurityInvoker("security-invoker"),
 	SecurityType("security-type"),
 	SelectExp("select-exp"),
 	SelectObjects("select-objects"),

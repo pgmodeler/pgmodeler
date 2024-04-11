@@ -585,6 +585,8 @@ namespace Attributes {
 	Schema,
 	SchemaOid,
 	SearchPath,
+	SecurityBarrier,
+	SecurityInvoker,
 	SecurityType,
 	SelectExp,
 	SelectObjects,

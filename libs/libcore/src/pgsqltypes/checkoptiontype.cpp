@@ -22,9 +22,8 @@ QStringList CheckOptionType::type_names =
 {
 	"", // Reserved for Class::Null
 
-	"CHECK",
-	"LOCAL CHECK",
-	"CASCADE CHECK"
+	"cascaded",
+	"local"
 };
 
 CheckOptionType::CheckOptionType()

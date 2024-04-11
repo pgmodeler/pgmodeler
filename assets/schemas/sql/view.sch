@@ -27,23 +27,25 @@
 VIEW $sp {name}
 
 %if {columns} %then
-	[ (] {columns} [)]
+	[ (] {columns} [)] 
 %end
-
-$br
 
 %if {materialized} %and {tablespace} %then
-	TABLESPACE $sp {tablespace} $br
+	$br TABLESPACE $sp {tablespace}
 %end
 
-[AS ] $br {definition}
+%if {options} %then
+	$br [WITH (] {options} [)] 
+%end
+
+$br [AS ] $br {definition}
 
 %if {materialized} %and {with-no-data} %then
 	$br [WITH NO DATA]
 %end
 
 %if %not {materialized} %and {check-option} %then
-	$br [WITH ] {check-option} [ OPTION]
+	$br [WITH ] {check-option} [ OPTION] 
 %end
 
 [;] {ddl-end}
