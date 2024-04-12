@@ -1919,6 +1919,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	std::vector<Reference> references;
 	std::vector<SimpleColumn> custom_cols;
 	BaseTable *ref_tab = nullptr;
+	QStringList options, key_val;
 
 	try
 	{
@@ -1928,6 +1929,24 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
+
+		options = Catalog::parseArrayValues(attribs[Attributes::Options]);
+
+		for(auto &opt : options)
+		{
+			key_val = opt.split('=');
+
+			if(key_val.isEmpty())
+				continue;
+
+			/* We replace the _ of the option name by - to match
+			 * the related attribute in Attributes namespace */
+			attribs[key_val[0].replace('_','-')] =
+					/* If the key_val has two elements we use the index #1 as the value,
+					 * in the abscence of the index #1 we consider the option to having a
+					 * boolean (true) value */
+					key_val.size() == 2 ? key_val[1] : Attributes::True;
+		}
 
 		//Creating columns
 		for(auto &itr : columns[attribs[Attributes::Oid].toUInt()])

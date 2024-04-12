@@ -31,7 +31,7 @@
 	%if {attribs} %then
 		[SELECT vw.oid, vw.relname AS name, vw.relnamespace AS schema, vw.relowner AS owner,
 		vw.reltablespace AS tablespace,
-		vw.relacl AS permission, pg_get_viewdef(vw.oid) AS definition, ]
+		vw.relacl AS permission, pg_get_viewdef(vw.oid) AS definition, reloptions AS options, ]
 
 		# Subquery that retrieves the tables that the view refereces
 		# Extracted from the definition of the relation information_schema.view_table_usage
