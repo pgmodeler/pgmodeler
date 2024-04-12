@@ -191,9 +191,6 @@
          <height>25</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>F3</string>
-       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -234,9 +231,6 @@
          <height>25</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>F3</string>
-       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -276,9 +270,6 @@
          <width>25</width>
          <height>25</height>
         </size>
-       </property>
-       <property name="shortcut">
-        <string>F3</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
