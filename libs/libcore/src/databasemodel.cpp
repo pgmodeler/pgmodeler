@@ -6657,6 +6657,9 @@ View *DatabaseModel::createView()
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
+		view->setCheckOption(attribs[Attributes::CheckOption]);
+		view->setSecurityBarrier(attribs[Attributes::SecurityBarrier] == Attributes::True);
+		view->setSecurityInvoker(attribs[Attributes::SecurityInvoker] == Attributes::True);
 		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? BaseTable::NotCollapsed : static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());

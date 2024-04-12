@@ -126,7 +126,8 @@ unsigned TemplateType<Class>::setType(unsigned type_id, const QStringList &type_
 		throw Exception(ErrorCode::ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the type id is invalid
 	else if(!isTypeValid(type_id, type_list))
-		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__,
+										nullptr, QString(QT_TR_NOOP("Type id: %1")).arg(static_cast<int>(type_id)));
 
 	type_idx = type_id;
 	return type_idx;
@@ -135,7 +136,15 @@ unsigned TemplateType<Class>::setType(unsigned type_id, const QStringList &type_
 template<class Class>
 unsigned TemplateType<Class>::setType(const QString &type_name, const QStringList &type_list)
 {
+	try
+	{
 	return setType(static_cast<unsigned>(type_list.indexOf(type_name)), type_list);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+										QString(QT_TR_NOOP("Type name: %1")).arg(type_name));
+	}
 }
 
 template<class Class>

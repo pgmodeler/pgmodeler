@@ -30,6 +30,7 @@
 #include "rule.h"
 #include "index.h"
 #include "genericsql.h"
+#include "pgsqltypes/checkoptiontype.h"
 
 class __libcore View: public BaseTable {
 	private:
@@ -50,9 +51,17 @@ class __libcore View: public BaseTable {
 		with_no_data,
 
 		//! \brief Indicates that the view is a a recursive one. This setting is auto exclusive with 'materialized'
-		recursive;
+		recursive,
+
+		security_invoker,
+
+		security_barrier;
+
+		CheckOptionType check_option;
 
 		void setSQLObjectAttribute();
+
+		void setOptionsAttributes(SchemaParser::CodeType def_type);
 
 		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
 		QString getUniqueColumnName(const QString &name);
@@ -70,15 +79,20 @@ class __libcore View: public BaseTable {
 		void setMaterialized(bool value);
 		void setRecursive(bool value);
 		void setWithNoData(bool value);
+		void setSecurityBarrier(bool value);
+		void setSecurityInvoker(bool value);
+
+		void setCheckOption(CheckOptionType check_opt);
+		CheckOptionType getCheckOption();
 
 		bool isMaterialized();
 		bool isRecursive();
 		bool isWithNoData();
+		bool isSecurityInvoker();
+		bool isSecurityBarrier();
 
 		void setReferences(const std::vector<Reference> &obj_refs);
-
 		void setCustomColumns(const std::vector<SimpleColumn> &cols);
-
 		void setSqlDefinition(const QString &sql_def);
 
 		QString getSqlDefinition();
