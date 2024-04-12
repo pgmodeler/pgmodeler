@@ -15,7 +15,7 @@
 		{ddl-end} $br
 	%end
 
-	[CREATE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
+	[CREATE OR REPLACE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
 	$tb [LANGUAGE ] {language} $br
 
 	%if {transform-types} %then

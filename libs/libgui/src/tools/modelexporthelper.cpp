@@ -958,25 +958,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 						//Removing/replacing noisy keywords in order to extract more easily the object's name
 						if(lin.startsWith("CREATE") || lin.startsWith("ALTER"))
 						{
-							if(obj_tp==ObjectType::Index)
+							if(lin.contains("OR REPLACE"))
+							{
+								lin.remove("OR REPLACE");
+							}
+							else if(obj_tp == ObjectType::Index)
 							{
 								lin.remove("UNIQUE");
 								lin.remove("CONCURRENTLY");
 							}
-							else if(obj_tp==ObjectType::View)
+							else if(obj_tp == ObjectType::View)
 							{
 								lin.remove("MATERIALIZED");
 								lin.remove("RECURSIVE");
 							}
-							else if(obj_tp==ObjectType::Table)
+							else if(obj_tp == ObjectType::Table)
 							{
 								lin.remove("UNLOGGED");
 							}
-							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
-							{
-								lin.remove("OR REPLACE");
-							}
-							else if(obj_tp==ObjectType::Transform)
+							else if(obj_tp == ObjectType::Transform)
 							{
 								lin.remove(" FOR");
 								lin.replace(" LANGUAGE ", "_");
@@ -989,7 +989,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin.remove("MATERIALIZED");
 						}
 
-						lin=lin.simplified();
+						lin = lin.simplified();
 
 						//Check if the keyword for the current object exists on string
 						reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));

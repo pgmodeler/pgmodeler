@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE FUNCTION ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
+[CREATE OR REPLACE FUNCTION ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
 $tb [RETURNS ]
 
 %if {return-table} %then

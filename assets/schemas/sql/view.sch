@@ -14,7 +14,13 @@
 	{ddl-end} $br
 %end
 
+
+
+%if {materialized} %then
 [CREATE ]
+%else
+[CREATE OR REPLACE ]
+%end
 
 %if {recursive} %then
 	[RECURSIVE ]

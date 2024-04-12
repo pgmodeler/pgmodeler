@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE RULE ] {name} [ AS ] {event-type} $br
+[CREATE OR REPLACE RULE ] {name} [ AS ] {event-type} $br
 $tb [TO ] {table} $br
 
 %if {condition} %then
