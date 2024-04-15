@@ -525,6 +525,9 @@ class __libcore BaseObject {
 		//! \brief Returns if the specified type accepts the use of DROP commands
 		static bool acceptsDropCommand(ObjectType obj_type);
 
+		//! \brief Returns if the object accepts the use of CREATE OR REPLACE commands
+		static bool acceptsReplaceCommand(ObjectType obj_type);
+
 		//! \brief Returns if the specified type accepts an alias (friendly name)
 		static bool acceptsAlias(ObjectType obj_type);
 
@@ -551,6 +554,9 @@ class __libcore BaseObject {
 
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand();
+
+		//! \brief Returns if the object accepts the use of CREATE OR REPLACE commands
+		bool acceptsReplaceCommand();
 
 		//! \brief Returns if the object accepts the use of alias
 		bool acceptsAlias();

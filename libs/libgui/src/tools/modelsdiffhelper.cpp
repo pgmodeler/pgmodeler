@@ -49,7 +49,8 @@ ModelsDiffHelper::ModelsDiffHelper()
 	diff_opts[OptKeepClusterObjs]=true;
 	diff_opts[OptCascadeMode]=true;
 	diff_opts[OptForceRecreation]=true;
-	diff_opts[OptRecreateUnmodifiable]=true;
+	diff_opts[OptRecreateUnmodifiable]=false;
+	diff_opts[OptReplaceModified]=false;
 	diff_opts[OptKeepObjectPerms]=true;
 	diff_opts[OptReuseSequences]=true;
 	diff_opts[OptPreserveDbName]=true;
@@ -960,41 +961,55 @@ void ModelsDiffHelper::processDiffInfos()
 			//Generating the ALTER commands
 			else if(diff_type==ObjectsDiffInfo::AlterObject)
 			{
+				QString obj_sql, old_obj_sql;
+
+				obj_sql = diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified();
+				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
+
 				//Recreating the object instead of generating an ALTER command for it
 				if((diff_opts[OptForceRecreation] && obj_type!=ObjectType::Database) &&
-						(!diff_opts[OptRecreateUnmodifiable] ||
-						 (diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() &&
-						  diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified()!=
-						  diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified())))
+
+						((!diff_opts[OptRecreateUnmodifiable] && !diff_opts[OptReplaceModified]) ||
+
+						(diff_opts[OptRecreateUnmodifiable] &&
+							!object->acceptsAlterCommand() && obj_sql != old_obj_sql) ||
+
+						(diff_opts[OptReplaceModified] &&
+							object->acceptsReplaceCommand() && obj_sql != old_obj_sql)))
 				{
-					recreateObject(object, drop_vect, create_vect);
-
-					//Generating the drop for the object's reference
-					for(auto &obj : drop_vect)
-						drop_objs[obj->getObjectId()]=getSourceCode(obj, true);
-
-					//Generating the create for the object's reference
-					for(auto &obj : create_vect)
+					if(object->acceptsReplaceCommand())
+						alter_objs[object->getObjectId()] = getSourceCode(object, false);
+					else
 					{
-						//The there is no ALTER info registered for an object's reference
-						if(!isDiffInfoExists(ObjectsDiffInfo::AlterObject, nullptr, obj, false))
-						{
-							/* Special case for constraints, their code will be appeded to a separated variable in order to
-							 create them at the end of diff buffer */
-							if(obj->getObjectType()==ObjectType::Constraint)
-							{
-								if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
-									create_fks[obj->getObjectId()]=getSourceCode(obj, false);
-								else
-									create_constrs[obj->getObjectId()]=getSourceCode(obj, false);
-							}
-							else
-								create_objs[obj->getObjectId()]=getSourceCode(obj, false);
-						}
-					}
+						recreateObject(object, drop_vect, create_vect);
 
-					drop_vect.clear();
-					create_vect.clear();
+						//Generating the drop for the object's reference
+						for(auto &obj : drop_vect)
+							drop_objs[obj->getObjectId()] = getSourceCode(obj, true);
+
+									 //Generating the create for the object's reference
+						for(auto &obj : create_vect)
+						{
+							//The there is no ALTER info registered for an object's reference
+							if(!isDiffInfoExists(ObjectsDiffInfo::AlterObject, nullptr, obj, false))
+							{
+								/* Special case for constraints, their code will be appeded to a separated variable in order to
+								 create them at the end of diff buffer */
+								if(obj->getObjectType()==ObjectType::Constraint)
+								{
+									if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
+										create_fks[obj->getObjectId()]=getSourceCode(obj, false);
+									else
+										create_constrs[obj->getObjectId()]=getSourceCode(obj, false);
+								}
+								else
+									create_objs[obj->getObjectId()]=getSourceCode(obj, false);
+							}
+						}
+
+						drop_vect.clear();
+						create_vect.clear();
+					}
 				}
 				else
 				{
@@ -1235,12 +1250,12 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 		}
 
 		/* Register a drop info for the object only if there is no drop registered previously,
-	   avoiding multiple drop statments for the same object */
+		 avoiding multiple drop statments for the same object */
 		if(aux_obj && !isDiffInfoExists(ObjectsDiffInfo::DropObject, aux_obj, nullptr))
 			drop_objs.push_back(aux_obj);
 
 		/* Register a create info for the object only if there is no drop or create registered previously,
-	   avoiding wrongly recreating the object */
+		 avoiding wrongly recreating the object */
 		if(!isDiffInfoExists(ObjectsDiffInfo::DropObject, aux_obj, nullptr) &&
 				!isDiffInfoExists(ObjectsDiffInfo::CreateObject, aux_obj, nullptr))
 			create_objs.push_back(object);
