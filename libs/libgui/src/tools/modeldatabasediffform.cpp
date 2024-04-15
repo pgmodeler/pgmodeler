@@ -124,8 +124,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 
 	connect(close_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::close);
 	connect(store_in_file_rb, &QRadioButton::clicked, store_in_file_wgt, &QWidget::setEnabled);
-	connect(force_recreation_chk, &QCheckBox::toggled, recreate_unmod_chk, &QCheckBox::setEnabled);
-	connect(force_recreation_chk, &QCheckBox::toggled, replace_modified_chk, &QCheckBox::setEnabled);
+
 	connect(dont_drop_missing_objs_chk, &QCheckBox::toggled, drop_missing_cols_constr_chk, &QCheckBox::setEnabled);
 	connect(create_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
 	connect(drop_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
@@ -143,6 +142,24 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	connect(default_presets_tb, &QToolButton::clicked, this, &ModelDatabaseDiffForm::restoreDefaults);
 	connect(remove_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::removePreset));
 	connect(save_preset_tb, &QToolButton::clicked, this, __slot(this, ModelDatabaseDiffForm::savePreset));
+
+	connect(force_recreation_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+		{
+			recreate_unmod_chk->setChecked(false);
+			replace_modified_chk->setChecked(false);
+		}
+	});
+
+	connect(recreate_unmod_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+			force_recreation_chk->setChecked(false);
+	});
+
+	connect(replace_modified_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+			force_recreation_chk->setChecked(false);
+	});
 
 	connect(src_database_rb, &QRadioButton::toggled, this, [this](bool toggle){
 		src_database_wgt->setEnabled(toggle);
@@ -1230,8 +1247,10 @@ void ModelDatabaseDiffForm::selectPreset()
 	cascade_mode_chk->setChecked(conf[Attributes::DropTruncCascade] == Attributes::True);
 	reuse_sequences_chk->setChecked(conf[Attributes::ReuseSequences] == Attributes::True);
 	force_recreation_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True);
-	recreate_unmod_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True &&
+	recreate_unmod_chk->setChecked(/* conf[Attributes::ForceObjsRecreation] == Attributes::True && */
 																 conf[Attributes::RecreateUnmodObjs] == Attributes::True);
+	replace_modified_chk->setChecked(/* conf[Attributes::ForceObjsRecreation] == Attributes::True && */
+																		conf[Attributes::ReplaceModObjs] == Attributes::True);
 
 	import_sys_objs_chk->setChecked(conf[Attributes::ImportSysObjs] == Attributes::True);
 	import_ext_objs_chk->setChecked(conf[Attributes::ImportExtObjs] == Attributes::True);
@@ -1329,6 +1348,7 @@ void ModelDatabaseDiffForm::savePreset()
 	conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::ForceObjsRecreation] = force_recreation_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::ReplaceModObjs] = replace_modified_chk->isChecked() ? Attributes::True : Attributes::False;
 
 	conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;

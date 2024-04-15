@@ -515,6 +515,7 @@ namespace Attributes {
 	Recent("recent"),
 	RecentModels("recent-models"),
 	RecreateUnmodObjs("recreate-unmod-objs"),
+	ReplaceModObjs("replace-mod-objs"),
 	RectVisible("rect-visible"),
 	Recursive("recursive"),
 	RecvFunc("receive"),
