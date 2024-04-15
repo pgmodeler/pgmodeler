@@ -256,7 +256,6 @@ namespace Attributes {
 	FkDefs("fk-defs"),
 	Font("font"),
 	FontSize("font-size"),
-	ForceObjsRecreation("force-objs-recreation"),
 	ForegroundColor("foreground-color"),
 	ForeignKeys("foreign-keys"),
 	ForeignTableTogglerButtons("foreigntable-toggler-btns"),

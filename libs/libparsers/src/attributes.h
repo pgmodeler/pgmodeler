@@ -270,7 +270,6 @@ namespace Attributes {
 	FkDefs,
 	Font,
 	FontSize,
-	ForceObjsRecreation,
 	ForegroundColor,
 	ForeignKeys,
 	ForeignTableTogglerButtons,

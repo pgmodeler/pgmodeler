@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>788</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1216,35 +1216,13 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;p&gt;Recreates only objects that can't be changed through &lt;strong&gt;ALTER&lt;/strong&gt; commands according to pgModeler implementation not the PostgreSQL one. &lt;br/&gt;&lt;br/&gt;Currently, these objects are: aggregates, casts, constraints, collations, conversions, languages, operators, operator classess, operator families, rules, transforms, triggers, and views.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; this option is ignored for aggregates, functions, languages, procedures, rules, transforms, triggers, and views when the option &lt;strong&gt;Replace modified objects&lt;/strong&gt; is checked.&lt;/p&gt;</string>
+                    <string>&lt;p&gt;Recreates using a combination of &lt;strong&gt;DROP&lt;/strong&gt; and &lt;strong&gt;CREATE&lt;/strong&gt; commands only those objects that can't be changed through &lt;strong&gt;ALTER&lt;/strong&gt; commands according to pgModeler implementation not the PostgreSQL one. &lt;br/&gt;&lt;br/&gt;Currently, these objects are: aggregates, casts, constraints, collations, conversions, languages, operators, operator classess, operator families, rules, transforms, triggers, and views.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; this option is ignored for aggregates, functions, languages, procedures, rules, transforms, triggers, and views when the option &lt;strong&gt;Replace modified objects&lt;/strong&gt; is checked.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
                    </property>
                    <property name="text">
                     <string>Recreate unmodifiable objects</string>
-                   </property>
-                   <property name="checked">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="force_recreation_chk">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="toolTip">
-                    <string>&lt;p&gt;Instead of using an &lt;strong&gt;ALTER&lt;/strong&gt; command to modify certain kinds of objects, a &lt;strong&gt;DROP&lt;/strong&gt; and &lt;strong&gt;CREATE&lt;/strong&gt; will be used to do a full modification. This option is ignored when the object in question is the database itself.&lt;/p&gt;</string>
-                   </property>
-                   <property name="statusTip">
-                    <string/>
-                   </property>
-                   <property name="text">
-                    <string>Forced object recreate</string>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
                    </property>
                    <property name="checked">
                     <bool>false</bool>

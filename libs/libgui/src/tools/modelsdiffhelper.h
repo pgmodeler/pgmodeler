@@ -126,9 +126,6 @@ class __libgui ModelsDiffHelper: public QObject {
 			//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
 			OptCascadeMode,
 
-			//! \brief Forces the recreation of any object maked as ALTER in the output
-			OptForceRecreation,
-
 			//! \brief Recreates only objects that can't be modified using ALTER commands
 			OptRecreateUnmodifiable,
 

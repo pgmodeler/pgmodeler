@@ -282,7 +282,6 @@ class __libcli PgModelerCliApp: public Application {
 		RenameDb,
 		NoSequenceReuse,
 		NoCascadeDrop,
-		ForceRecreateObjs,
 		OnlyUnmodifiable,
 
 		CreateConfigs,

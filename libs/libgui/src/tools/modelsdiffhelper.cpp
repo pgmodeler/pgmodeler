@@ -48,7 +48,6 @@ ModelsDiffHelper::ModelsDiffHelper()
 
 	diff_opts[OptKeepClusterObjs]=true;
 	diff_opts[OptCascadeMode]=true;
-	diff_opts[OptForceRecreation]=false;
 	diff_opts[OptRecreateUnmodifiable]=false;
 	diff_opts[OptReplaceModified]=false;
 	diff_opts[OptKeepObjectPerms]=true;
@@ -70,24 +69,6 @@ void ModelsDiffHelper::setDiffOption(DiffOptions opt_id, bool value)
 
 	if(opt_id == OptDropMissingColsConstr)
 		diff_opts[opt_id]=value & !diff_opts[OptDropMissingColsConstr];
-
-	/* The options OptRecreateUnmodifiable and OptRelaceModified are
-	 * mutually exclusive with OptForceRecreate */
-	else if(opt_id == OptRecreateUnmodifiable || opt_id == OptReplaceModified)
-	{
-		diff_opts[opt_id] = value;
-
-		if(value)
-			diff_opts[OptForceRecreation] = false;
-	}
-	/* The option OptForceRecreate is mutually exclusive with
-	 * OptRecreateUnmodifiable and OptRelaceModified*/
-	else if(opt_id == OptForceRecreation && value)
-	{
-		diff_opts[opt_id] = value;
-		diff_opts[OptRecreateUnmodifiable] = false;
-		diff_opts[OptReplaceModified] = false;
-	}
 	else
 		diff_opts[opt_id]=value;
 }
@@ -526,9 +507,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if((!diff_opts[OptForceRecreation] ||
-										 diff_opts[OptRecreateUnmodifiable] ||
-										 diff_opts[OptReplaceModified]) &&
+								if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
 										PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
@@ -664,10 +643,10 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 			/* If the info is for ALTER and there is a DROP info on the list,
 			 * the object will be recreated instead of modified */
-			if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
-					diff_type==ObjectsDiffInfo::AlterObject &&
-					isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
-					!isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
+			if(diff_opts[OptRecreateUnmodifiable] &&
+				 diff_type==ObjectsDiffInfo::AlterObject &&
+				 isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
+				 !isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
 			{
 				diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CreateObject, object, nullptr);
 				diff_infos.push_back(diff_info);
@@ -770,7 +749,7 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 				/* If the info is for DROP, generate the drop for referer objects of the
 				 * one marked to be dropped */
-				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
+				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
@@ -988,18 +967,14 @@ void ModelsDiffHelper::processDiffInfos()
 				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 
 				// If one or more options that controls the recreation of objects is set
-				if((diff_opts[OptForceRecreation] ||
-						diff_opts[OptRecreateUnmodifiable] ||
-						diff_opts[OptReplaceModified]) &&
+				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
 						obj_type != ObjectType::Database)
 				{
 					// Replacing objects that accepts CREATE OR REPLACE
 					if(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand() && obj_sql != old_obj_sql)
 						alter_objs[object->getObjectId()] = getSourceCode(object, false);
 					// Recreating objects via DROP and CREATE
-					else if(//(!diff_opts[OptRecreateUnmodifiable] && !diff_opts[OptReplaceModified]) ||
-									diff_opts[OptForceRecreation] ||
-									(diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() && obj_sql != old_obj_sql))
+					else if(diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() && obj_sql != old_obj_sql)
 					{
 						recreateObject(object, drop_vect, create_vect);
 
