@@ -67,7 +67,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	vbox->addWidget(sql_preview_txt);
 
 	tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
-	dynamic_cast<QGridLayout *>(basics_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
+	dynamic_cast<QGridLayout *>(basics_gb->layout())->addWidget(tag_sel, 0, 1, 1, 6);
 
 	custom_cols_wgt = new SimpleColumnsWidget(this);
 	vbox = new QVBoxLayout(columns_tab);
