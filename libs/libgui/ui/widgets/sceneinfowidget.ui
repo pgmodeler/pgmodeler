@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
+    <width>449</width>
     <height>36</height>
    </rect>
   </property>
@@ -36,14 +36,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="frame_3">
+    <widget class="QFrame" name="cursor_pos_info_frm">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="obj_pos_info_frm">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -129,7 +129,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="zoom_info_frm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="zoom_info_frm">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -240,14 +240,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="obj_sel_info_frm">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="sel_obj_info_frm">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
       <property name="spacing">
        <number>10</number>
       </property>
