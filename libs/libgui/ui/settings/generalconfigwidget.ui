@@ -564,6 +564,9 @@
           </item>
           <item row="8" column="1">
            <widget class="QCheckBox" name="hide_obj_sel_info_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the visibility of the widget that displays the current objects' selection bounding rectangle.&lt;/p&gt;</string>
+            </property>
             <property name="text">
              <string>Hide objects' selection information</string>
             </property>
@@ -666,6 +669,9 @@
           </item>
           <item row="7" column="1">
            <widget class="QCheckBox" name="hide_cur_pos_zoom_info_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the visibility of the widget that displays the current mouse cursor position and current zoom factor in the canvas.&lt;/p&gt;</string>
+            </property>
             <property name="text">
              <string>Hide cursor position and zoom info</string>
             </property>
