@@ -507,8 +507,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
-										PhysicalTable::isPhysicalTable(object->getObjectType()))
+								if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
 											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
