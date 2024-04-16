@@ -48,8 +48,8 @@ ModelsDiffHelper::ModelsDiffHelper()
 
 	diff_opts[OptKeepClusterObjs]=true;
 	diff_opts[OptCascadeMode]=true;
-	diff_opts[OptForceRecreation]=true;
-	diff_opts[OptRecreateUnmodifiable]=true;
+	diff_opts[OptRecreateUnmodifiable]=false;
+	diff_opts[OptReplaceModified]=false;
 	diff_opts[OptKeepObjectPerms]=true;
 	diff_opts[OptReuseSequences]=true;
 	diff_opts[OptPreserveDbName]=true;
@@ -337,7 +337,7 @@ void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_t
 					 columns created by common relationships will be considered on the comparison. Also,
 					foreign keys are discarded here, since they will be compared on the main comparison
 					at diffModels() */
-				if(aux_obj && diff_type!=ObjectsDiffInfo::DropObject &&
+				if(aux_obj && diff_type != ObjectsDiffInfo::DropObject &&
 						((tab_obj->isAddedByGeneralization() || !tab_obj->isAddedByLinking() ||
 							(aux_obj->getObjectType()==ObjectType::Column && tab_obj->isAddedByLinking())) ||
 						 (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)))
@@ -507,7 +507,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) && PhysicalTable::isPhysicalTable(object->getObjectType()))
+								if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
 											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
@@ -642,10 +642,10 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 			/* If the info is for ALTER and there is a DROP info on the list,
 			 * the object will be recreated instead of modified */
-			if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
-					diff_type==ObjectsDiffInfo::AlterObject &&
-					isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
-					!isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
+			if(diff_opts[OptRecreateUnmodifiable] &&
+				 diff_type==ObjectsDiffInfo::AlterObject &&
+				 isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
+				 !isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
 			{
 				diff_info=ObjectsDiffInfo(ObjectsDiffInfo::CreateObject, object, nullptr);
 				diff_infos.push_back(diff_info);
@@ -748,7 +748,7 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 				/* If the info is for DROP, generate the drop for referer objects of the
 				 * one marked to be dropped */
-				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
+				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
@@ -760,8 +760,8 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 					for(auto &obj : ref_objs)
 					{
 						/* Avoiding columns to be dropped when a sequence linked to them is dropped too. This because
-			   a column can be a reference to a sequence so to avoid drop and recreate that column this one
-			   will not be erased, unless the column does not exists in the model anymore */
+						 * a column can be a reference to a sequence so to avoid drop and recreate that column this one
+						 * will not be erased, unless the column does not exists in the model anymore */
 						if((obj_type==ObjectType::Sequence && obj->getObjectType()!=ObjectType::Column) &&
 								(obj_type!=ObjectType::Sequence && obj->getObjectType()!=ObjectType::BaseRelationship))
 							generateDiffInfo(diff_type, obj);
@@ -904,14 +904,14 @@ void ModelsDiffHelper::processDiffInfos()
 				else
 				{
 					//Ordinary drop commands for any object except columns
-					if(obj_type!=ObjectType::Column)
-						drop_objs[object->getObjectId()]=getSourceCode(object, true);
+					if(obj_type != ObjectType::Column)
+						drop_objs[object->getObjectId()] = getSourceCode(object, true);
 					else
 					{
 						/* Special case for columns: due to cases like inheritance there is the
-			   the need to drop the columns in the normal order of creation to avoid
-			   error like 'drop inherited column' or wrong propagation of drop on all
-			   child tables. */
+						 * the need to drop the columns in the normal order of creation to avoid
+						 * error like 'drop inherited column' or wrong propagation of drop on all
+						 * child tables. */
 						drop_cols.push_back(object);
 					}
 				}
@@ -960,41 +960,50 @@ void ModelsDiffHelper::processDiffInfos()
 			//Generating the ALTER commands
 			else if(diff_type==ObjectsDiffInfo::AlterObject)
 			{
-				//Recreating the object instead of generating an ALTER command for it
-				if((diff_opts[OptForceRecreation] && obj_type!=ObjectType::Database) &&
-						(!diff_opts[OptRecreateUnmodifiable] ||
-						 (diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() &&
-						  diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified()!=
-						  diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified())))
+				QString obj_sql, old_obj_sql;
+
+				obj_sql = diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified();
+				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
+
+				// If one or more options that controls the recreation of objects is set
+				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
+						obj_type != ObjectType::Database)
 				{
-					recreateObject(object, drop_vect, create_vect);
-
-					//Generating the drop for the object's reference
-					for(auto &obj : drop_vect)
-						drop_objs[obj->getObjectId()]=getSourceCode(obj, true);
-
-					//Generating the create for the object's reference
-					for(auto &obj : create_vect)
+					// Replacing objects that accepts CREATE OR REPLACE
+					if(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand() && obj_sql != old_obj_sql)
+						alter_objs[object->getObjectId()] = getSourceCode(object, false);
+					// Recreating objects via DROP and CREATE
+					else if(diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() && obj_sql != old_obj_sql)
 					{
-						//The there is no ALTER info registered for an object's reference
-						if(!isDiffInfoExists(ObjectsDiffInfo::AlterObject, nullptr, obj, false))
-						{
-							/* Special case for constraints, their code will be appeded to a separated variable in order to
-							 create them at the end of diff buffer */
-							if(obj->getObjectType()==ObjectType::Constraint)
-							{
-								if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
-									create_fks[obj->getObjectId()]=getSourceCode(obj, false);
-								else
-									create_constrs[obj->getObjectId()]=getSourceCode(obj, false);
-							}
-							else
-								create_objs[obj->getObjectId()]=getSourceCode(obj, false);
-						}
-					}
+						recreateObject(object, drop_vect, create_vect);
 
-					drop_vect.clear();
-					create_vect.clear();
+						//Generating the drop for the object's reference
+						for(auto &obj : drop_vect)
+							drop_objs[obj->getObjectId()] = getSourceCode(obj, true);
+
+						//Generating the create for the object's reference
+						for(auto &obj : create_vect)
+						{
+							//The there is no ALTER info registered for an object's reference
+							if(!isDiffInfoExists(ObjectsDiffInfo::AlterObject, nullptr, obj, false))
+							{
+								/* Special case for constraints, their code will be appeded to a separated variable in order to
+								 create them at the end of diff buffer */
+								if(obj->getObjectType()==ObjectType::Constraint)
+								{
+									if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
+										create_fks[obj->getObjectId()]=getSourceCode(obj, false);
+									else
+										create_constrs[obj->getObjectId()]=getSourceCode(obj, false);
+								}
+								else
+									create_objs[obj->getObjectId()]=getSourceCode(obj, false);
+							}
+						}
+
+						drop_vect.clear();
+						create_vect.clear();
+					}
 				}
 				else
 				{
@@ -1235,12 +1244,12 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 		}
 
 		/* Register a drop info for the object only if there is no drop registered previously,
-	   avoiding multiple drop statments for the same object */
+		 avoiding multiple drop statments for the same object */
 		if(aux_obj && !isDiffInfoExists(ObjectsDiffInfo::DropObject, aux_obj, nullptr))
 			drop_objs.push_back(aux_obj);
 
 		/* Register a create info for the object only if there is no drop or create registered previously,
-	   avoiding wrongly recreating the object */
+		 avoiding wrongly recreating the object */
 		if(!isDiffInfoExists(ObjectsDiffInfo::DropObject, aux_obj, nullptr) &&
 				!isDiffInfoExists(ObjectsDiffInfo::CreateObject, aux_obj, nullptr))
 			create_objs.push_back(object);

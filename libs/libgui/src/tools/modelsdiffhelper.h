@@ -126,11 +126,11 @@ class __libgui ModelsDiffHelper: public QObject {
 			//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
 			OptCascadeMode,
 
-			//! \brief Forces the recreation of any object maked as ALTER in the output
-			OptForceRecreation,
-
 			//! \brief Recreates only objects that can't be modified using ALTER commands
 			OptRecreateUnmodifiable,
+
+			//! \brief Recreates/replace the objects that can't be modified using ALTER commands but accepts CREATE OR REPLACE
+			OptReplaceModified,
 
 			//! \brief Indicates if permissions must be preserved on database
 			OptKeepObjectPerms,

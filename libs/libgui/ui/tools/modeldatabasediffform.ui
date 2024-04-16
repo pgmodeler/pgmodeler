@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>700</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1180,74 +1180,54 @@
                   </widget>
                  </item>
                  <item>
-                  <layout class="QGridLayout" name="gridLayout_8">
-                   <property name="spacing">
-                    <number>5</number>
+                  <widget class="QCheckBox" name="replace_modified_chk">
+                   <property name="enabled">
+                    <bool>true</bool>
                    </property>
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QCheckBox" name="force_recreation_chk">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>&lt;p&gt;Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.&lt;/p&gt;</string>
-                     </property>
-                     <property name="statusTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>Forced object recreate</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <spacer name="horizontalSpacer_5">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeType">
-                      <enum>QSizePolicy::Fixed</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>15</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QCheckBox" name="recreate_unmod_chk">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="toolTip">
-                      <string>Recreates only objects that can't be changed through ALTER commands according to pgModeler implementation not the PostgreSQL one. &lt;br/&gt;Currently, these objects are:&lt;br/&gt;&lt;br/&gt;aggregate, cast, constraint, collation, conversion, language, operator, operator class, operator family, rule, trigger and view.</string>
-                     </property>
-                     <property name="statusTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>Recreate only unmodifiable objects</string>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;p&gt;If an object being flagged as changed supports the &lt;strong&gt;CREATE OR REPLACE&lt;/strong&gt; syntax, pgModeler generates the proper command to replace the object instead of dropping and recreating it. &lt;br/&gt;&lt;br/&gt;Currently, this is applied to aggregates, functions, languages, procedures, rules, transforms, triggers, and views.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; this option takes precedence of the &lt;strong&gt;Recreate unmodifiable objects&lt;/strong&gt; when the object type is one of the above list.&lt;/p&gt;</string>
+                   </property>
+                   <property name="statusTip">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>Replace modified objects</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="recreate_unmod_chk">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;p&gt;Recreates using a combination of &lt;strong&gt;DROP&lt;/strong&gt; and &lt;strong&gt;CREATE&lt;/strong&gt; commands only those objects that can't be changed through &lt;strong&gt;ALTER&lt;/strong&gt; commands according to pgModeler implementation not the PostgreSQL one. &lt;br/&gt;&lt;br/&gt;Currently, these objects are: aggregates, casts, constraints, collations, conversions, languages, operators, operator classess, operator families, rules, transforms, triggers, and views.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; this option is ignored for aggregates, functions, languages, procedures, rules, transforms, triggers, and views when the option &lt;strong&gt;Replace modified objects&lt;/strong&gt; is checked.&lt;/p&gt;</string>
+                   </property>
+                   <property name="statusTip">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>Recreate unmodifiable objects</string>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -2747,8 +2727,6 @@
   <tabstop>preserve_db_name_chk</tabstop>
   <tabstop>cascade_mode_chk</tabstop>
   <tabstop>reuse_sequences_chk</tabstop>
-  <tabstop>force_recreation_chk</tabstop>
-  <tabstop>recreate_unmod_chk</tabstop>
   <tabstop>import_sys_objs_chk</tabstop>
   <tabstop>import_ext_objs_chk</tabstop>
   <tabstop>ignore_errors_chk</tabstop>

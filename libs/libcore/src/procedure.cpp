@@ -58,12 +58,12 @@ QString Procedure::getAlterCode(BaseObject *object)
 		attribs_map attribs;
 		attribs = BaseFunction::getAlterCodeAttributes(proc);
 
-		if(this->func_source.simplified() != proc->func_source.simplified() ||
+		/* if(this->func_source.simplified() != proc->func_source.simplified() ||
 			 this->library != proc->library || this->symbol != proc->symbol)
 		{
 			attribs[Attributes::Definition] = proc->getSourceCode(SchemaParser::SqlCode);
 			attribs[Attributes::Definition].replace("CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE");
-		}
+		} */
 
 		copyAttributes(attribs);
 		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);

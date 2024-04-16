@@ -537,6 +537,14 @@ bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 				obj_type!=ObjectType::BaseTable);
 }
 
+bool BaseObject::acceptsReplaceCommand(ObjectType obj_type)
+{
+	return obj_type == ObjectType::Aggregate || obj_type == ObjectType::Function ||
+				 obj_type == ObjectType::Language || obj_type == ObjectType::Procedure ||
+				 obj_type == ObjectType::Rule || obj_type == ObjectType::Transform ||
+				 obj_type == ObjectType::Trigger || obj_type == ObjectType::View;
+}
+
 bool BaseObject::acceptsAlias(ObjectType obj_type)
 {
 	return (obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship ||
@@ -567,6 +575,11 @@ bool BaseObject::acceptsAlterCommand()
 bool BaseObject::acceptsDropCommand()
 {
 	return BaseObject::acceptsDropCommand(this->obj_type);
+}
+
+bool BaseObject::acceptsReplaceCommand()
+{
+	return BaseObject::acceptsReplaceCommand(this->obj_type);
 }
 
 bool BaseObject::acceptsAlias()
