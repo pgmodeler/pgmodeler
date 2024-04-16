@@ -368,50 +368,6 @@
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="7" column="0">
-           <widget class="QCheckBox" name="invert_rangesel_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Trigger range selection with a single click</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="corner_move_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Start move the canvas when the cursor is on the canvas edges</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Move canvas by keeping the mouse on corners</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
@@ -478,82 +434,6 @@
              </spacer>
             </item>
            </layout>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="simple_obj_creation_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas &lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Simplify the creation of graphical objects</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QCheckBox" name="save_last_pos_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;After loading the model the last zoom and position on canvas will be restored&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Save and restore last position and zoom</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="confirm_validation_chk">
-            <property name="toolTip">
-             <string>&lt;p&gt;Triggers a dialog asking the user to validate the model before a save, export or diff operation.&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Validate before save, export or diff</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="use_placeholders_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt;When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Use placeholders when moving tables</string>
-            </property>
-           </widget>
           </item>
           <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -628,7 +508,71 @@
             </item>
            </layout>
           </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="simple_obj_creation_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas &lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Simplify the creation of graphical objects</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="confirm_validation_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;Triggers a dialog asking the user to validate the model before a save, export or diff operation.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Validate before save, export or diff</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="hide_ext_attribs_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Hide the portion of table which represents triggers, indexes and rules.</string>
+            </property>
+            <property name="text">
+             <string>Hide table extended attributes</string>
+            </property>
+           </widget>
+          </item>
           <item row="8" column="1">
+           <widget class="QCheckBox" name="hide_obj_sel_info_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the visibility of the widget that displays the current objects' selection bounding rectangle.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Hide objects' selection information</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
            <widget class="QCheckBox" name="escape_comments_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -647,45 +591,7 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
-           <widget class="QCheckBox" name="disable_smooth_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;p&gt; Disable the antialiasing for lines and texts improving performance when handling huge models.&lt;/p&gt;</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Disable render smoothness</string>
-            </property>
-           </widget>
-          </item>
           <item row="6" column="1">
-           <widget class="QCheckBox" name="use_curved_lines_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>Use curved lines for relationships</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
            <widget class="QCheckBox" name="hide_obj_shadows_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -704,7 +610,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QCheckBox" name="hide_sch_name_usr_types_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -723,7 +629,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QCheckBox" name="hide_rel_name_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -742,7 +648,36 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="10" column="0">
+           <widget class="QCheckBox" name="use_curved_lines_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Use curved lines for relationships</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QCheckBox" name="hide_cur_pos_zoom_info_chk">
+            <property name="toolTip">
+             <string>&lt;p&gt;Toggles the visibility of the widget that displays the current mouse cursor position and current zoom factor in the canvas.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Hide cursor position and zoom info</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="QCheckBox" name="hide_table_tags_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -761,19 +696,104 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="hide_ext_attribs_chk">
+          <item row="10" column="1">
+           <widget class="QCheckBox" name="disable_smooth_chk">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Hide the portion of table which represents triggers, indexes and rules.</string>
+             <string>&lt;p&gt; Disable the antialiasing for lines and texts improving performance when handling huge models.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
             </property>
             <property name="text">
-             <string>Hide table extended attributes</string>
+             <string>Disable render smoothness</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="corner_move_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Start move the canvas when the cursor is on the canvas edges</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Move canvas by keeping the mouse on corners</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="invert_rangesel_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Trigger range selection with a single click</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QCheckBox" name="save_last_pos_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;After loading the model the last zoom and position on canvas will be restored&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Save and restore last position and zoom</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QCheckBox" name="use_placeholders_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).&lt;/p&gt;</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Use placeholders when moving tables</string>
             </property>
            </widget>
           </item>

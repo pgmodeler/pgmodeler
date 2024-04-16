@@ -29,9 +29,9 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 {
 	if(!object)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("close1")));
-		obj_name_lbl->setText(tr("No selection"));
-		obj_pos_info_lbl->setText(tr("N/A"));
+		sel_obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("close1")));
+		sel_obj_count_lbl->setText(tr("None"));
+		obj_pos_info_lbl->setText(tr("None"));
 	}
 	else
 	{
@@ -42,8 +42,8 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 														 object->boundingRect().width(),
 														 object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
-		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));
+		sel_obj_icon_lbl->setPixmap(GuiUtilsNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
+		sel_obj_count_lbl->setText(tr("Selected: <strong>%1</strong>").arg(1));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 															.arg(round(rect.left()))
 															.arg(round(rect.top()))
@@ -59,8 +59,8 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 	if(!rect.isValid())
 		rect = QRect(0,0,0,0);
 
-	obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectall")));
-	obj_name_lbl->setText(tr("Sel. objects: %1").arg(obj_count));
+	sel_obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("selectmove")));
+	sel_obj_count_lbl->setText(tr("Selected: <strong>%1</strong>").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 														.arg(rect.left())
 														.arg(rect.top())
