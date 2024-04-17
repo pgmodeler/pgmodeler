@@ -23,7 +23,22 @@
 #include "exception.h"
 #include <QSettings>
 
-/** Base version number **/
+/* ATTENTION: The attributes below indicates the default names of configuration
+ * directories in user's local storage in the current major version as well as
+ * in the previous major version.
+ *
+ * This is used to automatically copy configuration files config from a previous
+ * version to the new one. More details in Application::createUserConfiguration()
+ *
+ * !!! ALWAYS UPDATE THESE VARIABLES WHEN UPGRADING THE MAJOR VERSION !!!
+ */
+const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.2");
+/* In versions 1.0.x and 1.1.x there was no distinction in the configuration dir
+ * so until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
+ * version config dir */
+const QString GlobalAttributes::PgModelerOldAppName("pgmodeler-1.0");
+
+// The base version number of the tool
 const QString GlobalAttributes::PgModelerVersion = QString("1.2.0-alpha")
 
 /* Appending the snapshot build number to the version number
@@ -35,7 +50,6 @@ const QString GlobalAttributes::PgModelerVersion = QString("1.2.0-alpha")
 /****/
 
 const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
-const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.0");
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
