@@ -97,6 +97,7 @@ class __libutils GlobalAttributes {
 	public:
 		static const QString
 		PgModelerAppName,
+		PgModelerOldAppName,
 		PgModelerURI,
 		PgModelerVersion,
 		PgModelerBuildNumber,

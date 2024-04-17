@@ -307,6 +307,8 @@ namespace Attributes {
 	HideRelName,
 	HideSchNameUserTypes,
 	HideTableTags,
+	HideObjectsSelInfo,
+	HideCurPosZoomInfo,
 	HighlightLines,
 	HighlightOrder,
 	HistoryMaxLength,

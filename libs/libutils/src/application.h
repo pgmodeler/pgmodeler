@@ -33,7 +33,7 @@
 class __libutils Application: public QApplication {
 	private:
 		//! \brief Copy files from a path to another recursively
-		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only);
+		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only, bool incl_subdirs);
 
 	protected:
 		/*! \brief Creates the pgModeler's configuration dir on user's local storage.
