@@ -246,13 +246,13 @@ QString Column::getSourceCode(SchemaParser::CodeType def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::Type]=type.getSourceCode(def_type);	
+	attributes[Attributes::Type]=type.getSourceCode(def_type);
 	attributes[Attributes::DefaultValue]="";
 	attributes[Attributes::IdentityType]="";
 
 	if(identity_type != IdentityType::Null)
 	{
-		attributes[Attributes::IdentityType] = ~identity_type;	
+		attributes[Attributes::IdentityType] = ~identity_type;
 		attributes[Attributes::Increment]=seq_increment;
 		attributes[Attributes::MinValue]=seq_min_value;
 		attributes[Attributes::MaxValue]=seq_max_value;
@@ -434,6 +434,9 @@ QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attri
 	try
 	{
 		attribs_map attribs;
+		QString format_dir = md_format ?
+														 GlobalAttributes::DataDictMdDir :
+														 GlobalAttributes::DataDictHtmlDir;
 
 		attribs.insert(extra_attribs.begin(), extra_attribs.end());
 		attribs[Attributes::Parent] = getParentTable()->getSchemaName();
@@ -444,13 +447,15 @@ QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attri
 		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
+
+		/*return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
 																		GlobalAttributes::DataDictSchemaDir +
 																		GlobalAttributes::DirSeparator +
-																		(md_format ?
-																					GlobalAttributes::DataDictMdDir :
-																					GlobalAttributes::DataDictHtmlDir),
-																		getSchemaName()), attribs);
+																		format_dir, getSchemaName()), attribs); */
+
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
+																				GlobalAttributes::DataDictSchemaDir,
+																				format_dir, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

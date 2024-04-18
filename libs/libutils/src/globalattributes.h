@@ -94,6 +94,47 @@ class __libutils GlobalAttributes {
 		 //! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
 		static void setSearchPath(const QString &search_path);
 
+		/*! \brief Returns the path to a file that is under a root path. Generally the root path is the full path to a folder that
+		 * stores assets related to pgModeler (config files, schema files, etc) in its installation root.
+		 *
+		 * The parameter file_ext is the file extension that is appended to the requested file.
+		 * The parameter root_path is the base path where the file name (and eventually subfolders) will be appended
+		 * The parameter subfolder is a base subfolder where the file is located
+		 * The paramter pack ...pth_elems is the last part of the complete file path. By using this, one can form a path with a
+		 * variable number of subfolders. The last element of the parameter pack will be ALWAYS the file that is needed to be retrieved.
+		 *
+		 * Example:
+		 *
+		 * > Input: file_ext = .sch, root_path = /usr/local/pgmodeler/conf, subfolder = schemas, pth_elems = [ sql, table ]
+		 * > Ouput: /usr/local/pgmodeler/conf/schemas/table.sch
+		 *
+		 * > Input: file_ext = [empty], root_path = ~/.config/pgmodeler, subfolder = tmp, pth_elems = [ tmpModel.dbm ]
+		 * > Ouput: ~/.config/pgmodeler/tmp/tmpModel.dbm
+		 *
+		 * > Input: file_ext = [empty], root_path = ~/.config/pgmodeler, subfolder = [empty], pth_elems = [ empty ]
+		 * > Ouput: ~/.config/pgmodeler
+		 * */
+		template<typename ...args, typename = QString>
+		static QString getFilePath(const QString &file_ext, const QString &root_path, args... pth_elems)
+		{
+			QStringList path_elems = { pth_elems... };
+			QString file, path = root_path;
+
+			path_elems.removeAll("");
+
+			if(path_elems.isEmpty())
+				return path;
+
+			// The last element of the parameter pack is the file to be retrieved
+			file = path_elems.last();
+			path_elems.removeLast();
+
+			for(auto &folder : path_elems)
+				path += DirSeparator + folder;
+
+			return path + DirSeparator + file + (file_ext.isEmpty() ? "" : file_ext);
+		}
+
 	public:
 		static const QString
 		PgModelerAppName,
@@ -200,10 +241,14 @@ class __libutils GlobalAttributes {
 		static QString getSchemasRootPath();
 
 		/*! \brief Returns the path to a schema file under "schemas" folder.
-		 * Since this method only operates over schemas folder there's no need to
-		 * provide a file with extension because the method already appends the extension .sch
-		 * automatically. */
-		static QString getSchemaFilePath(const QString &subfolder, const QString &file);
+		 * Since this method only operates over schemas folder there's no need to provide a file with
+		 * extension because the method already appends the extension .sch automatically.
+		 */
+		template<typename ...args, typename = QString>
+		static QString getSchemaFilePath(args... pth_elems)
+		{
+			return getFilePath(SchemaExt, SchemasRootPath, pth_elems...);
+		}
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage
 		static QString getTemporaryPath();
@@ -217,7 +262,11 @@ class __libutils GlobalAttributes {
 		/*! \brief Returns the path to the template file at template "conf" folder in pgModeler's installation
 		 * This method will not append any extension to the file since this folder has several kinds of
 		 * files inside it, so, the user must inform the file with its extension */
-		static QString getTmplConfigurationFilePath(const QString &subfolder, const QString &file);
+		template<typename ...args, typename = QString>
+		static QString getTmplConfigurationFilePath(args... pth_elems)
+		{
+			return getFilePath("", TmplConfigurationPath, pth_elems...);
+		}
 
 		//! \brief Returns the path to the "conf" folder in user's local storage
 		static QString getConfigurationsPath();

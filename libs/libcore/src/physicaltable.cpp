@@ -1736,9 +1736,12 @@ QString PhysicalTable::getDataDictionary(bool split, bool md_format, const attri
 	QStringList tab_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
 																									Attributes::Triggers, Attributes::Indexes };
 
-	QString tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
-			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
+	QString format_dir = md_format ? GlobalAttributes::DataDictMdDir :
+													 GlobalAttributes::DataDictHtmlDir,
+
+			tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, format_dir, BaseObject::getSchemaName(ObjectType::Table)),
+			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, format_dir, Attributes::Link),
+			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, format_dir, Attributes::Objects);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();

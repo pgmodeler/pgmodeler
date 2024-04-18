@@ -169,13 +169,6 @@ QString GlobalAttributes::getSchemasRootPath()
 	return SchemasRootPath;
 }
 
-QString GlobalAttributes::getSchemaFilePath(const QString &subfolder, const QString &file)
-{
-	return SchemasRootPath + DirSeparator +
-				 (subfolder.isEmpty() ? "" : subfolder + DirSeparator) +
-				 file + SchemaExt;
-}
-
 QString GlobalAttributes::getLanguagesPath()
 {
 	return LanguagesPath;
@@ -193,7 +186,7 @@ QString GlobalAttributes::getTemporaryPath()
 
 QString GlobalAttributes::getTemporaryFilePath(const QString &file)
 {
-	return TemporaryPath + DirSeparator + file;
+	return getFilePath("", TemporaryPath, file);
 }
 
 QString GlobalAttributes::getSamplesPath()
@@ -206,12 +199,6 @@ QString GlobalAttributes::getTmplConfigurationPath()
 	return TmplConfigurationPath;
 }
 
-QString GlobalAttributes::getTmplConfigurationFilePath(const QString &subfolder, const QString &file)
-{
-	return TmplConfigurationPath + DirSeparator +
-				 (subfolder.isEmpty() ? "" : subfolder + DirSeparator) + file;
-}
-
 QString GlobalAttributes::getConfigurationsPath()
 {
 	return ConfigurationsPath;
@@ -219,7 +206,7 @@ QString GlobalAttributes::getConfigurationsPath()
 
 QString GlobalAttributes::getConfigurationFilePath(const QString &file)
 {
-	return ConfigurationsPath + DirSeparator + file + ConfigurationExt;
+	return getFilePath(ConfigurationExt, ConfigurationsPath, file);
 }
 
 QString GlobalAttributes::getSQLHighlightConfPath()
