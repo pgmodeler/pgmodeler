@@ -1729,7 +1729,7 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	Column *column = nullptr;
 	attribs_map attribs, aux_attrs;
@@ -1790,7 +1790,7 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? CoreUtilsNs::DataDictCheckMark : "";
 			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? CoreUtilsNs::DataDictCheckMark : "";
 			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? CoreUtilsNs::DataDictCheckMark : "";
-			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
+			attribs[Attributes::Columns] += column->getDataDictionary(md_format, aux_attrs);
 		}
 
 		for(auto &obj : constraints)

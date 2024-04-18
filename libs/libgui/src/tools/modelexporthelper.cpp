@@ -630,7 +630,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 													 tr("Starting data dictionary generation..."),
 													 ObjectType::BaseObject);
 		progress=1;
-		db_model->saveDataDictionary(path, browsable, split);
+		db_model->saveDataDictionary(path, browsable, split, false);
 
 		emit s_progressUpdated(100, tr("Data dictionary successfully saved into `%1'.").arg(path), ObjectType::BaseObject);
 		emit s_exportFinished();

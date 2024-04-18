@@ -195,7 +195,7 @@ namespace CompatNs {
 
 			std::vector<Reference> getViewReferences();
 
-			virtual QString getDataDictionary(bool , const attribs_map & = {}) override { return ""; }
+			virtual QString getDataDictionary(bool , bool, const attribs_map & = {}) override { return ""; }
 
 			virtual QString getAlterCode(BaseObject *) final { return ""; }
 

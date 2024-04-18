@@ -159,7 +159,7 @@ class __libcore Column: public TableObject{
 		//! \brief Copies on column to other
 		void operator = (Column &col);
 
-		QString getDataDictionary(const attribs_map &extra_attribs = {});
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs = {});
 
 		virtual void updateDependencies() override;
 

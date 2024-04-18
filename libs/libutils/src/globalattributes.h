@@ -138,7 +138,9 @@ class __libutils GlobalAttributes {
 		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
 		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
 		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
-		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
+		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas root directory
+		DataDictHtmlDir,//! \brief Default name for the data dictionary schemas directory (HTML format)
+		DataDictMdDir,//! \brief Default name for the dictionary schemas directory (Markdown format)
 		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
 		LanguagesDir,     //! \brief Default name for the translation files directory
 		SamplesDir,       //! \brief Default name for the samples database models directory

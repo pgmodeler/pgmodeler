@@ -850,7 +850,7 @@ std::vector<BaseObject *> View::getObjects(const std::vector<ObjectType> &excl_t
 	return list;
 }
 
-QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString View::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;

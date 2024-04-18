@@ -143,7 +143,7 @@ class __libcore BaseTable: public BaseGraphicObject {
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).
 		 * The split parameter is used to inform the generation process that the dicts are being
 		 * saved in separated files. This changes the way links are generated inside the data dictionaries */
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) = 0;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs = {}) = 0;
 
 		virtual void setCodeInvalidated(bool value) override;
 

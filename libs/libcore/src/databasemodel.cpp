@@ -10098,7 +10098,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format)
 {
 	int idx = 0;
 	BaseTable *base_tab = nullptr;
@@ -10192,7 +10192,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		else
 			aux_attribs[Attributes::Sequences] = "";
 
-		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, md_format, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
@@ -10240,7 +10240,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format)
 {
 	try
 	{
@@ -10260,7 +10260,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, split);
+		getDataDictionary(datadict, browsable, split, md_format);
 		filename = path;
 
 		for(auto &itr : datadict)

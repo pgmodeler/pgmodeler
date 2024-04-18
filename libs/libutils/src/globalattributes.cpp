@@ -88,6 +88,8 @@ const QString GlobalAttributes::SQLSchemaDir("sql");
 const QString GlobalAttributes::XMLSchemaDir("xml");
 const QString GlobalAttributes::CatalogSchemasDir("catalog");
 const QString GlobalAttributes::DataDictSchemaDir("datadict");
+const QString GlobalAttributes::DataDictHtmlDir("html");
+const QString GlobalAttributes::DataDictMdDir("md");
 const QString GlobalAttributes::AlterSchemaDir("alter");
 const QString GlobalAttributes::LanguagesDir("lang");
 const QString GlobalAttributes::SamplesDir("samples");

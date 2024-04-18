@@ -429,7 +429,7 @@ void Column::operator = (Column &col)
 	this->setParentRelationship(col.getParentRelationship());
 }
 
-QString Column::getDataDictionary(const attribs_map &extra_attribs)
+QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -444,8 +444,13 @@ QString Column::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
+																		GlobalAttributes::DataDictSchemaDir +
+																		GlobalAttributes::DirSeparator +
+																		(md_format ?
+																					GlobalAttributes::DataDictMdDir :
+																					GlobalAttributes::DataDictHtmlDir),
+																		getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

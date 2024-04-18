@@ -367,7 +367,7 @@ QString Table::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_ad
 	return BaseObject::__getSourceCode(def_type);
 }
 
-QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString Table::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -376,7 +376,7 @@ QString Table::getDataDictionary(bool split, const attribs_map &extra_attribs)
 		for(auto &obj : indexes)
 			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
 
-		return PhysicalTable::getDataDictionary(split, attribs);
+		return PhysicalTable::getDataDictionary(split, md_format, attribs);
 	}
 	catch(Exception &e)
 	{

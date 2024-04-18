@@ -216,7 +216,7 @@ class __libcore View: public BaseTable {
 
 		std::vector<BaseTable *> getReferencedTables();
 
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs = {}) override;
 
 		virtual QString getAlterCode(BaseObject *object) final;
 
