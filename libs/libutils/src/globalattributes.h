@@ -114,7 +114,7 @@ class __libutils GlobalAttributes {
 		 * > Input: file_ext = [empty], root_path = ~/.config/pgmodeler, subfolder = [empty], pth_elems = [ empty ]
 		 * > Ouput: ~/.config/pgmodeler
 		 * */
-		template<typename ...args, typename = QString>
+		template<typename ...args>
 		static QString getFilePath(const QString &file_ext, const QString &root_path, args... pth_elems)
 		{
 			QStringList path_elems = { pth_elems... };
@@ -244,7 +244,7 @@ class __libutils GlobalAttributes {
 		 * Since this method only operates over schemas folder there's no need to provide a file with
 		 * extension because the method already appends the extension .sch automatically.
 		 */
-		template<typename ...args, typename = QString>
+		template<typename ...args>
 		static QString getSchemaFilePath(args... pth_elems)
 		{
 			return getFilePath(SchemaExt, SchemasRootPath, pth_elems...);
@@ -262,7 +262,7 @@ class __libutils GlobalAttributes {
 		/*! \brief Returns the path to the template file at template "conf" folder in pgModeler's installation
 		 * This method will not append any extension to the file since this folder has several kinds of
 		 * files inside it, so, the user must inform the file with its extension */
-		template<typename ...args, typename = QString>
+		template<typename ...args>
 		static QString getTmplConfigurationFilePath(args... pth_elems)
 		{
 			return getFilePath("", TmplConfigurationPath, pth_elems...);
