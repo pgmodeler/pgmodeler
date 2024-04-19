@@ -311,6 +311,9 @@ class __libutils GlobalAttributes {
 		/*! \brief Returns the param_name value in the specified configuration file.
 		 *  Returns empty string when the config parameter or the file does not exist. */
 		static QString getConfigParamFromFile(const QString &param_name, const QString &conf_file);
+
+		friend class PgModelerPlugin;
+		friend class PgModelerCliPlugin;
 };
 
 #endif

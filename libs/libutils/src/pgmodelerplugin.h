@@ -27,6 +27,7 @@
 
 #include "utilsglobal.h"
 #include <QString>
+#include "globalattributes.h"
 
 class __libutils PgModelerPlugin {
 	private:
@@ -53,46 +54,67 @@ class __libutils PgModelerPlugin {
 
 		/*! \brief This method returns a full path to a file using a plugin's name as the base folder.
 		 *
-		 * If both subdir and filename are empty, only the base path is returned [root-path]/[plugin-name]
-		 * If subdir is empty and filename not then a path in the format [root-path]/[plugin-name]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [root-path]/[plugin-name]/subdir/filename is returned.
+		 * The root_path is the full path to the root of plugin's resources.
 		 *
-		 * NOTE: always validate the path returned by this method since it's not restricted to the
-		 * pgModeler installation root! */
-		static QString getPluginFilePath(const QString &plugin_name, const QString &root_path, const QString &subdir, const QString &filename);
+		 * The parameters pack pth_elems is a list of 0 or more arguments that will be appended to the path formed by
+		 * root_path + plugin_name in the same sequence as they appear.
+		 *
+		 * If root_path or plugin_name is empty, this method returns an empty (invalid) path.
+		 *
+		 * NOTE: always validate the path returned by this method since it's not restricted to the pgModeler installation root!
+		 */
+		template<typename ...args>
+		static QString getPluginFilePath(const QString &plugin_name, const QString &root_path, args... pth_elems)
+		{
+			if(plugin_name.isEmpty() || root_path.isEmpty())
+				return "";
+
+			return GlobalAttributes::getFilePath("", root_path, plugin_name, pth_elems...);
+		}
 
 		/*! \brief This method returns a path of a template file (asset) that resided in a plugin directory which in turn
 		 * is located in the plugin's root directory in a pgModeler installation.
 		 *
+		 * The parameters pack pth_elems is a list of 0 or more arguments that will be appended to the path formed by
+		 * in the same sequence as they appear.
+		 *
 		 * For example, say we have a pgModeler installation in /opt/pgmodeler, and the plugins directory is located at /opt/pgmodeler/plugins.
-		 * Now considering that plugin_name is "foo", we'll get the following results depending on subdir and filename values:
+		 * Now considering that plugin_name is "foo", we'll get the following results depending on what pth_elems specifis:
 		 *
-		 *  > subidir = "" and filename = "" --> /opt/pgmodeler/plugins/foo
-		 *  > subidir = "bar" and filename = "" --> /opt/pgmodeler/plugins/foo/bar
-		 *  > subidir = "bar" and filename = "test.conf" --> /opt/pgmodeler/plugins/foo/bar/test.conf
-		 *  > subidir = "" and filename = "test.conf" --> /opt/pgmodeler/plugins/foo/test.conf
+		 *  > pth_elems = "" --> /opt/pgmodeler/plugins/foo
+		 *  > pth_elems = "bar" --> /opt/pgmodeler/plugins/foo/bar
+		 *  > pth_elems = "bar", "test.conf" --> /opt/pgmodeler/plugins/foo/bar/test.conf
+		 *  > pth_elems = "test.conf" --> /opt/pgmodeler/plugins/foo/test.conf
 		 */
-		static QString getPluginTmplFilePath(const QString &plugin_name, const QString &subdir, const QString &filename);
+		template<typename ...args>
+		static QString getPluginTmplFilePath(const QString &plugin_name, args ...pth_elems)
+		{
+			return getPluginFilePath(plugin_name, GlobalAttributes::getPluginsPath(), pth_elems...);
+		}
 
-		//! \brief This is the non-static version of getPluginFilePath and uses the this->plugin_name as the base folder
-		QString getPluginFilePath(const QString &root_path, const QString &subdir, const QString &filename) const;
-
-		/*! \brief This method mimics the behavior of GlobalAttributes::getConfigFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's configuration directory
-		 * inside the pgModeler's user settings directory.
+		/*! \brief This method returns the full path to a file inside a subdirectory in the plugin's
+		 * configuration directory inside the pgModeler's user settings directory.
 		 *
-		 * If both subdir and filename are empty, only the full path to the plugin's configuration directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-conf]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-conf]/subdir/filename is returned. */
-		QString getConfigFilePath(const QString &subdir, const QString &filename) const;
+		 * The parameters pack pth_elems is a list of 0 or more arguments that will be appended to the path formed by
+		 * in the same sequence as they appear.
+		 */
+		template<typename ...args>
+		QString getConfigFilePath(args... pth_elems) const
+		{
+			return getPluginFilePath(getPluginName(),
+																GlobalAttributes::getConfigurationsPath() +
+																GlobalAttributes::DirSeparator +
+																GlobalAttributes::PluginsDir, pth_elems...);
+		}
 
-		/*! \brief This method mimics the behavior of GlobalAttributes::getTmplConfigFilePath
-		 * returning the full path to a file inside a subdirectory in the plugin's template confs directory.
-		 *
-		 * If both subdir and filename are empty, only the full path to the plugin's template confs directory is returned.
-		 * If subdir is empty and filename not then a path in the format [plugin-tmpl-conf]/filename is returned.
-		 * If both subdir and filename are set then a path in the format [plugin-tmpl-conf]/subdir/filename is returned. */
-		QString getTmplConfigFilePath(const QString &subdir, const QString &filename) const;
+		/*! \brief This method calls the static version getPluginTmplFilePath(plugin_name, pth_elems)
+		 * but automatically using this->plugin_name as the plugin name parameter.
+		 */
+		template<typename ...args>
+		QString getTmplConfigFilePath(args... pth_elems) const
+		{
+			return getPluginTmplFilePath(plugin_name, pth_elems...);
+		}
 
 		friend class PluginsConfigWidget;
 		friend class PgModelerCliApp;
