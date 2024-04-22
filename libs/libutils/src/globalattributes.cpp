@@ -33,9 +33,10 @@
  * !!! ALWAYS UPDATE THESE VARIABLES WHEN UPGRADING THE MAJOR VERSION !!!
  */
 const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.2");
-/* In versions 1.0.x and 1.1.x there was no distinction in the configuration dir
- * so until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
- * version config dir */
+
+/* In versions 1.0.x and 1.1.x there was no distinction in the configuration directory.
+ * So, until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
+ * version configuration directory */
 const QString GlobalAttributes::PgModelerOldAppName("pgmodeler-1.0");
 
 // The base version number of the tool
@@ -143,8 +144,9 @@ QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
 QString GlobalAttributes::PgModelerSchemaEditorPath;
+QString GlobalAttributes::PgModelerBaseVersion;
 
-attribs_map GlobalAttributes::CustomPaths ;
+attribs_map GlobalAttributes::CustomPaths;
 
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {
@@ -247,6 +249,11 @@ QString GlobalAttributes::getPgModelerAppPath()
 QString GlobalAttributes::getPgModelerSchemaEditorPath()
 {
 	return PgModelerSchemaEditorPath;
+}
+
+QString GlobalAttributes::getPgModelerBaseVersion()
+{
+	return PgModelerBaseVersion;
 }
 
 QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, const QString &conf_file)
@@ -353,6 +360,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 {
+	QRegularExpression ver_rx("(\\-)?(alpha|beta|snapshot)(\\_)?(\\d)*");
 	QFileInfo fi(search_path);
 	GlobalAttributes::setSearchPath(fi.isDir() ? search_path : fi.absolutePath());
 
@@ -363,4 +371,8 @@ void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 		if(scale.toDouble() > 0)
 			qputenv("QT_SCALE_FACTOR", scale.toUtf8());
 	}
+
+	PgModelerBaseVersion = PgModelerVersion;
+	PgModelerBaseVersion.remove(ver_rx);
+	PgModelerBaseVersion[PgModelerBaseVersion.size() - 1] = '0';
 }

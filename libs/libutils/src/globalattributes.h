@@ -68,7 +68,8 @@ class __libutils GlobalAttributes {
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
-		PgModelerSchemaEditorPath;
+		PgModelerSchemaEditorPath,
+		PgModelerBaseVersion;
 
 		//! \brief Stores the custom paths retrieved either from pgmpaths.conf or from environment variables
 		static attribs_map CustomPaths;
@@ -307,6 +308,10 @@ class __libutils GlobalAttributes {
 
 		//! \brief Returns the path to the "pgmodeler-se" executable
 		static QString getPgModelerSchemaEditorPath();
+
+		/*! \brief Returns the version of the tool excluding any suffix
+		 * appended to the version number (e.g., alpha, beta, snapshot, etc) */
+		static QString getPgModelerBaseVersion();
 
 		/*! \brief Returns the param_name value in the specified configuration file.
 		 *  Returns empty string when the config parameter or the file does not exist. */
