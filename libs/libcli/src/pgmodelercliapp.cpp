@@ -2021,7 +2021,8 @@ void PgModelerCliApp::exportModel()
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
 		export_hlp->exportToDataDict(model, parsed_opts[Output],
 																 parsed_opts.count(NoIndex) == 0,
-																 parsed_opts.count(Split) > 0);
+																 parsed_opts.count(Split) > 0,
+																 false);
 	}
 	//Export to DBMS
 	else

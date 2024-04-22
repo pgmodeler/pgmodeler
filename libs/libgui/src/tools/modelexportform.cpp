@@ -44,7 +44,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	img_file_sel->setAllowFilenameInput(true);
 	img_file_sel->setFileIsMandatory(false);
 	img_file_sel->setAppendSuffix(true);
-	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
+	export_to_img_grid->addWidget(img_file_sel, 2, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
@@ -135,8 +135,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
 
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
-	connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
-	connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_mode_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
 	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
@@ -263,7 +262,10 @@ void ModelExportForm::exportModel()
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(), incl_index_chk->isChecked(), dict_split_rb->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(),
+																						 incl_index_chk->isChecked(),
+																						 dict_mode_cmb->currentIndex() == 1,
+																						 dict_format_cmb->currentIndex() == 1);
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
@@ -434,7 +436,7 @@ void ModelExportForm::selectImageFormat()
 
 void ModelExportForm::selectDataDictMode()
 {
-	if(dict_standalone_rb->isChecked())
+	if(dict_mode_cmb->currentIndex() == 0)
 	{
 		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
 		dict_file_sel->setDefaultSuffix("html");
