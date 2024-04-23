@@ -94,34 +94,46 @@ void SourceEditorWidget::toggleComment()
 
 	if(tc.hasSelection())
 	{
-		QStringList lines = tc.selection().toPlainText().split(QChar::LineFeed);
 		QMap<QString, QStringList> comment_chrs = {
 			{ GlobalAttributes::SchHighlightConf, { "# ", ""}},
-			{ GlobalAttributes::SQLHighlightConf, { "-- ", " --"}},
+			{ GlobalAttributes::SQLHighlightConf, { "-- ", ""}},
 			{ GlobalAttributes::XMLHighlightConf, { "<!-- ", " -->"}}
 		};
-		QString open_cmt, close_cmt;
+		QString open_cmt, close_cmt,
+				sel_text = tc.selection().toPlainText();
 
 		open_cmt = comment_chrs[curr_sytax_cfg][0];
 		close_cmt = comment_chrs[curr_sytax_cfg][1];
 
-		for(auto &line : lines)
+		if(curr_sytax_cfg == GlobalAttributes::XMLHighlightConf)
 		{
-			if(line.isEmpty())
-				continue;
+			sel_text.prepend(open_cmt);
+			sel_text.append(close_cmt);
+		}
+		else
+		{
+			QStringList lines = sel_text.split(QChar::LineFeed);
 
-			if(line.startsWith(open_cmt))
-				line.remove(open_cmt);
-			else
-				line.prepend(open_cmt);
+			for(auto &line : lines)
+			{
+				if(line.isEmpty())
+					continue;
 
-			if(line.endsWith(close_cmt))
-				line.remove(close_cmt);
-			else
-				line.append(close_cmt);
+				if(line.startsWith(open_cmt))
+					line.remove(open_cmt);
+				else
+					line.prepend(open_cmt);
+
+				if(line.endsWith(close_cmt))
+					line.remove(close_cmt);
+				else
+					line.append(close_cmt);
+			}
+
+			sel_text = lines.join(QChar::LineFeed);
 		}
 
-		tc.insertText(lines.join(QChar::LineFeed));
+		tc.insertText(sel_text);
 	}
 }
 
@@ -155,15 +167,12 @@ void SourceEditorWidget::loadFile(const QString &filename)
 
 	QString ext = "." + QFileInfo(filename).suffix();
 
-	if(ext == GlobalAttributes::DbModelExt ||
-		 ext == ".xml" ||
-		 ext == GlobalAttributes::ConfigurationExt ||
-		 ext == GlobalAttributes::ObjMetadataExt)
-		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
-	else if(ext == ".sql")
+	if(ext == ".sql")
 		curr_sytax_cfg = GlobalAttributes::SQLHighlightConf;
-	else
+	else if(ext == GlobalAttributes::SchemaExt)
 		curr_sytax_cfg = GlobalAttributes::SchHighlightConf;
+	else
+		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
 }
 
 void SourceEditorWidget::validateSyntax()

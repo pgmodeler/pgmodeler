@@ -925,6 +925,9 @@
           <height>32</height>
          </size>
         </property>
+        <property name="shortcut">
+         <string>Ctrl+/</string>
+        </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextUnderIcon</enum>
         </property>
