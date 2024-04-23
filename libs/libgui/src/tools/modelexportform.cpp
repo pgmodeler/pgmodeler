@@ -104,7 +104,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
 		{
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.exportToPNG();
 			else
 				export_hlp.exportToSVG();
@@ -128,11 +128,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
 	connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
 
-	connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
-	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	connect(img_fmt_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectImageFormat);
 
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 	connect(dict_mode_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
@@ -230,7 +226,7 @@ void ModelExportForm::exportModel()
 		{
 			viewp=new QGraphicsView(model->scene);
 
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.setExportToPNGParams(model->scene, viewp, img_file_sel->getSelectedFile(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
 																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
@@ -420,7 +416,9 @@ void ModelExportForm::enableExport()
 
 void ModelExportForm::selectImageFormat()
 {
-	if(png_rb->isChecked())
+	bool is_png = img_fmt_cmb->currentIndex() == 0;
+
+	if(is_png)
 	{
 		img_file_sel->setMimeTypeFilters({"image/png", "application/octet-stream"});
 		img_file_sel->setDefaultSuffix("png");
@@ -432,6 +430,10 @@ void ModelExportForm::selectImageFormat()
 		img_file_sel->setDefaultSuffix("svg");
 		override_bg_color_chk->setEnabled(false);
 	}
+
+	zoom_cmb->setEnabled(is_png);
+	zoom_lbl->setEnabled(is_png);
+	page_by_page_chk->setEnabled(is_png);
 }
 
 void ModelExportForm::selectDataDictMode()
