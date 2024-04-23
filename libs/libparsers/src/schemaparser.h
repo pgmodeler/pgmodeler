@@ -127,12 +127,11 @@ class __libparsers SchemaParser {
 		 analyzed by de parser */
 		QStringList buffer;
 
-		int line, //! \brief Current line where the parser reading is
-		column, //! \brief Current column where the parser reading is
+		//! \brief Current line where the parser reading is
+		int line,
 
-		/*! \brief Comment line ammout extracted. This attribute is used to make the correct
-				  reference to the line on file that has syntax errors */
-		comment_count;
+				 //! \brief Current column where the parser reading is
+				column;
 
 		attribs_map attributes;
 
@@ -207,7 +206,6 @@ class __libparsers SchemaParser {
 		 the definition of the objects. This function should always be called at
 		 software startup or when the user wants to change the default version
 		 of the database */
-		//void setPgSQLVersion(const QString &pgsql_ver);
 		void setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version);
 
 		/*! \brief Returns the complete xml/sql definition for an database object represented by the

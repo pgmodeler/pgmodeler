@@ -75,9 +75,9 @@ const QRegularExpression SchemaParser::AttribRegExp(QRegularExpression::anchored
 
 SchemaParser::SchemaParser()
 {
-	line=column=comment_count=0;
-	ignore_unk_atribs=ignore_empty_atribs=false;
-	pgsql_version=PgSqlVersions::DefaulVersion;
+	line = column = 0;
+	ignore_unk_atribs = ignore_empty_atribs = false;
+	pgsql_version = PgSqlVersions::DefaulVersion;
 }
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_ver, bool ignore_db_version)
@@ -135,7 +135,7 @@ QStringList SchemaParser::extractAttributes()
 
 int SchemaParser::getCurrentLine()
 {
-	return line + comment_count + 1;
+	return line + 1;
 }
 
 int SchemaParser::getCurrentColumn()
@@ -149,22 +149,19 @@ void SchemaParser::restartParser()
 		column and amount of comments */
 	buffer.clear();
 	attributes.clear();
-	line=column=comment_count=0;
+	line = column = 0;
 }
 
 void SchemaParser::loadBuffer(const QString &buf)
 {
-	QString buf_aux=buf, lin,
-			escaped_comm_chr=QString("\\%1").arg(CharComment),
-			placeholder = QString(QChar::ReplacementCharacter);
+	QString buf_aux = buf, lin;
 	QTextStream ts(&buf_aux);
-	int pos=0;
-	bool comm_holder_used = false;
+	int pos = 0;
 
 	//Prepares the parser to do new reading
 	restartParser();
 
-	filename="[memory buffer]";
+	filename = "[memory buffer]";
 
 	//While the input file doesn't reach the end
 	while(!ts.atEnd())
@@ -172,47 +169,24 @@ void SchemaParser::loadBuffer(const QString &buf)
 		//Get one line from stream (until the last char before \n)
 		lin = ts.readLine();
 
-		/* Special treatment for escaped comment characters (e.g.: \#):
-		 * In order to avoid removing wrongly the # from the the line where it appear in the form \#
-		 * we need to replace it temporarily by a placeholder <?> and remove other portions of the line
-		 * the is considered a real comment and then replace back that placeholder by the comment char again.
-		 * This is useful if the user intend to represent the hash (#) char in the schema code and not use it as comment. */
-		if(lin.indexOf(escaped_comm_chr) >= 0)
-		{
-			lin.replace(escaped_comm_chr, placeholder);
-			comm_holder_used = true;
-		}
-
 		/* Since the method getline discards the \n when the line was just a line break
 		its needed to treat it in order to not lost it */
-		if(lin.isEmpty()) lin+=CharLineEnd;
-
-		//If the entire line is commented out increases the comment lines counter
-		if(lin[0]==CharComment) comment_count++;
+		if(lin.isEmpty())
+			lin += CharLineEnd;
 
 		//Looking for the position of other comment characters for deletion
-		pos=lin.indexOf(CharComment);
+		pos = lin.indexOf(CharComment);
 
 		//Removes the characters from the found position
 		if(pos >= 0)
 			lin.remove(pos, lin.size());
 
-		//Replacing the comment placeholder by the comment char causing that character to be printed to the code
-		if(comm_holder_used)
-		{
-			lin.replace(placeholder, QString(CharComment));
-			comm_holder_used = false;
-		}
+		//Add a line break in case the last character is not
+		if(!lin.endsWith(CharLineEnd))
+			lin += CharLineEnd;
 
-		if(!lin.isEmpty())
-		{
-			//Add a line break in case the last character is not
-			if(lin[lin.size()-1]!=CharLineEnd)
-				lin+=CharLineEnd;
-
-			//Add the treated line in the buffer
-			buffer.push_back(lin);
-		}
+		//Add the treated line in the buffer
+		buffer.push_back(lin);
 	}
 }
 
@@ -388,30 +362,32 @@ QString SchemaParser::getPlainText()
 QString SchemaParser::getConditional()
 {
 	QString conditional, current_line;
-	bool error=false;
+	bool error = false;
 
-	current_line=buffer[line];
+	current_line = buffer[line];
 
 	//Will initiate extraction if a % is found
-	if(current_line[column]==CharStartConditional)
+	if(current_line[column] == CharStartConditional)
 	{
 		// The next char should be the start of the conditional instruction name
 		column++;
 
 		/* Moves to the next character that is the beginning of
 		 the name of the conditional word */
-		while(current_line[column]!=CharLineEnd &&
-			  current_line[column]!=CharSpace &&
-			  current_line[column]!=CharTabulation)
+		while(current_line[column] != CharLineEnd &&
+					current_line[column] != CharSpace &&
+					current_line[column] != CharTabulation)
 		{
-			conditional+=current_line[column];
+			conditional += current_line[column];
 			column++;
 		}
 
 		//If no word was extracted an error is raised
-		if(conditional.isEmpty()) error=true;
+		if(conditional.isEmpty())
+			error = true;
 	}
-	else error=true;
+	else
+		error = true;
 
 	if(error)
 	{
@@ -952,22 +928,6 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 	try
 	{
 		QString filename;
-
-		/* if(def_type==SqlCode)
-		{
-			//Formats the filename
-			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
-			attribs[Attributes::PgSqlVersion]=pgsql_version;
-
-			//Try to get the object definitin from the specified path
-			return getSourceCode(filename, attribs);
-		}
-		else
-		{
-			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
-			#warning "Fix me!"
-			return XmlParser::convertCharsToXMLEntities(getSourceCode(filename, attribs));
-		} */
 
 		if(def_type == SqlCode)
 		{
