@@ -2,13 +2,42 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({type-class} == "table") %then
-	%set {colspan} 8
+#%if ({type-class} == "table") %then
+#	%set {colspan} 8
+#%else
+#	%set {colspan} 5
+%#end
+
+#%set {spc} $br [ ]
+
+[{#] {schema}.{name} [}] $br
+
+[| Name | Data type ] 
+
+%if {columns} %then
+
+	%if ({type-class} == "table") %then
+		[ | PK | FK | UQ ] 
+	%end
+
+	[ | Not null | Default value | Description |] $br
+
 %else
-	%set {colspan} 5
+
+[ | No columns | ] $br
+
+%end 
+
+%if {objects} %then
+	{objects}
 %end
 
-%set {spc} $br [ ]
+$ob _{schema}_.*{name}* $cb
+
+
+
+
+
 
 
 <table $sp id="{schema}.{name}" $sp class="{type-class}">

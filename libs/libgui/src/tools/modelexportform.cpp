@@ -132,6 +132,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 	connect(dict_mode_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_format_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
 	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
@@ -440,8 +441,17 @@ void ModelExportForm::selectDataDictMode()
 {
 	if(dict_mode_cmb->currentIndex() == 0)
 	{
-		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
-		dict_file_sel->setDefaultSuffix("html");
+		if(dict_format_cmb->currentIndex() == 0)
+		{
+			dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("html");
+		}
+		else
+		{
+			dict_file_sel->setMimeTypeFilters({"text/markdown", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("md");
+		}
+
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 		dict_file_sel->setDirectoryMode(false);
 		dict_file_sel->setFileMustExist(false);

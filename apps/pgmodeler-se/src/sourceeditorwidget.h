@@ -94,6 +94,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 		void loadFile(const QString &filename);
 		void saveFile(const QString &filename);
 		void loadSyntaxConfig(const QString &filename);
+		void toggleComment();
 
 	signals:
 		void s_editorModified(bool value);

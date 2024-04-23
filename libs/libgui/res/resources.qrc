@@ -275,6 +275,7 @@
         <file>icons/wholeword.png</file>
         <file>icons/regexp.png</file>
         <file>icons/casesensitive.png</file>
+        <file>icons/comment.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

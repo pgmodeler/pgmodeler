@@ -88,6 +88,43 @@ void SourceEditorWidget::loadSyntaxConfig(const QString &filename)
 	}
 }
 
+void SourceEditorWidget::toggleComment()
+{
+	QTextCursor tc = editor_txt->textCursor();
+
+	if(tc.hasSelection())
+	{
+		QStringList lines = tc.selection().toPlainText().split(QChar::LineFeed);
+		QMap<QString, QStringList> comment_chrs = {
+			{ GlobalAttributes::SchHighlightConf, { "# ", ""}},
+			{ GlobalAttributes::SQLHighlightConf, { "-- ", " --"}},
+			{ GlobalAttributes::XMLHighlightConf, { "<!-- ", " -->"}}
+		};
+		QString open_cmt, close_cmt;
+
+		open_cmt = comment_chrs[curr_sytax_cfg][0];
+		close_cmt = comment_chrs[curr_sytax_cfg][1];
+
+		for(auto &line : lines)
+		{
+			if(line.isEmpty())
+				continue;
+
+			if(line.startsWith(open_cmt))
+				line.remove(open_cmt);
+			else
+				line.prepend(open_cmt);
+
+			if(line.endsWith(close_cmt))
+				line.remove(close_cmt);
+			else
+				line.append(close_cmt);
+		}
+
+		tc.insertText(lines.join(QChar::LineFeed));
+	}
+}
+
 void SourceEditorWidget::handleSelectedSnippet(const QString &snippet)
 {
 	QTextCursor tc = editor_txt->textCursor();
