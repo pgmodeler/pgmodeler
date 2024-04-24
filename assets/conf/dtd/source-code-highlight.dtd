@@ -110,13 +110,16 @@ In case of positive matching the word will receive the formatting associated to 
 is part of. Elements can hold simple, wildcard or regular expressions.
 
 value: the expression of the element.
-type: the type of the element expression. When initial-exp is set then the first occurrency of the expression matched
-      will cause any further words to be highlighted as the same group in which the element matched is part even the word 
-      is part of another group. The forced highlighting is finished only when another expression in this group and which is
-      marked as final-exp is found. This is useful when you need to highlight multiple lines of code in which the words
-      eventually is part of the same group. Code comments is a classical example of this situation /* */.
+type: the type of the element expression. When the group has both an initial-exp and a final-exp, then the first occurrency 
+      of the expression that matches initial-exp will cause any further words to be highlighted as the same group in which 
+      the element matched is part even the current word is matches another group. The forced highlighting is finished only
+      when another expression in this group and which is marked as final-exp is found. This is useful when you need to highlight
+      multiple lines of code in which the words eventually is part of the same group. 
+      Code comments is a classical example of this situation /* */.
 regexp: the expression of the element must be treated as a regular expression.
 wildcard: the expression of the element must be treated as a wildcard expression.
+entire-line: indicates that the all words in the current line must be hightlighted with the group format.
+             this is useful, for instance, to highlight single-line comments //
 
 Note: if neither regexp or wildcard is specified then the expression matching is perfomed in exact mode.
 -->
@@ -125,3 +128,4 @@ Note: if neither regexp or wildcard is specified then the expression matching is
 <!ATTLIST element type (initial-exp|final-exp) "initial-exp">
 <!ATTLIST element regexp (false|true) "false">
 <!ATTLIST element wildcard (false|true) "false">
+<!ATTLIST element entire-line (false|true) "false">

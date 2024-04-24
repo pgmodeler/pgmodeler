@@ -26,10 +26,11 @@ TextBlockInfo::TextBlockInfo(void)
 void TextBlockInfo::reset(void)
 {
 	group.clear();
-	is_multi_expr = false;
-	is_closed = false;
+	multi_expr = false;
+	closed = false;
 	closed_once = false;
 	allow_completion = false;
+	entire_line = false;
 }
 
 void TextBlockInfo::setGroup(const QString &grp)
@@ -42,17 +43,28 @@ void TextBlockInfo::setClosed(bool value)
 	if(!closed_once && value)
 		closed_once = true;
 
-	is_closed = value;
+	closed = value;
 }
 
 void TextBlockInfo::setMultiExpr(bool value)
 {
-	is_multi_expr = value;
+	multi_expr = value;
+
+	if(value && entire_line)
+		entire_line = false;
 }
 
 void TextBlockInfo::setAllowCompletion(bool value)
 {
 	allow_completion = value;
+}
+
+void TextBlockInfo::setEntireLine(bool value)
+{
+	if(value && multi_expr)
+		multi_expr = false;
+
+	entire_line = value;
 }
 
 QString TextBlockInfo::getGroup()
@@ -62,7 +74,7 @@ QString TextBlockInfo::getGroup()
 
 bool TextBlockInfo::isMultiExpr()
 {
-	return is_multi_expr;
+	return multi_expr;
 }
 
 bool TextBlockInfo::isClosedOnce()
@@ -72,10 +84,15 @@ bool TextBlockInfo::isClosedOnce()
 
 bool TextBlockInfo::isClosed()
 {
-	return is_closed;
+	return closed;
 }
 
 bool TextBlockInfo::isCompletionAllowed()
 {
 	return allow_completion;
+}
+
+bool TextBlockInfo::isEntireLine()
+{
+	return entire_line;
 }

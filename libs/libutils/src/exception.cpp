@@ -288,6 +288,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
 	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
 	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
+	{"InvGroupExprFlag", QT_TR_NOOP("An expression element of type `%1' in the group `%2' is using the flag `%3' which is not supported!")},
 };
 
 Exception::Exception()

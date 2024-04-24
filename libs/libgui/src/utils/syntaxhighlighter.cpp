@@ -22,6 +22,7 @@
 #include "attributes.h"
 #include "exception.h"
 #include "globalattributes.h"
+#include "utilsns.h"
 
 QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
 const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
@@ -319,16 +320,18 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	QString group;
 	bool match = false;
 	int block_st = currentBlockState();
-	bool match_final_expr= block_st == OpenExprBlock;
+	bool match_final_expr = block_st == OpenExprBlock,
+			fmt_line = false;
 	TextBlockInfo *info = dynamic_cast<TextBlockInfo *>(currentBlockUserData()),
 			*prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 	/* Trying to match the word against the gropus
-	 * If the block is marked as OpenExprBlock we'll match the word agains final expression
-	 * in order to check if the word is token that closes a multi line expression */
+	 * If the block is marked as OpenExprBlock we'll match the word against final expression
+	 * in order to check if the word is a token that closes a multiline expression */
 	for(auto &itr_group : groups_order)
 	{
-		if(isWordMatchGroup(word, itr_group, match_final_expr, lookahead_chr, match_idx, match_len))
+		if(isWordMatchGroup(word, itr_group, match_final_expr, lookahead_chr,
+												match_idx, match_len, fmt_line))
 		{
 			group = itr_group;
 			match = true;
@@ -338,28 +341,38 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 
 	/* If the word doesn't match any group or it matches but the found group is differnt
 	 * from the current block info group, we need to return a group name that considers
-	 * the state of the previous block (which can be previous line or previous word in the current line) */
-	if(!match || (match && block_st == OpenExprBlock && info->getGroup() != group))
+	 * the state of the previous block (which can be previous line or previous word in
+	 * the current line). */
+	if(!match ||
+			info->isEntireLine() ||
+			(match && block_st == OpenExprBlock && info->getGroup() != group))
 	{
 		match_idx = 0;
 		match_len = word.length();
 
-		/* If the current block info is a multi expression one and it is not closed yet (the closing
+		/* If the current block info is flagged to format the entire words in the current line
+		 * we simply need to return the group name of the current block (until we find a \n)
+		 *
+		 * If the current block info is a multi expression one and it is not closed yet (the closing
 		 * expresion wasn't found previously) we automatically return the info's group to enforce the
 		 * highlighting of the word using the formatting of the info's group no matter if the
 		 * word was matched against another group. The fact of the current info is a multi line expression
 		 * that is still open has precedence over any other situation. */
-		if(!info->getGroup().isEmpty() && info->isMultiExpr() && !info->isClosed())
+		if(!info->getGroup().isEmpty() &&
+				((word != QChar::LineFeed && info->isEntireLine()) ||
+				 (info->isMultiExpr() && !info->isClosed())))
 		{
 			return info->getGroup();
 		}
 		/* If the word is a simple line feed (\n) and the previous block info is a multi expression one
-		 * that is closed we force the current block to be unformatted. This will avoid that the next line
+		 * that is closed, or is a single expression but it forces the format of all words in the entire line,
+		 * we force the current block to be unformatted. This will avoid that the next line
 		 * starts with the formatting of the previous block info. */
-		else if((word == QChar::LineFeed && prev_info &&
-						 !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && prev_info->isClosed()) ||
+		else if((word == QChar::LineFeed && prev_info && !prev_info->getGroup().isEmpty() &&
+						(prev_info->isEntireLine() ||
+							(prev_info->isMultiExpr() && prev_info->isClosed()))) ||
 
-						/* If the word doens't match any group and the current block info was closed at least once
+						/* If the word doesn't match any group and the current block info was closed at least once
 						 * in the current line we also need to force the unformatted mode so the next words in the
 						 * line can be correctly highlighted. For example, supposing the following line in XML syntax:
 						 *  <!-- comment --> <tag>
@@ -372,6 +385,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			 * the group that matches the word can be properly found */
 			info->setGroup(UnformattedGroup);
 			info->setAllowCompletion(allow_completion[UnformattedGroup]);
+			info->setEntireLine(false);
 			info->setMultiExpr(true);
 			info->setClosed(true);
 			return info->getGroup();
@@ -395,7 +409,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 			/* We force the current info to be a multi expression one (like the previous)
 			 * and close it only if the word is a closing token of the group */
 			info->setMultiExpr(true);
-			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+			info->setEntireLine(false);
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true,
+																			lookahead_chr, match_idx, match_len, fmt_line));
 
 			return info->getGroup();
 		}
@@ -404,19 +420,21 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 	}
 	else
 	{
-		/* If no group is found related to the word we inherit the previous block
-		 * formatting if and only if the previous block is a multi line expressoin that
-		 * is not closed */
+		/* If no group related to the word is found, we inherit the previous block
+		 * formatting if and only if the previous block is a multi line expression that
+		 * is not closed yet */
 		if(!group.isEmpty() && info->getGroup().isEmpty() &&
 			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
 		{
 			info->setGroup(prev_info->getGroup());
 			info->setAllowCompletion(prev_info->isCompletionAllowed());
 			info->setMultiExpr(true);
+			info->setEntireLine(false);
 
 			/* We try to check if the current work matches a final expression of the previous block group
 			 * if so, the current block info will be automatically closed */
-			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr,
+																			 match_idx, match_len, fmt_line));
 
 			return info->getGroup();
 		}
@@ -425,12 +443,13 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		info->setAllowCompletion(group.isEmpty() ? true : allow_completion[group]);
 		info->setMultiExpr(hasInitialAndFinalExprs(group));
 		info->setClosed(match && match_final_expr);
+		info->setEntireLine(fmt_line);
 
 		return group;
 	}
 }
 
-bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
+bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len, bool &fmt_ent_line)
 {
 	std::vector<QRegularExpression> *vet_expr = nullptr;
 	bool has_match = false;
@@ -448,6 +467,7 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 			match_idx = 0;
 			match_len = word.length();
 			has_match = true;
+			fmt_ent_line = fmt_entire_line[ getExpressionId(group, &expr) ];
 		}
 
 		if(has_match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
@@ -577,6 +597,16 @@ void SyntaxHighlighter::clearConfiguration()
 	configureAttributes();
 }
 
+QString SyntaxHighlighter::getExpressionId(const QString &group, const QRegularExpression *expr)
+{
+	if(group.isEmpty() || !expr)
+		return "";
+
+	return QString("%1_%2").arg(group,
+															UtilsNs::getStringHash(
+																QString::number(reinterpret_cast<uintptr_t>(expr))).mid(0,6));
+}
+
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
 	if(!filename.isEmpty())
@@ -676,7 +706,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							if(groups_decl)
 							{
 								//Raises an error if the group was declared before
-								if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
+								if(std::find(groups_order.begin(), groups_order.end(), group) != groups_order.end())
 								{
 									throw Exception(Exception::getErrorMessage(ErrorCode::InvRedeclarationGroup).arg(group),
 																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -759,7 +789,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 									{
 										xmlparser.getElementAttributes(attribs);
-										expr_type=attribs[Attributes::Type];
+										expr_type = attribs[Attributes::Type];
+
+										if(expr_type.isEmpty())
+											expr_type = Attributes::InitialExp;
 
 										if(attribs[Attributes::RegularExp] == Attributes::True)
 											regexp.setPattern(attribs[Attributes::Value]);
@@ -768,20 +801,37 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										else
 											regexp.setPattern(QRegularExpression::anchoredPattern(QRegularExpression::escape(attribs[Attributes::Value])));
 
-										// We thrown an error aborting the loading if the regepx has an invalid pattern
+										// We throw an error aborting the loading if the regepx has an invalid pattern
 										if(!regexp.isValid())
 										{
 											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
 																			ErrorCode::InvGroupRegExpPattern,
 																			__PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
 										}
+										// We throw an error aborting the loading if the regepx is of type final-exp and is using the flag entire-line
+										else if(expr_type == Attributes::FinalExp &&
+														attribs[Attributes::EntireLine] == Attributes::True)
+										{
+											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupExprFlag).arg(expr_type, group, Attributes::EntireLine),
+																			 ErrorCode::InvGroupExprFlag,
+																			 __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
+										}
 
-										if(expr_type.isEmpty() ||
-											 expr_type==Attributes::SimpleExp ||
-											 expr_type==Attributes::InitialExp)
+										QRegularExpression *expr_ptr = nullptr;
+
+										if(expr_type == Attributes::InitialExp)
+										{
 											initial_exprs[group].push_back(regexp);
+											expr_ptr = &initial_exprs[group].back();
+										}
 										else
+										{
 											final_exprs[group].push_back(regexp);
+											expr_ptr = &final_exprs[group].back();
+										}
+
+										fmt_entire_line[getExpressionId(group, expr_ptr)] =
+												attribs[Attributes::EntireLine] == Attributes::True;
 									}
 								}
 								while(xmlparser.accessElement(XmlParser::NextElement));

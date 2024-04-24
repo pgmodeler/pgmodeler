@@ -35,16 +35,19 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 		QString group;
 
 		//! \brief Indicates if the block is related to a group that contains initial and final expression (multi lined expressions)
-		bool is_multi_expr,
+		bool multi_expr,
 
 		//! \brief Indicates if the block is closed (only for multi expression groups)
-		is_closed,
+		closed,
 
 		//! \brief Indicates if the block was closed at least one time.
 		closed_once,
 
 		//! \brief Indicates that, when available, the code completion can be triggered when the cursor is in this block info.
-		allow_completion;
+		allow_completion,
+
+		//! \brief Indicates that all words in the line of this block must receive the format of the this->group
+		entire_line;
 
 	public:
 		TextBlockInfo(void);
@@ -56,12 +59,14 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 		void setClosed(bool value);
 		void setMultiExpr(bool value);
 		void setAllowCompletion(bool value);
+		void setEntireLine(bool value);
 
 		QString getGroup();
 		bool isMultiExpr();
 		bool isClosedOnce();
 		bool isClosed();
 		bool isCompletionAllowed();
+		bool isEntireLine();
 };
 
 #endif

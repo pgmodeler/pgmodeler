@@ -301,12 +301,13 @@ enum class ErrorCode: unsigned {
 	RemExtRefChildObject,
 	AddExtDupChildObject,
 	AsgSchExtTypeConflict,
-	MalformedViewDefObject
+	MalformedViewDefObject,
+	InvGroupExprFlag
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=268;
+		static constexpr unsigned ErrorCount=269;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
