@@ -144,7 +144,7 @@ class __libparsers SchemaParser {
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
 	public:
-		static const char CharComment,	//! \brief Character that starts a comment
+		static const QChar CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
 		CharSpace,		//! \brief Character that indicates spacing
 		CharTabulation,	//! \brief Character that indicates tabulation
