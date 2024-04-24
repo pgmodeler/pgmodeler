@@ -166,11 +166,6 @@ void SchemaParser::loadBuffer(const QString &buf)
 		//Get one line from stream (until the last char before \n)
 		lin = ts.readLine();
 
-		/* Since the method getline discards the \n when the line was just a line break
-		its needed to treat it in order to not lost it */
-		if(lin.isEmpty())
-			lin += CharLineEnd;
-
 		//Looking for the position of other comment characters for deletion
 		pos = lin.indexOf(CharComment);
 
@@ -239,7 +234,8 @@ QString SchemaParser::getAttribute(bool &found_conv_to_xml)
 
 		/* Attempt to extract an attribute until a space, end of line
 		 * or attribute is encountered */
-		while(current_line[column]!=CharLineEnd &&
+		while(column < current_line.size() &&
+					current_line[column]!=CharLineEnd &&
 					current_line[column]!=CharSpace &&
 					current_line[column]!=CharTabulation &&
 					!end_attrib && !error)
@@ -286,12 +282,12 @@ QString SchemaParser::getWord()
 
 	/* Attempt to extract a word if the first character is not
 		a special character. */
-	if(!isSpecialCharacter(current_line[column].toLatin1()))
+	if(!isSpecialCharacter(current_line[column]))
 	{
 		/* Extract the word while it is not end of line, space or
 		 * special character */
 		while(current_line[column] != CharLineEnd &&
-					!isSpecialCharacter(current_line[column].toLatin1()) &&
+					!isSpecialCharacter(current_line[column]) &&
 					current_line[column] != CharSpace &&
 					current_line[column] != CharTabulation)
 		{
@@ -307,6 +303,7 @@ QString SchemaParser::getPlainText()
 {
 	QString text, current_line, extra_error_msg;
 	bool error = false;
+	int start_col = column, start_line = line;
 
 	current_line = buffer[line];
 
@@ -349,10 +346,13 @@ QString SchemaParser::getPlainText()
 		error = true;
 
 	if(error)
-		extra_error_msg = QString(QT_TR_NOOP("Expected a plain text expression enclosed by `%1%2'.")).arg(CharStartPlainText).arg(CharEndPlainText);
+		extra_error_msg = QString(QT_TR_NOOP("Plain text expression is unbalanced or is not properly enclosed by `%1%2'."))
+											.arg(CharStartPlainText).arg(CharEndPlainText);
 
 	if(error)
 	{
+		column = start_col;
+		line = start_line;
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) + " " + extra_error_msg,
 						ErrorCode::InvalidSyntax, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -442,12 +442,12 @@ QString SchemaParser::getMetaCharacter()
 	return meta;
 }
 
-bool SchemaParser::isSpecialCharacter(char chr)
+bool SchemaParser::isSpecialCharacter(const QChar &chr)
 {
-	return chr==CharStartAttribute || chr==CharEndAttribute ||
-			chr==CharStartConditional || chr==CharStartMetachar ||
-			chr==CharStartPlainText || chr==CharEndPlainText ||
-			chr==CharToXmlEntity;
+	return chr == CharStartAttribute || chr == CharEndAttribute ||
+				 chr == CharStartConditional || chr == CharStartMetachar ||
+				 chr == CharStartPlainText || chr == CharEndPlainText ||
+				 chr == CharToXmlEntity;
 }
 
 bool SchemaParser::evaluateComparisonExpr()

@@ -118,7 +118,7 @@ class __libparsers SchemaParser {
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
-		bool isSpecialCharacter(char chr);
+		bool isSpecialCharacter(const QChar &chr);
 
 		//! \brief Filename that was loaded by the parser
 		QString filename;
