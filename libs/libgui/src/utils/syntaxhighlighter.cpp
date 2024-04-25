@@ -163,31 +163,31 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 	if(!txt.isEmpty())
 	{
 		QString text, word, group;
-		unsigned i=0, len, idx=0, i1;
+		unsigned chr_idx = 0, txt_len, txt_pos = 0;
 		int match_idx, match_len, aux_len, start_col;
 		QChar chr_delim, lookahead_chr;
 		bool force_disable_compl = false;
 
 		text = txt + "\n";
-		len = text.length();
+		txt_len = text.length();
 
 		do
 		{
 			//Ignoring the char listed as ingnored on configuration
-			while(i < len && ignored_chars.contains(text[i])) i++;
+			while(chr_idx < txt_len && ignored_chars.contains(text[chr_idx])) chr_idx++;
 
-			if(i < len)
+			if(chr_idx < txt_len)
 			{
 				//Stores the curret text positon
-				idx=i;
+				txt_pos = chr_idx;
 
 				//If the char is a word separator
-				if(word_separators.contains(text[i]))
+				if(word_separators.contains(text[chr_idx]))
 				{
-					while(i < len && word_separators.contains(text[i]))
+					while(chr_idx < txt_len && word_separators.contains(text[chr_idx]))
 					{
-						word += text[i];
-						i++;
+						word += text[chr_idx];
+						chr_idx++;
 
 						/* If the nearby separators capture is not enabled we must
 						 * stop the char capture in order to return the currently formed word */
@@ -196,34 +196,34 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					}
 				}
 				//If the char is a word delimiter
-				else if(word_delimiters.contains(text[i]))
+				else if(word_delimiters.contains(text[chr_idx]))
 				{
-					chr_delim = text[i++];
+					chr_delim = text[chr_idx++];
 					word += chr_delim;
 
-					while(i < len && chr_delim != text[i])
+					while(chr_idx < txt_len && chr_delim != text[chr_idx])
 					{
-						word += text[i];
-						i++;
+						word += text[chr_idx];
+						chr_idx++;
 					}
 
-					if(i < len && text[i] == chr_delim)
+					if(chr_idx < txt_len && text[chr_idx] == chr_delim)
 					{
 						word += chr_delim;
-						i++;
+						chr_idx++;
 					}
 				}
 				else
 				{
 					TextBlockInfo *prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
-					while(i < len &&
-						  !word_separators.contains(text[i]) &&
-							!ignored_chars.contains(text[i]) &&
-							!word_delimiters.contains(text[i]))
+					while(chr_idx < txt_len &&
+							!word_separators.contains(text[chr_idx]) &&
+							!ignored_chars.contains(text[chr_idx]) &&
+							!word_delimiters.contains(text[chr_idx]))
 					{
-						word += text[i];
-						i++;
+						word += text[chr_idx];
+						chr_idx++;
 					}
 
 					/* This is an workaround for multi lined groups which use word delimiters
@@ -244,15 +244,15 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
 					in the last ' we include it in the current evaluated word and increment the position in the text so the next
 					word starts without the word delimiter. */
-					if(i < len && word_delimiters.contains(text[i]) &&
+					if(chr_idx < txt_len && word_delimiters.contains(text[chr_idx]) &&
 						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
 					{
 						for(auto &exp : final_exprs[prev_info->getGroup()])
 						{
-							if(exp.pattern().contains(text[i]))
+							if(exp.pattern().contains(text[chr_idx]))
 							{
-								word += text[i];
-								i++;
+								word += text[chr_idx];
+								chr_idx++;
 								break;
 							}
 						}
@@ -263,22 +263,24 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 			//If the word is not empty try to identify the group
 			if(!word.isEmpty())
 			{
-				i1=i;
-				while(i1 < len && ignored_chars.contains(text[i1])) i1++;
+				unsigned aux_pos = chr_idx;
 
-				if(i1 < len)
-					lookahead_chr=text[i1];
+				while(aux_pos < txt_len && ignored_chars.contains(text[aux_pos]))
+					aux_pos++;
+
+				if(aux_pos < txt_len)
+					lookahead_chr = text[aux_pos];
 				else
-					lookahead_chr='\0';
+					lookahead_chr = '\0';
 
-				match_idx=-1;
-				match_len=0;
+				match_idx = -1;
+				match_len = 0;
 
-				group=identifyWordGroup(word, lookahead_chr, match_idx, match_len);
+				group = identifyWordGroup(word, lookahead_chr, match_idx, match_len);
 
 				if(!group.isEmpty())
 				{
-					start_col=idx + match_idx;
+					start_col = txt_pos + match_idx;
 					setFormat(start_col, match_len, group);
 
 					/* Workaround to avoid the code completion to be triggered inside a delimited string when typing the
@@ -291,7 +293,7 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					 * from a group in which the completion is allowed in the settings. */
 					int cursor_pos = code_field_txt->textCursor().positionInBlock();
 					if(!info->isCompletionAllowed() && !force_disable_compl &&
-						 cursor_pos >= static_cast<int>(idx) && cursor_pos <= static_cast<int>(idx + match_len))
+						 cursor_pos >= static_cast<int>(txt_pos) && cursor_pos <= static_cast<int>(txt_pos + match_len))
 					{
 						force_disable_compl = true;
 					}
@@ -304,14 +306,15 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				else
 					setCurrentBlockState(SimpleBlock);
 
-				aux_len=(match_idx + match_len);
-				if(match_idx >=0 &&  aux_len != word.length())
-					i-=word.length() - aux_len;
+				aux_len = (match_idx + match_len);
+
+				if(match_idx >= 0 &&  aux_len != word.length())
+					chr_idx -= word.length() - aux_len;
 
 				word.clear();
 			}
 		}
-		while(i < len);
+		while(chr_idx < txt_len);
 	}
 }
 
@@ -462,8 +465,12 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 
 	for(auto &expr : *vet_expr)
 	{
-		if(expr.match(word).hasMatch())
+		match = expr.match(word);
+
+		if(match.hasMatch() /* && match.capturedLength() > 0 */)
 		{
+			//match_idx = match.capturedStart();
+			//match_len = match.capturedLength();
 			match_idx = 0;
 			match_len = word.length();
 			has_match = true;
@@ -896,7 +903,6 @@ void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
 {
 	QTextCharFormat format=formats[group];
 	format.setFontFamily(default_font.family());
-	//format.setFontPointSize(default_font.pointSizeF());
 	format.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(start, count, format);
 }
