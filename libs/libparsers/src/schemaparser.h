@@ -53,8 +53,14 @@ class __libparsers SchemaParser {
 		//! \brief Get an conditional instruction from the buffer on the current position
 		QString getConditional();
 
+		//! \brief Get a metacharacter or escaped character token from the buffer on the current position
+		QString getMetaOrEscapedToken(bool is_escaped);
+
 		//! \brief Get an metacharacter from the buffer on the current position
 		QString getMetaCharacter();
+
+		//! \brief Get an escaped character from the buffer on the current position
+		QString getEscapedCharacter();
 
 		/*! \brief Returns the result (true|false) of conditional expression evaluation.
 		The expression is evaluated from the left to the right and not support Polish Notation, so
@@ -107,7 +113,12 @@ class __libparsers SchemaParser {
 		void ignoreBlankChars(const QString &line);
 
 		//! \brief Translates the meta char token to the real character
-		QString translateMetaCharacter(const QString &meta);
+		QString convertMetaCharacter(const QString &meta);
+
+		//! \brief Translates the escaped char token to the equivalent character
+		QString convertEscapedCharacter(const QString &escaped);
+
+		QString convertMetaOrEscaped(const QString &token, bool is_escaped);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
@@ -158,7 +169,8 @@ class __libparsers SchemaParser {
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
 		CharValueOf,	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
-		CharToXmlEntity;	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
+		CharToXmlEntity,	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
+		CharStartEscaped; //! \brief Character that is used on escapade special characters, e.g. \# \$ \% #\$ \& \] \[ \{ \}
 
 		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TokenIf,  // %if
@@ -184,7 +196,8 @@ class __libparsers SchemaParser {
 		TokenMetaPs,// $ps (percentage sign '%')
 		TokenMetaAt,// $at (at character '@')
 		TokenMetaDs,// $ds (special data separator character '•')
-		TokenMetaAm;// $am (ampersand character '&')
+		TokenMetaAm,// $am (ampersand character '&')
+		TokenMetaBs;// $bs (backslash character '\')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)

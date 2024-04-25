@@ -302,12 +302,13 @@ enum class ErrorCode: unsigned {
 	AddExtDupChildObject,
 	AsgSchExtTypeConflict,
 	MalformedViewDefObject,
-	InvGroupExprFlag
+	InvGroupExpressionFlag,
+	InvalidEscapedCharacter
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=269;
+		static constexpr unsigned ErrorCount=270;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

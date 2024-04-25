@@ -812,8 +812,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										else if(expr_type == Attributes::FinalExp &&
 														attribs[Attributes::EntireLine] == Attributes::True)
 										{
-											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupExprFlag).arg(expr_type, group, Attributes::EntireLine),
-																			 ErrorCode::InvGroupExprFlag,
+											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupExpressionFlag).arg(expr_type, group, Attributes::EntireLine),
+																			 ErrorCode::InvGroupExpressionFlag,
 																			 __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
 										}
 

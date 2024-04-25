@@ -33,6 +33,8 @@ class SchemaParserTest: public QObject {
 		void testExpressionEvaluationWithCasts();
 		void testSetOperationInIf();
 		void testSetOperationUnderIfEvaluatedAsFalse();
+		void testConvertMetaCharsCorrectly();
+		void testConvertEscapedCharsCorrectly();
 };
 
 
@@ -130,6 +132,46 @@ void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
 		//out <<  buffer;
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getSourceCode(attribs) == "", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertMetaCharsCorrectly()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {test} $hs $at $oc foo $cc\n";
+	buffer += "{test}\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs) == "#@{foo}", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertEscapedCharsCorrectly()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {test} \\# \\& \\@ \\{ foo \\} \\$ \\% \\[ \\] \n";
+	buffer += "{test}\n";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs) == "#&@{foo}$%[]", true);
 	}
 	catch(Exception &e)
 	{

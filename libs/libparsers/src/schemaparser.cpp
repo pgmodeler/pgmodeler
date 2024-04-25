@@ -37,6 +37,7 @@ const QChar SchemaParser::CharEndCompExpr(')');
 const QChar SchemaParser::CharValueDelim('"');
 const QChar SchemaParser::CharValueOf('@');
 const QChar SchemaParser::CharToXmlEntity('&');
+const QChar SchemaParser::CharStartEscaped('\\');
 
 const QString SchemaParser::TokenIf("if");
 const QString SchemaParser::TokenThen("then");
@@ -61,6 +62,7 @@ const QString SchemaParser::TokenMetaHs("hs");
 const QString SchemaParser::TokenMetaAt("at");
 const QString SchemaParser::TokenMetaDs("ds");
 const QString SchemaParser::TokenMetaAm("am");
+const QString SchemaParser::TokenMetaBs("bs");
 
 const QString SchemaParser::TokenEqOper("==");
 const QString SchemaParser::TokenNeOper("!=");
@@ -154,6 +156,7 @@ void SchemaParser::loadBuffer(const QString &buf)
 	QString buf_aux = buf, lin;
 	QTextStream ts(&buf_aux);
 	bool open_plain_txt = false;
+	QChar prev_chr;
 
 	// Prepares the parser to do new reading
 	restartParser();
@@ -177,12 +180,17 @@ void SchemaParser::loadBuffer(const QString &buf)
 				open_plain_txt = true;
 			else if(open_plain_txt && lin[pos] == CharEndPlainText)
 				open_plain_txt = false;
-			else if(lin[pos] == CharComment && !open_plain_txt)
+			else if(lin[pos] == CharComment &&
+							// Avoids removing a escaped hash \# wrongly
+							prev_chr != CharStartEscaped &&
+							!open_plain_txt)
 			{
 				// We remove the line only if there's no open plaintext expression
 				lin.remove(pos, lin.size());
 				break;
 			}
+
+			prev_chr = lin[pos];
 		}
 
 		// Add a line break in case the last character is not
@@ -191,6 +199,7 @@ void SchemaParser::loadBuffer(const QString &buf)
 
 		// Add the treated line in the buffer
 		buffer.push_back(lin);
+		prev_chr = QChar::Null;
 	}
 }
 
@@ -416,28 +425,55 @@ QString SchemaParser::getConditional()
 
 QString SchemaParser::getMetaCharacter()
 {
-	QString meta, current_line;
+	try
+	{
+		return getMetaOrEscapedToken(false);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QString SchemaParser::getEscapedCharacter()
+{
+	try
+	{
+		return getMetaOrEscapedToken(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QString SchemaParser::getMetaOrEscapedToken(bool is_escaped)
+{
+	QString chr_token, current_line;
 	bool error = false;
+	QChar start_chr = is_escaped ? CharStartEscaped : CharStartMetachar;
 
 	current_line = buffer[line];
 
 	//Begins the extraction in case of a $ is found
-	if(current_line[column] == CharStartMetachar)
+	if(current_line[column] == start_chr)
 	{
 		//Moves to the next character that is the beginning of the metacharacter
 		column++;
 
 		//Extracts the metacharacter until doesn't finds a space or end of line
 		while(current_line[column] != CharLineEnd &&
-					current_line[column] != CharSpace &&
-					current_line[column] != CharTabulation)
+					 current_line[column] != CharSpace &&
+					 current_line[column] != CharTabulation)
 		{
-			meta += current_line[column];
+			chr_token += current_line[column];
 			column++;
 		}
 
 		//If no metacharacter was extracted an error is raised
-		if(meta.isEmpty())
+		if(chr_token.isEmpty())
 			error = true;
 	}
 	else
@@ -445,13 +481,19 @@ QString SchemaParser::getMetaCharacter()
 
 	if(error)
 	{
+		QString extra_msg;
+
+		if(is_escaped)
+			extra_msg = QString(QT_TR_NOOP("Expected a valid escaped character token starting with `%1' and followed by, at least, a letter.")).arg(start_chr);
+		else
+			extra_msg = QString(QT_TR_NOOP("Expected a valid metacharacter token starting with `%1' and followed by, at least, a letter.")).arg(start_chr);
+
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
-						.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) + " " +
-						QString(QT_TR_NOOP("Expected a valid metacharacter token starting with `%1' and followed by, at least, a letter.")).arg(CharStartMetachar),
-						ErrorCode::InvalidSyntax, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+										.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) + " " + extra_msg,
+										ErrorCode::InvalidSyntax, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
-	return meta;
+	return chr_token;
 }
 
 bool SchemaParser::isSpecialCharacter(const QChar &chr)
@@ -672,7 +714,11 @@ void SchemaParser::defineAttribute()
 			}
 			else if(chr == CharStartMetachar)
 			{
-				value += translateMetaCharacter(getMetaCharacter());
+				value += convertMetaCharacter(getMetaCharacter());
+			}
+			else if(chr == CharStartEscaped)
+			{
+				value += convertEscapedCharacter(getEscapedCharacter());
 			}
 			else
 			{
@@ -918,7 +964,7 @@ void SchemaParser::ignoreBlankChars(const QString &line)
 				 line[column]==CharTabulation)) column++;
 }
 
-QString SchemaParser::translateMetaCharacter(const QString &meta)
+QString SchemaParser::convertMetaCharacter(const QString &meta)
 {
 	static attribs_map metas={{ TokenMetaSp, CharSpace },
 														{ TokenMetaTb, CharTabulation },
@@ -932,16 +978,63 @@ QString SchemaParser::translateMetaCharacter(const QString &meta)
 														{ TokenMetaPs, CharStartConditional },
 														{ TokenMetaAt, CharValueOf },
 														{ TokenMetaDs, UtilsNs::DataSeparator },
-														{ TokenMetaAm, CharToXmlEntity }};
+														{ TokenMetaAm, CharToXmlEntity },
+														{ TokenMetaBs, CharStartEscaped }};
 
 	if(metas.count(meta)==0)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidMetacharacter)
-						.arg(meta).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
+						.arg(CharStartMetachar + meta).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
 						ErrorCode::InvalidMetacharacter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	return metas.at(meta);
+}
+
+QString SchemaParser::convertEscapedCharacter(const QString &escaped)
+{
+	static QStringList esc_chars = {
+		"s", /* CharSpace */
+		"t", /* CharTabulation */
+		"n", /* CharLineEnd */
+		CharStartPlainText,
+		CharEndPlainText,
+		CharStartAttribute,
+		CharEndAttribute,
+		CharStartMetachar,
+		CharComment,
+		CharStartConditional,
+		CharValueOf,
+		CharToXmlEntity,
+		CharStartEscaped };
+
+	static QStringList non_print_chars = {
+		CharSpace,
+		CharTabulation,
+		CharLineEnd
+	};
+
+	int idx = esc_chars.indexOf(escaped);
+
+	if(idx < 0)
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidEscapedCharacter)
+										.arg(CharStartEscaped + escaped).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()),
+										ErrorCode::InvalidEscapedCharacter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	if(idx <= 2)
+		return non_print_chars[idx];
+
+	return esc_chars[idx];
+}
+
+QString SchemaParser::convertMetaOrEscaped(const QString &token, bool is_escaped)
+{
+	if(is_escaped)
+		return convertEscapedCharacter(token);
+
+	return convertMetaCharacter(token);
 }
 
 QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attribs, CodeType def_type)
@@ -1014,14 +1107,12 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 			else if(chr == CharTabulation || chr == CharSpace)
 			{
 				//The parser will ignore the spaces that are not within pure texts
-				/* while(buffer[line][column] == CharSpace ||
-							 buffer[line][column] == CharTabulation) column++; */
 				ignoreBlankChars(buffer[line]);
 			}
 			//Metacharacter extraction
-			else if(chr == CharStartMetachar)
+			else if(chr == CharStartMetachar || chr == CharStartEscaped)
 			{
-				meta = getMetaCharacter();
+				meta = getMetaOrEscapedToken(chr == CharStartEscaped);
 
 				//Checks whether the metacharacter is part of the  'if' expression (this is an error)
 				if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
@@ -1032,8 +1123,8 @@ QString SchemaParser::getSourceCode(const attribs_map &attribs)
 				}
 				else
 				{
-					//Converting the metacharacter drawn to the character that represents this
-					meta = translateMetaCharacter(meta);
+					//Converting the metacharacter/escaped char to the character that it represents
+					meta = convertMetaOrEscaped(meta, chr == CharStartEscaped);
 
 					//If the parser is inside an 'if / else' extracting tokens
 					if(if_level>=0)
