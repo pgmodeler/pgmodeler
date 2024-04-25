@@ -18,7 +18,8 @@
 
 /**
 \ingroup libparsers
-\brief ParserEsquema class definition used to create SQL definition for model objects from schemas files (stored on disk).
+\class SchemaParser
+\brief Defines the schema micro language that is used to generate code.
 \note <strong>Creation date:</strong> 19/06/2008
 */
 
@@ -27,8 +28,6 @@
 
 #include "parsersglobal.h"
 #include "globalattributes.h"
-#include <map>
-#include <vector>
 #include <QDir>
 #include <QTextStream>
 #include "attribsmap.h"
