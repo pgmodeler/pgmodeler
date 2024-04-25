@@ -223,7 +223,7 @@ class __libparsers SchemaParser {
 		 attributes map */
 		QString getSourceCode(const attribs_map &attribs);
 
-		//! \brief Loads the buffer with a string
+		//! \brief Loads the schema code from a string buffer
 		void loadBuffer(const QString &buf);
 
 		//! \brief Loads a schema file and inserts its line into the parser's buffer

@@ -6,7 +6,7 @@
 #	%set {colspan} 8
 #%else
 #	%set {colspan} 5
-%#end
+#end
 
 #%set {spc} $br [ ]
 

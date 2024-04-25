@@ -153,31 +153,43 @@ void SchemaParser::loadBuffer(const QString &buf)
 {
 	QString buf_aux = buf, lin;
 	QTextStream ts(&buf_aux);
-	int pos = 0;
+	bool open_plain_txt = false;
 
-	//Prepares the parser to do new reading
+	// Prepares the parser to do new reading
 	restartParser();
 
 	filename = "[memory buffer]";
 
-	//While the input file doesn't reach the end
+	// While the input file doesn't reach the end
 	while(!ts.atEnd())
 	{
-		//Get one line from stream (until the last char before \n)
+		// Get one line from stream (until the last char before \n)
 		lin = ts.readLine();
 
-		//Looking for the position of other comment characters for deletion
-		pos = lin.indexOf(CharComment);
+		/* We need to make a pre processing on plaintext expressions []
+		 * in order to check if they have comment char inside them, e.g, [ # foo bar ]
+		 *
+		 * In positive case, we do not remove it (and the rest of the line as well)
+		 * because it would generate syntax error. */
+		for(int pos = 0; pos < lin.size(); pos++)
+		{
+			if(!open_plain_txt && lin[pos] == CharStartPlainText)
+				open_plain_txt = true;
+			else if(open_plain_txt && lin[pos] == CharEndPlainText)
+				open_plain_txt = false;
+			else if(lin[pos] == CharComment && !open_plain_txt)
+			{
+				// We remove the line only if there's no open plaintext expression
+				lin.remove(pos, lin.size());
+				break;
+			}
+		}
 
-		//Removes the characters from the found position
-		if(pos >= 0)
-			lin.remove(pos, lin.size());
-
-		//Add a line break in case the last character is not
+		// Add a line break in case the last character is not
 		if(!lin.endsWith(CharLineEnd))
 			lin += CharLineEnd;
 
-		//Add the treated line in the buffer
+		// Add the treated line in the buffer
 		buffer.push_back(lin);
 	}
 }
