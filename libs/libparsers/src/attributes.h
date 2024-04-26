@@ -756,6 +756,7 @@ namespace Attributes {
 	WithNoData,
 	WithoutOids,
 	WithTimezone,
+	Word,
 	WordDelimiters,
 	WordSeparators,
 	WorkingDir,

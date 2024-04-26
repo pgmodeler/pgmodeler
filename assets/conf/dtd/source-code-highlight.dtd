@@ -125,9 +125,9 @@ Note: if neither regexp or wildcard is specified then the expression matching is
 -->
 <!ELEMENT element EMPTY>
 <!ATTLIST element value CDATA #REQUIRED>
-<!-- DEPRECATION --> <!ATTLIST element type (initial-exp|final-exp) "initial-exp">
-<!ATTLIST element regexp (false|true) "false">
-<!ATTLIST element wildcard (false|true) "false">
+<!-- DEPRECATION initial-exp | final-exp --> <!ATTLIST element type (regexp | wildcard | word | initial-exp | final-exp) "initial-exp">
+<!-- DEPRECATION --> <!ATTLIST element regexp (false|true) "false">
+<!-- DEPRECATION --> <!ATTLIST element wildcard (false|true) "false">
 <!-- DEPRECATION --> <!ATTLIST element entire-line (false|true) "false">
 <!ATTLIST element persistent (false|true) "false">
 <!ATTLIST element initial (false|true) "false">

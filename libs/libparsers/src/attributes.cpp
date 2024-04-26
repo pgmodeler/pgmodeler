@@ -740,6 +740,7 @@ namespace Attributes {
 	WithNoData("with-no-data"),
 	WithoutOids("without-oids"),
 	WithTimezone("with-timezone"),
+	Word("word"),
 	WordDelimiters("word-delimiters"),
 	WordSeparators("word-separators"),
 	WorkingDir("working-dir"),

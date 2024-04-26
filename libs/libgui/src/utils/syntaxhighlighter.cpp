@@ -124,45 +124,58 @@ void SyntaxHighlighter::configureAttributes()
 	conf_loaded = false;
 }
 
-void SyntaxHighlighter::highlightBlock(const QString &txt)
+void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+	QRegularExpression regexp;
 	QRegularExpressionMatch match;
-	int pos = 0, idx = -1;
+	int pos = 0, idx = -1, match_len = 0, patt_len = 0;
 
-	if(txt.isEmpty())
+	if(text.isEmpty())
 		return;
 
 	for(auto &fmt_grp : fmt_groups)
 	{
-		pos = 0;
-
 		for(auto &elem : fmt_grp.elements)
 		{
+			pos = 0;
+
 			do
 			{
 				if(elem.exact)
 				{
-					QString pt = elem.regexp.pattern();
-					idx = txt.indexOf(elem.regexp.pattern(), pos);
+					patt_len = elem.pattern.length();
+					idx = text.indexOf(elem.pattern, pos,
+															elem.case_sensitive ?
+																	Qt::CaseSensitive : Qt::CaseInsensitive);
 
 					if(idx >= 0)
 					{
-						setFormat(idx, elem.regexp.pattern().size(), fmt_grp.format);
-						pos += idx + elem.regexp.pattern().size();
+						setFormat(idx, patt_len, fmt_grp.format);
+						pos += idx + patt_len;
 					}
+					else
+						pos++;
 				}
 				else
 				{
-					match = elem.regexp.match(txt, pos);
+					regexp.setPattern(elem.pattern);
+					regexp.setPatternOptions(!elem.case_sensitive ?
+																		QRegularExpression::CaseInsensitiveOption :
+																				QRegularExpression::NoPatternOption);
 
-					if(match.hasMatch() && match.capturedLength() > 0)
+					match = regexp.match(text, pos);
+					match_len = match.capturedLength();
+
+					if(match.hasMatch() && match_len > 0)
 					{
-						setFormat(match.capturedStart(), match.capturedLength(), fmt_grp.format);
-						pos += match.capturedEnd();
+						setFormat(match.capturedStart(), match_len, fmt_grp.format);
+						pos = match.capturedEnd();
 					}
+					else
+						pos++;
 				}
 			}
-			while(pos < txt.length());
+			while(pos < text.length());
 		}
 	}
 }
@@ -292,14 +305,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	if(!filename.isEmpty())
 	{
 		attribs_map attribs;
-		QString elem, group;
+		QString elem, group, pattern;
 		bool groups_decl = false,
 				bold = false, italic = false, strikeout = false,
 				underline = false, exact_match = false;
 		QTextCharFormat format;
-		QRegularExpression regexp;
 		QColor bg_color, fg_color;
 		FormatGroup *fmt_grp = nullptr;
+		QRegularExpression regexp;
 
 		try
 		{
@@ -446,23 +459,18 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 									{
 										xmlparser.getElementAttributes(attribs);
-										exact_match = false;
 
-										if(attribs[Attributes::RegularExp] == Attributes::True)
-											regexp.setPattern(attribs[Attributes::Value]);
-										else if(attribs[Attributes::Wildcard] == Attributes::True)
-											regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
-										else
-										{
-											exact_match = true;
-											regexp.setPattern(attribs[Attributes::Value]);
-										}
+										exact_match = attribs[Attributes::Type] != Attributes::Wildcard &&
+																	attribs[Attributes::Type] != Attributes::RegularExp;
 
-										if(attribs[Attributes::CaseSensitive] == Attributes::True)
-											regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+										pattern = attribs[Attributes::Type] == Attributes::Wildcard ?
+																QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]) :
+																attribs[Attributes::Value];
+
+										regexp.setPattern(pattern);
 
 										// We throw an error aborting the loading if the regepx has an invalid pattern
-										if(!regexp.isValid())
+										if(!exact_match && !regexp.isValid())
 										{
 											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
 																			ErrorCode::InvGroupRegExpPattern,
@@ -470,11 +478,12 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																			tr("Pattern: %1").arg(regexp.pattern()));
 										}
 
-										fmt_grp->elements.append(ExprElement(regexp,
-																													 attribs[Attributes::Persistent] == Attributes::True,
-																													 attribs[Attributes::Initial] == Attributes::True,
-																													 attribs[Attributes::Final] == Attributes::True,
-																													 exact_match));
+										fmt_grp->elements.append(ExprElement(pattern,
+																												 attribs[Attributes::Persistent] == Attributes::True,
+																												 attribs[Attributes::Initial] == Attributes::True,
+																												 attribs[Attributes::Final] == Attributes::True,
+																												 exact_match,
+																												 attribs[Attributes::CaseSensitive] == Attributes::True));
 									}
 								}
 								while(xmlparser.accessElement(XmlParser::NextElement));
@@ -515,14 +524,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	}
 }
 
-QList<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name)
+QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 {
-	QList<QRegularExpression> exprs;
+	QStringList exprs;
 
 	if(fmt_groups.contains(group_name))
 	{
 		for(auto &elem : fmt_groups[group_name].elements)
-			exprs.append(elem.regexp);
+			exprs.append(elem.pattern);
 	}
 
 	return exprs;

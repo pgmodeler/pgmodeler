@@ -37,16 +37,18 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		Q_OBJECT
 
 		struct ExprElement {
-			QRegularExpression regexp;
-			bool persistent, initial, final, exact;
+			QString pattern;
+			bool persistent, initial,
+					final, exact, case_sensitive;
 
-			ExprElement(const QRegularExpression &_regexp, bool _persistent, bool _initial, bool _final, bool _exact)
+			ExprElement(const QString &_pattern, bool _persistent, bool _initial, bool _final, bool _exact, bool _case_sensitive)
 			{
-				regexp = _regexp;
+				pattern = _pattern;
 				persistent = _persistent;
 				initial = _initial;
 				final = _final;
 				exact = _exact;
+				case_sensitive = _case_sensitive;
 			}
 		};
 
@@ -210,7 +212,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		that the final expressions must be returned instead of initial expression (default) */
 
 		//std::vector<QRegularExpression> getExpressions(const QString &group_name, bool final_expr=false);
-		QList<QRegularExpression> getExpressions(const QString &group_name);
+		QStringList getExpressions(const QString &group_name);
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger();
@@ -224,7 +226,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 	private slots:
 		//! \brief Highlight a line of the text
-		void highlightBlock(const QString &txt);
+		void highlightBlock(const QString &text);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration();
