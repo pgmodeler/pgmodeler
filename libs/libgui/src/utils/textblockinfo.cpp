@@ -18,19 +18,44 @@
 
 #include "textblockinfo.h"
 
-TextBlockInfo::TextBlockInfo(void)
+TextBlockInfo::TextBlockInfo()
 {
 	reset();
 }
 
-void TextBlockInfo::reset(void)
+void TextBlockInfo::reset()
 {
+	frag_infos.clear();
 	group.clear();
 	multi_expr = false;
 	closed = false;
 	closed_once = false;
 	allow_completion = false;
 	entire_line = false;
+}
+
+void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
+{
+	if(!f_info.isValid())
+		return;
+
+	frag_infos.append(f_info);
+}
+
+FragmentInfo TextBlockInfo::getFragmentInfo(int start, int length,	bool only_persist)
+{
+	for(auto &f_info : frag_infos)
+	{
+		if((only_persist && !f_info.persistent) ||
+			 (!only_persist && f_info.persistent))
+			continue;
+
+		if(start >= f_info.fmt_start &&
+			 start <= (f_info.fmt_start + f_info.fmt_length))
+			return f_info;
+	}
+
+	return FragmentInfo();
 }
 
 void TextBlockInfo::setGroup(const QString &grp)

@@ -103,6 +103,7 @@ allow-completion: enable/disable the code completion via completion trigger char
 <!ATTLIST group underline (false|true) "false">
 <!ATTLIST group strikeout (false|true) "false">
 <!ATTLIST group allow-completion (false|true) "true">
+<!ATTLIST group persistent (false|true) "false">
 
 <!--
 The element of a group. The element stores an expression that is matched against a captured word.
@@ -129,7 +130,6 @@ Note: if neither regexp or wildcard is specified then the expression matching is
 <!-- DEPRECATION --> <!ATTLIST element regexp (false|true) "false">
 <!-- DEPRECATION --> <!ATTLIST element wildcard (false|true) "false">
 <!-- DEPRECATION --> <!ATTLIST element entire-line (false|true) "false">
-<!ATTLIST element persistent (false|true) "false">
 <!ATTLIST element initial (false|true) "false">
 <!ATTLIST element final (false|true) "false">
 <!ATTLIST element case-sensitive (false|true) "false">

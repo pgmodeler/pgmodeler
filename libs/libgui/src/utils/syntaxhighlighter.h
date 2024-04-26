@@ -31,6 +31,7 @@
 #include <vector>
 #include "xmlparser.h"
 #include <algorithm>
+#include "textblockinfo.h"
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
@@ -38,13 +39,12 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		struct ExprElement {
 			QString pattern;
-			bool persistent, initial,
-					final, exact, case_sensitive;
+			bool initial, final,
+					exact, case_sensitive;
 
-			ExprElement(const QString &_pattern, bool _persistent, bool _initial, bool _final, bool _exact, bool _case_sensitive)
+			ExprElement(const QString &_pattern, bool _initial, bool _final, bool _exact, bool _case_sensitive)
 			{
 				pattern = _pattern;
-				persistent = _persistent;
 				initial = _initial;
 				final = _final;
 				exact = _exact;
@@ -55,7 +55,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		struct FormatGroup {
 			QString name;
 			QTextCharFormat format;
-			bool allow_completion;
+			bool allow_completion, persistent;
 			QList<ExprElement> elements;
 
 			FormatGroup()
@@ -63,11 +63,12 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 				allow_completion = false;
 			}
 
-			FormatGroup(const QString &_name, const QTextCharFormat &_format, bool _allow_compl)
+			FormatGroup(const QString &_name, const QTextCharFormat &_format, bool _allow_compl, bool _persistent)
 			{
 				name = _name;
 				format = _format;
 				allow_completion = _allow_compl;
+				persistent = _persistent;
 			}
 		};
 
@@ -179,7 +180,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		bool hasInitialAndFinalExprs(const QString &group);
 
 		//! \brief Renders the block format using the configuration of the specified fmt
+		[[deprecated]]
 		void setFormat(int start, int count, const QTextCharFormat &fmt);
+
+		void setFormat(int start, int count, const FormatGroup &fmt_grp, TextBlockInfo *blk_info);
 
 		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
