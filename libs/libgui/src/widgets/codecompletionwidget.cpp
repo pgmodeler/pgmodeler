@@ -251,21 +251,20 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
+			QList<QRegularExpression> exprs = syntax_hl->getExpressions(keywords_grp);
 
-			while(!exprs.empty())
+			for(auto &expr : exprs)
 			{
 				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
 				 * we need to remove from the pattern the initial and final regexp operators in
 				 * order to use only the word itself */
-				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
-				exprs.pop_back();
+				keywords.append(expr.pattern().remove("\\A(?:").remove(")\\z"));
 			}
 
-			completion_trigger=syntax_hl->getCompletionTrigger();
+			completion_trigger = syntax_hl->getCompletionTrigger();
 		}
 		else
-			completion_trigger=QChar('.');
+			completion_trigger = QChar('.');
 
 		if(enable_snippets)
 		{

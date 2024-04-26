@@ -29,7 +29,7 @@
 #include <QString>
 #include <QTextBlockUserData>
 
-class __libgui TextBlockInfo: public QTextBlockUserData {
+class  [[deprecated]] __libgui TextBlockInfo: public QTextBlockUserData {
 	private:
 		//! \brief The name of the group that holds the formatting applied to the block
 		QString group;

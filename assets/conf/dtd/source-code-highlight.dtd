@@ -18,8 +18,8 @@ apostrophe chars. The word delimiters are always attached to extracted words whe
 
 value: a list of characters that must be used as word delimiters.
 -->
-<!ELEMENT word-delimiters EMPTY>
-<!ATTLIST word-delimiters value CDATA #IMPLIED>
+<!-- DEPRECATION --> <!ELEMENT word-delimiters EMPTY>
+<!-- DEPRECATION --> <!ATTLIST word-delimiters value CDATA #IMPLIED>
 
 <!-- 
 The characters that separates words. The highlighter will stop extracting a word
@@ -34,17 +34,17 @@ capture-nearby: indicates if the word separators should be captured together whe
                 until the next char is not a separator. The result is a word containing multiples word separators
                 captured in line.
 -->
-<!ELEMENT word-separators EMPTY>
-<!ATTLIST word-separators value CDATA #IMPLIED>
-<!ATTLIST word-separators capture-nearby (false|true) "false">
+<!-- DEPRECATION --> <!ELEMENT word-separators EMPTY>
+<!-- DEPRECATION --> <!ATTLIST word-separators value CDATA #IMPLIED>
+<!-- DEPRECATION --> <!ATTLIST word-separators capture-nearby (false|true) "false">
 
 <!-- 
 The ignored characters that are completely discarded when the highlighter is extracting words.
 
 value: a list of characters that must be used as ignored characters.
 -->
-<!ELEMENT ignored-chars EMPTY>
-<!ATTLIST ignored-chars value CDATA #IMPLIED>
+<!-- DEPRECATION --> <!ELEMENT ignored-chars EMPTY>
+<!-- DEPRECATION --> <!ATTLIST ignored-chars value CDATA #IMPLIED>
 
 <!-- 
 The character that is used to trigger the code completion widget. The default trigger is the dot (.)
@@ -96,8 +96,8 @@ allow-completion: enable/disable the code completion via completion trigger char
 <!ATTLIST group name CDATA #REQUIRED>
 <!ATTLIST group background-color CDATA #IMPLIED>
 <!ATTLIST group foreground-color CDATA #IMPLIED>
-<!ATTLIST group lookahead-char CDATA #IMPLIED>
-<!ATTLIST group case-sensitive (false|true) "false">
+<!-- DEPRECATION --> <!ATTLIST group lookahead-char CDATA #IMPLIED>
+<!-- DEPRECATION --> <!ATTLIST group case-sensitive (false|true) "false">
 <!ATTLIST group bold (false|true) "false">
 <!ATTLIST group italic (false|true) "false">
 <!ATTLIST group underline (false|true) "false">
@@ -125,7 +125,11 @@ Note: if neither regexp or wildcard is specified then the expression matching is
 -->
 <!ELEMENT element EMPTY>
 <!ATTLIST element value CDATA #REQUIRED>
-<!ATTLIST element type (initial-exp|final-exp) "initial-exp">
+<!-- DEPRECATION --> <!ATTLIST element type (initial-exp|final-exp) "initial-exp">
 <!ATTLIST element regexp (false|true) "false">
 <!ATTLIST element wildcard (false|true) "false">
-<!ATTLIST element entire-line (false|true) "false">
+<!-- DEPRECATION --> <!ATTLIST element entire-line (false|true) "false">
+<!ATTLIST element persistent (false|true) "false">
+<!ATTLIST element initial (false|true) "false">
+<!ATTLIST element final (false|true) "false">
+<!ATTLIST element case-sensitive (false|true) "false">

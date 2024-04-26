@@ -36,6 +36,39 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
+		struct ExprElement {
+			QRegularExpression regexp;
+			bool persistent, initial, final, exact;
+
+			ExprElement(const QRegularExpression &_regexp, bool _persistent, bool _initial, bool _final, bool _exact)
+			{
+				regexp = _regexp;
+				persistent = _persistent;
+				initial = _initial;
+				final = _final;
+				exact = _exact;
+			}
+		};
+
+		struct FormatGroup {
+			QString name;
+			QTextCharFormat format;
+			bool allow_completion;
+			QList<ExprElement> elements;
+
+			FormatGroup()
+			{
+				allow_completion = false;
+			}
+
+			FormatGroup(const QString &_name, const QTextCharFormat &_format, bool _allow_compl)
+			{
+				name = _name;
+				format = _format;
+				allow_completion = _allow_compl;
+			}
+		};
+
 		/*! \brief This struct stores the configuration of enclosing characters
 		 *  and their respective foreground/background color */
 		struct EnclosingCharsCfg {
@@ -66,27 +99,29 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */
-		std::map<QString, std::vector<QRegularExpression> > initial_exprs;
+		std::map<QString, std::vector<QRegularExpression> > initial_exprs [[deprecated]];
 
 		/*! \brief Stores the regexps that indicates the end of a group. This regexps are
 		used mainly to identify the end of multiline comments */
-		std::map<QString, std::vector<QRegularExpression> > final_exprs;
+		std::map<QString, std::vector<QRegularExpression> > final_exprs [[deprecated]];
 
 		//! \brief Stores the text formatting to each group
-		std::map<QString, QTextCharFormat> formats;
+		std::map<QString, QTextCharFormat> formats [[deprecated]];
 
 		//! \brief Stores the completion allowed status for each group
-		std::map<QString, bool> allow_completion;
+		std::map<QString, bool> allow_completion [[deprecated]];
 
 		/*! \brief Stores if a certain expression of a group, when matched, causes the formatting
 		 *  for all the rest of words in the line, no matter if they matches other groups */
-		std::map<QString, bool> fmt_entire_line;
+		std::map<QString, bool> fmt_entire_line [[deprecated]];
 
 		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
-		std::map<QString, QChar> lookahead_char;
+		std::map<QString, QChar> lookahead_char [[deprecated]];
 
 		//! \brief Stores the order in which the groups must be applied
-		std::vector<QString> groups_order;
+		QStringList fmt_groups_order;
+
+		QMap<QString, FormatGroup> fmt_groups;
 
 		//! \brief Stores the enclosing characters config read from file
 		std::vector<EnclosingCharsCfg> enclosing_chrs;
@@ -105,19 +140,19 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 * to be appended to the detected word. An example of contigous capture is for
 		 * SQL comment in the for /(slash)*(asterisk) if the nearby capture is not enabled
 		 * then the highlighting will not be able to identify multi line comments properly. */
-				capt_nearby_separators;
+		capt_nearby_separators [[deprecated]];
 
 		//! \brief Stores the custom font size to be used instead of default_font size
 		qreal custom_font_size;
 
 		//! \brief Stores the chars that indicates word separators
-		QString word_separators,
+		QString word_separators [[deprecated]],
 
 		//! \brief Stores the chars that indicates word delimiters
-		word_delimiters,
+		word_delimiters [[deprecated]],
 
 		//! \brief Stores the chars ignored by the highlighter during the word reading
-		ignored_chars;
+		ignored_chars [[deprecated]];
 
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
@@ -128,8 +163,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		void configureAttributes();
 
 		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
-	the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
-		match length. */
+		 * the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
+		 * match length. */
+		[[deprecated]]
 		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
 
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
@@ -137,14 +173,16 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		bool eventFilter(QObject *object, QEvent *event);
 
 		//! \brief Returns if the specified group contains both initial and final expressions
+		[[deprecated]]
 		bool hasInitialAndFinalExprs(const QString &group);
 
-		//! \brief Renders the block format using the configuration of the specified group
-		void setFormat(int start, int count, const QString &group);
+		//! \brief Renders the block format using the configuration of the specified fmt
+		void setFormat(int start, int count, const QTextCharFormat &fmt);
 
 		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
 		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
+		[[deprecated]]
 		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr,
 													const QChar &lookahead_chr, int &match_idx, int &match_len, bool &fmt_ent_line);
 
@@ -170,7 +208,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
 		that the final expressions must be returned instead of initial expression (default) */
-		std::vector<QRegularExpression> getExpressions(const QString &group_name, bool final_expr=false);
+
+		//std::vector<QRegularExpression> getExpressions(const QString &group_name, bool final_expr=false);
+		QList<QRegularExpression> getExpressions(const QString &group_name);
 
 		//! \brief Returns the current configured code completion trigger char
 		QChar getCompletionTrigger();
