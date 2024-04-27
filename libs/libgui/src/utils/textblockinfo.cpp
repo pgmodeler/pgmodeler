@@ -26,12 +26,8 @@ TextBlockInfo::TextBlockInfo()
 void TextBlockInfo::reset()
 {
 	frag_infos.clear();
-	group.clear();
-	multi_expr = false;
-	closed = false;
-	closed_once = false;
-	allow_completion = false;
-	entire_line = false;
+	open_group.clear();
+	block_type = SimpleBlock;
 }
 
 void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
@@ -54,66 +50,22 @@ FragmentInfo TextBlockInfo::getFragmentInfo(int start, int end)
 	return FragmentInfo();
 }
 
-void TextBlockInfo::setGroup(const QString &grp)
+void TextBlockInfo::setOpenGroup(const QString &grp)
 {
-	group = grp;
+	open_group = grp;
 }
 
-void TextBlockInfo::setClosed(bool value)
+QString TextBlockInfo::getOpenGroup()
 {
-	if(!closed_once && value)
-		closed_once = true;
-
-	closed = value;
+	return open_group;
 }
 
-void TextBlockInfo::setMultiExpr(bool value)
+void TextBlockInfo::setBlockType(BlockType blk_type)
 {
-	multi_expr = value;
-
-	if(value && entire_line)
-		entire_line = false;
+	block_type = blk_type;
 }
 
-void TextBlockInfo::setAllowCompletion(bool value)
+TextBlockInfo::BlockType TextBlockInfo::getBlockType()
 {
-	allow_completion = value;
-}
-
-void TextBlockInfo::setEntireLine(bool value)
-{
-	if(value && multi_expr)
-		multi_expr = false;
-
-	entire_line = value;
-}
-
-QString TextBlockInfo::getGroup()
-{
-	return group;
-}
-
-bool TextBlockInfo::isMultiExpr()
-{
-	return multi_expr;
-}
-
-bool TextBlockInfo::isClosedOnce()
-{
-	return closed_once;
-}
-
-bool TextBlockInfo::isClosed()
-{
-	return closed;
-}
-
-bool TextBlockInfo::isCompletionAllowed()
-{
-	return allow_completion;
-}
-
-bool TextBlockInfo::isEntireLine()
-{
-	return entire_line;
+	return block_type;
 }

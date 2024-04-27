@@ -110,26 +110,24 @@ class FragmentInfo {
 };
 
 class  __libgui TextBlockInfo: public QTextBlockUserData {
+	public:
+		enum BlockType {
+			//! \brief Indicates that the current block has no special semantics (open or closed expression)
+			SimpleBlock,
+
+			//! \brief Indicates that the current block has an open (but yet to close) expression (e.g. multline comments)
+			OpenExprBlock,
+
+			//! \brief Indicates that the current block holds one or more closed expression
+			ClosedExprBlock
+		};
+
 	private:
 		QList<FragmentInfo> frag_infos;
 
-		//! \brief The name of the group that holds the formatting applied to the block
-		QString group [[deprecated]] ;
+		QString open_group;
 
-		//! \brief Indicates if the block is related to a group that contains initial and final expression (multi lined expressions)
-		bool multi_expr [[deprecated]] ,
-
-		//! \brief Indicates if the block is closed (only for multi expression groups)
-		closed [[deprecated]] ,
-
-		//! \brief Indicates if the block was closed at least one time.
-		closed_once [[deprecated]] ,
-
-		//! \brief Indicates that, when available, the code completion can be triggered when the cursor is in this block info.
-		allow_completion [[deprecated]],
-
-		//! \brief Indicates that all words in the line of this block must receive the format of the this->group
-		entire_line [[deprecated]];
+		BlockType block_type;
 
 	public:
 		TextBlockInfo();
@@ -141,38 +139,15 @@ class  __libgui TextBlockInfo: public QTextBlockUserData {
 
 		FragmentInfo getFragmentInfo(int start, int end);
 
-		[[deprecated]]
-		void setGroup(const QString &grp);
+		void setOpenGroup(const QString &grp);
 
-		[[deprecated]]
-		void setClosed(bool value);
+		QString getOpenGroup();
 
-		[[deprecated]]
-		void setMultiExpr(bool value);
+		void setBlockType(BlockType blk_type);
 
-		[[deprecated]]
-		void setAllowCompletion(bool value);
+		BlockType getBlockType();
 
-		[[deprecated]]
-		void setEntireLine(bool value);
-
-		[[deprecated]]
-		QString getGroup();
-
-		[[deprecated]]
-		bool isMultiExpr();
-
-		[[deprecated]]
-		bool isClosedOnce();
-
-		[[deprecated]]
-		bool isClosed();
-
-		[[deprecated]]
-		bool isCompletionAllowed();
-
-		[[deprecated]]
-		bool isEntireLine();
+		bool isCompletionAllowed(int = 0) { return false; }
 };
 
 #endif
