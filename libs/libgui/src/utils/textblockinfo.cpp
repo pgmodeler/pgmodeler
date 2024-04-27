@@ -42,16 +42,12 @@ void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
 	frag_infos.append(f_info);
 }
 
-FragmentInfo TextBlockInfo::getFragmentInfo(int start, int length,	bool only_persist)
+FragmentInfo TextBlockInfo::getFragmentInfo(int start, int end)
 {
 	for(auto &f_info : frag_infos)
 	{
-		if((only_persist && !f_info.persistent) ||
-			 (!only_persist && f_info.persistent))
-			continue;
-
-		if(start >= f_info.fmt_start &&
-			 start <= (f_info.fmt_start + f_info.fmt_length))
+		if((start >= f_info.fmt_start && start <= f_info.fmt_end) ||
+			 (end >= f_info.fmt_start && end <= f_info.fmt_end))
 			return f_info;
 	}
 

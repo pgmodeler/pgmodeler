@@ -42,6 +42,11 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 			bool initial, final,
 					exact, case_sensitive;
 
+			ExprElement()
+			{
+				clear();
+			}
+
 			ExprElement(const QString &_pattern, bool _initial, bool _final, bool _exact, bool _case_sensitive)
 			{
 				pattern = _pattern;
@@ -50,13 +55,25 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 				exact = _exact;
 				case_sensitive = _case_sensitive;
 			}
+
+			void clear()
+			{
+				pattern.clear();
+				initial = final =
+				exact = case_sensitive = false;
+			}
+
+			bool isValid()
+			{
+				return !pattern.isEmpty();
+			}
 		};
 
 		struct FormatGroup {
 			QString name;
 			QTextCharFormat format;
 			bool allow_completion, persistent;
-			QList<ExprElement> elements;
+			QList<ExprElement> expr_elements;
 
 			FormatGroup()
 			{
@@ -183,7 +200,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		[[deprecated]]
 		void setFormat(int start, int count, const QTextCharFormat &fmt);
 
-		void setFormat(int start, int count, const FormatGroup &fmt_grp, TextBlockInfo *blk_info);
+		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
+
+		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end);
+
 
 		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
 		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
@@ -198,6 +218,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Generates an unique id for a group's expression.
 		 * This is used to store the entire line formatting flag for each expression */
 		QString getExpressionId(const QString &group, const QRegularExpression *expr);
+
 
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.

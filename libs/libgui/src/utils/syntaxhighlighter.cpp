@@ -128,12 +128,13 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	if(text.isEmpty())
 		return;
 
-	QRegularExpression regexp;
-	QRegularExpressionMatch match;
+	int pos = 0, last_pos = -1, match_end = -1, match_start = -1;
 	TextBlockInfo *blk_info = nullptr;
-	int pos = 0, match_len = 0, match_start = 0, match_end = 0;
-	QString blk_group;
+	QString open_group;
+	ExprElement open_expr;
 	FragmentInfo fg_info;
+	FormatGroup fmt_grp;
+	TextBlockInfo *prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 
 	/* Creating a text block info so we can register
 	 * each position where there is a text formatting */
@@ -149,42 +150,39 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		blk_info->reset();
 	}
 
-	for(auto &fmt_grp : fmt_groups)
+	for(auto &grp : fmt_groups_order)
 	{
-		for(auto &elem : fmt_grp.elements)
+		fmt_grp = fmt_groups[grp];
+
+		for(auto &expr : fmt_grp.expr_elements)
 		{
-			pos = 0;
+			pos = last_pos >= 0 ? last_pos : 0;
 
 			do
 			{
-				if(elem.exact)
+				if(matchExpression(text, pos, expr, match_start, match_end))
 				{
-					match_start = text.indexOf(elem.pattern, pos,
-																		 elem.case_sensitive ?
-																		 Qt::CaseSensitive : Qt::CaseInsensitive);
-					match_len = elem.pattern.length();
-					match_end = match_start + match_len;
-				}
-				else
-				{
-					regexp.setPattern(elem.pattern);
-					regexp.setPatternOptions(!elem.case_sensitive ?
-																	 QRegularExpression::CaseInsensitiveOption :
-																	 QRegularExpression::NoPatternOption);
+					pos = match_end + 1;
 
-					match = regexp.match(text, pos);
-					match_start = match.capturedStart();
-					match_end = match.capturedEnd();
-					match_len = match.capturedLength();
-				}
+					if(grp == open_group && expr.final)
+					{
+						open_group.clear();
+						open_expr.clear();
+						match_start = last_pos;
+						last_pos = -1;
+					}
 
-				if(match_start >= 0 && match_len > 0)
-				{
-					if(fmt_grp.name == "comment")
-						fmt_grp.name.length();
+					setFormat(match_start, match_end,
+										open_group.isEmpty() ? grp : open_group,
+										open_group.isEmpty() ? expr : open_expr, blk_info);
 
-					pos = match_end;
-					setFormat(match_start, match_len, fmt_grp, blk_info);
+					if(open_group.isEmpty() && expr.initial)
+					{
+						open_group = grp;
+						open_expr = expr;
+						last_pos = pos;
+						break;
+					}
 				}
 				else
 					pos++;
@@ -192,6 +190,80 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			while(pos < text.length());
 		}
 	}
+
+	/* If the highlight iterated until the end of the block
+	 * but there still an open expression without being closed */
+	if(!open_group.isEmpty())
+		setFormat(last_pos, text.length(), open_group, open_expr, blk_info);
+}
+
+void SyntaxHighlighter::setFormat(int start, int count, const QTextCharFormat &fmt)
+{
+	QTextCharFormat format = fmt;
+	format.setFontFamily(default_font.family());
+	format.setFontPointSize(getCurrentFontSize());
+	QSyntaxHighlighter::setFormat(start, count, format);
+}
+
+void SyntaxHighlighter::setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info)
+{
+	FormatGroup fmt_group = fmt_groups[group];
+	QTextCharFormat fmt = fmt_group.format;
+	FragmentInfo f_info;
+	int count = (end - start) + 1;
+
+	if(blk_info)
+		f_info = blk_info->getFragmentInfo(start, end);
+
+	if(f_info.isValid()	&& f_info.isPersistent())
+	{
+		fmt_group = fmt_groups[f_info.getGroup()];
+		fmt = fmt_group.format;
+
+		/* If the fragment found is closed and the current format
+		 * postion and length will be restricted to the end of
+		 * the fragment's end position */
+		if(f_info.isClosed() && end > f_info.getEnd())
+			count = f_info.getEnd() - start;
+	}
+
+	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
+																				 expr_elem.initial, expr_elem.final,
+																				 fmt_group.allow_completion));
+
+	fmt.setFontFamily(default_font.family());
+	fmt.setFontPointSize(getCurrentFontSize());
+
+	QSyntaxHighlighter::setFormat(start, count, fmt);
+}
+
+bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end)
+{
+	if(expr.exact)
+	{
+		start = text.indexOf(expr.pattern, txt_pos,
+																expr.case_sensitive ?
+																		Qt::CaseSensitive : Qt::CaseInsensitive);
+		end = start + expr.pattern.length() - 1;
+	}
+	else
+	{
+		QRegularExpression regexp;
+		QRegularExpressionMatch match;
+
+		regexp.setPattern(expr.pattern);
+		regexp.setPatternOptions(QRegularExpression::DontCaptureOption |
+															(!expr.case_sensitive ?
+																	 QRegularExpression::CaseInsensitiveOption :
+																	 QRegularExpression::NoPatternOption));
+
+		match = regexp.match(text, txt_pos);
+		start = match.capturedStart();
+		end = match.capturedEnd() - 1;
+	}
+
+	int len = (end - start) + 1;
+	return start >= 0 && end >= 0 && len > 0;
 }
 
 void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
@@ -493,7 +565,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																			tr("Pattern: %1").arg(regexp.pattern()));
 										}
 
-										fmt_grp->elements.append(ExprElement(pattern,																												 
+										fmt_grp->expr_elements.append(ExprElement(pattern,
 																												 attribs[Attributes::Initial] == Attributes::True,
 																												 attribs[Attributes::Final] == Attributes::True,
 																												 exact_match,
@@ -544,7 +616,7 @@ QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 
 	if(fmt_groups.contains(group_name))
 	{
-		for(auto &elem : fmt_groups[group_name].elements)
+		for(auto &elem : fmt_groups[group_name].expr_elements)
 			exprs.append(elem.pattern);
 	}
 
@@ -554,43 +626,6 @@ QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 QChar SyntaxHighlighter::getCompletionTrigger()
 {
 	return completion_trigger;
-}
-
-void SyntaxHighlighter::setFormat(int start, int count, const QTextCharFormat &fmt)
-{
-	QTextCharFormat format = fmt;
-	format.setFontFamily(default_font.family());
-	format.setFontPointSize(getCurrentFontSize());
-	QSyntaxHighlighter::setFormat(start, count, format);
-}
-
-void SyntaxHighlighter::setFormat(int start, int count, const FormatGroup &fmt_grp, TextBlockInfo *blk_info)
-{
-	QTextCharFormat fmt = fmt_grp.format;
-	FormatGroup fmt_group = fmt_grp;
-	FragmentInfo f_info;
-	TextBlockInfo *prev_blk_info = nullptr;
-
-	if(blk_info)
-	{
-		prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
-		f_info = blk_info->getFragmentInfo(start, count, true);
-	}
-
-	if(f_info.isValid() && f_info.isPersistent())
-	{
-		fmt_group = fmt_groups[f_info.getGroup()];
-		fmt = fmt_group.format;
-	}
-
-	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, count,
-																				 fmt_group.persistent, false,
-																				 fmt_group.allow_completion));
-
-	fmt.setFontFamily(default_font.family());
-	fmt.setFontPointSize(getCurrentFontSize());
-
-	QSyntaxHighlighter::setFormat(start, count, fmt);
 }
 
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)

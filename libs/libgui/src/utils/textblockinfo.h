@@ -32,29 +32,30 @@
 
 class FragmentInfo {
 	private:
-		int fmt_start, fmt_length;
+		int fmt_start, fmt_end;
 
 		bool persistent,
-				 multi_expr,
+				 open,
 				 closed,
-				allow_completion;
+				 allow_completion;
 
 		QString group;
 
 	public:
 	FragmentInfo()
 	{
-		persistent = multi_expr =
-				closed = allow_completion = false;
-		fmt_start = fmt_length = -1;
+		persistent = open =
+		closed = allow_completion = false;
+		fmt_start = fmt_end = -1;
 	}
 
-	FragmentInfo(const QString &grp, int start, int length, bool persist, bool closed, bool allow_compl)
+	FragmentInfo(const QString &grp, int start, int end, bool persist, bool open, bool closed, bool allow_compl)
 	{
 		group = grp;
 		fmt_start = start;
-		fmt_length = length;
+		fmt_end = end;
 		persistent = persist;
+		this->open = open;
 		this->closed = closed;
 		allow_completion = allow_compl;
 	}
@@ -64,14 +65,24 @@ class FragmentInfo {
 		return fmt_start;
 	}
 
+	int getEnd() const
+	{
+		return fmt_end;
+	}
+
 	int getLength() const
 	{
-		return fmt_length;
+		return fmt_end - fmt_start + 1;
 	}
 
 	QString getGroup() const
 	{
 		return group;
+	}
+
+	bool isOpen() const
+	{
+		return open;
 	}
 
 	bool isClosed() const
@@ -92,7 +103,7 @@ class FragmentInfo {
 	bool isValid() const
 	{
 		return !group.isEmpty() &&
-					 fmt_start >= 0 && fmt_length > 0;
+					 fmt_start >= 0 && fmt_start >= fmt_end;
 	}
 
 	friend class TextBlockInfo;
@@ -128,7 +139,7 @@ class  __libgui TextBlockInfo: public QTextBlockUserData {
 
 		void addFragmentInfo(const FragmentInfo &f_info);
 
-		FragmentInfo getFragmentInfo(int start, int length, bool only_persist);
+		FragmentInfo getFragmentInfo(int start, int end);
 
 		[[deprecated]]
 		void setGroup(const QString &grp);
