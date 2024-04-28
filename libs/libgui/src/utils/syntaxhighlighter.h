@@ -115,28 +115,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
 		configuration as the current one */
-		OpenBlock = 0;
+		OpenExprBlock = 0,
 
-		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
-		Also stores initial regexps used to identify a multiline group */
-		std::map<QString, std::vector<QRegularExpression> > initial_exprs [[deprecated]];
-
-		/*! \brief Stores the regexps that indicates the end of a group. This regexps are
-		used mainly to identify the end of multiline comments */
-		std::map<QString, std::vector<QRegularExpression> > final_exprs [[deprecated]];
-
-		//! \brief Stores the text formatting to each group
-		std::map<QString, QTextCharFormat> formats [[deprecated]];
-
-		//! \brief Stores the completion allowed status for each group
-		std::map<QString, bool> allow_completion [[deprecated]];
-
-		/*! \brief Stores if a certain expression of a group, when matched, causes the formatting
-		 *  for all the rest of words in the line, no matter if they matches other groups */
-		std::map<QString, bool> fmt_entire_line [[deprecated]];
-
-		//! \brief Stores the char used to break the highlight for a group. This char is not highlighted itself.
-		std::map<QString, QChar> lookahead_char [[deprecated]];
+		PersistentBlock = 1;
 
 		//! \brief Stores the order in which the groups must be applied
 		QStringList fmt_groups_order;
@@ -152,27 +133,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief This causes the highlighter to ignores any RETURN/ENTER press on QTextEdit causing
 		 *  the text to be in a single line. Also, in single line mode, pressing tab on a focused
 		 *  input causes the focus to jump to the next widget in the hierarchy */
-		single_line_mode,
-
-		/*! \brief Indicates that nearby (contiguous) word separators must be captured
-		 * The default behavior is to stop character capture when the first word separator
-		 * is found. Setting this flag to true causes all the contiguous word separators
-		 * to be appended to the detected word. An example of contigous capture is for
-		 * SQL comment in the for /(slash)*(asterisk) if the nearby capture is not enabled
-		 * then the highlighting will not be able to identify multi line comments properly. */
-		capt_nearby_separators [[deprecated]];
+		single_line_mode;
 
 		//! \brief Stores the custom font size to be used instead of default_font size
 		qreal custom_font_size;
-
-		//! \brief Stores the chars that indicates word separators
-		QString word_separators [[deprecated]],
-
-		//! \brief Stores the chars that indicates word delimiters
-		word_delimiters [[deprecated]],
-
-		//! \brief Stores the chars ignored by the highlighter during the word reading
-		ignored_chars [[deprecated]];
 
 		//! \brief Stores the char that triggers the code completion
 		QChar	completion_trigger;
@@ -182,43 +146,16 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Configures the initial attributes of the highlighter
 		void configureAttributes();
 
-		/*! \brief Indentifies the group which the word belongs to.  The other parameters indicates, respectively,
-		 * the lookahead char for the group, the current index (column) on the buffer, the initial match index and the
-		 * match length. */
-		[[deprecated]]
-		QString identifyWordGroup(const QString &palavra, const QChar &lookahead_chr, int &match_idx, int &match_len);
-
 		/*! \brief This event filter is used to nullify the line breaks when the highlighter
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
-
-		//! \brief Returns if the specified group contains both initial and final expressions
-		[[deprecated]]
-		bool hasInitialAndFinalExprs(const QString &group);
-
-		//! \brief Renders the block format using the configuration of the specified fmt
-		[[deprecated]]
-		void setFormat(int start, int count, const QTextCharFormat &fmt);
 
 		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
 
 		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end);
 
-
-		/*! \brief Check if the word matches the specified group by searching the vector of expressions related to it.
-		If the word matches then the match_idx and match_len parameters will be configured with the index and length of chars that
-		the expression could match. Additionally this method returns a boolean indicating the if the match was successful */
-		[[deprecated]]
-		bool isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr,
-													const QChar &lookahead_chr, int &match_idx, int &match_len, bool &fmt_ent_line);
-
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
-
-		/*! \brief Generates an unique id for a group's expression.
-		 * This is used to store the entire line formatting flag for each expression */
-		QString getExpressionId(const QString &group, const QRegularExpression *expr);
-
 
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
@@ -235,8 +172,6 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Returns the regexp vector of the specified group. The 'final_expr' bool parameter indicates
 		that the final expressions must be returned instead of initial expression (default) */
-
-		//std::vector<QRegularExpression> getExpressions(const QString &group_name, bool final_expr=false);
 		QStringList getExpressions(const QString &group_name);
 
 		//! \brief Returns the current configured code completion trigger char

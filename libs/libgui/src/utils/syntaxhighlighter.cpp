@@ -113,11 +113,6 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 	return QSyntaxHighlighter::eventFilter(object, event);
 }
 
-bool SyntaxHighlighter::hasInitialAndFinalExprs(const QString &group)
-{
-	return (initial_exprs.count(group) && final_exprs.count(group));
-}
-
 void SyntaxHighlighter::configureAttributes()
 {
 	conf_loaded = false;
@@ -130,6 +125,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	ExprElement open_expr;
 	TextBlockInfo *blk_info = nullptr,
 			*prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
+	int prev_blk_state = currentBlock().previous().userState();
 
 	/* Creating a text block info so we can register
 	 * each position where there is a text formatting */
@@ -137,22 +133,25 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	{
 		blk_info = new TextBlockInfo;
 		setCurrentBlockUserData(blk_info);
+		setCurrentBlockState(prev_blk_state == PersistentBlock ? SimpleBlock : prev_blk_state);
 	}
 	else
 	{
 		//Reset the block's info to permit the rehighlighting
 		blk_info = dynamic_cast<TextBlockInfo *>(currentBlockUserData());
 		blk_info->reset();
+		setCurrentBlockState(SimpleBlock);
 	}
 
 	/* If we have a previous block that is pending to close a multiline expression
 	 * We get the open group associated to the previous block and iterate over
 	 * the expressions of that group until we find the final expression that
 	 * closes it */
-	if(prev_blk_info && prev_blk_info->getBlockType() == TextBlockInfo::OpenExprBlock)
+	if(prev_blk_info && prev_blk_state == OpenExprBlock)
 	{
 		open_group = 	prev_blk_info->getOpenGroup();
 		last_pos = 0;
+		setCurrentBlockState(OpenExprBlock);
 	}
 
 	if(!text.isEmpty())
@@ -163,7 +162,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 		/* If we have an open group inherited from the previous block,
 		 * we try to find the closing expression in the current block */
-		if(!open_group.isEmpty())
+		if(!open_group.isEmpty() && currentBlockState() == OpenExprBlock)
 		{
 			for(auto &expr : fmt_groups[open_group].expr_elements)
 			{
@@ -172,13 +171,16 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 					last_pos = match_end + 1;
 					setFormat(pos, match_end, open_group, expr, blk_info);
 					open_group.clear();
-					blk_info->setBlockType(TextBlockInfo::SimpleBlock);
+					setCurrentBlockState(SimpleBlock);
 				}
 			}
 		}
 
 		for(auto &grp : fmt_groups_order)
 		{
+			if(currentBlockState() == PersistentBlock)
+				break;
+
 			fmt_grp = fmt_groups[grp];
 
 			for(auto &expr : fmt_grp.expr_elements)
@@ -196,30 +198,36 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						/* If we have an open group and the current expression is the final one
 						 * of the group (closing an expression) we reset the control variables
 						 * of open group since the expression is now closed */
-						if(grp == open_group && expr.final)
+						if(currentBlockState() == OpenExprBlock && grp == open_group && expr.final)
 						{
-							blk_info->setBlockType(TextBlockInfo::ClosedExprBlock);
+							setCurrentBlockState(SimpleBlock);
 							open_group.clear();
 							open_expr.clear();
 							match_start = last_pos;
 							last_pos = -1;
+						}
+						/* If the matching expression is related to a expression opening
+						 * we use the group name / expression to highlight the rest of the
+						 * text until we find the closing expression of that group */
+						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.initial)
+						{
+							setCurrentBlockState(OpenExprBlock);
+							open_group = grp;
+							open_expr = expr;
+							last_pos = pos;
+						}
+						else if(fmt_grp.persistent)
+						{
+							setCurrentBlockState(PersistentBlock);
+							match_end = text.length();
 						}
 
 						setFormat(match_start, match_end,
 											 open_group.isEmpty() ? grp : open_group,
 											 open_group.isEmpty() ? expr : open_expr, blk_info);
 
-						/* If the matching expression is related to a expression opening
-						 * we use the group name / expression to highlight the rest of the
-						 * text until we find the closing expression of that group */
-						if(open_group.isEmpty() && expr.initial)
-						{
-							blk_info->setBlockType(TextBlockInfo::OpenExprBlock);
-							open_group = grp;
-							open_expr = expr;
-							last_pos = pos;
+						if(currentBlockState() != SimpleBlock)
 							break;
-						}
 					}
 					else
 						pos++;
@@ -233,22 +241,14 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	 * but there still an open group expression without being closed
 	 * we apply the highlight from the last position until the end of
 	 * the block */
-	if(!open_group.isEmpty())
+	if(!open_group.isEmpty() && currentBlockState() != PersistentBlock)
 	{
 		if(!text.isEmpty())
 			setFormat(last_pos, text.length(), open_group, open_expr, blk_info);
 
 		blk_info->setOpenGroup(open_group);
-		blk_info->setBlockType(TextBlockInfo::OpenExprBlock);
+		setCurrentBlockState(OpenExprBlock);
 	}
-}
-
-void SyntaxHighlighter::setFormat(int start, int count, const QTextCharFormat &fmt)
-{
-	QTextCharFormat format = fmt;
-	format.setFontFamily(default_font.family());
-	format.setFontPointSize(getCurrentFontSize());
-	QSyntaxHighlighter::setFormat(start, count, format);
 }
 
 void SyntaxHighlighter::setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info)
@@ -258,24 +258,24 @@ void SyntaxHighlighter::setFormat(int start, int end, const QString &group, cons
 	FragmentInfo f_info;
 	int count = (end - start) + 1;
 
-	if(blk_info)
-		f_info = blk_info->getFragmentInfo(start, end);
+	//if(blk_info)
+	//	f_info = blk_info->getFragmentInfo(start, end);
 
-	if(f_info.isValid()	&& f_info.isPersistent())
-	{
-		fmt_group = fmt_groups[f_info.getGroup()];
-		fmt = fmt_group.format;
+	//if(f_info.isValid()	&& f_info.isPersistent())
+	//{
+	//	fmt_group = fmt_groups[f_info.getGroup()];
+	//	fmt = fmt_group.format;
 
 		/* If the fragment found is closed and the current format
-		 * postion and length will be restricted to the end of
+		 * position and length will be restricted to the end of
 		 * the fragment's end position */
-		if(f_info.isClosed() && end > f_info.getEnd())
-			count = f_info.getEnd() - start;
-	}
+	//	if(f_info.isClosed() && end > f_info.getEnd())
+	//		count = f_info.getEnd() - start;
+	//}
 
-	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
-																				 expr_elem.initial, expr_elem.final,
-																				 fmt_group.allow_completion));
+	//blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
+	//																			 expr_elem.initial, expr_elem.final,
+	//																			 fmt_group.allow_completion));
 
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());
@@ -420,16 +420,6 @@ void SyntaxHighlighter::clearConfiguration()
 	fmt_groups_order.clear();
 	fmt_groups.clear();
 	configureAttributes();
-}
-
-QString SyntaxHighlighter::getExpressionId(const QString &group, const QRegularExpression *expr)
-{
-	if(group.isEmpty() || !expr)
-		return "";
-
-	return QString("%1_%2").arg(group,
-															UtilsNs::getStringHash(
-																QString::number(reinterpret_cast<uintptr_t>(expr))).mid(0,6));
 }
 
 void SyntaxHighlighter::loadConfiguration(const QString &filename)

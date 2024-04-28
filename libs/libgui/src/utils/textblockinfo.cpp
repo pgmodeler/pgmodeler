@@ -27,7 +27,6 @@ void TextBlockInfo::reset()
 {
 	frag_infos.clear();
 	open_group.clear();
-	block_type = SimpleBlock;
 }
 
 void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
@@ -58,14 +57,4 @@ void TextBlockInfo::setOpenGroup(const QString &grp)
 QString TextBlockInfo::getOpenGroup()
 {
 	return open_group;
-}
-
-void TextBlockInfo::setBlockType(BlockType blk_type)
-{
-	block_type = blk_type;
-}
-
-TextBlockInfo::BlockType TextBlockInfo::getBlockType()
-{
-	return block_type;
 }

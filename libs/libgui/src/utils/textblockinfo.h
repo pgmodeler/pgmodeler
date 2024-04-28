@@ -110,24 +110,10 @@ class FragmentInfo {
 };
 
 class  __libgui TextBlockInfo: public QTextBlockUserData {
-	public:
-		enum BlockType {
-			//! \brief Indicates that the current block has no special semantics (open or closed expression)
-			SimpleBlock,
-
-			//! \brief Indicates that the current block has an open (but yet to close) expression (e.g. multline comments)
-			OpenExprBlock,
-
-			//! \brief Indicates that the current block holds one or more closed expression
-			ClosedExprBlock
-		};
-
 	private:
 		QList<FragmentInfo> frag_infos;
 
 		QString open_group;
-
-		BlockType block_type;
 
 	public:
 		TextBlockInfo();
@@ -142,10 +128,6 @@ class  __libgui TextBlockInfo: public QTextBlockUserData {
 		void setOpenGroup(const QString &grp);
 
 		QString getOpenGroup();
-
-		void setBlockType(BlockType blk_type);
-
-		BlockType getBlockType();
 
 		bool isCompletionAllowed(int = 0) { return false; }
 };
