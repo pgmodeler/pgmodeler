@@ -157,7 +157,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	if(!text.isEmpty())
 	{
 		int pos = 0, match_end = -1, match_start = -1;
-		FragmentInfo fg_info;
 		FormatGroup fmt_grp;
 
 		/* If we have an open group inherited from the previous block,
@@ -176,12 +175,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			}
 		}
 
-		for(auto &grp : fmt_groups_order)
+		for(int grp_id = 0; grp_id < fmt_groups_order.size(); grp_id++)
 		{
 			if(currentBlockState() == PersistentBlock)
 				break;
 
-			fmt_grp = fmt_groups[grp];
+			fmt_grp = fmt_groups[fmt_groups_order[grp_id]];
 
 			for(auto &expr : fmt_grp.expr_elements)
 			{
@@ -198,13 +197,16 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						/* If we have an open group and the current expression is the final one
 						 * of the group (closing an expression) we reset the control variables
 						 * of open group since the expression is now closed */
-						if(currentBlockState() == OpenExprBlock && grp == open_group && expr.final)
+						if(currentBlockState() == OpenExprBlock && fmt_grp.name == open_group && expr.final)
 						{
 							setCurrentBlockState(SimpleBlock);
 							open_group.clear();
 							open_expr.clear();
 							match_start = last_pos;
-							last_pos = -1;
+							last_pos = pos;
+
+							// Restarting the groups counter so we can match them against the rest of the text
+							grp_id = 0;
 						}
 						/* If the matching expression is related to a expression opening
 						 * we use the group name / expression to highlight the rest of the
@@ -212,7 +214,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.initial)
 						{
 							setCurrentBlockState(OpenExprBlock);
-							open_group = grp;
+							open_group = fmt_grp.name;
 							open_expr = expr;
 							last_pos = pos;
 						}
@@ -223,7 +225,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						}
 
 						setFormat(match_start, match_end,
-											 open_group.isEmpty() ? grp : open_group,
+											 open_group.isEmpty() ? fmt_grp.name : open_group,
 											 open_group.isEmpty() ? expr : open_expr, blk_info);
 
 						if(currentBlockState() != SimpleBlock)
@@ -258,24 +260,24 @@ void SyntaxHighlighter::setFormat(int start, int end, const QString &group, cons
 	FragmentInfo f_info;
 	int count = (end - start) + 1;
 
-	//if(blk_info)
-	//	f_info = blk_info->getFragmentInfo(start, end);
+	if(blk_info)
+		f_info = blk_info->getFragmentInfo(start);
 
-	//if(f_info.isValid()	&& f_info.isPersistent())
-	//{
-	//	fmt_group = fmt_groups[f_info.getGroup()];
-	//	fmt = fmt_group.format;
+	if(f_info.isValid()	&& f_info.isClosed())
+	{
+		fmt_group = fmt_groups[f_info.getGroup()];
+		fmt = fmt_group.format;
 
 		/* If the fragment found is closed and the current format
 		 * position and length will be restricted to the end of
 		 * the fragment's end position */
-	//	if(f_info.isClosed() && end > f_info.getEnd())
-	//		count = f_info.getEnd() - start;
-	//}
+		if(f_info.isClosed() && end > f_info.getEnd())
+			count = f_info.getEnd() - start;
+	}
 
-	//blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
-	//																			 expr_elem.initial, expr_elem.final,
-	//																			 fmt_group.allow_completion));
+	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
+																				 expr_elem.initial, expr_elem.final,
+																				 fmt_group.allow_completion));
 
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());

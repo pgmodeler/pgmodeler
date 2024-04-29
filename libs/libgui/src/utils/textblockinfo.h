@@ -103,7 +103,7 @@ class FragmentInfo {
 	bool isValid() const
 	{
 		return !group.isEmpty() &&
-					 fmt_start >= 0 && fmt_start >= fmt_end;
+					 fmt_start >= 0 && fmt_start <= fmt_end;
 	}
 
 	friend class TextBlockInfo;
@@ -123,7 +123,7 @@ class  __libgui TextBlockInfo: public QTextBlockUserData {
 
 		void addFragmentInfo(const FragmentInfo &f_info);
 
-		FragmentInfo getFragmentInfo(int start, int end);
+		FragmentInfo getFragmentInfo(int start);
 
 		void setOpenGroup(const QString &grp);
 
