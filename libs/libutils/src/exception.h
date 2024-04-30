@@ -164,12 +164,9 @@ enum class ErrorCode: unsigned {
 	InvUseSpecialPrimaryKey,
 	OprRelationshipAddedObject,
 	RemProtectedObject,
-	InvRedeclarationGroup,
 	InvGroupDeclaration,
-	DefNotDeclaredGroup,
 	DefEmptyGroup,
 	DefDuplicatedGroup,
-	InvGroupDeclarationNotDefined,
 	RefColObjectTabInvalidIndex,
 	RefRowObjectTabInvalidIndex,
 	OprReservedObject,
@@ -302,13 +299,14 @@ enum class ErrorCode: unsigned {
 	AddExtDupChildObject,
 	AsgSchExtTypeConflict,
 	MalformedViewDefObject,
-	InvGroupExpressionFlag,
-	InvalidEscapedCharacter
+	InvalidEscapedCharacter,
+	InvExprPersistentGroup,
+	InvExprMultilineGroup
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=270;
+		static constexpr unsigned ErrorCount=269;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

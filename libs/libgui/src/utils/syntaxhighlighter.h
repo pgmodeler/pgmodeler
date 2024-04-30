@@ -54,6 +54,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 				final = _final;
 				exact = _exact;
 				case_sensitive = _case_sensitive;
+
+				// An expression can't be both initial and final
+				if(initial && final)
+					initial = final = false;
 			}
 
 			void clear()
@@ -66,6 +70,16 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 			bool isValid()
 			{
 				return !pattern.isEmpty();
+			}
+
+			bool isInitial()
+			{
+				return initial;
+			}
+
+			bool isFinal()
+			{
+				return final;
 			}
 		};
 
@@ -86,6 +100,31 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 				format = _format;
 				allow_completion = _allow_compl;
 				persistent = _persistent;
+			}
+
+			bool isPersistent()
+			{
+				return persistent;
+			}
+
+			bool isMultiline()
+			{
+				bool has_initial = false,
+						has_final = false;
+
+				for(auto &expr : expr_elements)
+				{
+					if(expr.isInitial())
+						has_initial = true;
+
+					if(expr.isFinal())
+						has_final = true;
+
+					if(has_initial && has_final)
+						return true;
+				}
+
+				return false;
 			}
 		};
 
@@ -125,7 +164,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		QMap<QString, FormatGroup> fmt_groups;
 
 		//! \brief Stores the enclosing characters config read from file
-		std::vector<EnclosingCharsCfg> enclosing_chrs;
+		QList<EnclosingCharsCfg> enclosing_chrs;
 
 		//! \brief Indicates if the configuration is loaded or not
 		bool conf_loaded,

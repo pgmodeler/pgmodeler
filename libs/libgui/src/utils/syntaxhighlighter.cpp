@@ -122,7 +122,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 {
 	int last_pos = -1;
 	QString open_group;
-	ExprElement open_expr;
+	ExprElement open_expr, expr;
 	TextBlockInfo *blk_info = nullptr,
 			*prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 	int prev_blk_state = currentBlock().previous().userState();
@@ -158,6 +158,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	{
 		int pos = 0, match_end = -1, match_start = -1;
 		FormatGroup fmt_grp;
+		FragmentInfo fg_info;
 
 		/* If we have an open group inherited from the previous block,
 		 * we try to find the closing expression in the current block */
@@ -181,18 +182,22 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				break;
 
 			fmt_grp = fmt_groups[fmt_groups_order[grp_id]];
+			last_pos = 0;
 
-			for(auto &expr : fmt_grp.expr_elements)
+			for(int expr_id = 0; expr_id < fmt_grp.expr_elements.size(); expr_id++)
 			{
 				pos = last_pos >= 0 ? last_pos : 0;
 
 				do
 				{
+					expr = fmt_grp.expr_elements[expr_id];
+
 					if(matchExpression(text, pos, expr, match_start, match_end))
 					{
 						/* Moving to the character right after the matching end position
 						 * so we can keep matching the rest of the text */
 						pos = match_end + 1;
+						fg_info = blk_info->getFragmentInfo(match_start);
 
 						/* If we have an open group and the current expression is the final one
 						 * of the group (closing an expression) we reset the control variables
@@ -204,9 +209,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 							open_expr.clear();
 							match_start = last_pos;
 							last_pos = pos;
-
-							// Restarting the groups counter so we can match them against the rest of the text
-							grp_id = 0;
+							expr_id = 0;
 						}
 						/* If the matching expression is related to a expression opening
 						 * we use the group name / expression to highlight the rest of the
@@ -217,11 +220,23 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 							open_group = fmt_grp.name;
 							open_expr = expr;
 							last_pos = pos;
+							expr_id = 0;
 						}
-						else if(fmt_grp.persistent)
+						else if(fmt_grp.isPersistent())
 						{
-							setCurrentBlockState(PersistentBlock);
-							match_end = text.length();
+							if(currentBlockState() == OpenExprBlock &&
+								 prev_blk_state != OpenExprBlock && !fg_info.isValid())
+							{
+								setCurrentBlockState(PersistentBlock);
+								match_end = text.length();
+							}
+							else if(fg_info.isValid() && fg_info.isClosed())
+							{
+								fmt_grp = fmt_groups[fg_info.getGroup()];
+								match_end = fg_info.getEnd();
+							}
+
+							open_group.clear();
 						}
 
 						setFormat(match_start, match_end,
@@ -259,21 +274,6 @@ void SyntaxHighlighter::setFormat(int start, int end, const QString &group, cons
 	QTextCharFormat fmt = fmt_group.format;
 	FragmentInfo f_info;
 	int count = (end - start) + 1;
-
-	if(blk_info)
-		f_info = blk_info->getFragmentInfo(start);
-
-	if(f_info.isValid()	&& f_info.isClosed())
-	{
-		fmt_group = fmt_groups[f_info.getGroup()];
-		fmt = fmt_group.format;
-
-		/* If the fragment found is closed and the current format
-		 * position and length will be restricted to the end of
-		 * the fragment's end position */
-		if(f_info.isClosed() && end > f_info.getEnd())
-			count = f_info.getEnd() - start;
-	}
 
 	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
 																				 expr_elem.initial, expr_elem.final,
@@ -430,13 +430,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	{
 		attribs_map attribs;
 		QString elem, group, pattern;
-		bool groups_decl = false,
-				bold = false, italic = false, strikeout = false,
-				underline = false, exact_match = false;
+		bool bold = false, italic = false, strikeout = false,
+				underline = false, exact_match = false,
+				initial_expr = false, final_expr = false;
 		QTextCharFormat format;
 		QColor bg_color, fg_color;
-		FormatGroup *fmt_grp = nullptr;
+		FormatGroup fmt_group;
 		QRegularExpression regexp;
+		QStringList groups, persist_groups;
 
 		try
 		{
@@ -483,162 +484,120 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							enclosing_chrs.push_back(cfg);
 						}
 
-						/*	If the element is what defines the order of application of the groups
-								highlight in the (highlight-order). Is in this block that are declared
-								the groups used to highlight the source code. ALL groups
-								in this block must be declared before they are built
-								otherwise an error will be triggered. */
-						else if(elem == Attributes::HighlightOrder)
-						{
-							//Marks a flag indication that groups are being declared
-							groups_decl = true;
-							xmlparser.savePosition();
-							xmlparser.accessElement(XmlParser::ChildElement);
-							elem = xmlparser.getElementName();
-						}
-
 						if(elem == Attributes::Group)
 						{
 							xmlparser.getElementAttributes(attribs);
 							group = attribs[Attributes::Name];
 
-							/* If the parser is on the group declaration block and not in the build block
-								 some validations are made. */
-							if(groups_decl)
+							//Raises an error if the group is being constructed by a second time
+							if(fmt_groups.contains(group))
 							{
-								//Raises an error if the group was declared before
-								if(fmt_groups_order.contains(group))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::InvRedeclarationGroup).arg(group),
-																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
-								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclaration)
-																	.arg(group).arg(Attributes::HighlightOrder),
-																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-
-								fmt_groups_order.append(group);
+								throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
+																 ErrorCode::DefDuplicatedGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 							}
-							//Case the parser is on the contruction block and not in declaration of groups
+							//Raises an error if the group does not have children element
+							else if(!xmlparser.hasElement(XmlParser::ChildElement))
+							{
+								throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
+																ErrorCode::DefEmptyGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+							}
+
+							italic = (attribs[Attributes::Italic] == Attributes::True);
+							bold = (attribs[Attributes::Bold] == Attributes::True);
+							underline = (attribs[Attributes::Underline] == Attributes::True);
+							strikeout = (attribs[Attributes::Stikeout] == Attributes::True);
+							fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+
+							//If the attribute isn't defined the bg color will be transparent
+							if(attribs[Attributes::BackgroundColor].isEmpty())
+								bg_color.setRgb(0,0,0,0);
 							else
+								bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+
+							format.setFontFamily(default_font.family());
+							format.setFontPointSize(default_font.pointSizeF());
+							format.setFontItalic(italic);
+							format.setFontUnderline(underline);
+							format.setFontStrikeOut(strikeout);
+
+							if(bold)
+								format.setFontWeight(QFont::Bold);
+							else
+								format.setFontWeight(QFont::Normal);
+
+							format.setForeground(fg_color);
+							format.setBackground(bg_color);
+
+							fmt_group = FormatGroup(group, format,
+																			attribs[Attributes::AllowCompletion] != Attributes::False,
+																			attribs[Attributes::Persistent] == Attributes::True);
+
+							xmlparser.savePosition();
+							xmlparser.accessElement(XmlParser::ChildElement);
+
+							do
 							{
-								//Raises an error if the group is being constructed by a second time
-								if(fmt_groups.contains(group))
+								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
-																	 ErrorCode::DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group is being constructed without being declared
-								else if(!fmt_groups_order.contains(group))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefNotDeclaredGroup)
-																	.arg(group).arg(Attributes::HighlightOrder),
-																	ErrorCode::DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group does not have children element
-								else if(!xmlparser.hasElement(XmlParser::ChildElement))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
-																	ErrorCode::DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
+									xmlparser.getElementAttributes(attribs);
 
-								italic = (attribs[Attributes::Italic] == Attributes::True);
-								bold = (attribs[Attributes::Bold] == Attributes::True);
-								underline = (attribs[Attributes::Underline] == Attributes::True);
-								strikeout = (attribs[Attributes::Stikeout] == Attributes::True);
-								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+									initial_expr = attribs[Attributes::Initial] == Attributes::True;
+									final_expr = attribs[Attributes::Final] == Attributes::True;
 
-								//If the attribute isn't defined the bg color will be transparent
-								if(attribs[Attributes::BackgroundColor].isEmpty())
-									bg_color.setRgb(0,0,0,0);
-								else
-									bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+									exact_match = attribs[Attributes::Type] != Attributes::Wildcard &&
+																attribs[Attributes::Type] != Attributes::RegularExp;
 
-								format.setFontFamily(default_font.family());
-								format.setFontPointSize(default_font.pointSizeF());
-								format.setFontItalic(italic);
-								format.setFontUnderline(underline);
-								format.setFontStrikeOut(strikeout);
+									pattern = attribs[Attributes::Type] == Attributes::Wildcard ?
+															QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]) :
+															attribs[Attributes::Value];
 
-								if(bold)
-									format.setFontWeight(QFont::Bold);
-								else
-									format.setFontWeight(QFont::Normal);
+									regexp.setPattern(pattern);
 
-								format.setForeground(fg_color);
-								format.setBackground(bg_color);
-
-								fmt_groups[group] = FormatGroup(group, format,
-																								attribs[Attributes::AllowCompletion] != Attributes::False,
-																								attribs[Attributes::Persistent] == Attributes::True);
-								fmt_grp = &fmt_groups[group];
-
-								xmlparser.savePosition();
-								xmlparser.accessElement(XmlParser::ChildElement);
-
-								do
-								{
-									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+									// We throw an error aborting the loading if the regepx has an invalid pattern
+									if(!exact_match && !regexp.isValid())
 									{
-										xmlparser.getElementAttributes(attribs);
-
-										exact_match = attribs[Attributes::Type] != Attributes::Wildcard &&
-																	attribs[Attributes::Type] != Attributes::RegularExp;
-
-										pattern = attribs[Attributes::Type] == Attributes::Wildcard ?
-																QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]) :
-																attribs[Attributes::Value];
-
-										regexp.setPattern(pattern);
-
-										// We throw an error aborting the loading if the regepx has an invalid pattern
-										if(!exact_match && !regexp.isValid())
-										{
-											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
-																			ErrorCode::InvGroupRegExpPattern,
-																			__PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-																			tr("Pattern: %1").arg(regexp.pattern()));
-										}
-
-										fmt_grp->expr_elements.append(ExprElement(pattern,
-																												 attribs[Attributes::Initial] == Attributes::True,
-																												 attribs[Attributes::Final] == Attributes::True,
-																												 exact_match,
-																												 attribs[Attributes::CaseSensitive] == Attributes::True));
+										throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
+																		ErrorCode::InvGroupRegExpPattern, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																		tr("Pattern: %1").arg(regexp.pattern()));
 									}
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
+									else if(fmt_group.isPersistent() && (initial_expr || final_expr))
+									{
+										throw Exception(Exception::getErrorMessage(ErrorCode::InvExprPersistentGroup).arg(group, filename),
+																		ErrorCode::InvExprPersistentGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																		tr("Pattern: %1").arg(regexp.pattern()));
+									}
+									else if(initial_expr && final_expr)
+									{
+										throw Exception(Exception::getErrorMessage(ErrorCode::InvExprMultilineGroup).arg(group, filename),
+																		 ErrorCode::InvExprMultilineGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																		 tr("Pattern: %1").arg(regexp.pattern()));
+									}
 
-								xmlparser.restorePosition();
+									fmt_group.expr_elements.append(ExprElement(pattern, initial_expr,
+																														 final_expr, exact_match,
+																														 attribs[Attributes::CaseSensitive] == Attributes::True));
+								}
 							}
+							while(xmlparser.accessElement(XmlParser::NextElement));
+
+							fmt_groups[fmt_group.name] = fmt_group;
+
+							if(fmt_group.isPersistent())
+								persist_groups.append(fmt_group.name);
+							else if(fmt_group.isMultiline())
+								groups.append(fmt_group.name);
+							else
+								groups.prepend(fmt_group.name);
+
+							xmlparser.restorePosition();
 						}
 					}
-
-					/* Check if there are some other groups to be declared, if not,
-							continues to reading to the other part of configuration */
-					if(groups_decl && !xmlparser.hasElement(XmlParser::NextElement))
-					{
-						groups_decl = false;
-						xmlparser.restorePosition();
-					}
-
 				}
 				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
 
-			for(auto &grp : fmt_groups_order)
-			{		
-				if(!fmt_groups.contains(grp))
-				{
-					//Raises an error if the group was declared but not constructed
-					throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclarationNotDefined).arg(group),
-													ErrorCode::InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				}
-			}
-
+			fmt_groups_order.append(groups);
+			fmt_groups_order.append(persist_groups);
 			conf_loaded = true;
 		}
 		catch(Exception &e)
