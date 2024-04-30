@@ -132,10 +132,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object == code_field_txt)
 		{
 			TextBlockInfo *blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			int pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
 			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()) &&
-				 (!blk_info || (blk_info && blk_info->isCompletionAllowed())))
+				 (!blk_info || (blk_info && blk_info->isCompletionAllowed(pos_in_blk))))
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -771,6 +772,7 @@ void CodeCompletionWidget::extractTableNames()
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false, is_special_char = false;
 	TextBlockInfo *blk_info = nullptr;
+	int pos_in_blk = -1;
 
 	tab_aliases.clear();
 	tab_names_pos.clear();
@@ -782,11 +784,13 @@ void CodeCompletionWidget::extractTableNames()
 		curr_word = tc.selectedText();
 		curr_word.remove('"');
 		blk_info = dynamic_cast<TextBlockInfo *>(tc.block().userData());
+		pos_in_blk = tc.positionInBlock();
+
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
 		/* If the current block doesn't allow completion (e.g. comment block)
 		 * we just skip the table name/alias extraction */
-		if(blk_info && !blk_info->isCompletionAllowed())
+		if(blk_info && !blk_info->isCompletionAllowed(pos_in_blk))
 			continue;
 
 		/* Every time we find a new SELECT keyword we reset name/alias
@@ -951,7 +955,7 @@ bool CodeCompletionWidget::updateObjectsList()
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds;
 	unsigned kw_id = Select;
-	int found_kw_id = -1;
+	int found_kw_id = -1, pos_in_blk = -1;
 	bool cursor_after_kw = false, kw_found = false;
 	TextBlockInfo *blk_info = nullptr;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
@@ -973,9 +977,10 @@ bool CodeCompletionWidget::updateObjectsList()
 
 			kw_found = code_field_txt->find(kw, flag);
 			blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			// Avoiding using the position of a found keyword that is in a commented block
-			if(kw_found && blk_info && blk_info->isCompletionAllowed())
+			if(kw_found && blk_info && blk_info->isCompletionAllowed(pos_in_blk))
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
 

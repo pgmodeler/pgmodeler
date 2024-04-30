@@ -19,100 +19,25 @@
 /**
 \ingroup libgui
 \class TextBlockInfo
-\brief Auxiliary class used by SyntaxHighlight and store highlighting states of words in a document.
+\brief Auxiliary class used by SyntaxHighlight which stores highlighting states of text blocks in a document.
 */
 
 #ifndef TEXT_BLOCK_INFO_H
 #define TEXT_BLOCK_INFO_H
 
-#include "guiglobal.h"
-#include <QString>
 #include <QTextBlockUserData>
 #include <QList>
+#include "fragmentinfo.h"
 
-class FragmentInfo {
+class __libgui TextBlockInfo: public QTextBlockUserData {
 	private:
-		int fmt_start, fmt_end;
-
-		bool persistent,
-				 open,
-				 closed,
-				 allow_completion;
-
-		QString group;
-
-	public:
-	FragmentInfo()
-	{
-		persistent = open =
-		closed = allow_completion = false;
-		fmt_start = fmt_end = -1;
-	}
-
-	FragmentInfo(const QString &grp, int start, int end, bool persist, bool open, bool closed, bool allow_compl)
-	{
-		group = grp;
-		fmt_start = start;
-		fmt_end = end;
-		persistent = persist;
-		this->open = open;
-		this->closed = closed;
-		allow_completion = allow_compl;
-	}
-
-	int getStart() const
-	{
-		return fmt_start;
-	}
-
-	int getEnd() const
-	{
-		return fmt_end;
-	}
-
-	int getLength() const
-	{
-		return fmt_end - fmt_start + 1;
-	}
-
-	QString getGroup() const
-	{
-		return group;
-	}
-
-	bool isOpen() const
-	{
-		return open;
-	}
-
-	bool isClosed() const
-	{
-		return closed;
-	}
-
-	bool isAllowCompletion() const
-	{
-		return allow_completion;
-	}
-
-	bool isPersistent() const
-	{
-		return persistent;
-	}
-
-	bool isValid() const
-	{
-		return !group.isEmpty() &&
-					 fmt_start >= 0 && fmt_start <= fmt_end;
-	}
-
-	friend class TextBlockInfo;
-};
-
-class  __libgui TextBlockInfo: public QTextBlockUserData {
-	private:
+		//! \brief Holds all text fragment infos on the current text block
 		QList<FragmentInfo> frag_infos;
 
+		/*! \brief Holds the name of the group that was left open
+		 *  when the syntax highlighter parsed the block. This is
+		 *  use to indicate that the next block need to be formatted
+		 *  like this one. See SyntaxHighlighter::highlightBlock() */
 		QString open_group;
 
 	public:
@@ -121,15 +46,19 @@ class  __libgui TextBlockInfo: public QTextBlockUserData {
 		//! \brief Clears the group name and set all flags to false
 		void reset();
 
+		//! \brief Register a text fragment
 		void addFragmentInfo(const FragmentInfo &f_info);
 
-		FragmentInfo getFragmentInfo(int start);
+		/*! \brief Returns a text fragment in which the provided position
+		 * is between the fragment's start and end positions */
+		FragmentInfo getFragmentInfo(int pos);
 
 		void setOpenGroup(const QString &grp);
-
 		QString getOpenGroup();
 
-		bool isCompletionAllowed(int = 0) { return false; }
+		/*! \brief Return true if the position in the text block accepts
+		 *  the code completion widget to be triggered */
+		bool isCompletionAllowed(int pos);
 };
 
 #endif

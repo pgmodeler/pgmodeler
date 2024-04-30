@@ -37,11 +37,11 @@ void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
 	frag_infos.append(f_info);
 }
 
-FragmentInfo TextBlockInfo::getFragmentInfo(int start)
+FragmentInfo TextBlockInfo::getFragmentInfo(int pos)
 {
 	for(auto &f_info : frag_infos)
 	{
-		if(start >= f_info.fmt_start && start <= f_info.fmt_end)
+		if(pos >= f_info.getStart() && pos <= f_info.getEnd())
 			return f_info;
 	}
 
@@ -56,4 +56,15 @@ void TextBlockInfo::setOpenGroup(const QString &grp)
 QString TextBlockInfo::getOpenGroup()
 {
 	return open_group;
+}
+
+bool TextBlockInfo::isCompletionAllowed(int pos)
+{
+	for(auto &f_info : frag_infos)
+	{
+		if(f_info.isCompletionAllowed(pos))
+			return true;
+	}
+
+	return false;
 }

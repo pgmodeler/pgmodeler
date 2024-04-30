@@ -27,106 +27,13 @@
 
 #include "guiglobal.h"
 #include <QtWidgets>
-#include <map>
-#include <vector>
 #include "xmlparser.h"
-#include <algorithm>
 #include "textblockinfo.h"
+#include "formatgroup.h"
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
-
-		struct ExprElement {
-			QString pattern;
-			bool initial, final,
-					exact, case_sensitive;
-
-			ExprElement()
-			{
-				clear();
-			}
-
-			ExprElement(const QString &_pattern, bool _initial, bool _final, bool _exact, bool _case_sensitive)
-			{
-				pattern = _pattern;
-				initial = _initial;
-				final = _final;
-				exact = _exact;
-				case_sensitive = _case_sensitive;
-
-				// An expression can't be both initial and final
-				if(initial && final)
-					initial = final = false;
-			}
-
-			void clear()
-			{
-				pattern.clear();
-				initial = final =
-				exact = case_sensitive = false;
-			}
-
-			bool isValid()
-			{
-				return !pattern.isEmpty();
-			}
-
-			bool isInitial()
-			{
-				return initial;
-			}
-
-			bool isFinal()
-			{
-				return final;
-			}
-		};
-
-		struct FormatGroup {
-			QString name;
-			QTextCharFormat format;
-			bool allow_completion, persistent;
-			QList<ExprElement> expr_elements;
-
-			FormatGroup()
-			{
-				allow_completion = false;
-			}
-
-			FormatGroup(const QString &_name, const QTextCharFormat &_format, bool _allow_compl, bool _persistent)
-			{
-				name = _name;
-				format = _format;
-				allow_completion = _allow_compl;
-				persistent = _persistent;
-			}
-
-			bool isPersistent()
-			{
-				return persistent;
-			}
-
-			bool isMultiline()
-			{
-				bool has_initial = false,
-						has_final = false;
-
-				for(auto &expr : expr_elements)
-				{
-					if(expr.isInitial())
-						has_initial = true;
-
-					if(expr.isFinal())
-						has_final = true;
-
-					if(has_initial && has_final)
-						return true;
-				}
-
-				return false;
-			}
-		};
 
 		/*! \brief This struct stores the configuration of enclosing characters
 		 *  and their respective foreground/background color */
@@ -136,11 +43,6 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		};
 
 		QPlainTextEdit *code_field_txt;
-
-		/*! \brief The default name of the group related to unformatted words.
-		 * This is just a dummy group and just serves to force the non-formatting of
-		 * any word that doesn't fit the configured groups */
-		static const QString UnformattedGroup;
 
 		//! \brief XML parser used to parse configuration files
 		XmlParser xmlparser;
@@ -152,10 +54,13 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		static constexpr int SimpleBlock = -1,
 
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
-		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
-		configuration as the current one */
+		 * When the highlighter finds this const it'll do special operation like highlight next blocks with the same
+		 * configuration as the current one */
 		OpenExprBlock = 0,
 
+		/*! \brief Indicates that the current block is a persistent one, which means
+		 * that the formatting is applied from the determined start postion until
+		 * the end of the block (text). The next block will not inherit the formmating */
 		PersistentBlock = 1;
 
 		//! \brief Stores the order in which the groups must be applied
@@ -189,8 +94,13 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
+		/*! \brief Applies the 'group' text format in the text portion determined by 'start' and 'end'.
+		 * This method creates a FragmentInfo instance in blk_info for further comparissons during highlight process. */
 		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
 
+		/*! \brief Matches the expression 'expr' in 'text' starting from 'txt_pos'.
+		 * If the expression matches any portion of the text then 'start' and 'end' will hold
+		 * the start and end match positions, otherwise, they will be -1 */
 		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end);
 
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input

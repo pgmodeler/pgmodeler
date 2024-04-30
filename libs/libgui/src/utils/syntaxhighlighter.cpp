@@ -21,10 +21,8 @@
 #include "attributes.h"
 #include "exception.h"
 #include "globalattributes.h"
-#include "utilsns.h"
 
 QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
-const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
@@ -159,14 +157,15 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		int pos = 0, match_end = -1, match_start = -1;
 		FormatGroup fmt_grp;
 		FragmentInfo fg_info;
+		QList<ExprElement> grp_exprs;
 
 		/* If we have an open group inherited from the previous block,
 		 * we try to find the closing expression in the current block */
 		if(!open_group.isEmpty() && currentBlockState() == OpenExprBlock)
 		{
-			for(auto &expr : fmt_groups[open_group].expr_elements)
+			for(auto &expr : fmt_groups[open_group].getExpressions())
 			{
-				if(expr.final && matchExpression(text, pos, expr, match_start, match_end))
+				if(expr.isFinal() && matchExpression(text, pos, expr, match_start, match_end))
 				{
 					last_pos = match_end + 1;
 					setFormat(pos, match_end, open_group, expr, blk_info);
@@ -182,15 +181,16 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				break;
 
 			fmt_grp = fmt_groups[fmt_groups_order[grp_id]];
+			grp_exprs =	fmt_grp.getExpressions();
 			last_pos = 0;
 
-			for(int expr_id = 0; expr_id < fmt_grp.expr_elements.size(); expr_id++)
+			for(int expr_id = 0; expr_id < grp_exprs.size(); expr_id++)
 			{
 				pos = last_pos >= 0 ? last_pos : 0;
 
 				do
 				{
-					expr = fmt_grp.expr_elements[expr_id];
+					expr = grp_exprs[expr_id];
 
 					if(matchExpression(text, pos, expr, match_start, match_end))
 					{
@@ -202,7 +202,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						/* If we have an open group and the current expression is the final one
 						 * of the group (closing an expression) we reset the control variables
 						 * of open group since the expression is now closed */
-						if(currentBlockState() == OpenExprBlock && fmt_grp.name == open_group && expr.final)
+						if(currentBlockState() == OpenExprBlock && fmt_grp.getName() == open_group && expr.isFinal())
 						{
 							setCurrentBlockState(SimpleBlock);
 							open_group.clear();
@@ -214,24 +214,42 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						/* If the matching expression is related to a expression opening
 						 * we use the group name / expression to highlight the rest of the
 						 * text until we find the closing expression of that group */
-						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.initial)
+						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.isInitial())
 						{
 							setCurrentBlockState(OpenExprBlock);
-							open_group = fmt_grp.name;
+							open_group = fmt_grp.getName();
 							open_expr = expr;
 							last_pos = pos;
 							expr_id = 0;
 						}
 						else if(fmt_grp.isPersistent())
 						{
+							/* If the format group is a persistent and we have a open group/block
+							 * and no fragment was found in the current position in block.
+							 * Example (in schema micro-language):
+							 *
+							 * > A comment (#) that starts before an open plaintext expression.
+							 *  # [ foo bar
+							 * */
 							if(currentBlockState() == OpenExprBlock &&
 								 prev_blk_state != OpenExprBlock && !fg_info.isValid())
 							{
+								// Applies the persistent group formatting until the end of the text
 								setCurrentBlockState(PersistentBlock);
 								match_end = text.length();
 							}
+							/* If the format group is a persistent and we have a closed group/block
+							 * in the current position in block.
+							 * Example (in schema micro-language):
+							 *
+							 * > A comment (#) is inside an open plaintext expression.
+							 *  [ foo bar # abc ]
+							 * */
 							else if(fg_info.isValid() && fg_info.isClosed())
 							{
+								/* We apply the fragment's group formatting
+								 * and restrict the formatting to the end position
+								 * of the fragment */
 								fmt_grp = fmt_groups[fg_info.getGroup()];
 								match_end = fg_info.getEnd();
 							}
@@ -240,7 +258,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 						}
 
 						setFormat(match_start, match_end,
-											 open_group.isEmpty() ? fmt_grp.name : open_group,
+											 open_group.isEmpty() ? fmt_grp.getName() : open_group,
 											 open_group.isEmpty() ? expr : open_expr, blk_info);
 
 						if(currentBlockState() != SimpleBlock)
@@ -271,13 +289,14 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 void SyntaxHighlighter::setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info)
 {
 	FormatGroup fmt_group = fmt_groups[group];
-	QTextCharFormat fmt = fmt_group.format;
+	QTextCharFormat fmt = fmt_group.getFormat();
 	FragmentInfo f_info;
 	int count = (end - start) + 1;
 
-	blk_info->addFragmentInfo(FragmentInfo(fmt_group.name, start, end, fmt_group.persistent,
-																				 expr_elem.initial, expr_elem.final,
-																				 fmt_group.allow_completion));
+	blk_info->addFragmentInfo(FragmentInfo(fmt_group.getName(), start, end,
+																				 fmt_group.isPersistent(),
+																				 expr_elem.isInitial(), expr_elem.isFinal(),
+																				 fmt_group.isCompletionAllowed()));
 
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());
@@ -287,21 +306,22 @@ void SyntaxHighlighter::setFormat(int start, int end, const QString &group, cons
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end)
 {
-	if(expr.exact)
+	if(expr.isExact())
 	{
-		start = text.indexOf(expr.pattern, txt_pos,
-																expr.case_sensitive ?
-																		Qt::CaseSensitive : Qt::CaseInsensitive);
-		end = start + expr.pattern.length() - 1;
+		start = text.indexOf(expr.getPattern(), txt_pos,
+												 expr.isCaseSensitive() ?
+													Qt::CaseSensitive : Qt::CaseInsensitive);
+
+		end = start + expr.getPattern().length() - 1;
 	}
 	else
 	{
 		QRegularExpression regexp;
 		QRegularExpressionMatch match;
 
-		regexp.setPattern(expr.pattern);
+		regexp.setPattern(expr.getPattern());
 		regexp.setPatternOptions(QRegularExpression::DontCaptureOption |
-															(!expr.case_sensitive ?
+															(!expr.isCaseSensitive() ?
 																	 QRegularExpression::CaseInsensitiveOption :
 																	 QRegularExpression::NoPatternOption));
 
@@ -573,21 +593,21 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																		 tr("Pattern: %1").arg(regexp.pattern()));
 									}
 
-									fmt_group.expr_elements.append(ExprElement(pattern, initial_expr,
-																														 final_expr, exact_match,
-																														 attribs[Attributes::CaseSensitive] == Attributes::True));
+									fmt_group.addExpression(ExprElement(pattern, initial_expr,
+																											final_expr, exact_match,
+																											attribs[Attributes::CaseSensitive] == Attributes::True));
 								}
 							}
 							while(xmlparser.accessElement(XmlParser::NextElement));
 
-							fmt_groups[fmt_group.name] = fmt_group;
+							fmt_groups[fmt_group.getName()] = fmt_group;
 
 							if(fmt_group.isPersistent())
-								persist_groups.append(fmt_group.name);
+								persist_groups.append(fmt_group.getName());
 							else if(fmt_group.isMultiline())
-								groups.append(fmt_group.name);
+								groups.append(fmt_group.getName());
 							else
-								groups.prepend(fmt_group.name);
+								groups.prepend(fmt_group.getName());
 
 							xmlparser.restorePosition();
 						}
@@ -613,8 +633,8 @@ QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 
 	if(fmt_groups.contains(group_name))
 	{
-		for(auto &elem : fmt_groups[group_name].expr_elements)
-			exprs.append(elem.pattern);
+		for(auto &elem : fmt_groups[group_name].getExpressions())
+			exprs.append(elem.getPattern());
 	}
 
 	return exprs;
