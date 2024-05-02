@@ -127,14 +127,14 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
 
 		/*! \brief Matches the expression 'expr' in 'text' starting from 'txt_pos'.
-		 * If the expression matches any portion of the text then 'start' and 'end' will hold
-		 * the start and end match positions, otherwise, they will be -1 */
-		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end);
+		 * If the expression matches any portion of the text then 'match_start' and 'match_end' will hold
+		 * the match_start and match_end match positions, otherwise, they will be -1 */
+		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &match_start, int &match_end);
 
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
-		bool matchGroup(const QString &text, int txt_pos, bool final_expr, int &start, int &end);
+		bool matchGroup(const QString &group, const QString &text, bool final_expr, int &start, int &end);
 
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
