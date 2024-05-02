@@ -141,149 +141,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		setCurrentBlockState(SimpleBlock);
 	}
 
-	/* If we have a previous block that is pending to close a multiline expression
-	 * We get the open group associated to the previous block and iterate over
-	 * the expressions of that group until we find the final expression that
-	 * closes it */
-	if(prev_blk_info && prev_blk_state == OpenExprBlock)
-	{
-		open_group = 	prev_blk_info->getOpenGroup();
-		last_pos = 0;
-		setCurrentBlockState(OpenExprBlock);
-	}
-
-	if(!text.isEmpty())
-	{
-		int pos = 0, match_end = -1, match_start = -1;
-		FormatGroup fmt_grp;
-		FragmentInfo fg_info;
-		QList<ExprElement> grp_exprs;
-
-		/* If we have an open group inherited from the previous block,
-		 * we try to find the closing expression in the current block */
-		if(!open_group.isEmpty() && currentBlockState() == OpenExprBlock)
-		{
-			for(auto &expr : fmt_groups[open_group].getExpressions())
-			{
-				if(expr.isFinal() && matchExpression(text, pos, expr, match_start, match_end))
-				{
-					last_pos = match_end + 1;
-					setFormat(pos, match_end, open_group, expr, blk_info);
-					open_group.clear();
-					setCurrentBlockState(SimpleBlock);
-				}
-			}
-		}
-
-		for(int grp_id = 0; grp_id < fmt_groups_order.size(); grp_id++)
-		{
-			if(currentBlockState() == PersistentBlock)
-				break;
-
-			fmt_grp = fmt_groups[fmt_groups_order[grp_id]];
-			grp_exprs =	fmt_grp.getExpressions();
-			last_pos = 0;
-
-			for(int expr_id = 0; expr_id < grp_exprs.size(); expr_id++)
-			{
-				pos = last_pos >= 0 ? last_pos : 0;
-
-				do
-				{
-					expr = grp_exprs[expr_id];
-
-					if(matchExpression(text, pos, expr, match_start, match_end))
-					{
-						/* Moving to the character right after the matching end position
-						 * so we can keep matching the rest of the text */
-						pos = match_end + 1;
-						fg_info = blk_info->getFragmentInfo(match_start);
-
-						/* If we have an open group and the current expression is the final one
-						 * of the group (closing an expression) we reset the control variables
-						 * of open group since the expression is now closed */
-						if(currentBlockState() == OpenExprBlock && fmt_grp.getName() == open_group && expr.isFinal())
-						{
-							setCurrentBlockState(SimpleBlock);
-							open_group.clear();
-							open_expr.clear();
-							match_start = last_pos;
-							last_pos = pos;
-							expr_id = 0;
-						}
-						/* If the matching expression is related to a expression opening
-						 * we use the group name / expression to highlight the rest of the
-						 * text until we find the closing expression of that group */
-						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.isInitial())
-						{
-							setCurrentBlockState(OpenExprBlock);
-							open_group = fmt_grp.getName();
-							open_expr = expr;
-							last_pos = pos;
-							expr_id = 0;
-						}
-						else if(fmt_grp.isPersistent())
-						{
-							/* If the format group is a persistent and we have a open group/block
-							 * and no fragment was found in the current position in block.
-							 * Example (in schema micro-language):
-							 *
-							 * > A comment (#) that starts before an open plaintext expression.
-							 *  # [ foo bar
-							 * */
-							if(currentBlockState() == OpenExprBlock &&
-								 prev_blk_state != OpenExprBlock && !fg_info.isValid())
-							{
-								// Applies the persistent group formatting until the end of the text
-								setCurrentBlockState(PersistentBlock);
-								match_end = text.length();
-							}
-							/* If the format group is a persistent and we have a closed group/block
-							 * in the current position in block.
-							 * Example (in schema micro-language):
-							 *
-							 * > A comment (#) is inside an open plaintext expression.
-							 *  [ foo bar # abc ]
-							 * */
-							else if(fg_info.isValid() && fg_info.isClosed())
-							{
-								/* We apply the fragment's group formatting
-								 * and restrict the formatting to the end position
-								 * of the fragment */
-								fmt_grp = fmt_groups[fg_info.getGroup()];
-								match_end = fg_info.getEnd();
-							}
-
-							open_group.clear();
-						}
-
-						setFormat(match_start, match_end,
-											 open_group.isEmpty() ? fmt_grp.getName() : open_group,
-											 open_group.isEmpty() ? expr : open_expr, blk_info);
-
-						if(currentBlockState() != SimpleBlock)
-							break;
-					}
-					else
-						pos++;
-				}
-				while(pos < text.length());
-			}
-		}
-	}
-
-	/* If the highlight iterated until the end of the block
-	 * but there still an open group expression without being closed
-	 * we apply the highlight from the last position until the end of
-	 * the block */
-	if(!open_group.isEmpty() && currentBlockState() != PersistentBlock)
-	{
-		if(!text.isEmpty())
-			setFormat(last_pos, text.length(), open_group, open_expr, blk_info);
-
-		blk_info->setOpenGroup(open_group);
-		setCurrentBlockState(OpenExprBlock);
-	}
 }
 
 void SyntaxHighlighter::setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info)
@@ -302,6 +159,11 @@ void SyntaxHighlighter::setFormat(int start, int end, const QString &group, cons
 	fmt.setFontPointSize(getCurrentFontSize());
 
 	QSyntaxHighlighter::setFormat(start, count, fmt);
+}
+
+bool SyntaxHighlighter::matchGroup(const QString &text, int txt_pos, bool final_expr, int &start, int &end)
+{
+
 }
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &start, int &end)
@@ -439,7 +301,7 @@ bool SyntaxHighlighter::isConfigurationLoaded()
 
 void SyntaxHighlighter::clearConfiguration()
 {
-	fmt_groups_order.clear();
+	groups_order.clear();
 	fmt_groups.clear();
 	configureAttributes();
 }
@@ -455,9 +317,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				initial_expr = false, final_expr = false;
 		QTextCharFormat format;
 		QColor bg_color, fg_color;
-		FormatGroup fmt_group;
+		GroupConfig group_cfg;
 		QRegularExpression regexp;
-		QStringList groups, persist_groups;
+		QStringList groups, persist_groups, multi_groups;
+		ExprElement expr;
 
 		try
 		{
@@ -548,9 +411,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							format.setForeground(fg_color);
 							format.setBackground(bg_color);
 
-							fmt_group = FormatGroup(group, format,
+							group_cfg = GroupConfig(group, format,
 																			attribs[Attributes::AllowCompletion] != Attributes::False,
-																			attribs[Attributes::Persistent] == Attributes::True);
+																			attribs[Attributes::Persistent] == Attributes::True, false);
 
 							xmlparser.savePosition();
 							xmlparser.accessElement(XmlParser::ChildElement);
@@ -563,6 +426,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 									initial_expr = attribs[Attributes::Initial] == Attributes::True;
 									final_expr = attribs[Attributes::Final] == Attributes::True;
+
+									if(!group_cfg.multiline && (initial_expr || final_expr))
+										group_cfg.multiline = true;
 
 									exact_match = attribs[Attributes::Type] != Attributes::Wildcard &&
 																attribs[Attributes::Type] != Attributes::RegularExp;
@@ -580,7 +446,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																		ErrorCode::InvGroupRegExpPattern, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
 																		tr("Pattern: %1").arg(regexp.pattern()));
 									}
-									else if(fmt_group.isPersistent() && (initial_expr || final_expr))
+									else if(group_cfg.persistent && (initial_expr || final_expr))
 									{
 										throw Exception(Exception::getErrorMessage(ErrorCode::InvExprPersistentGroup).arg(group, filename),
 																		ErrorCode::InvExprPersistentGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
@@ -593,21 +459,25 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																		 tr("Pattern: %1").arg(regexp.pattern()));
 									}
 
-									fmt_group.addExpression(ExprElement(pattern, initial_expr,
-																											final_expr, exact_match,
-																											attribs[Attributes::CaseSensitive] == Attributes::True));
+									expr = ExprElement(pattern, initial_expr,
+																		 final_expr, exact_match,
+																		 attribs[Attributes::CaseSensitive] == Attributes::True);
+									if(final_expr)
+										final_exprs[group].append(expr);
+									else
+										initial_exprs[group].append(expr);
 								}
 							}
 							while(xmlparser.accessElement(XmlParser::NextElement));
 
-							fmt_groups[fmt_group.getName()] = fmt_group;
+							groups_conf[group_cfg.name] = group_cfg;
 
-							if(fmt_group.isPersistent())
-								persist_groups.append(fmt_group.getName());
-							else if(fmt_group.isMultiline())
-								groups.append(fmt_group.getName());
+							if(group_cfg.persistent)
+								persist_groups.append(group_cfg.name);
+							else if(group_cfg.multiline)
+								multi_groups.append(group_cfg.name);
 							else
-								groups.prepend(fmt_group.getName());
+								groups.append(group_cfg.name);
 
 							xmlparser.restorePosition();
 						}
@@ -616,8 +486,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
 
-			fmt_groups_order.append(groups);
-			fmt_groups_order.append(persist_groups);
+			groups_order.append(groups);
+			groups_order.append(multi_groups);
+			groups_order.append(persist_groups);
 			conf_loaded = true;
 		}
 		catch(Exception &e)
@@ -648,4 +519,175 @@ QChar SyntaxHighlighter::getCompletionTrigger()
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
 {
 	SyntaxHighlighter::default_font = fnt;
+}
+
+
+void SyntaxHighlighter::old__highlightBlock(const QString &text)
+{
+	int last_pos = -1;
+	QString open_group;
+	ExprElement open_expr, expr;
+	TextBlockInfo *blk_info = nullptr,
+			*prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
+	int prev_blk_state = currentBlock().previous().userState();
+
+	/* Creating a text block info so we can register
+	 * each position where there is a text formatting */
+	if(!currentBlockUserData())
+	{
+		blk_info = new TextBlockInfo;
+		setCurrentBlockUserData(blk_info);
+		setCurrentBlockState(prev_blk_state == PersistentBlock ? SimpleBlock : prev_blk_state);
+	}
+	else
+	{
+		//Reset the block's info to permit the rehighlighting
+		blk_info = dynamic_cast<TextBlockInfo *>(currentBlockUserData());
+		blk_info->reset();
+		setCurrentBlockState(SimpleBlock);
+	}
+
+	/* If we have a previous block that is pending to close a multiline expression
+	 * We get the open group associated to the previous block and iterate over
+	 * the expressions of that group until we find the final expression that
+	 * closes it */
+	if(prev_blk_info && prev_blk_state == OpenExprBlock)
+	{
+		open_group = 	prev_blk_info->getOpenGroup();
+		last_pos = 0;
+		setCurrentBlockState(OpenExprBlock);
+	}
+
+	if(!text.isEmpty())
+	{
+		int pos = 0, match_end = -1, match_start = -1;
+		FormatGroup fmt_grp;
+		FragmentInfo fg_info;
+		QList<ExprElement> grp_exprs;
+
+		/* If we have an open group inherited from the previous block,
+		 * we try to find the closing expression in the current block */
+		if(!open_group.isEmpty() && currentBlockState() == OpenExprBlock)
+		{
+			for(auto &expr : fmt_groups[open_group].getExpressions())
+			{
+				if(expr.isFinal() && matchExpression(text, pos, expr, match_start, match_end))
+				{
+					last_pos = match_end + 1;
+					setFormat(pos, match_end, open_group, expr, blk_info);
+					open_group.clear();
+					setCurrentBlockState(SimpleBlock);
+				}
+			}
+		}
+
+		for(int grp_id = 0; grp_id < groups_order.size(); grp_id++)
+		{
+			if(currentBlockState() == PersistentBlock)
+				break;
+
+			fmt_grp = fmt_groups[groups_order[grp_id]];
+			grp_exprs =	fmt_grp.getExpressions();
+			last_pos = 0;
+
+			for(int expr_id = 0; expr_id < grp_exprs.size(); expr_id++)
+			{
+				pos = last_pos >= 0 ? last_pos : 0;
+
+				do
+				{
+					expr = grp_exprs[expr_id];
+
+					if(matchExpression(text, pos, expr, match_start, match_end))
+					{
+						/* Moving to the character right after the matching end position
+						 * so we can keep matching the rest of the text */
+						pos = match_end + 1;
+						fg_info = blk_info->getFragmentInfo(match_start);
+
+						/* If we have an open group and the current expression is the final one
+						 * of the group (closing an expression) we reset the control variables
+						 * of open group since the expression is now closed */
+						if(currentBlockState() == OpenExprBlock && fmt_grp.getName() == open_group && expr.isFinal())
+						{
+							setCurrentBlockState(SimpleBlock);
+							open_group.clear();
+							open_expr.clear();
+							match_start = last_pos;
+							last_pos = pos;
+							expr_id = 0;
+						}
+						/* If the matching expression is related to a expression opening
+						 * we use the group name / expression to highlight the rest of the
+						 * text until we find the closing expression of that group */
+						else if(currentBlockState() == SimpleBlock && open_group.isEmpty() && expr.isInitial())
+						{
+							setCurrentBlockState(OpenExprBlock);
+							open_group = fmt_grp.getName();
+							open_expr = expr;
+							last_pos = pos;
+							expr_id = 0;
+						}
+						else if(fmt_grp.isPersistent())
+						{
+							/* If the format group is a persistent and we have a open group/block
+							 * and no fragment was found in the current position in block.
+							 * Example (in schema micro-language):
+							 *
+							 * > A comment (#) that starts before an open plaintext expression.
+							 *  # [ foo bar
+							 * */
+							if(currentBlockState() == OpenExprBlock &&
+									prev_blk_state != OpenExprBlock && !fg_info.isValid())
+							{
+								// Applies the persistent group formatting until the end of the text
+								setCurrentBlockState(PersistentBlock);
+								match_end = text.length();
+							}
+							/* If the format group is a persistent and we have a closed group/block
+							 * in the current position in block.
+							 * Example (in schema micro-language):
+							 *
+							 * > A comment (#) is inside an open plaintext expression.
+							 *  [ foo bar # abc ]
+							 * */
+							else if(fg_info.isValid() && fg_info.isClosed())
+							{
+								/* We apply the fragment's group formatting
+								 * and restrict the formatting to the end position
+								 * of the fragment */
+								fmt_grp = fmt_groups[fg_info.getGroup()];
+								match_end = fg_info.getEnd();
+							}
+
+							open_group.clear();
+						}
+
+						setFormat(match_start, match_end,
+											open_group.isEmpty() ? fmt_grp.getName() : open_group,
+											open_group.isEmpty() ? expr : open_expr, blk_info);
+
+						if(currentBlockState() != SimpleBlock)
+							break;
+					}
+					else
+						pos++;
+				}
+				while(pos < text.length());
+			}
+		}
+	}
+
+	/* If the highlight iterated until the end of the block
+	 * but there still an open group expression without being closed
+	 * we apply the highlight from the last position until the end of
+	 * the block */
+	if(!open_group.isEmpty() && currentBlockState() != PersistentBlock)
+	{
+		if(!text.isEmpty())
+			setFormat(last_pos, text.length(), open_group, open_expr, blk_info);
+
+		blk_info->setOpenGroup(open_group);
+		setCurrentBlockState(OpenExprBlock);
+	}
 }

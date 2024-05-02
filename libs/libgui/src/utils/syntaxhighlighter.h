@@ -35,6 +35,30 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
+		struct GroupConfig {
+			QString name;
+			QTextCharFormat format;
+			bool allow_completion, persistent, multiline;
+
+			GroupConfig()
+			{
+				allow_completion = persistent = multiline = false;
+			}
+
+			GroupConfig(const QString &_name, const QTextCharFormat &_format,
+									bool _allow_compl, bool _persistent, bool _multiline)
+			{
+				name = _name;
+				format = _format;
+				allow_completion = _allow_compl;
+				persistent = _persistent;
+				multiline = _multiline;
+
+				if(persistent && multiline)
+					persistent = multiline = false;
+			}
+		};
+
 		/*! \brief This struct stores the configuration of enclosing characters
 		 *  and their respective foreground/background color */
 		struct EnclosingCharsCfg {
@@ -64,9 +88,13 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		PersistentBlock = 1;
 
 		//! \brief Stores the order in which the groups must be applied
-		QStringList fmt_groups_order;
+		QStringList groups_order;
 
 		QMap<QString, FormatGroup> fmt_groups;
+
+		QMap<QString, GroupConfig> groups_conf;
+
+		QMap<QString, QList<ExprElement>> initial_exprs, final_exprs;
 
 		//! \brief Stores the enclosing characters config read from file
 		QList<EnclosingCharsCfg> enclosing_chrs;
@@ -106,6 +134,8 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
+		bool matchGroup(const QString &text, int txt_pos, bool final_expr, int &start, int &end);
+
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
 		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.
@@ -136,6 +166,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private slots:
 		//! \brief Highlight a line of the text
 		void highlightBlock(const QString &text);
+		void old__highlightBlock(const QString &text);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration();
