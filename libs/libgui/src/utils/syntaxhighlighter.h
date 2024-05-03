@@ -29,11 +29,49 @@
 #include <QtWidgets>
 #include "xmlparser.h"
 #include "textblockinfo.h"
-#include "formatgroup.h"
+#include "exprelement.h"
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
+
+		struct MatchInfo {
+			int start, end;
+
+			MatchInfo()
+			{
+				clear();
+			}
+
+			MatchInfo(int _start, int _end)
+			{
+				start = _start;
+				end = _end;
+			}
+
+			int getLength() const
+			{
+				if(!isValid())
+					return 0;
+
+				return end - start + 1;
+			}
+
+			bool isEmpty() const
+			{
+				return getLength() > 0;
+			}
+
+			bool isValid() const
+			{
+				return start >= 0 && start <= end;
+			}
+
+			void clear()
+			{
+				start = end = -1;
+			}
+		};
 
 		struct GroupConfig {
 			QString name;
@@ -88,11 +126,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		PersistentBlock = 1;
 
 		//! \brief Stores the order in which the groups must be applied
-		QStringList groups_order;
+		QStringList groups_order, persistents_order, multilines_order;
 
-		QMap<QString, FormatGroup> fmt_groups;
-
-		QMap<QString, GroupConfig> groups_conf;
+		QMap<QString, GroupConfig> group_confs;
 
 		QMap<QString, QList<ExprElement>> initial_exprs, final_exprs;
 
@@ -124,17 +160,27 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 		/*! \brief Applies the 'group' text format in the text portion determined by 'start' and 'end'.
 		 * This method creates a FragmentInfo instance in blk_info for further comparissons during highlight process. */
+		[[deprecated]]
 		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
 
 		/*! \brief Matches the expression 'expr' in 'text' starting from 'txt_pos'.
 		 * If the expression matches any portion of the text then 'match_start' and 'match_end' will hold
 		 * the match_start and match_end match positions, otherwise, they will be -1 */
-		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, int &match_start, int &match_end);
+		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, QList<MatchInfo> &matches);
+
+		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, MatchInfo &m_info);
 
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
-		bool matchGroup(const QString &group, const QString &text, bool final_expr, int &start, int &end);
+		template<class Class>
+		bool matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos,
+										 bool final_expr, Class &matches, bool &expr_open, bool &expr_closed);
+
+		const GroupConfig *getGroupConfig(const QString &group);
+
+		void setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
+										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
 
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
@@ -166,7 +212,6 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private slots:
 		//! \brief Highlight a line of the text
 		void highlightBlock(const QString &text);
-		void old__highlightBlock(const QString &text);
 
 		//! \brief Clears the loaded configuration
 		void clearConfiguration();

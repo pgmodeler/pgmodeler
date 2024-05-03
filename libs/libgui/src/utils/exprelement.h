@@ -27,32 +27,27 @@ are used to determine the format groups applied to text blocks.
 #define EXPR_ELEMENT_H
 
 #include "guiglobal.h"
+#include <QRegularExpression>
 
 class __libgui ExprElement {
 	private:
-		QString pattern;
+		QRegularExpression regexp;
 
-		bool initial, final,
-				exact, case_sensitive;
+		bool initial, final;
 
 	public:
 		ExprElement();
 
-		ExprElement(const QString &_pattern, bool _initial, bool _final,
-								 bool _exact, bool _case_sensitive);
+		ExprElement(const QRegularExpression &regexp, bool initial, bool final);
 
 		void clear();
 
-		QString getPattern() const;
+		const QRegularExpression *getRegExp() const;
 
 		bool isValid() const;
 
 		bool isInitial() const;
 
 		bool isFinal() const;
-
-		bool isExact() const;
-
-		bool isCaseSensitive() const;
 };
 #endif

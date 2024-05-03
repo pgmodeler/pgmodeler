@@ -23,34 +23,27 @@ ExprElement::ExprElement()
 	clear();
 }
 
-ExprElement::ExprElement(const QString &_pattern, bool _initial, bool _final, bool _exact, bool _case_sensitive)
+ExprElement::ExprElement(const QRegularExpression &regexp, bool initial, bool final)
 {
-	pattern = _pattern;
-	initial = _initial;
-	final = _final;
-	exact = _exact;
-	case_sensitive = _case_sensitive;
-
-	// An expression can't be both initial and final
-	if(initial && final)
-		initial = final = false;
+	this->regexp = regexp;
+	this->initial = initial;
+	this->final = final;
 }
 
 void ExprElement::clear()
 {
-	pattern.clear();
+	regexp = QRegularExpression("");
 	initial = final = false;
-	exact = case_sensitive = false;
 }
 
-QString ExprElement::getPattern() const
+const QRegularExpression *ExprElement::getRegExp() const
 {
-	return pattern;
+	return &regexp;
 }
 
 bool ExprElement::isValid() const
 {
-	return !pattern.isEmpty();
+	return regexp.isValid();
 }
 
 bool ExprElement::isInitial() const
@@ -61,14 +54,4 @@ bool ExprElement::isInitial() const
 bool ExprElement::isFinal() const
 {
 	return final;
-}
-
-bool ExprElement::isExact() const
-{
-	return exact;
-}
-
-bool ExprElement::isCaseSensitive() const
-{
-	return case_sensitive;
 }

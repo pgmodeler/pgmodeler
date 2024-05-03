@@ -51,7 +51,7 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 
 		/*! \brief Returns a text fragment in which the provided position
 		 * is between the fragment's start and end positions */
-		FragmentInfo getFragmentInfo(int pos);
+		const FragmentInfo *getFragmentInfo(int pos);
 
 		void setOpenGroup(const QString &grp);
 		QString getOpenGroup();
