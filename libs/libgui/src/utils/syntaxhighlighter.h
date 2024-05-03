@@ -59,7 +59,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 
 			bool isEmpty() const
 			{
-				return getLength() > 0;
+				return getLength() == 0;
 			}
 
 			bool isValid() const
@@ -158,11 +158,6 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-		/*! \brief Applies the 'group' text format in the text portion determined by 'start' and 'end'.
-		 * This method creates a FragmentInfo instance in blk_info for further comparissons during highlight process. */
-		[[deprecated]]
-		void setFormat(int start, int end, const QString &group, const ExprElement &expr_elem, TextBlockInfo *blk_info);
-
 		/*! \brief Matches the expression 'expr' in 'text' starting from 'txt_pos'.
 		 * If the expression matches any portion of the text then 'match_start' and 'match_end' will hold
 		 * the match_start and match_end match positions, otherwise, they will be -1 */
@@ -174,14 +169,15 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
 		template<class Class>
-		bool matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos,
-										 bool final_expr, Class &matches, bool &expr_open, bool &expr_closed);
+		bool matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos, bool final_expr, Class &matches);
 
 		const GroupConfig *getGroupConfig(const QString &group);
 
-		void setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
+		bool setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
 										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
 
+		bool setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg,
+										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
 		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.
