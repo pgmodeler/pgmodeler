@@ -119,7 +119,6 @@ void SyntaxHighlighter::configureAttributes()
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
 	QString open_group;
-	ExprElement open_expr, expr;
 	TextBlockInfo *blk_info = nullptr,
 			*prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
 	int prev_blk_state = currentBlock().previous().userState();
@@ -171,19 +170,19 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 		while(ml_itr != ml_itr_end)
 		{
+			expr_open = expr_closed = false;
 			group_cfg = &group_confs[*ml_itr];
-			ml_itr++;
 
 			// Searching for the opening expression of the current group
 			if(!match_final_exp && matchGroup(group_cfg, text, pos, false, m_info))
 			{
 				match_final_exp = true;
-				pos += m_info.end + 1;
+				pos = m_info.end + 1;
 
 				/* Flagging the block state as OpenExprBlock, to force the highliting until its end
 				 * if an closing expression isn't found */
 				setCurrentBlockState(OpenExprBlock);
-				setFormat(m_info, group_cfg, true, false, blk_info);
+				setFormat(m_info, group_cfg, true, false, blk_info, true);
 			}
 
 			// If we find the opening expression, we'll search for the closing expression
@@ -201,7 +200,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				{
 					expr_open = true;
 					expr_closed = false;
-					m_info.end = text.length();
+					pos = m_info.end = text.length();
 
 					// Flagging the block state as OpenExprBlock, highliting it until its end
 					setCurrentBlockState(OpenExprBlock);
@@ -211,15 +210,13 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				 * and formatting accordingly */
 				else
 				{
+					pos = m_info.end + 1;
 					expr_open = false;
 					expr_closed = true;
 					setCurrentBlockState(SimpleBlock);
-					/* Restarting the group searching to highlight other multiline that
-					 * are eventually open and close in the current block */
-					ml_itr = multilines_order.begin();
 				}
 
-				setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info);
+				setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info, true);
 
 				/* If the current block state is OpenExprBlock at this point
 				 * it means that we have reached the end o the block and no
@@ -228,6 +225,14 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				 * block that was not closed. */
 				if(currentBlockState() == OpenExprBlock)
 					break;
+			}
+
+			if(pos >= text.length() || (!expr_open && !expr_closed))
+			{
+				/* Restarting the highliting in the block but now with
+				 * the next multiline group */
+				pos = 0;
+				ml_itr++;
 			}
 		}
 
@@ -241,7 +246,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 			if(matchGroup(group_cfg, text, pos, false, m_info))
 			{
-				if(setFormat(m_info, group_cfg, false, false, blk_info))
+				if(setFormat(m_info, group_cfg, false, false, blk_info, false))
 				{
 					setCurrentBlockState(PersistentBlock);
 					break;
@@ -262,13 +267,13 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			group_cfg = &group_confs[grp];
 
 			if(matchGroup(group_cfg, text, 0, false, matches))
-				setFormat(&matches, group_cfg, false, false, blk_info);
+				setFormat(&matches, group_cfg, false, false, blk_info, false);
 		}
 	}
 }
 
 bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg, bool expr_open,
-																	bool expr_closed, TextBlockInfo *blk_info)
+																	bool expr_closed, TextBlockInfo *blk_info, bool force)
 {
 	if(!m_info.isValid() || !group_cfg || !blk_info)
 		return false;
@@ -280,8 +285,14 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 
 	/* No formatting will be applied if we found a formatted
 	 * text fragment in the current postion */
-	if(f_info)
+	if(f_info && !force)
 		return false;
+	else
+	{
+		#warning "Testing"
+		blk_info->removeFragmentInfo(m_info.start);
+		blk_info->removeFragmentInfo(m_info.end);
+	}
 
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());
@@ -303,7 +314,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 
 
 bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg, bool expr_open,
-																	bool expr_closed, TextBlockInfo *blk_info)
+																	bool expr_closed, TextBlockInfo *blk_info, bool force)
 {
 	if(!matches || !group_cfg || !blk_info)
 		return false;
@@ -312,7 +323,7 @@ bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupC
 
 	for(auto &m_info : *matches)
 	{
-		if(setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info))
+		if(setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info, force))
 			fmt_applied = true;
 	}
 
@@ -632,8 +643,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									 * be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=) operators
 									 * to avoid that the space character is captured/computed.
 									 * This can match the entire word and not parts of it in the text block */
-									regexp.setPattern(QString("^%1(?=\\s)|(?<=\\s)%1(?=\\s)|(?<=\\s)%1$")
-																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
+									/*regexp.setPattern(QString("^%1(?=\\s)|(?<=\\s)%1(?=\\s)|(?<=\\s)%1$")
+																		.arg(QRegularExpression::escape(attribs[Attributes::Value]))); */
+									regexp.setPattern(QString("%1")
+																				.arg(QRegularExpression::escape(attribs[Attributes::Value])));
 								}
 
 								regexp.setPatternOptions(QRegularExpression::DontCaptureOption |

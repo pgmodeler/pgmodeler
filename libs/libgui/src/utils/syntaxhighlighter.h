@@ -174,10 +174,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		const GroupConfig *getGroupConfig(const QString &group);
 
 		bool setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
-										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
+										bool expr_open, bool expr_closed, TextBlockInfo *blk_info, bool force);
 
 		bool setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg,
-										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
+										bool expr_open, bool expr_closed, TextBlockInfo *blk_info, bool force);
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
 		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.
