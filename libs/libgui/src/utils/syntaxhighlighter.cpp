@@ -159,6 +159,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		bool expr_open = false, expr_closed = false;
 		QList<MatchInfo> matches;
 		MatchInfo m_info;
+		const FragmentInfo *f_info = nullptr;
 		int pos = 0, grp_idx = multilines_order.indexOf(open_group);
 		auto ml_itr = multilines_order.begin(),
 				ml_itr_end = multilines_order.end();
@@ -168,21 +169,29 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		if(grp_idx >= 0)
 			ml_itr += grp_idx;
 
+		// Applying multiline expressions format
 		while(ml_itr != ml_itr_end)
 		{
-			expr_open = expr_closed = false;
 			group_cfg = &group_confs[*ml_itr];
 
 			// Searching for the opening expression of the current group
 			if(!match_final_exp && matchGroup(group_cfg, text, pos, false, m_info))
 			{
-				match_final_exp = true;
+				f_info = blk_info->getFragmentInfo(m_info.start);
 				pos = m_info.end + 1;
 
-				/* Flagging the block state as OpenExprBlock, to force the highliting until its end
-				 * if an closing expression isn't found */
-				setCurrentBlockState(OpenExprBlock);
-				setFormat(m_info, group_cfg, true, false, blk_info, true);
+				/* If we don't have a text fragment in the starting position
+				 * of the current match info or there's a fragment info but
+				 * it is not related to a multiline expression (it's not
+				 * open and closed) */
+				if(!f_info || (!f_info->isOpen() && !f_info->isClosed()))
+				{
+					/* Flagging the block state as OpenExprBlock, to force the highliting until its end
+					 * if an closing expression isn't found */
+					match_final_exp = true;
+					setCurrentBlockState(OpenExprBlock);
+					setFormat(m_info, group_cfg, true, false, blk_info);
+				}
 			}
 
 			// If we find the opening expression, we'll search for the closing expression
@@ -205,9 +214,9 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 					// Flagging the block state as OpenExprBlock, highliting it until its end
 					setCurrentBlockState(OpenExprBlock);
 				}
-				/* If the closing expression is found we need to flag the block state
-				 * as SimpleBlock so the highlighter can keep searching other groups
-				 * and formatting accordingly */
+				/* If the closing expression is found we need to flag the expression as
+				 * closed and the block state as SimpleBlock so the highlighter can keep
+				 * searching other groups in the same block and formatting accordingly */
 				else
 				{
 					pos = m_info.end + 1;
@@ -216,10 +225,10 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 					setCurrentBlockState(SimpleBlock);
 				}
 
-				setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info, true);
+				setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info);
 
 				/* If the current block state is OpenExprBlock at this point
-				 * it means that we have reached the end o the block and no
+				 * it means that we have reached the end of the block and no
 				 * closing expression was found, so the next block will
 				 * inconditionally inherit the formatting of portion of this
 				 * block that was not closed. */
@@ -227,15 +236,23 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 					break;
 			}
 
-			if(pos >= text.length() || (!expr_open && !expr_closed))
+			if(pos >= text.length())
 			{
-				/* Restarting the highliting in the block but now with
-				 * the next multiline group */
+				/* If we have reached the end of the block we restarting the highliting
+				 * in that block but now using the next multiline group */
 				pos = 0;
 				ml_itr++;
 			}
+			else
+				pos++;
 		}
 
+		/* Applying persistent block formatting. This kind of block
+		 * formats a block from the starting postion of the group token
+		 * in the block until the very end of the block.
+		 *
+		 * If the start expression of a persistent group is found in
+		 * multiline expresion the formatting is not applied. */
 		pos = 0;
 		ml_itr = persistents_order.begin();
 		ml_itr_end = persistents_order.end();
@@ -246,34 +263,44 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 			if(matchGroup(group_cfg, text, pos, false, m_info))
 			{
-				if(setFormat(m_info, group_cfg, false, false, blk_info, false))
+				// If the formatting was applied we flag the block state as PersistentBlock
+				if(setFormat(m_info, group_cfg, false, false, blk_info))
 				{
 					setCurrentBlockState(PersistentBlock);
-					break;
+					pos = m_info.end + 1;
 				}
+				/* If the format wasn't applied despite we have a valid match
+				 * we try to find other token of that group in the forward position
+				 * of the block until the end is reached */
 				else if(m_info.isValid())
 					pos = m_info.start + 1;
-				else
-					ml_itr++;
 			}
-			else
+
+			/* If the current group wasn't matched in the block or
+			 * we had some matches but they were inside multiline expression
+			 * we'll move the position to the start of the block and
+			 * use the next group */
+			if(!m_info.isValid() || pos >= text.length())
+			{
+				pos = 0;
 				ml_itr++;
+			}
 		}
 
 		/* The remaining highlight must occur only when there is no
-		 * open expression or the a persistent formatting */
+		 * open expression or a persistent formatting */
 		for(auto &grp : groups_order)
 		{
 			group_cfg = &group_confs[grp];
 
 			if(matchGroup(group_cfg, text, 0, false, matches))
-				setFormat(&matches, group_cfg, false, false, blk_info, false);
+				setFormat(&matches, group_cfg, false, false, blk_info);
 		}
 	}
 }
 
 bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg, bool expr_open,
-																	bool expr_closed, TextBlockInfo *blk_info, bool force)
+																	bool expr_closed, TextBlockInfo *blk_info)
 {
 	if(!m_info.isValid() || !group_cfg || !blk_info)
 		return false;
@@ -285,14 +312,8 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 
 	/* No formatting will be applied if we found a formatted
 	 * text fragment in the current postion */
-	if(f_info && !force)
+	if(f_info)
 		return false;
-	else
-	{
-		#warning "Testing"
-		blk_info->removeFragmentInfo(m_info.start);
-		blk_info->removeFragmentInfo(m_info.end);
-	}
 
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());
@@ -314,7 +335,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 
 
 bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg, bool expr_open,
-																	bool expr_closed, TextBlockInfo *blk_info, bool force)
+																	bool expr_closed, TextBlockInfo *blk_info)
 {
 	if(!matches || !group_cfg || !blk_info)
 		return false;
@@ -323,7 +344,7 @@ bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupC
 
 	for(auto &m_info : *matches)
 	{
-		if(setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info, force))
+		if(setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info))
 			fmt_applied = true;
 	}
 
@@ -507,7 +528,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	if(filename.isEmpty() ||
 
 			#warning "Temporarily disabling XML/SQL highlight"
-			filename.contains(GlobalAttributes::SQLHighlightConf) ||
+			//filename.contains(GlobalAttributes::SQLHighlightConf) ||
 		 filename.contains(GlobalAttributes::XMLHighlightConf))
 		return;
 
@@ -643,10 +664,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									 * be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=) operators
 									 * to avoid that the space character is captured/computed.
 									 * This can match the entire word and not parts of it in the text block */
-									/*regexp.setPattern(QString("^%1(?=\\s)|(?<=\\s)%1(?=\\s)|(?<=\\s)%1$")
-																		.arg(QRegularExpression::escape(attribs[Attributes::Value]))); */
-									regexp.setPattern(QString("%1")
-																				.arg(QRegularExpression::escape(attribs[Attributes::Value])));
+									regexp.setPattern(QString("^%1(?=\\s)|(?<=\\s)%1(?=\\s)|(?<=\\s)%1$")
+																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
+									/*regexp.setPattern(QString("%1")
+																				.arg(QRegularExpression::escape(attribs[Attributes::Value])));*/
 								}
 
 								regexp.setPatternOptions(QRegularExpression::DontCaptureOption |

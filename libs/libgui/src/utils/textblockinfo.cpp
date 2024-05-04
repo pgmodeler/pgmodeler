@@ -37,22 +37,6 @@ void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
 	frag_infos.append(f_info);
 }
 
-void TextBlockInfo::removeFragmentInfo(int pos)
-{
-	int idx = 0;
-
-	for(auto &f_info : frag_infos)
-	{
-		if(pos >= f_info.getStart() && pos <= f_info.getEnd())
-			break;
-
-		idx++;
-	}
-
-	if(idx >= 0)
-		frag_infos.removeAt(idx);
-}
-
 const FragmentInfo *TextBlockInfo::getFragmentInfo(int pos)
 {
 	for(auto &f_info : frag_infos)
