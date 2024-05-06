@@ -62,9 +62,9 @@ bool TextBlockInfo::isCompletionAllowed(int pos)
 {
 	for(auto &f_info : frag_infos)
 	{
-		if(f_info.isCompletionAllowed(pos))
-			return true;
+		if(f_info.contains(pos))
+			return f_info.isCompletionAllowed();
 	}
 
-	return false;
+	return true;
 }

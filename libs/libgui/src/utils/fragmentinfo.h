@@ -66,12 +66,8 @@ class	__libgui	FragmentInfo {
 		bool isClosed() const;
 		bool isPersistent() const;
 		bool isValid() const;
-
-		/*! \brief Returns if the fragment accepts the code completion to be
-		 *  displayed. If pos >= 0, besides the allow_completion state, the
-		 *  method will also validate if the position is inside the fragment
-		 *  boundaries, returning true in positive case. */
-		bool isCompletionAllowed(int pos = -1) const;
+		bool contains(int pos) const;
+		bool isCompletionAllowed() const;
 };
 
 #endif

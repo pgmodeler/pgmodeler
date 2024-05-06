@@ -253,13 +253,14 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		{
 			//Get the keywords from the highlighter
 			QStringList exprs = syntax_hl->getExpressions(keywords_grp);
+			QRegularExpression regexp("\\(\\?\\=.*");
 
 			for(auto &expr : exprs)
 			{
-				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
-				 * we need to remove from the pattern the initial and final regexp operators in
-				 * order to use only the word itself */
-				keywords.append(expr.remove("\\A(?:").remove(")\\z"));
+				/* Since keywords are exact match patterns (see SyntaxHighlighter::loadConfiguration)
+				 * we need to remove from the pattern the regexp operators in order to extract only the
+				 * work itself. */
+				keywords.append(expr.remove("^").remove(regexp));
 			}
 
 			completion_trigger = syntax_hl->getCompletionTrigger();

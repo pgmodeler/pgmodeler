@@ -61,12 +61,14 @@ bool FragmentInfo::isClosed() const
 	return closed;
 }
 
-bool FragmentInfo::isCompletionAllowed(int pos) const
+bool FragmentInfo::contains(int pos) const
 {
-	if(pos < 0)
-		return allow_completion;
+	return pos >= 0 && start >= pos && end <= pos;
+}
 
-	return (allow_completion && start >= pos && end <= pos);
+bool FragmentInfo::isCompletionAllowed() const
+{
+	return allow_completion;
 }
 
 bool FragmentInfo::isPersistent() const

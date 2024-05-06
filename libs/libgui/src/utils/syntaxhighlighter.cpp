@@ -659,15 +659,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
 								else
 								{
-									/* For exact match words we use four different patterns (^[word]\s, \s[word]\s, \s[word]$)
-									 * The patterns indicate that the word must have at least on space (or tab) attached or
-									 * be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=) operators
-									 * to avoid that the space character is captured/computed.
+									/* For exact match words we use three different patterns (^[word]\s, \s[word]\s, \s[word]$)
+									 * The patterns indicate that the word must have at least on space or tab attached, or be a word boundary,
+									 * or be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=) operators
+									 * to avoid that the space character/word boundary is captured/computed.
 									 * This can match the entire word and not parts of it in the text block */
-									regexp.setPattern(QString("^%1(?=\\s)|(?<=\\s)%1(?=\\s)|(?<=\\s)%1$")
+									regexp.setPattern(QString("^%1(?=\\s|\\b)|(?<=\\s|\\b)%1(?=\\s|\\b)|(?<=\\s|\\b)%1$")
 																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
-									/*regexp.setPattern(QString("%1")
-																				.arg(QRegularExpression::escape(attribs[Attributes::Value])));*/
 								}
 
 								regexp.setPatternOptions(QRegularExpression::DontCaptureOption |
