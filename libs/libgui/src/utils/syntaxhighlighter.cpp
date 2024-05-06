@@ -525,11 +525,7 @@ void SyntaxHighlighter::clearConfiguration()
 
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
-	if(filename.isEmpty() ||
-
-			#warning "Temporarily disabling XML/SQL highlight"
-			//filename.contains(GlobalAttributes::SQLHighlightConf) ||
-		 filename.contains(GlobalAttributes::XMLHighlightConf))
+	if(filename.isEmpty())
 		return;
 
 	attribs_map attribs;
@@ -664,7 +660,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									 * or be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=) operators
 									 * to avoid that the space character/word boundary is captured/computed.
 									 * This can match the entire word and not parts of it in the text block */
-									regexp.setPattern(QString("^%1(?=\\s|\\b)|(?<=\\s|\\b)%1(?=\\s|\\b)|(?<=\\s|\\b)%1$")
+									regexp.setPattern(QString("^%1(?=\\s|\\b)|(?<=\\s|\\b)%1(?=\\s|\\b)|(?<=\\s|\\b)%1$|^%1$")
 																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
 								}
 
