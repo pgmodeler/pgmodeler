@@ -48,12 +48,32 @@ schemas.path = $$SCHEMASDIR
 lang.files = assets/lang/*
 lang.path = $$LANGDIR
 
-conf.files = assets/conf/*
-conf.path = $$CONFDIR
+# Copies all template configs from assets/conf
+TMPLCONFS = assets/conf
+tmplconf.files = $$TMPLCONFS/*
+tmplconf.path = $$CONFDIR
+
+# Copies the highlight configs from dark theme to be the initial one
+iniconf.files = $$TMPLCONFS/themes/dark/*-highlight.conf
+iniconf.path = $$CONFDIR
+
+# Creates the "defaults" configs dir containing the files from the initial template config dir
+defconf.files = $$TMPLCONFS/themes/dark/*-highlight.conf \
+$$TMPLCONFS/appearance.conf \
+$$TMPLCONFS/connections.conf \
+$$TMPLCONFS/diff-presets.conf \
+$$TMPLCONFS/example.dbm \
+$$TMPLCONFS/general.conf \
+$$TMPLCONFS/example.dbm \
+$$TMPLCONFS/general.conf \
+$$TMPLCONFS/snippets.conf \
+$$TMPLCONFS/relationships.conf \
+$$TMPLCONFS/*-highlight.conf
+defconf.path = $$CONFDIR/defaults
 
 doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
 doc.path = $$DOCDIR
 
-INSTALLS += samples schemas lang conf doc
+INSTALLS += samples schemas lang doc tmplconf iniconf defconf
 
 CONFIG += qt
