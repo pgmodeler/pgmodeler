@@ -337,16 +337,19 @@ bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const 
 {
 	QRegularExpressionMatchIterator mt_itr = expr.globalMatch(text, txt_pos);
 	QRegularExpressionMatch match;
-	int mt_start = -1, mt_end = -1;
+	MatchInfo m_info;
 
 	while(mt_itr.isValid() && mt_itr.hasNext())
 	{
 		match = mt_itr.next();
-		mt_start = match.capturedStart();
-		mt_end = match.capturedEnd() - 1;
+		m_info.start = match.capturedStart();
+		m_info.end = match.capturedEnd() - 1;
 
-		if(match.isValid() && mt_start >= 0 && mt_end >= 0 && match.capturedLength() > 0)
-			matches.append(MatchInfo(mt_start, mt_end));
+		if(match.isValid() && m_info.isValid() &&
+				match.capturedLength() > 0 && !matches.contains(m_info))
+		{
+			matches.append(m_info);
+		}
 	}
 
 	return !matches.isEmpty();

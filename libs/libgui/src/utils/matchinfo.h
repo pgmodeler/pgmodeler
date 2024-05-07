@@ -50,6 +50,8 @@ class MatchInfo {
 
 		virtual void clear();
 
+		virtual bool operator == (const MatchInfo &m_info) const;
+
 		friend class SyntaxHighlighter;
 };
 

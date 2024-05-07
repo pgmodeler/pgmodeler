@@ -66,3 +66,8 @@ int MatchInfo::getEnd() const
 {
 	return end;
 }
+
+bool MatchInfo::operator == (const MatchInfo &m_info) const
+{
+	return start == m_info.start && end == m_info.end;
+}
