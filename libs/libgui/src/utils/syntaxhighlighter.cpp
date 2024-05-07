@@ -311,7 +311,7 @@ bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupC
 template<class Class>
 bool SyntaxHighlighter::matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos, bool final_expr, Class &match)
 {
-	QMap<QString, QList<ExprElement>> *exprs_map = final_expr ? &final_exprs : &initial_exprs;
+	QMap<QString, QList<QRegularExpression>> *exprs_map = final_expr ? &final_exprs : &initial_exprs;
 
 	match.clear();
 
@@ -324,9 +324,9 @@ bool SyntaxHighlighter::matchGroup(const GroupConfig *group_cfg, const QString &
 	return !match.isEmpty();
 }
 
-bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const ExprElement &expr, QList<MatchInfo> &matches)
+bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, QList<MatchInfo> &matches)
 {
-	QRegularExpressionMatchIterator mt_itr = expr.getRegExp()->globalMatch(text, txt_pos);
+	QRegularExpressionMatchIterator mt_itr = expr.globalMatch(text, txt_pos);
 	QRegularExpressionMatch match;
 	int mt_start = -1, mt_end = -1;
 
@@ -343,9 +343,9 @@ bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const 
 	return !matches.isEmpty();
 }
 
-bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const ExprElement &expr, MatchInfo &m_info)
+bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info)
 {
-	QRegularExpressionMatch match = expr.getRegExp()->match(text, txt_pos);
+	QRegularExpressionMatch match = expr.match(text, txt_pos);
 	int mt_start = -1, mt_end = -1;
 
 	mt_start = match.capturedStart();
@@ -494,7 +494,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	QColor bg_color, fg_color;
 	GroupConfig group_cfg;
 	QRegularExpression regexp;
-	ExprElement expr;
 
 	try
 	{
@@ -646,12 +645,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																	 tr("Pattern: %1").arg(regexp.pattern()));
 								}
 
-								expr = ExprElement(regexp, initial_expr, final_expr);
-
 								if(final_expr)
-									final_exprs[group].append(expr);
+									final_exprs[group].append(regexp);
 								else
-									initial_exprs[group].append(expr);
+									initial_exprs[group].append(regexp);
 							}
 						}
 						while(xmlparser.accessElement(XmlParser::NextElement));
@@ -685,7 +682,7 @@ QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 	if(initial_exprs.contains(group_name))
 	{
 		for(auto &expr : initial_exprs[group_name])
-			exprs.append(expr.getRegExp()->pattern());
+			exprs.append(expr.pattern());
 	}
 
 	return exprs;

@@ -18,36 +18,39 @@
 
 /**
 \ingroup libgui
-\class ExprElement
-\brief Auxiliary class used by SyntaxHighlight to construct formatting groups expressions that
-are used to determine the format groups applied to text blocks.
+\class MatchInfo
+\brief Auxiliary class that holds where a word matching starts and finishes in syntax highlighting process.
 */
 
-#ifndef EXPR_ELEMENT_H
-#define EXPR_ELEMENT_H
+#ifndef MATCH_INFO_H
+#define MATCH_INFO_H
 
-#include "guiglobal.h"
-#include <QRegularExpression>
-
-class __libgui ExprElement {
-	private:
-		QRegularExpression regexp;
-
-		bool initial, final;
+class MatchInfo {
+	protected:
+		int start, end;
 
 	public:
-		ExprElement();
+		MatchInfo();
+		MatchInfo(int start, int end);
 
-		ExprElement(const QRegularExpression &regexp, bool initial, bool final);
+		virtual ~MatchInfo(){}
 
-		void clear();
+		int getStart() const;
+		int getEnd() const;
+		int getLength() const;
 
-		const QRegularExpression *getRegExp() const;
+		/*! \brief Returns true when the provided position is within
+		 * boundaries of the this match info */
+		bool contains(int pos) const;
 
-		bool isValid() const;
+		virtual bool isEmpty() const;
 
-		bool isInitial() const;
+		//! \brief Returns true when the start/end are non-negative and start < end
+		virtual bool isValid() const;
 
-		bool isFinal() const;
+		virtual void clear();
+
+		friend class SyntaxHighlighter;
 };
+
 #endif

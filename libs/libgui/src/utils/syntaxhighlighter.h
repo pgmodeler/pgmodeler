@@ -29,50 +29,13 @@
 #include <QtWidgets>
 #include "xmlparser.h"
 #include "textblockinfo.h"
-#include "exprelement.h"
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 	private:
 		Q_OBJECT
 
-		struct MatchInfo {
-			int start, end;
-
-			MatchInfo()
-			{
-				clear();
-			}
-
-			MatchInfo(int _start, int _end)
-			{
-				start = _start;
-				end = _end;
-			}
-
-			int getLength() const
-			{
-				if(!isValid())
-					return 0;
-
-				return end - start + 1;
-			}
-
-			bool isEmpty() const
-			{
-				return getLength() == 0;
-			}
-
-			bool isValid() const
-			{
-				return start >= 0 && start <= end;
-			}
-
-			void clear()
-			{
-				start = end = -1;
-			}
-		};
-
+		/*! \brief This struct stores the configuration of formatting groups
+		 *  and their respective foreground/background colors */
 		struct GroupConfig {
 			QString name;
 			QTextCharFormat format;
@@ -94,7 +57,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		};
 
 		/*! \brief This struct stores the configuration of enclosing characters
-		 *  and their respective foreground/background color */
+		 *  and their respective foreground/background colors */
 		struct EnclosingCharsCfg {
 				QChar open_char, close_char;
 				QColor fg_color, bg_color;
@@ -119,9 +82,14 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Stores the order in which the groups must be applied
 		QStringList groups_order, multilines_order;
 
+		//! \brief Stores the formatting groups configs
 		QMap<QString, GroupConfig> group_confs;
 
-		QMap<QString, QList<ExprElement>> initial_exprs, final_exprs;
+		//! \brief Stores the groups initial expressions
+		QMap<QString, QList<QRegularExpression>> initial_exprs,
+
+				//! \brief Stores the groups final expressions (only for multiline groups)
+				final_exprs;
 
 		//! \brief Stores the enclosing characters config read from file
 		QList<EnclosingCharsCfg> enclosing_chrs;
@@ -149,26 +117,42 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 is created in single line edit model */
 		bool eventFilter(QObject *object, QEvent *event);
 
-		/*! \brief Matches the expression 'expr' in 'text' starting from 'txt_pos'.
-		 * If the expression matches any portion of the text then 'match_start' and 'match_end' will hold
-		 * the match_start and match_end match positions, otherwise, they will be -1 */
-		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, QList<MatchInfo> &matches);
+		/*! \brief Performas a global match of the expression 'expr' in 'text' starting from 'txt_pos'.
+		 * If the expression matches any portion of the text then 'matches' will store
+		 * all the match positions in the text, otherwise, it will be empty. */
+		bool matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, QList<MatchInfo> &matches);
 
-		bool matchExpression(const QString &text, int txt_pos, const ExprElement &expr, MatchInfo &m_info);
+		/*! \brief Performs a single match of the expression 'expr' in 'text' starting from 'txt_pos'.
+		 * If the expression matches any portion of the text then 'm_info' will store
+		 * the first match position in the text, otherwise, it will be invalid */
+		bool matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info);
 
 		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
 		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
+		//! \brief Returns a const ref to the named group configuration
+		const GroupConfig *getGroupConfig(const QString &group);
+
+		/*! \brief Matches the expression in 'group_cfg' in 'text' starting from 'txt_pos', storing the
+		 * matching position(s) in 'matches'. The 'final_expr' forces only final expressions to be used
+		 * in the matching. This method returns true when there's at least one matching */
 		template<class Class>
 		bool matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos, bool final_expr, Class &matches);
 
-		const GroupConfig *getGroupConfig(const QString &group);
-
-		bool setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
-										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
-
+		/*! \brief Applies a formatting in position defined by 'm_info', using the setting in 'group_cfg'.
+		 *  The 'expr_open' and 'expr_closed' is used to indicate if the current formatting is related to
+		 *  an open or closed expression (multiline groups). The 'blk_info' instance is the current block
+		 *  info structure which is updated by registering a new FragmentInfo for the current text postion,
+		 *  to keep track of multiline groups formatting.
+		 *
+		 *  This method will not apply the formatting if there is already a formatting applied in the
+		 *  provided text position in 'm_info'. */
 		bool setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg,
 										bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
+
+		bool setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg,
+									 bool expr_open, bool expr_closed, TextBlockInfo *blk_info);
+
 	public:
 		/*! \brief Install the syntax highlighter in a QPlainTextEdit.
 		 * If single_line_mode is true the highlighter prevents the parent text field to process line breaks.

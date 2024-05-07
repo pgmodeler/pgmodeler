@@ -19,8 +19,8 @@
 /**
 \ingroup libgui
 \class FragmentInfo
-\brief Auxiliary class used by TextBlockInfo and SyntaxHighlight that holds text fragments format info and other
-useful information that helps in syntax highlighting process in a document.
+\brief Auxiliary class used by TextBlockInfo and SyntaxHighlight that holds text fragments format info
+and other useful information that helps in syntax highlighting process in a document.
 */
 
 #ifndef FRAGMENT_INFO_H
@@ -28,17 +28,12 @@ useful information that helps in syntax highlighting process in a document.
 
 #include "guiglobal.h"
 #include <QString>
+#include "matchinfo.h"
 
-class	__libgui	FragmentInfo {
+class	__libgui	FragmentInfo: public MatchInfo {
 	private:
 		//! \brief The name of the group that formatted the fragment
 		QString group;
-
-		//! \brief Position in the text block where the fragment starts
-		int start,
-
-		//! \brief Position in the text block where the fragment ends
-		end;
 
 		//! \brief Indicates if the fragment is open (only for multiline expressions)
 		bool open,
@@ -56,13 +51,12 @@ class	__libgui	FragmentInfo {
 		FragmentInfo(const QString &grp, int start, int end,
 								 bool open, bool closed, bool allow_compl);
 
+		~FragmentInfo(){}
+
 		QString getGroup() const;
-		int getStart() const;
-		int getEnd() const;
 		bool isOpen() const;
 		bool isClosed() const;
-		bool isValid() const;
-		bool contains(int pos) const;
+		bool isValid() const override;
 		bool isCompletionAllowed() const;
 };
 

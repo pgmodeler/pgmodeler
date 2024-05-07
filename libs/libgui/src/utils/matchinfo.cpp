@@ -16,42 +16,53 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "exprelement.h"
+#include "matchinfo.h"
 
-ExprElement::ExprElement()
+MatchInfo::MatchInfo()
 {
-	clear();
+	start = end = -1;
 }
 
-ExprElement::ExprElement(const QRegularExpression &regexp, bool initial, bool final)
+MatchInfo::MatchInfo(int start, int end)
 {
-	this->regexp = regexp;
-	this->initial = initial;
-	this->final = final;
+	this->start = start;
+	this->end = end;
 }
 
-void ExprElement::clear()
+int MatchInfo::getLength() const
 {
-	regexp = QRegularExpression("");
-	initial = final = false;
+	if(!isValid())
+		return 0;
+
+	return end - start + 1;
 }
 
-const QRegularExpression *ExprElement::getRegExp() const
+bool MatchInfo::isEmpty() const
 {
-	return &regexp;
+	return getLength() == 0;
 }
 
-bool ExprElement::isValid() const
+bool MatchInfo::isValid() const
 {
-	return regexp.isValid();
+	return start >= 0 && start <= end;
 }
 
-bool ExprElement::isInitial() const
+void MatchInfo::clear()
 {
-	return initial;
+	start = end = -1;
 }
 
-bool ExprElement::isFinal() const
+bool MatchInfo::contains(int pos) const
 {
-	return final;
+	return pos >= 0 && start >= pos && end <= pos;
+}
+
+int MatchInfo::getStart() const
+{
+	return start;
+}
+
+int MatchInfo::getEnd() const
+{
+	return end;
 }

@@ -18,30 +18,18 @@
 
 #include "fragmentinfo.h"
 
-FragmentInfo::FragmentInfo()
+FragmentInfo::FragmentInfo() : MatchInfo()
 {
 	open = closed = allow_completion = false;
-	start = end = -1;
 }
 
-FragmentInfo::FragmentInfo(const QString &grp, int start, int end, bool open, bool closed, bool allow_compl)
+FragmentInfo::FragmentInfo(const QString &grp, int start, int end,
+													 bool open, bool closed, bool allow_compl) : MatchInfo(start, end)
 {
 	group = grp;
-	this->start = start;
-	this->end = end;
 	this->open = open;
 	this->closed = closed;
 	allow_completion = allow_compl;
-}
-
-int FragmentInfo::getStart() const
-{
-	return start;
-}
-
-int FragmentInfo::getEnd() const
-{
-	return end;
 }
 
 QString FragmentInfo::getGroup() const
@@ -59,11 +47,6 @@ bool FragmentInfo::isClosed() const
 	return closed;
 }
 
-bool FragmentInfo::contains(int pos) const
-{
-	return pos >= 0 && start >= pos && end <= pos;
-}
-
 bool FragmentInfo::isCompletionAllowed() const
 {
 	return allow_completion;
@@ -71,6 +54,5 @@ bool FragmentInfo::isCompletionAllowed() const
 
 bool FragmentInfo::isValid() const
 {
-	return !group.isEmpty() &&
-				 start >= 0 && start <= end;
+	return !group.isEmpty() && MatchInfo::isValid();
 }
