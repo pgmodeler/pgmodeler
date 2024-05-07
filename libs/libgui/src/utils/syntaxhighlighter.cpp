@@ -676,7 +676,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, filename);
 	}
-
 }
 
 QStringList SyntaxHighlighter::getExpressions(const QString &group_name)

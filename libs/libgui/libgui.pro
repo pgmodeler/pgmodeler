@@ -90,7 +90,6 @@ src/tools/modelvalidationwidget.cpp \
 	src/utils/customsortproxymodel.cpp \
 src/utils/deletableitemdelegate.cpp \
 	src/utils/exprelement.cpp \
-	src/utils/formatgroup.cpp \
 	src/utils/fragmentinfo.cpp \
 src/utils/htmlitemdelegate.cpp \
 	src/utils/objectslistmodel.cpp \
@@ -215,7 +214,6 @@ src/tools/modelvalidationwidget.h \
 	src/utils/customsortproxymodel.h \
 src/utils/deletableitemdelegate.h \
 	src/utils/exprelement.h \
-	src/utils/formatgroup.h \
 	src/utils/fragmentinfo.h \
 src/utils/htmlitemdelegate.h \
 	src/utils/objectslistmodel.h \
