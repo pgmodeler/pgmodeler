@@ -500,7 +500,6 @@ namespace Attributes {
 	Permission,
 	Permissive,
 	PerRow,
-	Persistent,
 	PgModelerVersion,
 	PgSqlBaseType,
 	PgSqlVersion,

@@ -20,17 +20,15 @@
 
 FragmentInfo::FragmentInfo()
 {
-	persistent = open =
-	closed = allow_completion = false;
+	open = closed = allow_completion = false;
 	start = end = -1;
 }
 
-FragmentInfo::FragmentInfo(const QString &grp, int start, int end, bool persist, bool open, bool closed, bool allow_compl)
+FragmentInfo::FragmentInfo(const QString &grp, int start, int end, bool open, bool closed, bool allow_compl)
 {
 	group = grp;
 	this->start = start;
 	this->end = end;
-	persistent = persist;
 	this->open = open;
 	this->closed = closed;
 	allow_completion = allow_compl;
@@ -69,11 +67,6 @@ bool FragmentInfo::contains(int pos) const
 bool FragmentInfo::isCompletionAllowed() const
 {
 	return allow_completion;
-}
-
-bool FragmentInfo::isPersistent() const
-{
-	return persistent;
 }
 
 bool FragmentInfo::isValid() const

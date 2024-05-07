@@ -484,7 +484,6 @@ namespace Attributes {
 	Permission("permission"),
 	Permissive("permissive"),
 	PerRow("per-line"),
-	Persistent("persistent"),
 	PgModelerVersion("pgmodeler-ver"),
 	PgSqlBaseType("basetype"),
 	PgSqlVersion("pgsql-ver"),

@@ -130,7 +130,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	{
 		blk_info = new TextBlockInfo;
 		setCurrentBlockUserData(blk_info);
-		setCurrentBlockState(prev_blk_state == PersistentBlock ? SimpleBlock : prev_blk_state);
+		setCurrentBlockState(prev_blk_state);
 	}
 	else
 	{
@@ -247,48 +247,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				pos++;
 		}
 
-		/* Applying persistent block formatting. This kind of block
-		 * formats a block from the starting postion of the group token
-		 * in the block until the very end of the block.
-		 *
-		 * If the start expression of a persistent group is found in
-		 * multiline expresion the formatting is not applied. */
-		pos = 0;
-		ml_itr = persistents_order.begin();
-		ml_itr_end = persistents_order.end();
-
-		while(ml_itr != ml_itr_end)
-		{
-			group_cfg = &group_confs[*ml_itr];
-
-			if(matchGroup(group_cfg, text, pos, false, m_info))
-			{
-				// If the formatting was applied we flag the block state as PersistentBlock
-				if(setFormat(m_info, group_cfg, false, false, blk_info))
-				{
-					setCurrentBlockState(PersistentBlock);
-					pos = m_info.end + 1;
-				}
-				/* If the format wasn't applied despite we have a valid match
-				 * we try to find other token of that group in the forward position
-				 * of the block until the end is reached */
-				else if(m_info.isValid())
-					pos = m_info.start + 1;
-			}
-
-			/* If the current group wasn't matched in the block or
-			 * we had some matches but they were inside multiline expression
-			 * we'll move the position to the start of the block and
-			 * use the next group */
-			if(!m_info.isValid() || pos >= text.length())
-			{
-				pos = 0;
-				ml_itr++;
-			}
-		}
-
-		/* The remaining highlight must occur only when there is no
-		 * open expression or a persistent formatting */
 		for(auto &grp : groups_order)
 		{
 			group_cfg = &group_confs[grp];
@@ -326,9 +284,8 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 		blk_info->setOpenGroup("");
 
 	blk_info->addFragmentInfo(FragmentInfo(group_cfg->name, m_info.start, m_info.end,
-																					 group_cfg->persistent,
-																					 expr_open, expr_closed,
-																					 group_cfg->allow_completion));
+																				 expr_open, expr_closed,
+																				 group_cfg->allow_completion));
 
 	return true;
 }
@@ -630,7 +587,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 						group_cfg = GroupConfig(group, format,
 																		attribs[Attributes::AllowCompletion] != Attributes::False,
-																		attribs[Attributes::Persistent] == Attributes::True, false);
+																		false);
 
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -649,11 +606,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 								regexp.setPattern(pattern);
 
+								// Regular expression matching
 								if(attribs[Attributes::Type] == Attributes::RegularExp)
 									regexp.setPattern(attribs[Attributes::Value]);
+								// Wildcard matching
 								else if(attribs[Attributes::Type] == Attributes::Wildcard)
 									regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
-								else
+								// Word boundary matching regexp
+								else if(attribs[Attributes::Type] == Attributes::Word)
 								{
 									/* For exact match words we use three different patterns (^[word]\s, \s[word]\s, \s[word]$)
 									 * The patterns indicate that the word must have at least on space or tab attached, or be a word boundary,
@@ -663,8 +623,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									regexp.setPattern(QString("^%1(?=\\s|\\b)|(?<=\\s|\\b)%1(?=\\s|\\b)|(?<=\\s|\\b)%1$|^%1$")
 																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
 								}
+								// Simple (escaped) regular expression
+								else
+									regexp.setPattern(QRegularExpression::escape(attribs[Attributes::Value]));
 
-								regexp.setPatternOptions(QRegularExpression::DontCaptureOption |
+								regexp.setPatternOptions(/* QRegularExpression::DontCaptureOption | */
 																					(attribs[Attributes::CaseSensitive] != Attributes::True ?
 																						QRegularExpression::CaseInsensitiveOption :
 																						QRegularExpression::NoPatternOption));
@@ -674,12 +637,6 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								{
 									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
 																	ErrorCode::InvGroupRegExpPattern, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-																	tr("Pattern: %1").arg(regexp.pattern()));
-								}
-								else if(group_cfg.persistent && (initial_expr || final_expr))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::InvExprPersistentGroup).arg(group, filename),
-																	ErrorCode::InvExprPersistentGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
 																	tr("Pattern: %1").arg(regexp.pattern()));
 								}
 								else if(initial_expr && final_expr)
@@ -701,9 +658,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 						group_confs[group] = group_cfg;
 
-						if(group_cfg.persistent)
-							persistents_order.append(group);
-						else if(group_cfg.multiline)
+						if(group_cfg.multiline)
 							multilines_order.append(group);
 						else
 							groups_order.append(group);

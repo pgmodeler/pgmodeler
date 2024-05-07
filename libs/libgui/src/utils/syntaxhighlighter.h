@@ -76,24 +76,20 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		struct GroupConfig {
 			QString name;
 			QTextCharFormat format;
-			bool allow_completion, persistent, multiline;
+			bool allow_completion, multiline;
 
 			GroupConfig()
 			{
-				allow_completion = persistent = multiline = false;
+				allow_completion = multiline = false;
 			}
 
 			GroupConfig(const QString &_name, const QTextCharFormat &_format,
-									bool _allow_compl, bool _persistent, bool _multiline)
+									bool _allow_compl, bool _multiline)
 			{
 				name = _name;
 				format = _format;
 				allow_completion = _allow_compl;
-				persistent = _persistent;
 				multiline = _multiline;
-
-				if(persistent && multiline)
-					persistent = multiline = false;
 			}
 		};
 
@@ -118,15 +114,10 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		 * When the highlighter finds this const it'll do special operation like highlight next blocks with the same
 		 * configuration as the current one */
-		OpenExprBlock = 0,
-
-		/*! \brief Indicates that the current block is a persistent one, which means
-		 * that the formatting is applied from the determined start postion until
-		 * the end of the block (text). The next block will not inherit the formmating */
-		PersistentBlock = 1;
+		OpenExprBlock = 0;
 
 		//! \brief Stores the order in which the groups must be applied
-		QStringList groups_order, persistents_order, multilines_order;
+		QStringList groups_order, multilines_order;
 
 		QMap<QString, GroupConfig> group_confs;
 

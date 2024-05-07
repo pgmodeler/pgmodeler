@@ -40,11 +40,8 @@ class	__libgui	FragmentInfo {
 		//! \brief Position in the text block where the fragment ends
 		end;
 
-		//! \brief Indicates if the fragment holds a persistent highlighting
-		bool persistent,
-
 		//! \brief Indicates if the fragment is open (only for multiline expressions)
-		open,
+		bool open,
 
 		//! \brief Indicates if the fragment is closed (only for multiline expressions)
 		closed,
@@ -56,7 +53,7 @@ class	__libgui	FragmentInfo {
 	public:
 		FragmentInfo();
 
-		FragmentInfo(const QString &grp, int start, int end, bool persist,
+		FragmentInfo(const QString &grp, int start, int end,
 								 bool open, bool closed, bool allow_compl);
 
 		QString getGroup() const;
@@ -64,7 +61,6 @@ class	__libgui	FragmentInfo {
 		int getEnd() const;
 		bool isOpen() const;
 		bool isClosed() const;
-		bool isPersistent() const;
 		bool isValid() const;
 		bool contains(int pos) const;
 		bool isCompletionAllowed() const;
