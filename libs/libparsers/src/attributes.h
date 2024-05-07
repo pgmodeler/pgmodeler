@@ -499,6 +499,7 @@ namespace Attributes {
 	Patterns,
 	Permission,
 	Permissive,
+	Persistent,
 	PerRow,
 	PgModelerVersion,
 	PgSqlBaseType,

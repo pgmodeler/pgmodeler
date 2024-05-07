@@ -39,20 +39,21 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		struct GroupConfig {
 			QString name;
 			QTextCharFormat format;
-			bool allow_completion, multiline;
+			bool allow_completion, multiline, persistent;
 
 			GroupConfig()
 			{
-				allow_completion = multiline = false;
+				allow_completion = multiline = persistent = false;
 			}
 
 			GroupConfig(const QString &_name, const QTextCharFormat &_format,
-									bool _allow_compl, bool _multiline)
+									bool _allow_compl, bool _persistent, bool _multiline)
 			{
 				name = _name;
 				format = _format;
 				allow_completion = _allow_compl;
 				multiline = _multiline;
+				persistent = _persistent;
 			}
 		};
 
@@ -74,10 +75,18 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		//! \brief Indicates that the current block has no special meaning
 		static constexpr int SimpleBlock = -1,
 
+		/*! \brief Indicates that the current block was last formatted by a persistent group,
+		 * Indicating that the highlight was applied to the start position of the group
+		 * until the end of the block. */
+		PersistentBlock = 0,
+
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
-		 * When the highlighter finds this const it'll do special operation like highlight next blocks with the same
-		 * configuration as the current one */
-		OpenExprBlock = 0;
+		* When the highlighter finds this const it'll do special operation like highlight next blocks with the same
+		* configuration as the current one. Due to the possiblity to have many multiline groups the setCurrentBlockState
+		* calls using this as parameter will always use the group index as extra value. For example, say we have a
+		* "multi-line-comment" group which index is 1 and was applied to the current block, then the block state will
+		* be set as OpenExprBlock + 1 */
+		OpenExprBlock = 1;
 
 		//! \brief Stores the order in which the groups must be applied
 		QStringList groups_order, multilines_order;

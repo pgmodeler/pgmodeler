@@ -42,13 +42,13 @@ store the expressions that are matched against the captured words.
 name: the name of the group
 background-color: the color of the background of words matching the group (omitting this attribute causes transparent background to be applied).
 foreground-color: the color of the foreground of words matching the group (omitting this attribute causes black foreground to be applied)
-lookahead-char: the character used to break the highlight for a group. This character itself is not highlighted.
 case-sensitive: indicates if the expressions matching must be case sensitive or not.
 bold: words matching the group will have a bold style.
 italic: words matching the group will have a italic style.
 underline: words matching the group will have a underline style.
 strikeout: words matching the group will have a strikeout style.
 allow-completion: enable/disable the code completion via completion trigger char for this group.
+persistent: indicates that once found this group in a block, the highlight will stop further highilightings in the block.
 -->
 <!ELEMENT group (element*)>
 <!ATTLIST group name CDATA #REQUIRED>
@@ -68,21 +68,17 @@ In case of positive matching the word will receive the formatting associated to 
 is part of. Elements can hold simple, wildcard or regular expressions.
 
 value: the expression of the element.
-type: the type of the element expression. When the group has both an initial-exp and a final-exp, then the first occurrency 
-      of the expression that matches initial-exp will cause any further words to be highlighted as the same group in which 
-      the element matched is part even the current word is matches another group. The forced highlighting is finished only
-      when another expression in this group and which is marked as final-exp is found. This is useful when you need to highlight
-      multiple lines of code in which the words eventually is part of the same group. 
-      Code comments is a classical example of this situation /* */.
-regexp: the expression of the element must be treated as a regular expression.
-wildcard: the expression of the element must be treated as a wildcard expression.
-entire-line: indicates that the all words in the current line must be hightlighted with the group format.
-             this is useful, for instance, to highlight single-line comments //
-
-Note: if neither regexp or wildcard is specified then the expression matching is perfomed in exact mode.
+type: the type of the element expression. 
+      * "regexp" type tells the highlighter to use the expression of the element as a regular expression (QRegularExpression syntax).        
+      * "wildcard" type indicates that the expression of the element must be treated as a wildcard expression.
+      * "word" type indicates to the highlighter to match whole words delimited by word boundaries 
+        (\b[word]\b regex syntax), specially useful when matching language keywords.
+      * "exact" type indicates that the expression is to be used in exact match operation.
+initial: indicates that the expression is a opening one for a multiline group
+final: indicates that the expression is a closing one for a multiline group
 -->
 <!ELEMENT element EMPTY>
 <!ATTLIST element value CDATA #REQUIRED>
-<!ATTLIST element type (regexp | wildcard | word | simple) "regexp">
+<!ATTLIST element type (regexp | wildcard | word | exact) "exact">
 <!ATTLIST element initial (false|true) "false">
 <!ATTLIST element final (false|true) "false">
