@@ -277,8 +277,17 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 	fmt.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(m_info.start, m_info.getLength(), fmt);
 
+	/* If we are highlighting an open expression we need
+	 * to register the name of the group that the confs
+	 * are being applied to the block so it can be applied
+	 * to the next block */
 	if(expr_open && currentBlockState() == OpenExprBlock)
 		blk_info->setOpenGroup(group_cfg->name);
+
+	/* If the block state is SimpleBlock meaning that there's no
+	 * open expression. Or, if the current state is an open expression
+	 * but the expression was closed we clear the name of the group
+	 * so the next block don't inherit formatting */
 	else if(currentBlockState() == SimpleBlock ||
 					(currentBlockState() == OpenExprBlock && expr_closed))
 		blk_info->setOpenGroup("");

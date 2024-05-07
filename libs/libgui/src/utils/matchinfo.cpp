@@ -54,7 +54,7 @@ void MatchInfo::clear()
 
 bool MatchInfo::contains(int pos) const
 {
-	return pos >= 0 && start >= pos && end <= pos;
+	return pos >= 0 && pos >= start && pos <= end;
 }
 
 int MatchInfo::getStart() const
