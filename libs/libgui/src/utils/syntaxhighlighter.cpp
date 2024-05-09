@@ -271,13 +271,10 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			if(matchGroup(group_cfg, text, 0, false, matches))
 			{
 				/* The the current group is a persistent one and its formatting settings were
-				 * applied, then we mark the block state as PersistentBlock and stop trying to
-				 * match the other groups. */
+				 * applied, then we mark the block state as PersistentBlock this force the rehighlight
+				 * of next block if they are part of a open multiline expression. */
 				if(setFormat(&matches, group_cfg, false, false, blk_info) && group_cfg->persistent)
-				{
 					setCurrentBlockState(PersistentBlock);
-					break;
-				}
 			}
 		}
 	}
@@ -291,6 +288,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 
 	QTextCharFormat fmt = group_cfg ? group_cfg->format : QTextCharFormat();
 	const FragmentInfo *f_info = nullptr;
+	int end = m_info.end, len = m_info.getLength();
 
 	f_info = blk_info->getFragmentInfo(m_info.start);
 
@@ -299,9 +297,17 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 	if(f_info)
 		return false;
 
+	/* Forcing the highlighting from the starting position of the matching info to the
+	 * end of the block when the group is a persistent one */
+	if(group_cfg->persistent)
+	{
+		end = currentBlock().length() - 1;
+		len = end - m_info.start + 1;
+	}
+
 	fmt.setFontFamily(default_font.family());
 	fmt.setFontPointSize(getCurrentFontSize());
-	QSyntaxHighlighter::setFormat(m_info.start, m_info.getLength(), fmt);
+	QSyntaxHighlighter::setFormat(m_info.start, len, fmt);
 
 	/* If we are highlighting an open expression we need
 	 * to register the name of the group that the confs
@@ -318,7 +324,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 					 (currentBlockState() >= OpenExprBlock && expr_closed))
 		blk_info->setOpenGroup("");
 
-	blk_info->addFragmentInfo(FragmentInfo(group_cfg->name, m_info.start, m_info.end,
+	blk_info->addFragmentInfo(FragmentInfo(group_cfg->name, m_info.start, end,
 																				 expr_open, expr_closed,
 																				 group_cfg->allow_completion));
 
