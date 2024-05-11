@@ -342,10 +342,31 @@ QString SchemaParser::getPlainText()
 		{
 			text += current_line[column];
 
+			/* In case a escaped start char \ in current position
+			 * of plain text expression is found, we convert look for
+			 * [ or ] to determined that the user espacted the plain text
+			 * operators, e.g., \[ or \], this way we add them in the
+			 * extracted text instead of parsing as the start or end
+			 * of the expression */
+			if(current_line[column] == CharStartEscaped)
+			{
+				column++;
+
+				/* If the the current char is [ or ] we then proceed with
+				 * the conversion of the escaped char */
+				if(column < current_line.size() &&
+					 (current_line[column] == CharStartPlainText ||
+						current_line[column] == CharEndPlainText))
+				{
+					text.removeLast();
+					text += current_line[column];
+					column++;
+				}
+			}
 			/* Special case to end of line. Unlike other elements of
 			 * language, a pure text can be extracted until the end of the buffer,
 			 * thus, this method also controls the lines transitions */
-			if(current_line[column] == CharLineEnd)
+			else if(current_line[column] == CharLineEnd)
 			{
 				//Step to the next line
 				line++;

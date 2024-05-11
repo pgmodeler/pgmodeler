@@ -35,6 +35,7 @@ class SchemaParserTest: public QObject {
 		void testSetOperationUnderIfEvaluatedAsFalse();
 		void testConvertMetaCharsCorrectly();
 		void testConvertEscapedCharsCorrectly();
+		void testConvertEscapedPlainTextCharsInPlaintextExpr();
 };
 
 
@@ -172,6 +173,25 @@ void SchemaParserTest::testConvertEscapedCharsCorrectly()
 	{
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getSourceCode(attribs) == "#&@{foo}$%[]", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testConvertEscapedPlainTextCharsInPlaintextExpr()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "[foo bar test \\[ abc \\] foo]";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getSourceCode(attribs) == "foo bar test [ abc ] foo", true);
 	}
 	catch(Exception &e)
 	{
