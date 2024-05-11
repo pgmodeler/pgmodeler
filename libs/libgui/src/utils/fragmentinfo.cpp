@@ -16,55 +16,43 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "textblockinfo.h"
+#include "fragmentinfo.h"
 
-TextBlockInfo::TextBlockInfo()
+FragmentInfo::FragmentInfo() : MatchInfo()
 {
-	reset();
+	open = closed = allow_completion = false;
 }
 
-void TextBlockInfo::reset()
+FragmentInfo::FragmentInfo(const QString &grp, int start, int end,
+													 bool open, bool closed, bool allow_compl) : MatchInfo(start, end)
 {
-	frag_infos.clear();
-	open_group.clear();
+	group = grp;
+	this->open = open;
+	this->closed = closed;
+	allow_completion = allow_compl;
 }
 
-void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
+QString FragmentInfo::getGroup() const
 {
-	if(!f_info.isValid())
-		return;
-
-	frag_infos.append(f_info);
+	return group;
 }
 
-const FragmentInfo *TextBlockInfo::getFragmentInfo(int pos)
+bool FragmentInfo::isOpen() const
 {
-	for(auto &f_info : frag_infos)
-	{
-		if(pos >= f_info.getStart() && pos <= f_info.getEnd())
-			return &f_info;
-	}
-
-	return nullptr;
+	return open;
 }
 
-void TextBlockInfo::setOpenGroup(const QString &grp)
+bool FragmentInfo::isClosed() const
 {
-	open_group = grp;
+	return closed;
 }
 
-QString TextBlockInfo::getOpenGroup()
+bool FragmentInfo::isCompletionAllowed() const
 {
-	return open_group;
+	return allow_completion;
 }
 
-bool TextBlockInfo::isCompletionAllowed(int pos)
+bool FragmentInfo::isValid() const
 {
-	for(auto &f_info : frag_infos)
-	{
-		if(f_info.contains(pos))
-			return f_info.isCompletionAllowed();
-	}
-
-	return true;
+	return !group.isEmpty() && MatchInfo::isValid();
 }

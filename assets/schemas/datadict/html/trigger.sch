@@ -2,11 +2,11 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br [ ]
+%set {spc} $br \s
 
 {spc} <tr>
 {spc} <td> {name} </td>
-{spc} <td [ class="value constr-type"]> {attributes} </td>
+{spc} <td [ class="value constr-type"] > {attributes} </td>
 {spc} <td> {function} </td>
 {spc} <td [ class="value constr-type"] > {firing-type} </td>
 {spc} <td [ class="value constr-type"] > {events} </td>
@@ -16,9 +16,9 @@
 {spc} <td>
 	%if {ref-table} %then
 		%if {split} %then
-			<a $sp href="{ref-table}.html">{ref-table}</a>
+			<a $sp href="{ref-table}.html"> {ref-table} </a>
 		%else
-			<a $sp href="\#{ref-table}">{ref-table}</a>
+			<a $sp href="#{ref-table}"> {ref-table} </a>
 		%end
 	%end
 {spc} </td>

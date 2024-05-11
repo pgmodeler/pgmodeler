@@ -8,13 +8,13 @@
 	%set {colspan} 5
 %end
 
-%set {spc} $br [ ]
+%set {spc} $br \s
 
 
 <table $sp id="{schema}.{name}" $sp class="{type-class}">
-{spc} <caption [ class="tab-name"]>
-{spc} <em>{schema}</em>.<strong>{name}</strong>
-{spc} <span $sp class="type-label">{type}</span>
+{spc} <caption [ class="tab-name"] >
+{spc} <em> {schema} </em> . <strong> {name} </strong>
+{spc} <span $sp class="type-label"> {type} </span>
 {spc} </caption>
 {spc} <thead>
 
@@ -29,22 +29,22 @@
 %if {columns} %then
 	{spc} <tr>
 	{spc} <th> Name </th>
-	{spc} <th>[Data type]</th>
+	{spc} <th> [Data type] </th>
 
 	%if ({type-class} == "table") %then
-		{spc} <th>PK</th>
-		{spc} <th>FK</th>
-		{spc} <th>UQ</th>
+		{spc} <th> PK </th>
+		{spc} <th> FK </th>
+		{spc} <th> UQ </th>
 	%end
 
-	{spc} <th>[Not null]</th>
-	{spc} <th>[Default value]</th>
+	{spc} <th> [Not null] </th>
+	{spc} <th> [Default value] </th>
 	{spc} <th> Description </th>
 	{spc} </tr>
 %else
 	{spc} <tr>
 	{spc} <th $sp colspan="{colspan}">
-	{spc} <em>[No columns]</em>
+	{spc} <em> [No columns] </em>
 	{spc} </th>
 	{spc} </tr>
 %end
@@ -73,14 +73,14 @@
 
 	%if {partitioned-table} %then
 		{spc} <tr>
-		{spc} <td $sp class="label">[Partition of:]</td>
+		{spc} <td $sp class="label"> [Partition of:] </td>
 		{spc} <td> {partitioned-table} </td>
 		{spc} </tr>
 	%end
 
 	%if {partition-tables} %then
 		{spc} <tr>
-		{spc} <td $sp class="label">[Partitions:]</td>
+		{spc} <td $sp class="label"> [Partitions:] </td>
 		{spc} <td> {partition-tables} </td>
 		{spc} </tr>
 	%end
@@ -102,12 +102,12 @@ $br </table> $br
 	%end
 
 	%if {split} %then
-		$br [ <a href="index.html" class="nav-link">]
+		$br [ <a href="index.html" class="nav-link"> ]
 	%else
-		$br [ <a href="\#index" class="nav-link">]
+		$br [ <a href="#index" class="nav-link"> ]
 	%end
 
-	[&uarr; Index</a>]
+	[&uarr; Index</a> ]
 
 	%if {split} %and {next} %then
 		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp [&rarr;] </a>

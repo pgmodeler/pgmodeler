@@ -6,11 +6,13 @@
 #	%set {colspan} 8
 #%else
 #	%set {colspan} 5
-%#end
+#end
 
 #%set {spc} $br [ ]
 
-[{#] {schema}.{name} [}] $br
+$hs $hs $hs _{schema}_.*{name}* [{#] {schema}.{name} [}] $br
+
+{comment}
 
 [| Name | Data type ] 
 
@@ -24,7 +26,7 @@
 
 %else
 
-[ | No columns | ] $br
+	[ | No columns | ] $br
 
 %end 
 
@@ -32,60 +34,52 @@
 	{objects}
 %end
 
-$ob _{schema}_.*{name}* $cb
+# <table $sp id="{schema}.{name}" $sp class="{type-class}">
+# {spc} <caption [ class="tab-name"]>
+# {spc} <em>{schema}</em>.<strong>{name}</strong>
+# {spc} <span $sp class="type-label">{type}</span>
+# {spc} </caption>
+# {spc} <thead>
 
+# %if {comment} %then
+# 	{spc} <tr>
+# 	{spc} <td $sp colspan="{colspan}" $sp class="tab-description">
+# 	{comment}
+# 	{spc} </td>
+# 	{spc} </tr>
+# %end
 
+# %if {columns} %then
+# 	{spc} <tr>
+# 	{spc} <th> Name </th>
+# 	{spc} <th>[Data type]</th>
 
+# 	%if ({type-class} == "table") %then
+# 		{spc} <th>PK</th>
+# 		{spc} <th>FK</th>
+# 		{spc} <th>UQ</th>
+# 	%end
 
+# 	{spc} <th>[Not null]</th>
+# 	{spc} <th>[Default value]</th>
+# 	{spc} <th> Description </th>
+# 	{spc} </tr>
+# %else
+# 	{spc} <tr>
+# 	{spc} <th $sp colspan="{colspan}">
+# 	{spc} <em>[No columns]</em>
+# 	{spc} </th>
+# 	{spc} </tr>
+# %end
 
+# {spc} </thead>
+# {spc} <tbody> 
 
+# %if {objects} %then
+# 	{objects}
+# %end
 
-<table $sp id="{schema}.{name}" $sp class="{type-class}">
-{spc} <caption [ class="tab-name"]>
-{spc} <em>{schema}</em>.<strong>{name}</strong>
-{spc} <span $sp class="type-label">{type}</span>
-{spc} </caption>
-{spc} <thead>
-
-%if {comment} %then
-	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="tab-description">
-	{comment}
-	{spc} </td>
-	{spc} </tr>
-%end
-
-%if {columns} %then
-	{spc} <tr>
-	{spc} <th> Name </th>
-	{spc} <th>[Data type]</th>
-
-	%if ({type-class} == "table") %then
-		{spc} <th>PK</th>
-		{spc} <th>FK</th>
-		{spc} <th>UQ</th>
-	%end
-
-	{spc} <th>[Not null]</th>
-	{spc} <th>[Default value]</th>
-	{spc} <th> Description </th>
-	{spc} </tr>
-%else
-	{spc} <tr>
-	{spc} <th $sp colspan="{colspan}">
-	{spc} <em>[No columns]</em>
-	{spc} </th>
-	{spc} </tr>
-%end
-
-{spc} </thead>
-{spc} <tbody> 
-
-%if {objects} %then
-	{objects}
-%end
-
-{spc} </tbody>
+# {spc} </tbody>
 
 %if {inherit} %or {partitioned-table} %or {partition-tables} %then
 	{spc} <tfoot>
@@ -123,24 +117,24 @@ $ob _{schema}_.*{name}* $cb
 $br </table> $br
 
 
-%if {datadictidx} %then
-	$br <div>
+# %if {datadictidx} %then
+# 	$br <div>
 
-	%if {split} %and {previous} %then
-		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> [&larr;] $sp {previous}</a>
-	%end
+# 	%if {split} %and {previous} %then
+# 		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> [&larr;] $sp {previous}</a>
+# 	%end
 
-	%if {split} %then
-		$br [ <a href="index.html" class="nav-link">]
-	%else
-		$br [ <a href="\#index" class="nav-link">]
-	%end
+# 	%if {split} %then
+# 		$br [ <a href="index.html" class="nav-link">]
+# 	%else
+# 		$br [ <a href="\#index" class="nav-link">]
+# 	%end
 
-	[&uarr; Index</a>]
+# 	[&uarr; Index</a>]
 
-	%if {split} %and {next} %then
-		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp [&rarr;] </a>
-	%end
+# 	%if {split} %and {next} %then
+# 		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp [&rarr;] </a>
+# 	%end
 
-	$br </div> $br
-%end
+# 	$br </div> $br
+# %end

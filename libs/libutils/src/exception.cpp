@@ -150,12 +150,9 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvUseSpecialPrimaryKey", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"OprRelationshipAddedObject", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
 	{"RemProtectedObject", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
-	{"InvRedeclarationGroup", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"InvGroupDeclaration", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
-	{"DefNotDeclaredGroup", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},
 	{"DefEmptyGroup", QT_TR_NOOP("The group `%1' can not be built without possessing child elements!")},
 	{"DefDuplicatedGroup", QT_TR_NOOP("The group `%1' can not be built once more because this was done in previous blocks!")},
-	{"InvGroupDeclarationNotDefined", QT_TR_NOOP("The group `%1' has been declared but not built!")},
 	{"RefColObjectTabInvalidIndex", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"RefRowObjectTabInvalidIndex", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
 	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is a protected object which is present in the database model only to be used as dependency of other objects!")},
@@ -288,6 +285,9 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
 	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
 	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
+	{"InvalidEscapedCharacter", QT_TR_NOOP("Invalid escaped character `%1' in file `%2', line %3, column %4!")},
+	{"InvExprMultilineGroup", QT_TR_NOOP("The group `%1' contains an expression declared as both initial and final! An expression must be either initial or final, not both.")},
+	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")}
 };
 
 Exception::Exception()

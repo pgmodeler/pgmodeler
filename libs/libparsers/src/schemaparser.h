@@ -18,7 +18,8 @@
 
 /**
 \ingroup libparsers
-\brief ParserEsquema class definition used to create SQL definition for model objects from schemas files (stored on disk).
+\class SchemaParser
+\brief Defines the schema micro language that is used to generate code.
 \note <strong>Creation date:</strong> 19/06/2008
 */
 
@@ -27,8 +28,6 @@
 
 #include "parsersglobal.h"
 #include "globalattributes.h"
-#include <map>
-#include <vector>
 #include <QDir>
 #include <QTextStream>
 #include "attribsmap.h"
@@ -53,8 +52,14 @@ class __libparsers SchemaParser {
 		//! \brief Get an conditional instruction from the buffer on the current position
 		QString getConditional();
 
+		//! \brief Get a metacharacter or escaped character token from the buffer on the current position
+		QString getMetaOrEscapedToken(bool is_escaped);
+
 		//! \brief Get an metacharacter from the buffer on the current position
 		QString getMetaCharacter();
+
+		//! \brief Get an escaped character from the buffer on the current position
+		QString getEscapedCharacter();
 
 		/*! \brief Returns the result (true|false) of conditional expression evaluation.
 		The expression is evaluated from the left to the right and not support Polish Notation, so
@@ -107,7 +112,12 @@ class __libparsers SchemaParser {
 		void ignoreBlankChars(const QString &line);
 
 		//! \brief Translates the meta char token to the real character
-		QString translateMetaCharacter(const QString &meta);
+		QString convertMetaCharacter(const QString &meta);
+
+		//! \brief Translates the escaped char token to the equivalent character
+		QString convertEscapedCharacter(const QString &escaped);
+
+		QString convertMetaOrEscaped(const QString &token, bool is_escaped);
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
@@ -118,7 +128,7 @@ class __libparsers SchemaParser {
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
-		bool isSpecialCharacter(char chr);
+		bool isSpecialCharacter(const QChar &chr);
 
 		//! \brief Filename that was loaded by the parser
 		QString filename;
@@ -144,7 +154,7 @@ class __libparsers SchemaParser {
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
 	public:
-		static const char CharComment,	//! \brief Character that starts a comment
+		static const QChar CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line
 		CharSpace,		//! \brief Character that indicates spacing
 		CharTabulation,	//! \brief Character that indicates tabulation
@@ -158,7 +168,8 @@ class __libparsers SchemaParser {
 		CharEndCompExpr,	//! \brief Character that ends a comparison expression
 		CharValueDelim,	//! \brief Character that delimiters a value (string)
 		CharValueOf,	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
-		CharToXmlEntity;	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
+		CharToXmlEntity,	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
+		CharStartEscaped; //! \brief Character that is used on escapade special characters, e.g. \# \$ \% #\$ \& \] \[ \{ \}
 
 		//! \brief Tokens related to conditional instructions and operators
 		static const QString	TokenIf,  // %if
@@ -184,7 +195,8 @@ class __libparsers SchemaParser {
 		TokenMetaPs,// $ps (percentage sign '%')
 		TokenMetaAt,// $at (at character '@')
 		TokenMetaDs,// $ds (special data separator character '•')
-		TokenMetaAm;// $am (ampersand character '&')
+		TokenMetaAm,// $am (ampersand character '&')
+		TokenMetaBs;// $bs (backslash character '\')
 
 		//! \brief Tokens related to comparison expressions
 		static const QString	TokenEqOper,// == (equal)
@@ -223,7 +235,7 @@ class __libparsers SchemaParser {
 		 attributes map */
 		QString getSourceCode(const attribs_map &attribs);
 
-		//! \brief Loads the buffer with a string
+		//! \brief Loads the schema code from a string buffer
 		void loadBuffer(const QString &buf);
 
 		//! \brief Loads a schema file and inserts its line into the parser's buffer

@@ -3,7 +3,7 @@
 # Code generation can be broken if incorrect changes are made.
 [body {
 font-family: sans-serif;
-color: \#333;
+color: #333;
 margin-left: 2em;
 margin-top: 2em;
 background-color: white;
@@ -20,31 +20,31 @@ margin-bottom: .5em;
 }
 
 a {
-color: \#4182c3;
+color: #4182c3;
 text-decoration: none;
 }
 
 a:hover {
-color: \#080;
+color: #080;
 text-decoration: underline;
 }
 
-\#index {
-background-color: \#f8f9fa;
+#index {
+background-color: #f8f9fa;
 margin-block-end: 1.5em;
 list-style: none;
 display: inline-block;
 padding: 1em;
-border: 1px solid \#c0c0c0;
+border: 1px solid #c0c0c0;
 border-radius: 4px 4px 4px 4px;
 }
 
-\#index li {
+#index li {
 list-style: none;
 margin: 0;
 }
 
-\#index > li > ul {
+#index > li > ul {
 padding-inline-start: 1em;
 }
 
@@ -57,36 +57,36 @@ page-break-inside: avoid;
 }
 
 .table caption {
-background-color: \#d2f3ff;
+background-color: #d2f3ff;
 }
 
 .foreigntable caption {
-background-color: \#94f0b1;
+background-color: #94f0b1;
 }
 
 .view caption {
-background-color: \#ffd8a1;
+background-color: #ffd8a1;
 }
 
 .table,
 .table caption,
 .table th,
 .table td {
-border: 1px solid \#b4d0da;
+border: 1px solid #b4d0da;
 }
 
 .foreigntable,
 .foreigntable caption,
 .foreigntable th,
 .foreigntable td {
-border: 1px solid \#6aad80;
+border: 1px solid #6aad80;
 }
 
 .view,
 .view caption,
 .view th,
 .view td {
-border: 1px solid \#ba7c00;
+border: 1px solid #ba7c00;
 }
 
 .table caption,
@@ -98,27 +98,27 @@ border-bottom: 0;
 .table th,
 .table .title,
 .table .label{
-background-color: \#e9f8ff;
+background-color: #e9f8ff;
 }
 
 .foreigntable th,
 .foreigntable .title,
 .foreigntable .label {
-background-color: \#e2ffed;
+background-color: #e2ffed;
 }
 
 .view th,
 .view .title,
 .view .label {
-background-color: \#ffebd2;
+background-color: #ffebd2;
 }
 
 .type-label {
 float: right;
-color: \#212529;
+color: #212529;
 font-size: 70%;
 font-weight: bold;
-background-color: \#f8f9fa;
+background-color: #f8f9fa;
 padding: 5px;
 border-radius: 4px 4px 4px 4px;
 }
@@ -129,10 +129,10 @@ border-radius: 5px 5px 0 0;
 
 .nav-link {
 font-size: 85%;
-background-color: \#f2f2f3;
+background-color: #f2f2f3;
 padding: 5px;
 border-radius: 4px 4px 4px 4px;
-color: \#212529;
+color: #212529;
 font-weight: bold;
 text-decoration: none;
 margin-right: .5em;
@@ -140,7 +140,7 @@ margin-right: .5em;
 
 .nav-link:hover {
 color: white;
-background-color: \#007bff;
+background-color: #007bff;
 }
 
 td, th, caption, .title {
@@ -151,7 +151,7 @@ padding: .3em;
 .title, th {
 font-weight: bold;
 text-align: center;
-color: \#535c67;
+color: #535c67;
 }
 
 .data-type, .value, .constr-type {
@@ -160,21 +160,21 @@ text-align: center;
 }
 
 .constr-type {
-color: \#24486c;
+color: #24486c;
 }
 
 .data-type {
-color: \#b00;
+color: #b00;
 }
 
 .bool-field {
 text-align: center;
-color: \#080;
+color: #080;
 }
 
 .label {
 font-weight: bold;
-color: \#444f53;
+color: #444f53;
 width: 1px;
 white-space: nowrap;
 }

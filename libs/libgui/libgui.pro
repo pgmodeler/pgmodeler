@@ -89,7 +89,9 @@ src/tools/swapobjectsidswidget.cpp \
 src/tools/modelvalidationwidget.cpp \
 	src/utils/customsortproxymodel.cpp \
 src/utils/deletableitemdelegate.cpp \
+	src/utils/fragmentinfo.cpp \
 src/utils/htmlitemdelegate.cpp \
+	src/utils/matchinfo.cpp \
 	src/utils/objectslistmodel.cpp \
 src/utils/plaintextitemdelegate.cpp \
 src/utils/resultsetmodel.cpp \
@@ -211,7 +213,9 @@ src/tools/swapobjectsidswidget.h \
 src/tools/modelvalidationwidget.h \
 	src/utils/customsortproxymodel.h \
 src/utils/deletableitemdelegate.h \
+	src/utils/fragmentinfo.h \
 src/utils/htmlitemdelegate.h \
+	src/utils/matchinfo.h \
 	src/utils/objectslistmodel.h \
 src/utils/plaintextitemdelegate.h \
 src/utils/resultsetmodel.h \

@@ -127,7 +127,7 @@ void DataDictTest::generateASimpleDataDict()
 
 		dbmodel.addTable(table);
 		dbmodel.addTable(table1);
-		dbmodel.saveDataDictionary("./simpledict.html", true, false);
+		dbmodel.saveDataDictionary("./simpledict.html", true, false, false);
 	}
 	catch (Exception &e)
 	{
@@ -142,7 +142,7 @@ void DataDictTest::generateASplittedDataDictFromSampleModel()
 	{
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(QString(SAMPLESDIR)+ "/demo.dbm");
-		dbmodel.saveDataDictionary("./dict_test.html", true, false);
+		dbmodel.saveDataDictionary("./dict_test.html", true, false, false);
 	}
 	catch (Exception &e)
 	{
