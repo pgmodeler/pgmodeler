@@ -56,6 +56,8 @@ $tb [<configuration pgmodeler-ver="] {pgmodeler-ver} ["] $br
 {spc} [alert-unsaved-models="] {alert-unsaved-models} ["] $br
 {spc} [alert-open-sqltabs="] {alert-open-sqltabs} ["] $br
 {spc} [use-def-disambiguation="] {use-def-disambiguation} ["] $br
+{spc} [hide-objects-sel-info="] %if {hide-objects-sel-info} %then true %else false %end ["] $br
+{spc} [hide-cur-pos-zoom-info="] %if {hide-cur-pos-zoom-info} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
 	{spc} [source-editor-app="] &{source-editor-app} ["] $br

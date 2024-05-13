@@ -291,6 +291,8 @@ namespace Attributes {
 	HideRelName("hide-rel-name"),
 	HideSchNameUserTypes("hide-schema-names-of-types"),
 	HideTableTags("hide-table-tags"),
+	HideObjectsSelInfo("hide-objects-sel-info"),
+	HideCurPosZoomInfo("hide-cur-pos-zoom-info"),
 	HighlightLines("highlight-lines"),
 	HighlightOrder("highlight-order"),
 	HistoryMaxLength("history-max-length"),

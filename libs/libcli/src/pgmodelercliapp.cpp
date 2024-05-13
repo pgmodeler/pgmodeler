@@ -1527,9 +1527,19 @@ void PgModelerCliApp::recreateObjects()
 		{
 			do
 			{
-				xmlparser->getElementAttributes(attribs);
-				model->addChangelogEntry(attribs[Attributes::Signature], attribs[Attributes::Type],
-																 attribs[Attributes::Action], attribs[Attributes::Date]);
+				try
+				{
+					xmlparser->getElementAttributes(attribs);
+					model->addChangelogEntry(attribs[Attributes::Signature], attribs[Attributes::Type],
+																		attribs[Attributes::Action], attribs[Attributes::Date]);
+				}
+				catch(Exception &e)
+				{
+					printMessage();
+					printMessage(tr("** WARNING: Failed to process a changelog entry due to invalid values! Ignoring it."));
+					printMessage(tr("** Entry: `%1'.").arg(e.getExtraInfo()));
+					printMessage();
+				}
 			}
 			while(xmlparser->accessElement(XmlParser::NextElement));
 		}

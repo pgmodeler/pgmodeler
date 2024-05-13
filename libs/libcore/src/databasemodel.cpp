@@ -9675,11 +9675,12 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	ObjectType obj_type = BaseObject::getObjectType(type);
 	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
-	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
+	if(signature.isEmpty() || obj_type == ObjectType::BaseObject ||
 		 !date_time.isValid() || !actions.contains(action))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(signature, type, action, date),
-										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__,
+										nullptr, QString("%1, %2, %3, %4").arg(signature, type, action, date));
 	}
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));

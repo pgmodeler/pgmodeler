@@ -1678,7 +1678,10 @@ void MainWindow::applyConfigurations()
 		int count, i;
 		ModelWidget *model=nullptr;
 
-		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+		conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
+
+		scene_info_wgt->obj_sel_info_frm->setHidden(conf_wgt->hide_obj_sel_info_chk->isChecked());
+		scene_info_wgt->cursor_pos_info_frm->setHidden(conf_wgt->hide_cur_pos_zoom_info_chk->isChecked());
 
 		//Disable the auto save if the option is not checked
 		if(!conf_wgt->autosave_interv_chk->isChecked())
