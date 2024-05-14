@@ -352,7 +352,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 		PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1/pgmodeler-cli").arg(BINDIR), QString("%1/pgmodeler-cli").arg(search_path));
 		PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
-		PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se").arg(BINDIR), QString("%1/pgmodeler-sc").arg(search_path));
+		PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se").arg(BINDIR), QString("%1/pgmodeler-se").arg(search_path));
 
 	#else
 		PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
@@ -364,8 +364,13 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 
 void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 {
+#if !defined(APPIMAGE_BUILD)
 	QFileInfo fi(search_path);
 	GlobalAttributes::setSearchPath(fi.isDir() ? search_path : fi.absolutePath());
+#else
+	#warning "AppImage: hard coding search path to temporary path /tmp/pgmodelerXXXXX!"
+	GlobalAttributes::setSearchPath(getenv("APPDIR"));
+#endif
 
 	if(apply_ui_factor)
 	{
