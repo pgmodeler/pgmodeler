@@ -118,6 +118,10 @@ linux {
 
   # If the AppImage generation option is set
   isEqual(APPIMAGE_BUILD, true):{
+
+	# Set the flag passed to compiler to indicate a appimage build
+	DEFINES+=APPIMAGE_BUILD
+
 	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
 	BINDIR = $$PREFIX
 	PRIVATEBINDIR = $$PREFIX
