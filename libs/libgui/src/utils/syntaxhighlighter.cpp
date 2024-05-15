@@ -179,7 +179,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			// Searching for the opening expression of the current group
 			if(!match_final_exp && matchGroup(group_cfg, text, pos, false, m_info))
 			{
-				f_info = blk_info->getFragmentInfo(m_info.start);
+				f_info = blk_info->getFragmentInfo(m_info.start, m_info.end);
 				pos = m_info.end + 1;
 
 				/* If we don't have a text fragment in the starting position
@@ -287,14 +287,11 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 		return false;
 
 	QTextCharFormat fmt = group_cfg ? group_cfg->format : QTextCharFormat();
-	const FragmentInfo *f_info = nullptr;
 	int end = m_info.end, len = m_info.getLength();
-
-	f_info = blk_info->getFragmentInfo(m_info.start);
 
 	/* No formatting will be applied if we found a formatted
 	 * text fragment in the current postion */
-	if(f_info)
+	if(blk_info->getFragmentInfo(m_info.start, m_info.end))
 		return false;
 
 	/* Forcing the highlighting from the starting position of the matching info to the

@@ -49,9 +49,9 @@ class __libgui TextBlockInfo: public QTextBlockUserData {
 		//! \brief Register a text fragment
 		void addFragmentInfo(const FragmentInfo &f_info);
 
-		/*! \brief Returns a text fragment in which the provided position
-		 * is between the fragment's start and end positions */
-		const FragmentInfo *getFragmentInfo(int pos);
+		/*! \brief Returns a text fragment in which the provided start/end
+		 * positions are between the fragment's start and end positions */
+		const FragmentInfo *getFragmentInfo(int start, int end);
 
 		void setOpenGroup(const QString &grp);
 

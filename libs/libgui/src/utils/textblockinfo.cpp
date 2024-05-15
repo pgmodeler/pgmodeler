@@ -37,11 +37,12 @@ void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
 	frag_infos.append(f_info);
 }
 
-const FragmentInfo *TextBlockInfo::getFragmentInfo(int pos)
+const FragmentInfo *TextBlockInfo::getFragmentInfo(int start, int end)
 {
 	for(auto &f_info : frag_infos)
 	{
-		if(pos >= f_info.getStart() && pos <= f_info.getEnd())
+		if((start >= f_info.getStart() && start <= f_info.getEnd()) ||
+			 (end >= f_info.getStart() && end <= f_info.getEnd()))
 			return &f_info;
 	}
 
