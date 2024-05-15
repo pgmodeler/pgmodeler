@@ -569,9 +569,13 @@ bool SchemaParser::evaluateComparisonExpr()
 					{
 						value += curr_line[column++];
 
-						if(value.at(value.size() - 1) == CharValueDelim)
+						if(value.endsWith(CharValueDelim))
 							break;
 					}
+
+					// If the value is not properly closed by double quotes
+					if(!value.isEmpty() && !value.endsWith(CharValueDelim))
+						error = true;
 				}
 				else
 					error = true;
