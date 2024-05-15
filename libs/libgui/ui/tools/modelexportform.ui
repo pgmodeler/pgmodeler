@@ -1311,6 +1311,11 @@
                   </property>
                   <item>
                    <widget class="QComboBox" name="dict_format_cmb">
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;HTML:&lt;/strong&gt; Creates the data dictionary in Hypertext Markup Language format.
+
+&lt;strong&gt;MD:&lt;/strong&gt; Creates the data dictionary in Markdown format.</string>
+                    </property>
                     <property name="sizeAdjustPolicy">
                      <enum>QComboBox::AdjustToContents</enum>
                     </property>
@@ -1328,6 +1333,11 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="dict_mode_cmb">
+                    <property name="toolTip">
+                     <string>&lt;strong&gt;Standalone:&lt;/strong&gt; pgModeler will generate a single file containing the data dictionaries of all tables in the database model. 
+
+&lt;strong&gt;Split:&lt;/strong&gt; pgModeler will generate a data dictionary file per table of the database model.</string>
+                    </property>
                     <property name="sizeAdjustPolicy">
                      <enum>QComboBox::AdjustToContents</enum>
                     </property>
@@ -1355,7 +1365,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.html&lt;/em&gt; will be saved into the destination folder.</string>
+                     <string>pgModeler will generate an index to help navigate through the data dictionary. If splitted mode is set then a separated file named &lt;em&gt;index.(html|md)&lt;/em&gt; will be saved into the destination folder.</string>
                     </property>
                     <property name="statusTip">
                      <string/>
