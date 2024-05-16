@@ -18,7 +18,7 @@
 
 /**
 \ingroup libcore/pgsqltypes
-\class UserTypeConfig
+\struct UserTypeConfig
 \brief Implements the operations to manipulate user-defined data type configurations (used by PgSqlType).
 **/
 
@@ -34,7 +34,7 @@ class BaseObject;
 	 When the user creates a Type, Sequence, Domain, even a Table,
 	 it can be used as a type on certain configurations so this
 	 class implements a basic structure to control these types */
-class __libcore UserTypeConfig {
+struct __libcore UserTypeConfig {
 	public:
 		enum TypeConf: unsigned {
 			BaseType=1, //! \brief The type refers to a user-defined base type (class Type)
@@ -48,7 +48,7 @@ class __libcore UserTypeConfig {
 			AllUserTypes=63
 		};
 
-		UserTypeConfig(void)
+		UserTypeConfig()
 		{
 			name="";
 			ptype=nullptr;
