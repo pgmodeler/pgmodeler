@@ -29,7 +29,11 @@
 
 class __libcore CheckOptionType: public TemplateType<CheckOptionType>{
 	private:
-		static QStringList type_names;
+		inline static const QStringList type_names {
+			"", // Reserved for Class::Null
+			"cascaded",
+			"local"
+		};
 
 	public:
 		static constexpr unsigned

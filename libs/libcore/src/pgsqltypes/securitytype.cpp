@@ -18,14 +18,6 @@
 
 #include "securitytype.h"
 
-QStringList SecurityType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"SECURITY INVOKER",
-	"SECURITY DEFINER"
-};
-
 SecurityType::SecurityType()
 {
 	type_idx = Invoker;

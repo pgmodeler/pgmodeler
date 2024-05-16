@@ -53,7 +53,7 @@ class __libutils GlobalAttributes {
 		 PGMODELER_SE_PATH  --> Full path to pgmodeler-se executable
 		 PGMODELER_PATH     --> Full path to pgmodeler executable */
 
-		static QString
+		inline static QString
 		SchemasRootPath,
 		LanguagesPath,
 		PluginsPath,
@@ -72,7 +72,7 @@ class __libutils GlobalAttributes {
 		PgModelerBaseVersion;
 
 		//! \brief Stores the custom paths retrieved either from pgmpaths.conf or from environment variables
-		static attribs_map CustomPaths;
+		inline static attribs_map CustomPaths;
 
 		/*! \brief Returns the current value for an environment variable that points to one of the assets/executables.
 		 *  These variables can be defined either in the file pgmpaths.conf (key=value file) or from system's environment variables.
@@ -137,91 +137,113 @@ class __libutils GlobalAttributes {
 		}
 
 	public:
-		static const QString
-		PgModelerAppName,
-		PgModelerOldAppName,
-		PgModelerURI,
-		PgModelerVersion,
-		PgModelerBuildNumber,
-		PgModelerSite,
-		PgModelerSupport,
-		PgModelerSourceURL,
-		PgModelerDownloadURL,
-		PgModelerDonateURL,
-		PgModelerUpdateCheckURL,
+		inline static const QString
+		// The base version number of the tool
+		PgModelerVersion {
+			QString("1.2.0-alpha")
 
-		EnvSchemasPath,
-		EnvConfPath,
-		EnvTmplConfPath,
-		EnvLangPath,
-		EnvPluginsPath,
-		EnvTmpPath,
-		EnvSamplesPath,
-		EnvPgModelerChPath,
-		EnvPgModelerCliPath,
-		EnvPgModelerSePath,
-		EnvPgModelerPath,
+			/* Appending the snapshot build number to the version number
+			 * when the external variable SNAPSHOT_BUILD is defined */
+			#if defined(SNAPSHOT_BUILD)
+				+ QString("_snapshot%1").arg(BUILDDATE)
+			#endif
+		},
 
-		PgmPathsConfFile, //! \brief An ini-like (key=value) file that holds custom values for the pgModeler's enviroment variables
-		BugReportEmail,
-		BugReportFile,
-		StacktraceFile,
-		LastModelFile,
+		/* ATTENTION: The attributes below indicates the default names of configuration
+		 * directories in user's local storage in the current major version as well as
+		 * in the previous major version.
+		 *
+		 * This is used to automatically copy configuration files config from a previous
+		 * version to the new one. More details in Application::createUserConfiguration()
+		 * !!! ALWAYS UPDATE THESE VARIABLES WHEN UPGRADING THE MAJOR VERSION !!! */
+		PgModelerAppName {"pgmodeler-1.2"},
 
-		DbModelExt,
-		DbModelBkpExt,
-		ObjMetadataExt,
-		DirSeparator,
-		ResourcesDir, //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
-		ConfigurationsDir,//! \brief Default name for the configurations directory
-		DefaultConfsDir,  //! \brief Default name for the default configurations directory
-		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
-		SchemasDir,       //! \brief Default name for the schemas directory
-		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
-		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
-		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
-		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas root directory
-		DataDictHtmlDir,//! \brief Default name for the data dictionary schemas directory (HTML format)
-		DataDictMdDir,//! \brief Default name for the dictionary schemas directory (Markdown format)
-		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
-		LanguagesDir,     //! \brief Default name for the translation files directory
-		SamplesDir,       //! \brief Default name for the samples database models directory
-		PluginsDir,       //! \brief Default name for the plug-ins directory
-		SchemaExt,        //! \brief Default extension for schema files
-		ObjectDTDDir,     //! \brief Default directory for dtd files
-		ObjectDTDExt,     //! \brief Default extension for dtd files
-		RootDTD,          //! \brief Root DTD of model xml files
-		MetadataDTD,			//! \brief Root DTD of objects metadata xml files
-		ConfigurationExt, //! \brief Default extension for configuration files
-		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
-		ThemesDir,					 //! \brief Default name for the ui style directory
+		/* In versions 1.0.x and 1.1.x there was no distinction in the configuration directory.
+		 * So, until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
+		 * version configuration directory */
+		PgModelerOldAppName {"pgmodeler-1.0"},
 
-		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
-		AppearanceConf,   //! \brief Default name for the appearance configuration file
-		GeneralConf,         //! \brief Default name for the general pgModeler configuration
-		ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
-		RelationshipsConf,   //! \brief Default name for the relationships configuration file
-		SnippetsConf,        //! \brief Default name for the code snippets configuration file
-		DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
+		PgModelerURI {"pgmodeler.io"},
+		PgModelerBuildNumber { QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM) },
+		PgModelerSite {"https://pgmodeler.io" },
+		PgModelerSupport {"https://pgmodeler.io/support/docs" },
+		PgModelerSourceURL {"https://github.com/pgmodeler/pgmodeler/releases" },
+		PgModelerDownloadURL { PgModelerSite + "/download" },
+		PgModelerDonateURL { PgModelerSite + "/#donationForm" },
+		PgModelerUpdateCheckURL { PgModelerSite + "/checkupdate?version=%1&mode=%2" },
 
-		SQLHighlightConf, //! \brief Configuration file for SQL language highlight
-		XMLHighlightConf, //! \brief Configuration file for XML language highlight
-		SchHighlightConf, //! \brief Configuration file for Schema micro-language highlight
-		PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
-		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
+		EnvSchemasPath {"PGMODELER_SCHEMAS_PATH"},
+		EnvConfPath {"PGMODELER_CONF_PATH"},
+		EnvTmplConfPath {"PGMODELER_TMPL_CONF_PATH"},
+		EnvLangPath {"PGMODELER_LANG_PATH"},
+		EnvPluginsPath {"PGMODELER_PLUGINS_PATH"},
+		EnvTmpPath {"PGMODELER_TMP_PATH"},
+		EnvSamplesPath {"PGMODELER_SAMPLES_PATH"},
+		EnvPgModelerChPath {"PGMODELER_CH_PATH"},
+		EnvPgModelerCliPath {"PGMODELER_CLI_PATH"},
+		EnvPgModelerSePath {"PGMODELER_SE_PATH"},
+		EnvPgModelerPath {"PGMODELER_PATH"},
 
-		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-		UiStyleConf, //! \brief Configuration file ui style
-		IconsMediumConf, //! \brief Extra configuration file that defines medium icons size
-		IconsSmallConf, //! \brief Extra configuration file that defines small icons size
-		IconsBigConf, //! \brief Extra configuration file that defines big icons size
+		PgmPathsConfFile {"pgmpaths"}, //! \brief An ini-like (key=value) file that holds custom values for the pgModeler's enviroment variables
+		BugReportEmail {"bug@pgmodeler.io"},
+		BugReportFile {"pgmodeler%1.bug"},
+		StacktraceFile {".stacktrace"},
+		LastModelFile {"lastmodel"},
 
-		FileDialogConf,		//! \brief Default name for the file used to save/restore QFileDialog last geometry
+		DbModelExt {".dbm"},
+		DbModelBkpExt {".dbk"},
+		ObjMetadataExt {".omf"},
+		DirSeparator {"/"},
+		ResourcesDir {"res"},				 //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
+		ConfigurationsDir {"conf"},	 //! \brief Default name for the configurations directory
+		DefaultConfsDir {"defaults"}, //! \brief Default name for the default configurations directory
+		ConfsBackupsDir {"backups"},  //! \brief Directory name which holds the pgModeler configuration backups
+		SchemasDir {"schemas"},				//! \brief Default name for the schemas directory
+		SQLSchemaDir {"sql"},					//! \brief Default name for the sql schemas directory
+		XMLSchemaDir {"xml"},					//! \brief Default name for the xml schemas directory
+		CatalogSchemasDir {"catalog"}, //! \brief Default name for the catalog schemas directory
+		DataDictSchemaDir {"datadict"}, //! \brief Default name for the data dictionary schemas root directory
+		DataDictHtmlDir {"html"},				//! \brief Default name for the data dictionary schemas directory (HTML format)
+		DataDictMdDir {"md"},						//! \brief Default name for the dictionary schemas directory (Markdown format)
+		AlterSchemaDir {"alter"},				//! \brief Default name for the alter schemas directory
+		LanguagesDir {"lang"},					//! \brief Default name for the translation files directory
+		SamplesDir {"samples"},					//! \brief Default name for the samples database models directory
+		PluginsDir {"plugins"},					//! \brief Default name for the plug-ins directory
+		SchemaExt {".sch"},							//! \brief Default extension for schema files
+		ObjectDTDDir {"dtd"},						//! \brief Default directory for dtd files
+		ObjectDTDExt {".dtd"},					//! \brief Default extension for dtd files
+		RootDTD {"dbmodel"},						//! \brief Root DTD of model xml files
+		MetadataDTD {"metadata"},				//! \brief Root DTD of objects metadata xml files
+		ConfigurationExt {".conf"},			//! \brief Default extension for configuration files
+		HighlightFileSuffix {"-highlight"}, //! \brief Suffix of language highlight configuration files
+		ThemesDir {"themes"},					 //! \brief Default name for the ui style directory
+
+		CodeHighlightConf {"source-code-highlight"}, //! \brief Default name for the language highlight dtd
+		AppearanceConf {"appearance"},			 //! \brief Default name for the appearance configuration file
+		GeneralConf {"general"},						 //! \brief Default name for the general pgModeler configuration
+		ConnectionsConf {"connections"},		 //! \brief Default name for the DBMS connection configuration file
+		RelationshipsConf {"relationships"}, //! \brief Default name for the relationships configuration file
+		SnippetsConf {"snippets"},					 //! \brief Default name for the code snippets configuration file
+		DiffPresetsConf {"diff-presets"},		 //! \brief Default name for the diff presets configuration file
+
+		SQLHighlightConf {"sql-highlight"}, //! \brief Configuration file for SQL language highlight
+		XMLHighlightConf {"xml-highlight"}, //! \brief Configuration file for XML language highlight
+		SchHighlightConf {"sch-highlight"}, //! \brief Configuration file for Schema micro-language highlight
+		PatternHighlightConf {"pattern-highlight"}, //! \brief Configuration file for name patterns highlight (relationship editing form)
+		SQLHistoryConf {"sql-history"}, //! \brief Default name for the SQL commands history configuration file
+
+		ExampleModel {"example.dbm"}, //! \brief Default name for the sample model loaded on appearence configuration form
+		UiStyleConf {"ui-style"},			//! \brief Configuration file ui style
+		IconsMediumConf {"icons-medium"}, //! \brief Extra configuration file that defines medium icons size
+		IconsSmallConf {"icons-small"},		//! \brief Extra configuration file that defines small icons size
+		IconsBigConf {"icons-big"}, //! \brief Extra configuration file that defines big icons size
+
+		FileDialogConf {"filedlg"}, //! \brief Default name for the file used to save/restore QFileDialog last geometry
 
 		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 		the executable using -style option. This same style is applied to crash handler. */
-		DefaultQtStyle,
-		UiStyleOption;
+		DefaultQtStyle {"Fusion"},
+		UiStyleOption {"-style"};
 
 		#ifdef DEMO_VERSION
 			//Maximum object creation counter for demo version

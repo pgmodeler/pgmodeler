@@ -29,7 +29,11 @@
 
 class __libcore DeferralType: public TemplateType<DeferralType>{
 	private:
-		static QStringList type_names;
+		inline static const QStringList type_names {
+			"", // Reserved for Class::Null
+			"INITIALLY IMMEDIATE",
+			"INITIALLY DEFERRED"
+		};
 
 	public:
 		static constexpr unsigned Immediate = 1,

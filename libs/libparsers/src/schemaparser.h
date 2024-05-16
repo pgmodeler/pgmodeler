@@ -44,7 +44,10 @@ class __libparsers SchemaParser {
 		bool ignore_empty_atribs;
 
 		//! \brief RegExp used to validate attribute names
-		static const QRegularExpression AttribRegExp;
+		inline static const QRegularExpression AttribRegExp {
+			 QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+			 QRegularExpression::CaseInsensitiveOption
+		};
 
 		//! \brief Get an attribute name from the buffer on the current position
 		QString getAttribute(bool &found_conv_to_xml);
@@ -154,57 +157,57 @@ class __libparsers SchemaParser {
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
 
 	public:
-		static const QChar CharComment,	//! \brief Character that starts a comment
-		CharLineEnd,	//! \brief Character that indicates end of line
-		CharSpace,		//! \brief Character that indicates spacing
-		CharTabulation,	//! \brief Character that indicates tabulation
-		CharStartAttribute,	//! \brief Character that indicates a reference to an attribute
-		CharEndAttribute,	//! \brief Character that delimits on the right the attribute name
-		CharStartConditional,	//! \brief Character that starts a conditional instruction
-		CharStartMetachar,	//! \brief Character that starts a metacharacter
-		CharStartPlainText,	//! \brief Character that starts a plain text
-		CharEndPlainText,	//! \brief Character that ends a plain text
-		CharStartCompExpr,	//! \brief Character that starts a comparison expression
-		CharEndCompExpr,	//! \brief Character that ends a comparison expression
-		CharValueDelim,	//! \brief Character that delimiters a value (string)
-		CharValueOf,	//! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
-		CharToXmlEntity,	//! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
-		CharStartEscaped; //! \brief Character that is used on escapade special characters, e.g. \# \$ \% #\$ \& \] \[ \{ \}
+		inline static const QChar CharComment {'#'}, //! \brief Character that starts a comment
+		CharLineEnd {'\n'}, //! \brief Character that indicates end of line
+		CharSpace {' '}, //! \brief Character that indicates spacing
+		CharTabulation {'\t'}, //! \brief Character that indicates tabulation
+		CharStartAttribute {'{'}, //! \brief Character that indicates a reference to an attribute
+		CharEndAttribute {'}'}, //! \brief Character that delimits on the right the attribute name
+		CharStartConditional {'%'}, //! \brief Character that starts a conditional instruction
+		CharStartMetachar {'$'}, //! \brief Character that starts a metacharacter
+		CharStartPlainText {'['}, //! \brief Character that starts a plain text
+		CharEndPlainText {']'}, //! \brief Character that ends a plain text
+		CharStartCompExpr {'('}, //! \brief Character that starts a comparison expression
+		CharEndCompExpr {')'}, //! \brief Character that ends a comparison expression
+		CharValueDelim {'"'}, //! \brief Character that delimiters a value (string)
+		CharValueOf {'@'}, //! \brief Character that is used on %set instructions to create an attribute name based upon another attribute value
+		CharToXmlEntity {'&'}, //! \brief Character that is used on attributes, e.g. &{attribute}, to indicate that their content must be converted to xml entities
+		CharStartEscaped {'\\'}; //! \brief Character that is used on escapade special characters, e.g. \# \$ \% #\$ \& \] \[ \{ \}
 
 		//! \brief Tokens related to conditional instructions and operators
-		static const QString	TokenIf,  // %if
-		TokenThen,// %then
-		TokenElse,// %else
-		TokenEnd, // %end
-		TokenOr,  // %or
-		TokenNot, // %not
-		TokenAnd, // %and
-		TokenSet, //%set
-		TokenUnset; //%unset
+		inline static const QString	TokenIf {"if"},
+		TokenThen {"then"},
+		TokenElse {"else"},
+		TokenEnd {"end"},
+		TokenOr {"or"},
+		TokenAnd {"and"},
+		TokenNot {"not"},
+		TokenSet {"set"},
+		TokenUnset {"unset"};
 
 		//! \brief Tokens related to metacharacters
-		static const QString	TokenMetaSp,// $sp (space)
-		TokenMetaBr,// $br (line break)
-		TokenMetaTb,// $tb (tabulation)
-		TokenMetaOb,// $ob (open square bracket '[')
-		TokenMetaCb,// $cb (close square bracket ']')
-		TokenMetaOc,// $oc (open curly bracket '{')
-		TokenMetaCc,// $cc (close curly bracket '}')
-		TokenMetaMs,// $ms (money sign '$')
-		TokenMetaHs,// $hs (hash/number sign '#')
-		TokenMetaPs,// $ps (percentage sign '%')
-		TokenMetaAt,// $at (at character '@')
-		TokenMetaDs,// $ds (special data separator character '•')
-		TokenMetaAm,// $am (ampersand character '&')
-		TokenMetaBs;// $bs (backslash character '\')
+		inline static const QString	TokenMetaSp {"sp"},// $sp (space)
+		TokenMetaBr {"br"}, // $br (line break)
+		TokenMetaTb {"tb"}, // $tb (tabulation)
+		TokenMetaOb {"ob"}, // $ob (open square bracket '[')
+		TokenMetaCb {"cb"}, // $cb (close square bracket ']')
+		TokenMetaOc {"oc"}, // $oc (open curly bracket '{')
+		TokenMetaCc {"cc"}, // $cc (close curly bracket '}')
+		TokenMetaMs {"ms"}, // $ms (money sign '$')
+		TokenMetaHs {"hs"}, // $hs (hash/number sign '#')
+		TokenMetaPs {"ps"}, // $ps (percentage sign '%')
+		TokenMetaAt {"at"}, // $at (at character '@')
+		TokenMetaDs {"ds"}, // $ds (special data separator character '•')
+		TokenMetaAm {"am"}, // $am (ampersand character '&')
+		TokenMetaBs {"bs"}; // $bs (backslash character '\')
 
 		//! \brief Tokens related to comparison expressions
-		static const QString	TokenEqOper,// == (equal)
-		TokenNeOper,// != (not equal)
-		TokenGtOper,// > (greater than)
-		TokenLtOper,// < (less than)
-		TokenGtEqOper,// >= (greater or equal to)
-		TokenLtEqOper;// <= (less or equal to)
+		inline static const QString	TokenEqOper {"=="}, // == (equal)
+		TokenNeOper {"!="}, // != (not equal)
+		TokenGtOper {">"}, // > (greater than)
+		TokenLtOper {"<"}, // < (less than)
+		TokenGtEqOper {">="}, // >= (greater or equal to)
+		TokenLtEqOper {"<="}; // <= (less or equal to)
 
 		//! \brief Constants used to get a specific object definition
 		enum CodeType {

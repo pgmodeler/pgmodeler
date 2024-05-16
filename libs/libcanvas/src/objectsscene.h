@@ -39,19 +39,28 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 			DotPattern
 		};
 
+		//! \brief Stores the default grid line color
+		inline static const QColor DefaultGridColor {225, 225, 225},
+
+		//! \brief Stores the default grid line color
+		DefaultCanvasColor {255, 255, 255},
+
+		//! \brief Stores the default page delimiter lines color
+		DefaultDelimitersColor {75,115,195};
+
 	private:
 		Q_OBJECT
 
-		static GridPattern grid_pattern;
+		inline static GridPattern grid_pattern { ObjectsScene::SquarePattern };
 
 		//! \brief Stores the grid line color
-		static QColor grid_color,
+		inline static QColor grid_color { DefaultGridColor },
 
 		//! \brief Stores the canvas background color
-		canvas_color,
+		canvas_color { DefaultCanvasColor },
 
 		//! \brief Stores the page delimiter lines color
-		delimiters_color;
+		delimiters_color { DefaultDelimitersColor };
 
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
 		QStringList layers,
@@ -66,15 +75,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		//! \brief Holds the tables/views which have selected children objects
 		QList<BaseTableView *> tabs_sel_children;
-
-		//! \brief Indicates if the corner move is enabled for the scene
-		static bool corner_move,
-
-		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
-		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger,
-
-		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene,
@@ -105,24 +105,41 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		int scene_move_dx, scene_move_dy;
 
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
-		static bool align_objs_grid, show_grid, show_page_delim;
+		inline static bool align_objs_grid {false},
+
+		show_grid {true},
+
+		show_page_delim {true},
+
+		//! \brief Indicates if the corner move is enabled for the scene
+		corner_move {true},
+
+		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
+		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
+		invert_rangesel_trigger {false},
+
+		lock_delim_scale {false};
 
 		//! \brief Scene grid size
-		static unsigned grid_size,
+		inline static unsigned grid_size {20},
 
 		//! \brief The number of pages in which the scene rect is expanded
-		expansion_factor;
+		expansion_factor {2};
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
-		static QPageLayout page_layout;
+		inline static QPageLayout page_layout {
+			QPageSize(QPageSize::A4),
+			QPageLayout::Landscape,
+			QMarginsF(10,10,10,10)
+		};
 
-		static double delimiter_scale;
+		inline static double delimiter_scale {1},
 
 		//! \brief The minimum scene width is defined to be width of the current page layout * 2
-		static double min_scene_width,
+		min_scene_width { page_layout.paintRect().width() },
 
 		//! \brief The minimum scene height is defined to be height of the current page layout * 2
-		min_scene_height;
+		min_scene_height { page_layout.paintRect().height() };
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,
@@ -216,15 +233,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		MaxScaleFactor = 5.000001;
 
 		static constexpr unsigned DefaultLayer = 0;
-
-		//! \brief Stores the default grid line color
-		static const QColor DefaultGridColor,
-
-		//! \brief Stores the default grid line color
-		DefaultCanvasColor,
-
-		//! \brief Stores the default page delimiter lines color
-		DefaultDelimitersColor;
 
 		ObjectsScene();
 

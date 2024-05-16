@@ -50,11 +50,11 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		static int ToolsActionsCount;
+		inline static int ToolsActionsCount {0};
 
 		static constexpr int InfinityInterval = INT_MAX;
 
-		static bool confirm_validation;
+		inline static bool confirm_validation {true};
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
 		enum PendingOpId: unsigned {

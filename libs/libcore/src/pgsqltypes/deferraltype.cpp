@@ -18,14 +18,6 @@
 
 #include "deferraltype.h"
 
-QStringList DeferralType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"INITIALLY IMMEDIATE",
-	"INITIALLY DEFERRED"
-};
-
 DeferralType::DeferralType(const QString &type_name)
 {
 	setType(type_name);

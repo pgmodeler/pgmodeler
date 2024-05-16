@@ -18,8 +18,6 @@
 
 #include "tag.h"
 
-unsigned Tag::tag_id=4000;
-
 Tag::Tag()
 {
 	obj_type=ObjectType::Tag;

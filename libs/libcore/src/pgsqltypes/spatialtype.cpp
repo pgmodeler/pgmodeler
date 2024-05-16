@@ -18,20 +18,6 @@
 
 #include "spatialtype.h"
 
-QStringList SpatialType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"POINT",	"LINESTRING",
-	"POLYGON",	"MULTIPOINT",
-	"MULTILINESTRING",	"MULTIPOLYGON",
-	"GEOMETRY",	"GEOMETRYCOLLECTION",
-	"POLYHEDRALSURFACE",	"TRIANGLE",
-	"TIN",	"CIRCULARSTRING",
-	"COMPOUNDCURVE",	"CURVEPOLYGON",
-	"MULTICURVE",	"MULTISURFACE",
-};
-
 SpatialType::SpatialType(const QString &type_name, int srid, VariationId variation_id)
 {
 	QString name=type_name;

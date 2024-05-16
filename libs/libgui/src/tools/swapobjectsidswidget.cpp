@@ -1,8 +1,6 @@
 #include "swapobjectsidswidget.h"
 #include "guiutilsns.h"
 
-const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
-
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 	std::vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Permission,

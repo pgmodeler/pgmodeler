@@ -20,67 +20,6 @@
 #include "attributes.h"
 #include "../baseobject.h"
 
-std::vector<UserTypeConfig> PgSqlType::user_types;
-
-QStringList PgSqlType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	//Types used by the class PgSQLType
-	//offsets 1 to 63
-	//Note: the type char is different from "char" (with quotes)
-	//Reference: http://www.postgresql.org/docs/9.2/static/datatype-character.html
-
-	"smallint", "integer", "bigint", "decimal", "numeric",
-	"real", "double precision", "float", "serial", "bigserial", "money",
-	"character varying", "varchar", "character",  "char", "\"char\"",
-	"text", "bytea",
-	"timestamp", "date", "time","timetz","timestamptz",
-	"interval", "boolean", "bool",
-	"point", "line", "lseg", "box", "path",
-	"polygon", "circle", "cidr", "inet",
-	"macaddr", "macaddr8", "bit", "bit varying", "varbit", "uuid", "xml", "json", "jsonb",
-	"smallserial", "int2vector", "int2", "int4", "int8", "float4", "float8",
-	"bpchar", "name", "abstime", "aclitem", "gtsvector", "refcursor",
-	"reltime", "tinterval", "tsquery", "tsvector", "txid_snapshot", "pg_lsn",
-
-	//Spatial type specifics for the PostGiS extension
-	//offsets 64 to 82
-	"box2d","box3d","box2df","box3df",
-	"geometry", "geometry_dump","geography",
-	"geomval", "addbandarg", "rastbandarg",
-	"raster", "reclassarg",  "unionarg",
-	"\"TopoGeometry\"",
-	"getfaceedges_returntype",
-	"validatetopology_returntype",
-	"gidx", "spheroid", "valid_detail",
-
-	//Range-types
-	//offsets 83 to 93
-	"int4range", "int8range", "numrange",
-	"tsrange","tstzrange","daterange",
-	"int4multirange","int8multirange",
-	"nummultirange", "tsmultirange",
-	"tstzmultirange",
-
-	//Object Identification type (OID)
-	//offsets 94 to 108
-	"oid", "regproc", "regprocedure",
-	"regoper", "regoperator", "regclass",
-	"regrole", "regnamespace", "regtype",
-	"regconfig", "regdictionary", "xid", "cid",
-	"tid", "oidvector",
-
-	//Pseudo-types
-	//offsets 109 to 133
-	"\"any\"", "anyelement", "anyarray", "anynonarray", "anyenum",
-	"anyrange", "anymultirange", "anycompatible", "anycompatiblearray",
-	"anycompatiblenonarray", "anycompatiblerange", "anycompatiblemultirange",
-	"cstring", "internal", "language_handler", "fdw_handler", "table_am_handler",
-	"index_am_handler", "tsm_handler", "record", "trigger", "event_trigger",
-	"pg_ddl_command", "void", "unknown"
-};
-
 PgSqlType::PgSqlType()
 {
 	type_idx = type_names.indexOf("smallint");

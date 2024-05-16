@@ -33,7 +33,7 @@ all widgets in the application.
 
 class __libutils CustomUiStyle : public QProxyStyle {
 	private:
-		static QMap<PixelMetric, int> pixel_metrics;
+		inline static QMap<PixelMetric, int> pixel_metrics;
 
 	public:
 		CustomUiStyle();

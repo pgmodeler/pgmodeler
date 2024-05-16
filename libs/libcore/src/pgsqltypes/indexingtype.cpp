@@ -18,18 +18,6 @@
 
 #include "indexingtype.h"
 
-QStringList IndexingType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"btree",
-	"gist",
-	"hash",
-	"gin",
-	"spgist",
-	"brin"
-};
-
 IndexingType::IndexingType(unsigned type_id)
 {
 	setType(type_id);

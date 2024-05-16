@@ -42,7 +42,7 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
-		static bool low_verbosity;
+		inline static bool low_verbosity {false};
 
 		//! \brief Stores the scene size increment when setting imported objects position (see setObjectPosition());
 		double scene_size_incr;

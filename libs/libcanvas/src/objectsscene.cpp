@@ -24,31 +24,6 @@
 #include "schemaview.h"
 #include "databasemodel.h"
 
-ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
-unsigned ObjectsScene::expansion_factor = 2;
-
-bool ObjectsScene::align_objs_grid=false;
-bool ObjectsScene::show_grid=true;
-bool ObjectsScene::show_page_delim=true;
-bool ObjectsScene::lock_delim_scale = false;
-unsigned ObjectsScene::grid_size=20;
-double ObjectsScene::delimiter_scale = 1;
-
-QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
-double ObjectsScene::min_scene_width = ObjectsScene::page_layout.paintRect().width();
-double ObjectsScene::min_scene_height = ObjectsScene::page_layout.paintRect().height();
-
-const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
-const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
-const QColor ObjectsScene::DefaultDelimitersColor(75,115,195);
-
-QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
-QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
-QColor ObjectsScene::delimiters_color = ObjectsScene::DefaultDelimitersColor;
-
-bool ObjectsScene::corner_move=true;
-bool ObjectsScene::invert_rangesel_trigger=false;
-
 ObjectsScene::ObjectsScene()
 {		
 	is_layer_rects_visible=is_layer_names_visible=false;

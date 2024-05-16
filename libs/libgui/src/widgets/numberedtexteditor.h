@@ -37,23 +37,23 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		Q_OBJECT
 
 		//! \brief Controls if line numbers must be visible or not
-		static bool line_nums_visible,
+		inline static bool line_nums_visible {true},
 
 		//! \brief Controls if current line must be highlighted
-		highlight_lines;
+		highlight_lines {true};
 
 		//! \brief Line highlight color
-		static QColor line_hl_color;
+		inline static QColor line_hl_color { Qt::yellow };
 
 		//! \brief Default font for texts
-		static QFont default_font;
+		inline static QFont default_font {"Source Code Pro", 12};
 
 		//! \brief Default tab size for texts
-		static double tab_width;
+		inline static double tab_width {0};
 
-		static QString src_editor_app;
+		inline static QString src_editor_app;
 
-		static QString src_editor_app_args;
+		inline static QString src_editor_app_args;
 
 		//! \brief Widget used to expose document line numbers
 		LineNumbersWidget *line_number_wgt;

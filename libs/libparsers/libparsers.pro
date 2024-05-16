@@ -17,8 +17,7 @@ src/attributes.h
 SOURCES += src/schemaparser.cpp \
 src/csvdocument.cpp \
 src/csvparser.cpp \
-src/xmlparser.cpp \
-src/attributes.cpp
+src/xmlparser.cpp
 
 unix|windows: LIBS += $$LIBUTILS_LIB $$XML_LIB
 

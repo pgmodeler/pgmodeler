@@ -23,29 +23,6 @@
 #include "utils/htmlitemdelegate.h"
 #include "utils/textblockinfo.h"
 
-const QStringList CodeCompletionWidget::dml_keywords = {
-	/* ATTENTION: the keywords in this list MUST have a counter part in
-	 * DmlKeywordId. Also, the list MUST follow the same item order
-	 * in DmlKeywordId.
-	 *
-	 * Insert here the keywords that need have their position determined
-	 * in order to call retriveColumnNames() and retrieveObjectsName().
-	 * New keywords here need a new entry in DmlKeywordId enum */
-	"select", "insert", "update", "delete",
-	"truncate", "alter", "drop", "from",
-	"join",	"into", "as", "set", "table",
-	"only", "where",
-
-	/* Insert new keywords after this point if their position in the SQL command
-	 * is not important but if they are need to do some extra checkings */
-	"inner", "outer", "left", "right",
-	"full", "union", "intersect",
-	"except","distinct", "values",
-	"all"
-};
-
-const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
-
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)

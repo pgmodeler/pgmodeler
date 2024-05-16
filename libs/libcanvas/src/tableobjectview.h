@@ -35,7 +35,7 @@ class __libcanvas TableObjectView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
-		static bool hide_sch_name_usr_type;
+		inline static bool hide_sch_name_usr_type {false};
 
 		//! \brief Table object descriptor
 		QGraphicsItem *descriptor;
@@ -63,16 +63,16 @@ class __libcanvas TableObjectView: public BaseObjectView {
 		QString formatUserTypeName(PgSqlType type);
 
 	public:
-		static const QString	ConstrDelimEnd,
-		ConstrDelimStart,
-		TypeSeparator,
-		ConstrSeparator,
-		TextForeignKey,
-		TextNotNull,
-		TextPrimaryKey,
-		TextUnique,
-		TextCheck,
-		TextExclude;
+		inline static const QString	TypeSeparator {" "},
+		ConstrSeparator {" "},
+		TextUnique {"uq"},
+		TextExclude {"ex"},
+		TextCheck {"ck"},
+		TextPrimaryKey {"pk"},
+		TextForeignKey {"fk"},
+		TextNotNull {"nn"},
+		ConstrDelimStart {"«"},
+		ConstrDelimEnd {"»"};
 
 		enum ChildObjectId: unsigned {
 			ObjDescriptor,

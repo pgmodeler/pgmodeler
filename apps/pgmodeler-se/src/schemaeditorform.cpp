@@ -28,8 +28,6 @@
 #include "utilsns.h"
 #include "qtconnectmacros.h"
 
-const QString SchemaEditorForm::UntitledFile = QT_TR_NOOP("(untitled)");
-
 SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 {
 	QToolButton *btn = nullptr;

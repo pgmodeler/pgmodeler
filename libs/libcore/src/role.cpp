@@ -18,8 +18,6 @@
 
 #include "role.h"
 
-unsigned Role::role_id=0;
-
 Role::Role()
 {
 	obj_type=ObjectType::Role;

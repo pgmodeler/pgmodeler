@@ -28,9 +28,6 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-std::map<QString, attribs_map> GeneralConfigWidget::config_params;
-std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
-
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	std::vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,

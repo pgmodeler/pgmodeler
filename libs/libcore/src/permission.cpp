@@ -20,8 +20,6 @@
 #include "column.h"
 #include "utilsns.h"
 
-const QString Permission::priv_codes("rawdDxtCcTXU");
-
 Permission::Permission(BaseObject *obj)
 {
 	unsigned priv_id;

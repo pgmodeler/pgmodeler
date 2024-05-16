@@ -18,15 +18,6 @@
 
 #include "partitioningtype.h"
 
-QStringList PartitioningType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"RANGE",
-	"LIST",
-	"HASH"
-};
-
 PartitioningType::PartitioningType()
 {
 	type_idx = Range;

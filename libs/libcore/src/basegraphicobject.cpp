@@ -18,8 +18,6 @@
 
 #include "basegraphicobject.h"
 
-bool BaseGraphicObject::updates_enabled = true;
-
 BaseGraphicObject::BaseGraphicObject()
 {
 	is_modified=true;
