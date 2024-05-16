@@ -21,9 +21,9 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 
-std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
+//std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegularExpression SnippetsConfigWidget::IdFormatRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"), QRegularExpression::CaseInsensitiveOption);
+//const QRegularExpression SnippetsConfigWidget::IdFormatRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"), QRegularExpression::CaseInsensitiveOption);
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {

@@ -18,7 +18,7 @@
 
 #include "basegraphicobject.h"
 
-bool BaseGraphicObject::updates_enabled = true;
+//bool BaseGraphicObject::updates_enabled = true;
 
 BaseGraphicObject::BaseGraphicObject()
 {

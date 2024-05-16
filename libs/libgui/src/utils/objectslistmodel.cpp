@@ -24,15 +24,15 @@
 #include "permission.h"
 #include "baserelationship.h"
 
-const QStringList ObjectsListModel::HeaderTexts = {
+/*const QStringList ObjectsListModel::HeaderTexts = {
 		QT_TR_NOOP("Object"), QT_TR_NOOP("Type"), QT_TR_NOOP("ID"),
 		QT_TR_NOOP("Parent"), QT_TR_NOOP("Parent type")
-};
+};*/
 
-const QStringList ObjectsListModel::HeaderIcons = {
+/* const QStringList ObjectsListModel::HeaderIcons = {
 		"objects", "usertype", "typeoid",
 		"schema", "usertype", "attribute"
-};
+}; */
 
 ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {

@@ -23,7 +23,7 @@
 #include "connection.h"
 #include "pgsqlversions.h"
 
-const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
+/* const QStringList ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 
 const QStringList ModelsDiffHelper::ObjectsIgnoredAttribs = {
 	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
@@ -37,7 +37,7 @@ const QStringList ModelsDiffHelper::ObjectsIgnoredTags = {
 
 const QStringList ModelsDiffHelper::RolesIgnoredTags = {
 	Attributes::AppendedSql,	Attributes::PrependedSql
-};
+}; */
 
 ModelsDiffHelper::ModelsDiffHelper()
 {

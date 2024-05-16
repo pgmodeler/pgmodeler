@@ -18,7 +18,7 @@
 
 #include "customuistyle.h"
 
-QMap<QStyle::PixelMetric, int> CustomUiStyle::pixel_metrics;
+//QMap<QStyle::PixelMetric, int> CustomUiStyle::pixel_metrics;
 
 CustomUiStyle::CustomUiStyle() : QProxyStyle()
 {

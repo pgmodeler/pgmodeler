@@ -24,10 +24,10 @@
 #include "csvdocument.h"
 #include "messagebox.h"
 
-std::map<QString, QString> SQLExecutionWidget::cmd_history;
+//std::map<QString, QString> SQLExecutionWidget::cmd_history;
 
-int SQLExecutionWidget::cmd_history_max_len = 1000;
-const QString SQLExecutionWidget::ColumnNullValue("␀");
+//int SQLExecutionWidget::cmd_history_max_len = 1000;
+//const QString SQLExecutionWidget::ColumnNullValue("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {

@@ -20,9 +20,9 @@
 #include "schema.h"
 #include "utilsns.h"
 
-bool BaseTableView::hide_ext_attribs = false;
+/* bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
-unsigned BaseTableView::attribs_per_page[2] = { 10, 5 };
+unsigned BaseTableView::attribs_per_page[2] = { 10, 5 }; */
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {

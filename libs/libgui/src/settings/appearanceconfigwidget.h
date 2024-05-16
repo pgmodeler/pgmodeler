@@ -41,10 +41,10 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		/*! \brief This palette instance holds the current system palette. It is used
 		 * to detect if the system uses dark or light theme and helps pgModeler to
 		 * determine the proper colors when user used System default theme setting */
-		static QPalette system_pal;
+		inline static QPalette system_pal {};
 		
 		//! \brief Holds the currently loaded config params
-		static std::map<QString, attribs_map> config_params;
+		inline static std::map<QString, attribs_map> config_params {};
 
 		/*! \brief Holds the QPalette settings that defines dark theme.
 		 * This map key is a color role which value is a string list that
@@ -66,7 +66,7 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		light_tab_item_colors;
 
 		//! \brief Holds the current user interface theme id (light/dark)
-		static QString UiThemeId;
+		inline static QString UiThemeId {};
 
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {

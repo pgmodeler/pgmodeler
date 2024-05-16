@@ -21,13 +21,13 @@
 #include "attributes.h"
 #include "settings/appearanceconfigwidget.h"
 
-const QString ModelFixForm::PgModelerCli(
+/*const QString ModelFixForm::PgModelerCli(
 #ifdef Q_OS_WIN
 	"pgmodeler-cli.exe"
 #else
 	"pgmodeler-cli"
 #endif
-);
+);*/
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

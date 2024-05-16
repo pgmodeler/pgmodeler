@@ -3,7 +3,7 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 
-QPalette SourceEditorWidget::def_editor_pal;
+//QPalette SourceEditorWidget::def_editor_pal;
 
 attribs_map SourceEditorWidget::snippets = {
 	{"ifend", "%if {} %then\n\n%end\n"},

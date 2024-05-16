@@ -54,22 +54,38 @@ class __libconnector Catalog {
 	private:
 		SchemaParser schparser;
 
-		static const QString QueryList,	//! \brief Executes a list command on catalog
-		QueryAttribs, //! \brief Executes a attribute retrieving command on catalog
-		PgSqlTrue, //! \brief Replacement for true 't' boolean value
-		PgSqlFalse, //! \brief Replacement for false 'f' boolean value
-		BoolField,     //! \brief Suffix for boolean fields.
+		//! \brief Executes a list command on catalog
+		inline static const QString QueryList {"list"},
 
-		//! \brief Query used to retrieve extension objects.
-		GetExtensionObjsSql,
+		//! \brief Executes a attribute retrieving command on catalog
+		QueryAttribs {"attribs"},
+
+		//! \brief Replacement for true 't' boolean value
+		PgSqlTrue {"t"},
+
+		//! \brief Replacement for false 'f' boolean value
+		PgSqlFalse {"f"},
+
+		//! \brief Suffix for boolean fields.
+		BoolField {"_bool"},
+
+		/*! \brief Query used to retrieve extension objects.
+		 * This query retrieve all extension child object except for data types because
+		 * they are handled in extension catalog query */
+		GetExtensionObjsSql {
+			"SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
+			 LEFT JOIN pg_extension AS e ON e.oid = d.refobjid \
+			 WHERE objid > 0 AND refobjid > 0 AND deptype='e' AND classid::regclass::text != 'pg_type'\
+			 ORDER BY extname;"
+		},
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		ArrayPattern,
+		ArrayPattern {"((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$"},
 
 		//! \brief Holds a constant string used to mark invalid filter patterns
-		InvFilterPattern,
+		InvFilterPattern {"__invalid__pattern__"},
 
-		AliasPlaceholder;
+		AliasPlaceholder{"$alias$"};
 
 		/*! \brief Stores the oid of objects that are created by extension.
 		 * The keys of this map are the names of the extensions that hold objects in the database,
@@ -110,7 +126,7 @@ class __libconnector Catalog {
 		parent_aliases;
 
 		//! \brief Store the cached catalog queries
-		static attribs_map catalog_queries;
+		inline static attribs_map catalog_queries {};
 
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
@@ -173,17 +189,17 @@ class __libconnector Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj;
+		inline static const QString PgModelerTempDbObj {"__pgmodeler_tmp"},
 
 		//! \brief Stores the null char escaped in format \000
-		static const QString EscapedNullChar;		
+		EscapedNullChar {"\\000"};
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
 		/*! \brief Closes the connection used by the catalog.
-	Once this method is called the user must call setConnection() again or the
-	catalog queries will fail */
+		 * Once this method is called the user must call setConnection() again or the
+		 * catalog queries will fail */
 		void closeConnection();
 
 		bool isConnectionValid();

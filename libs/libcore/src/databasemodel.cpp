@@ -24,7 +24,7 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
-unsigned DatabaseModel::dbmodel_id=2000;
+//unsigned DatabaseModel::dbmodel_id=2000;
 
 DatabaseModel::DatabaseModel()
 {

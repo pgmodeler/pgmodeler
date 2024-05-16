@@ -21,7 +21,7 @@
 #include "guiutilsns.h"
 #include "qtconnectmacros.h"
 
-const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
+//const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {

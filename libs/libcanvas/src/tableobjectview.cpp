@@ -25,8 +25,8 @@
 #include "physicaltable.h"
 #include "utilsns.h"
 
-bool TableObjectView::hide_sch_name_usr_type = false;
-const QString TableObjectView::TypeSeparator(" ");
+//bool TableObjectView::hide_sch_name_usr_type = false;
+/*const QString TableObjectView::TypeSeparator(" ");
 const QString TableObjectView::ConstrSeparator(" ");
 const QString TableObjectView::TextUnique("uq");
 const QString TableObjectView::TextExclude("ex");
@@ -35,7 +35,7 @@ const QString TableObjectView::TextPrimaryKey("pk");
 const QString TableObjectView::TextForeignKey("fk");
 const QString TableObjectView::TextNotNull("nn");
 const QString TableObjectView::ConstrDelimStart("«");
-const QString TableObjectView::ConstrDelimEnd("»");
+const QString TableObjectView::ConstrDelimEnd("»");*/
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {

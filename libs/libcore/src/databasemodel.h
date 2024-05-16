@@ -100,7 +100,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * to return the created object */
 		std::map<ObjectType, std::function<void(BaseObject *, int)>> remove_methods;
 
-		static unsigned dbmodel_id;
+		inline static unsigned dbmodel_id {2000};
 
 		XmlParser xmlparser;
 

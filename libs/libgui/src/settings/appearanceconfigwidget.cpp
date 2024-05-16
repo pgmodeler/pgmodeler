@@ -26,11 +26,11 @@
 #include "styledtextboxview.h"
 #include "graphicalview.h"
 
-std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
+//std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 
-QPalette AppearanceConfigWidget::system_pal;
+//QPalette AppearanceConfigWidget::system_pal;
 
-QString AppearanceConfigWidget::UiThemeId;
+//QString AppearanceConfigWidget::UiThemeId;
 
 std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
 	{ QPalette::WindowText, {} },

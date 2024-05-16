@@ -21,12 +21,12 @@
 #include "objectsscene.h"
 #include "utilsns.h"
 
-std::map<QString, QTextCharFormat> BaseObjectView::font_config;
-std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
-unsigned BaseObjectView::global_sel_order=1;
-bool BaseObjectView::use_placeholder=true;
-bool BaseObjectView::compact_view=false;
-bool BaseObjectView::hide_shadow=false;
+//std::map<QString, QTextCharFormat> BaseObjectView::font_config;
+//std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
+//unsigned BaseObjectView::global_sel_order=1;
+//bool BaseObjectView::use_placeholder=true;
+//bool BaseObjectView::compact_view=false;
+//bool BaseObjectView::hide_shadow=false;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {

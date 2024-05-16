@@ -34,9 +34,9 @@ class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
 	private:
 		Q_OBJECT
 
-		static int max_display_len;
+		inline static int max_display_len {500};
 
-		static bool txt_editor_enabled;
+		inline static bool txt_editor_enabled {true};
 
 		bool read_only;
 

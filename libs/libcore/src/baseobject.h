@@ -35,6 +35,7 @@
 #include <type_traits>
 #include "enumtype.h"
 #include "exception.h"
+#include "pgsqlversions.h"
 
 enum class ObjectType: unsigned {
 	Column,
@@ -89,15 +90,15 @@ Q_DECLARE_METATYPE(ObjectType)
 class __libcore BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation
-		static QString pgsql_ver;
+		inline static QString pgsql_ver { PgSqlVersions::DefaulVersion };
 
-		static bool escape_comments;
+		inline static bool escape_comments {true},
 
 		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
-		static bool clear_deps_in_dtor;
+		clear_deps_in_dtor {true};
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
-		static const QByteArray special_chars;
+		inline static const QByteArray special_chars {"'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;"};
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
@@ -118,19 +119,25 @@ class __libcore BaseObject {
 
 		/*! \brief Indicates if the PostgreSQL version checking must be ignored during code generation.
 		 * This flag allows generating code (poorly!) for older versions ( < 10). */
-		static bool ignore_db_version;
+		inline static bool ignore_db_version {false};
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
-		 As object instances are created this value ​​are incremented. In some classes
-		 like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
-		 used each with a custom different numbering range (see cited classes declaration). */
-		static unsigned global_id;
+		 * As object instances are created this value is incremented. In some classes
+		 * like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
+		 * used each with a custom different numbering range.
+		 *
+		 * Initializes the global id which is shared between instances
+		 * of classes derived from the this class. The value of global_id
+		 * starts at 5k because the id ranges 0, 1k, 2k, 3k, 4k
+		 * are respectively assigned to objects of classes Role, Tablespace
+		 * DatabaseModel, Schema, Tag */
+		inline static unsigned global_id {5000};
 
 		/*! \brief Stores the unique identifier for the object. This id is nothing else
-		 than the current value of global_id. This identifier is used
-		 to know the chronological order of the creation of each object in the model
-		 because the generation and reading of the XML code is completely tied to the order
-		 in which the objects were created */
+		 * than the current value of global_id. This identifier is used
+		 * to know the chronological order of the creation of each object in the model
+		 * because the generation and reading of the XML code is completely tied to the order
+		 * in which the objects were created */
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType

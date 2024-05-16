@@ -39,7 +39,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		static attribs_map snippets;
 
-		static QPalette def_editor_pal;
+		inline static QPalette def_editor_pal;
 
 		CodeCompletionWidget *code_compl_wgt;
 

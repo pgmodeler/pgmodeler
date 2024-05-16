@@ -21,11 +21,11 @@
 #include "tablespace.h"
 #include <QApplication>
 
-const QString Relationship::SuffixSeparator("_");
+/* const QString Relationship::SuffixSeparator("_");
 const QString Relationship::SrcTabToken("{st}");
 const QString Relationship::DstTabToken("{dt}");
 const QString Relationship::GenTabToken("{gt}");
-const QString Relationship::SrcColToken("{sc}");
+const QString Relationship::SrcColToken("{sc}"); */
 
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {

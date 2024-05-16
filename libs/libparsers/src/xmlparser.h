@@ -36,10 +36,11 @@
 
 class __libparsers XmlParser {
 	private:
-		/*! \brief This global counter holds the number of parsers instances created on the application. This is done to control
-		 * when to call xmlInitParser() and xmlCleanupParser() as these functions need to be called only once in the application.
+		/*! \brief This global counter holds the number of parsers instances created
+		 * on the application. This is done to control when to call xmlInitParser() and
+		 * xmlCleanupParser() as these functions need to be called only once in the application.
 		 * Reference: http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser */
-		static int parser_instances;
+		inline static int parser_instances {0};
 
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */

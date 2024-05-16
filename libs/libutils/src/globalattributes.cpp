@@ -32,25 +32,25 @@
  *
  * !!! ALWAYS UPDATE THESE VARIABLES WHEN UPGRADING THE MAJOR VERSION !!!
  */
-const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.2");
+//const QString GlobalAttributes::PgModelerAppName("pgmodeler-1.2");
 
 /* In versions 1.0.x and 1.1.x there was no distinction in the configuration directory.
  * So, until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
  * version configuration directory */
-const QString GlobalAttributes::PgModelerOldAppName("pgmodeler-1.0");
+//const QString GlobalAttributes::PgModelerOldAppName("pgmodeler-1.0");
 
 // The base version number of the tool
-const QString GlobalAttributes::PgModelerVersion = QString("1.2.0-alpha")
+//const QString GlobalAttributes::PgModelerVersion = QString("1.2.0-alpha")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
-#if defined(SNAPSHOT_BUILD)
-	+ QString("_snapshot%1").arg(BUILDDATE)
-#endif
-;
+//#if defined(SNAPSHOT_BUILD)
+//	+ QString("_snapshot%1").arg(BUILDDATE)
+//#endif
+//;
 /****/
 
-const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
+/*const QString GlobalAttributes::PgModelerBuildNumber(QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM));
 const QString GlobalAttributes::PgModelerURI("pgmodeler.io");
 const QString GlobalAttributes::PgModelerSite("https://pgmodeler.io");
 const QString GlobalAttributes::PgModelerSupport("https://pgmodeler.io/support/docs");
@@ -62,9 +62,9 @@ const QString GlobalAttributes::BugReportEmail("bug@pgmodeler.io");
 const QString GlobalAttributes::BugReportFile("pgmodeler%1.bug");
 const QString GlobalAttributes::StacktraceFile(".stacktrace");
 const QString GlobalAttributes::LastModelFile("lastmodel");
-const QString GlobalAttributes::PgmPathsConfFile("pgmpaths");
+const QString GlobalAttributes::PgmPathsConfFile("pgmpaths");*/
 
-const QString GlobalAttributes::EnvSchemasPath("PGMODELER_SCHEMAS_PATH");
+/*const QString GlobalAttributes::EnvSchemasPath("PGMODELER_SCHEMAS_PATH");
 const QString GlobalAttributes::EnvConfPath("PGMODELER_CONF_PATH");
 const QString GlobalAttributes::EnvTmplConfPath("PGMODELER_TMPL_CONF_PATH");
 const QString GlobalAttributes::EnvLangPath("PGMODELER_LANG_PATH");
@@ -74,9 +74,9 @@ const QString GlobalAttributes::EnvSamplesPath("PGMODELER_SAMPLES_PATH");
 const QString GlobalAttributes::EnvPgModelerChPath("PGMODELER_CH_PATH");
 const QString GlobalAttributes::EnvPgModelerCliPath("PGMODELER_CLI_PATH");
 const QString GlobalAttributes::EnvPgModelerSePath("PGMODELER_SE_PATH");
-const QString GlobalAttributes::EnvPgModelerPath("PGMODELER_PATH");
+const QString GlobalAttributes::EnvPgModelerPath("PGMODELER_PATH");*/
 
-const QString GlobalAttributes::DbModelExt(".dbm");
+/*const QString GlobalAttributes::DbModelExt(".dbm");
 const QString GlobalAttributes::DbModelBkpExt(".dbk");
 const QString GlobalAttributes::ObjMetadataExt(".omf");
 const QString GlobalAttributes::DirSeparator("/");
@@ -127,9 +127,9 @@ const QString GlobalAttributes::IconsBigConf("icons-big");
 const QString GlobalAttributes::FileDialogConf("filedlg");
 
 const QString GlobalAttributes::DefaultQtStyle("Fusion");
-const QString GlobalAttributes::UiStyleOption("-style");
+const QString GlobalAttributes::UiStyleOption("-style"); */
 
-QString GlobalAttributes::SchemasRootPath;
+/*QString GlobalAttributes::SchemasRootPath;
 QString GlobalAttributes::LanguagesPath;
 QString GlobalAttributes::SamplesPath;
 QString GlobalAttributes::TmplConfigurationPath;
@@ -144,9 +144,9 @@ QString GlobalAttributes::PgModelerCLIPath;
 QString GlobalAttributes::PgModelerAppPath;
 QString GlobalAttributes::PgModelerCHandlerPath;
 QString GlobalAttributes::PgModelerSchemaEditorPath;
-QString GlobalAttributes::PgModelerBaseVersion;
+QString GlobalAttributes::PgModelerBaseVersion;*/
 
-attribs_map GlobalAttributes::CustomPaths;
+//attribs_map GlobalAttributes::CustomPaths;
 
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {

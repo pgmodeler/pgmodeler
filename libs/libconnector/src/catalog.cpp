@@ -19,7 +19,7 @@
 #include "utilsns.h"
 #include "tableobject.h"
 
-const QString Catalog::QueryList("list");
+/*const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
 const QString Catalog::PgSqlTrue("t");
 const QString Catalog::PgSqlFalse("f");
@@ -28,15 +28,15 @@ const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
 const QString Catalog::AliasPlaceholder("$alias$");
-const QString Catalog::EscapedNullChar("\\000");
+const QString Catalog::EscapedNullChar("\\000"); */
 
 /* This query retrieve all extension child object except for data types because
  * they are handled in extension catalog query */
-const QString Catalog::GetExtensionObjsSql("SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
+/* const QString Catalog::GetExtensionObjsSql("SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
 																					 LEFT JOIN pg_extension AS e ON e.oid = d.refobjid \
 																					 WHERE objid > 0 AND refobjid > 0 AND deptype='e' AND classid::regclass::text != 'pg_type'\
-																					 ORDER BY extname;");
-attribs_map Catalog::catalog_queries;
+																					 ORDER BY extname;"); */
+//attribs_map Catalog::catalog_queries;
 
 std::map<ObjectType, QString> Catalog::oid_fields=
 { {ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},

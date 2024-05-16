@@ -33,7 +33,13 @@ class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
 		Q_OBJECT
 
-		static const QString PgModelerCli;
+		inline static const QString PgModelerCli {
+			#ifdef Q_OS_WIN
+				"pgmodeler-cli.exe"
+			#else
+				"pgmodeler-cli"
+			#endif
+		};
 
 		//! \brief Process used to execute pgmodeler-cli
 		QProcess pgmodeler_cli_proc;

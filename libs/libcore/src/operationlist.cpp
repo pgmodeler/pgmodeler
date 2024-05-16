@@ -19,7 +19,7 @@
 #include "operationlist.h"
 #include "coreutilsns.h"
 
-unsigned OperationList::max_size=500;
+//unsigned OperationList::max_size=500;
 
 OperationList::OperationList(DatabaseModel *model)
 {

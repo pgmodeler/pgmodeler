@@ -19,7 +19,7 @@
 #include "view.h"
 #include "physicaltable.h"
 
-const QString View::ExtraSCRegExp("((\\;)+(\\s|\\t)*)+$");
+//const QString View::ExtraSCRegExp("((\\;)+(\\s|\\t)*)+$");
 
 View::View() : BaseTable()
 {

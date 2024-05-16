@@ -18,7 +18,7 @@
 
 #include "attributes.h"
 
-namespace Attributes {
+/* namespace Attributes {
 	const QString
 	Action("action"),
 	ActiveLayers("active-layers"),
@@ -748,5 +748,5 @@ namespace Attributes {
 	YPos("y"),
 	Year("year"),
 	ZValue("z-value");
-}
+} */
 

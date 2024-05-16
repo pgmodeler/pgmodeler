@@ -26,7 +26,7 @@
 #include "objectslistmodel.h"
 #include "schemaview.h"
 
-bool DatabaseImportForm::low_verbosity = false;
+//bool DatabaseImportForm::low_verbosity = false;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

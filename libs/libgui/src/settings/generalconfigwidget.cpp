@@ -28,8 +28,8 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-std::map<QString, attribs_map> GeneralConfigWidget::config_params;
-std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
+//std::map<QString, attribs_map> GeneralConfigWidget::config_params;
+//std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {

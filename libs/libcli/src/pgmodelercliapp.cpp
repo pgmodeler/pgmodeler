@@ -28,12 +28,12 @@
 #include "pgsqlversions.h"
 #include "compat/compatns.h"
 
-QTextStream PgModelerCliApp::out(stdout);
+//QTextStream PgModelerCliApp::out(stdout);
 
-const QRegularExpression PgModelerCliApp::PasswordRegExp=QRegularExpression("(password)(=)(.)*( )");
-const QString PgModelerCliApp::PasswordPlaceholder("password=******");
+//const QRegularExpression PgModelerCliApp::PasswordRegExp=QRegularExpression("(password)(=)(.)*( )");
+//const QString PgModelerCliApp::PasswordPlaceholder("password=******");
 
-const QString PgModelerCliApp::AllChildren("all");
+/* const QString PgModelerCliApp::AllChildren("all");
 const QString PgModelerCliApp::Input("--input");
 const QString PgModelerCliApp::Output("--output");
 const QString PgModelerCliApp::InputDb("--input-db");
@@ -115,7 +115,7 @@ const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|
 const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
 
-const QString PgModelerCliApp::ModelFixLog("model_fix.log");
+const QString PgModelerCliApp::ModelFixLog("model_fix.log"); */
 
 attribs_map PgModelerCliApp::short_opts = {
 	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },

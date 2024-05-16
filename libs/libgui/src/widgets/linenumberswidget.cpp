@@ -22,8 +22,8 @@
 #include <QTextBlock>
 #include "exception.h"
 
-QColor LineNumbersWidget::font_color=Qt::lightGray;
-QColor LineNumbersWidget::bg_color=Qt::black;
+//QColor LineNumbersWidget::font_color=Qt::lightGray;
+//QColor LineNumbersWidget::bg_color=Qt::black;
 
 LineNumbersWidget::LineNumbersWidget(QPlainTextEdit * parent) : QWidget(parent)
 {

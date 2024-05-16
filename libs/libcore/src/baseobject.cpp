@@ -19,14 +19,14 @@
 #include "baseobject.h"
 #include "coreutilsns.h"
 #include "exception.h"
-#include "pgsqlversions.h"
+//#include "pgsqlversions.h"
 #include <QApplication>
 
-bool BaseObject::ignore_db_version = false;
+//bool BaseObject::ignore_db_version = false;
 
-bool BaseObject::clear_deps_in_dtor = true;
+//bool BaseObject::clear_deps_in_dtor = true;
 
-const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
+//const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;");
 
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
@@ -103,10 +103,10 @@ const attribs_map BaseObject::search_attribs_i18n = {
 	 starts at 4k because the id ranges 0, 1k, 2k, 3k, 4k
 	 are respectively assigned to objects of classes Role, Tablespace
 	 DatabaseModel, Schema, Tag */
-unsigned BaseObject::global_id=5000;
+//unsigned BaseObject::global_id=5000;
 
-QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
-bool BaseObject::escape_comments=true;
+//QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
+//bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject()
 {

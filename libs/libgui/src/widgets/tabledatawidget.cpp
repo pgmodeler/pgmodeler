@@ -22,7 +22,7 @@
 #include "csvparser.h"
 #include "utils/plaintextitemdelegate.h"
 
-const QString TableDataWidget::PlaceholderColumn("$placeholder$");
+//const QString TableDataWidget::PlaceholderColumn("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {

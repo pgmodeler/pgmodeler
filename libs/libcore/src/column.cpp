@@ -19,7 +19,7 @@
 #include "column.h"
 #include "coreutilsns.h"
 
-const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
+//const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
 
 Column::Column()
 {

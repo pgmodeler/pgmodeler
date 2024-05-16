@@ -66,10 +66,10 @@
 		WHEN tb.relkind = 'v' THEN 'view'
 		WHEN tb.relkind = 'm' THEN 'view'
 		WHEN tb.relkind = 'p' THEN 'table'
-		END AS table_type,
+		END AS table_type, ]
 
 		#Convert the arguments from bytea to a string array. The last element is always empty and can be discarded
-		encode(tg.tgargs,'escape') AS arguments,
+		[ encode(tg.tgargs,'escape') AS arguments,
 
 		it.action_condition AS condition,
 		(B'0000001'::integer & tgtype = 1) AS per_line_bool,

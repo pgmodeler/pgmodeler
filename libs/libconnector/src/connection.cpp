@@ -18,19 +18,19 @@
 
 #include "connection.h"
 #include <QTextStream>
-#include <iostream>
+//#include <iostream>
 #include "globalattributes.h"
 #include "pgsqlversions.h"
 #include "exception.h"
 
-const QString Connection::SslDisable("disable");
+/*const QString Connection::SslDisable("disable");
 const QString Connection::SslAllow("allow");
 const QString Connection::SslPrefer("prefer");
 const QString Connection::SslRequire("require");
 const QString Connection::SslCaVerify("verify-ca");
-const QString Connection::SslFullVerify("verify-full");
+const QString Connection::SslFullVerify("verify-full");*/
 
-const QString Connection::ParamAlias("alias");
+/*const QString Connection::ParamAlias("alias");
 const QString Connection::ParamApplicationName("application_name");
 const QString Connection::ParamServerFqdn("host");
 const QString Connection::ParamServerIp("hostaddr");
@@ -47,18 +47,18 @@ const QString Connection::ParamSslRootCert("sslrootcert");
 const QString Connection::ParamSslCrl("sslcrl");
 const QString Connection::ParamKerberosServer("krbsrvname");
 const QString Connection::ParamLibGssapi("gsslib");
-const QString Connection::ParamSetRole("setrole");
+const QString Connection::ParamSetRole("setrole");*/
 
-const QString Connection::ServerPid("server-pid");
+/*const QString Connection::ServerPid("server-pid");
 const QString Connection::ServerProtocol("server-protocol");
-const QString Connection::ServerVersion("server-version");
+const QString Connection::ServerVersion("server-version");*/
 
-bool Connection::notice_enabled=false;
+/* bool Connection::notice_enabled=false;
 bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
-bool Connection::ignore_db_version=false;
+bool Connection::ignore_db_version=false; */
 
-QStringList Connection::notices;
+//QStringList Connection::notices;
 
 Connection::Connection()
 {
