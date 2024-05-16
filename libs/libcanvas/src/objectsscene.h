@@ -40,13 +40,13 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		};
 
 		//! \brief Stores the default grid line color
-		inline static const QColor DefaultGridColor {225, 225, 225},
+		inline static const QColor DefaultGridColor { "#e1e1e1"},
 
 		//! \brief Stores the default grid line color
-		DefaultCanvasColor {255, 255, 255},
+		DefaultCanvasColor {"#fff"},
 
 		//! \brief Stores the default page delimiter lines color
-		DefaultDelimitersColor {75,115,195};
+		DefaultDelimitersColor {"#4b73c3"};
 
 	private:
 		Q_OBJECT

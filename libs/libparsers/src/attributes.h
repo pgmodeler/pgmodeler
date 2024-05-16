@@ -32,7 +32,7 @@
 #include <QString>
 
 namespace Attributes {
-	static __libparsers const QString
+	static const QString
 	Action ("action"),
 	ActiveLayers("active-layers"),
 	AdminOption("admin-option"),
