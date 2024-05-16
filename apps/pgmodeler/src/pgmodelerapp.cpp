@@ -31,12 +31,10 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	try
 	{
 		//Creating the initial user's configuration
-		createUserConfiguration(true);
+		createUserConfiguration();
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 

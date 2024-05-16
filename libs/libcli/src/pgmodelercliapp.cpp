@@ -2453,7 +2453,7 @@ void PgModelerCliApp::createConfigurations()
 				throw Exception(tr("Failed to create the configuration files backup!").arg(bkp_conf_dir), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		createUserConfiguration(missing_only);
+		createUserConfiguration();
 		printMessage(tr("Configuration files successfully created!\n"));
 	}
 	catch (Exception &e)

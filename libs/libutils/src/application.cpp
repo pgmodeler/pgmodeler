@@ -70,16 +70,18 @@ void Application::loadTranslations(const QString &lang_id, bool incl_plugins_tr)
 	}
 }
 
-void Application::createUserConfiguration(bool missing_only)
+void Application::createUserConfiguration()
 {
 	QDir new_cfg_dir(GlobalAttributes::getConfigurationsPath()),
 			old_cfg_dir(GlobalAttributes::getConfigurationsPath().replace(GlobalAttributes::PgModelerAppName,
 																																		GlobalAttributes::PgModelerOldAppName));
 
+	bool first_run = !new_cfg_dir.exists();
+
 	/* First, we check if there are config files of previous version (GlobalAttributes::PgModelerOldAppName)
 	 * in the user's local storage. If that's the case, we copy the files to the folder reserved for the
 	 * new version (GlobalAttributes::PgModelerAppName) */
-	if(!new_cfg_dir.exists() && old_cfg_dir.exists())
+	if(first_run && !new_cfg_dir.exists())
 	{
 		new_cfg_dir.mkpath(new_cfg_dir.absolutePath());
 		copyFilesRecursively(old_cfg_dir.absolutePath(),
@@ -88,17 +90,9 @@ void Application::createUserConfiguration(bool missing_only)
 
 	try
 	{
-		//If the directory not exists
-		if(!new_cfg_dir.exists() || missing_only ||
-			 // If the overwrite flag is not set we'll copy the files only if the directory is empty
-			(!missing_only &&
-			 new_cfg_dir.entryList({ "*" },
-														 QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot).isEmpty()))
-		{
-			copyFilesRecursively(GlobalAttributes::getTmplConfigurationPath(),
-													 GlobalAttributes::getConfigurationsPath(),
-													 missing_only, false);
-		}
+		copyFilesRecursively(GlobalAttributes::getTmplConfigurationPath(),
+												 GlobalAttributes::getConfigurationsPath(),
+												 !first_run, false);
 	}
 	catch(Exception &e)
 	{
@@ -148,7 +142,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 			new_dst_path = dst_path + dst_dir.separator() + filename;
 			fi.setFile(new_src_path);
 
-			// Ignoring the files icons-*.conf and ui-*.conf
+			// Ignoring the files icons-*.conf, ui-*.conf
 			if((filename.startsWith("icons-") ||
 					filename.startsWith("ui-")) ||
 
@@ -168,12 +162,19 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	}
 	else
 	{
-		if(!QFile::copy(src_path, dst_path))
+		bool file_exists = QFileInfo::exists(dst_path);
+
+		/* Forcing the removal of files that are not backward compatible
+		 * if they already exists in the destination folder */
+		if(dst_path.contains("-highlight"))
+			QFile::remove(dst_path);
+
+		if(!file_exists && !QFile::copy(src_path, dst_path))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 											__PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
-		else
+		else if(file_exists)
 		{
 			// Set write permissions when copying file with read-only permissions
 			QFile file(dst_path);
