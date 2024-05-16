@@ -24,9 +24,6 @@
 #include "settings/connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
-//bool ModelDatabaseDiffForm::low_verbosity = false;
-//std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
-
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
 	setupUi(this);

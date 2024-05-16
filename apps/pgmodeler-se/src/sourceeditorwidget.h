@@ -37,7 +37,16 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	private:
 		Q_OBJECT
 
-		static attribs_map snippets;
+		inline static attribs_map snippets {
+			{"ifend", "%if {} %then\n\n%end\n"},
+			{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
+			{"ifexpr", "%if ({}) %then\n\n%end\n"},
+			{"ifexprelse", "%if ({}) %then\n\n%else\n\n%end\n"},
+			{"setattrstr", "%set {} \"\"\n"},
+			{"setattrtxt", "%set {} [ ]\n"},
+			{"unsetattr", "%unset {}\n"},
+			{"unsetattr", "%unset {}\n"},
+		};
 
 		inline static QPalette def_editor_pal;
 

@@ -19,10 +19,6 @@
 #include "referenceswidget.h"
 #include "guiutilsns.h"
 
-/*const QRegularExpression ReferencesWidget::AttrDelimRegexp = QRegularExpression(QString("(\\%1)+|(\\%2)+")
-																																	.arg(SchemaParser::CharStartAttribute)
-																																	.arg(SchemaParser::CharEndAttribute)); */
-
 ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool conf_view_refs, QWidget *parent): QWidget(parent)
 {
 	Ui_ReferencesWidget::setupUi(this);

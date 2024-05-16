@@ -98,15 +98,6 @@ class __libcli PgModelerCliApp: public Application {
 		//! \brief Creates an standard out to handles QStrings
 		inline static QTextStream out {stdout};
 
-		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
-		static std::map<QString, bool> long_opts;
-
-		//! \brief Stores the short option names.
-		static attribs_map short_opts;
-
-		//! \brief Stores the accepted options by the different operations
-		static std::map<QString, QStringList> accepted_opts;
-
 		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
 
@@ -292,8 +283,13 @@ class __libcli PgModelerCliApp: public Application {
 
 		ModelFixLog {"model_fix.log"},
 
-		MsgFileAssociated { QString(QT_TR_NOOP("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force) },
-		MsgNoFileAssociation { QString(QT_TR_NOOP("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force) };
+		MsgFileAssociated {
+			QString(QT_TR_NOOP("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force)
+		},
+
+		MsgNoFileAssociation {
+			QString(QT_TR_NOOP("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force)
+		};
 
 		PgModelerCliApp(int argc, char **argv);
 
@@ -326,6 +322,91 @@ class __libcli PgModelerCliApp: public Application {
 		void updateProgress(int progress, QString msg, ObjectType = ObjectType::BaseObject);
 		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
+
+	private:
+		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
+		inline static std::map<QString, bool> long_opts {
+			{ Input, true }, { Output, true }, { InputDb, true },
+			{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
+			{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
+			{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
+			{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
+			{ PageByPage, false },	{ IgnoreDuplicates, false },	{ OverrideBgColor, false },
+			{ IgnoreErrorCodes, true }, { ConnAlias, true },	{ Host, true },	{ Port, true },
+			{ User, true },	{ Passwd, true },	{ InitialDb, true },
+			{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
+			{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
+			{ DbmMimeType, true },	{ IgnoreImportErrors, false },	{ ImportSystemObjs, false },
+			{ ImportExtensionObjs, false },	{ FilterObjects, true },	{ ForceChildren, true },
+			{ OnlyMatching, false },	{ MatchByName, false },	{ DebugMode, false },
+			{ PartialDiff, false },	{ StartDate, true },	{ EndDate, true },
+			{ CompareTo, true },	{ SaveDiff, false },	{ ApplyDiff, false },
+			{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
+			{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
+			{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
+			{ RecreateUnmod, false }, { ReplaceModified, false },	{ ExportToDict, false },
+			{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
+			{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
+			{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
+			{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
+			{ ListPlugins, false }
+		};
+
+		//! \brief Stores the short option names.
+		inline static attribs_map short_opts {
+			{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
+			{ ExportToFile, "-ef" },	{ ExportToPng, "-ep" },	{ ExportToSvg, "-es" },
+			{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
+			{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
+			{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
+			{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },
+			{ IgnoreDuplicates, "-ir" }, { OverrideBgColor, "-oc" },
+			{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
+			{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
+			{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
+			{ Simulate, "-sm" },	{ FixModel, "-fm" },	{ FixTries, "-ft" },
+			{ ZoomFactor, "-zf" },	{ UseTmpNames, "-tn" },	{ DbmMimeType, "-mt" },
+			{ IgnoreImportErrors, "-ie" },	{ ImportSystemObjs, "-is" },	{ ImportExtensionObjs, "-ix" },
+			{ FilterObjects, "-fo" },	{ MatchByName, "-mn" },	{ ForceChildren, "-fc" },
+			{ OnlyMatching, "-om" },	{ DebugMode, "-d" },	{ PartialDiff, "-pd" },
+			{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
+			{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
+			{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
+			{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
+			{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },
+			{ RecreateUnmod, "-ru" }, { ReplaceModified, "-rm" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
+			{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
+			{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
+			{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
+			{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
+		};
+
+		//! \brief Stores the accepted options by the different operations
+		inline static std::map<QString, QStringList> accepted_opts {
+			{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+			{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
+			{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
+			{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
+			{{ ExportToDict }, { Input, Output, Split, NoIndex }},
+
+			{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
+														DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
+
+			{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
+												FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
+												Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
+
+			{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
+									 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
+									 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
+									 NoSequenceReuse, RecreateUnmod, ReplaceModified }},
+
+			{{ DbmMimeType }, { SystemWide, Force }},
+			{{ FixModel },	{ Input, Output, FixTries }},
+			{{ ListConns }, { }},
+			{{ CreateConfigs }, { MissingOnly, Force }},
+			{{ ListPlugins }, { IgnoreFaultyPlugins }}
+		};
 
 		/* We main the main() a friend function of PgModelerCliApp just to
 		 * allow it to call exec() that is a private function.

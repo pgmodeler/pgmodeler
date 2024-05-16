@@ -21,8 +21,6 @@
 #include "utils/syntaxhighlighter.h"
 #include "relationshipview.h"
 
-//std::map<QString, attribs_map> RelationshipConfigWidget::config_params;
-
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,

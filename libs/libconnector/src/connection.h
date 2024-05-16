@@ -54,7 +54,7 @@ class __libconnector Connection {
 
 		/*! \brief List of notices generated during the command execution
 		The list is filled only if notice_enabled is true */
-		inline static QStringList notices {};
+		inline static QStringList notices;
 
 		//! \brief Generates the connection string based on the parameter map
 		void generateConnectionString();
@@ -81,7 +81,7 @@ class __libconnector Connection {
 		silence_conn_err {true},
 
 		/*! \brief Indicates if the PostgreSQL version checking must be ignored during connection.
-		 * This flag allows connecting (poorly!) to older versions ( < 10). */
+		 * This flag allows connecting (poorly and error-prone!) to older versions ( < 10). */
 		ignore_db_version {false};
 
 		/*! \brief Indicates that the initial database configured in the connection can be automatically

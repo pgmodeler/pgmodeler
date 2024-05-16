@@ -19,13 +19,6 @@
 #include "sequence.h"
 #include "coreutilsns.h"
 
-/* const QString Sequence::MaxPositiveValue("+2147483647");
-const QString Sequence::MaxNegativeValue("-2147483648");
-const QString Sequence::MaxSmallPositiveValue("+32767");
-const QString Sequence::MaxSmallNegativeValue("-32768");
-const QString Sequence::MaxBigPositiveValue("+9223372036854775807");
-const QString Sequence::MaxBigNegativeValue("-9223372036854775808"); */
-
 Sequence::Sequence()
 {
 	obj_type=ObjectType::Sequence;

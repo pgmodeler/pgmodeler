@@ -20,8 +20,6 @@
 #include <QApplication>
 #include "baseobjectview.h"
 
-//QPolygonF AttributesTogglerItem::btn_polygons[7];
-
 AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRectItem(parent)
 {
 	createButtonPolygons();

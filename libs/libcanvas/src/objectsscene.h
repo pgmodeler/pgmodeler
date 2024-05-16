@@ -109,7 +109,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		show_grid {true},
 
-		show_page_delim {false},
+		show_page_delim {true},
 
 		//! \brief Indicates if the corner move is enabled for the scene
 		corner_move {true},
@@ -127,14 +127,16 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		expansion_factor {2};
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
-		inline static QPageLayout page_layout { QPageSize(QPageSize::A4),
-																						QPageLayout::Landscape,
-																						QMarginsF(10,10,10,10) };
+		inline static QPageLayout page_layout {
+			QPageSize(QPageSize::A4),
+			QPageLayout::Landscape,
+			QMarginsF(10,10,10,10)
+		};
 
-		inline static double delimiter_scale {1};
+		inline static double delimiter_scale {1},
 
 		//! \brief The minimum scene width is defined to be width of the current page layout * 2
-		inline static double min_scene_width { page_layout.paintRect().width() },
+		min_scene_width { page_layout.paintRect().width() },
 
 		//! \brief The minimum scene height is defined to be height of the current page layout * 2
 		min_scene_height { page_layout.paintRect().height() };

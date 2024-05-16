@@ -22,8 +22,6 @@
 #include "exception.h"
 #include "globalattributes.h"
 
-//QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
-
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
 	if(!parent)

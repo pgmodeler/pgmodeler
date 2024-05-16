@@ -40,13 +40,13 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		inline static bool line_nums_visible {true},
 
 		//! \brief Controls if current line must be highlighted
-				highlight_lines {true};
+		highlight_lines {true};
 
 		//! \brief Line highlight color
 		inline static QColor line_hl_color { Qt::yellow };
 
 		//! \brief Default font for texts
-		inline static QFont default_font {"Source Code Pro", 11};
+		inline static QFont default_font {"Source Code Pro", 12};
 
 		//! \brief Default tab size for texts
 		inline static double tab_width {0};

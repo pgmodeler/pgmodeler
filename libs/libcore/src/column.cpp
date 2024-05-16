@@ -19,8 +19,6 @@
 #include "column.h"
 #include "coreutilsns.h"
 
-//const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
-
 Column::Column()
 {
 	obj_type=ObjectType::Column;

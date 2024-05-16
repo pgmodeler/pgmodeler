@@ -22,8 +22,6 @@
 #include <QUrl>
 #include <QFileInfo>
 
-//int XmlParser::parser_instances = 0;
-
 XmlParser::XmlParser()
 {
 	root_elem=nullptr;
