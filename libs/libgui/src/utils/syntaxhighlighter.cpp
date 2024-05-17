@@ -528,7 +528,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 	QString elem, group, pattern;
 	bool bold = false, italic = false, strikeout = false,
 			underline = false, initial_expr = false,
-			final_expr = false;
+			final_expr = false, case_sensitive = false;
 	QTextCharFormat format;
 	QColor bg_color, fg_color;
 	GroupConfig group_cfg;
@@ -597,10 +597,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 															ErrorCode::DefEmptyGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 						}
 
-						italic = (attribs[Attributes::Italic] == Attributes::True);
-						bold = (attribs[Attributes::Bold] == Attributes::True);
-						underline = (attribs[Attributes::Underline] == Attributes::True);
-						strikeout = (attribs[Attributes::Stikeout] == Attributes::True);
+						case_sensitive = attribs[Attributes::CaseSensitive] == Attributes::True;
+						italic = attribs[Attributes::Italic] == Attributes::True;
+						bold = attribs[Attributes::Bold] == Attributes::True;
+						underline = attribs[Attributes::Underline] == Attributes::True;
+						strikeout = attribs[Attributes::Stikeout] == Attributes::True;
 						fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 						//If the attribute isn't defined the bg color will be transparent
@@ -661,18 +662,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									 * This can match the entire word and not parts of it in the text block */
 									regexp.setPattern(QString("(?<=\\s|\\b)%1(?=\\s|\\b)")
 																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
-
-									/*regexp.setPattern(QString("^%1(?=\\s|\\b)|(?<=\\s|\\b)%1(?=\\s|\\b)|(?<=\\s|\\b)%1$|^%1$")
-																		.arg(QRegularExpression::escape(attribs[Attributes::Value]))); */
 								}
 								// Exact (escaped) regular expression
 								else
 									regexp.setPattern(QRegularExpression::escape(attribs[Attributes::Value]));
 
-								regexp.setPatternOptions(/* QRegularExpression::DontCaptureOption | */
-																					(attribs[Attributes::CaseSensitive] != Attributes::True ?
-																						QRegularExpression::CaseInsensitiveOption :
-																						QRegularExpression::NoPatternOption));
+								regexp.setPatternOptions(!case_sensitive ?
+																					QRegularExpression::CaseInsensitiveOption :
+																					QRegularExpression::NoPatternOption);
 
 								// We throw an error aborting the loading if the regepx has an invalid pattern
 								if(!regexp.isValid())
