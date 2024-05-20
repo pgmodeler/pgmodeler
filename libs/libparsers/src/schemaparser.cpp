@@ -984,13 +984,19 @@ QString SchemaParser::convertEscapedCharacter(const QString &escaped)
 		CharStartConditional,
 		CharValueOf,
 		CharToXmlEntity,
-		CharStartEscaped };
+		CharStartEscaped
+	};
 
 	static QStringList non_print_chars = {
 		CharSpace,
 		CharTabulation,
 		CharLineEnd
 	};
+
+	/* Special case for escaped \* which returns the special
+	 * character UtilsNs::DataSeparator (•) */
+	if(escaped == "*")
+		return UtilsNs::DataSeparator;
 
 	int idx = esc_chars.indexOf(escaped);
 

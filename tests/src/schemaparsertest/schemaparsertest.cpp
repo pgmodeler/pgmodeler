@@ -166,13 +166,13 @@ void SchemaParserTest::testConvertEscapedCharsCorrectly()
 	QString buffer;
 	attribs_map attribs;
 
-	buffer = "%set {test} \\# \\& \\@ \\{ foo \\} \\$ \\% \\[ \\] \n";
+	buffer = "%set {test} \\# \\& \\@ \\{ foo \\} \\$ \\% \\[ \\] \\* \n";
 	buffer += "{test}\n";
 
 	try
 	{
 		schparser.loadBuffer(buffer);
-		QCOMPARE(schparser.getSourceCode(attribs) == "#&@{foo}$%[]", true);
+		QCOMPARE(schparser.getSourceCode(attribs) == "#&@{foo}$%[]•", true);
 	}
 	catch(Exception &e)
 	{
