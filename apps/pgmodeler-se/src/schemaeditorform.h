@@ -71,7 +71,6 @@ class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
 		void saveFile(bool save_as = false);
 		void setTabModified(bool modified);
 		void indentAll();
-		void toggleComment();
 		void saveAll();
 		void closeAll();
 		void loadSyntaxFromCurrentTab();

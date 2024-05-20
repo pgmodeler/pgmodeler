@@ -40,6 +40,15 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(false);
 
+	metachars_tb->setMenu(&metachar_conv_menu);
+	metachar_conv_menu.addAction(tr("Metachar to escaped"), this, [this](){
+		convertMetaChars(false);
+	});
+
+	metachar_conv_menu.addAction(tr("Escaped to metachar"), this, [this](){
+		convertMetaChars(true);
+	});
+
 	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
 	connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
@@ -48,6 +57,11 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
 	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
 	connect(search_tb, &QToolButton::toggled, search_parent, &QWidget::setVisible);
+	connect(comment_tb, &QToolButton::clicked, this, &SourceEditorWidget::toggleComment);
+
+	connect(editor_txt, &NumberedTextEditor::selectionChanged, this, [this]() {
+		comment_tb->setEnabled(editor_txt->textCursor().hasSelection());
+	});
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)
@@ -67,7 +81,8 @@ void SourceEditorWidget::loadSyntaxConfig(const QString &filename)
 	{
 		editor_hl->loadConfiguration(filename);
 		editor_hl->rehighlight();		
-		curr_sytax_cfg = QFileInfo(filename).baseName();
+		curr_sytax_cfg = QFileInfo(filename).baseName();		
+		metachars_tb->setEnabled(curr_sytax_cfg == GlobalAttributes::SchHighlightConf);
 	}
 	catch(Exception &e)
 	{
@@ -122,6 +137,37 @@ void SourceEditorWidget::toggleComment()
 
 		tc.insertText(sel_text);
 	}
+}
+
+void SourceEditorWidget::convertMetaChars(bool escaped_to_meta)
+{
+	attribs_map metas {
+		{"\\#", "$hs"}, {"\\s", "$sp"},
+		{"\\t", "$tb"}, {"\\n", "$br"},
+		{"\\[", "$ob"}, {"\\]", "$cb"},
+		{"\\{", "$oc"}, {"\\}", "$cc"},
+		{"\\\\", "$bs"}, {"\\@", "$at"},
+		{"\\%", "$ps"}, {"\\&", "$am"},
+		{"\\$", "$ms"}, {"\\*", "$ds"}
+	};
+
+	QString code = editor_txt->toPlainText();
+
+	for(const auto &[escaped, metachr] : metas)
+	{
+		if(escaped_to_meta)
+			code.replace(escaped, metachr);
+		else
+			code.replace(metachr, escaped);
+	}
+
+	editor_txt->blockSignals(true);
+	QTextCursor tc = editor_txt->textCursor();
+	tc.setPosition(0);
+	tc.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+	tc.insertText(code);
+	editor_txt->moveCursor(QTextCursor::Start);
+	editor_txt->blockSignals(false);
 }
 
 void SourceEditorWidget::handleSelectedSnippet(const QString &snippet)

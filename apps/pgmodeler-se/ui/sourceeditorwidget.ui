@@ -168,6 +168,94 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="comment_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Toggles the comments in the current selection</string>
+       </property>
+       <property name="text">
+        <string>Comments</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../libs/libgui/res/resources.qrc">
+         <normaloff>:/icons/icons/comment.png</normaloff>:/icons/icons/comment.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+/</string>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="metachars_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Convert metacharacters to escaped and vice-versa</string>
+       </property>
+       <property name="text">
+        <string>Metachars</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../libs/libgui/res/resources.qrc">
+         <normaloff>:/icons/icons/metatoescaped.png</normaloff>:/icons/icons/metatoescaped.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="search_tb">
        <property name="enabled">
         <bool>true</bool>

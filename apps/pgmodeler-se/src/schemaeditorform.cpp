@@ -120,7 +120,6 @@ subcontrol-position: right center; }");
 
 	connect(save_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::saveFile));
 	connect(indent_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::indentAll);
-	connect(comment_tb, &QToolButton::clicked, this, &SchemaEditorForm::toggleComment);
 
 	connect(save_all_tb, &QToolButton::clicked, this, __slot(this, SchemaEditorForm::saveAll));
 	connect(close_all_tb, &QToolButton::clicked, this, &SchemaEditorForm::closeAll);
@@ -372,16 +371,6 @@ void SchemaEditorForm::indentAll()
 	qApp->restoreOverrideCursor();
 }
 
-void SchemaEditorForm::toggleComment()
-{
-	SourceEditorWidget *editor = dynamic_cast<SourceEditorWidget *>(editors_tbw->currentWidget());
-
-	if(!editor)
-		return;
-
-	editor->toggleComment();
-}
-
 void SchemaEditorForm::saveAll()
 {
 	qApp->setOverrideCursor(Qt::WaitCursor);
@@ -528,7 +517,6 @@ void SchemaEditorForm::addEditorTab(const QString &filename)
 	save_as_tb->setEnabled(true);
 	save_tb->setEnabled(true);
 	indent_all_tb->setEnabled(true);
-	comment_tb->setEnabled(true);
 	save_all_tb->setEnabled(true);
 	close_all_tb->setEnabled(true);
 	syntax_cfg_edit_frm->setEnabled(true);
@@ -555,7 +543,6 @@ void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
 	save_as_tb->setEnabled(enable);
 	save_tb->setEnabled(enable);
 	indent_all_tb->setEnabled(enable);
-	comment_tb->setEnabled(enable);
 	save_all_tb->setEnabled(enable);
 	close_all_tb->setEnabled(enable);
 	syntax_cfg_edit_frm->setEnabled(enable);
