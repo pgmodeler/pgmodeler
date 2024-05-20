@@ -2,15 +2,15 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-#%if ({type-class} == "table") %then
-#	%set {colspan} 8
-#%else
-#	%set {colspan} 5
-#end
+%if ({type-class} == "table") %then
+	%set {colspan} 8
+%else
+	%set {colspan} 5
+%end
 
-#%set {spc} $br [ ]
+%set {spc} \n\s
 
-$hs $hs $hs _{schema}_.*{name}* [{#] {schema}.{name} [}] $br
+\#\#\#\s _{schema}_.*{name}* [{#] {schema}.{name} [}] \n
 
 {comment}
 
@@ -22,12 +22,11 @@ $hs $hs $hs _{schema}_.*{name}* [{#] {schema}.{name} [}] $br
 		[ | PK | FK | UQ ] 
 	%end
 
-	[ | Not null | Default value | Description |] $br
-
+	[ | Not null | Default value | Description |] \n
+	[| --- | --- | --- | --- | --- | --- | --- | --- |] \n
 %else
-
-	[ | No columns | ] $br
-
+	[ | No columns | ] \n
+	[| --- | --- | --- |] \n
 %end 
 
 %if {objects} %then
@@ -81,40 +80,40 @@ $hs $hs $hs _{schema}_.*{name}* [{#] {schema}.{name} [}] $br
 
 # {spc} </tbody>
 
-%if {inherit} %or {partitioned-table} %or {partition-tables} %then
-	{spc} <tfoot>
-	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+# %if {inherit} %or {partitioned-table} %or {partition-tables} %then
+# 	{spc} <tfoot>
+# 	{spc} <tr>
+# 	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
+# 	{spc} <table $sp class="nested-tab">
 
-	%if {inherit} %then
-		{spc} <tr>
-		{spc} <td $sp class="label"> Inherits: </td>
-		{spc} <td> {inherit} </td>
-		{spc} </tr>
-	%end
+# 	%if {inherit} %then
+# 		{spc} <tr>
+# 		{spc} <td $sp class="label"> Inherits: </td>
+# 		{spc} <td> {inherit} </td>
+# 		{spc} </tr>
+# 	%end
 
-	%if {partitioned-table} %then
-		{spc} <tr>
-		{spc} <td $sp class="label">[Partition of:]</td>
-		{spc} <td> {partitioned-table} </td>
-		{spc} </tr>
-	%end
+# 	%if {partitioned-table} %then
+# 		{spc} <tr>
+# 		{spc} <td $sp class="label">[Partition of:]</td>
+# 		{spc} <td> {partitioned-table} </td>
+# 		{spc} </tr>
+# 	%end
 
-	%if {partition-tables} %then
-		{spc} <tr>
-		{spc} <td $sp class="label">[Partitions:]</td>
-		{spc} <td> {partition-tables} </td>
-		{spc} </tr>
-	%end
+# 	%if {partition-tables} %then
+# 		{spc} <tr>
+# 		{spc} <td $sp class="label">[Partitions:]</td>
+# 		{spc} <td> {partition-tables} </td>
+# 		{spc} </tr>
+# 	%end
 
-	{spc} </table>
-	{spc} </td>
-	{spc} </tr>
-	{spc} </tfoot> $br
-%end
+# 	{spc} </table>
+# 	{spc} </td>
+# 	{spc} </tr>
+# 	{spc} </tfoot> $br
+# %end
 
-$br </table> $br
+# $br </table> $br
 
 
 # %if {datadictidx} %then

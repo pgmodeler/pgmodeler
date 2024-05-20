@@ -432,10 +432,15 @@ QString SchemaParser::getMetaOrEscapedToken(bool is_escaped)
 		//Moves to the next character that is the beginning of the metacharacter
 		column++;
 
-		//Extracts the metacharacter until doesn't finds a space or end of line
+		/* Extracts the metacharacter until doesn't finds a space or end of line
+		 * or another char starting a escaped sequence.
+		 * Contiguous escaped sequences are allowed, e.g., \#\s\t\n.
+		 * Contiguous metachars are not allowed for legibility reasons, e.g., $br$hs$tb */
 		while(current_line[column] != CharLineEnd &&
 					 current_line[column] != CharSpace &&
-					 current_line[column] != CharTabulation)
+					 current_line[column] != CharTabulation &&
+					 (!is_escaped ||
+						(is_escaped && current_line[column] != start_chr)))
 		{
 			chr_token += current_line[column];
 			column++;
