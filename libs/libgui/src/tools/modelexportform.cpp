@@ -457,6 +457,7 @@ void ModelExportForm::selectDataDictMode()
 	else
 	{
 		dict_file_sel->setDefaultSuffix("");
+		dict_file_sel->setMimeTypeFilters({});
 		dict_file_sel->setDirectoryMode(true);
 		dict_file_sel->setFileMustExist(false);
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);

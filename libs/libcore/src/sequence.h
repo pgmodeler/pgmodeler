@@ -127,7 +127,7 @@ class __libcore Sequence: public BaseObject {
 
 		virtual QString getAlterCode(BaseObject *object) final;
 
-		QString getDataDictionary(const attribs_map &extra_attribs = {});
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs = {});
 
 		virtual void updateDependencies() override;
 };

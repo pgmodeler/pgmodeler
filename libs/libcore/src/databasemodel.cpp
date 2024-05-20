@@ -10105,10 +10105,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	QString styles, id, dict_index, items, buffer;
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
-	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
-			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
-			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
+	QString dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
+			style_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles),
+			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
+			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -10182,7 +10182,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 			for(auto &itr : col_seqs)
 			{
 				aux_attribs[Attributes::Sequences] +=
-						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+						itr.first->getDataDictionary(md_format, {{ Attributes::Columns, itr.second.join(", ") }});
 			}
 
 			col_seqs.clear();

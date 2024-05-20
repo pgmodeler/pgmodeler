@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br \s
+%set {spc} \n \s
 
 <table $sp id="{schema}.{name}" $sp class="{type-class}">
 {spc} <caption [ class="tab-name"] >

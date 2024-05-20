@@ -374,7 +374,7 @@ QString Table::getDataDictionary(bool split, bool md_format, const attribs_map &
 		attribs_map attribs = extra_attribs;
 
 		for(auto &obj : indexes)
-			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary(md_format);
 
 		return PhysicalTable::getDataDictionary(split, md_format, attribs);
 	}

@@ -718,7 +718,7 @@ QString Constraint::getDropCode(bool cascade)
 	return TableObject::getDropCode(cascade);
 }
 
-QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
+QString Constraint::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -739,8 +739,7 @@ QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Columns] = col_names.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

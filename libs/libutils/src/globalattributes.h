@@ -265,12 +265,25 @@ class __libutils GlobalAttributes {
 
 		/*! \brief Returns the path to a schema file under "schemas" folder.
 		 * Since this method only operates over schemas folder there's no need to provide a file with
-		 * extension because the method already appends the extension .sch automatically.
-		 */
+		 * extension because the method already appends the extension .sch automatically. */
 		template<typename ...args>
 		static QString getSchemaFilePath(args... pth_elems)
 		{
 			return getFilePath(SchemaExt, SchemasRootPath, pth_elems...);
+		}
+
+		/*! \brief Returns the path to a data dictionary schema file under "schemas/datadict/(html|md)" folder(s).
+		 * Since this method only operates over the mentioned path there's no need to provide a file with
+		 * extension because the method already appends the extension .sch automatically.
+		 * The parameter md_format, when true, returns a path to the markdown format data dictionary schemas
+		 * otherwise a path to html data dictionary schemas is returned. */
+		template<typename ...args>
+		static QString getDictSchemaFilePath(bool md_format, args... pth_elems)
+		{
+			return getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+															 md_format ? GlobalAttributes::DataDictMdDir :
+																					 GlobalAttributes::DataDictHtmlDir,
+															 pth_elems...);
 		}
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage

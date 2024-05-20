@@ -484,7 +484,7 @@ void Sequence::operator = (Sequence &seq)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
+QString Sequence::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -498,8 +498,7 @@ QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Comment] = comment;
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

@@ -432,9 +432,6 @@ QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attri
 	try
 	{
 		attribs_map attribs;
-		QString format_dir = md_format ?
-														 GlobalAttributes::DataDictMdDir :
-														 GlobalAttributes::DataDictHtmlDir;
 
 		attribs.insert(extra_attribs.begin(), extra_attribs.end());
 		attribs[Attributes::Parent] = getParentTable()->getSchemaName();
@@ -445,15 +442,7 @@ QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attri
 		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
-
-		/*return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
-																		GlobalAttributes::DataDictSchemaDir +
-																		GlobalAttributes::DirSeparator +
-																		format_dir, getSchemaName()), attribs); */
-
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(
-																				GlobalAttributes::DataDictSchemaDir,
-																				format_dir, getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

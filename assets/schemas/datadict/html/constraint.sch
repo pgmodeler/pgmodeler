@@ -14,7 +14,7 @@
 	%if {split} %then
 		<a $sp href="{ref-table}.html"> {ref-table} </a>
 	%else
-		<a $sp href="#{ref-table}"> {ref-table} </a>
+		<a $sp href="\#{ref-table}"> {ref-table} </a>
 	%end
 %end
 

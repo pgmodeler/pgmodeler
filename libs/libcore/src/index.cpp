@@ -519,7 +519,7 @@ void Index::validateElements()
 	}
 }
 
-QString Index::getDataDictionary(const attribs_map &extra_attribs)
+QString Index::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -546,8 +546,7 @@ QString Index::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Expressions] = exprs.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{
