@@ -2,31 +2,20 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-# %set {spc} $br [ ]
+[| ] {name} [ | ] {type} [ | ] {columns} [ | ]
 
-# {spc} <tr>
-# {spc} <td>{name}</td>
-# {spc} <td [ class="value constr-type"]>{type}</td>
-# {spc} <td>{columns}</td>
-# {spc} <td>
+%if {ref-table} %then
+	%if {split} %then
+		\[ {ref-table} \] ({ref-table}.md)
+	%else
+		\[ {ref-table} \] (\# {ref-table})
+	%end
+%end
 
-# %if {ref-table} %then
-# 	%if {split} %then
-# 		<a $sp href="{ref-table}.html">{ref-table}</a>
-# 	%else
-# 		<a $sp href="\#{ref-table}">{ref-table}</a>
-# 	%end
-# %end
+[ | ]
 
-# </td>
+%if ({type} == "CHECK") %then
+	{expression}
+%end
 
-# {spc} <td [ class="value"]>
-
-# %if ({type} == "CHECK") %then
-# 	<p $sp class="max-td-wth">{expression}</p>
-# %end
-
-# </td>
-
-# {spc} <td [ colspan="3"]><p $sp class="max-td-wth"><em>{comment}</em></p></td>
-# {spc} </tr>
+[ | ] {comment} [ |] \n

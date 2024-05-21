@@ -2,15 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if ({type-class} == "table") %then
-	%set {colspan} 8
-%else
-	%set {colspan} 5
-%end
-
-%set {spc} \n\s
-
-\#\#\#\s _{schema}_.*{name}* [{#] {schema}.{name} [}] \n
+\#\#\#\s [<a name="] {schema}.{name} ["></a>] _{schema}_.**{name}** \s `{type}` \n
 
 {comment}
 
@@ -23,7 +15,7 @@
 	%end
 
 	[ | Not null | Default value | Description |] \n
-	[| --- | --- | --- | --- | --- | --- | --- | --- |] \n
+	[| --- | --- | :---: | :---: | :---: | :---: | --- | --- |] \n
 %else
 	[ | No columns | ] \n
 	[| --- | --- | --- |] \n
@@ -32,6 +24,8 @@
 %if {objects} %then
 	{objects}
 %end
+
+\n --- \n
 
 # <table $sp id="{schema}.{name}" $sp class="{type-class}">
 # {spc} <caption [ class="tab-name"]>

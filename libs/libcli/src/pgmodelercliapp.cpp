@@ -347,6 +347,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("Data dictionary export options: "));
 	printText(tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the specified output directory.").arg(short_opts[Split]).arg(Split));
 	printText(tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigate through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex));
+	printText(tr("  %1, %2\t\t    Generates a data dictionary in Markdown format (.md) instead of the HTML format.").arg(short_opts[Markdown]).arg(Markdown));
 	printText();
 
 	printText(tr("DBMS export options: "));
@@ -1852,7 +1853,7 @@ void PgModelerCliApp::exportModel()
 		export_hlp->exportToDataDict(model, parsed_opts[Output],
 																 parsed_opts.count(NoIndex) == 0,
 																 parsed_opts.count(Split) > 0,
-																 false);
+																 parsed_opts.count(Markdown) > 0);
 	}
 	//Export to DBMS
 	else

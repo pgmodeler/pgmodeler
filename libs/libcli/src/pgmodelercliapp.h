@@ -214,6 +214,7 @@ class __libcli PgModelerCliApp: public Application {
 		ImportDb {"--import-db"},
 		NoIndex {"--no-index"},
 		Split {"--split"},
+		Markdown {"--markdown"},
 		DependenciesSql {"--dependencies"},
 		ChildrenSql {"--children"},
 		GroupByType {"--group-by-type"},
@@ -349,7 +350,7 @@ class __libcli PgModelerCliApp: public Application {
 			{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 			{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
 			{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
-			{ ListPlugins, false }
+			{ ListPlugins, false }, { Markdown, false }
 		};
 
 		//! \brief Stores the short option names.
@@ -378,7 +379,7 @@ class __libcli PgModelerCliApp: public Application {
 			{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 			{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
 			{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
-			{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
+			{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }, { Markdown, "-md" }
 		};
 
 		//! \brief Stores the accepted options by the different operations
@@ -387,7 +388,7 @@ class __libcli PgModelerCliApp: public Application {
 			{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
 			{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
 			{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-			{{ ExportToDict }, { Input, Output, Split, NoIndex }},
+			{{ ExportToDict }, { Input, Output, Split, NoIndex, Markdown }},
 
 			{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
 														DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
@@ -408,7 +409,7 @@ class __libcli PgModelerCliApp: public Application {
 			{{ ListPlugins }, { IgnoreFaultyPlugins }}
 		};
 
-		/* We main the main() a friend function of PgModelerCliApp just to
+		/* We make the main() a friend function of PgModelerCliApp just to
 		 * allow it to call exec() that is a private function.
 		 *
 		 * This will avoid the exec() method to be called from within
