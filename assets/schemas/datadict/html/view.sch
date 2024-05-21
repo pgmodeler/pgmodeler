@@ -4,10 +4,10 @@
 
 %set {spc} \n \s
 
-<table $sp id="{schema}.{name}" $sp class="{type-class}">
+<table \s id="{schema}.{name}" \s class="{type-class}">
 {spc} <caption [ class="tab-name"] >
 {spc} <em> {schema} </em> . <strong> {name} </strong>
-{spc} <span $sp class="type-label"> {type} </span>
+{spc} <span \s class="type-label"> {type} </span>
 {spc} </caption>
 {spc} <thead>
 
@@ -45,38 +45,38 @@
 %if {references} %then
 	{spc} <tfoot>
 	{spc} <tr>
-	{spc} <td $sp colspan="2" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+	{spc} <td \s colspan="2" \s class="nested-tab-parent">
+	{spc} <table \s class="nested-tab">
 	{spc} <tr>
-	{spc} <td $sp class="label">References:</td>
+	{spc} <td \s class="label">References:</td>
 	{spc} <td> {references} </td>
 	{spc} </tr>
 	{spc} </table>
 	{spc} </td>
 	{spc} </tr>
-	{spc} </tfoot> $br
+	{spc} </tfoot> \n
 %end
 
-$br </table> $br
+\n </table> \n
 
 %if {datadictidx} %then
-	$br <div>
+	\n <div>
 
 	%if {split} %and {previous} %then
-		{spc} <a $sp href="{previous}.html" $sp class="nav-link"> [&larr;] $sp {previous} </a>
+		{spc} <a \s href="{previous}.html" \s class="nav-link"> [&larr;] \s {previous} </a>
 	%end
 
 	%if {split} %then
-		$br [ <a href="index.html" class="nav-link"> ]
+		\n [ <a href="index.html" class="nav-link"> ]
 	%else
-		$br [ <a href="#index" class="nav-link"> ]
+		\n [ <a href="#index" class="nav-link"> ]
 	%end
 
 	[ &uarr; Index</a> ]
 
 	%if {split} %and {next} %then
-		{spc} <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp [&rarr;] </a>
+		{spc} <a \s href="{next}.html" \s class="nav-link"> {next} \s [&rarr;] </a>
 	%end
 
-	$br </div> $br
+	\n </div> \n
 %end

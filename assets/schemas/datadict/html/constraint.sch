@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br \s
+%set {spc} \n \s
 
 {spc} <tr>
 {spc} <td> {name} </td>
@@ -12,9 +12,9 @@
 
 %if {ref-table} %then
 	%if {split} %then
-		<a $sp href="{ref-table}.html"> {ref-table} </a>
+		<a \s href="{ref-table}.html"> {ref-table} </a>
 	%else
-		<a $sp href="\#{ref-table}"> {ref-table} </a>
+		<a \s href="\# {ref-table}"> {ref-table} </a>
 	%end
 %end
 
@@ -23,10 +23,10 @@
 {spc} <td [ class="value"] >
 
 %if ({type} == "CHECK") %then
-	<p $sp class="max-td-wth"> {expression} </p>
+	<p \s class="max-td-wth"> {expression} </p>
 %end
 
 </td>
 
-{spc} <td [ colspan="3" ] > <p $sp class="max-td-wth"><em> {comment} </em></p></td>
+{spc} <td [ colspan="3" ] > <p \s class="max-td-wth"><em> {comment} </em></p></td>
 {spc} </tr>

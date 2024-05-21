@@ -437,10 +437,10 @@ QString SchemaParser::getMetaOrEscapedToken(bool is_escaped)
 		 * Contiguous escaped sequences are allowed, e.g., \#\s\t\n.
 		 * Contiguous metachars are not allowed for legibility reasons, e.g., $br$hs$tb */
 		while(current_line[column] != CharLineEnd &&
-					 current_line[column] != CharSpace &&
-					 current_line[column] != CharTabulation &&
-					 (!is_escaped ||
-						(is_escaped && current_line[column] != start_chr)))
+					current_line[column] != CharSpace &&
+					current_line[column] != CharTabulation &&
+					(!is_escaped ||
+					 (is_escaped && current_line[column] != start_chr)))
 		{
 			chr_token += current_line[column];
 			column++;
@@ -475,7 +475,7 @@ bool SchemaParser::isSpecialCharacter(const QChar &chr)
 	return chr == CharStartAttribute || chr == CharEndAttribute ||
 				 chr == CharStartConditional || chr == CharStartMetachar ||
 				 chr == CharStartPlainText || chr == CharEndPlainText ||
-				 chr == CharToXmlEntity;
+				 chr == CharToXmlEntity || chr == CharStartEscaped;
 }
 
 bool SchemaParser::evaluateComparisonExpr()

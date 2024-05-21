@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br \s
+%set {spc} \n \s
 
 %if ({type-class} == "table") %then
 	%set {colspan} 8
@@ -16,8 +16,8 @@
 
 %if {constraints} %then
 	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+	{spc} <td \s colspan="{colspan}" \s class="nested-tab-parent">
+	{spc} <table \s class="nested-tab">
 	{spc} <tr>
 	{spc} <td [ class="title" colspan="6"] > Constraints </td>
 	{spc} </tr>
@@ -39,8 +39,8 @@
 
 %if {indexes} %then
 	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+	{spc} <td \s colspan="{colspan}" \s class="nested-tab-parent">
+	{spc} <table \s class="nested-tab">
 	{spc} <tr>
 	{spc} <td [ class="title" colspan="6"] > Indexes </td>
 	{spc} </tr>
@@ -62,8 +62,8 @@
 
 %if {triggers} %then
 	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+	{spc} <td \s colspan="{colspan}" \s class="nested-tab-parent">
+	{spc} <table \s class="nested-tab">
 	{spc} <tr>
 	{spc} <td [ class="title" colspan="9"] > Triggers </td>
 	{spc} </tr>
@@ -88,8 +88,8 @@
 
 %if {sequences} %then
 	{spc} <tr>
-	{spc} <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
-	{spc} <table $sp class="nested-tab">
+	{spc} <td \s colspan="{colspan}" \s class="nested-tab-parent">
+	{spc} <table \s class="nested-tab">
 	{spc} <tr>
 	{spc} <td [ class="title" colspan="6"] > Sequences </td>
 	{spc} </tr>

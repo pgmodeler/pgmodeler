@@ -2,22 +2,22 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br \s
+%set {spc} \n \s
 
 {spc} <tr>
 {spc} <td> {name} </td>
-{spc} <td $sp class="data-type"> {type} </td>
+{spc} <td \s class="data-type"> {type} </td>
 
 %if ({parent} != "view") %then
 	%if ({parent} == "table") %then
-		{spc} <td $sp class="bool-field"> {pk-constr} </td>
-		{spc} <td $sp class="bool-field"> {fk-constr} </td>
-		{spc} <td $sp class="bool-field"> {uq-constr} </td>
+		{spc} <td \s class="bool-field"> {pk-constr} </td>
+		{spc} <td \s class="bool-field"> {fk-constr} </td>
+		{spc} <td \s class="bool-field"> {uq-constr} </td>
 	%end
 
-	{spc} <td $sp class="bool-field"> {not-null} </td>
-	{spc} <td $sp class="value"> {default-value} </td>
-	{spc} <td><p $sp class="max-td-wth"><em> {comment} </em></p></td>
+	{spc} <td \s class="bool-field"> {not-null} </td>
+	{spc} <td \s class="value"> {default-value} </td>
+	{spc} <td><p \s class="max-td-wth"><em> {comment} </em></p></td>
 %end
 
 {spc} </tr>

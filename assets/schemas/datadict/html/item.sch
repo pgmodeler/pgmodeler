@@ -8,4 +8,4 @@
 	%set {link} \# {item}
 %end
 
-$br \s <li><a $sp href="{link}"> {item} </a></li>
+\n \s <li><a \s href="{link}"> {item} </a></li>

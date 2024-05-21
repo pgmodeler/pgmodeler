@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%set {spc} $br \s
+%set {spc} \n \s
 
 %if {split} %then
 	[ <html>
@@ -14,9 +14,9 @@
 	<body> ]
 %end
 
-$br [ <h2>Data dictionary index</h2> ]
+\n [ <h2>Data dictionary index</h2> ]
 
-{spc} <ul $sp id="index">
+{spc} <ul \s id="index">
 {spc} <li><strong> [Database: ] </strong> {name} </strong>
 
 %if {table} %then
@@ -44,7 +44,7 @@ $br [ <h2>Data dictionary index</h2> ]
 %end
 
 {spc} </ul>
-$br
+\n
 
 %if {split} %then
 
@@ -53,6 +53,6 @@ $br
 	Copyright © 2006 - ] {year} [ Raphael Araújo e Silva
 	</footer> ]
 
-	</body> $br
+	</body> \n
 	</html>
 %end
