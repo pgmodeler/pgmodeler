@@ -10106,7 +10106,6 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
 	QString dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
-			style_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles),
 			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
 			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
@@ -10137,8 +10136,6 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	dict_index_list.sort();
 	datadict.clear();
 
-	// Generates the the stylesheet
-	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
@@ -10146,12 +10143,18 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
 	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
-	// If the generation is a standalone HTML the css is embedded
-	if(!split)
-		attribs[Attributes::Styles] = styles;
-	else
-		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + ".css"] = styles;
+	// Generates the the stylesheet (only for HTML data dicts)
+	if(!md_format)
+	{
+		styles = schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles), attribs);
+
+		// If the generation is a standalone HTML the css is embedded
+		if(!split)
+			attribs[Attributes::Styles] = styles;
+		else
+			// Otherwise we create a separated stylesheet file
+			datadict[Attributes::Styles + ".css"] = styles;
+	}
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)

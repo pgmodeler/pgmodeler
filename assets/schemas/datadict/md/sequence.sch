@@ -2,14 +2,4 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-# %set {spc} $br [ ]
-
-# {spc} <tr>
-# {spc} <td> {name} </td>
-# {spc} <td [ class="value bool-value"]> {cycle} </td>
-# {spc} <td [ class="value"] > {min-value} </td>
-# {spc} <td [ class="value"] > {max-value} </td>
-# {spc} <td> {columns} </td>
-# {spc} <td> <p $sp class="max-td-wth"> <em> {comment} </em> </p></td>
-
-# {spc} </tr>
+[| ] {name} [ | ] {cycle} [ | ] {min-value} [ | ] {max-value} [ | ] {columns} [ | ] {comment} [ |] \n

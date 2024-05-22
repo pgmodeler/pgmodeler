@@ -2,7 +2,8 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-\#\#\#\s [<a name="] {schema}.{name} ["></a>] _{schema}_.**{name}** \s `{type}` \n
+[<a name="] {schema}.{name} ["></a>] \n
+\#\#\#\s _{schema}_.**{name}** \s `{type}` \n
 
 {comment}
 
@@ -26,7 +27,7 @@
 %end
 
 %if {inherit} %or {partitioned-table} %or {partition-tables} %then
-	\n\#\#\#\#\s Inhiritances \& Partitions \n
+	\n\#\#\#\#\s Inhiritances [ & ] Partitions \n
 
 	\n [| | Tables |] \n
 	[| --- | --- |] \n
