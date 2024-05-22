@@ -433,14 +433,15 @@ QString SchemaParser::getMetaOrEscapedToken(bool is_escaped)
 		column++;
 
 		/* Extracts the metacharacter until doesn't finds a space or end of line
-		 * or another char starting a escaped sequence.
+		 * or another char starting another escaped/metachar sequence.
 		 * Contiguous escaped sequences are allowed, e.g., \#\s\t\n.
-		 * Contiguous metachars are not allowed for legibility reasons, e.g., $br$hs$tb */
+		 * Also, contiguous metachars are allowed (despite the poor legibility), e.g., $br$hs$tb */
 		while(current_line[column] != CharLineEnd &&
 					current_line[column] != CharSpace &&
 					current_line[column] != CharTabulation &&
-					(!is_escaped ||
-					 (is_escaped && current_line[column] != start_chr)))
+					current_line[column] != start_chr &&
+					((!is_escaped && chr_token.size() < 2) ||
+					 (is_escaped && chr_token.isEmpty())))
 		{
 			chr_token += current_line[column];
 			column++;
@@ -458,7 +459,7 @@ QString SchemaParser::getMetaOrEscapedToken(bool is_escaped)
 		QString extra_msg;
 
 		if(is_escaped)
-			extra_msg = QString(QT_TR_NOOP("Expected a valid escaped character token starting with `%1' and followed by, at least, a letter.")).arg(start_chr);
+			extra_msg = QString(QT_TR_NOOP("Expected a valid escaped character token starting with `%1' and followed by a single character.")).arg(start_chr);
 		else
 			extra_msg = QString(QT_TR_NOOP("Expected a valid metacharacter token starting with `%1' and followed by, at least, a letter.")).arg(start_chr);
 
