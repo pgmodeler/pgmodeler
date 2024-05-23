@@ -10102,10 +10102,11 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, dict_index, items, buffer;
+	QString styles, id, dict_index;
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
-	QString dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
+	QString dict_ext = md_format ? ".md" : ".html",
+			dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
 			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
 			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
@@ -10198,7 +10199,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + ".html";
+			id = itr.first + dict_ext;
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -10232,7 +10233,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + ".html"] = dict_index;
+		datadict[Attributes::Index + dict_ext] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;

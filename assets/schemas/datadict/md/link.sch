@@ -3,9 +3,9 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {split} %then
-	%set {link} {name} [.html]
+	%set {link} {name} [.md]
 %else
 	%set {link} \# {name}
 %end
 
-<a \s href="{link}"> {name} </a></li>
+\[ {name} \] ({link}) 

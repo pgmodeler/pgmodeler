@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[<a name="] {schema}.{name} ["></a>] \n
+\n [<a name="] {schema}.{name} ["></a>] \n
 \#\#\#\s _{schema}_.**{name}** \s `{type}` \n
 
 {comment}
@@ -37,11 +37,11 @@
 	%end
 
 	%if {partitioned-table} %then
-		[| Partition of: |] {partitioned-table} [|] \n
+		[| Partition of: | ] {partitioned-table} [ |] \n
 	%end
 
 	%if {partition-tables} %then
-		[| Partition(s): |] {partition-tables} [|] \n
+		[| Partition(s): | ] {partition-tables} [ |] \n
 	%end
 %end
 
@@ -61,7 +61,7 @@
 	) \n
 
  	%if {split} %and {next} %then
- 		\[ {next} \s [&larr;] \] ({next}.md) \n 
+ 		\[ {next} \s \&rarr; \] ({next}.md) \n 
  	%end
 %end
 

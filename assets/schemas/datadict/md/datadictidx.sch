@@ -2,34 +2,25 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-\n [<a name="index"></a>] \n
-\#\#\#\s [Database: ] {name} \n\n
+%set {spc} \n\#\#\#\s
+
+\n [<a name="index"></a>]
+{spc} [Database: ] {name} \n
 
 %if {table} %then
- 	\#\#\#\s Tables \n 	
+ 	{spc} Tables \n 	
  	{table}
 %end
 
-\n
+%if {foreigntable} %then
+	{spc} [Foreign tables] \n 	
+ 	{foreigntable}
+%end
 
-# %if {foreigntable} %then
-# 	{spc} <li><br/><strong>[Foreign tables]</strong>
-# 	{spc} <ul>
-# 	{foreigntable}
-# 	{spc} </ul>
-# 	{spc} </li>
-# %end
-
-# %if {view} %then
-# 	{spc} <li><br/><strong>Views</strong>
-# 	{spc} <ul>
-# 	{view}
-# 	{spc} </ul>
-# 	{spc} </li>
-# %end
-
-# {spc} </ul>
-# \n
+%if {view} %then
+	{spc} Views \n
+	{view}
+%end
 
 # %if {split} %then
 
