@@ -134,7 +134,7 @@ class __libparsers SchemaParser {
 		bool isSpecialCharacter(const QChar &chr);
 
 		//! \brief Filename that was loaded by the parser
-		QString filename;
+		QString filename, search_path;
 
 		/*! \brief Vectorial representation of the loaded file. This is the buffer that is
 		 analyzed by de parser */
@@ -155,6 +155,13 @@ class __libparsers SchemaParser {
 		 * using the provided operator oper (see Token*Oper) */
 		template<typename Type>
 		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
+
+		/*! \brief Parsers the token @include "file.sch". This method changes the original
+		 *  structure of the buffer by replacing @include token with the code in the included file.
+		 *  The "file.sch" portion in @include token is always treated as being a relative path.
+		 *  Currently, you can have includes only in the main buffer (source file). If the included
+		 *  files also have includes this method will raise an exception. This should be changed in the future. */
+		bool parseInclude(const QString &include_ln, QString &buffer, qint64 curr_stream_pos);
 
 	public:
 		inline static const QChar CharComment {'#'}, //! \brief Character that starts a comment
@@ -183,10 +190,11 @@ class __libparsers SchemaParser {
 		TokenAnd {"and"},
 		TokenNot {"not"},
 		TokenSet {"set"},
-		TokenUnset {"unset"};
+		TokenUnset {"unset"},
+		TokenInclude{ QString(CharValueOf) + "include"},
 
 		//! \brief Tokens related to metacharacters
-		inline static const QString	TokenMetaSp {"sp"},// $sp (space)
+		TokenMetaSp {"sp"},// $sp (space)
 		TokenMetaBr {"br"}, // $br (line break)
 		TokenMetaTb {"tb"}, // $tb (tabulation)
 		TokenMetaOb {"ob"}, // $ob (open square bracket '[')
@@ -199,15 +207,21 @@ class __libparsers SchemaParser {
 		TokenMetaAt {"at"}, // $at (at character '@')
 		TokenMetaDs {"ds"}, // $ds (special data separator character '•')
 		TokenMetaAm {"am"}, // $am (ampersand character '&')
-		TokenMetaBs {"bs"}; // $bs (backslash character '\')
+		TokenMetaBs {"bs"}, // $bs (backslash character '\')
 
 		//! \brief Tokens related to comparison expressions
-		inline static const QString	TokenEqOper {"=="}, // == (equal)
+		TokenEqOper {"=="}, // == (equal)
 		TokenNeOper {"!="}, // != (not equal)
 		TokenGtOper {">"}, // > (greater than)
 		TokenLtOper {"<"}, // < (less than)
 		TokenGtEqOper {">="}, // >= (greater or equal to)
 		TokenLtEqOper {"<="}; // <= (less or equal to)
+
+		//! \brief Token related to schema files inclusion (@include)
+		inline static const QRegularExpression TokenIncludeRegexp { "^\\s*" +
+																																TokenInclude +
+																																"\\s+([\"])((.*)?)\\1\\s*$",
+																																QRegularExpression::MultilineOption };
 
 		//! \brief Constants used to get a specific object definition
 		enum CodeType {
@@ -264,6 +278,8 @@ class __libparsers SchemaParser {
 
 		//! \brief Returns the current columnm of the current line where the parser is reading
 		int getCurrentColumn();
+
+		void setSearchPath(const QString &path);
 
 		friend class Catalog;
 };

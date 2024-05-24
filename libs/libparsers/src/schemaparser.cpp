@@ -90,6 +90,11 @@ int SchemaParser::getCurrentColumn()
 	return column + 1;
 }
 
+void SchemaParser::setSearchPath(const QString &path)
+{
+	search_path = path;
+}
+
 void SchemaParser::restartParser()
 {
 	/* Clears the buffer and resets the counters for line,
@@ -105,17 +110,22 @@ void SchemaParser::loadBuffer(const QString &buf)
 	QTextStream ts(&buf_aux);
 	bool open_plain_txt = false;
 	QChar prev_chr;
+	QString orig_cwd = QDir::currentPath();
 
 	// Prepares the parser to do new reading
 	restartParser();
 
-	filename = "[memory buffer]";
+	if(filename.isEmpty())
+		filename = QT_TR_NOOP("[memory buffer]");
+
+	if(!search_path.isEmpty())
+		QDir::setCurrent(search_path);
 
 	// While the input file doesn't reach the end
 	while(!ts.atEnd())
 	{
 		// Get one line from stream (until the last char before \n)
-		lin = ts.readLine();
+		ts.readLineInto(&lin);
 
 		/* We need to make a pre processing on plaintext expressions []
 		 * in order to check if they have comment char inside them, e.g, [ # foo bar ]
@@ -145,19 +155,111 @@ void SchemaParser::loadBuffer(const QString &buf)
 		if(!lin.endsWith(CharLineEnd))
 			lin += CharLineEnd;
 
+		try
+		{
+			/* If we find a @include that is not inside a plaintext statement
+			 * we parse it, and in case of successful parsing, we just
+			 * jump to the next buffer line which may be the first line of
+			 * the included file */
+			if(!open_plain_txt && parseInclude(lin, buf_aux, ts.pos()))
+				continue;
+		}
+		catch(Exception &e)
+		{
+			QDir::setCurrent(orig_cwd);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+
 		// Add the treated line in the buffer
 		buffer.push_back(lin);
 		prev_chr = QChar::Null;
 	}
 }
 
+bool SchemaParser::parseInclude(const QString &include_ln, QString &src_buf, qint64 curr_stream_pos)
+{
+	QRegularExpressionMatch match = TokenIncludeRegexp.match(include_ln);
+
+	// The line does't contain a well formed include statement
+	if(!match.hasMatch() && !include_ln.contains(TokenInclude))
+	{
+		return false;
+	}
+	// The line contains a malformed include statement
+	else if(!match.hasMatch() && include_ln.contains(TokenInclude))
+	{
+		line = buffer.size();
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
+										.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) + " " +
+										QString(QT_TR_NOOP("Expected a valid include statement in the form `%1 \"file.sch\"'.")).arg(TokenInclude),
+										ErrorCode::InvalidSyntax, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+	else
+	{
+		QDir dir;
+		QStringList texts = match.capturedTexts();
+		QString incl_file = dir.absoluteFilePath(texts.last());
+		QFileInfo fi(incl_file);
+
+		/* If the user specificed the include file without the extension
+		 * we set the default extension .sch in order to locate the file */
+		if(fi.suffix().isEmpty())
+			fi.setFile(incl_file + GlobalAttributes::SchemaExt);
+
+		// Check if the included file exists, if not, abort the parsing
+		if(!fi.isFile() || !fi.isReadable())
+		{
+			line = buffer.size();
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidInclude)
+											.arg(filename).arg(getCurrentLine()).arg(1) + " " +
+											QString(QT_TR_NOOP("No such include file `%1'.")).arg(fi.absoluteFilePath()),
+											ErrorCode::InvalidInclude, __PRETTY_FUNCTION__, __FILE__, __LINE__,
+											nullptr, fi.absoluteFilePath());
+		}
+
+		try
+		{
+			// Load the code of the included file
+			QString incl_buf = UtilsNs::loadFile(fi.absoluteFilePath());
+
+			/* If the loaded code contains one or more @include statements we abort
+			 * the parsing because chained/nested file inclusion is not yet supported. */
+			if(incl_buf.contains(TokenIncludeRegexp))
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::InvalidInclude)
+												.arg(filename).arg(getCurrentLine()).arg(1) + " " +
+												QString(QT_TR_NOOP("The included file `%1' contains one or more `@include' statements which is not currently supported!")).arg(fi.absoluteFilePath()),
+												ErrorCode::InvalidInclude, __PRETTY_FUNCTION__, __FILE__, __LINE__,
+												nullptr, fi.absoluteFilePath());
+			}
+
+			src_buf.insert(curr_stream_pos, incl_buf);
+
+			return true;
+		}
+		catch(Exception &e)
+		{
+			line = buffer.size();
+			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		}
+	}
+}
+
 void SchemaParser::loadFile(const QString &filename)
 {
-	if(!filename.isEmpty())
+	if(filename.isEmpty())
+		return;
+
+	try
 	{
 		QString buf(UtilsNs::loadFile(filename));
+		setSearchPath(QFileInfo(filename).absolutePath());
 		loadBuffer(buf);
-		SchemaParser::filename=filename;
+		SchemaParser::filename = filename;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -229,7 +331,7 @@ QString SchemaParser::getAttribute(bool &found_conv_to_xml)
 	if(error)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax).arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) +
-					QString(QT_TR_NOOP("Expected a valid attribute token enclosed by `%1%2'.")).arg(CharStartAttribute).arg(CharEndAttribute),
+					" " + QString(QT_TR_NOOP("Expected a valid attribute token enclosed by `%1%2'.")).arg(CharStartAttribute).arg(CharEndAttribute),
 					ErrorCode::InvalidSyntax, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 	else if(!AttribRegExp.match(atrib).hasMatch())

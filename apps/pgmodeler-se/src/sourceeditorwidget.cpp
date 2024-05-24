@@ -218,6 +218,7 @@ void SourceEditorWidget::validateSyntax()
 		editor_txt->setPalette(def_editor_pal);
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
+		schparser.setSearchPath(QFileInfo(filename).absolutePath());
 		schparser.loadBuffer(editor_txt->toPlainText());
 		schparser.getSourceCode({});
 
