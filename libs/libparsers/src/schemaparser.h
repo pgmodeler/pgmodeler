@@ -27,14 +27,39 @@
 #define SCHEMA_PARSER_H
 
 #include "parsersglobal.h"
-#include "globalattributes.h"
 #include <QDir>
 #include <QTextStream>
 #include "attribsmap.h"
+#include "exception.h"
 #include <QRegularExpression>
 
 class __libparsers SchemaParser {
 	private:
+		struct IncludeInfo {
+			QString include_file;
+			int start_line {-1},
+					end_line {-1},
+					stmt_length {0};
+
+			bool isValid()
+			{
+				return start_line >= 0 &&
+							 end_line >= start_line &&
+							 stmt_length > 0;
+			}
+
+			bool contains(int line)
+			{
+				return isValid() &&
+							 line >= start_line && line <= end_line;
+			}
+		};
+
+		/*! \brief Stores the information (start/end lines) of included files
+		 *  in the buffer. This is used to report syntax/semantic errors at the
+		 *  correct location */
+		std::vector<IncludeInfo> include_infos;
+
 		/*! \brief Indicates that the parser should ignore unknown
 		 attributes avoiding raising exceptions */
 		bool ignore_unk_atribs;
@@ -162,6 +187,57 @@ class __libparsers SchemaParser {
 		 *  Currently, you can have includes only in the main buffer (source file). If the included
 		 *  files also have includes this method will raise an exception. This should be changed in the future. */
 		bool parseInclude(const QString &include_ln, QString &buffer, qint64 curr_stream_pos);
+
+		/*! \brief Returns a formatted error message used prior to an exception raising.
+		 * This method take into account if the error happened in the current schema file/buffer or
+		 * in a file included via @include. ATTENTION: this method changes the current line and column
+		 * variables so getCurrentLine() and getCurrentColumn() returns the proper line/columns of
+		 * the source file. DO NOT CALL THIS METHOD outside an exception instantiation/throwing */
+		template<typename ...ArgType>
+		QString getParseError(ErrorCode err_code, const QString &extra_msg = "", const ArgType & ...args)
+		{
+			int actual_line = line + 1, incl_line = 0, incl_stmt_len = 0;
+			QString file = filename, msg;
+			bool is_incl_error = false;
+
+			for(auto &info : include_infos)
+			{
+				if(info.contains(line))
+				{
+					incl_line = info.start_line;
+					actual_line = (line - info.start_line) + 1;
+					file = info.include_file;
+					incl_stmt_len = info.stmt_length;
+					is_incl_error = true;
+					break;
+				}
+			}
+
+			if(is_incl_error)
+				msg = QString(QT_TR_NOOP("Failed to parse the file `%1' due to an error in the included file at line `%2'. Error detected:\n\n"))
+									.arg(filename).arg(incl_line + 1);
+
+			/* Compile-time if: if the folded expression is not empty
+			 * we use it as part of the error message arguments */
+			if constexpr(sizeof...(args) > 0)
+			{
+				msg += Exception::getErrorMessage(err_code)
+							 .arg(args...).arg(file).arg(actual_line).arg(column + 1) + " " + extra_msg;
+			}
+			else
+			{
+				msg += Exception::getErrorMessage(err_code)
+							 .arg(file).arg(actual_line).arg(column + 1) + " " + extra_msg;
+			}
+
+			if(is_incl_error)
+			{
+				column = incl_stmt_len - 1;
+				line = incl_line;
+			}
+
+			return msg;
+		}
 
 	public:
 		inline static const QChar CharComment {'#'}, //! \brief Character that starts a comment

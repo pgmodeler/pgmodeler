@@ -27,12 +27,11 @@
 
 #include "coreglobal.h"
 #include "attributes.h"
+#include "globalattributes.h"
 #include "schemaparser.h"
-#include <map>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
-#include <type_traits>
 #include "enumtype.h"
 #include "exception.h"
 #include "pgsqlversions.h"
