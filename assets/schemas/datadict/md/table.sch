@@ -45,24 +45,4 @@
 	%end
 %end
 
-%if {datadictidx} %then
-	\n 
-
- 	%if {split} %and {previous} %then
- 		\[ \&larr; \s {previous} \] ({previous}.md) \n 
- 	%end
-
-	\[ \&uarr; \s Index \] (
-		%if {split} %then
-			index.md
-		%else
-			\# index
-		%end
-	) \n
-
- 	%if {split} %and {next} %then
- 		\[ {next} \s \&rarr; \] ({next}.md) \n 
- 	%end
-%end
-
-\n --- \n
+@include "navigation"
