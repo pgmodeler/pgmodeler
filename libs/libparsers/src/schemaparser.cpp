@@ -231,7 +231,7 @@ bool SchemaParser::parseInclude(const QString &include_ln, QString &src_buf, qin
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::InvalidInclude)
 												.arg(filename).arg(getCurrentLine()).arg(getCurrentColumn()) + " " +
-												QString(QT_TR_NOOP("The included file `%1' contains one or more `@include' statements. This isn't currently supported!")).arg(fi.absoluteFilePath()),
+												QString(QT_TR_NOOP("The included file `%1' contains one or more `%2' statements. This isn't currently supported!")).arg(fi.absoluteFilePath(), TokenInclude),
 												ErrorCode::InvalidInclude, __PRETTY_FUNCTION__, __FILE__, __LINE__,
 												nullptr, fi.absoluteFilePath());
 			}
@@ -260,41 +260,6 @@ bool SchemaParser::parseInclude(const QString &include_ln, QString &src_buf, qin
 		}
 	}
 }
-
-/* QString SchemaParser::getParseError(ErrorCode err_code, const QString &extra_msg)
-{
-	int actual_line = line + 1, incl_line = 0, incl_stmt_len = 0;
-	QString file = filename, msg;
-	bool is_incl_error = false;
-
-	for(auto &info : include_infos)
-	{
-		if(info.contains(line))
-		{
-			incl_line = info.start_line;
-			actual_line = (line - info.start_line) + 1;
-			file = info.include_file;
-			incl_stmt_len = info.stmt_length;
-			is_incl_error = true;
-			break;
-		}
-	}
-
-	if(is_incl_error)
-		msg = QString(QT_TR_NOOP("Failed to parse the file `%1' due to an error in the included file at line `%2'. Error detected:\n\n"))
-					.arg(filename).arg(incl_line + 1);
-
-	msg += Exception::getErrorMessage(err_code)
-				 .arg(file).arg(actual_line).arg(column + 1) + " " + extra_msg;
-
-	if(is_incl_error)
-	{
-		column = incl_stmt_len - 1;
-		line = incl_line;
-	}
-
-	return msg;
-} */
 
 void SchemaParser::loadFile(const QString &filename)
 {

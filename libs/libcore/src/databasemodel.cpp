@@ -10214,7 +10214,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
-		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+		idx_attribs[Attributes::Year] = attribs[Attributes::Year];
+		idx_attribs[Attributes::Date] = attribs[Attributes::Date];
+		idx_attribs[Attributes::Styles] = "";
+		idx_attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 		// Generating the index items
 		for(auto &item : dict_index_list)

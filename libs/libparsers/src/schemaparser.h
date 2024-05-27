@@ -200,6 +200,8 @@ class __libparsers SchemaParser {
 			QString file = filename, msg;
 			bool is_incl_error = false;
 
+			/* Checking if the current line is associated to a fragment of code
+			 * loaded from an include file */
 			for(auto &info : include_infos)
 			{
 				if(info.contains(line))
@@ -355,6 +357,7 @@ class __libparsers SchemaParser {
 		//! \brief Returns the current columnm of the current line where the parser is reading
 		int getCurrentColumn();
 
+		//! \brief Set where the schema parser should look for include files used via @include
 		void setSearchPath(const QString &path);
 
 		friend class Catalog;
