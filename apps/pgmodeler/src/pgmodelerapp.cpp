@@ -19,24 +19,19 @@
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
-#include "customuistyle.h"
 #include <QScreen>
 
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
-	QString plugin_name, plug_lang_dir, plug_lang_file;
-	QStringList dir_list;
 	QDir dir;
 
 	try
 	{
 		//Creating the initial user's configuration
-		createUserConfiguration(true);
+		createUserConfiguration();
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 

@@ -19,49 +19,47 @@
 /**
 \ingroup libgui
 \class TextBlockInfo
-\brief Auxiliary class used by SyntaxHighlight and store highlighting states of words in a document.
+\brief Auxiliary class used by SyntaxHighlight which stores highlighting states of text blocks in a document.
 */
 
 #ifndef TEXT_BLOCK_INFO_H
 #define TEXT_BLOCK_INFO_H
 
-#include "guiglobal.h"
-#include <QString>
 #include <QTextBlockUserData>
+#include <QList>
+#include "fragmentinfo.h"
 
 class __libgui TextBlockInfo: public QTextBlockUserData {
 	private:
-		//! \brief The name of the group that holds the formatting applied to the block
-		QString group;
+		//! \brief Holds all text fragment infos on the current text block
+		QList<FragmentInfo> frag_infos;
 
-		//! \brief Indicates if the block is related to a group that contains initial and final expression (multi lined expressions)
-		bool is_multi_expr,
-
-		//! \brief Indicates if the block is closed (only for multi expression groups)
-		is_closed,
-
-		//! \brief Indicates if the block was closed at least one time.
-		closed_once,
-
-		//! \brief Indicates that, when available, the code completion can be triggered when the cursor is in this block info.
-		allow_completion;
+		/*! \brief Holds the name of the group that was left open
+		 *  when the syntax highlighter parsed the block. This is
+		 *  use to indicate that the next block need to be formatted
+		 *  like this one. See SyntaxHighlighter::highlightBlock() */
+		QString open_group;
 
 	public:
-		TextBlockInfo(void);
+		TextBlockInfo();
 
 		//! \brief Clears the group name and set all flags to false
-		void reset(void);
+		void reset();
 
-		void setGroup(const QString &grp);
-		void setClosed(bool value);
-		void setMultiExpr(bool value);
-		void setAllowCompletion(bool value);
+		//! \brief Register a text fragment
+		void addFragmentInfo(const FragmentInfo &f_info);
 
-		QString getGroup();
-		bool isMultiExpr();
-		bool isClosedOnce();
-		bool isClosed();
-		bool isCompletionAllowed();
+		/*! \brief Returns a text fragment in which the provided start/end
+		 * positions are between the fragment's start and end positions */
+		const FragmentInfo *getFragmentInfo(int start, int end);
+
+		void setOpenGroup(const QString &grp);
+
+		QString getOpenGroup();
+
+		/*! \brief Return true if the position in the text block accepts
+		 *  the code completion widget to be triggered */
+		bool isCompletionAllowed(int pos);
 };
 
 #endif

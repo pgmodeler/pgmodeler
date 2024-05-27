@@ -34,7 +34,7 @@ class __libcanvas AttributesTogglerItem: public QObject, public RoundedRectItem 
 	private:
 		Q_OBJECT
 
-		static QPolygonF btn_polygons[7];
+		inline static QPolygonF btn_polygons[7];
 
 		//! \brief Stores the selection rectangle of the item's internal elements
 		QGraphicsRectItem *sel_rect;

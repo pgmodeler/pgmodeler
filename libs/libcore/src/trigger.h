@@ -207,7 +207,7 @@ class __libcore Trigger: public TableObject{
 		Normally the user don't need to call it explicitly */
 		void validateTrigger();
 
-		QString getDataDictionary(const attribs_map &extra_attribs);
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs);
 
 		virtual void updateDependencies() override;
 		virtual void generateHashCode() override;

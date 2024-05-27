@@ -28,8 +28,6 @@
 #include "utilsns.h"
 #include "qtconnectmacros.h"
 
-const QString SchemaEditorForm::UntitledFile = QT_TR_NOOP("(untitled)");
-
 SchemaEditorForm::SchemaEditorForm(QWidget *parent) : QWidget(parent)
 {
 	QToolButton *btn = nullptr;
@@ -387,8 +385,6 @@ void SchemaEditorForm::saveAll()
 		}
 		catch(Exception &e)
 		{
-			//Messagebox msgbox;
-			//msgbox.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			break;
 		}

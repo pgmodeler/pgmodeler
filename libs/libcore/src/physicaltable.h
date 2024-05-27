@@ -368,7 +368,7 @@ class __libcore PhysicalTable: public BaseTable {
 
 		virtual unsigned getMaxObjectCount() override;
 
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs = {}) override;
 
 		friend class Relationship;
 		friend class OperationList;

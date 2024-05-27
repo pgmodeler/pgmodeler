@@ -18,16 +18,6 @@
 
 #include "storagetype.h"
 
-QStringList StorageType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"plain",
-	"external",
-	"extended",
-	"main"
-};
-
 StorageType::StorageType()
 {
 	type_idx = Plain;

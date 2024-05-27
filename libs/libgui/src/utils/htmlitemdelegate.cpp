@@ -20,8 +20,6 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-const QRegularExpression HtmlItemDelegate::TagRegExp("<(\\/)?[a-z]+(>|\\/>)");
-
 HtmlItemDelegate::HtmlItemDelegate(QObject *parent, bool ignore_tags_sz_hint) : PlainTextItemDelegate(parent, true)
 {
 	this->ignore_tags_sz_hint = ignore_tags_sz_hint;

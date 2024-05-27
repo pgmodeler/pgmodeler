@@ -10,18 +10,18 @@ ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 
 void ModelExportHelper::resetExportParams()
 {
-	sql_gen_progress=progress=0;
-	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=false;
-	force_db_drop=gen_drop_file=false;
-	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
-	db_model=nullptr;
-	connection=nullptr;
-	scene=nullptr;
-	zoom=100;
-	show_grid=show_delim=page_by_page=split=browsable=false;
-	viewp=nullptr;
-	code_gen_mode=DatabaseModel::OriginalSql;
+	sql_gen_progress = progress = 0;
+	db_created = ignore_dup = drop_db = drop_objs = export_canceled = false;
+	simulate = use_tmp_names = db_sql_reenabled = override_bg_color = false;
+	force_db_drop = gen_drop_file = md_format = false;
+	show_grid = show_delim = page_by_page = split = browsable = false;
+	created_objs[ObjectType::Role] = created_objs[ObjectType::Tablespace] = -1;
+	db_model = nullptr;
+	connection = nullptr;
+	scene = nullptr;
+	zoom = 100;
+	viewp = nullptr;
+	code_gen_mode = DatabaseModel::OriginalSql;
 }
 
 void ModelExportHelper::abortExport(Exception &e)
@@ -616,7 +616,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	}
 }
 
-void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
+void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -630,7 +630,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 													 tr("Starting data dictionary generation..."),
 													 ObjectType::BaseObject);
 		progress=1;
-		db_model->saveDataDictionary(path, browsable, split);
+		db_model->saveDataDictionary(path, browsable, split, md_format);
 
 		emit s_progressUpdated(100, tr("Data dictionary successfully saved into `%1'.").arg(path), ObjectType::BaseObject);
 		emit s_exportFinished();
@@ -1146,40 +1146,41 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 
 void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file)
 {
-	this->db_model=db_model;
-	this->filename=filename;
-	this->pgsql_ver=pgsql_ver;
-	this->split=split;
-	this->code_gen_mode=code_gen_mode;
-	this->gen_drop_file=gen_drop_file;
+	this->db_model = db_model;
+	this->filename = filename;
+	this->pgsql_ver = pgsql_ver;
+	this->split = split;
+	this->code_gen_mode = code_gen_mode;
+	this->gen_drop_file = gen_drop_file;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color)
 {
-	this->scene=scene;
-	this->viewp=viewp;
-	this->filename=filename;
-	this->zoom=zoom;
-	this->show_grid=show_grid;
-	this->show_delim=show_delim;
-	this->page_by_page=page_by_page;
-	this->override_bg_color=override_bg_color;
+	this->scene = scene;
+	this->viewp = viewp;
+	this->filename = filename;
+	this->zoom = zoom;
+	this->show_grid = show_grid;
+	this->show_delim = show_delim;
+	this->page_by_page = page_by_page;
+	this->override_bg_color = override_bg_color;
 }
 
 void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
-	this->scene=scene;
-	this->filename=filename;
-	this->show_grid=show_grid;
-	this->show_delim=show_delim;
+	this->scene = scene;
+	this->filename = filename;
+	this->show_grid = show_grid;
+	this->show_delim = show_delim;
 }
 
-void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
+void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format)
 {
-	this->db_model=db_model;
-	this->filename=path;
-	this->browsable=browsable;
-	this->split=split;
+	this->db_model = db_model;
+	this->filename = path;
+	this->browsable = browsable;
+	this->split = split;
+	this->md_format = md_format;
 }
 
 void ModelExportHelper::exportToDBMS()
@@ -1254,7 +1255,7 @@ void ModelExportHelper::exportToDataDict()
 {
 	try
 	{
-		exportToDataDict(db_model, filename, browsable, split);
+		exportToDataDict(db_model, filename, browsable, split, md_format);
 		resetExportParams();
 	}
 	catch(Exception &e)

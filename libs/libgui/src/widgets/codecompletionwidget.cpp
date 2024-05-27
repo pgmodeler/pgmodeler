@@ -23,29 +23,6 @@
 #include "utils/htmlitemdelegate.h"
 #include "utils/textblockinfo.h"
 
-const QStringList CodeCompletionWidget::dml_keywords = {
-	/* ATTENTION: the keywords in this list MUST have a counter part in
-	 * DmlKeywordId. Also, the list MUST follow the same item order
-	 * in DmlKeywordId.
-	 *
-	 * Insert here the keywords that need have their position determined
-	 * in order to call retriveColumnNames() and retrieveObjectsName().
-	 * New keywords here need a new entry in DmlKeywordId enum */
-	"select", "insert", "update", "delete",
-	"truncate", "alter", "drop", "from",
-	"join",	"into", "as", "set", "table",
-	"only", "where",
-
-	/* Insert new keywords after this point if their position in the SQL command
-	 * is not important but if they are need to do some extra checkings */
-	"inner", "outer", "left", "right",
-	"full", "union", "intersect",
-	"except","distinct", "values",
-	"all"
-};
-
-const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
-
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
@@ -132,10 +109,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object == code_field_txt)
 		{
 			TextBlockInfo *blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			int pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
 			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()) &&
-				 (!blk_info || (blk_info && blk_info->isCompletionAllowed())))
+				 (!blk_info || (blk_info && blk_info->isCompletionAllowed(pos_in_blk))))
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -251,21 +229,21 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
+			QStringList exprs = syntax_hl->getExpressions(keywords_grp);
+			QRegularExpression regexp("\\(\\?\\=.*");
 
-			while(!exprs.empty())
+			for(auto &expr : exprs)
 			{
-				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
-				 * we need to remove from the pattern the initial and final regexp operators in
-				 * order to use only the word itself */
-				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
-				exprs.pop_back();
+				/* Since keywords are exact match patterns (see SyntaxHighlighter::loadConfiguration)
+				 * we need to remove from the pattern the regexp operators in order to extract only the
+				 * work itself. */
+				keywords.append(expr.remove("^").remove(regexp));
 			}
 
-			completion_trigger=syntax_hl->getCompletionTrigger();
+			completion_trigger = syntax_hl->getCompletionTrigger();
 		}
 		else
-			completion_trigger=QChar('.');
+			completion_trigger = QChar('.');
 
 		if(enable_snippets)
 		{
@@ -772,6 +750,7 @@ void CodeCompletionWidget::extractTableNames()
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false, is_special_char = false;
 	TextBlockInfo *blk_info = nullptr;
+	int pos_in_blk = -1;
 
 	tab_aliases.clear();
 	tab_names_pos.clear();
@@ -783,11 +762,13 @@ void CodeCompletionWidget::extractTableNames()
 		curr_word = tc.selectedText();
 		curr_word.remove('"');
 		blk_info = dynamic_cast<TextBlockInfo *>(tc.block().userData());
+		pos_in_blk = tc.positionInBlock();
+
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
 		/* If the current block doesn't allow completion (e.g. comment block)
 		 * we just skip the table name/alias extraction */
-		if(blk_info && !blk_info->isCompletionAllowed())
+		if(blk_info && !blk_info->isCompletionAllowed(pos_in_blk))
 			continue;
 
 		/* Every time we find a new SELECT keyword we reset name/alias
@@ -952,7 +933,7 @@ bool CodeCompletionWidget::updateObjectsList()
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds;
 	unsigned kw_id = Select;
-	int found_kw_id = -1;
+	int found_kw_id = -1, pos_in_blk = -1;
 	bool cursor_after_kw = false, kw_found = false;
 	TextBlockInfo *blk_info = nullptr;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
@@ -974,9 +955,10 @@ bool CodeCompletionWidget::updateObjectsList()
 
 			kw_found = code_field_txt->find(kw, flag);
 			blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			// Avoiding using the position of a found keyword that is in a commented block
-			if(kw_found && blk_info && blk_info->isCompletionAllowed())
+			if(kw_found && blk_info && blk_info->isCompletionAllowed(pos_in_blk))
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
 

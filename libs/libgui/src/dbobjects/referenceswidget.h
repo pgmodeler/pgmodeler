@@ -40,7 +40,11 @@ class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 		bool conf_view_refs;
 
 		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
-		static const QRegularExpression AttrDelimRegexp;
+		inline static const QRegularExpression AttrDelimRegexp {
+			QString("(\\%1)+|(\\%2)+")
+			.arg(SchemaParser::CharStartAttribute)
+			.arg(SchemaParser::CharEndAttribute)
+		};
 
 		void showReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,
 													bool use_signature, bool format_name, bool use_columns);

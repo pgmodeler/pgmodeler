@@ -492,7 +492,7 @@ void Trigger::validateTrigger()
 	}
 }
 
-QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
+QString Trigger::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -533,8 +533,7 @@ QString Trigger::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Events] = aux_list.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 BaseObject::getSchemaName(ObjectType::Trigger)), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

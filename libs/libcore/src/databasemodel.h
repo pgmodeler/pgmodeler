@@ -100,7 +100,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * to return the created object */
 		std::map<ObjectType, std::function<void(BaseObject *, int)>> remove_methods;
 
-		static unsigned dbmodel_id;
+		inline static unsigned dbmodel_id {2000};
 
 		XmlParser xmlparser;
 
@@ -819,10 +819,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
-		void getDataDictionary(attribs_map &datadict, bool browsable, bool split);
+		void getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format);
 
 		//! \brief Saves the data dictionary of all tables in a single HTML file or splitted in several files for each table
-		void saveDataDictionary(const QString &path, bool browsable, bool split);
+		void saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format);
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */

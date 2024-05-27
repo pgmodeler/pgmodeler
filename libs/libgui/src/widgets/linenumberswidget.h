@@ -54,10 +54,10 @@ class __libgui LineNumbersWidget : public QWidget {
 		start_sel_line, start_sel_pos;
 
 		//! \brief Font color for drawn line numbers
-		static QColor font_color,
+		inline static QColor font_color { Qt::lightGray },
 
 		//! \brief Widget's background color
-		bg_color;
+		bg_color { Qt::black };
 
 	protected:
 		void paintEvent(QPaintEvent *event);

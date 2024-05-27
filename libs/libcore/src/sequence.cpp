@@ -19,13 +19,6 @@
 #include "sequence.h"
 #include "coreutilsns.h"
 
-const QString Sequence::MaxPositiveValue("+2147483647");
-const QString Sequence::MaxNegativeValue("-2147483648");
-const QString Sequence::MaxSmallPositiveValue("+32767");
-const QString Sequence::MaxSmallNegativeValue("-32768");
-const QString Sequence::MaxBigPositiveValue("+9223372036854775807");
-const QString Sequence::MaxBigNegativeValue("-9223372036854775808");
-
 Sequence::Sequence()
 {
 	obj_type=ObjectType::Sequence;
@@ -491,7 +484,7 @@ void Sequence::operator = (Sequence &seq)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
+QString Sequence::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -505,8 +498,7 @@ QString Sequence::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Comment] = comment;
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

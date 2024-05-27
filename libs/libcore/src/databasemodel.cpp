@@ -24,8 +24,6 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
-unsigned DatabaseModel::dbmodel_id=2000;
-
 DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
@@ -10098,19 +10096,19 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format)
 {
 	int idx = 0;
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, dict_index, items, buffer;
+	QString styles, id, dict_index;
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
-	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
-			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
-			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
+	QString dict_ext = md_format ? ".md" : ".html",
+			dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
+			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
+			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -10139,8 +10137,6 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	dict_index_list.sort();
 	datadict.clear();
 
-	// Generates the the stylesheet
-	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
@@ -10148,12 +10144,18 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
 	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
-	// If the generation is a standalone HTML the css is embedded
-	if(!split)
-		attribs[Attributes::Styles] = styles;
-	else
-		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + ".css"] = styles;
+	// Generates the the stylesheet (only for HTML data dicts)
+	if(!md_format)
+	{
+		styles = schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles), attribs);
+
+		// If the generation is a standalone HTML the css is embedded
+		if(!split)
+			attribs[Attributes::Styles] = styles;
+		else
+			// Otherwise we create a separated stylesheet file
+			datadict[Attributes::Styles + ".css"] = styles;
+	}
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
@@ -10184,7 +10186,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 			for(auto &itr : col_seqs)
 			{
 				aux_attribs[Attributes::Sequences] +=
-						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+						itr.first->getDataDictionary(md_format, {{ Attributes::Columns, itr.second.join(", ") }});
 			}
 
 			col_seqs.clear();
@@ -10192,12 +10194,12 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		else
 			aux_attribs[Attributes::Sequences] = "";
 
-		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, md_format, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + ".html";
+			id = itr.first + dict_ext;
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -10212,7 +10214,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
-		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+		idx_attribs[Attributes::Year] = attribs[Attributes::Year];
+		idx_attribs[Attributes::Date] = attribs[Attributes::Date];
+		idx_attribs[Attributes::Styles] = "";
+		idx_attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 		// Generating the index items
 		for(auto &item : dict_index_list)
@@ -10231,7 +10236,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + ".html"] = dict_index;
+		datadict[Attributes::Index + dict_ext] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;
@@ -10240,7 +10245,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format)
 {
 	try
 	{
@@ -10260,7 +10265,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, split);
+		getDataDictionary(datadict, browsable, split, md_format);
 		filename = path;
 
 		for(auto &itr : datadict)

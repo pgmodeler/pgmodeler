@@ -18,64 +18,54 @@
 
 #include "textblockinfo.h"
 
-TextBlockInfo::TextBlockInfo(void)
+TextBlockInfo::TextBlockInfo()
 {
 	reset();
 }
 
-void TextBlockInfo::reset(void)
+void TextBlockInfo::reset()
 {
-	group.clear();
-	is_multi_expr = false;
-	is_closed = false;
-	closed_once = false;
-	allow_completion = false;
+	frag_infos.clear();
+	open_group.clear();
 }
 
-void TextBlockInfo::setGroup(const QString &grp)
+void TextBlockInfo::addFragmentInfo(const FragmentInfo &f_info)
 {
-	group = grp;
+	if(!f_info.isValid())
+		return;
+
+	frag_infos.append(f_info);
 }
 
-void TextBlockInfo::setClosed(bool value)
+const FragmentInfo *TextBlockInfo::getFragmentInfo(int start, int end)
 {
-	if(!closed_once && value)
-		closed_once = true;
+	for(auto &f_info : frag_infos)
+	{
+		if((start >= f_info.getStart() && start <= f_info.getEnd()) ||
+			 (end >= f_info.getStart() && end <= f_info.getEnd()))
+			return &f_info;
+	}
 
-	is_closed = value;
+	return nullptr;
 }
 
-void TextBlockInfo::setMultiExpr(bool value)
+void TextBlockInfo::setOpenGroup(const QString &grp)
 {
-	is_multi_expr = value;
+	open_group = grp;
 }
 
-void TextBlockInfo::setAllowCompletion(bool value)
+QString TextBlockInfo::getOpenGroup()
 {
-	allow_completion = value;
+	return open_group;
 }
 
-QString TextBlockInfo::getGroup()
+bool TextBlockInfo::isCompletionAllowed(int pos)
 {
-	return group;
-}
+	for(auto &f_info : frag_infos)
+	{
+		if(f_info.contains(pos))
+			return f_info.isCompletionAllowed();
+	}
 
-bool TextBlockInfo::isMultiExpr()
-{
-	return is_multi_expr;
-}
-
-bool TextBlockInfo::isClosedOnce()
-{
-	return closed_once;
-}
-
-bool TextBlockInfo::isClosed()
-{
-	return is_closed;
-}
-
-bool TextBlockInfo::isCompletionAllowed()
-{
-	return allow_completion;
+	return true;
 }

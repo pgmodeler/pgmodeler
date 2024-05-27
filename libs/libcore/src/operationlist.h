@@ -59,7 +59,7 @@ class __libcore OperationList: public QObject {
 		DatabaseModel *model;
 
 		//! \brief Maximum number of stored operations (global)
-		static unsigned max_size;
+		inline static unsigned max_size {500};
 
 		/*! \brief Stores the type of chain to the next operation to be stored
 		 in the list. This attribute is used in conjunction with the chaining

@@ -19,8 +19,6 @@
 #include "view.h"
 #include "physicaltable.h"
 
-const QString View::ExtraSCRegExp("((\\;)+(\\s|\\t)*)+$");
-
 View::View() : BaseTable()
 {
 	obj_type = ObjectType::View;
@@ -850,11 +848,11 @@ std::vector<BaseObject *> View::getObjects(const std::vector<ObjectType> &excl_t
 	return list;
 }
 
-QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString View::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+	QString link_dict_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Link);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -893,26 +891,24 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 			aux_attrs[Attributes::Type] = col.getType();
 
 			schparser.ignoreUnkownAttributes(true);
-			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																																			BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
+			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
 			aux_attrs.clear();
 		}
 
 		for(auto &obj : triggers)
 		{
 			attribs[Attributes::Triggers] +=
-					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+					dynamic_cast<Trigger *>(obj)->getDataDictionary(md_format, {{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
 		for(auto &obj : indexes)
-			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary(md_format);
 
 		schparser.ignoreUnkownAttributes(true);
-		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																																		Attributes::Objects), attribs);
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Objects), attribs);
+
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

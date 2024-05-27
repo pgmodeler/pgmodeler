@@ -172,7 +172,7 @@ class __libcore Index: public TableObject{
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
 		std::vector<SimpleColumn> getSimpleColumns();
 
-		QString getDataDictionary(const attribs_map &extra_attribs = {});
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs = {});
 
 		virtual void updateDependencies() override;
 

@@ -22,8 +22,6 @@
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
-bool ModelExportForm::low_verbosity = false;
-
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	model=nullptr;
@@ -44,7 +42,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	img_file_sel->setAllowFilenameInput(true);
 	img_file_sel->setFileIsMandatory(false);
 	img_file_sel->setAppendSuffix(true);
-	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
+	export_to_img_grid->addWidget(img_file_sel, 2, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
@@ -104,7 +102,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
 		{
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.exportToPNG();
 			else
 				export_hlp.exportToSVG();
@@ -128,15 +126,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
 	connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
 
-	connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
-	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	connect(img_fmt_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectImageFormat);
 
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
-	connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
-	connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_mode_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_format_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
 	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
@@ -231,7 +225,7 @@ void ModelExportForm::exportModel()
 		{
 			viewp=new QGraphicsView(model->scene);
 
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.setExportToPNGParams(model->scene, viewp, img_file_sel->getSelectedFile(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
 																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
@@ -263,7 +257,10 @@ void ModelExportForm::exportModel()
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(), incl_index_chk->isChecked(), dict_split_rb->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(),
+																						 incl_index_chk->isChecked(),
+																						 dict_mode_cmb->currentIndex() == 1,
+																						 dict_format_cmb->currentIndex() == 1);
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
@@ -418,7 +415,9 @@ void ModelExportForm::enableExport()
 
 void ModelExportForm::selectImageFormat()
 {
-	if(png_rb->isChecked())
+	bool is_png = img_fmt_cmb->currentIndex() == 0;
+
+	if(is_png)
 	{
 		img_file_sel->setMimeTypeFilters({"image/png", "application/octet-stream"});
 		img_file_sel->setDefaultSuffix("png");
@@ -430,14 +429,27 @@ void ModelExportForm::selectImageFormat()
 		img_file_sel->setDefaultSuffix("svg");
 		override_bg_color_chk->setEnabled(false);
 	}
+
+	zoom_cmb->setEnabled(is_png);
+	zoom_lbl->setEnabled(is_png);
+	page_by_page_chk->setEnabled(is_png);
 }
 
 void ModelExportForm::selectDataDictMode()
 {
-	if(dict_standalone_rb->isChecked())
+	if(dict_mode_cmb->currentIndex() == 0)
 	{
-		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
-		dict_file_sel->setDefaultSuffix("html");
+		if(dict_format_cmb->currentIndex() == 0)
+		{
+			dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("html");
+		}
+		else
+		{
+			dict_file_sel->setMimeTypeFilters({"text/markdown", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("md");
+		}
+
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 		dict_file_sel->setDirectoryMode(false);
 		dict_file_sel->setFileMustExist(false);
@@ -445,6 +457,7 @@ void ModelExportForm::selectDataDictMode()
 	else
 	{
 		dict_file_sel->setDefaultSuffix("");
+		dict_file_sel->setMimeTypeFilters({});
 		dict_file_sel->setDirectoryMode(true);
 		dict_file_sel->setFileMustExist(false);
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);

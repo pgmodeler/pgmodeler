@@ -29,7 +29,11 @@
 
 class __libcore IdentityType: public TemplateType<IdentityType>{
 	private:
-		static QStringList type_names;
+		inline static const QStringList type_names {
+			"", // Reserved for Class::Null
+			"ALWAYS",
+			"BY DEFAULT"
+		};
 
 	public:
 		static constexpr unsigned Always = 1,
