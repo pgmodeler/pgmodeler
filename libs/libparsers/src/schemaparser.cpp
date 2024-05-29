@@ -424,7 +424,12 @@ QString SchemaParser::getPlainText()
 					 (current_line[column] == CharStartPlainText ||
 						current_line[column] == CharEndPlainText))
 				{
-					text.removeLast();
+					#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+						text.removeLast();
+					#else
+						text.remove(text.length() - 1, 1);
+					#endif
+
 					text += current_line[column];
 					column++;
 				}
