@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+v1.1.3
+------
+<em>Release date: May 13, 2024</em><br/>
+
+* [New] Added an option to toggle the display of the mouse position, zoom, and object selection information.
+* [Change] Minor adjustment in UI stylesheets of the scene info widget.
+* [Change] Adjust the scene info widget layout to diminish the components wobbling when moving objects.
+* [Change] Minor adjustment in changelog entry validation in the database model.
+* [Fix] Fixed a shortcut conflict in the text search/replace widget.
+* [Fix] Minor fix in the database model objects recreation process (during model fix operation) to warn about invalid changelog entries avoiding aborting the entire model fix process.
+* [Fix] Fixed a bug in the catalog class that was not retrieving comments of sequences causing false-positive to be generated in diff process.
+
 v1.1.2
 ------
 <em>Release date: April 08, 2024</em><br/>
