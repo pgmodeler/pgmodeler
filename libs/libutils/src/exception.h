@@ -284,7 +284,6 @@ enum class ErrorCode: unsigned {
 	InvalidObjectFilter,
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
-	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
 	InvConfigParameterName,
 	EmptyConfigParameterValue,
@@ -307,7 +306,7 @@ enum class ErrorCode: unsigned {
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=270;
+		static constexpr unsigned ErrorCount=269;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;
