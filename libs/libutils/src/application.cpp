@@ -162,19 +162,22 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	}
 	else
 	{
-		bool file_exists = QFileInfo::exists(dst_path);
+		bool file_exists = QFileInfo::exists(dst_path),
+				file_copied = false;
 
 		/* Forcing the removal of files that are not backward compatible
 		 * if they already exists in the destination folder */
 		if(dst_path.contains("-highlight"))
 			QFile::remove(dst_path);
 
-		if(!file_exists && !QFile::copy(src_path, dst_path))
+		file_copied = QFile::copy(src_path, dst_path);
+
+		if(!file_exists && !file_copied)
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 											__PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
-		else if(file_exists)
+		else if(file_exists || file_copied)
 		{
 			// Set write permissions when copying file with read-only permissions
 			QFile file(dst_path);
