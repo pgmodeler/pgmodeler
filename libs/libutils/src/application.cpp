@@ -81,7 +81,7 @@ void Application::createUserConfiguration()
 	/* First, we check if there are config files of previous version (GlobalAttributes::PgModelerOldAppName)
 	 * in the user's local storage. If that's the case, we copy the files to the folder reserved for the
 	 * new version (GlobalAttributes::PgModelerAppName) */
-	if(first_run && !new_cfg_dir.exists())
+	if(first_run && old_cfg_dir.exists() && !new_cfg_dir.exists())
 	{
 		new_cfg_dir.mkpath(new_cfg_dir.absolutePath());
 		copyFilesRecursively(old_cfg_dir.absolutePath(),
