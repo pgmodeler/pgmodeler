@@ -3,7 +3,7 @@ Changelog
 
 v1.2.0-alpha
 ------
-<em>Release date: June 10, 2024</em><br/>
+<em>Release date: June 20, 2024</em><br/>
 
 * [New] Added support for @include statements in schema micro language.
 * [New] Added the support for Markdown data dictionaries in ModelExportForm.
@@ -25,6 +25,7 @@ v1.2.0-alpha
 * [New] Added the option ModelsDiffHelper::OptReplaceModified that toggles the replacement of objects that accept CREATE OR REPLACE.
 * [New] Added the fields in ViewWidget to handle check_option, security_invoker, and security_barrier options
 * [New] Objects that can be created with "CREATE OR REPLACE" are now having their DDL generated with "OR REPLACE".
+* [Change] Removed the restriction of specifying OUT parameters in procedures.
 * [Change] Refactored schema files of HTML data dicts to use the include statement.
 * [Change] SourceCodeWidget now generates code on demand, when the current source code type tab changes.
 * [Change] Moved the type strings from translation units in libcore/pgsqltypes/* to their respective class definition.
@@ -50,6 +51,7 @@ v1.2.0-alpha
 * [Change] Minor layout adjustment in ViewWidget.
 * [Change] Minor adjustment in TemplateType::setType to include extra information when raising exceptions.
 * [Change] Minor adjustment in changelog entry validation in DatabaseModel::addChangelogEntry.
+* [Fix] Minor fix in Application::createUserConfiguration to avoid trying to copy legacy configs when older version configurations don't exist.
 * [Fix] Minor fix in SchemaParser::isSpecialCharacter to include CharStartEscaped as a special char.
 * [Fix] Fixed all getDataDictionary methods to be able to generate data dictionaries for both HTML and MD formats
 * [Fix] Fixed a bug in SyntaxHighlighter::loadConfiguration that was not properly setting regular expressions as case-sensitive.
