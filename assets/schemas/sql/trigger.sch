@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE ]
+[CREATE OR REPLACE ]
 %if {constraint} %then [CONSTRAINT ]%end
 [TRIGGER ] {name} $br
 $tb {firing-type} $sp {events} $br

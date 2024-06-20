@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE ]
+[CREATE OR REPLACE ]
 
 %if {trusted} %then
 

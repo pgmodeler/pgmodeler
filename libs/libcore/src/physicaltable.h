@@ -82,7 +82,7 @@ class __libcore PhysicalTable: public BaseTable {
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
 		//! \brief The methods below generates the table attributes used by the SchemaParser
-		void setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols);
+		void setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols, bool incl_constraints);
 		void setConstraintsAttribute(SchemaParser::CodeType def_type);
 		void setCommentAttribute(TableObject *tab_obj);
 		void setAncestorTableAttribute();
@@ -362,13 +362,13 @@ class __libcore PhysicalTable: public BaseTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		void setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
+		void setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_contraints);
 
 		virtual void setObjectListsCapacity(unsigned capacity) override;
 
 		virtual unsigned getMaxObjectCount() override;
 
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) override;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs = {}) override;
 
 		friend class Relationship;
 		friend class OperationList;

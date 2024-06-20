@@ -18,8 +18,6 @@
 
 #include "schema.h"
 
-unsigned Schema::schema_id = 3000;
-
 Schema::Schema()
 {
 	object_id = Schema::schema_id++;

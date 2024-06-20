@@ -35,14 +35,17 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 	private:
 		Q_OBJECT
 
-		NumberedTextEditor *sqlcode_txt,
-				*xmlcode_txt;
+		NumberedTextEditor *sqlcode_txt, *xmlcode_txt;
 
-		SyntaxHighlighter *hl_sqlcode,
-				*hl_xmlcode;
+		SyntaxHighlighter *hl_sqlcode, *hl_xmlcode;
 
-		SearchReplaceWidget *search_sql_wgt,
-				*search_xml_wgt;
+		SearchReplaceWidget *search_sql_wgt, *search_xml_wgt;
+
+		int prev_pg_ver, prev_code_opt;
+
+		void generateSQLCode();
+
+		void generateXMLCode();
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);
@@ -58,8 +61,8 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 		void applyConfiguration();
 
 	private slots:
-		void generateSourceCode(int=0);
-		void setSourceCodeTab(int=0);
+		void generateSourceCode(int def_type);
+		void setSourceCodeTab(int tab_idx);
 		void saveSQLCode();
 };
 

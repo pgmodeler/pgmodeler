@@ -56,7 +56,7 @@ Older releases of pgModeler can be found on [Sourceforge.net](http://sourceforge
  
 * The diff process still presents false-positive results due to its limitations. Sometimes, there is the need to run the process twice and/or tweaking the options to get the full changes.
 
-* pgModeler does not fully support the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space. The use of non-ASCII characters in the objects' names also implies in automatic usage of quoted notation.
+* pgModeler does not fully support the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). The non-printable characters, some special UTF8 characters, some special characters, and upper case letters in the objects' names will automatically trigger the usage of quoted identifier notation. The following characters are considered special in pgModeler's implementation: '_-.@ $:()/<>+*\=~!#%^&|?{}[]`;
 
 * pgModeler can't be compiled with Microsoft Visual Studio due to the use of some GCC and clang extensions.
 

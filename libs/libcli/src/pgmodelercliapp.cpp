@@ -28,172 +28,6 @@
 #include "pgsqlversions.h"
 #include "compat/compatns.h"
 
-QTextStream PgModelerCliApp::out(stdout);
-
-const QRegularExpression PgModelerCliApp::PasswordRegExp=QRegularExpression("(password)(=)(.)*( )");
-const QString PgModelerCliApp::PasswordPlaceholder("password=******");
-
-const QString PgModelerCliApp::AllChildren("all");
-const QString PgModelerCliApp::Input("--input");
-const QString PgModelerCliApp::Output("--output");
-const QString PgModelerCliApp::InputDb("--input-db");
-const QString PgModelerCliApp::ExportToFile("--export-to-file");
-const QString PgModelerCliApp::ExportToPng("--export-to-png");
-const QString PgModelerCliApp::ExportToSvg("--export-to-svg");
-const QString PgModelerCliApp::ExportToDbms("--export-to-dbms");
-const QString PgModelerCliApp::ExportToDict("--export-to-dict");
-const QString PgModelerCliApp::ImportDb("--import-db");
-const QString PgModelerCliApp::NoIndex("--no-index");
-const QString PgModelerCliApp::Split("--split");
-const QString PgModelerCliApp::DependenciesSql("--dependencies");
-const QString PgModelerCliApp::ChildrenSql("--children");
-const QString PgModelerCliApp::Diff("--diff");
-const QString PgModelerCliApp::DropDatabase("--drop-database");
-const QString PgModelerCliApp::DropObjects("--drop-objects");
-const QString PgModelerCliApp::PgSqlVer("--pgsql-ver");
-const QString PgModelerCliApp::Help("--help");
-const QString PgModelerCliApp::ShowGrid("--show-grid");
-const QString PgModelerCliApp::ShowDelimiters("--show-delimiters");
-const QString PgModelerCliApp::PageByPage("--page-by-page");
-const QString PgModelerCliApp::OverrideBgColor("--override-bg-color");
-const QString PgModelerCliApp::IgnoreDuplicates("--ignore-duplicates");
-const QString PgModelerCliApp::IgnoreErrorCodes("--ignore-error-codes");
-const QString PgModelerCliApp::ConnAlias("--conn-alias");
-const QString PgModelerCliApp::Host("--host");
-const QString PgModelerCliApp::Port("--port");
-const QString PgModelerCliApp::User("--user");
-const QString PgModelerCliApp::Passwd("--passwd");
-const QString PgModelerCliApp::InitialDb("--initial-db");
-const QString PgModelerCliApp::Silent("--silent");
-const QString PgModelerCliApp::ListConns("--list-conns");
-const QString PgModelerCliApp::Simulate("--simulate");
-const QString PgModelerCliApp::FixModel("--fix-model");
-const QString PgModelerCliApp::FixTries("--fix-tries");
-const QString PgModelerCliApp::ZoomFactor("--zoom");
-const QString PgModelerCliApp::UseTmpNames("--use-tmp-names");
-const QString PgModelerCliApp::DbmMimeType("--dbm-mime-type");
-const QString PgModelerCliApp::Install("install");
-const QString PgModelerCliApp::Uninstall("uninstall");
-const QString PgModelerCliApp::SystemWide("--system-wide");
-const QString PgModelerCliApp::IgnoreImportErrors("--ignore-errors");
-const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
-const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
-const QString PgModelerCliApp::DebugMode("--debug-mode");
-const QString PgModelerCliApp::FilterObjects("--filter-objects");
-const QString PgModelerCliApp::MatchByName("--match-by-name");
-const QString PgModelerCliApp::ForceChildren("--force-children");
-const QString PgModelerCliApp::OnlyMatching("--only-matching");
-const QString PgModelerCliApp::CommentsAsAliases("--comments-as-aliases");
-const QString PgModelerCliApp::PartialDiff("--partial");
-const QString PgModelerCliApp::Force("--force");
-const QString PgModelerCliApp::StartDate("--start-date");
-const QString PgModelerCliApp::EndDate("--end-date");
-const QString PgModelerCliApp::CompareTo("--compare-to");
-const QString PgModelerCliApp::SaveDiff("--save");
-const QString PgModelerCliApp::ApplyDiff("--apply");
-const QString PgModelerCliApp::NoDiffPreview("--no-preview");
-const QString PgModelerCliApp::DropClusterObjs("--drop-cluster-objs");
-const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
-const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
-const QString PgModelerCliApp::ForceDropColsConstrs("--force-drop-cols");
-const QString PgModelerCliApp::RenameDb("--rename-db");
-const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
-const QString PgModelerCliApp::NoCascadeDrop("--no-cascade");
-const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
-const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
-const QString PgModelerCliApp::CreateConfigs("--create-configs");
-const QString PgModelerCliApp::MissingOnly("--missing-only");
-const QString PgModelerCliApp::IgnoreFaultyPlugins("--ignore-faulty");
-const QString PgModelerCliApp::ListPlugins("--list-plugins");
-
-const QString PgModelerCliApp::TagExpr("<%1");
-const QString PgModelerCliApp::EndTagExpr("</%1");
-const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")");
-
-const QString PgModelerCliApp::MsgFileAssociated(tr("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
-const QString PgModelerCliApp::MsgNoFileAssociation(tr("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.").arg(GlobalAttributes::DbModelExt, Force));
-
-const QString PgModelerCliApp::ModelFixLog("model_fix.log");
-
-attribs_map PgModelerCliApp::short_opts = {
-	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
-	{ ExportToFile, "-ef" },	{ ExportToPng, "-ep" },	{ ExportToSvg, "-es" },
-	{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
-	{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
-	{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
-	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },
-	{ IgnoreDuplicates, "-ir" }, { OverrideBgColor, "-oc" },
-	{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
-	{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
-	{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
-	{ Simulate, "-sm" },	{ FixModel, "-fm" },	{ FixTries, "-ft" },
-	{ ZoomFactor, "-zf" },	{ UseTmpNames, "-tn" },	{ DbmMimeType, "-mt" },
-	{ IgnoreImportErrors, "-ie" },	{ ImportSystemObjs, "-is" },	{ ImportExtensionObjs, "-ix" },
-	{ FilterObjects, "-fo" },	{ MatchByName, "-mn" },	{ ForceChildren, "-fc" },
-	{ OnlyMatching, "-om" },	{ DebugMode, "-d" },	{ PartialDiff, "-pd" },
-	{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
-	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
-	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
-	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
-	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },	{ ForceRecreateObjs, "-nf" },
-	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
-	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
-	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
-		{ CommentsAsAliases, "-cl" }, { IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }
-};
-
-std::map<QString, bool> PgModelerCliApp::long_opts = {
-	{ Input, true }, { Output, true }, { InputDb, true },
-	{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
-	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
-	{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
-	{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
-	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ OverrideBgColor, false },
-	{ IgnoreErrorCodes, true }, { ConnAlias, true },	{ Host, true },	{ Port, true },
-	{ User, true },	{ Passwd, true },	{ InitialDb, true },
-	{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
-	{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
-	{ DbmMimeType, true },	{ IgnoreImportErrors, false },	{ ImportSystemObjs, false },
-	{ ImportExtensionObjs, false },	{ FilterObjects, true },	{ ForceChildren, true },
-	{ OnlyMatching, false },	{ MatchByName, false },	{ DebugMode, false },
-	{ PartialDiff, false },	{ StartDate, true },	{ EndDate, true },
-	{ CompareTo, true },	{ SaveDiff, false },	{ ApplyDiff, false },
-	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
-	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
-	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
-	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
-	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
-	{ DependenciesSql, false }, { ChildrenSql, false }, { CommentsAsAliases, false },
-		{ IgnoreFaultyPlugins, false }, { ListPlugins, false }
-};
-
-std::map<QString, QStringList> PgModelerCliApp::accepted_opts = {
-	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
-	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
-
-	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-											DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
-
-	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
-									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
-									Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
-
-	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
-							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
-							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-							NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
-
-	{{ DbmMimeType }, { SystemWide, Force }},
-	{{ FixModel },	{ Input, Output, FixTries }},
-	{{ ListConns }, { }},
-	{{ CreateConfigs }, { MissingOnly, Force }},
-	{{ ListPlugins }, { IgnoreFaultyPlugins }},
-};
-
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
 	try
@@ -476,7 +310,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Exports the input model to a data dictionary in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict));
 	printText(tr("  %1, %2\t\t    Exports the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms));
 	printText(tr("  %1, %2\t\t    Lists the available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt));
-	printText(tr("  %1, %2\t\t    Importa a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
+	printText(tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb));
 	printText(tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff));
 	printText(tr("  %1, %2\t\t    Tries to fix the structure of the input model file to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel));
 	printText(tr("  %1, %2\t\t    Creates the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs));
@@ -495,9 +329,11 @@ void PgModelerCliApp::showMenu()
 	printText();
 
 	printText(tr("SQL file export options: "));
-	printText(tr("  %1, %2\t\t\t    The SQL file is generated per object. The files will be named in such a way to reflect the correct creation order of the objects.").arg(short_opts[Split]).arg(Split));
+	printText(tr("  %1, %2\t\t\t    The database model SQL code is split into several files, one per object.").arg(short_opts[Split]).arg(Split));
 	printText(tr("  %1, %2\t\t    Includes the object's dependencies SQL code in the generated file. (Only for split mode)").arg(short_opts[DependenciesSql]).arg(DependenciesSql));
 	printText(tr("  %1, %2\t\t    Includes the object's children SQL code in the generated file. (Only for split mode)").arg(short_opts[ChildrenSql]).arg(ChildrenSql));
+	printText(tr("  %1, %2\t\t    Instead of creating a separate SQL file per object, groups the SQL code of all objects of the same type in a single file. (Only for split mode)").arg(short_opts[GroupByType]).arg(GroupByType));
+	printText(tr("  %1, %2\t    Create a separate script containing the DROP commands to destroy objects in the database.").arg(short_opts[GenDropScript]).arg(GenDropScript));
 	printText();
 
 	printText(tr("PNG and SVG export options: "));
@@ -511,6 +347,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("Data dictionary export options: "));
 	printText(tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the specified output directory.").arg(short_opts[Split]).arg(Split));
 	printText(tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigate through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex));
+	printText(tr("  %1, %2\t\t    Generates a data dictionary in Markdown format (.md) instead of the HTML format.").arg(short_opts[Markdown]).arg(Markdown));
 	printText();
 
 	printText(tr("DBMS export options: "));
@@ -540,8 +377,8 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 [FILTER]    Makes the import process retrieve only those objects matching the filter(s). The FILTER must be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects));
 	printText(tr("  %1, %2\t\t    Makes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching));
 	printText(tr("  %1, %2\t\t    Makes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName));
-	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
-	printText(tr("  %1, %2\t\t    Runs the import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode));
+	printText(tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma-separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren));
+	printText(tr("  %1, %2\t\t    Runs the import in debug mode printing all queries executed on the server.").arg(short_opts[DebugMode]).arg(DebugMode));
 	printText();
 
 	printText(tr("Diff options: "));
@@ -560,18 +397,18 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Renames the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb));
 	printText(tr("  %1, %2\t\t    Don't drop objects in cascade mode.").arg(short_opts[NoCascadeDrop]).arg(NoCascadeDrop));
 	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
-	printText(tr("  %1, %2\t    Forces recreating the objects. Instead of an ALTER command, the DROP and CREATE commands are used to create new versions of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs));
-	printText(tr("  %1, %2\t    Recreates only the unmodifiable objects. These objects are the ones that can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable));
+	printText(tr("  %1, %2\t\t    Recreates the unmodifiable objects. These objects are the ones that can't be changed via the ALTER command.").arg(short_opts[RecreateUnmod]).arg(RecreateUnmod));
+	printText(tr("  %1, %2\t\t    Replaces modifiable objects. These objects are the ones that supports CREATE OR REPLACE command.").arg(short_opts[ReplaceModified]).arg(ReplaceModified));
 	printText();
 
 	printText(tr("Model fix options: ") );
-	printText(tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries));
+	printText(tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count, the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries));
 	printText();
 
 #ifndef Q_OS_MAC
 	printText(tr("File association options: "));
 	printText(tr("  %1, %2\t\t    The file association to DBM files will be applied on a system-wide level instead of to the current user only.").arg(short_opts[SystemWide]).arg(SystemWide));
-	printText(tr("  %1, %2 \t\t\t    Forces the mime type install or uninstall. ").arg(short_opts[Force]).arg(Force));
+	printText(tr("  %1, %2 \t\t\t    Forces the mime type installation or uninstallation. ").arg(short_opts[Force]).arg(Force));
 	printText();
 #endif
 
@@ -580,9 +417,9 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2 \t\t\t    Forces the recreation of all configuration files. This option implies the backup of the current settings.").arg(short_opts[Force]).arg(Force));
 	printText();
 
-	printText(tr("Plug-ins options: "));	
-	printText(tr("  %1, %2 \t\t    List the available plug-ins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
-	printText(tr("  %1, %2 \t\t    Ignore the errors of plug-ins that failed to be loaded.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
+	printText(tr("Plugins options: "));
+	printText(tr("  %1, %2 \t\t    List the available plugins.").arg(short_opts[ListPlugins]).arg(ListPlugins));
+	printText(tr("  %1, %2 \t\t    Ignore the errors of plugins that failed to be loaded.").arg(short_opts[IgnoreFaultyPlugins]).arg(IgnoreFaultyPlugins));
 	printText();
 
 	// Displaying loaded plugin's options
@@ -604,7 +441,10 @@ void PgModelerCliApp::showMenu()
 	}
 
 	printText();
-	printText(tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects));
+	printText(tr("** When exporting to SQL file in split mode and none of the options %1, %2, and %3\
+\n   are specified then the generated files will be named in such a way to reflect the correct creation order.").arg(DependenciesSql, ChildrenSql, GroupByType));
+	printText();
+	printText(tr("** The FILTER value in the %1 option has the form type:pattern:mode. ").arg(FilterObjects));
 	printText(tr("   * The section `type' is the type of object to be filtered and accepts the following values (invalid types ignored): "));
 
 	QStringList list;
@@ -637,7 +477,7 @@ void PgModelerCliApp::showMenu()
 		}
 	}
 	printText(lines.join('\n'));
-
+	
 	printText();
 	printText(tr("   * The special type `%1' allows writing a single filter that applies to all object types.").arg(Attributes::Any));
 	printText();
@@ -648,22 +488,22 @@ void PgModelerCliApp::showMenu()
 	printText(tr("     > `%1' causes the pattern to be treated as a Perl-like regular expression while matching objects' names.").arg(UtilsNs::FilterRegExp));
 	printText();
 	printText(tr("   * The option %1 takes effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching));
-	printText(tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded."));
+	printText(tr("     Other tables eventually imported that are dependencies of the matched objects will have their children discarded."));
 	printText(tr("     The comma-separated list of table children objects accepts the values:"));
 	printText(tr("     > %1").arg(child_list) );
 	printText(tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren) );
 	printText();
-	printText(tr("   * NOTES: all comparisons during the filtering process are case insensitive."));
+	printText(tr("   * NOTES: all comparisons during the filtering process are case-insensitive."));
 	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
 	printText();
 	printText(tr("** The diff process allows the usage of all options related to the import operation."));
 	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
 	printText();
 	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
-	printText(tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
+	printText(tr("   * The options %1 and %2 accept the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
 	printText();
 	printText(tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo));
-	printText(tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison."));
+	printText(tr("   If only one connection is set, then it will be used to import the input database as well as retrieve the database used in the comparison."));
 	printText(tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above."));
 	printText(tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo));
 	printText();
@@ -672,7 +512,7 @@ void PgModelerCliApp::showMenu()
 	{
 		printText();
 		printText("**");
-		printText(tr("** WARNING: Failed to retrieve available plug-ins' options due to one or more errors!"));
+		printText(tr("** WARNING: Failed to retrieve available plugins' options due to one or more errors!"));
 		printText(tr("**          Run pgmodeler-cli again with the option `%1' to get detailed info about the error(s).").arg(ListPlugins));
 		printText("**");
 		printText();
@@ -823,12 +663,16 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(create_configs && opts.count(Force) && opts.count(MissingOnly))
 			throw Exception(tr("The options `%1' and `%2' can't be used together when handling configuration files!").arg(Force).arg(MissingOnly), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(opts.count(DependenciesSql) || opts.count(ChildrenSql))
+		if(opts.count(DependenciesSql) || opts.count(ChildrenSql) || opts.count(GroupByType))
 		{
+			unsigned num_opts = opts.count(DependenciesSql) ? 1 : 0;
+			num_opts += opts.count(ChildrenSql) ? 1 : 0;
+			num_opts += opts.count(GroupByType) ? 1 : 0;
+
 			if(!export_file || (export_file && !opts.count(Split)))
-				throw Exception(tr("The options `%1' and `%2' must be used together with the split mode option `%3'!").arg(DependenciesSql, ChildrenSql, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			else if(opts.count(DependenciesSql) && opts.count(ChildrenSql))
-				throw Exception(tr("The options `%1' and `%2' can't be used at the same time!").arg(DependenciesSql, ChildrenSql), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The options `%1', `%2' and `%3' must be used together with the split mode option `%4'!").arg(DependenciesSql, ChildrenSql, GroupByType, Split), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(num_opts > 1)
+				throw Exception(tr("The options `%1', `%2' and `%3' can't be used at the same time!").arg(DependenciesSql, ChildrenSql, GroupByType), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		if(diff)
@@ -1527,9 +1371,19 @@ void PgModelerCliApp::recreateObjects()
 		{
 			do
 			{
-				xmlparser->getElementAttributes(attribs);
-				model->addChangelogEntry(attribs[Attributes::Signature], attribs[Attributes::Type],
-																 attribs[Attributes::Action], attribs[Attributes::Date]);
+				try
+				{
+					xmlparser->getElementAttributes(attribs);
+					model->addChangelogEntry(attribs[Attributes::Signature], attribs[Attributes::Type],
+																		attribs[Attributes::Action], attribs[Attributes::Date]);
+				}
+				catch(Exception &e)
+				{
+					printMessage();
+					printMessage(tr("** WARNING: Failed to process a changelog entry due to invalid values! Ignoring it."));
+					printMessage(tr("** Entry: `%1'.").arg(e.getExtraInfo()));
+					printMessage();
+				}
 			}
 			while(xmlparser->accessElement(XmlParser::NextElement));
 		}
@@ -1979,6 +1833,8 @@ void PgModelerCliApp::exportModel()
 			code_gen_option = DatabaseModel::DependenciesSql;
 		else if(parsed_opts.count(ChildrenSql))
 			code_gen_option = DatabaseModel::ChildrenSql;
+		else if(parsed_opts.count(GroupByType))
+			code_gen_option = DatabaseModel::GroupByType;
 
 		if(!parsed_opts.count(Split))
 			printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
@@ -1986,7 +1842,9 @@ void PgModelerCliApp::exportModel()
 			printMessage(tr("Export to output directory: %1").arg(parsed_opts[Output]));
 
 		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer],
-														parsed_opts.count(Split) > 0, code_gen_option);
+														parsed_opts.count(Split) > 0,
+														code_gen_option,
+														parsed_opts.count(GenDropScript) > 0);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
@@ -1994,7 +1852,8 @@ void PgModelerCliApp::exportModel()
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
 		export_hlp->exportToDataDict(model, parsed_opts[Output],
 																 parsed_opts.count(NoIndex) == 0,
-																 parsed_opts.count(Split) > 0);
+																 parsed_opts.count(Split) > 0,
+																 parsed_opts.count(Markdown) > 0);
 	}
 	//Export to DBMS
 	else
@@ -2169,8 +2028,8 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setFilteredObjects(filtered_objs);
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDrop));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptForceRecreation, parsed_opts.count(ForceRecreateObjs));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, parsed_opts.count(OnlyUnmodifiable));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, parsed_opts.count(RecreateUnmod));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptReplaceModified, parsed_opts.count(ReplaceModified));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NoSequenceReuse));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
@@ -2595,7 +2454,7 @@ void PgModelerCliApp::createConfigurations()
 				throw Exception(tr("Failed to create the configuration files backup!").arg(bkp_conf_dir), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		createUserConfiguration(missing_only);
+		createUserConfiguration();
 		printMessage(tr("Configuration files successfully created!\n"));
 	}
 	catch (Exception &e)

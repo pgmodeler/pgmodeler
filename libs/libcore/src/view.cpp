@@ -21,8 +21,9 @@
 
 View::View() : BaseTable()
 {
-	obj_type=ObjectType::View;
-	materialized=recursive=with_no_data=false;
+	obj_type = ObjectType::View;
+	materialized = recursive = with_no_data = false;
+	security_invoker = security_barrier = false;
 	attributes[Attributes::Definition]="";
 	attributes[Attributes::References]="";
 	attributes[Attributes::SelectExp]="";
@@ -34,6 +35,10 @@ View::View() : BaseTable()
 	attributes[Attributes::Recursive]="";
 	attributes[Attributes::WithNoData]="";
 	attributes[Attributes::Columns]="";
+	attributes[Attributes::CheckOption]="";
+	attributes[Attributes::Options]="";
+	attributes[Attributes::SecurityBarrier]="";
+	attributes[Attributes::SecurityInvoker]="";
 }
 
 View::~View()
@@ -73,21 +78,57 @@ void View::setProtected(bool value)
 void View::setMaterialized(bool value)
 {
 	setCodeInvalidated(materialized != value);
-	materialized=value;
-	if(materialized) recursive=false;
+	materialized = value;
+
+	if(materialized)
+	{
+		recursive = false;
+		check_option = CheckOptionType::Null;
+	}
 }
 
 void View::setRecursive(bool value)
 {
 	setCodeInvalidated(recursive != value);
-	recursive=value;
-	if(recursive) materialized=false;
+	recursive = value;
+
+	if(recursive)
+	{
+		materialized = false;
+		check_option = CheckOptionType::Null;
+	}
 }
 
 void View::setWithNoData(bool value)
 {
 	setCodeInvalidated(materialized && with_no_data != value);
 	with_no_data=(materialized ? value : false);
+}
+
+void View::setSecurityBarrier(bool value)
+{
+	setCodeInvalidated(security_barrier != value);
+	security_barrier = value;
+}
+
+void View::setSecurityInvoker(bool value)
+{
+	setCodeInvalidated(security_invoker != value);
+	security_invoker = value;
+}
+
+void View::setCheckOption(CheckOptionType check_opt)
+{
+	if(materialized || recursive)
+		check_option = CheckOptionType::Null;
+
+	setCodeInvalidated(check_option != check_opt);
+	check_option = check_opt;
+}
+
+CheckOptionType View::getCheckOption()
+{
+	return check_option;
 }
 
 bool View::isMaterialized()
@@ -103,6 +144,16 @@ bool View::isRecursive()
 bool View::isWithNoData()
 {
 	return with_no_data;
+}
+
+bool View::isSecurityInvoker()
+{
+	return security_invoker;
+}
+
+bool View::isSecurityBarrier()
+{
+	return security_barrier;
 }
 
 void View::setReferences(const std::vector<Reference> &obj_refs)
@@ -264,24 +315,53 @@ bool View::isReferencingTable(BaseTable *tab)
 	return false;
 }
 
+void View::setOptionsAttributes(SchemaParser::CodeType def_type)
+{
+	attribs_map opts_map = {{ Attributes::CheckOption, ~check_option },
+													{ Attributes::SecurityBarrier, security_barrier ? Attributes::True : "" },
+													{ Attributes::SecurityInvoker, security_invoker ? Attributes::True : "" }};
+
+	if(def_type == SchemaParser::SqlCode)
+	{
+		QStringList fmt_opts;
+
+		for(auto &itr : opts_map)
+		{
+			if(!itr.second.isEmpty())
+			{
+				fmt_opts.append(QString("%1=%2")
+												.arg(QString(itr.first).replace('-', '_'), itr.second));
+			}
+		}
+
+		attributes[Attributes::Options] = fmt_opts.join(", ");
+	}
+	else
+	{
+		for(auto &itr : opts_map)
+			attributes[itr.first] = itr.second;
+	}
+}
+
 QString View::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Materialized]=(materialized ? Attributes::True : "");
-	attributes[Attributes::Recursive]=(recursive ? Attributes::True : "");
-	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
-	attributes[Attributes::Columns]="";
-	attributes[Attributes::Tag]="";
+	attributes[Attributes::Materialized] = (materialized ? Attributes::True : "");
+	attributes[Attributes::Recursive] = (recursive ? Attributes::True : "");
+	attributes[Attributes::WithNoData] = (with_no_data ? Attributes::True : "");
+	attributes[Attributes::Columns] = "";
+	attributes[Attributes::Tag] = "";
 	attributes[Attributes::References] = "";
-	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
-	attributes[Attributes::CollapseMode]=QString::number(collapse_mode);
-	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
-	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
+	attributes[Attributes::Pagination] = (pagination_enabled ? Attributes::True : "");
+	attributes[Attributes::CollapseMode] = QString::number(collapse_mode);
+	attributes[Attributes::AttribsPage] = (pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
+	attributes[Attributes::ExtAttribsPage] = (pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	setSQLObjectAttribute();
 	setLayersAttribute();
+	setOptionsAttributes(def_type);
 
 	if(recursive)
 	{
@@ -299,8 +379,13 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 	if(def_type==SchemaParser::SqlCode)
 	{
 		GenericSQL view_def_obj;
+		QString fmt_sql_def = sql_definition.trimmed();
+
+		// Removing unneeded semicolons at the end of the view's definition command
+		fmt_sql_def.remove(QRegularExpression(ExtraSCRegExp));
+
 		view_def_obj.setHideDescription(true);
-		view_def_obj.setDefinition(sql_definition);
+		view_def_obj.setDefinition(fmt_sql_def);
 		view_def_obj.addReferences(references);
 		attributes[Attributes::Definition] = view_def_obj.getSourceCode(def_type).trimmed();
 	}
@@ -316,8 +401,8 @@ QString View::getSourceCode(SchemaParser::CodeType def_type)
 		setFadedOutAttribute();
 
 		attributes[Attributes::Definition] = sql_definition;
-		attributes[Attributes::ZValue]=QString::number(z_value);
-		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::ZValue] = QString::number(z_value);
+		attributes[Attributes::MaxObjCount] = QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
 	return BaseObject::__getSourceCode(def_type);
@@ -763,11 +848,11 @@ std::vector<BaseObject *> View::getObjects(const std::vector<ObjectType> &excl_t
 	return list;
 }
 
-QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString View::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link);
+	QString link_dict_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Link);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -806,26 +891,24 @@ QString View::getDataDictionary(bool split, const attribs_map &extra_attribs)
 			aux_attrs[Attributes::Type] = col.getType();
 
 			schparser.ignoreUnkownAttributes(true);
-			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																																			BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
+			attribs[Attributes::Columns] += schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, BaseObject::getSchemaName(ObjectType::Column)), aux_attrs);
 			aux_attrs.clear();
 		}
 
 		for(auto &obj : triggers)
 		{
 			attribs[Attributes::Triggers] +=
-					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+					dynamic_cast<Trigger *>(obj)->getDataDictionary(md_format, {{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
 		for(auto &obj : indexes)
-			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary();
+			attribs[Attributes::Indexes] +=  dynamic_cast<Index *>(obj)->getDataDictionary(md_format);
 
 		schparser.ignoreUnkownAttributes(true);
-		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																																		Attributes::Objects), attribs);
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Objects), attribs);
+
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

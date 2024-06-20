@@ -19,8 +19,6 @@
 #include "column.h"
 #include "coreutilsns.h"
 
-const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
-
 Column::Column()
 {
 	obj_type=ObjectType::Column;
@@ -246,13 +244,13 @@ QString Column::getSourceCode(SchemaParser::CodeType def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::Type]=type.getSourceCode(def_type);	
+	attributes[Attributes::Type]=type.getSourceCode(def_type);
 	attributes[Attributes::DefaultValue]="";
 	attributes[Attributes::IdentityType]="";
 
 	if(identity_type != IdentityType::Null)
 	{
-		attributes[Attributes::IdentityType] = ~identity_type;	
+		attributes[Attributes::IdentityType] = ~identity_type;
 		attributes[Attributes::Increment]=seq_increment;
 		attributes[Attributes::MinValue]=seq_min_value;
 		attributes[Attributes::MaxValue]=seq_max_value;
@@ -293,11 +291,6 @@ QString Column::getAlterCode(BaseObject *object)
 		attribs_map attribs;
 		QString def_val, alter_def;
 		bool ident_seq_changed = false;
-
-		BaseObject::setBasicAttributes(true);
-
-		if(getParentTable())
-			attribs[Attributes::Table]=getParentTable()->getName(true);
 
 		if(!this->type.isEquivalentTo(col->type) ||
 				(this->type.isEquivalentTo(col->type) &&
@@ -385,8 +378,8 @@ QString Column::getAlterCode(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		alter_def = BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
-		alter_def += getAlterCommentDefinition(object, attributes);
+		alter_def = TableObject::getAlterCode(col);
+		alter_def += BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);
 
 		return alter_def;
 	}
@@ -434,7 +427,7 @@ void Column::operator = (Column &col)
 	this->setParentRelationship(col.getParentRelationship());
 }
 
-QString Column::getDataDictionary(const attribs_map &extra_attribs)
+QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -449,8 +442,7 @@ QString Column::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

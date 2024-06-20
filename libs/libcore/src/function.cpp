@@ -276,14 +276,14 @@ QString Function::getAlterCode(BaseObject *object)
 		attribs_map attribs;
 		attribs = BaseFunction::getAlterCodeAttributes(func);
 
-		if(this->func_source.simplified() != func->func_source.simplified() ||
+		/* if(this->func_source.simplified() != func->func_source.simplified() ||
 			 this->library!=func->library || this->symbol!=func->symbol)
 		{
 			attribs[Attributes::Definition]=func->getSourceCode(SchemaParser::SqlCode);
 			attribs[Attributes::Definition].replace("CREATE FUNCTION", "CREATE OR REPLACE FUNCTION");
 		}
 		else
-		{
+		{ */
 			if(this->execution_cost!=func->execution_cost)
 				attribs[Attributes::ExecutionCost]=QString::number(func->execution_cost);
 
@@ -307,7 +307,7 @@ QString Function::getAlterCode(BaseObject *object)
 
 			if(this->parallel_type!=func->parallel_type)
 				attribs[Attributes::ParallelType]=~func->parallel_type;
-		}
+		//}
 
 		copyAttributes(attribs);
 

@@ -18,17 +18,6 @@
 
 #include "policycmdtype.h"
 
-QStringList PolicyCmdType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"ALL",
-	"SELECT",
-	"INSERT",
-	"DELETE",
-	"UPDATE"
-};
-
 PolicyCmdType::PolicyCmdType()
 {
 	type_idx = All;

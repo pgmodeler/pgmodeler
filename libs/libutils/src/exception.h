@@ -164,12 +164,9 @@ enum class ErrorCode: unsigned {
 	InvUseSpecialPrimaryKey,
 	OprRelationshipAddedObject,
 	RemProtectedObject,
-	InvRedeclarationGroup,
 	InvGroupDeclaration,
-	DefNotDeclaredGroup,
 	DefEmptyGroup,
 	DefDuplicatedGroup,
-	InvGroupDeclarationNotDefined,
 	RefColObjectTabInvalidIndex,
 	RefRowObjectTabInvalidIndex,
 	OprReservedObject,
@@ -181,6 +178,7 @@ enum class ErrorCode: unsigned {
 	PluginNotLoaded,
 	PluginsNotLoaded,
 	InvalidSyntax,
+	InvalidInclude,
 	InvalidInstruction,
 	UnkownAttribute,
 	InvalidMetacharacter,
@@ -286,7 +284,6 @@ enum class ErrorCode: unsigned {
 	InvalidObjectFilter,
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
-	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
 	InvConfigParameterName,
 	EmptyConfigParameterValue,
@@ -301,12 +298,15 @@ enum class ErrorCode: unsigned {
 	RemExtRefChildObject,
 	AddExtDupChildObject,
 	AsgSchExtTypeConflict,
-	MalformedViewDefObject
+	MalformedViewDefObject,
+	InvalidEscapedCharacter,
+	InvExprMultilineGroup,
+	InvExprPersistentGroup
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=268;
+		static constexpr unsigned ErrorCount=269;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

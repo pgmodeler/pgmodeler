@@ -24,11 +24,6 @@
 #include "csvdocument.h"
 #include "messagebox.h"
 
-std::map<QString, QString> SQLExecutionWidget::cmd_history;
-
-int SQLExecutionWidget::cmd_history_max_len = 1000;
-const QString SQLExecutionWidget::ColumnNullValue("␀");
-
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -426,6 +421,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	output_tbw->setTabEnabled(0, false);
 
 	addToSQLHistory(sql_cmd_txt->toPlainText(), 0, e.getErrorMessage());
+	qApp->alert(this);
 }
 
 void SQLExecutionWidget::finishExecution(int rows_affected)
@@ -505,6 +501,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 	switchToExecutionMode(false);
 	sql_exec_thread.quit();
+	qApp->alert(this);
 }
 
 void SQLExecutionWidget::filterResults()
@@ -1112,9 +1109,9 @@ void SQLExecutionWidget::showHistoryContextMenu()
 			*exec_act = nullptr;
 
 	if(!search_history_parent->isVisible())
-		action_toggle_find = new QAction(QPixmap(GuiUtilsNs::getIconPath("findtext")), tr("Find in history"), ctx_menu);
+		action_toggle_find = new QAction(QPixmap(GuiUtilsNs::getIconPath("findtext")), tr("Search in history"), ctx_menu);
 	else
-		action_toggle_find = new QAction(tr("Hide find tool"), ctx_menu);
+		action_toggle_find = new QAction(tr("Hide search tool"), ctx_menu);
 
 	ctx_menu->addSeparator();
 	ctx_menu->addAction(action_toggle_find);

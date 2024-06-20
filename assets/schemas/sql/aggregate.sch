@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE AGGREGATE ] {name} [ (]{types}[) (] $br
+[CREATE OR REPLACE AGGREGATE ] {name} [ (]{types}[) (] $br
 $tb [SFUNC = ] {transition}, $br
 $tb [STYPE = ] {state-type} $br
 %if {final} %then $tb [,FINALFUNC = ] {final} $br %end

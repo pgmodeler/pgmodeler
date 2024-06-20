@@ -29,7 +29,12 @@
 
 class __libcore ParallelType: public TemplateType<ParallelType>{
 	private:
-		static QStringList type_names;
+		inline static const QStringList type_names {
+			"", // Reserved for Class::Null
+			"PARALLEL UNSAFE",
+			"PARALLEL RESTRICTED",
+			"PARALLEL SAFE"
+		};
 
 	public:
 		static constexpr unsigned Unsafe = 1,

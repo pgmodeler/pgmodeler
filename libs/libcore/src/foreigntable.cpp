@@ -71,9 +71,9 @@ void ForeignTable::setPartitioningType(PartitioningType)
 	PhysicalTable::setPartitioningType(PartitioningType::Null);
 }
 
-QString ForeignTable::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
+QString ForeignTable::__getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_constraints)
 {
-	setTableAttributes(def_type, incl_rel_added_objs);
+	setTableAttributes(def_type, incl_rel_added_objs, incl_constraints);
 
 	if(foreign_server)
 	{
@@ -91,7 +91,7 @@ QString ForeignTable::getSourceCode(SchemaParser::CodeType def_type)
 	QString code_def = PhysicalTable::getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	return __getSourceCode(def_type, false);
+	return __getSourceCode(def_type, false, true);
 }
 
 void ForeignTable::operator = (ForeignTable &tab)

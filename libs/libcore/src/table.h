@@ -173,9 +173,9 @@ class __libcore Table: public PhysicalTable {
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always
 		 * invalidate the tables code (see setCodeInvalidated()) after retrieving the resulting code */
-		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs);
+		QString __getSourceCode(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_constraints = true);
 
-		virtual QString getDataDictionary(bool split, const attribs_map & extra_attribs = {}) override;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map & extra_attribs = {}) override;
 
 		virtual void updateDependencies() override;
 

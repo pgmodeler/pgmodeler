@@ -100,7 +100,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * to return the created object */
 		std::map<ObjectType, std::function<void(BaseObject *, int)>> remove_methods;
 
-		static unsigned dbmodel_id;
+		inline static unsigned dbmodel_id {2000};
 
 		XmlParser xmlparser;
 
@@ -320,11 +320,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
 		 *  DependenciesSql: generates the original SQL code + dependencies SQL
-		 *  ChildrenSql: generates the original SQL code + children SQL */
+		 *  ChildrenSql: generates the original SQL code + children SQL
+		 *  GroupByType: generates the original SQL code but grouping them in a single file
+		 *  for each object type. */
 		enum CodeGenMode: unsigned {
 			OriginalSql,
 			DependenciesSql,
-			ChildrenSql
+			ChildrenSql,
+			GroupByType
 		};
 
 		enum MetaAttrOptions: unsigned {
@@ -482,7 +485,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql);
+		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql, bool gen_drop_file = false);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
@@ -511,8 +514,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		The parameter incl_rel1n_constr when 'true' includes the generated foreign and unique keys
 		of one-to-one|many relationships instead of the relationships themselves. This parameter is
-		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
-		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
+		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored.
+
+		The parameter realloc_fk_perms causes foreign keys and permissions to have their position changed to the
+		end of the creation order to avoid being created before their parent objects or referenced objects */
+		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs = false, bool incl_rel1n_constrs = false, bool realloc_fk_perms = true);
 
 		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
@@ -813,10 +819,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
-		void getDataDictionary(attribs_map &datadict, bool browsable, bool split);
+		void getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format);
 
 		//! \brief Saves the data dictionary of all tables in a single HTML file or splitted in several files for each table
-		void saveDataDictionary(const QString &path, bool browsable, bool split);
+		void saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format);
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */

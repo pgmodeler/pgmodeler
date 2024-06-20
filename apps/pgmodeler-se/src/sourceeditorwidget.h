@@ -37,9 +37,18 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 	private:
 		Q_OBJECT
 
-		static attribs_map snippets;
+		inline static attribs_map snippets {
+			{"ifend", "%if {} %then\n\n%end\n"},
+			{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
+			{"ifexpr", "%if ({}) %then\n\n%end\n"},
+			{"ifexprelse", "%if ({}) %then\n\n%else\n\n%end\n"},
+			{"setattrstr", "%set {} \"\"\n"},
+			{"setattrtxt", "%set {} [ ]\n"},
+			{"unsetattr", "%unset {}\n"},
+			{"unsetattr", "%unset {}\n"},
+		};
 
-		static QPalette def_editor_pal;
+		inline static QPalette def_editor_pal;
 
 		CodeCompletionWidget *code_compl_wgt;
 
@@ -55,7 +64,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QAction *act_break_inline_ifs;
 
-		QMenu indent_opts_menu;
+		QMenu indent_opts_menu, metachar_conv_menu;
 
 		bool is_modified;
 
@@ -76,6 +85,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString getCurrentSyntaxConfig();
 
+		void convertMetaChars(bool escaped_to_meta);
+
 	private slots:
 		//! \brief Validates the syntax of the editor's content (only for schema micro-language code)
 		void validateSyntax();
@@ -88,6 +99,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		//! \brief Insert the selected snippet into the editors (only for schema micro-language code)
 		void handleSelectedSnippet(const QString &snippet);
+
+		void toggleComment();
 
 	public slots:
 		void setModified(bool value);

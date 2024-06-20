@@ -30,32 +30,12 @@ class ProcedureTest: public QObject, public PgModelerUnitTest {
 		ProcedureTest() : PgModelerUnitTest(SCHEMASDIR) {}
 
 	private slots:
-		void throwsErrorOnInvalidParameter();
 		void generatesNameAndSignatureCorrectly();
 		void generatesSQLCorrectly();
 		void generatesXMLCorrectly();
 		void modelReturnsProcedureDepsRefs();
 		void modelCreatesProcedureFromXML();
 };
-
-void ProcedureTest::throwsErrorOnInvalidParameter()
-{
-	Procedure proc;
-
-	try
-	{
-		Parameter param;
-		param.setName("p1");
-		param.setOut(true);
-		param.setIn(false);
-		proc.addParameter(param);
-		QFAIL("No error related to invalid parameter raised!");
-	}
-	catch(Exception &e)
-	{
-		QCOMPARE(e.getErrorCode(), ErrorCode::InvProcedureParamOutMode);
-	}
-}
 
 void ProcedureTest::generatesNameAndSignatureCorrectly()
 {

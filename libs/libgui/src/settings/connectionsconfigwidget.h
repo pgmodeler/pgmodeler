@@ -33,14 +33,14 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 	private:
 		Q_OBJECT
 		
-		static const QString DefaultFor;
+		inline static const QString DefaultFor {"default-for-%1"};
 		
 		//! \brief Stores the connections created by the user
-		static std::vector<Connection *> connections;
+		inline static std::vector<Connection *> connections;
 		
 		/*! \brief Stores the connections attributes. This map is used to write the connections.conf file
 		as well to create the connections stored by the 'connections' vector */
-		static std::map<QString, attribs_map> config_params;
+		inline static std::map<QString, attribs_map> config_params;
 		
 		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configureConnection(Connection *conn, bool is_update);

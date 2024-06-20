@@ -29,7 +29,14 @@
 
 class __libcore EventType: public TemplateType<EventType>{
 	private:
-		static QStringList type_names;
+		inline static const QStringList type_names {
+			"", // Reserved for Class::Null
+			"ON SELECT",
+			"ON INSERT",
+			"ON DELETE",
+			"ON UPDATE",
+			"ON TRUNCATE"
+		};
 
 	public:
 		static constexpr unsigned OnSelect = 1,

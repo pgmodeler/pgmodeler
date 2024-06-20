@@ -32,6 +32,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	QVBoxLayout *vbox = nullptr;
 
 	Ui_ViewWidget::setupUi(this);
+	alert_frm->setVisible(false);
+
+	check_option_cmb->addItem(tr("No check"));
+	check_option_cmb->addItems(CheckOptionType::getTypes());
+	check_option_cmb->setCurrentIndex(0);
 
 	sql_definition_txt = new NumberedTextEditor(this, true);
 	sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
@@ -39,6 +44,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 	vbox = new QVBoxLayout(sql_definition_tab);
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
+	vbox->addWidget(alert_frm);
 	vbox->addWidget(sql_definition_txt);
 
 	obj_refs_wgt = new ReferencesWidget({ ObjectType::Schema, ObjectType::Column,
@@ -61,7 +67,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	vbox->addWidget(sql_preview_txt);
 
 	tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
+	dynamic_cast<QGridLayout *>(basics_gb->layout())->addWidget(tag_sel, 0, 1, 1, 6);
 
 	custom_cols_wgt = new SimpleColumnsWidget(this);
 	vbox = new QVBoxLayout(columns_tab);
@@ -125,6 +131,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
 	connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
 	connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
+	connect(materialized_rb, &QRadioButton::toggled, check_option_cmb, &QComboBox::setDisabled);
+	connect(recursive_rb, &QRadioButton::toggled, check_option_cmb, &QComboBox::setDisabled);
 
 	connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
 	connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
@@ -133,6 +141,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	connect(tablespace_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
 	connect(schema_sel, &ObjectSelectorWidget::s_objectSelected, this, &ViewWidget::updateCodePreview);
 	connect(schema_sel, &ObjectSelectorWidget::s_selectorCleared, this, &ViewWidget::updateCodePreview);
+
+	connect(sql_definition_txt, &NumberedTextEditor::textChanged, this, [this]() {
+		alert_frm->setVisible(sql_definition_txt->toPlainText().contains(QRegularExpression(View::ExtraSCRegExp)));
+	});
 
 	configureFormFields(ObjectType::View);
 	baseobject_grid->setContentsMargins(0, 0, 0, 0);
@@ -469,12 +481,15 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	with_no_data_chk->setChecked(view->isWithNoData());
 
 	op_list->startOperationChain();
-	operation_count=op_list->getCurrentSize();
+	operation_count = op_list->getCurrentSize();
 
 	tag_sel->setModel(this->model);
 	tag_sel->setSelectedObject(view->getTag());
 
 	custom_cols_wgt->setAttributes(this->model, view->getCustomColumns());
+	check_option_cmb->setCurrentText(~view->getCheckOption());
+	security_barrier_chk->setChecked(view->isSecurityBarrier());
+	security_invoker_chk->setChecked(view->isSecurityInvoker());
 
 	listObjects(ObjectType::Trigger);
 	listObjects(ObjectType::Rule);
@@ -497,6 +512,9 @@ void ViewWidget::applyConfiguration()
 
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
+		view->setSecurityBarrier(security_barrier_chk->isChecked());
+		view->setSecurityInvoker(security_invoker_chk->isChecked());
+		view->setCheckOption(check_option_cmb->currentIndex() > 0 ? check_option_cmb->currentText() : "");
 		view->setMaterialized(materialized_rb->isChecked());
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());

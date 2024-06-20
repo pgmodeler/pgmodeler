@@ -21,6 +21,7 @@
 #include <QDate>
 #include "utilsns.h"
 #include "attributes.h"
+#include "globalattributes.h"
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {

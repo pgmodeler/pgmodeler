@@ -24,8 +24,6 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
-unsigned DatabaseModel::dbmodel_id=2000;
-
 DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
@@ -6657,6 +6655,9 @@ View *DatabaseModel::createView()
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
+		view->setCheckOption(attribs[Attributes::CheckOption]);
+		view->setSecurityBarrier(attribs[Attributes::SecurityBarrier] == Attributes::True);
+		view->setSecurityInvoker(attribs[Attributes::SecurityInvoker] == Attributes::True);
 		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? BaseTable::NotCollapsed : static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
@@ -7543,7 +7544,7 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(code_gen_mode == OriginalSql)
+	if(code_gen_mode == OriginalSql || code_gen_mode == GroupByType)
 	{
 		if(object->getObjectType() == ObjectType::Database)
 			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
@@ -7794,7 +7795,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 	}
 }
 
-std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms)
 {
 	BaseObject *object=nullptr;
 	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
@@ -7982,23 +7983,35 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 		fkeys.insert(fkeys.end(), rel_constrs.begin(), rel_constrs.end());
 	}
 
-	//Adding fk relationships and foreign keys at end of objects map
-	i=BaseObject::getGlobalId() + 1;
 	fkeys.insert(fkeys.end(), fk_rels.begin(), fk_rels.end());
 
-	for(auto &obj : fkeys)
+	if(realloc_fk_perms)
 	{
-		objects_map[i]=obj;
-		i++;
+		//Adding fk relationships and foreign keys at end of objects map
+		i = BaseObject::getGlobalId() + 1;
+
+		for(auto &obj : fkeys)
+		{
+			objects_map[i]=obj;
+			i++;
+		}
+
+		//Adding permissions at the very end of object map
+		i = BaseObject::getGlobalId() + fkeys.size() + 1;
+
+		for(auto &obj : permissions)
+		{
+			objects_map[i]=obj;
+			i++;
+		}
 	}
-
-	//Adding permissions at the very end of object map
-	i=BaseObject::getGlobalId() + fkeys.size() + 1;
-
-	for(auto &obj : permissions)
+	else
 	{
-		objects_map[i]=obj;
-		i++;
+		for(auto &obj : fkeys)
+			objects_map[obj->getObjectId()] = obj;
+
+		for(auto &obj : permissions)
+			objects_map[obj->getObjectId()] = obj;
 	}
 
 	return objects_map;
@@ -8265,7 +8278,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode, bool gen_drop_file)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8274,24 +8287,76 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(code_gen_mode > ChildrenSql)
+	if(code_gen_mode > GroupByType)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
 										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!fi.exists())
 		dir.mkdir(path);
 
-	QFile output;
+	bool group_by_type = code_gen_mode == GroupByType;
 	QByteArray buffer;
-	std::map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlCode);
+	std::map<unsigned, BaseObject *>  aux_objs,
+			objects = getCreationOrder(SchemaParser::SqlCode, true, true, !group_by_type);
 	int pad_size = QString::number(objects.size()).size(), idx = 1;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
-	Relationship *rel = nullptr;
 	QStringList sch_names;
 	QRegularExpression name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 	attribs_map attribs;
+	std::map<QString, QByteArray> grouped_defs,
+			grouped_drops;
+	ObjectType obj_type;
+	Table *tab = nullptr;
+	ForeignTable *ftab = nullptr;
+	Constraint *constr = nullptr;
+	std::vector<Constraint *> contraints;
+	QString obj_type_name;
+	std::map<unsigned, QString> constr_filename = {
+		{ ConstraintType::PrimaryKey, "constraint_pk" },
+		{ ConstraintType::ForeignKey, "constraint_fk" },
+		{ ConstraintType::Unique, "constraint_uq" },
+		{ ConstraintType::Exclude, "constraint_ex" },
+		{ ConstraintType::Check, "constraint_ck" },
+	};
+
+	/* When generating a split model in GroupByType mode
+	 * we need to get primary key and unique keys that aren't
+	 * included by getCreationOrder() so we can separate their
+	 * SQL code from the parent tables and save it in the
+	 * file reserved for constraints definition */
+	if(code_gen_mode == GroupByType)
+	{
+		PhysicalTable *tab = nullptr;
+
+		for(auto &itr : objects)
+		{
+			tab = dynamic_cast<PhysicalTable *>(itr.second);
+
+			if(!tab)
+				continue;
+
+			for(auto &tab_obj : *tab->getObjectList(ObjectType::Constraint))
+			{
+				aux_objs[tab_obj->getObjectId()] = tab_obj;
+				constr = dynamic_cast<Constraint *>(tab_obj);
+
+				/* Forcing the flag decl_in_table of the contraint to false
+				 * so the SQL code is generated in full form */
+				if(constr->isDeclaredInTable())
+				{
+					constr->setDeclaredInTable(false);
+
+					/* Store the constraint in a temporary list so the
+					 * flag can be restored at the end of the export */
+					contraints.push_back(constr);
+				}
+			}
+		}
+
+		objects.insert(aux_objs.begin(), aux_objs.end());
+	}
 
 	try
 	{
@@ -8310,23 +8375,26 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				break;
 
 			obj = itr.second;
+			obj_type = obj->getObjectType();
 
-			if(obj->getObjectType() == ObjectType::Schema)
+			if(obj_type == ObjectType::Schema)
 				sch_names.append(obj->getName(true));
 
 			gen_defs_idx++;
 
-			if(obj->isSystemObject())
+			if(obj->isSystemObject() ||
+				 obj_type == ObjectType::BaseRelationship ||
+				 obj_type == ObjectType::Relationship)
 				continue;
 
 			// Saving the shell types before we start generating the files of other objects
 			if(!shell_types.isEmpty() &&
-				 obj->getObjectType() != ObjectType::Role && obj->getObjectType() != ObjectType::Tablespace &&
-				 obj->getObjectType() != ObjectType::Database  && obj->getObjectType() != ObjectType::Schema)
+				 obj_type != ObjectType::Role && obj_type != ObjectType::Tablespace &&
+				 obj_type != ObjectType::Database && obj_type != ObjectType::Schema)
 			{
 				filename = QString("%1_%2.sql")
-									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
-									 .arg(Attributes::ShellTypes.toLower().replace('-', '_'));
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'),
+												Attributes::ShellTypes.toLower().replace('-', '_'));
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 									tr("Saving SQL of shell types to file `%1'.").arg(filename),
@@ -8338,62 +8406,75 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				shell_types.clear();
 			}
 
-			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
+			/* In GroupByType split mode we force the generation of table/foreign table
+			 * DDL command without the constraint codes since they will be saved in
+			 * a separated file */
+			if(group_by_type && PhysicalTable::isPhysicalTable(obj_type))
+			{
+				tab = dynamic_cast<Table *>(obj);
+				ftab = dynamic_cast<ForeignTable *>(obj);
+
+				if(tab)
+					buffer.append(tab->__getSourceCode(SchemaParser::SqlCode, true, false).toUtf8());
+				else
+					buffer.append(ftab->__getSourceCode(SchemaParser::SqlCode, true, false).toUtf8());
+			}
+			else
+				buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;
 
-			rel = dynamic_cast<Relationship *>(obj);
-			/* If the object is a 1-1, 1-n or n-n relationship we name the output file
-			 * after the generated table or foreign key in order to avoid to generate
-			 * a file with the relationship's name. */
-			if(rel &&
-				 (rel->getRelationshipType() == BaseRelationship::Relationship11 ||
-					rel->getRelationshipType() == BaseRelationship::Relationship1n ||
-					rel->getRelationshipType() == BaseRelationship::RelationshipNn))
+			// Grouping the SQL definitions before saving to file
+			if(group_by_type)
 			{
-				if(rel->getGeneratedTable())
-					obj = rel->getGeneratedTable();
-				else
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
+														tr("Generating SQL of `%1' (%2).")
+														.arg(obj->getSignature())
+														.arg(obj->getTypeName()),
+														enum_t(obj_type));
+
+				obj_type_name = obj->getSchemaName();
+
+				if(obj_type == ObjectType::Constraint)
 				{
-					for(auto &constr : rel->getGeneratedConstraints())
-					{
-						if(constr->getConstraintType() == ConstraintType::ForeignKey)
-						{
-							obj = constr;
-							break;
-						}
-					}
+					constr = dynamic_cast<Constraint *>(obj);
+					obj_type_name = constr_filename[constr->getConstraintType().getTypeId()];
 				}
+
+				grouped_defs[obj_type_name] += buffer;
+			}
+			else
+			{
+				/* The name of the generated file will be:
+				 * [creation order id]_[name]_[type]_[internal id].sql
+				 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
+				 * the filename in some filesystems. The internal id is used for desambiguation purposes. */
+
+				// If the object is a table child object we use its signature instead of name
+				if(TableObject::isTableObject(obj_type))
+					name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(true);
+				else
+					name = obj->getName(true);
+
+				name.replace('"', "").replace(name_fmt_regexp, "_");
+
+				filename = QString("%1_%2_%3_%4.sql")
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+									 .arg(name)
+									 .arg(obj->getSchemaName())
+									 .arg(obj->getObjectId());
+
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
+									tr("Saving SQL of `%1' (%2) to file `%3'.")
+									.arg(obj->getSignature())
+									.arg(obj->getTypeName())
+									.arg(filename),
+									enum_t(obj_type));
+
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			}
 
-			/* The name of the generated file will be:
-			 * [creation order id]_[name]_[type]_[internal id].sql
-			 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
-			 * the filename in some filesystems. The internal id is used for desambiguation purposes. */
-
-			// If the object is a table child object we use its signature instead of name
-			if(TableObject::isTableObject(obj->getObjectType()))
-				name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(true);
-			else
-				name = obj->getName(true);
-
-			name.replace('"', "").replace(name_fmt_regexp, "_");
-
-			filename = QString("%1_%2_%3_%4.sql")
-								 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
-								 .arg(name)
-								 .arg(obj->getSchemaName())
-								 .arg(obj->getObjectId());
-
-			emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
-								tr("Saving SQL of `%1' (%2) to file `%3'.")
-								.arg(obj->getName())
-								.arg(obj->getTypeName())
-								.arg(filename),
-								enum_t(obj->getObjectType()));
-
-			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
 
 			/* If the current object is the database itself, we need to save the sessionopts
@@ -8414,6 +8495,98 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				buffer.append(schparser.getSourceCode(Attributes::SessionOpts, attribs, SchemaParser::SqlCode).toUtf8());
 				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
 				buffer.clear();
+			}
+		}
+
+		/* Saving the grouped SQL definition files if the map of grouped
+		 * defintions is filled. */
+		for(auto &itr : grouped_defs)
+		{
+			filename = QString("%1_%2.sql")
+								.arg(itr.first,
+										 itr.first == BaseObject::getSchemaName(ObjectType::Permission) ?
+										 Attributes::Grant : Attributes::Create);
+
+			emit s_objectLoaded(100, tr("Saving SQL file `%1' .").arg(filename), enum_t(ObjectType::Database));
+
+			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
+		}
+
+		// Generating the file containing all DROP commands
+		if(gen_drop_file)
+		{
+			std::map<unsigned, BaseObject *>::reverse_iterator ritr = objects.rbegin();
+			QString drop_cmd;
+
+			/* We iterate over the object in reverse order because they need to be destroyed
+			 * from the last to the first */
+			while(ritr != objects.rend())
+			{
+				obj = ritr->second;
+				ritr++;
+
+				if(obj->isSystemObject())
+					continue;
+
+				drop_cmd = obj->getDropCode(true);
+
+				// Disabling the drop command if the object is also with SQL disabled
+				if(obj->isSQLDisabled())
+					drop_cmd.prepend("-- ");
+
+				if(group_by_type)
+				{
+					obj_type_name = obj->getSchemaName();
+
+					if(obj->getObjectType() == ObjectType::Constraint)
+					{
+						constr = dynamic_cast<Constraint *>(obj);
+						obj_type_name = constr_filename[constr->getConstraintType().getTypeId()];
+					}
+
+					grouped_drops[obj_type_name] += drop_cmd.toUtf8();
+				}
+				else
+					buffer.append(drop_cmd.toUtf8());
+			}
+
+			// Restoring the decl_in_table flag in constraints
+			for(auto &constr : contraints)
+				constr->setDeclaredInTable(true);
+
+			/* If we are not generating grouped definitions
+			 * we reuse the groped_drops having a key = Attributes::DropCmds
+			 * and value = buffer with the whole drop commands just to
+			 * make a single iteration in the for below to
+			 * simplify the logic */
+			if(!group_by_type)
+				grouped_drops[Attributes::DropCmds] = buffer;
+
+			// Generating the file(s) containing the drop commands
+			for(auto &itr : grouped_drops)
+			{
+				if(itr.first == BaseObject::getSchemaName(ObjectType::BaseRelationship) ||
+					 itr.first == BaseObject::getSchemaName(ObjectType::Relationship))
+					continue;
+
+				// If we are generating a single file with all DROP commands
+				if(itr.first == Attributes::DropCmds)
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(QString::number(0).rightJustified(pad_size, '0'), Attributes::Drop);
+				}
+				// If we are generating a DROP file per object type
+				else
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(itr.first,
+													itr.first == BaseObject::getSchemaName(ObjectType::Permission) ?
+													Attributes::Revoke : Attributes::Drop);
+				}
+
+				emit s_objectLoaded(100, tr("Saving drop commands file `%1'.").arg(filename),	enum_t(ObjectType::Database));
+
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
 			}
 		}
 
@@ -9675,11 +9848,12 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	ObjectType obj_type = BaseObject::getObjectType(type);
 	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
-	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
+	if(signature.isEmpty() || obj_type == ObjectType::BaseObject ||
 		 !date_time.isValid() || !actions.contains(action))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvChangelogEntryValues).arg(signature, type, action, date),
-										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+										ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__,
+										nullptr, QString("%1, %2, %3, %4").arg(signature, type, action, date));
 	}
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
@@ -9922,19 +10096,19 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format)
 {
 	int idx = 0;
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, dict_index, items, buffer;
+	QString styles, id, dict_index;
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
-	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
-			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
-			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
+	QString dict_ext = md_format ? ".md" : ".html",
+			dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
+			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
+			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -9963,8 +10137,6 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	dict_index_list.sort();
 	datadict.clear();
 
-	// Generates the the stylesheet
-	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
@@ -9972,12 +10144,18 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
 	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
-	// If the generation is a standalone HTML the css is embedded
-	if(!split)
-		attribs[Attributes::Styles] = styles;
-	else
-		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + ".css"] = styles;
+	// Generates the the stylesheet (only for HTML data dicts)
+	if(!md_format)
+	{
+		styles = schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles), attribs);
+
+		// If the generation is a standalone HTML the css is embedded
+		if(!split)
+			attribs[Attributes::Styles] = styles;
+		else
+			// Otherwise we create a separated stylesheet file
+			datadict[Attributes::Styles + ".css"] = styles;
+	}
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
@@ -10008,7 +10186,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 			for(auto &itr : col_seqs)
 			{
 				aux_attribs[Attributes::Sequences] +=
-						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+						itr.first->getDataDictionary(md_format, {{ Attributes::Columns, itr.second.join(", ") }});
 			}
 
 			col_seqs.clear();
@@ -10016,12 +10194,12 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		else
 			aux_attribs[Attributes::Sequences] = "";
 
-		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, md_format, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + ".html";
+			id = itr.first + dict_ext;
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -10036,7 +10214,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
-		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+		idx_attribs[Attributes::Year] = attribs[Attributes::Year];
+		idx_attribs[Attributes::Date] = attribs[Attributes::Date];
+		idx_attribs[Attributes::Styles] = "";
+		idx_attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 		// Generating the index items
 		for(auto &item : dict_index_list)
@@ -10055,7 +10236,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + ".html"] = dict_index;
+		datadict[Attributes::Index + dict_ext] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;
@@ -10064,7 +10245,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format)
 {
 	try
 	{
@@ -10084,7 +10265,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, split);
+		getDataDictionary(datadict, browsable, split, md_format);
 		filename = path;
 
 		for(auto &itr : datadict)

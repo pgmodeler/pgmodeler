@@ -18,14 +18,6 @@
 
 #include "executiontype.h"
 
-QStringList ExecutionType::type_names =
-{
-	"", // Reserved for Class::Null
-
-	"ALSO",
-	"INSTEAD"
-};
-
 ExecutionType::ExecutionType()
 {
 	type_idx = Also;

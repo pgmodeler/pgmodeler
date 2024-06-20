@@ -86,8 +86,14 @@ class __libgui ModelExportHelper: public QObject {
 		//! \brief Indicates if the data dictionary should be browsable (include an index)
 		browsable,
 
+		//! \brief Changes the data dictionary output format from HTML to MD (Markdown)
+		md_format,
+
 		//! \brief Indicates if the database must be dropped before the export
-		force_db_drop;
+		force_db_drop,
+
+		//! \brief Indicates if the script containing DROP commandos of all objects must be created
+		gen_drop_file;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -166,7 +172,7 @@ class __libgui ModelExportHelper: public QObject {
 		void setIgnoredErrors(const QStringList &err_codes);
 
 		//! \brief Exports the model to a named SQL file. The PostgreSQL version syntax must be specified.
-		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode);
+		void exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file);
 
 		/*! \brief Exports the model to a named PNG image. The boolean parameters controls the grid exhibition
 		as well the page delimiters on the output image. The zoom parameter controls the zoom applied to the viewport
@@ -190,7 +196,7 @@ class __libgui ModelExportHelper: public QObject {
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
 		 * respectively, that the data dictionary should have an object index and the dictionary should be split
 		 * in different files per table */
-		void exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split);
+		void exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a database model as input and the sql code to be exported will be generated from it.
@@ -205,7 +211,7 @@ class __libgui ModelExportHelper: public QObject {
 
 		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
 		This form receive the model, output filename and pgsql version to be used */
-		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode);
+		void setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file);
 
 		/*! \brief Configures the PNG export params before start the export thread (when in thread mode).
 		This form receive the objects scene, a viewport, the output filename, zoom factor, grid options and page by page export options */
@@ -218,7 +224,7 @@ class __libgui ModelExportHelper: public QObject {
 
 		/*! \brief Configures the Data Dictionary export params before start the export thread (when in thread mode).
 		This form receive the database model, the output path and browsabe and split options. */
-		void setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split);
+		void setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format);
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes

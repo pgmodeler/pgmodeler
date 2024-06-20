@@ -33,12 +33,14 @@
 class __libutils Application: public QApplication {
 	private:
 		//! \brief Copy files from a path to another recursively
-		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only);
+		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only, bool incl_subdirs);
 
 	protected:
-		/*! \brief Creates the pgModeler's configuration dir on user's local storage.
-		 * The output path is platform dependant and is determined by GlobalAttributes::getConfigurationsDir() */
-		void createUserConfiguration(bool missing_only);
+		/*! \brief Creates the pgModeler's configuration directory on user's local storage.
+		 * This method, in the first run of the tool, copies config files from previous versions.
+		 * For next exectutions, the method only recreate missing configuration files that were
+		 * envetually removed */
+		void createUserConfiguration();
 
 		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
 		 * By default, the files are searched in the pgModeler's default lang files location.

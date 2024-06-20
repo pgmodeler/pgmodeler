@@ -28,9 +28,6 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-std::map<QString, attribs_map> GeneralConfigWidget::config_params;
-std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
-
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	std::vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
@@ -276,6 +273,9 @@ void GeneralConfigWidget::loadConfiguration()
 		disable_inline_editor_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableInlineEditor]==Attributes::True);
 		disable_inline_editor_chk->setEnabled(disable_inline_editor_chk->isChecked());
 
+		hide_obj_sel_info_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideObjectsSelInfo]==Attributes::True);
+		hide_cur_pos_zoom_info_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideCurPosZoomInfo]==Attributes::True);
+
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
 
@@ -482,6 +482,9 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::ColumnTruncThreshold]=QString::number(trunc_columns_data_spb->value());
 		config_params[Attributes::Configuration][Attributes::DisableInlineEditor]=(trunc_columns_data_chk->isChecked() &&
 																																							 disable_inline_editor_chk->isChecked() ? Attributes::True : "");
+
+		config_params[Attributes::Configuration][Attributes::HideObjectsSelInfo]=(hide_obj_sel_info_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideCurPosZoomInfo]=(hide_cur_pos_zoom_info_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::File]="";
 		config_params[Attributes::Configuration][Attributes::RecentModels]="";

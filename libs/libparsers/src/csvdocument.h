@@ -59,13 +59,13 @@ class __libparsers CsvDocument {
 
 	public:
 		//! \brief Default character used as text delimiter
-		static const QChar TextDelimiter,
+		inline static const QChar TextDelimiter {'"'},
 
 		//! \brief Default character used as value separator
-		Separator,
+		Separator {';'},
 
 		//! \brief Default character used as line break
-		LineBreak;
+		LineBreak { QChar::LineFeed };
 
 		CsvDocument();
 

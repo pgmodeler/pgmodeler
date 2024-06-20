@@ -20,8 +20,6 @@
 #include <QTextDocument>
 #include <QLineEdit>
 
-const QRegularExpression HtmlItemDelegate::TagRegExp("<(\\/)?[a-z]+(>|\\/>)");
-
 HtmlItemDelegate::HtmlItemDelegate(QObject *parent, bool ignore_tags_sz_hint) : PlainTextItemDelegate(parent, true)
 {
 	this->ignore_tags_sz_hint = ignore_tags_sz_hint;
@@ -94,9 +92,14 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		else
 			painter->setPen(option.palette.color(QPalette::Disabled, QPalette::Text));
 
-		txt_sz = option.fontMetrics.boundingRect(text).size();
+		txt_sz = option.fontMetrics.boundingRect(rect, Qt::Horizontal, text).size();
 		dy = abs(rect.height() - txt_sz.height()) / 2;
-		rect.translate(ico_sz.width() + 5, dy);
+
+		if(!ico.isNull())
+			rect.translate(ico_sz.width() + 5, dy);
+		else
+			rect.translate(0, dy);
+
 		painter->drawText(rect, text);
 	}
 	else

@@ -278,7 +278,7 @@ class __libcore Constraint: public TableObject{
 
 		bool isNullsNotDistinct();
 
-		QString getDataDictionary(const attribs_map &extra_attribs);
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs);
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */

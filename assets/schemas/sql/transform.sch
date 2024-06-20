@@ -14,7 +14,7 @@
 	{ddl-end} $br
 %end
 
-[CREATE TRANSFORM FOR ] {type} [ LANGUAGE ] {language} [ (]
+[CREATE OR REPLACE TRANSFORM FOR ] {type} [ LANGUAGE ] {language} [ (]
 
 # One of the two function should be defined otherwise the code generation will fail
 
