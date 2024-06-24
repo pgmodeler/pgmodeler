@@ -164,6 +164,15 @@ linux {
 windows {
   CONFIG += windows
 
+  # Removing optimization flag -O2 (level 2) and replacing by
+  # level 0 (the default according to GCC docs) because at level 2
+  # in MingW Clang/GCC some C++17 techniques don't work properly
+  # (e.g. inline static class members). Maybe it's a bug in the code is wrong (more likely)
+  # or is a bug in the compiler? The fact is that reducing the executable/libs code
+  # optmization causes the tool to work as expected.
+  QMAKE_CXXFLAGS_RELEASE -= -O2
+  QMAKE_CXXFLAGS_RELEASE *= -O0
+
   # The default prefix is ./build
   !defined(PREFIX, var):        PREFIX = $$PWD/build
   !defined(BINDIR, var):        BINDIR = $$PREFIX
