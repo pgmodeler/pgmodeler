@@ -1,6 +1,6 @@
 v1.2.0-alpha
 ------
-<em>Release date: June 20, 2024</em><br/>
+<em>Release date: June 24, 2024</em><br/>
 <em>Changes since: <strong>v1.1.x</strong></em><br/>
 
 <em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.2.0-alpha causing a break in backward compatibility with some pgModeler 1.1.x settings. This way, at the first start of the newer version, pgModeler will automatically try to migrate the older settings to the newer ones!</em><br/><br/>

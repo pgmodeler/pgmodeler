@@ -3,7 +3,7 @@ Changelog
 
 v1.2.0-alpha
 ------
-<em>Release date: June 20, 2024</em><br/>
+<em>Release date: June 24, 2024</em><br/>
 
 * [New] Added support for @include statements in schema micro language.
 * [New] Added the support for Markdown data dictionaries in ModelExportForm.
