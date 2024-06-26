@@ -1,6 +1,7 @@
 name: Linux build
 
-#on:
+on:
+  workflow_dispatch:
 #  push:
 #    branches: [ main, develop, 1.* ]
 #    tags: 1.*
