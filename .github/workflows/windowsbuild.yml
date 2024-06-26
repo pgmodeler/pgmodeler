@@ -49,5 +49,5 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: pgmodeler_exe
-        path: D:/a/pgmodeler/pgmodeler/build/pgmodeler.exe
+        name: pgmodeler_installation_root
+        path: D:/a/pgmodeler/pgmodeler/build/
