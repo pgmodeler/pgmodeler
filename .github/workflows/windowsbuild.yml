@@ -47,6 +47,18 @@ jobs:
     - name: Deploying pgModeler
       run: mingw32-make install
 
+    - name: Resolve Runtime Dependencies
+      run: |
+        echo -e "[Paths]\nPrefix=.\nPlugins=qtplugins\nLibraries=." > D:/a/pgmodeler/pgmodeler/build/qt.conf
+        cd C:/msys64/mingw64/bin/
+        cp D3Dcompiler_47.dll libb2-1.dll libbrotlicommon.dll libbrotlidec.dll libbz2-1.dll libcrypto-1_1-x64.dll \
+              libdouble-conversion.dll libfreetype-6.dll libgcc_s_seh-1.dll libglib-2.0-0.dll libgraphite2.dll \
+              libharfbuzz-0.dll libiconv-2.dll libicudt*.dll libicuin*.dll libicuuc*.dll libintl-8.dll liblzma-5.dll \
+              libmd4c.dll libpcre-1.dll libpcre2-16-0.dll libpng16-16.dll libpq.dll libssl-1_1-x64.dll libstdc++-6.dll \
+              libwinpthread-1.dll libxml2-2.dll zlib1.dll D:/a/pgmodeler/pgmodeler/build
+        mkdir D:/a/pgmodeler/pgmodeler/build/qtplugins/tls
+        cp -r C:/msys64/mingw64/share/qt6/plugins/platforms/tls/* D:/a/pgmodeler/pgmodeler/build/qtplugins/tls      
+
     - uses: actions/upload-artifact@v4
       with:
         name: pgmodeler_installation_root
