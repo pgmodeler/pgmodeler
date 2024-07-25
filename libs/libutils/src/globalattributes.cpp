@@ -25,7 +25,7 @@ QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &
 {
 	QFileInfo fi;
 	QStringList paths={ CustomPaths[varname],
-											QDir::toNativeSeparators(default_val) };
+											 QDir::toNativeSeparators(default_val) };
 
 	for(int i=0; i < 2; i++)
 	{
@@ -147,7 +147,7 @@ QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, cons
 		match =	regexp.match(buf);
 		idx = match.capturedStart();
 
-		//Extract the value of the attribute in the conf file
+					 //Extract the value of the attribute in the conf file
 		attr_val = buf.mid(idx, match.capturedLength());
 		attr_val.remove(param_name);
 		attr_val.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
@@ -158,13 +158,13 @@ QString GlobalAttributes::getConfigParamFromFile(const QString &param_name, cons
 
 void GlobalAttributes::setConfigFilesPaths()
 {
-	#if defined(Q_OS_WINDOWS)
-		ConfigurationsPath=getPathFromEnv(EnvConfPath, QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryPath=getPathFromEnv(EnvTmpPath, QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
-	#else
-		ConfigurationsPath=getPathFromEnv(EnvConfPath, QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
-		TemporaryPath=getPathFromEnv(EnvTmpPath, QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
-	#endif
+#if defined(Q_OS_WINDOWS)
+	ConfigurationsPath=getPathFromEnv(EnvConfPath, QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1").arg(PgModelerAppName));
+	TemporaryPath=getPathFromEnv(EnvTmpPath, QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+#else
+	ConfigurationsPath=getPathFromEnv(EnvConfPath, QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName));
+	TemporaryPath=getPathFromEnv(EnvTmpPath, QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName));
+#endif
 
 	SQLHighlightConfPath=ConfigurationsPath + DirSeparator + SQLHighlightConf + ConfigurationExt;
 	XMLHighlightConfPath=ConfigurationsPath + DirSeparator + XMLHighlightConf + ConfigurationExt;
@@ -175,10 +175,10 @@ void GlobalAttributes::setConfigFilesPaths()
 void GlobalAttributes::setCustomPaths(const QString &search_path)
 {
 	QStringList env_vars = {
-		EnvSchemasPath,	EnvConfPath,	EnvTmplConfPath,
-		EnvLangPath,	EnvPluginsPath,	EnvTmpPath,
-		EnvSamplesPath,	EnvPgModelerChPath,	EnvPgModelerCliPath,
-		EnvPgModelerSePath,	EnvPgModelerPath
+			EnvSchemasPath,	EnvConfPath,	EnvTmplConfPath,
+			EnvLangPath,	EnvPluginsPath,	EnvTmpPath,
+			EnvSamplesPath,	EnvPgModelerChPath,	EnvPgModelerCliPath,
+			EnvPgModelerSePath,	EnvPgModelerPath
 	};
 
 	QString path, filename = search_path + DirSeparator + PgmPathsConfFile + ConfigurationExt;
@@ -211,23 +211,23 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	TmplConfigurationPath=getPathFromEnv(EnvTmplConfPath, CONFDIR, QString("%1/%2").arg(search_path, ConfigurationsDir));
 	PluginsPath=getPathFromEnv(EnvPluginsPath, PLUGINSDIR, QString("%1/%2").arg(search_path, PluginsDir));
 
-	#if defined(Q_OS_UNIX)
-		#if defined(Q_OS_MAC)
-			//For MacOSX the crash handler path is fixed (inside bundle)
-			PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1/pgmodeler-ch").arg(BINDIR), QString("%1/pgmodeler-ch").arg(search_path));
-		#else
-			PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1/pgmodeler-ch").arg(PRIVATEBINDIR), QString("%1/pgmodeler-ch").arg(search_path));
-		#endif
+#if defined(Q_OS_UNIX)
+#if defined(Q_OS_MAC)
+																																																					 //For MacOSX the crash handler path is fixed (inside bundle)
+	PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1/pgmodeler-ch").arg(BINDIR), QString("%1/pgmodeler-ch").arg(search_path));
+#else
+	PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1/pgmodeler-ch").arg(PRIVATEBINDIR), QString("%1/pgmodeler-ch").arg(search_path));
+#endif
 
-		PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1/pgmodeler-cli").arg(BINDIR), QString("%1/pgmodeler-cli").arg(search_path));
-		PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
-		PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se").arg(BINDIR), QString("%1/pgmodeler-se").arg(search_path));
+	PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1/pgmodeler-cli").arg(BINDIR), QString("%1/pgmodeler-cli").arg(search_path));
+	PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1/pgmodeler").arg(BINDIR), QString("%1/pgmodeler").arg(search_path));
+	PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se").arg(BINDIR), QString("%1/pgmodeler-se").arg(search_path));
 
-	#else
-		PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
-		PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1\\pgmodeler-cli.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-cli.exe").arg(search_path));
-		PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
-		PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
+#else
+	PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1\\pgmodeler-ch.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-ch.exe").arg(search_path));
+	PgModelerCLIPath=getPathFromEnv(EnvPgModelerCliPath, QString("%1\\pgmodeler-cli.exe").arg(PRIVATEBINDIR), QString("%1\\pgmodeler-cli.exe").arg(search_path));
+	PgModelerAppPath=getPathFromEnv(EnvPgModelerPath, QString("%1\\pgmodeler.exe").arg(BINDIR), QString("%1\\pgmodeler.exe").arg(search_path));
+	PgModelerSchemaEditorPath=getPathFromEnv(EnvPgModelerSePath, QString("%1/pgmodeler-se.exe").arg(BINDIR), QString("%1/pgmodeler-sc.exe").arg(search_path));
 #endif
 }
 
@@ -239,7 +239,7 @@ void GlobalAttributes::init(const QString &search_path, bool apply_ui_factor)
 	QFileInfo fi(search_path);
 	GlobalAttributes::setSearchPath(fi.isDir() ? search_path : fi.absolutePath());
 #else
-	#warning "AppImage: hard coding search path to temporary path /tmp/pgmodelerXXXXX!"
+#warning "AppImage: hard coding search path to temporary path /tmp/pgmodelerXXXXX!"
 	GlobalAttributes::setSearchPath(getenv("APPDIR"));
 #endif
 

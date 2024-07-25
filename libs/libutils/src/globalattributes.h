@@ -140,7 +140,7 @@ class __libutils GlobalAttributes {
 		inline static const QString
 		// The base version number of the tool
 		PgModelerVersion {
-			QString("1.2.0-alpha")
+			QString("1.2.0-alpha1")
 
 			/* Appending the snapshot build number to the version number
 			 * when the external variable SNAPSHOT_BUILD is defined */
