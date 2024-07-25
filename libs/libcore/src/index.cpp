@@ -375,6 +375,8 @@ void Index::setColumns(const std::vector<Column *> &cols)
 {
 	try
 	{
+		included_cols.clear();
+
 		for(auto &col : cols)
 			addColumn(col);
 	}
@@ -388,6 +390,8 @@ void Index::setSimpleColumns(const std::vector<SimpleColumn> &cols)
 {
 	try
 	{
+		incl_simple_cols.clear();
+
 		for(auto &col : cols)
 			addSimpleColumn(col);
 	}
