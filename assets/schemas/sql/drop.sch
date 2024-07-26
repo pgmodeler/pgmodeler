@@ -2,6 +2,8 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
+@include "ddlend"
+
 %if %not {domain} %and {constraint} %or {column} %then
 	%if %not {decl-in-table} %then
 		[ALTER TABLE ] {table} [ DROP ] {sql-object} [ IF EXISTS ]
@@ -26,4 +28,4 @@
 
 ;
 
-$br [-- ddl-end --] $br
+{ddl-end}

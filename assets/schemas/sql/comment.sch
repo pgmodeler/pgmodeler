@@ -3,6 +3,8 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if {comment} %or ({comment}=="unset") %then
+	@include "ddlend"
+
 	[COMMENT ON ] {sql-object} $sp 
 
 	%if ({sql-object}=="CONSTRAINT") %or ({sql-object}=="TRIGGER") %or 
@@ -21,9 +23,7 @@
 		'{comment}'
 	%end
 
-	; $br
+	; 
 
-	# This is a special token that pgModeler recognizes as end of DDL command
-	# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-	[-- ddl-end --] $br
+	{ddl-end}
 %end

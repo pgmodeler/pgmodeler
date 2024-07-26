@@ -2,11 +2,12 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
+@include "ddlend"
+
 %if {decl-in-table} %then
 	$tb
 %else
 	[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-	[-- ] {drop}
 
 	%if {table} %then
 		[ALTER TABLE ] {table} [ ADD COLUMN ]
@@ -68,10 +69,7 @@
 %else
 	[;]
 
-	# This is a special token that pgModeler recognizes as end of DDL command
-	# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-	$br [-- ddl-end --] $br
-	$br
+	{ddl-end} $br
 %end
 
 %if %not {decl-in-table} %and {comment} %then

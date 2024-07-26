@@ -2,23 +2,18 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-[-- ] {drop}
+@include "ddlend"
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-%set {ddl-end} $br [-- ddl-end --] $br
+%if %not {reduced-form} %then
+	@include "objlabel"
+	@include "prependedsql"
+%end
 
 [CREATE TYPE ] {name}
 
 %if {reduced-form} %then
 	; {ddl-end} $br
 %else
-	%if {prepended-sql} %then
-		{prepended-sql}
-		{ddl-end} $br
-	%end
-
 	%if {base} %then
 		[ (] $br
 	%else

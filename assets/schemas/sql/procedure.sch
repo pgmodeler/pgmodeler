@@ -3,7 +3,9 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} >=f "11.0") %then
-	@include "header"
+	@include "ddlend"
+	@include "objlabel"
+	@include "prependedsql"
 
 	[CREATE OR REPLACE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
 	$tb [LANGUAGE ] {language} $br
