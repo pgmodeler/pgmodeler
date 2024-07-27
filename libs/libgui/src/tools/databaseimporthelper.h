@@ -241,6 +241,11 @@ class __libgui DatabaseImportHelper: public QObject {
 		//! \brief Return a string containing all attributes and their values in a formatted way
 		QString dumpObjectAttributes(attribs_map &attribs);
 
+		/*! \brief Remove the table columns that came from an inheritance from the inherited_cols vector.
+		 *  This method must be called before destroying a table due to an error during the importing.
+		 *  See createTable() and createForeignTable() */
+		void removeInheritedCols(PhysicalTable *tab);
+
 	public:
 		DatabaseImportHelper(QObject *parent = nullptr);
 		
