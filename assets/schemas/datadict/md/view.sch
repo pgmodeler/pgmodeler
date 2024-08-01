@@ -5,7 +5,9 @@
 \n [<a name="] {schema}.{name} ["></a>] \n
 \#\#\#\s _{schema}_.**{name}** \s `{type}` \n
 
-{comment}
+%if {comment} %then
+	\n {comment} \n\n
+%end
 
 %if {columns} %then
 	[| Name | Data type ] \n
