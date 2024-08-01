@@ -950,14 +950,16 @@ void ModelsDiffHelper::processDiffInfos()
 				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 
 				// If one or more options that controls the recreation of objects is set
-				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
-						obj_type != ObjectType::Database)
+				//if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) && obj_type != ObjectType::Database)
+				if(obj_type != ObjectType::Database && obj_sql != old_obj_sql &&
+						((diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand()) ||
+							(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand())))
 				{
 					// Replacing objects that accepts CREATE OR REPLACE
-					if(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand() && obj_sql != old_obj_sql)
+					if(diff_opts[OptReplaceModified])
 						alter_objs[object->getObjectId()] = getSourceCode(object, false);
 					// Recreating objects via DROP and CREATE
-					else if(diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() && obj_sql != old_obj_sql)
+					else if(diff_opts[OptRecreateUnmodifiable])
 					{
 						recreateObject(object, drop_vect, create_vect);
 
