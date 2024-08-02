@@ -67,7 +67,7 @@ class __libgui ModelsDiffHelper: public QObject {
 		bool diff_canceled,
 
 		//!brief Diff options. See OPT_??? constants
-		diff_opts[10];
+		diff_opts[9];
 
 		//! \brief Stores the count of objects to be dropped, changed or created
 		unsigned diffs_counter[4];
