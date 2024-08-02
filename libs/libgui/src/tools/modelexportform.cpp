@@ -191,12 +191,12 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	progress_lbl->setText(text);
 	progress_pb->setValue(progress);
 
-	if(obj_type!=ObjectType::BaseObject)
-		ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
+	if(obj_type != ObjectType::BaseObject)
+		ico = QPixmap(GuiUtilsNs::getIconPath(obj_type));
 	else if(!cmd.isEmpty())
-		ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+		ico = QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
 	else
-		ico=QPixmap(GuiUtilsNs::getIconPath("info"));
+		ico = QPixmap(GuiUtilsNs::getIconPath("info"));
 
 	ico_lbl->setPixmap(ico);
 

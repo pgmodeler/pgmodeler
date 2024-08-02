@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>776</height>
+    <height>804</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1368,6 +1368,13 @@
                  <property name="bottomMargin">
                   <number>5</number>
                  </property>
+                 <item>
+                  <widget class="QCheckBox" name="run_in_transaction_chk">
+                   <property name="text">
+                    <string>Run in a transaction</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QCheckBox" name="ignore_duplic_chk">
                    <property name="sizePolicy">

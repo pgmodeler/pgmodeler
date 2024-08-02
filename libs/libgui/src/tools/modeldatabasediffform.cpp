@@ -737,7 +737,9 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
-																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
+																				 database_cmb->currentText(), ignore_duplic_chk->isChecked(),
+																				 run_in_transaction_chk->isChecked());
+
 		if(ignore_error_codes_chk->isChecked())
 			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
 
@@ -1035,8 +1037,13 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		if(!low_verbosity)
 		{
-			if(obj_type==ObjectType::BaseObject)
-				ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+			if(obj_type == ObjectType::BaseObject)
+			{
+				if(!cmd.isEmpty())
+					ico = QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+				else
+					ico = QPixmap(GuiUtilsNs::getIconPath("info"));
+			}
 			else
 				ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 

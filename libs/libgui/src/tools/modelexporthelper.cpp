@@ -15,6 +15,7 @@ void ModelExportHelper::resetExportParams()
 	simulate = use_tmp_names = db_sql_reenabled = override_bg_color = false;
 	force_db_drop = gen_drop_file = md_format = false;
 	show_grid = show_delim = page_by_page = split = browsable = false;
+	transactional = false;
 	created_objs[ObjectType::Role] = created_objs[ObjectType::Tablespace] = -1;
 	db_model = nullptr;
 	connection = nullptr;
@@ -818,7 +819,7 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
 	return err_codes.contains(error_code);
 }
 
-void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
+void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs, bool transactional)
 {
 	Connection aux_conn;
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
@@ -827,7 +828,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;
-	bool ddl_tk_found=false, is_create=false, is_drop=false;
+	bool ddl_tk_found=false, is_create=false, is_drop=false, in_transaction = false;
 	unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
 			factor=(db_name.isEmpty() ? 70 : 90);
 	int pos=0, pos1=0, comm_cnt=0;
@@ -1071,7 +1072,16 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				if(!sql_cmd.isEmpty() && !export_canceled)
 				{
 					if(obj_type != ObjectType::Database)
+					{
+						if(transactional && !in_transaction)
+						{
+							emit s_progressUpdated(aux_prog, tr("Starting transaction."), ObjectType::BaseObject, "");
+							conn.executeDDLCommand("BEGIN");
+							in_transaction = true;
+						}
+
 						conn.executeDDLCommand(sql_cmd);
+					}
 					else
 						//If it's a database level command (e.g. ALTER DATABASE ... RENAME TO ...)
 						db_sql_cmds.push_back(sql_cmd);
@@ -1079,6 +1089,20 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				sql_cmd.clear();
 				ddl_tk_found=false;
+			}
+
+			if(ts.atEnd() && in_transaction)
+			{
+				if(export_canceled)
+				{
+					emit s_progressUpdated(aux_prog, tr("Rolling back changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("ROLLBACK");
+				}
+				else
+				{
+					emit s_progressUpdated(aux_prog, tr("Committing changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("COMMIT");
+				}
 			}
 
 			//Executing the pending database level commands
@@ -1097,6 +1121,19 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 		}
 		catch(Exception &e)
 		{
+			if(conn.isStablished() && in_transaction)
+			{
+				try
+				{
+					emit s_progressUpdated(aux_prog, tr("Rolling back changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("ROLLBACK");
+				}
+				catch(Exception &)
+				{
+					emit s_progressUpdated(aux_prog, tr("Failed to roll back changes!"), ObjectType::BaseObject, "");
+				}
+			}
+
 			if(ddl_tk_found) ddl_tk_found=false;
 			handleSQLError(e, sql_cmd, ignore_dup);
 			sql_cmd.clear();
@@ -1132,7 +1169,7 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
+void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup, bool transactional)
 {
 	this->sql_buffer = sql_buffer;
 	this->connection = conn;
@@ -1140,6 +1177,7 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->ignore_dup = ignore_dup;
 	this->simulate = false;
 	this->drop_db = false;
+	this->transactional = transactional;
 	this->use_tmp_names = false;
 	this->errors.clear();
 }
@@ -1196,7 +1234,7 @@ void ModelExportHelper::exportToDBMS()
 		{
 			try
 			{
-				exportBufferToDBMS(sql_buffer, *connection);
+				exportBufferToDBMS(sql_buffer, *connection, false, transactional);
 
 				if(export_canceled)
 					emit s_exportCanceled();
