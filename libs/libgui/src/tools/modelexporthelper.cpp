@@ -341,7 +341,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	emit s_exportFinished();
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names, bool forced_db_drop)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate,
+																		 bool use_tmp_names, bool forced_db_drop, bool transactional)
 {
 	int type_id = 0, pos = -1;
 	QString  version, sql_cmd, buf, sql_cmd_comment;
@@ -554,7 +555,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Exporting the database model definition using the opened connection
 			buf=db_model->getSourceCode(SchemaParser::SqlCode, false);
 			progress=40;
-			exportBufferToDBMS(buf, new_db_conn, drop_objs);
+			exportBufferToDBMS(buf, new_db_conn, drop_objs, transactional);
 		}
 
 		disconnect(db_model, nullptr, this, nullptr);
@@ -1153,7 +1154,7 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender() == db_model);
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop, bool transactional)
 {
 	this->db_model = db_model;
 	this->connection = conn;
@@ -1164,6 +1165,7 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 	this->drop_objs = drop_objs && !drop_db;
 	this->use_tmp_names = use_rand_names;
 	this->force_db_drop = drop_db && force_db_drop;
+	this->transactional = transactional;
 	this->sql_buffer.clear();
 	this->db_name.clear();
 	this->errors.clear();
@@ -1228,7 +1230,7 @@ void ModelExportHelper::exportToDBMS()
 		if(sql_buffer.isEmpty())
 		{
 			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db,
-									 drop_objs, simulate, use_tmp_names, force_db_drop);
+									 drop_objs, simulate, use_tmp_names, force_db_drop, transactional);
 		}
 		else
 		{

@@ -214,6 +214,24 @@ void ModelExportForm::exportModel()
 {
 	try
 	{
+		// Alerting the user about dropping objects/database
+		if(export_to_dbms_rb->isChecked() && drop_chk->isChecked())
+		{
+			Messagebox msg_box;
+			QString msg;
+
+			if(drop_db_rb->isChecked())
+				msg = tr("<strong>CAUTION:</strong> You are about to drop an entire database from the chosen server! All data will be completely wiped out. Do you really want to proceed?");
+			else
+				msg = tr("<strong>CAUTION:</strong> You are about to drop objects in a database of the chosen server! Data can be lost in the process. Do you really want to proceed?");
+
+			msg_box.show(tr("Warning"), msg, Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+			if(msg_box.result() == QDialog::Rejected)
+				return;
+		}
+
+
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
@@ -266,8 +284,8 @@ void ModelExportForm::exportModel()
 			//Exporting directly to DBMS
 			else
 			{
+				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 				QString version;
-				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());			
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())
@@ -278,7 +296,8 @@ void ModelExportForm::exportModel()
 																				 drop_chk->isChecked() && drop_db_rb->isChecked(),
 																				 drop_chk->isChecked() && drop_objs_rb->isChecked(),
 																				 false, false,
-																				 drop_chk->isChecked() && force_db_drop_chk->isChecked());
+																				 drop_chk->isChecked() && force_db_drop_chk->isChecked(),
+																				 run_in_transaction_chk->isChecked());
 
 				if(ignore_error_codes_chk->isChecked())
 					export_hlp.setIgnoredErrors(error_codes_edt->text().simplified().split(' '));

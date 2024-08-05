@@ -196,7 +196,7 @@ class __libgui ModelExportHelper: public QObject {
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
 											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
-											bool forced_db_drop = false);
+											bool forced_db_drop = false, bool transactional = false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
 		 * respectively, that the data dictionary should have an object index and the dictionary should be split
@@ -208,7 +208,7 @@ class __libgui ModelExportHelper: public QObject {
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
 															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
-															 bool force_db_drop = false);
+															 bool force_db_drop = false, bool transactional = false);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a previously generated sql buffer to be exported the the helper */
