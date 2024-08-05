@@ -1763,7 +1763,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			if(confirm_validation && db_model->isInvalidated())
 			{
 				msg_box.show(tr("Confirmation"),
-							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
+							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::AlertIcon, Messagebox::AllButtons,
 							 tr("Validate"), tr("Save anyway"), "",
 								GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("save"));
@@ -1863,7 +1863,7 @@ void MainWindow::exportModel()
 	if(confirm_validation && db_model->isInvalidated())
 	{
 		msg_box.show(tr("Confirmation"),
-					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Export anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("export"));
@@ -1931,7 +1931,7 @@ void MainWindow::diffModelDatabase()
 	if(confirm_validation && db_model && db_model->isInvalidated())
 	{
 		msg_box.show(tr("Confirmation"),
-					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Diff anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("diff"));

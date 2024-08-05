@@ -26,3 +26,4 @@
 <!ATTLIST preset ignore-import-errors (false|true) "false">
 <!ATTLIST preset ignore-duplic-errors (false|true) "false">
 <!ATTLIST preset ignore-error-codes CDATA #IMPLIED>
+<!ATTLIST preset run-in-transaction (false|true) "false">
