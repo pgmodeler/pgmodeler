@@ -222,6 +222,7 @@ class __libcli PgModelerCliApp: public Application {
 		Diff {"--diff"},
 		DropDatabase {"--drop-database"},
 		DropObjects {"--drop-objects"},
+		NonTransactional {"--non-transactional"},
 		PgSqlVer {"--pgsql-ver"},
 		Help {"--help"},
 		ShowGrid {"--show-grid"},
@@ -350,7 +351,7 @@ class __libcli PgModelerCliApp: public Application {
 			{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 			{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
 			{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
-			{ ListPlugins, false }, { Markdown, false }
+			{ ListPlugins, false }, { Markdown, false }, { NonTransactional, false }
 		};
 
 		//! \brief Stores the short option names.
@@ -379,7 +380,8 @@ class __libcli PgModelerCliApp: public Application {
 			{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 			{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
 			{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
-			{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }, { Markdown, "-md" }
+			{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }, { Markdown, "-md" },
+			{ NonTransactional, "-nt" }
 		};
 
 		//! \brief Stores the accepted options by the different operations
@@ -391,7 +393,8 @@ class __libcli PgModelerCliApp: public Application {
 			{{ ExportToDict }, { Input, Output, Split, NoIndex, Markdown }},
 
 			{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
-														DropDatabase, DropObjects, Simulate, UseTmpNames, Force }},
+														DropDatabase, DropObjects, Simulate, UseTmpNames, Force,
+														NonTransactional, ConnAlias, Host, Port, User, Passwd }},
 
 			{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 												FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
@@ -400,7 +403,7 @@ class __libcli PgModelerCliApp: public Application {
 			{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 									 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 									 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-									 NoSequenceReuse, RecreateUnmod, ReplaceModified }},
+									 NoSequenceReuse, RecreateUnmod, ReplaceModified, NonTransactional }},
 
 			{{ DbmMimeType }, { SystemWide, Force }},
 			{{ FixModel },	{ Input, Output, FixTries }},

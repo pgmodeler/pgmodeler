@@ -362,7 +362,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
-		if(simulate && (ignore_dup || drop_db || drop_objs))
+		if(simulate && (ignore_dup || drop_db || drop_objs || transactional))
 			throw Exception(ErrorCode::MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(drop_db && drop_objs)
 			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
