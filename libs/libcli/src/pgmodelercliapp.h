@@ -279,6 +279,7 @@ class __libcli PgModelerCliApp: public Application {
 		IgnoreFaultyPlugins {"--ignore-faulty"},
 		ListPlugins {"--list-plugins"},
 
+		ConnOptions {"connopts"},
 		TagExpr {"<%1"},
 		EndTagExpr {"</%1"},
 		AttributeExpr {"(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")"},
@@ -386,7 +387,7 @@ class __libcli PgModelerCliApp: public Application {
 
 		//! \brief Stores the accepted options by the different operations
 		inline static std::map<QString, QStringList> accepted_opts {
-			{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+			{{ ConnOptions }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
 			{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
 			{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
 			{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
@@ -394,7 +395,7 @@ class __libcli PgModelerCliApp: public Application {
 
 			{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
 														DropDatabase, DropObjects, Simulate, UseTmpNames, Force,
-														NonTransactional, ConnAlias, Host, Port, User, Passwd }},
+														NonTransactional }},
 
 			{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 												FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,

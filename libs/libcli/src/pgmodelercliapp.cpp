@@ -767,7 +767,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		// Diff, import and export (to DBMS) share the same connection options
 		if(diff || import_db || export_dbms)
-			acc_opts.append(accepted_opts[Attributes::Connection]);
+			acc_opts.append(accepted_opts[ConnOptions]);
 
 		// Diff also accepts all import parameters
 		if(diff)
