@@ -225,6 +225,10 @@ bool SchemaParser::parseInclude(const QString &include_ln, QString &src_buf, qin
 			// Load the code of the included file
 			QString incl_buf = UtilsNs::loadFile(fi.absoluteFilePath());
 
+			/* Appending a line feed char to the loaded include file to avoid
+			 * errors when the loaded include is followed by another @include */
+			incl_buf.append(QChar::LineFeed);
+
 			/* If the loaded code contains one or more @include statements we abort
 			 * the parsing because chained/nested file inclusion is not yet supported. */
 			if(incl_buf.contains(TokenIncludeRegexp))

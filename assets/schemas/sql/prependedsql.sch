@@ -1,13 +1,8 @@
-# SQL definition for relationships
+# Prepended SQL commands attached to objects' defintion.
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-%if {rel1n} %then
-	{constraints}
+%if {prepended-sql} %then
+	{prepended-sql}
+	{ddl-end} $br
 %end
-
-%if {relnn} %then
-	{table}
-	{constraints}
-%end
-
