@@ -583,6 +583,7 @@ namespace Attributes {
 	RoleType("role-type"),
 	RowAmount("row-amount"),
 	Rules("rules"),
+	RunInTransaction("run-in-transaction"),
 	SaveLastPosition("save-last-position"),
 	SaveRestoreGeometry("save-restore-geometry"),
 	SceneRect("scene-rect"),

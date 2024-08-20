@@ -35,6 +35,7 @@ $tb [<preset ] name="&{name}"
 {spacer} reuse-sequences="{reuse-sequences}"
 {spacer} ignore-import-errors="{ignore-import-errors}"
 {spacer} ignore-duplic-errors="{ignore-duplic-errors}"
+{spacer} run-in-transaction="{run-in-transaction}"
 
 %if {ignore-error-codes} %then
 	{spacer} ignore-error-codes="{ignore-error-codes}"

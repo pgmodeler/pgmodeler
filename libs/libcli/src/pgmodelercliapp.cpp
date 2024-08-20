@@ -358,6 +358,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to objects in which SQL code is enabled.").arg(short_opts[DropObjects]).arg(DropObjects));
 	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
 	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles, and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
+	printText(tr("  %1, %2\t    Run the export process in a non-transactional mode where changes are not rolled back in case of errors.").arg(short_opts[NonTransactional]).arg(NonTransactional));
 	printText();
 
 	printText(tr("Connection options: "));
@@ -497,7 +498,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
 	printText();
 	printText(tr("** The diff process allows the usage of all options related to the import operation."));
-	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
+	printText(tr("   It also accepts the following export operation options: `%1', `%2' and `%3'").arg(IgnoreDuplicates, IgnoreErrorCodes, NonTransactional));
 	printText();
 	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
 	printText(tr("   * The options %1 and %2 accept the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
@@ -654,6 +655,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(export_dbms && opts.count(Force) && !opts.count(DropDatabase))
 			throw Exception(tr("The option `%1' must be used only with `%2' when exporting to DBMS!").arg(Force).arg(DropDatabase), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		if(export_dbms && opts.count(Simulate) && opts.count(NonTransactional))
+			throw Exception(tr("The options `%1' and `%2' can't be used together when exporting to DBMS!").arg(Simulate).arg(NonTransactional), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
@@ -763,7 +767,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		// Diff, import and export (to DBMS) share the same connection options
 		if(diff || import_db || export_dbms)
-			acc_opts.append(accepted_opts[Attributes::Connection]);
+			acc_opts.append(accepted_opts[ConnOptions]);
 
 		// Diff also accepts all import parameters
 		if(diff)
@@ -1864,12 +1868,13 @@ void PgModelerCliApp::exportModel()
 			export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
 		export_hlp->exportToDBMS(model, connection, parsed_opts[PgSqlVer],
-								parsed_opts.count(IgnoreDuplicates) > 0,
-								parsed_opts.count(DropDatabase) > 0,
-								parsed_opts.count(DropObjects) > 0,
-								parsed_opts.count(Simulate) > 0,
-								parsed_opts.count(UseTmpNames) > 0,
-								parsed_opts.count(Force) > 0);
+								parsed_opts.count(IgnoreDuplicates),
+								parsed_opts.count(DropDatabase),
+								parsed_opts.count(DropObjects),
+								parsed_opts.count(Simulate),
+								parsed_opts.count(UseTmpNames),
+								parsed_opts.count(Force),
+								!parsed_opts.count(Simulate) && !parsed_opts.count(NonTransactional));
 	}
 
 	printMessage(tr("Export successfully ended!\n"));
@@ -2114,7 +2119,9 @@ void PgModelerCliApp::diffModelDatabase()
 				printMessage(tr("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp->setExportToDBMSParams(diff_hlp->getDiffDefinition(),
 												 &extra_connection,
-												 parsed_opts[CompareTo], parsed_opts.count(IgnoreDuplicates));
+												 parsed_opts[CompareTo],
+												 parsed_opts.count(IgnoreDuplicates),
+												 !parsed_opts.count(NonTransactional));
 
 				if(parsed_opts.count(IgnoreErrorCodes))
 					export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));

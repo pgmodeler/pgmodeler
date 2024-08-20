@@ -221,7 +221,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"RefInvalidNamePatternId", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
 	{"InvUsageVariadicParamMode", QT_TR_NOOP("Invalid use of `variadic' parameter mode! This mode can be used only with an array or \"any\" data type!")},
-	{"MixingIncompExportOptions", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
+	{"MixingIncompExportOptions", QT_TR_NOOP("Mixing incompatibles DBMS export options: `ignore object duplications', `drop database', `drop objects' or `transactional' cannot be used with `simulate export'!")},
 	{"MixingIncompDropOptions", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
 	{"InvIdSwapSameObject", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"InvIdSwapInvalidObjectType", QT_TR_NOOP("Invalid object swapping operation! The database, tablespaces and roles can have the ids swapped with only other objects of the same kind!")},

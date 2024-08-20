@@ -482,6 +482,7 @@ void ModelDatabaseDiffForm::listDatabases()
 
 void ModelDatabaseDiffForm::enableDiffMode()
 {
+	export_opts_gb->setEnabled(apply_on_server_rb->isChecked());
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
 	file_sel->setFileIsMandatory(store_in_file_rb->isChecked());
 
@@ -737,7 +738,9 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
-																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
+																				 database_cmb->currentText(), ignore_duplic_chk->isChecked(),
+																				 run_in_transaction_chk->isChecked());
+
 		if(ignore_error_codes_chk->isChecked())
 			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
 
@@ -1035,8 +1038,13 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		if(!low_verbosity)
 		{
-			if(obj_type==ObjectType::BaseObject)
-				ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+			if(obj_type == ObjectType::BaseObject)
+			{
+				if(!cmd.isEmpty())
+					ico = QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+				else
+					ico = QPixmap(GuiUtilsNs::getIconPath("info"));
+			}
 			else
 				ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 
@@ -1173,10 +1181,7 @@ void ModelDatabaseDiffForm::selectPreset()
 	QStringList db_name;
 
 	src_model_rb->setChecked(src_model_rb->isEnabled() && conf[Attributes::CurrentModel] == Attributes::True);
-
 	src_database_rb->setChecked(!conf[Attributes::InputDatabase].isEmpty());
-	//src_connections_cmb->setCurrentIndex(0);
-	//src_connections_cmb->activated(0);
 	db_name = conf[Attributes::InputDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1192,8 +1197,6 @@ void ModelDatabaseDiffForm::selectPreset()
 	}
 
 	// Selecting the database to compare
-	//connections_cmb->setCurrentIndex(0);
-	//connections_cmb->activated(0);
 	db_name = conf[Attributes::CompareToDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1231,6 +1234,7 @@ void ModelDatabaseDiffForm::selectPreset()
 	import_ext_objs_chk->setChecked(conf[Attributes::ImportExtObjs] == Attributes::True);
 	ignore_duplic_chk->setChecked(conf[Attributes::IgnoreDuplicErrors] == Attributes::True);
 	ignore_errors_chk->setChecked(conf[Attributes::IgnoreImportErrors] == Attributes::True);
+	run_in_transaction_chk->setChecked(conf[Attributes::RunInTransaction] == Attributes::True);
 	ignore_error_codes_chk->setChecked(!conf[Attributes::IgnoreErrorCodes].isEmpty());
 	error_codes_edt->setText(conf[Attributes::IgnoreErrorCodes]);
 }
@@ -1311,6 +1315,7 @@ void ModelDatabaseDiffForm::savePreset()
 	conf[Attributes::CompareToDatabase] = QString("%1@%2")
 																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
 																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
+
 	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
 	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
 	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
@@ -1329,6 +1334,7 @@ void ModelDatabaseDiffForm::savePreset()
 	conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
+	conf[Attributes::RunInTransaction] = run_in_transaction_chk->isChecked() ? Attributes::True : Attributes::False;
 
 	config_params[fmt_name] = conf;
 
