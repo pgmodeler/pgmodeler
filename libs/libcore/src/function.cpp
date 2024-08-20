@@ -75,6 +75,8 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	p.setName(name);
 	p.setType(type);	
 	ret_table_columns.push_back(p);
+
+	returns_setof = false;
 	setCodeInvalidated(true);
 }
 
