@@ -988,6 +988,20 @@ QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
 	return dump_str;
 }
 
+void DatabaseImportHelper::removeInheritedCols(PhysicalTable *tab)
+{
+	if(!tab || inherited_cols.empty())
+		return;
+
+	for(auto &col : *tab->getObjectList(ObjectType::Column))
+	{
+		auto inh_col_itr = std::find(inherited_cols.begin(), inherited_cols.end(), col);
+
+		if(inh_col_itr != inherited_cols.end())
+			inherited_cols.erase(inh_col_itr);
+	}
+}
+
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 {
 	Tablespace *tabspc=nullptr;
@@ -1904,7 +1918,12 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(table) delete table;
+		if(table)
+		{
+			removeInheritedCols(table);
+			delete table;
+		}
+
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2477,7 +2496,11 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(ftable) delete ftable;
+		if(ftable)
+		{
+			removeInheritedCols(ftable);
+			delete ftable;
+		}
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}

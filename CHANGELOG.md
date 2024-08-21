@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+v1.1.4
+------
+<em>Release date: August 21, 2024</em><br/>
+
+* [Fix] Fixed a bug in the function object that was not resetting the SETOF flag when changing the return type to TABLE.
+* [Fix] Fixed a crash in the database import process when destroying detached inherited columns.
+* [Fix] Fixed a bug in the system catalog query class that was crashing the application while trying to retrieve user mapping comments.
+* [Fix] Fix a bug in the index object that was preventing the removal of included columns.
+
 v1.1.3
 ------
 <em>Release date: May 13, 2024</em><br/>

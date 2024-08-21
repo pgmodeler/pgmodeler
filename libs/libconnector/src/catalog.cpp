@@ -76,7 +76,7 @@ std::map<ObjectType, QString> Catalog::obj_relnames={
 	{ObjectType::ForeignServer, "pg_foreign_server"},	{ObjectType::Table, "pg_class"},
 	{ObjectType::Tablespace, "pg_tablespace"},	{ObjectType::Transform, "pg_transform"},
 	{ObjectType::Trigger, "pg_trigger"},	{ObjectType::Type, "pg_type"},
-	{ObjectType::View, "pg_class"}
+	{ObjectType::View, "pg_class"}, {ObjectType::UserMapping, "pg_user_mapping"}
 };
 
 std::map<ObjectType, QString> Catalog::parent_aliases={
