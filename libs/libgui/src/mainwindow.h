@@ -137,6 +137,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the actions related to recent models
 		QMenu *recent_models_menu,
 
+		clear_recent_menu,
+
 		main_menu,
 
 		sample_mdls_menu,
@@ -333,10 +335,15 @@ public:
 		void loadModelFromAction();
 
 		//! \brief Clears the recent models menu/list
-		void clearRecentModelsMenu();
+		void clearRecentModelsMenu(bool missing_only);
 
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu();
+
+		/*! \brief Validates if the current entries in the recent models menu
+		 *  points to valid files. In case an action contains an invalid file (not accessible)
+		 *  the item is striked out indicating the invalid status */
+		void validateRecentModelsActions();
 
 		//! \brief Save the temp files for all opened models
 		void saveTemporaryModels();

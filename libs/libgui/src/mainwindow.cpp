@@ -37,6 +37,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	recent_models_menu = new QMenu(this);
 	recent_models_menu->setObjectName("recent_models_menu");
 
+	connect(recent_models_menu, &QMenu::aboutToShow, this, &MainWindow::validateRecentModelsActions);
+
+	QAction *act = clear_recent_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
+	act->setText(tr("Clear menu"));
+
+	clear_recent_menu.addAction(tr("Missing files only"), this, [this](){
+		clearRecentModelsMenu(true);
+	});
+
+	clear_recent_menu.addAction(tr("All files"), this, [this]{
+		clearRecentModelsMenu(false);
+	});
+
 	#ifdef DEMO_VERSION
 		window_title+=tr(" (Demo)");
 	#endif
@@ -1117,19 +1131,57 @@ void MainWindow::saveTemporaryModels()
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		tmpmodel_save_timer.start();
 	}
 #endif
 }
 
+void MainWindow::clearRecentModelsMenu(bool missing_only)
+{
+	if(missing_only)
+	{
+		for(auto &act : recent_models_menu->actions())
+		{
+			if(act->isSeparator() || act->data().toString().isEmpty())
+				continue;
+
+			if(act->font().strikeOut())
+				recent_models.removeAll(act->data().toString());
+		}
+	}
+	else
+		recent_models.clear();
+
+	updateRecentModelsMenu();
+}
+
+void MainWindow::validateRecentModelsActions()
+{
+	QFont fnt;
+	QFileInfo fi;
+
+	for(auto &act : recent_models_menu->actions())
+	{
+		fi.setFile(act->data().toString());
+
+		if(act->isSeparator() || fi.fileName().isEmpty())
+			continue;
+
+		fnt = act->font();
+		fnt.setStrikeOut(!fi.exists() || !fi.isReadable() || !fi.isFile());
+		act->setFont(fnt);
+		act->setToolTip(fi.fileName() + (fnt.strikeOut() ? tr(" (not accessible)") : ""));
+	}
+}
+
 void MainWindow::updateRecentModelsMenu()
 {
 	QAction *act=nullptr;
 	QFileInfo fi;
+	QString dbm_ext = GlobalAttributes::DbModelExt;
 
+	dbm_ext.remove('.');
 	recent_models_menu->setToolTipsVisible(true);
 	recent_models_menu->clear();
 	recent_models.removeDuplicates();
@@ -1139,24 +1191,27 @@ void MainWindow::updateRecentModelsMenu()
 
 	for(int i = 0; i < recent_models.size(); i++)
 	{
-		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
+		fi.setFile(recent_models[i]);
+
+		act=recent_models_menu->addAction(fi.fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
 		act->setData(recent_models[i]);
 
-		if(recent_models[i].endsWith(GlobalAttributes::DbModelExt))
+		if(fi.suffix() == dbm_ext)
 			act->setIcon(QIcon(GuiUtilsNs::getIconPath("dbmfile")));
 		else
 		{
-			fi.setFile(recent_models[i]);
 			if(recent_models_icons.contains(fi.suffix()))
 				act->setIcon(recent_models_icons[fi.suffix()]);
 		}
 	}
 
+	validateRecentModelsActions();
+
 	if(!recent_models_menu->isEmpty())
 	{
 		recent_models_menu->addSeparator();
-		recent_models_menu->addAction(QIcon(GuiUtilsNs::getIconPath("delete")), tr("Clear menu"), this, &MainWindow::clearRecentModelsMenu);
+		recent_models_menu->addAction(clear_recent_menu.menuAction());
 	}
 
 	recent_models_menu->menuAction()->setEnabled(!recent_models_menu->isEmpty());
@@ -1189,12 +1244,6 @@ void MainWindow::loadModelFromAction()
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
-}
-
-void MainWindow::clearRecentModelsMenu()
-{
-	recent_models.clear();
-	updateRecentModelsMenu();
 }
 
 void MainWindow::addModel(const QString &filename)
@@ -2083,6 +2132,7 @@ void MainWindow::loadModels(const QStringList &files)
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
+		registerRecentModels(loaded_files);
 
 		if(files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
