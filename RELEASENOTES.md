@@ -1,6 +1,6 @@
 v1.1.4
 ------
-<em>Release date: August 20, 2024</em><br/>
+<em>Release date: August 21, 2024</em><br/>
 <em>Changes since: <strong>v1.1.3</strong></em><br/>
 
 This patch release for pgModeler 1.1.x brings the following improvements and fixes:

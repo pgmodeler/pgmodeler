@@ -3,7 +3,7 @@ Changelog
 
 v1.1.4
 ------
-<em>Release date: August 20, 2024</em><br/>
+<em>Release date: August 21, 2024</em><br/>
 
 * [Fix] Fixed a bug in the function object that was not resetting the SETOF flag when changing the return type to TABLE.
 * [Fix] Fixed a crash in the database import process when destroying detached inherited columns.
