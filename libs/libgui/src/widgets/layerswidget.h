@@ -30,6 +30,8 @@
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 
+class ModelWidget;
+
 class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
@@ -43,14 +45,17 @@ class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
 
-		//! \brief Configures the widget with layer names and a set of object selected in a model widget
-		void setAttributes(const QStringList &layers, const std::vector<BaseObject *> &selected_objs);
+		//! \brief Configures the widget with layer names and a set of object selected in a model widget instance
+		void setAttributes(ModelWidget *model_wgt);
 
 		//! \brief Returns true if the layers of the selected object have been changed by the user.
 		bool isLayersChanged();
 
 	private slots:
 		void updateObjectsLayers();
+
+	signals:
+		void s_newLayerRequested(const QString &layer_name);
 };
 
 #endif

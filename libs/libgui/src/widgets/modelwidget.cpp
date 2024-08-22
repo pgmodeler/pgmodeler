@@ -547,9 +547,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
 	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
 
-	//connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
-	//connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
-
 	connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
 	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
 
@@ -647,6 +644,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		wheel_timer.stop();
 		wheel_move = false;
 	});
+
+	connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -3844,7 +3843,8 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 		if(is_graph_obj)
 		{
 			quick_actions_menu.addAction(action_set_layer);
-			layers_wgt->setAttributes(scene->getLayers(), selected_objects);
+			//layers_wgt->setAttributes(scene->getLayers(), selected_objects);
+			layers_wgt->setAttributes(this);
 		}
 
 		if(accepts_owner)
@@ -4755,6 +4755,11 @@ QGraphicsView *ModelWidget::getViewport()
 OperationList *ModelWidget::getOperationList()
 {
 	return op_list;
+}
+
+std::vector<BaseObject *> ModelWidget::getSelectedObjects()
+{
+	return selected_objects;
 }
 
 void ModelWidget::setSaveLastCanvasPosition(bool value)

@@ -69,10 +69,6 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setModel(ModelWidget *model);
 
 	private slots:
-		/*! \brief This slot adds an item to the layers grid and performs the need operations
-		 * to make the new layer available to the scene and model widget */
-		void addLayer(const QString &name = "");
-
 		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming();
 
@@ -95,6 +91,10 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setLayersActive();
 
 	public slots:
+		/*! \brief This slot adds an item to the layers grid and performs the need operations
+		 * to make the new layer available to the scene and model widget */
+		QString addLayer(const QString &name = "", bool config_obj_sel = true);
+
 		void setVisible(bool value) override;
 
 		void toggleLayersRects();

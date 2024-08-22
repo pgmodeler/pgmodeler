@@ -387,6 +387,7 @@ public:
 
 		bool mimeDataHasModelFiles(const QMimeData *mime_data);
 		void loadModelsFromMimeData(const QMimeData *mime_data);
+		void addNewLayer(const QString &layer_name);
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);

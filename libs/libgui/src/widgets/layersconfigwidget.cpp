@@ -53,7 +53,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
 
 	connect(add_tb, &QToolButton::clicked, this, [this](){
-		addLayer();
+		addLayer("", true);
 	});
 
 	connect(remove_tb, &QToolButton::clicked, this, &LayersConfigWidget::removeLayer);
@@ -361,7 +361,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	enableButtons();
 }
 
-void LayersConfigWidget::addLayer(const QString &name)
+QString LayersConfigWidget::addLayer(const QString &name, bool config_obj_sel)
 {
 	QString fmt_name = name.isEmpty() ? tr("New layer") : name;
 	QStringList act_layers = model->scene->getActiveLayers();
@@ -376,8 +376,10 @@ void LayersConfigWidget::addLayer(const QString &name)
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can
 	 * appear in the "Move to layer" quick action */
-	if(!model->scene->selectedItems().isEmpty())
+	if(config_obj_sel && !model->scene->selectedItems().isEmpty())
 		model->configureObjectSelection();
+
+	return fmt_name;
 }
 
 void LayersConfigWidget::startLayerRenaming()

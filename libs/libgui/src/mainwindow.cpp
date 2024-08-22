@@ -191,6 +191,12 @@ void MainWindow::loadModelsFromMimeData(const QMimeData *mime_data)
 	loadModels(dbm_files);
 }
 
+void MainWindow::addNewLayer(const QString &layer_name)
+{
+	layers_cfg_wgt->addLayer(layer_name, false);
+	current_model->layers_wgt->setAttributes(current_model);
+}
+
 void MainWindow::dropEvent(QDropEvent *event)
 {
 	loadModelsFromMimeData(event->mimeData());
@@ -1516,6 +1522,7 @@ void MainWindow::setCurrentModel()
 		connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
 		connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_newLayerRequested, this, &MainWindow::addNewLayer);
 
 		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
 			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);

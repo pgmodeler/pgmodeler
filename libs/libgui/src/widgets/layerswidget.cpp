@@ -17,6 +17,7 @@
 */
 
 #include "layerswidget.h"
+#include "modelwidget.h"
 
 LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 {
@@ -25,20 +26,41 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	layers_changed = false;
 
 	connect(layers_lst, &QListWidget::itemChanged, this, &LayersWidget::updateObjectsLayers);
+
+	connect(layer_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
+		add_tb->setEnabled(!txt.isEmpty());
+	});
+
+	connect(add_tb, &QToolButton::clicked, this, [this](){
+		emit s_newLayerRequested(layer_name_edt->text());
+		layer_name_edt->clear();
+
+		// The  new layer is checked by default
+		QListWidgetItem *item = layers_lst->item(layers_lst->count() - 1);
+		item->setCheckState(Qt::Checked);
+	});
 }
 
-void LayersWidget::setAttributes(const QStringList &layers, const std::vector<BaseObject *> &sel_objs)
+void LayersWidget::setAttributes(ModelWidget *model_wgt)
 {
+	if(!model_wgt)
+	{
+		setEnabled(false);
+		return;
+	}
+
 	QListWidgetItem *item = nullptr;
 	BaseGraphicObject *graph_obj = nullptr;
 	QList<unsigned> sel_layers;
 	unsigned layer_id = 0;
+	QStringList layers = model_wgt->getObjectsScene()->getLayers();
 
+	setEnabled(true);
 	layers_changed = false;
 	selected_objs.clear();
 	layers_lst->clear();
 
-	for(auto &obj : sel_objs)
+	for(auto &obj : model_wgt->getSelectedObjects())
 	{
 		if(BaseGraphicObject::isGraphicObject(obj->getObjectType()))
 		{

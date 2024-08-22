@@ -425,6 +425,9 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList();
 
+		//! \brief Returns the currently selected list of objects
+		std::vector<BaseObject *> getSelectedObjects();
+
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
 
@@ -663,6 +666,11 @@ class __libgui ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the scene suffered a successful drag & drop event.
 		 * It passes the mime data when the event occurred */
 		void s_sceneDragDropped(const QMimeData *mime_data);
+
+		/*! \brief This signal is emitted whenever the user requests via context menu Quick > Set layer > New layer button
+		 *  the creation of a new layer. This signal just redirects the new layer name to the outside world do be
+		 *  handled properly (currently, in MainWindow) */
+		void s_newLayerRequested(const QString &layer_name);
 
 		friend class MainWindow;
 		friend class ModelExportForm;
