@@ -69,7 +69,7 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 			{ QPalette::AlternateBase, {"#31363b", "#31363b", "#31363b"} },
 			{ QPalette::ToolTipBase, {"#31363b", "#31363b", "#31363b"} },
 			{ QPalette::ToolTipText, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-			{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+			{ QPalette::PlaceholderText, {"#48494b", "#48494b", "#48494b"} }
 		},
 
 		/*! \brief Holds the QPalette settings that defines light theme.
