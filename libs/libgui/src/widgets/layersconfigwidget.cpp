@@ -31,7 +31,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	curr_row = -1;
 
 	layers_tab->installEventFilter(this);
-	frame->installEventFilter(this);
+	vhandle_lbl->installEventFilter(this);
 
 	QAction *act = visibility_menu.addAction(tr("Show all"), this, &LayersConfigWidget::setLayersActive);
 	act->setData(true);
@@ -82,7 +82,7 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 		else if(event->type() == QEvent::FocusIn && curr_item && curr_item != layers_tab->currentItem())
 			finishLayerRenaming();
 	}
-	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	else if(watched == vhandle_lbl && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
 	{
 		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
 
@@ -96,8 +96,8 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 				int w = 0, h = 0;
 
 				//Calculates the width and height based upon the delta between the points
-				w = this->width() + (pnt.x() - old_pos.x());
-				h = this->geometry().bottom() - pnt.y() + 1;
+				w = round(this->width() + (pnt.x() - old_pos.x()));
+				h = round(this->geometry().bottom() - pnt.y() + 1);
 
 				if(h >= this->minimumHeight() && h <= this->maximumHeight() &&
 					 w >= this->minimumWidth() && w <= this->maximumWidth())

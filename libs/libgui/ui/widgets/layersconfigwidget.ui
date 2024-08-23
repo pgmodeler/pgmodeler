@@ -74,7 +74,57 @@
       <property name="spacing">
        <number>5</number>
       </property>
-      <item row="0" column="5">
+      <item row="0" column="3">
+       <widget class="QToolButton" name="visibility_tb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Add a new layer</string>
+        </property>
+        <property name="text">
+         <string>Visibility</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../res/resources.qrc">
+          <normaloff>:/icons/icons/layervisibility.png</normaloff>:/icons/icons/layervisibility.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
        <widget class="QToolButton" name="hide_tb">
         <property name="toolTip">
          <string>Hide this widget</string>
@@ -100,41 +150,21 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="6">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>5</number>
+      <item row="0" column="4">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <item>
-         <widget class="QCheckBox" name="toggle_layers_rects_chk">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Display layer rectangles</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="toggle_layers_names_chk">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Display layer names</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item row="0" column="0">
        <widget class="QToolButton" name="add_tb">
@@ -180,10 +210,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QToolButton" name="visibility_tb">
+      <item row="0" column="2">
+       <widget class="QToolButton" name="remove_all_tb">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -198,14 +228,14 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Add a new layer</string>
+         <string>Remove all layers</string>
         </property>
         <property name="text">
-         <string>Visibility</string>
+         <string>Delete all</string>
         </property>
         <property name="icon">
          <iconset resource="../../res/resources.qrc">
-          <normaloff>:/icons/icons/layervisibility.png</normaloff>:/icons/icons/layervisibility.png</iconset>
+          <normaloff>:/icons/icons/clearlayers.png</normaloff>:/icons/icons/clearlayers.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -213,14 +243,8 @@
           <height>25</height>
          </size>
         </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <property name="popupMode">
-         <enum>QToolButton::InstantPopup</enum>
+        <property name="shortcut">
+         <string>Shift+Del</string>
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -274,23 +298,81 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="0" column="7">
+       <widget class="QLabel" name="vhandle_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
+        <property name="minimumSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>19</width>
+          <height>19</height>
          </size>
         </property>
-       </spacer>
+        <property name="cursor">
+         <cursorShape>SizeAllCursor</cursorShape>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="0" colspan="6">
+      <item row="1" column="0" colspan="8">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="toggle_layers_rects_chk">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Display layer rectangles</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="toggle_layers_names_chk">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Display layer names</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Relationships follow tables' visibility</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="8">
        <widget class="QTableWidget" name="layers_tab">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -352,50 +434,6 @@
           <string>Rectangle color</string>
          </property>
         </column>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="remove_all_tb">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Remove all layers</string>
-        </property>
-        <property name="text">
-         <string>Delete all</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../res/resources.qrc">
-          <normaloff>:/icons/icons/clearlayers.png</normaloff>:/icons/icons/clearlayers.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>25</width>
-          <height>25</height>
-         </size>
-        </property>
-        <property name="shortcut">
-         <string>Shift+Del</string>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
        </widget>
       </item>
      </layout>
