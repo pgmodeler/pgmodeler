@@ -102,7 +102,12 @@ void ObjectsListModel::configureHeader(const QString &search_attr)
 QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 {
 	if(role == Qt::DisplayRole)
+	{
+		if(item_dt.id > 0)
+			return item_dt.id;
+
 		return item_dt.text;
+	}
 
 	if(role == Qt::ForegroundRole && !item_dt.fg_color.isEmpty())
 		return QColor(item_dt.fg_color);
@@ -198,6 +203,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 
 		//Third column: Object id
 		item_dt.clear();
+		item_dt.id = obj->getObjectId();
 		item_dt.text = QString::number(obj->getObjectId());
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 		item_data.append(item_dt);
