@@ -48,7 +48,7 @@ class __libcanvas RoundedRectItem: public QAbstractGraphicsShapeItem {
 			BottomRightCorner=16,
 
 			//! \brief All corners will be rounded
-			AllCorners=32
+			AllCorners=31
 		};
 
 	protected:

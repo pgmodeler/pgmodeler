@@ -792,4 +792,93 @@ namespace GuiUtilsNs {
 		}
 	}
 
+	WidgetCornerId getWidgetHoveredCorner(QWidget *widget, QWidget *event_wgt, QMouseEvent *event, WidgetCornerId corners)
+	{
+		if(!widget || !event ||
+				event->type() != QEvent::MouseMove || event->buttons() != Qt::NoButton)
+		{
+			return WidgetCornerId::NoCorners;
+		}
+
+		std::unordered_map<WidgetCornerId, Qt::CursorShape> cur_shapes;
+		std::unordered_map<WidgetCornerId, QRect> corner_rects;
+		static constexpr int rect_inc = GuiUtilsNs::LtMargin * 1.5;
+		QRect ev_wgt_rect = event_wgt->geometry();
+
+		if((corners & WidgetCornerId::TopLeftCorner) == WidgetCornerId::TopLeftCorner)
+		{
+			cur_shapes[WidgetCornerId::TopLeftCorner] = Qt::SizeFDiagCursor;
+			corner_rects[WidgetCornerId::TopLeftCorner] =
+					QRect(ev_wgt_rect.topLeft(),
+								ev_wgt_rect.topLeft() +
+								QPoint(rect_inc, rect_inc));
+		}
+
+		if((corners & WidgetCornerId::TopRightCorner) == WidgetCornerId::TopRightCorner)
+		{
+			cur_shapes[WidgetCornerId::TopRightCorner] = Qt::SizeBDiagCursor;
+			corner_rects[WidgetCornerId::TopRightCorner] =
+					QRect(ev_wgt_rect.topRight(),
+								ev_wgt_rect.topRight() +
+								QPoint(-rect_inc, rect_inc));
+		}
+
+		if((corners & WidgetCornerId::BottomRightCorner) == WidgetCornerId::BottomRightCorner)
+		{
+			cur_shapes[WidgetCornerId::BottomRightCorner] = Qt::SizeFDiagCursor;
+			corner_rects[WidgetCornerId::BottomRightCorner] =
+					QRect(ev_wgt_rect.bottomRight(),
+								ev_wgt_rect.bottomRight() +
+								QPoint(-rect_inc, -rect_inc));
+		}
+
+		if((corners & WidgetCornerId::BottomLeftCorner) == WidgetCornerId::BottomLeftCorner)
+		{
+			cur_shapes[WidgetCornerId::BottomLeftCorner] = Qt::SizeBDiagCursor;
+			corner_rects[WidgetCornerId::BottomLeftCorner] =
+					QRect(ev_wgt_rect.bottomLeft(),
+								ev_wgt_rect.bottomLeft() +
+								QPoint(rect_inc, -rect_inc));
+		}
+
+		for(auto &[corner_id, rect] : corner_rects)
+		{
+			if(corner_rects[corner_id].contains(event->pos()))
+			{
+				widget->setCursor(cur_shapes[corner_id]);
+				return corner_id;
+			}
+		}
+
+		widget->unsetCursor();
+		return WidgetCornerId::NoCorners;
+	}
+
+	void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner)
+	{
+		if(!widget || !event ||
+			 event->type() != QEvent::MouseMove || event->buttons() != Qt::LeftButton ||
+			 corner == WidgetCornerId::NoCorners)
+		{
+			return;
+		}
+
+		QRect geom = widget->geometry();
+		QPoint pnt = widget->mapToParent(event->pos());
+
+		if(corner == WidgetCornerId::TopLeftCorner)
+			geom.setTopLeft(pnt);
+		else if(corner == WidgetCornerId::TopRightCorner)
+			geom.setTopRight(pnt);
+		else if(corner == WidgetCornerId::BottomRightCorner)
+			geom.setBottomRight(pnt);
+		else
+			geom.setBottomLeft(pnt);
+
+		if(geom.height() >= widget->minimumHeight() &&
+				geom.height() <= widget->maximumHeight() &&
+				geom.width() >= widget->minimumWidth() &&
+				geom.width() <= widget->maximumWidth())
+			widget->setGeometry(geom);
+	}
 }

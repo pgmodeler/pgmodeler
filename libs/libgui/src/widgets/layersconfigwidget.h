@@ -34,9 +34,6 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Holds the last mouse position while moving the cursor over the widget (used during resize event filter)
-		QPoint old_pos;
-
 		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 

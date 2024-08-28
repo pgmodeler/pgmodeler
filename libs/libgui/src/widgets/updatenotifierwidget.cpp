@@ -27,7 +27,6 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 
 	show_no_upd_msg=false;
 	update_chk_reply=nullptr;
-	old_pos=QPoint(-1,-1);
 	frame->installEventFilter(this);
 	GuiUtilsNs::createDropShadow(this, 5, 5, 30);
 
@@ -63,34 +62,19 @@ void UpdateNotifierWidget::setCheckVersions(const QString &chk_versions)
 
 bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)
 {
-	if(obj==frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	if(obj == frame && event->type() == QEvent::MouseMove)
 	{
-		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+		static GuiUtilsNs::WidgetCornerId corner_id;
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
 
-		if(event->type()==QEvent::MouseButtonPress)
-			old_pos=QPoint(-1,-1);
-		else
+		if(m_event->buttons() == Qt::NoButton)
 		{
-			//Resizing the widget
-			if(m_event->buttons()==Qt::LeftButton)
-			{
-				if(m_event->pos().x() >= this->minimumWidth() - 20 ||
-						m_event->pos().y() >= this->minimumHeight()- 20)
-				{
-					int w, h;
-
-					if(old_pos.x() >= 0)
-					{
-						//Calculates the width and height based upon the delta between the points
-						w=this->width() + (m_event->pos().x() - old_pos.x());
-						h=this->height() + (m_event->pos().y() - old_pos.y());
-						this->setGeometry(this->pos().x(), this->pos().y(), w, h);
-					}
-				}
-
-				old_pos=m_event->pos();
-			}
+			corner_id = GuiUtilsNs::getWidgetHoveredCorner(this, frame, m_event,
+																										 GuiUtilsNs::WidgetCornerId::BottomRightCorner |
+																										 GuiUtilsNs::WidgetCornerId::BottomLeftCorner);
 		}
+
+		GuiUtilsNs::resizeFloatingWidget(this, m_event, corner_id);
 	}
 
 	return QWidget::eventFilter(obj, event);

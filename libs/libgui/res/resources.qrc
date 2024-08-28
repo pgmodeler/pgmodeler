@@ -305,7 +305,5 @@
         <file>images/vsplitter_handle_dark.png</file>
         <file>images/vsplitter_handle_light.png</file>
         <file>images/hsplitter_handle_light.png</file>
-        <file>images/vhandle_dark.png</file>
-        <file>images/vhandle_light.png</file>
     </qresource>
 </RCC>

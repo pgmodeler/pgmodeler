@@ -33,8 +33,13 @@
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
 #include "csvdocument.h"
+#include "roundedrectitem.h"
 
 namespace GuiUtilsNs {
+	/*! \brief WidgetCornerId is an alias of the enum RoundRectItem::RectCorners
+	 *  that is used by resizeFloatingWidget() */
+	using WidgetCornerId = RoundedRectItem::RectCorners;
+
 	static constexpr int LtMargin = 5,
 	LtSpacing = 5;
 
@@ -148,7 +153,19 @@ namespace GuiUtilsNs {
 	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
 	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
 
+	/*! \brief Resizes the toolbuttons under the widget wgt according to its width.
+	 *  If the widget's width isn't enough to display the tool buttons with icons and texts
+	 *  the this function changes the tool buttons to icon-only style */
 	extern __libgui void resizeChildToolButtons(QWidget *wgt, const QSize &new_size);
+
+	/*! \brief Returns the corner id (see WidgetCornerId) that is currently hovered in the provided widget.
+	 *  The event_wgt is the widget that has triggered the mouse event.
+	 *  The corners params holds the corner ids that the hovered is allowed for the widget */
+	extern __libgui WidgetCornerId getWidgetHoveredCorner(QWidget *widget, QWidget *event_wgt, QMouseEvent *event, WidgetCornerId corners);
+
+	/*! \brief Resizes a widget based a mouse move event.
+	 *  The corner param is used to identify from which corner the widget must be resized */
+	extern __libgui void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner);
 }
 
 #endif
