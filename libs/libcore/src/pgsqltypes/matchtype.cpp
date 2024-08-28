@@ -18,6 +18,13 @@
 
 #include "matchtype.h"
 
+const QStringList MatchType::type_names {
+	"", // Reserved for Class::Null
+	"MATCH SIMPLE",
+	"MATCH FULL",
+	"MATCH PARTIAL"
+};
+
 MatchType::MatchType()
 {
 	type_idx = Full;

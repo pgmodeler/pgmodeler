@@ -29,12 +29,7 @@
 
 class __libcore MatchType: public TemplateType<MatchType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"MATCH SIMPLE",
-			"MATCH FULL",
-			"MATCH PARTIAL"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned Simple = 1,

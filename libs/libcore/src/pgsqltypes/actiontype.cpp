@@ -18,6 +18,17 @@
 
 #include "actiontype.h"
 
+const QStringList ActionType::type_names
+{
+	"", // Reserved for Class::Null
+
+	"NO ACTION",
+	"RESTRICT",
+	"CASCADE",
+	"SET NULL",
+	"SET DEFAULT"
+};
+
 ActionType::ActionType(unsigned type_id)
 {
 	setType(type_id);

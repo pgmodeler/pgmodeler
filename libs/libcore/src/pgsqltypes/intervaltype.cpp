@@ -18,6 +18,14 @@
 
 #include "intervaltype.h"
 
+const QStringList IntervalType::type_names {
+	"", // Reserved for Class::Null
+	"YEAR", "MONTH", "DAY", "HOUR",
+	"MINUTE", "SECOND","YEAR TO MONTH",
+	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
+	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND"
+};
+
 IntervalType::IntervalType(unsigned type_id)
 {
 	setType(type_id);

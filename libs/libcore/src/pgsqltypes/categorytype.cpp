@@ -18,6 +18,26 @@
 
 #include "categorytype.h"
 
+const QStringList CategoryType::type_names {
+	"", // Reserved for null value
+
+	//See table 44-43 on PostgreSQL documentation
+	"U", //User-defined types
+	"A", //Array types
+	"B", //Boolean types
+	"C", //Composite types
+	"D", //Date/time types
+	"E", //Enum types
+	"G", //Geometric types
+	"I", //Network address types
+	"N", //Numeric types
+	"P", //Pseudo-types
+	"S", //String types
+	"T", //Timespan types
+	"V", //Bit-string types
+	"X", //Unknown type
+};
+
 CategoryType::CategoryType(const QString &type_name)
 {
 	setType(type_name);

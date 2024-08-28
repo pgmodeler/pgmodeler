@@ -18,6 +18,12 @@
 
 #include "checkoptiontype.h"
 
+const QStringList CheckOptionType::type_names {
+	"", // Reserved for Class::Null
+	"cascaded",
+	"local"
+};
+
 CheckOptionType::CheckOptionType()
 {
 	type_idx = Null;

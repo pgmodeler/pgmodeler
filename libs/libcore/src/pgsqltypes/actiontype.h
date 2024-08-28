@@ -29,16 +29,7 @@
 
 class __libcore ActionType: public TemplateType<ActionType>{
 	private:
-		inline static const QStringList type_names =
-		{
-			"", // Reserved for Class::Null
-
-			"NO ACTION",
-			"RESTRICT",
-			"CASCADE",
-			"SET NULL",
-			"SET DEFAULT"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned NoAction = 1,

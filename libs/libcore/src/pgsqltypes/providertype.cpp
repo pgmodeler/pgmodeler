@@ -18,6 +18,12 @@
 
 #include "providertype.h"
 
+const QStringList ProviderType::type_names {
+	"", // Reserved for Class::Null
+	"libc",
+	"icu"
+};
+
 ProviderType::ProviderType(unsigned type_id)
 {
 	setType(type_id);
