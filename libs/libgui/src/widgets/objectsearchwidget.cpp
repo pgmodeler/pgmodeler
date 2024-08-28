@@ -89,9 +89,6 @@ ObjectSearchWidget::ObjectSearchWidget(QWidget *parent) : QWidget(parent)
 			exact_match_chk->setChecked(false);
 	});
 
-	//for(auto &attr : BaseObject::getSearchAttributesNames())
-	//	search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
-
 	for(auto &attr : BaseObject::getSearchAttributesNames())
 		_search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
 
