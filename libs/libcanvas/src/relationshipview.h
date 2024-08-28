@@ -52,18 +52,18 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		static constexpr double ConnLineLength=20.0;
 
 		//! \brief Indicates that the relationship labels must be hidden
-		inline static bool hide_name_label {false},
+		static bool hide_name_label,
 
 		//! \brief Indicates that the relationship lines should be curved
-		use_curved_lines {true},
+		use_curved_lines,
 
 		//! \brief Indicates that the relationship should be drawn in Crow's foot notation
-		use_crows_foot {true};
+		use_crows_foot;
 
 		/*! \brief Specify the type of connection used by the lines. The first (classical)
 		is to connect the line to tables through their central points. The second (better semantics)
 		makes the line start from the fk columns on receiver table and connecting to the pk columns on reference table */
-		inline static LineConnectionMode line_conn_mode { ConnectFkToPk };
+		static LineConnectionMode line_conn_mode;
 
 		/*! \brief Indicate that the line is being configured/updated. This flag is used to evict
 		 that the configureLine() method is exceedingly called during the table moving. */

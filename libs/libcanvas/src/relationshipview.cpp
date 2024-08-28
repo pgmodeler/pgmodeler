@@ -21,6 +21,12 @@
 #include "tableview.h"
 #include "utilsns.h"
 
+bool RelationshipView::hide_name_label {false};
+bool RelationshipView::use_curved_lines {true};
+bool RelationshipView::use_crows_foot {true};
+
+RelationshipView::LineConnectionMode RelationshipView::line_conn_mode { RelationshipView::ConnectFkToPk };
+
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
