@@ -36,7 +36,7 @@ class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
 	private:
 		Q_OBJECT
 
-		inline static const QString UntitledFile { QT_TR_NOOP("(untitled)") };
+		static const QString UntitledFile;
 
 		NumberedTextEditor *syntax_txt, *dtd_txt;
 
