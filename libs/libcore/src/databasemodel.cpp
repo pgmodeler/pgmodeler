@@ -24,6 +24,8 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
+unsigned DatabaseModel::dbmodel_id {2000};
+
 DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
