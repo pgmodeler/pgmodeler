@@ -21,6 +21,83 @@
 #include "exception.h"
 #include <QApplication>
 
+QString BaseObject::pgsql_ver { PgSqlVersions::DefaulVersion };
+
+bool BaseObject::escape_comments {true};
+bool BaseObject::clear_deps_in_dtor {true};
+bool BaseObject::ignore_db_version {false};
+
+unsigned BaseObject::global_id {5000};
+
+const QByteArray BaseObject::special_chars {"'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;"};
+
+const QString BaseObject::objs_schemas[ObjectTypeCount] {
+	"column",  "constraint", "function", "trigger",
+	"index", "rule", "table", "view",
+	"domain", "schema", "aggregate", "operator",
+	"sequence", "role", "conversion", "cast",
+	"language", "usertype", "tablespace",
+	"opfamily", "opclass", "database","collation",
+	"extension", "eventtrigger", "policy", "foreigndatawrapper",
+	"foreignserver", "foreigntable", "usermapping", "transform",
+	"procedure", "relationship", "textbox", "permission", "parameter",
+	"typeattribute", "tag", "genericsql", "relationship"
+};
+
+const QString BaseObject::objs_sql[ObjectTypeCount] {
+	"COLUMN", "CONSTRAINT", "FUNCTION",
+	"TRIGGER", "INDEX", "RULE", "TABLE",
+	"VIEW", "DOMAIN", "SCHEMA", "AGGREGATE",
+	"OPERATOR", "SEQUENCE", "ROLE", "CONVERSION",
+	"CAST", "LANGUAGE", "TYPE", "TABLESPACE",
+	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
+	"COLLATION", "EXTENSION", "EVENT TRIGGER",
+	"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
+	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM",
+	"PROCEDURE"
+};
+
+const QString BaseObject::obj_type_names[ObjectTypeCount] {
+	QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
+	QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
+	QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
+	QT_TR_NOOP("Schema"), QT_TR_NOOP("Aggregate"), QT_TR_NOOP("Operator"),
+	QT_TR_NOOP("Sequence"), QT_TR_NOOP("Role"), QT_TR_NOOP("Conversion"),
+	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
+	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
+	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign-data Wrapper"),
+	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
+	QT_TR_NOOP("Transform"), QT_TR_NOOP("Procedure"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"),	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"),
+	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
+	QT_TR_NOOP("Basic Relationship")
+};
+
+const attribs_map BaseObject::search_attribs_i18n {
+	{ Attributes::Name, QT_TR_NOOP("Name") },
+	{ Attributes::Comment, QT_TR_NOOP("Comment") },
+	{ Attributes::Signature, QT_TR_NOOP("Signature") },
+	{ Attributes::Schema, QT_TR_NOOP("Schema") },
+	{ Attributes::Owner, QT_TR_NOOP("Owner") },
+	{ Attributes::Tablespace, QT_TR_NOOP("Tablespace") },
+	{ Attributes::Type, QT_TR_NOOP("Data type") },
+	{ Attributes::ReturnType, QT_TR_NOOP("Return type") },
+	{ Attributes::SrcTable, QT_TR_NOOP("Source table") },
+	{ Attributes::DstTable, QT_TR_NOOP("Destination table") },
+	{ Attributes::RelatedForeignKey, QT_TR_NOOP("Related foreign key") },
+	{ Attributes::SrcColumns, QT_TR_NOOP("Source column(s)") },
+	{ Attributes::RefColumns, QT_TR_NOOP("Referenced column(s)") }
+};
+
+const QStringList BaseObject::search_attribs_names {
+	Attributes::Name, Attributes::Comment, Attributes::Signature,
+	Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
+	Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
+	Attributes::DstTable, Attributes::RelatedForeignKey, Attributes::SrcColumns,
+	Attributes::RefColumns
+};
+
 BaseObject::BaseObject()
 {
 	object_id=BaseObject::global_id++;

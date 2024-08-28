@@ -89,15 +89,15 @@ Q_DECLARE_METATYPE(ObjectType)
 class __libcore BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation
-		inline static QString pgsql_ver { PgSqlVersions::DefaulVersion };
+		static QString pgsql_ver;
 
-		inline static bool escape_comments {true},
+		static bool escape_comments,
 
 		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
-		clear_deps_in_dtor {true};
+		clear_deps_in_dtor;
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
-		inline static const QByteArray special_chars {"'_-.@ $:()/<>+*\\=~!#%^&|?{}[]`;"};
+		static const QByteArray special_chars;
 
 		//! \brief Stores the database wich the object belongs
 		BaseObject *database;
@@ -118,7 +118,7 @@ class __libcore BaseObject {
 
 		/*! \brief Indicates if the PostgreSQL version checking must be ignored during code generation.
 		 * This flag allows generating code (poorly!) for older versions ( < 10). */
-		inline static bool ignore_db_version {false};
+		static bool ignore_db_version;
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
 		 * As object instances are created this value is incremented. In some classes
@@ -130,7 +130,7 @@ class __libcore BaseObject {
 		 * starts at 5k because the id ranges 0, 1k, 2k, 3k, 4k
 		 * are respectively assigned to objects of classes Role, Tablespace
 		 * DatabaseModel, Schema, Tag */
-		inline static unsigned global_id {5000};
+		static unsigned global_id;
 
 		/*! \brief Stores the unique identifier for the object. This id is nothing else
 		 * than the current value of global_id. This identifier is used
@@ -185,80 +185,22 @@ class __libcore BaseObject {
 		/*! \brief This list stores the name of each object type associated to a schema file
 		 * that generates the object's code definition.
 		 *
-		 * CAUTION: If both amount and order of the enumerations are modified
-		 * then the order and amount of the elements of this vector
-		 * must also be modified */
-		inline static const QString objs_schemas[ObjectTypeCount] {
-			"column",  "constraint", "function", "trigger",
-			"index", "rule", "table", "view",
-			"domain", "schema", "aggregate", "operator",
-			"sequence", "role", "conversion", "cast",
-			"language", "usertype", "tablespace",
-			"opfamily", "opclass", "database","collation",
-			"extension", "eventtrigger", "policy", "foreigndatawrapper",
-			"foreignserver", "foreigntable", "usermapping", "transform",
-			"procedure", "relationship", "textbox", "permission", "parameter",
-			"typeattribute", "tag", "genericsql", "relationship"
-		},
+		 * CAUTION: If both amount and order of the object type enumerations are modified
+		 * then the order and amount of the elements of this vector must also be modified */
+		static const QString objs_schemas[ObjectTypeCount],
 
 		/*! \brief This map associates the object type to a keyword on
 		 SQL language that represents the object */
-		objs_sql[ObjectTypeCount] {
-			"COLUMN", "CONSTRAINT", "FUNCTION",
-			"TRIGGER", "INDEX", "RULE", "TABLE",
-			"VIEW", "DOMAIN", "SCHEMA", "AGGREGATE",
-			"OPERATOR", "SEQUENCE", "ROLE", "CONVERSION",
-			"CAST", "LANGUAGE", "TYPE", "TABLESPACE",
-			"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
-			"COLLATION", "EXTENSION", "EVENT TRIGGER",
-			"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
-			"FOREIGN TABLE", "USER MAPPING", "TRANSFORM",
-			"PROCEDURE"
-		},
+		objs_sql[ObjectTypeCount],
 
 		/*! \brief Stores the name of the type of objects to be used in error messages formatting
 		 and others operations that envolves object type name */
-		obj_type_names[ObjectTypeCount] {
-			QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
-			QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
-			QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
-			QT_TR_NOOP("Schema"), QT_TR_NOOP("Aggregate"), QT_TR_NOOP("Operator"),
-			QT_TR_NOOP("Sequence"), QT_TR_NOOP("Role"), QT_TR_NOOP("Conversion"),
-			QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
-			QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
-			QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-			QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign-data Wrapper"),
-			QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
-			QT_TR_NOOP("Transform"), QT_TR_NOOP("Procedure"), QT_TR_NOOP("Relationship"),
-			QT_TR_NOOP("Textbox"),	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"),
-			QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
-			QT_TR_NOOP("Basic Relationship")
-		};
+		obj_type_names[ObjectTypeCount];
 
 		//! \brief This map stores the translate human readable names of each search attribute use by the object
-		inline static const attribs_map search_attribs_i18n {
-			{ Attributes::Name, QT_TR_NOOP("Name") },
-			{ Attributes::Comment, QT_TR_NOOP("Comment") },
-			{ Attributes::Signature, QT_TR_NOOP("Signature") },
-			{ Attributes::Schema, QT_TR_NOOP("Schema") },
-			{ Attributes::Owner, QT_TR_NOOP("Owner") },
-			{ Attributes::Tablespace, QT_TR_NOOP("Tablespace") },
-			{ Attributes::Type, QT_TR_NOOP("Data type") },
-			{ Attributes::ReturnType, QT_TR_NOOP("Return type") },
-			{ Attributes::SrcTable, QT_TR_NOOP("Source table") },
-			{ Attributes::DstTable, QT_TR_NOOP("Destination table") },
-			{ Attributes::RelatedForeignKey, QT_TR_NOOP("Related foreign key") },
-			{ Attributes::SrcColumns, QT_TR_NOOP("Source column(s)") },
-			{ Attributes::RefColumns, QT_TR_NOOP("Referenced column(s)") }
-		};
+		static const attribs_map search_attribs_i18n;
 
-		inline static const QStringList search_attribs_names {
-			Attributes::Name, Attributes::Comment, Attributes::Signature,
-			Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
-			Attributes::Type, Attributes::ReturnType, Attributes::SrcTable,
-			Attributes::DstTable, Attributes::RelatedForeignKey, Attributes::SrcColumns,
-			Attributes::RefColumns
-		};
+		static const QStringList search_attribs_names;
 
 		/*! \brief Role that is owner of the object. Some objects cannot be associated to a role
 		 so if one is assigned to the object an error will be raised */
