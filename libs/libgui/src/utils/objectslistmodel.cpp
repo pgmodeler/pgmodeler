@@ -23,6 +23,7 @@
 #include "tableobject.h"
 #include "permission.h"
 #include "baserelationship.h"
+#include "utilsns.h"
 
 ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {
@@ -257,6 +258,12 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 					search_attr != Attributes::Comment)
 			{
 				item_dt.text = search_attribs[search_attr];
+
+				if(search_attr == Attributes::SrcColumns ||
+						search_attr == Attributes::RefColumns)
+				{
+					item_dt.text.replace(UtilsNs::DataSeparator, ", ");
+				}
 			}
 			else
 				item_dt.text = obj->getComment();

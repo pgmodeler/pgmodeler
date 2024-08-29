@@ -245,7 +245,6 @@ void ObjectSearchWidget::findObjects()
 		return;
 
 	std::vector<ObjectType> types;
-	//QString search_attr = search_attrs_cmb->currentData().toString();
 	QString search_attr = _search_attrs_cmb->currentData().toString();
 
 	qApp->setOverrideCursor(Qt::WaitCursor);

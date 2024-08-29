@@ -8962,7 +8962,24 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 		obj->configureSearchAttributes();
 		srch_attribs = obj->getSearchAttributes();
 
-		if(regexp.match(srch_attribs[search_attr]).hasMatch())
+		/* If we are searching in the constraints' source and referenced columns
+		 * we have to split the list of names so the regexp can be correctly matched */
+		if(search_attr == Attributes::SrcColumns || search_attr == Attributes::RefColumns)
+		{
+			QStringList aux_names, ref_names = srch_attribs[search_attr].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
+
+			for(auto &ref_name : ref_names)
+			{
+				// Splitting the column names since they are schema qualified
+				aux_names = ref_name.split('.');
+
+				/* We always use the last name in the generated list above in the matching
+				 * since it probably contains the name of the column */
+				if(regexp.match(aux_names.constLast()).hasMatch())
+					list.push_back(obj);
+			}
+		}
+		else if(regexp.match(srch_attribs[search_attr]).hasMatch())
 			list.push_back(obj);
 	}
 
