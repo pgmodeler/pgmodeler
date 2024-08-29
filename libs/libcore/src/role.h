@@ -30,7 +30,7 @@
 
 class __libcore Role: public BaseObject {
 	private:
-		inline static unsigned role_id {0};
+		static unsigned role_id;
 
 		/*! \brief Options for the role (SUPERUSER, CREATEDB, CREATEROLE,
 		 INHERIT, LOGIN, REPLICATION, BYPASSRLS) */
