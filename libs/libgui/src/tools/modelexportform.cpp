@@ -22,6 +22,8 @@
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
+bool ModelExportForm::low_verbosity {false};
+
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	model=nullptr;
