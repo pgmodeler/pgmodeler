@@ -44,7 +44,7 @@ class __libgui PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 
 		bool eventFilter(QObject *watched, QEvent *event);
 
-		inline static const QString InvalidType {"invalid_type"};
+		static const QString InvalidType;
 
 	public:
 		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label="");

@@ -18,6 +18,8 @@
 
 #include "pgsqltypewidget.h"
 
+const QString PgSQLTypeWidget::InvalidType {"invalid_type"};
+
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
 	QStringList interval_lst, spatial_lst;
