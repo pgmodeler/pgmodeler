@@ -41,93 +41,32 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		/*! \brief This palette instance holds the current system palette. It is used
 		 * to detect if the system uses dark or light theme and helps pgModeler to
 		 * determine the proper colors when user used System default theme setting */
-		inline static QPalette system_pal;
+		static QPalette system_pal;
 		
 		//! \brief Holds the currently loaded config params
-		inline static std::map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		/*! \brief Holds the QPalette settings that defines dark theme.
 		 * This map key is a color role which value is a string list that
 		 * contains 3 elements: active color, inactive color and disabled color. */
-		inline static std::map<QPalette::ColorRole, QStringList> dark_ui_colors {
-			{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
-			{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
-			{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
-			{ QPalette::Midlight, {"#25292c", "#25292c", "#25292c"} },
-			{ QPalette::Mid, {"#41484e", "#41484e", "#41484e"} },
-			{ QPalette::Dark, {"#626c76", "#626c76", "#626c76"} },
-			{ QPalette::Text, {"#eff0f1", "#eff0f1", "#626c76"} },
-			{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
-			{ QPalette::ButtonText, {"#eff0f1", "#eff0f1", "#626c76"} },
-			{ QPalette::Base, {"#232629", "#232629", "#31363b"} },
-			{ QPalette::Window, {"#31363b", "#31363b", "#31363b"} },
-			{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
-			{ QPalette::Highlight, {"#3daee9", "#3daee9", "#41484e"} },
-			{ QPalette::HighlightedText, {"#eff0f1", "#eff0f1", "#25292c"} },
-			{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
-			{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
-			{ QPalette::AlternateBase, {"#31363b", "#31363b", "#31363b"} },
-			{ QPalette::ToolTipBase, {"#31363b", "#31363b", "#31363b"} },
-			{ QPalette::ToolTipText, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-			{ QPalette::PlaceholderText, {"#48494b", "#48494b", "#48494b"} }
-		},
+		static std::map<QPalette::ColorRole, QStringList> dark_ui_colors,
 
 		/*! \brief Holds the QPalette settings that defines light theme.
 		 * This map key is a color role which value is a string list that
 		 * contains 3 elements: active color, inactive color and disabled color. */
-		light_ui_colors {
-			{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
-			{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-			{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
-			{ QPalette::Midlight, {"#ffffff", "#ffffff", "#ffffff"} },
-			{ QPalette::Mid, {"#9fa0a1", "#9fa0a1", "#9fa0a1"} },
-			{ QPalette::Dark, {"#777878", "#777878", "#777878"} },
-			{ QPalette::Text, {"#232627", "#232627", "#777878"} },
-			{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
-			{ QPalette::ButtonText, {"#232627", "#232627", "#777878"} },
-			{ QPalette::Base, {"#fcfcfc", "#fcfcfc", "#eff0f1"} },
-			{ QPalette::Window, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-			{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
-			{ QPalette::Highlight, {"#3daee9", "#3daee9", "#9fa0a1"} },
-			{ QPalette::HighlightedText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
-			{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
-			{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
-			{ QPalette::AlternateBase, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-			{ QPalette::ToolTipBase, {"#232627", "#232627", "#232627"} },
-			{ QPalette::ToolTipText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
-			{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
-		},
+		light_ui_colors,
 
 		//! \brief Holds the default/system QPalette settings.
-		system_ui_colors {
-			{ QPalette::WindowText, {} }, { QPalette::Button, {} },
-			{ QPalette::Light, {} }, { QPalette::Midlight, {} },
-			{ QPalette::Dark, {} }, { QPalette::Mid, {} },
-			{ QPalette::Text, {} }, { QPalette::BrightText, {} },
-			{ QPalette::ButtonText, {} }, { QPalette::Base, {} },
-			{ QPalette::Window, {} }, { QPalette::Shadow, {} },
-			{ QPalette::Highlight, {} }, { QPalette::HighlightedText, {} },
-			{ QPalette::Link, {} }, { QPalette::LinkVisited, {} },
-			{ QPalette::AlternateBase, {} }, { QPalette::ToolTipBase, {} },
-			{ QPalette::ToolTipText, {} }, { QPalette::PlaceholderText, {} }
-		};
+		system_ui_colors;
 
 		//! \brief Colors used for ObjectTableWidget items when in dark theme
-		inline static QStringList dark_tab_item_colors {
-			"#b54225", "#fff", "#54a800", "#fff",
-			"#54a800", "#fff", "#e2e236", "#000",
-			"#b54225", "#fff", "#fa0000", "#00f000"
-		},
+		static QStringList dark_tab_item_colors,
 
 		//! \brief Colors used for ObjectTableWidget items when in light theme
-		light_tab_item_colors {
-			"#ffb4b4", "#303030",	"#a4f9b0", "#303030",
-			"#c0ffc0", "#000", "#ffffc0", "#000",
-			"#ffc0c0", "#000", "#fa0000", "#00f000"
-		};
+		light_tab_item_colors;
 
 		//! \brief Holds the current user interface theme id (light/dark)
-		inline static QString UiThemeId;
+		static QString UiThemeId;
 
 		//! \brief Auxiliary class that stores the formating data of each element
 		class AppearanceConfigItem {
