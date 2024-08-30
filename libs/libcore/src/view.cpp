@@ -19,6 +19,8 @@
 #include "view.h"
 #include "physicaltable.h"
 
+const QString View::ExtraSCRegExp {"((\\;)+(\\s|\\t)*)+$"};
+
 View::View() : BaseTable()
 {
 	obj_type = ObjectType::View;
