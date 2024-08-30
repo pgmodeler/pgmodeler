@@ -26,6 +26,12 @@
 #include "settings/generalconfigwidget.h"
 #include "tools/datamanipulationform.h"
 
+const QString DatabaseExplorerWidget::DepNotDefined;
+const QString DatabaseExplorerWidget::DepNotFound { QT_TR_NOOP("(not found, OID: %1)") };
+const QString DatabaseExplorerWidget::DefaultSourceCode {
+	QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."))
+};
+
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::AdminRoles, QT_TR_NOOP("Admin. roles")},	{Attributes::Alignment, QT_TR_NOOP("Alignment")},
 	{Attributes::AnalyzeFunc, QT_TR_NOOP("Analyze func.")},	{Attributes::ArgCount, QT_TR_NOOP("Arg. count")},
