@@ -23,6 +23,24 @@
 #include "connection.h"
 #include "pgsqlversions.h"
 
+const QStringList	ModelsDiffHelper::TableObjsIgnoredAttribs { Attributes::Alias };
+
+const QStringList	ModelsDiffHelper::RolesIgnoredTags {
+		Attributes::AppendedSql,	Attributes::PrependedSql
+};
+
+const QStringList	ModelsDiffHelper::ObjectsIgnoredAttribs {
+	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
+	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
+	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
+	Attributes::Pagination,	Attributes::Alias,	Attributes::Layers
+};
+
+const QStringList	ModelsDiffHelper::ObjectsIgnoredTags {
+	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
+	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql
+};
+
 ModelsDiffHelper::ModelsDiffHelper()
 {
 	diff_canceled=false;
