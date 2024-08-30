@@ -26,6 +26,9 @@
 #include "tools/databaseimportform.h"
 #include "tools/modeldatabasediffform.h"
 
+int MainWindow::ToolsActionsCount {0};
+bool MainWindow::confirm_validation {true};
+
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
