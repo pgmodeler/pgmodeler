@@ -38,9 +38,9 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 	private:
 		Q_OBJECT
 
-		inline static std::map<QString, QString> cmd_history;
+		static std::map<QString, QString> cmd_history;
 
-		inline static int cmd_history_max_len {1000};
+		static int cmd_history_max_len;
 
 		qint64 start_exec, end_exec, total_exec;
 
@@ -98,7 +98,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void reloadHighlightConfigs();
 
 	public:
-		inline static const QString ColumnNullValue {"␀"};
+		static const QString ColumnNullValue;
 
 		SQLExecutionWidget(QWidget * parent = nullptr);
 		virtual ~SQLExecutionWidget();
