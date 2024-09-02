@@ -2,6 +2,10 @@
 #include "utilsns.h"
 #include "exception.h"
 
+const QChar CsvDocument::TextDelimiter {'"'};
+const QChar CsvDocument::Separator {';'};
+const QChar CsvDocument::LineBreak { QChar::LineFeed };
+
 CsvDocument::CsvDocument()
 {
 	setSpecialChars(Separator, TextDelimiter, LineBreak);
