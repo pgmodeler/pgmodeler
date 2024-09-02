@@ -20,6 +20,13 @@
 #include "exception.h"
 #include "messagebox.h"
 
+QColor ObjectsTableWidget::item_colors[12] {
+	"#ffb4b4", "#303030", "#a4f9b0",
+	"#303030", "#c0ffc0", "#000",
+	"#ffffc0", "#000", "#ffc0c0",
+	"#000", "#f00000", "#00f000"
+};
+
 ObjectsTableWidget::ObjectsTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
