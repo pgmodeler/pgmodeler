@@ -40,7 +40,7 @@ class __libparsers XmlParser {
 		 * on the application. This is done to control when to call xmlInitParser() and
 		 * xmlCleanupParser() as these functions need to be called only once in the application.
 		 * Reference: http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser */
-		inline static int parser_instances {0};
+		static int parser_instances;
 
 		/*! \brief Stores the name of the file that generated the xml buffer when
 		 loadXMLFile() method is called */
