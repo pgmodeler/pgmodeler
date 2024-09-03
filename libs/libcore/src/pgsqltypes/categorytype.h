@@ -29,25 +29,7 @@
 
 class __libcore CategoryType: public TemplateType<CategoryType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for null value
-
-			//See table 44-43 on PostgreSQL documentation
-			"U", //User-defined types
-			"A", //Array types
-			"B", //Boolean types
-			"C", //Composite types
-			"D", //Date/time types
-			"E", //Enum types
-			"G", //Geometric types
-			"I", //Network address types
-			"N", //Numeric types
-			"P", //Pseudo-types
-			"S", //String types
-			"T", //Timespan types
-			"V", //Bit-string types
-			"X", //Unknown type
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned UserDefined = 1,

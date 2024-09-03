@@ -32,7 +32,7 @@ class __libgui RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Re
 	private:
 		Q_OBJECT
 
-		inline static std::map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		std::map<QString, attribs_map> patterns;
 

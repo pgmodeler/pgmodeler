@@ -21,6 +21,127 @@
 #include <QRegularExpression>
 #include <QSettings>
 
+const QString GlobalAttributes::PgModelerVersion {
+	QString("1.2.0-alpha1")
+
+/* Appending the snapshot build number to the version number
+ * when the external variable SNAPSHOT_BUILD is defined */
+#if defined(SNAPSHOT_BUILD)
+			+ QString("_snapshot%1").arg(BUILDDATE)
+#endif
+};
+
+/* ATTENTION: The attributes below indicates the default names of configuration
+ * directories in user's local storage in the current major version as well as
+ * in the previous major version.
+ *
+ * This is used to automatically copy configuration files config from a previous
+ * version to the new one. More details in Application::createUserConfiguration()
+ * !!! ALWAYS UPDATE THESE VARIABLES WHEN UPGRADING THE MAJOR VERSION !!! */
+const QString GlobalAttributes::PgModelerAppName {"pgmodeler-1.2"};
+
+/* In versions 1.0.x and 1.1.x there was no distinction in the configuration directory.
+ * So, until we upgrade to 1.3, we have to use the pgmodeler-1.0 as the previous
+ * version configuration directory */
+const QString GlobalAttributes::PgModelerOldAppName {"pgmodeler-1.0"};
+
+const QString GlobalAttributes::PgModelerURI {"pgmodeler.io"};
+const QString GlobalAttributes::PgModelerBuildNumber { QString("%1.%2").arg(BUILDDATE).arg(BUILDNUM) };
+const QString GlobalAttributes::PgModelerSite {"https://pgmodeler.io" };
+const QString GlobalAttributes::PgModelerSupport {"https://pgmodeler.io/support/docs" };
+const QString GlobalAttributes::PgModelerSourceURL {"https://github.com/pgmodeler/pgmodeler/releases" };
+const QString GlobalAttributes::PgModelerDownloadURL { PgModelerSite + "/download" };
+const QString GlobalAttributes::PgModelerDonateURL { PgModelerSite + "/#donationForm" };
+const QString GlobalAttributes::PgModelerUpdateCheckURL { PgModelerSite + "/checkupdate?version=%1&mode=%2" };
+
+const QString GlobalAttributes::EnvSchemasPath {"PGMODELER_SCHEMAS_PATH"};
+const QString GlobalAttributes::EnvConfPath {"PGMODELER_CONF_PATH"};
+const QString GlobalAttributes::EnvTmplConfPath {"PGMODELER_TMPL_CONF_PATH"};
+const QString GlobalAttributes::EnvLangPath {"PGMODELER_LANG_PATH"};
+const QString GlobalAttributes::EnvPluginsPath {"PGMODELER_PLUGINS_PATH"};
+const QString GlobalAttributes::EnvTmpPath {"PGMODELER_TMP_PATH"};
+const QString GlobalAttributes::EnvSamplesPath {"PGMODELER_SAMPLES_PATH"};
+const QString GlobalAttributes::EnvPgModelerChPath {"PGMODELER_CH_PATH"};
+const QString GlobalAttributes::EnvPgModelerCliPath {"PGMODELER_CLI_PATH"};
+const QString GlobalAttributes::EnvPgModelerSePath {"PGMODELER_SE_PATH"};
+const QString GlobalAttributes::EnvPgModelerPath {"PGMODELER_PATH"};
+
+const QString GlobalAttributes::PgmPathsConfFile {"pgmpaths"};
+const QString GlobalAttributes::BugReportEmail {"bug@pgmodeler.io"};
+const QString GlobalAttributes::BugReportFile {"pgmodeler%1.bug"};
+const QString GlobalAttributes::StacktraceFile {".stacktrace"};
+const QString GlobalAttributes::LastModelFile {"lastmodel"};
+
+const QString GlobalAttributes::DbModelExt {".dbm"};
+const QString GlobalAttributes::DbModelBkpExt {".dbk"};
+const QString GlobalAttributes::ObjMetadataExt {".omf"};
+const QString GlobalAttributes::DirSeparator {"/"};
+const QString GlobalAttributes::ResourcesDir {"res"};
+const QString GlobalAttributes::ConfigurationsDir {"conf"};
+const QString GlobalAttributes::DefaultConfsDir {"defaults"};
+const QString GlobalAttributes::ConfsBackupsDir {"backups"};
+const QString GlobalAttributes::SchemasDir {"schemas"};
+const QString GlobalAttributes::SQLSchemaDir {"sql"};
+const QString GlobalAttributes::XMLSchemaDir {"xml"};
+const QString GlobalAttributes::CatalogSchemasDir {"catalog"};
+const QString GlobalAttributes::DataDictSchemaDir {"datadict"};
+const QString GlobalAttributes::DataDictHtmlDir {"html"};
+const QString GlobalAttributes::DataDictMdDir {"md"};
+const QString GlobalAttributes::AlterSchemaDir {"alter"};
+const QString GlobalAttributes::LanguagesDir {"lang"};
+const QString GlobalAttributes::SamplesDir {"samples"};
+const QString GlobalAttributes::PluginsDir {"plugins"};
+const QString GlobalAttributes::SchemaExt {".sch"};
+const QString GlobalAttributes::ObjectDTDDir {"dtd"};
+const QString GlobalAttributes::ObjectDTDExt {".dtd"};
+const QString GlobalAttributes::RootDTD {"dbmodel"};
+const QString GlobalAttributes::MetadataDTD {"metadata"};
+const QString GlobalAttributes::ConfigurationExt {".conf"};
+const QString GlobalAttributes::HighlightFileSuffix {"-highlight"};
+const QString GlobalAttributes::ThemesDir {"themes"};
+
+const QString GlobalAttributes::CodeHighlightConf {"source-code-highlight"};
+const QString GlobalAttributes::AppearanceConf {"appearance"};
+const QString GlobalAttributes::GeneralConf {"general"};
+const QString GlobalAttributes::ConnectionsConf {"connections"};
+const QString GlobalAttributes::RelationshipsConf {"relationships"};
+const QString GlobalAttributes::SnippetsConf {"snippets"};
+const QString GlobalAttributes::DiffPresetsConf {"diff-presets"};
+
+const QString GlobalAttributes::SQLHighlightConf {"sql-highlight"};
+const QString GlobalAttributes::XMLHighlightConf {"xml-highlight"};
+const QString GlobalAttributes::SchHighlightConf {"sch-highlight"};
+const QString GlobalAttributes::PatternHighlightConf {"pattern-highlight"};
+const QString GlobalAttributes::SQLHistoryConf {"sql-history"};
+const QString GlobalAttributes::UiStyleConf {"ui-style"};
+const QString GlobalAttributes::IconsMediumConf {"icons-medium"};
+const QString GlobalAttributes::IconsSmallConf {"icons-small"};
+const QString GlobalAttributes::IconsBigConf {"icons-big"};
+const QString GlobalAttributes::FileDialogConf {"filedlg"};
+
+const QString GlobalAttributes::ExampleModel {"example.dbm"};
+const QString GlobalAttributes::DefaultQtStyle {"Fusion"};
+const QString GlobalAttributes::UiStyleOption {"-style"};
+
+QString GlobalAttributes::SchemasRootPath;
+QString GlobalAttributes::LanguagesPath;
+QString GlobalAttributes::PluginsPath;
+QString GlobalAttributes::TemporaryPath;
+QString GlobalAttributes::SamplesPath;
+QString GlobalAttributes::TmplConfigurationPath;
+QString GlobalAttributes::ConfigurationsPath;
+QString GlobalAttributes::SQLHighlightConfPath;
+QString GlobalAttributes::XMLHighlightConfPath;
+QString GlobalAttributes::SchHighlightConfPath;
+QString GlobalAttributes::PatternHighlightConfPath;
+QString GlobalAttributes::PgModelerCHandlerPath;
+QString GlobalAttributes::PgModelerCLIPath;
+QString GlobalAttributes::PgModelerAppPath;
+QString GlobalAttributes::PgModelerSchemaEditorPath;
+QString GlobalAttributes::PgModelerBaseVersion;
+
+attribs_map GlobalAttributes::CustomPaths;
+
 QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
 {
 	QFileInfo fi;

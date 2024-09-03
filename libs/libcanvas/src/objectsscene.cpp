@@ -24,6 +24,36 @@
 #include "schemaview.h"
 #include "databasemodel.h"
 
+const QColor ObjectsScene::DefaultGridColor { "#e1e1e1"};
+const QColor ObjectsScene::DefaultCanvasColor {"#fff"};
+const QColor ObjectsScene::DefaultDelimitersColor {"#4b73c3"};
+
+ObjectsScene::GridPattern ObjectsScene::grid_pattern { ObjectsScene::SquarePattern };
+
+QColor ObjectsScene::grid_color { DefaultGridColor };
+QColor ObjectsScene::canvas_color { DefaultCanvasColor };
+QColor ObjectsScene::delimiters_color { DefaultDelimitersColor };
+
+bool ObjectsScene::align_objs_grid {false};
+bool ObjectsScene::show_grid {true};
+bool ObjectsScene::show_page_delim {true};
+bool ObjectsScene::corner_move {true};
+bool ObjectsScene::invert_rangesel_trigger {false};
+bool ObjectsScene::lock_delim_scale {false};
+
+unsigned ObjectsScene::grid_size {20};
+unsigned ObjectsScene::expansion_factor {2};
+
+QPageLayout ObjectsScene::page_layout {
+	QPageSize(QPageSize::A4),
+	QPageLayout::Landscape,
+	QMarginsF(10,10,10,10)
+};
+
+double ObjectsScene::delimiter_scale {1};
+double ObjectsScene::min_scene_width { page_layout.paintRect().width() };
+double ObjectsScene::min_scene_height { page_layout.paintRect().height() };
+
 ObjectsScene::ObjectsScene()
 {		
 	is_layer_rects_visible=is_layer_names_visible=false;

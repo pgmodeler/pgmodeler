@@ -70,6 +70,17 @@
 #include "styledtextboxview.h"
 #include "tableview.h"
 
+bool ModelWidget::cut_operation {false};
+bool ModelWidget::save_restore_pos {true};
+bool ModelWidget::simple_obj_creation {true};
+bool ModelWidget::disable_render_smooth {false};
+
+double ModelWidget::min_object_opacity {0.10};
+
+ModelWidget *ModelWidget::src_model {};
+std::vector<BaseObject *> ModelWidget::copied_objects;
+std::vector<BaseObject *> ModelWidget::cut_objects;
+
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
 	QFont font;

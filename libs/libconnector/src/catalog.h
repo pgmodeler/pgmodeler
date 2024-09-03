@@ -55,37 +55,32 @@ class __libconnector Catalog {
 		SchemaParser schparser;
 
 		//! \brief Executes a list command on catalog
-		inline static const QString QueryList {"list"},
+		static const QString QueryList,
 
 		//! \brief Executes a attribute retrieving command on catalog
-		QueryAttribs {"attribs"},
+		QueryAttribs,
 
 		//! \brief Replacement for true 't' boolean value
-		PgSqlTrue {"t"},
+		PgSqlTrue,
 
 		//! \brief Replacement for false 'f' boolean value
-		PgSqlFalse {"f"},
+		PgSqlFalse,
 
 		//! \brief Suffix for boolean fields.
-		BoolField {"_bool"},
+		BoolField,
 
 		/*! \brief Query used to retrieve extension objects.
 		 * This query retrieve all extension child object except for data types because
 		 * they are handled in extension catalog query */
-		GetExtensionObjsSql {
-			"SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
-			 LEFT JOIN pg_extension AS e ON e.oid = d.refobjid \
-			 WHERE objid > 0 AND refobjid > 0 AND deptype='e' AND classid::regclass::text != 'pg_type'\
-			 ORDER BY extname;"
-		},
+		GetExtensionObjsSql,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		ArrayPattern {"((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$"},
+		ArrayPattern,
 
 		//! \brief Holds a constant string used to mark invalid filter patterns
-		InvFilterPattern {"__invalid__pattern__"},
+		InvFilterPattern,
 
-		AliasPlaceholder{"$alias$"};
+		AliasPlaceholder;
 
 		/*! \brief Stores the oid of objects that are created by extension.
 		 * The keys of this map are the names of the extensions that hold objects in the database,
@@ -107,79 +102,26 @@ class __libconnector Catalog {
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
-		inline static const std::map<ObjectType, QString> oid_fields {
-			{ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
-			{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
-			{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
-			{ObjectType::OpClass, "op.oid"}, {ObjectType::OpFamily, "op.oid"}, {ObjectType::Collation, "cl.oid"},
-			{ObjectType::Conversion, "cn.oid"}, {ObjectType::Cast, "cs.oid"}, {ObjectType::View, "vw.oid"},
-			{ObjectType::Sequence, "sq.oid"}, {ObjectType::Domain, "dm.oid"}, {ObjectType::Type, "tp.oid"},
-			{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
-			{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
-			{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
-			{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}, {ObjectType::ForeignTable, "ft.oid"},
-			{ObjectType::Transform, "tr.oid"}, {ObjectType::Procedure, "pr.oid"}
-		},
+		static const std::map<ObjectType, QString> oid_fields,
 
 		//! \brief This map stores the relation names in catalogs for each object type
-		obj_relnames {
-			{ObjectType::Aggregate, "pg_aggregate"},	{ObjectType::Cast, "pg_cast"},
-			{ObjectType::Collation, "pg_collation"},	{ObjectType::Column, "pg_attribute"},
-			{ObjectType::Constraint, "pg_constraint"},	{ObjectType::Conversion, "pg_conversion"},
-			{ObjectType::Database, "pg_database"},	{ObjectType::Domain, "pg_type"},
-			{ObjectType::Extension, "pg_extension"},	{ObjectType::EventTrigger, "pg_event_trigger"},
-			{ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},	{ObjectType::ForeignTable, "pg_foreign_table"},
-			{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_index"},
-			{ObjectType::Operator, "pg_operator"},	{ObjectType::OpClass, "pg_opclass"},
-			{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
-			{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
-			{ObjectType::Role, "pg_authid"},	{ObjectType::Rule, "pg_rewrite"},
-			{ObjectType::Schema, "pg_namespace"},	{ObjectType::Sequence, "pg_class"},
-			{ObjectType::ForeignServer, "pg_foreign_server"},	{ObjectType::Table, "pg_class"},
-			{ObjectType::Tablespace, "pg_tablespace"},	{ObjectType::Transform, "pg_transform"},
-			{ObjectType::Trigger, "pg_trigger"},	{ObjectType::Type, "pg_type"},
-			{ObjectType::View, "pg_class"}, {ObjectType::UserMapping, "pg_user_mapping"}
-		},
+		obj_relnames,
 		
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
-		name_fields {
-			{ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
-			{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
-			{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
-			{ObjectType::OpClass, "opcname"}, {ObjectType::OpFamily, "opfname"}, {ObjectType::Collation, "collname"},
-			{ObjectType::Conversion, "conname"}, {ObjectType::Cast, ""}, {ObjectType::View, "relname"},
-			{ObjectType::Sequence, "relname"}, {ObjectType::Domain, "typname"}, {ObjectType::Type, "typname"},
-			{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
-			{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "cl.relname"},
-			{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"},
-			{ObjectType::ForeignServer, "srvname"}, {ObjectType::ForeignTable, "relname"}, {ObjectType::Transform, ""},
-			{ObjectType::Procedure, "proname"}
-		},
+		name_fields,
 
 		/*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
 		(see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
 		there are different fields that tells if the object (or its parent) is part of extension. */
-		ext_oid_fields {
-			{ObjectType::Constraint, "cs.conrelid"},
-			{ObjectType::Index, "id.indexrelid"},
-			{ObjectType::Trigger, "tg.tgrelid"},
-			{ObjectType::Rule, "rl.ev_class"},
-			{ObjectType::Policy, "pl.polrelid"}
-		},
+		ext_oid_fields,
 
 		/*! \brief This map stores the aliases that are used to reference the table (parent) on each table object catalog query.
 		 * This is mainly used to force the filter of constraints/indexes/triggers/rules/policies in presence of one or more table
 		 * filter (see setObjectFilter) */
-		parent_aliases {
-			{ObjectType::Constraint, "tb"},
-			{ObjectType::Index, "tb"},
-			{ObjectType::Trigger, "tb"},
-			{ObjectType::Rule, "cl"},
-			{ObjectType::Policy, "tb"}
-		};
+		parent_aliases;
 
 		//! \brief Store the cached catalog queries
-		inline static attribs_map catalog_queries {};
+		static attribs_map catalog_queries;
 
 		//! \brief Connection used to query the pg_catalog
 		Connection connection;
@@ -239,10 +181,10 @@ class __libconnector Catalog {
 
 	public:
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		inline static const QString PgModelerTempDbObj {"__pgmodeler_tmp"},
+		static const QString PgModelerTempDbObj,
 
 		//! \brief Stores the null char escaped in format \000
-		EscapedNullChar {"\\000"};
+		EscapedNullChar;
 
 		Catalog();
 

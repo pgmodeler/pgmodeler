@@ -62,13 +62,13 @@ class __libcanvas BaseTableView: public BaseObjectView {
 		*ext_attribs;
 
 		//! brief Indicates if the extended attributes body should be hidden
-		inline static bool hide_ext_attribs {false},
+		static bool hide_ext_attribs,
 
 		//! brief Indicates if the tag object should be hidden
-		hide_tags {false};
+		hide_tags;
 
 		//! brief Controls the maximum amount of attributes visible per page (columns/references + extended attributes)
-		inline static unsigned attribs_per_page[2] { 10, 5};
+		static unsigned attribs_per_page[2];
 
 		//! \brief Polygonal object that defines the table body
 		RoundedRectItem *body,

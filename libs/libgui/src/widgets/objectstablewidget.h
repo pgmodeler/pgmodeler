@@ -35,12 +35,7 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 	private:
 		Q_OBJECT
 
-		inline static QColor item_colors[12] {
-			"#ffb4b4", "#303030", "#a4f9b0",
-			"#303030", "#c0ffc0", "#000",
-			"#ffffc0", "#000", "#ffc0c0",
-			"#000", "#f00000", "#00f000"
-		};
+		static QColor item_colors[12];
 
 		/*! \brief Indicates that a confirmation message must be shown when the user try
 		to remove an element from table. By default, the exclusions are made without confirmation */

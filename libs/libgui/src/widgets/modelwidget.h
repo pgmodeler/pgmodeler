@@ -85,25 +85,25 @@ class __libgui ModelWidget: public QWidget {
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
-		inline static bool cut_operation {false},
+		static bool cut_operation,
 
 		//! \brief Indicates if the last position and zoom must be saved/restored
-		save_restore_pos {true},
+		save_restore_pos,
 
 		//! \brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
-		simple_obj_creation {true},
+		simple_obj_creation,
 
-		disable_render_smooth {false};
+		disable_render_smooth;
 
 		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
-		inline static double min_object_opacity {0.10};
+		static double min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
-		inline static ModelWidget *src_model {};
+		static ModelWidget *src_model;
 
 		//! \brief Copied object on the source model
-		inline static std::vector<BaseObject *> copied_objects,
+		static std::vector<BaseObject *> copied_objects,
 
 		//! \brief Stores the cutted object on source model (only when executing cut command)
 		cut_objects;

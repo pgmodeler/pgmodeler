@@ -25,6 +25,8 @@
 #include "settings/connectionsconfigwidget.h"
 #include "objectslistmodel.h"
 
+bool DatabaseImportForm::low_verbosity {false};
+
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	std::random_device rand_seed;

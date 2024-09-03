@@ -19,6 +19,89 @@
 #include "utilsns.h"
 #include "tableobject.h"
 
+const QString Catalog::PgModelerTempDbObj {"__pgmodeler_tmp"};
+const QString Catalog::EscapedNullChar {"\\000"};
+const QString Catalog::QueryList {"list"};
+const QString Catalog::QueryAttribs {"attribs"};
+const QString Catalog::PgSqlTrue {"t"};
+const QString Catalog::PgSqlFalse {"f"};
+const QString Catalog::BoolField {"_bool"};
+const QString Catalog::ArrayPattern {"((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$"};
+const QString Catalog::InvFilterPattern {"__invalid__pattern__"};
+const QString Catalog::AliasPlaceholder{"$alias$"};
+
+const QString Catalog::GetExtensionObjsSql {
+	"SELECT d.objid AS oid, e.extname AS name FROM pg_depend AS d \
+		LEFT JOIN pg_extension AS e ON e.oid = d.refobjid \
+		WHERE objid > 0 AND refobjid > 0 AND deptype='e' AND classid::regclass::text != 'pg_type'\
+		ORDER BY extname;"
+};
+
+const std::map<ObjectType, QString> Catalog::oid_fields {
+	{ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
+	{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
+	{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
+	{ObjectType::OpClass, "op.oid"}, {ObjectType::OpFamily, "op.oid"}, {ObjectType::Collation, "cl.oid"},
+	{ObjectType::Conversion, "cn.oid"}, {ObjectType::Cast, "cs.oid"}, {ObjectType::View, "vw.oid"},
+	{ObjectType::Sequence, "sq.oid"}, {ObjectType::Domain, "dm.oid"}, {ObjectType::Type, "tp.oid"},
+	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
+	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
+	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
+	{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}, {ObjectType::ForeignTable, "ft.oid"},
+	{ObjectType::Transform, "tr.oid"}, {ObjectType::Procedure, "pr.oid"}
+};
+
+const std::map<ObjectType, QString> Catalog::obj_relnames {
+	{ObjectType::Aggregate, "pg_aggregate"},	{ObjectType::Cast, "pg_cast"},
+	{ObjectType::Collation, "pg_collation"},	{ObjectType::Column, "pg_attribute"},
+	{ObjectType::Constraint, "pg_constraint"},	{ObjectType::Conversion, "pg_conversion"},
+	{ObjectType::Database, "pg_database"},	{ObjectType::Domain, "pg_type"},
+	{ObjectType::Extension, "pg_extension"},	{ObjectType::EventTrigger, "pg_event_trigger"},
+	{ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},	{ObjectType::ForeignTable, "pg_foreign_table"},
+	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_index"},
+	{ObjectType::Operator, "pg_operator"},	{ObjectType::OpClass, "pg_opclass"},
+	{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
+	{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
+	{ObjectType::Role, "pg_authid"},	{ObjectType::Rule, "pg_rewrite"},
+	{ObjectType::Schema, "pg_namespace"},	{ObjectType::Sequence, "pg_class"},
+	{ObjectType::ForeignServer, "pg_foreign_server"},	{ObjectType::Table, "pg_class"},
+	{ObjectType::Tablespace, "pg_tablespace"},	{ObjectType::Transform, "pg_transform"},
+	{ObjectType::Trigger, "pg_trigger"},	{ObjectType::Type, "pg_type"},
+	{ObjectType::View, "pg_class"}, {ObjectType::UserMapping, "pg_user_mapping"}
+};
+
+const std::map<ObjectType, QString> Catalog::name_fields {
+	{ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
+	{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
+	{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
+	{ObjectType::OpClass, "opcname"}, {ObjectType::OpFamily, "opfname"}, {ObjectType::Collation, "collname"},
+	{ObjectType::Conversion, "conname"}, {ObjectType::Cast, ""}, {ObjectType::View, "relname"},
+	{ObjectType::Sequence, "relname"}, {ObjectType::Domain, "typname"}, {ObjectType::Type, "typname"},
+	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
+	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "cl.relname"},
+	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"},
+	{ObjectType::ForeignServer, "srvname"}, {ObjectType::ForeignTable, "relname"}, {ObjectType::Transform, ""},
+	{ObjectType::Procedure, "proname"}
+};
+
+const std::map<ObjectType, QString> Catalog::ext_oid_fields {
+	{ObjectType::Constraint, "cs.conrelid"},
+	{ObjectType::Index, "id.indexrelid"},
+	{ObjectType::Trigger, "tg.tgrelid"},
+	{ObjectType::Rule, "rl.ev_class"},
+	{ObjectType::Policy, "pl.polrelid"}
+};
+
+const std::map<ObjectType, QString> Catalog::parent_aliases {
+	{ObjectType::Constraint, "tb"},
+	{ObjectType::Index, "tb"},
+	{ObjectType::Trigger, "tb"},
+	{ObjectType::Rule, "cl"},
+	{ObjectType::Policy, "tb"}
+};
+
+attribs_map Catalog::catalog_queries {};
+
 Catalog::Catalog()
 {
 	match_signature = true;

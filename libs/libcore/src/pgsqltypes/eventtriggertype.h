@@ -29,13 +29,7 @@
 
 class __libcore EventTriggerType: public TemplateType<EventTriggerType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"ddl_command_start",
-			"ddl_command_end",
-			"sql_drop",
-			"table_rewrite"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned DdlCommandStart = 1,

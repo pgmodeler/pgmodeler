@@ -50,7 +50,7 @@ class __libcore Permission: public BaseObject {
 				* schema
 				* tablespace */
 	private:
-		inline static const QString priv_codes {"rawdDxtCcTXU"};
+		static const QString priv_codes;
 
 		//! \brief Object which the permission is applied
 		BaseObject *object;

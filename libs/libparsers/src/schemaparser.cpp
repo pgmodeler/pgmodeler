@@ -22,6 +22,66 @@
 #include "pgsqlversions.h"
 #include "globalattributes.h"
 
+const QRegularExpression SchemaParser::AttribRegExp {
+	QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+	QRegularExpression::CaseInsensitiveOption
+};
+
+const QChar SchemaParser::CharComment {'#'};
+const QChar SchemaParser::CharLineEnd {'\n'};
+const QChar SchemaParser::CharSpace {' '};
+const QChar SchemaParser::CharTabulation {'\t'};
+const QChar SchemaParser::CharStartAttribute {'{'};
+const QChar SchemaParser::CharEndAttribute {'}'};
+const QChar SchemaParser::CharStartConditional {'%'};
+const QChar SchemaParser::CharStartMetachar {'$'};
+const QChar SchemaParser::CharStartPlainText {'['};
+const QChar SchemaParser::CharEndPlainText {']'};
+const QChar SchemaParser::CharStartCompExpr {'('};
+const QChar SchemaParser::CharEndCompExpr {')'};
+const QChar SchemaParser::CharValueDelim {'"'};
+const QChar SchemaParser::CharValueOf {'@'};
+const QChar SchemaParser::CharToXmlEntity {'&'};
+const QChar SchemaParser::CharStartEscaped {'\\'};
+
+const QString	SchemaParser::TokenIf {"if"};
+const QString	SchemaParser::TokenThen {"then"};
+const QString	SchemaParser::TokenElse {"else"};
+const QString	SchemaParser::TokenEnd {"end"};
+const QString	SchemaParser::TokenOr {"or"};
+const QString	SchemaParser::TokenAnd {"and"};
+const QString	SchemaParser::TokenNot {"not"};
+const QString	SchemaParser::TokenSet {"set"};
+const QString	SchemaParser::TokenUnset {"unset"};
+const QString	SchemaParser::TokenInclude{ QString(SchemaParser::CharValueOf) + "include"};
+
+const QString	SchemaParser::TokenMetaSp {"sp"};
+const QString	SchemaParser::TokenMetaBr {"br"};
+const QString	SchemaParser::TokenMetaTb {"tb"};
+const QString	SchemaParser::TokenMetaOb {"ob"};
+const QString	SchemaParser::TokenMetaCb {"cb"};
+const QString	SchemaParser::TokenMetaOc {"oc"};
+const QString	SchemaParser::TokenMetaCc {"cc"};
+const QString	SchemaParser::TokenMetaMs {"ms"};
+const QString	SchemaParser::TokenMetaHs {"hs"};
+const QString	SchemaParser::TokenMetaPs {"ps"};
+const QString	SchemaParser::TokenMetaAt {"at"};
+const QString	SchemaParser::TokenMetaDs {"ds"};
+const QString	SchemaParser::TokenMetaAm {"am"};
+const QString	SchemaParser::TokenMetaBs {"bs"};
+
+const QString	SchemaParser::TokenEqOper {"=="};
+const QString	SchemaParser::TokenNeOper {"!="};
+const QString	SchemaParser::TokenGtOper {">"};
+const QString	SchemaParser::TokenLtOper {"<"};
+const QString	SchemaParser::TokenGtEqOper {">="};
+const QString	SchemaParser::TokenLtEqOper {"<="};
+
+const QRegularExpression SchemaParser::TokenIncludeRegexp { "^\\s*" +
+																													 TokenInclude +
+																													 "\\s+([\"])((.*)?)\\1\\s*$",
+																													 QRegularExpression::MultilineOption };
+
 SchemaParser::SchemaParser()
 {
 	line = column = 0;

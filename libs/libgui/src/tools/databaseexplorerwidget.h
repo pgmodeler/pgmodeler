@@ -45,11 +45,9 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		 * This attribute is used by saveTreeState() and restoreTreeState() */
 		QStringList items_state;
 
-		inline static const QString DepNotDefined,
-		DepNotFound { QT_TR_NOOP("(not found, OID: %1)") },
-		DefaultSourceCode {
-			QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."))
-		};
+		static const QString DepNotDefined,
+		DepNotFound,
+		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;

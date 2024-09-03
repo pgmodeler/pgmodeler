@@ -21,6 +21,10 @@
 #include "utilsns.h"
 #include "baseform.h"
 
+const QString ConnectionsConfigWidget::DefaultFor {"default-for-%1"};
+std::vector<Connection *> ConnectionsConfigWidget::connections;
+std::map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);

@@ -61,28 +61,9 @@ class __libgui CodeCompletionWidget: public QWidget {
 		//! \brief Stores the extracted table names and the position in the command they were found
 		std::map<int, QString> tab_names_pos;
 
-		inline static const QStringList dml_keywords {
-			/* ATTENTION: the keywords in this list MUST have a counter part in
-			 * DmlKeywordId. Also, the list MUST follow the same item order
-			 * in DmlKeywordId.
-			 *
-			 * Insert here the keywords that need have their position determined
-			 * in order to call retriveColumnNames() and retrieveObjectsName().
-			 * New keywords here need a new entry in DmlKeywordId enum */
-			"select", "insert", "update", "delete",
-			"truncate", "alter", "drop", "from",
-			"join",	"into", "as", "set", "table",
-			"only", "where",
+		static const QStringList dml_keywords;
 
-			/* Insert new keywords after this point if their position in the SQL command
-			 * is not important but if they are need to do some extra checkings */
-			"inner", "outer", "left", "right",
-			"full", "union", "intersect",
-			"except","distinct", "values",
-			"all"
-		};
-
-		inline static const QString special_chars {"(),*;=><|:!@^+-/&~#"};
+		static const QString special_chars;
 
 		//! \brief A timer that controls the completion popup
 		QTimer popup_timer;

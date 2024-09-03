@@ -30,7 +30,7 @@
 
 class __libcore Tablespace: public BaseObject{
 	private:
-		inline static unsigned tabspace_id {1000};
+		static unsigned tabspace_id;
 
 		//! \brief Directory where the tablespace resides
 		QString directory;

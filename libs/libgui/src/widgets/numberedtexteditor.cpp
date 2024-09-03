@@ -30,6 +30,17 @@
 #include "messagebox.h"
 #include "utilsns.h"
 
+bool NumberedTextEditor::line_nums_visible {true};
+bool NumberedTextEditor::highlight_lines {true};
+
+QColor NumberedTextEditor::line_hl_color { Qt::yellow };
+QFont NumberedTextEditor::default_font {"Source Code Pro", 12};
+
+double NumberedTextEditor::tab_width {0};
+
+QString NumberedTextEditor::src_editor_app;
+QString NumberedTextEditor::src_editor_app_args;
+
 NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, qreal custom_fnt_size) : QPlainTextEdit(parent)
 {
 	this->handle_ext_files = handle_ext_files;

@@ -29,14 +29,7 @@
 
 class __libcore BehaviorType: public TemplateType<BehaviorType>{
 	private:
-		inline static const QStringList type_names =
-		{
-			"", // Reserved for Class::Null
-
-			"CALLED ON NULL INPUT",
-			"RETURNS NULL ON NULL INPUT",
-			"STRICT"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned CalledOnNullInput = 1,

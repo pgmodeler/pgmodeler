@@ -36,13 +36,10 @@ class __libgui SnippetsConfigWidget: public BaseConfigWidget, public Ui::Snippet
 		Q_OBJECT
 
 		//! \brief Stores all snippets created by the user or loaded from file
-		inline static std::map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		//! \brief The regular expression the defines a valid id for a snippet
-		inline static const QRegularExpression IdFormatRegExp {
-			QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"),
-			QRegularExpression::CaseInsensitiveOption
-		};
+		static const QRegularExpression IdFormatRegExp;
 
 		NumberedTextEditor *snippet_txt;
 

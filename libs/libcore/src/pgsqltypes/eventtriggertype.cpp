@@ -18,6 +18,14 @@
 
 #include "eventtriggertype.h"
 
+const QStringList EventTriggerType::type_names {
+	"", // Reserved for Class::Null
+	"ddl_command_start",
+	"ddl_command_end",
+	"sql_drop",
+	"table_rewrite"
+};
+
 EventTriggerType::EventTriggerType()
 {
 	type_idx = DdlCommandStart;

@@ -38,7 +38,7 @@ class __libgui ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
-		inline static bool low_verbosity {false};
+		static bool low_verbosity;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;

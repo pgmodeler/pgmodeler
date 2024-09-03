@@ -39,19 +39,19 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		Place holder objects when enabled causes a significant performance gain mainly when
 		moving tables linked to relationships because the relationships will be updated only
 		when the table moviment ends and not during it */
-		inline static bool use_placeholder {true};
+		static bool use_placeholder;
 
 		/*! \brief Stores the global selection order of objects. This attributes
 		 is incremented each time an object is selected. */
-		inline static unsigned global_sel_order {1};
+		static unsigned global_sel_order;
 
 		/*! \brief Stores the current status for object's compact view display.
 		 * In compact view the alias of object's are shown instead of name. Also, data types and constraint types are hidden,
 		 * as well the table's extended area is collapsed by default */
-		inline static bool compact_view {false};
+		static bool compact_view;
 
 		//! \brief Indicate if the graphical element representing object's shadow must be hidden.
-		inline static bool hide_shadow {false};
+		static bool hide_shadow;
 
 		/*! \brief Stores the selection order of the current object. This attribute is used to
 		 know when an item was selected before another in the scene because the implementation of
@@ -84,10 +84,10 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 		TextPolygonItem *sql_disabled_item;
 
 		//! \brief Stores the object font configuration
-		inline static std::map<QString, QTextCharFormat> font_config;
+		static std::map<QString, QTextCharFormat> font_config;
 
 		//! \brief Stores the object colors configuration
-		inline static std::map<QString, std::vector<QColor>> color_config;
+		static std::map<QString, std::vector<QColor>> color_config;
 
 		//! \brief Configures the objects shadow polygon
 		void configureObjectShadow(void);

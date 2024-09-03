@@ -18,6 +18,12 @@
 
 #include "identitytype.h"
 
+const QStringList IdentityType::type_names {
+	"", // Reserved for Class::Null
+	"ALWAYS",
+	"BY DEFAULT"
+};
+
 IdentityType::IdentityType()
 {
 	type_idx = Always;

@@ -18,6 +18,13 @@
 
 #include "paralleltype.h"
 
+const QStringList ParallelType::type_names {
+	"", // Reserved for Class::Null
+	"PARALLEL UNSAFE",
+	"PARALLEL RESTRICTED",
+	"PARALLEL SAFE"
+};
+
 ParallelType::ParallelType(unsigned type_id)
 {
 	setType(type_id);

@@ -3,6 +3,19 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 
+attribs_map SourceEditorWidget::snippets {
+	{"ifend", "%if {} %then\n\n%end\n"},
+	{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
+	{"ifexpr", "%if ({}) %then\n\n%end\n"},
+	{"ifexprelse", "%if ({}) %then\n\n%else\n\n%end\n"},
+	{"setattrstr", "%set {} \"\"\n"},
+	{"setattrtxt", "%set {} [ ]\n"},
+	{"unsetattr", "%unset {}\n"},
+	{"unsetattr", "%unset {}\n"},
+};
+
+QPalette SourceEditorWidget::def_editor_pal;
+
 SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);

@@ -48,9 +48,9 @@ class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralC
 		FileSelectorWidget *confs_dir_sel,
 		*source_editor_sel;
 
-		inline static std::map<QString, WidgetState> widgets_geom;
+		static std::map<QString, WidgetState> widgets_geom;
 
-		inline static std::map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		enum UnitId: unsigned {
 			UnitMilimeters,

@@ -19,6 +19,8 @@
 #include "operationlist.h"
 #include "coreutilsns.h"
 
+unsigned OperationList::max_size {500};
+
 OperationList::OperationList(DatabaseModel *model)
 {
 	/* Raises an error if the user tries to allocate an operation list linked to

@@ -33,7 +33,7 @@ class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWi
 	private:
 		Q_OBJECT
 
-		inline static const QString IdLabel {"ID: <strong>%1</strong>"};
+		static const QString IdLabel;
 
 		unsigned selector_idx = 0;
 

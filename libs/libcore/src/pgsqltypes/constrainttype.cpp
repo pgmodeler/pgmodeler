@@ -18,6 +18,15 @@
 
 #include "constrainttype.h"
 
+const QStringList ConstraintType::type_names {
+	"", // Reserved for Class::Null
+	"PRIMARY KEY",
+	"FOREIGN KEY",
+	"CHECK",
+	"UNIQUE",
+	"EXCLUDE",
+};
+
 ConstraintType::ConstraintType(unsigned type_id)
 {
 	setType(type_id);

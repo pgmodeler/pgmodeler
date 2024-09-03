@@ -29,12 +29,7 @@
 
 class __libcore FiringType: public TemplateType<FiringType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"BEFORE",
-			"AFTER",
-			"INSTEAD OF"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned Before = 1,

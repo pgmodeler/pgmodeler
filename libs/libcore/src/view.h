@@ -67,7 +67,7 @@ class __libcore View: public BaseTable {
 		QString getUniqueColumnName(const QString &name);
 
 	public:
-		inline static const QString ExtraSCRegExp {"((\\;)+(\\s|\\t)*)+$"};
+		static const QString ExtraSCRegExp;
 
 		View();
 
