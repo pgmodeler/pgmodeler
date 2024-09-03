@@ -6,8 +6,13 @@
 @include "objlabel"
 @include "prependedsql"
 
-[CREATE OR REPLACE ]
-%if {constraint} %then [CONSTRAINT ] %end
+[CREATE ] 
+
+%if %not {constraint} %then 
+	[OR REPLACE ]
+%else
+	[CONSTRAINT ] 
+%end
 
 [TRIGGER ] {name} $br
 $tb {firing-type} $sp {events} $br
