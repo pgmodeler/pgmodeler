@@ -225,6 +225,8 @@ class __libcore View: public BaseTable {
 		void operator = (View &visao);
 
 		virtual void updateDependencies() override;
+
+		bool acceptsReplaceCommand() override;
 };
 
 #endif

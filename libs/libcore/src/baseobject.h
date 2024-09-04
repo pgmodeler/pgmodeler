@@ -565,7 +565,7 @@ class __libcore BaseObject {
 		bool acceptsDropCommand();
 
 		//! \brief Returns if the object accepts the use of CREATE OR REPLACE commands
-		bool acceptsReplaceCommand();
+		virtual bool acceptsReplaceCommand();
 
 		//! \brief Returns if the object accepts the use of alias
 		bool acceptsAlias();

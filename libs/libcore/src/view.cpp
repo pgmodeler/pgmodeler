@@ -931,6 +931,12 @@ QString View::getAlterCode(BaseObject *object)
 	}
 }
 
+bool View::acceptsReplaceCommand()
+{
+	// Materialized views don't accept CREATE OR REPLACE command
+	return !materialized;
+}
+
 void View::updateDependencies()
 {
 	std::vector<BaseObject *> deps;
