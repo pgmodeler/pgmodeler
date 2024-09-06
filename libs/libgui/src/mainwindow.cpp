@@ -1526,6 +1526,7 @@ void MainWindow::setCurrentModel()
 		connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_newLayerRequested, this, &MainWindow::addNewLayer);
+		connect(current_model, &ModelWidget::s_objectsLayerChanged, layers_cfg_wgt, &LayersConfigWidget::updateRelsVisibility);
 
 		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
 			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);
@@ -2380,6 +2381,11 @@ void MainWindow::storeDockWidgetsSettings()
 	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : "");
 	conf_wgt->setConfigurationSection(Attributes::SqlTool, params);
 	params.clear();
+
+	params[Attributes::LayersConfig] = Attributes::True;
+	params[Attributes::RelsFollowTabsVisibility] = layers_cfg_wgt->rels_tabs_visibility_chk->isChecked() ? Attributes::True : "";
+	conf_wgt->setConfigurationSection(Attributes::LayersConfig, params);
+	params.clear();
 }
 
 void MainWindow::restoreDockWidgetsSettings()
@@ -2407,6 +2413,11 @@ void MainWindow::restoreDockWidgetsSettings()
 	{
 		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowAttributesGrid]==Attributes::True);
 		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowSourcePane]==Attributes::True);
+	}
+
+	if(confs.count(Attributes::LayersConfig))
+	{
+		layers_cfg_wgt->rels_tabs_visibility_chk->setChecked(confs[Attributes::LayersConfig][Attributes::RelsFollowTabsVisibility]==Attributes::True);
 	}
 }
 

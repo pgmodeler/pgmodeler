@@ -103,12 +103,16 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		 * scene layers without force the update of other graphical objects. */
 		void updateLayersRects();
 
+		void updateRelsVisibility();
+
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility
 		void s_visibilityChanged(bool);
 
 		//! \brief Signal emitted whenever the current active layers change
 		void s_activeLayersChanged();
+
+		friend class MainWindow;
 };
 
 #endif

@@ -214,15 +214,18 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(BaseRelationship::TableId table_idx);
 
+		//! \brief Returns the label through its index
+		TextboxView *getLabel(BaseRelationship::LabelId lab_idx);
+
+		//! \brief Returns the current visibility state of the tables in that are linked by the relationship
+		bool isTableVisible(BaseRelationship::TableId table_idx);
+
 		void configureObjectShadow(void) = delete;
 		void configureObjectSelection(void) = delete;
 
 	public slots:
 		//! \brief Configures the relationship line
 		void configureLine();
-
-		//! \brief Returns the label through its index
-		TextboxView *getLabel(BaseRelationship::LabelId lab_idx);
 
 	private slots:
 		//! \brief Makes the comple relationship configuration

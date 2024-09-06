@@ -19,6 +19,7 @@
 #include "layersconfigwidget.h"
 #include "colorpickerwidget.h"
 #include "guiutilsns.h"
+#include "relationshipview.h"
 
 LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -64,6 +65,13 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 
 	connect(remove_all_tb, &QToolButton::clicked, this, [this](){
 		removeLayer(true);
+	});
+
+	connect(rels_tabs_visibility_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+			updateRelsVisibility();
+		else
+			updateActiveLayers();
 	});
 }
 
@@ -112,6 +120,10 @@ void LayersConfigWidget::updateActiveLayers()
 	}
 
 	model->scene->setActiveLayers(active_layers);
+
+	if(rels_tabs_visibility_chk->isChecked())
+		updateRelsVisibility();
+
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 	emit s_activeLayersChanged();
 }
@@ -407,3 +419,25 @@ void LayersConfigWidget::finishLayerRenaming()
 	}
 }
 
+void LayersConfigWidget::updateRelsVisibility()
+{
+	if(!model)
+		return;
+
+	RelationshipView *rel_view = nullptr;
+
+	for(auto &item : model->scene->items())
+	{
+		rel_view = dynamic_cast<RelationshipView *>(item);
+
+		if(!rel_view)
+			continue;
+
+		if(rel_view->isVisible() &&
+				(!rel_view->isTableVisible(BaseRelationship::SrcTable) ||
+				 !rel_view->isTableVisible(BaseRelationship::DstTable)))
+		{
+			rel_view->setVisible(false);
+		}
+	}
+}

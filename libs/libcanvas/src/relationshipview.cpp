@@ -219,6 +219,14 @@ TextboxView *RelationshipView::getLabel(BaseRelationship::LabelId lab_idx)
 	return labels[lab_idx];
 }
 
+bool RelationshipView::isTableVisible(BaseRelationship::TableId table_idx)
+{
+	if(table_idx > 2)
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return tables[table_idx]->isVisible();
+}
+
 QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	if(change==ItemPositionChange)

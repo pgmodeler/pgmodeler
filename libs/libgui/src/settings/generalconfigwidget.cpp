@@ -515,7 +515,8 @@ void GeneralConfigWidget::saveConfiguration()
 			}
 			else if(itr->first==Attributes::Validator ||
 							itr->first==Attributes::ObjectFinder ||
-							itr->first==Attributes::SqlTool)
+							itr->first==Attributes::SqlTool ||
+							itr->first==Attributes::LayersConfig)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);

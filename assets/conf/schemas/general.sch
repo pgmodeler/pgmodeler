@@ -81,19 +81,19 @@ $tb /> $br
 
 %if {recent-models} %then
 	$br $tb <recent-models> $br
-	$tb {recent-models}
+	{recent-models}
 	$tb </recent-models> $br
 %end
 
 %if {dock-widgets} %then
 	$br $tb <dock-widgets> $br
-	$tb {dock-widgets}
+	{dock-widgets}
 	$tb </dock-widgets> $br
 %end
 
 %if {widgets-geometry} %then
 	$br $tb <widgets-geometry> $br
-	$tb {widgets-geometry}
+	{widgets-geometry}
 	$tb </widgets-geometry> $br
 %end
 
