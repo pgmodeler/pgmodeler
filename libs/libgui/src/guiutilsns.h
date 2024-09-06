@@ -36,9 +36,20 @@
 #include "roundedrectitem.h"
 
 namespace GuiUtilsNs {
-	/*! \brief WidgetCornerId is an alias of the enum RoundRectItem::RectCorners
-	 *  that is used by resizeFloatingWidget() */
-	using WidgetCornerId = RoundedRectItem::RectCorners;
+	/*! \brief WidgetCornerId used by resizeFloatingWidget() to determine
+	 *  which corners of an widget can be used to resize it */
+	enum WidgetCornerId: unsigned {
+		NoCorners = 0,
+		LeftCorner = 2,
+		TopCorner = 4,
+		RightCorner = 8,
+		BottomCorner = 16,
+		TopLeftCorner = TopCorner | LeftCorner,
+		TopRightCorner = TopCorner | RightCorner,
+		BottomLeftCorner = BottomCorner | LeftCorner,
+		BottomRightCorner = BottomCorner | RightCorner,
+		AllCorners = 31
+	};
 
 	static constexpr int LtMargin = 5,
 	LtSpacing = 5;
@@ -166,6 +177,10 @@ namespace GuiUtilsNs {
 	/*! \brief Resizes a widget based a mouse move event.
 	 *  The corner param is used to identify from which corner the widget must be resized */
 	extern __libgui void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner);
+
+	/*! \brief Moves a widget based a mouse move event that is captured by a handle widget
+	 *  in the the edge of the widget */
+	extern __libgui void moveFloatingWidget(QWidget *widget, QWidget *event_wgt, QMouseEvent *event);
 }
 
 #endif

@@ -305,14 +305,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema->setIcon(QIcon(GuiUtilsNs::getIconPath("movetoschema")));
 	action_moveto_schema->setText(tr("Move to schema"));
 
-	action_set_layer = layers_menu.menuAction();
-	action_set_layer->setIcon(QIcon(GuiUtilsNs::getIconPath("layers")));
-	action_set_layer->setText(tr("Set layers"));
-
+	action_set_layer = new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
 	layers_wgt = new LayersWidget(this);
-	wgt_action_layers = new QWidgetAction(this);
-	wgt_action_layers->setDefaultWidget(layers_wgt);
-	layers_menu.addAction(wgt_action_layers);
 
 	action_set_tag = tags_menu.menuAction();
 	action_set_tag->setIcon(QIcon(GuiUtilsNs::getIconPath("tag")));
@@ -598,6 +592,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_no_collapse_attribs, &QAction::triggered, this, &ModelWidget::setCollapseMode);
 	connect(action_show_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
 	connect(action_hide_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
+	connect(action_set_layer, &QAction::triggered, this, &ModelWidget::updateObjectsLayers);
+
+	connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	connect(db_model, &DatabaseModel::s_objectAdded, this, &ModelWidget::handleObjectAddition);
 	connect(db_model, &DatabaseModel::s_objectRemoved, this, &ModelWidget::handleObjectRemoval);
@@ -646,7 +643,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, &ObjectsScene::s_scenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 
-	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
+	//connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
 	wheel_timer.setInterval(300);
 
@@ -656,7 +653,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		wheel_move = false;
 	});
 
-	connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
+	//connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -2460,13 +2457,18 @@ void ModelWidget::moveToSchema()
 
 void ModelWidget::updateObjectsLayers()
 {
-	if(!layers_wgt->isLayersChanged())
-		return;
+	layers_wgt->setAttributes(this);
 
-	qApp->setOverrideCursor(Qt::WaitCursor);
-	scene->updateActiveLayers();
-	db_model->setObjectsModified({ ObjectType::Schema });
-	qApp->restoreOverrideCursor();
+	if(layers_wgt->exec() == QDialog::Accepted &&
+		 layers_wgt->isLayersChanged())
+	{
+		qApp->setOverrideCursor(Qt::WaitCursor);
+		scene->updateActiveLayers();
+		db_model->setObjectsModified({ ObjectType::Schema });
+		qApp->restoreOverrideCursor();
+
+		emit s_objectsLayerChanged();
+	}
 }
 
 void ModelWidget::changeOwner()
@@ -3848,15 +3850,11 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			action_rename->setData(QVariant::fromValue<void *>(object));
 		}
 
+		if(is_graph_obj)
+			quick_actions_menu.addAction(action_set_layer);
+
 		if(accepts_schema)
 			quick_actions_menu.addAction(action_moveto_schema);
-
-		if(is_graph_obj)
-		{
-			quick_actions_menu.addAction(action_set_layer);
-			//layers_wgt->setAttributes(scene->getLayers(), selected_objects);
-			layers_wgt->setAttributes(this);
-		}
 
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);

@@ -115,14 +115,7 @@ void ObjectRenameWidget::updateLabelsButtons()
 bool ObjectRenameWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(object == handle_lbl && event->type() == QEvent::MouseMove)
-	{
-		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
-
-		move(m_event->globalPosition().x() - width() + (handle_lbl->width() / 2),
-				 m_event->globalPosition().y() - (height() - (handle_lbl->height() / 2)));
-
-		return true;
-	}
+		GuiUtilsNs::moveFloatingWidget(this, handle_lbl, dynamic_cast<QMouseEvent *>(event));
 
 	return QDialog::eventFilter(object, event);
 }

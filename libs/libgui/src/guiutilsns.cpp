@@ -800,58 +800,70 @@ namespace GuiUtilsNs {
 			return WidgetCornerId::NoCorners;
 		}
 
-		std::unordered_map<WidgetCornerId, Qt::CursorShape> cur_shapes;
+		static std::unordered_map<WidgetCornerId, Qt::CursorShape> cur_shapes {
+			{ WidgetCornerId::LeftCorner, Qt::SizeHorCursor },
+			{ WidgetCornerId::TopCorner, Qt::SizeVerCursor },
+			{ WidgetCornerId::RightCorner, Qt::SizeHorCursor },
+			{ WidgetCornerId::BottomCorner, Qt::SizeVerCursor },
+			{ WidgetCornerId::TopLeftCorner, Qt::SizeFDiagCursor },
+			{ WidgetCornerId::TopRightCorner, Qt::SizeBDiagCursor },
+			{ WidgetCornerId::BottomLeftCorner, Qt::SizeBDiagCursor },
+			{ WidgetCornerId::BottomRightCorner, Qt::SizeFDiagCursor }
+		};
+
+		static constexpr int rect_inc = GuiUtilsNs::LtMargin;
+
 		std::unordered_map<WidgetCornerId, QRect> corner_rects;
-		static constexpr int rect_inc = GuiUtilsNs::LtMargin * 1.5;
 		QRect ev_wgt_rect = event_wgt->geometry();
+		bool left_corner = false, top_corner = false,
+				right_corner = false, bottom_corner = false;
+		WidgetCornerId corner_id = WidgetCornerId::NoCorners;
 
-		if((corners & WidgetCornerId::TopLeftCorner) == WidgetCornerId::TopLeftCorner)
+		left_corner = (corners & WidgetCornerId::LeftCorner) == WidgetCornerId::LeftCorner;
+		top_corner = (corners & WidgetCornerId::TopCorner) == WidgetCornerId::TopCorner;
+		right_corner = (corners & WidgetCornerId::RightCorner) == WidgetCornerId::RightCorner;
+		bottom_corner = (corners & WidgetCornerId::BottomCorner) == WidgetCornerId::BottomCorner;
+
+		if(left_corner)
 		{
-			cur_shapes[WidgetCornerId::TopLeftCorner] = Qt::SizeFDiagCursor;
-			corner_rects[WidgetCornerId::TopLeftCorner] =
-					QRect(ev_wgt_rect.topLeft(),
-								ev_wgt_rect.topLeft() +
-								QPoint(rect_inc, rect_inc));
+			corner_rects[WidgetCornerId::LeftCorner] =
+					QRect(QPoint(ev_wgt_rect.left(), ev_wgt_rect.top()),
+								QPoint(ev_wgt_rect.left() + rect_inc, ev_wgt_rect.bottom()));
 		}
 
-		if((corners & WidgetCornerId::TopRightCorner) == WidgetCornerId::TopRightCorner)
+		if(top_corner)
 		{
-			cur_shapes[WidgetCornerId::TopRightCorner] = Qt::SizeBDiagCursor;
-			corner_rects[WidgetCornerId::TopRightCorner] =
-					QRect(ev_wgt_rect.topRight(),
-								ev_wgt_rect.topRight() +
-								QPoint(-rect_inc, rect_inc));
+			corner_rects[WidgetCornerId::TopCorner] =
+					QRect(QPoint(ev_wgt_rect.left(), ev_wgt_rect.top()),
+								QPoint(ev_wgt_rect.right(), ev_wgt_rect.top() + rect_inc));
 		}
 
-		if((corners & WidgetCornerId::BottomRightCorner) == WidgetCornerId::BottomRightCorner)
+		if(right_corner)
 		{
-			cur_shapes[WidgetCornerId::BottomRightCorner] = Qt::SizeFDiagCursor;
-			corner_rects[WidgetCornerId::BottomRightCorner] =
-					QRect(ev_wgt_rect.bottomRight(),
-								ev_wgt_rect.bottomRight() +
-								QPoint(-rect_inc, -rect_inc));
+			corner_rects[WidgetCornerId::RightCorner] =
+					QRect(QPoint(ev_wgt_rect.right(), ev_wgt_rect.top()),
+								QPoint(ev_wgt_rect.right() - rect_inc, ev_wgt_rect.bottom()));
 		}
 
-		if((corners & WidgetCornerId::BottomLeftCorner) == WidgetCornerId::BottomLeftCorner)
+		if(bottom_corner)
 		{
-			cur_shapes[WidgetCornerId::BottomLeftCorner] = Qt::SizeBDiagCursor;
-			corner_rects[WidgetCornerId::BottomLeftCorner] =
-					QRect(ev_wgt_rect.bottomLeft(),
-								ev_wgt_rect.bottomLeft() +
-								QPoint(rect_inc, -rect_inc));
+			corner_rects[WidgetCornerId::BottomCorner] =
+					QRect(QPoint(ev_wgt_rect.left(), ev_wgt_rect.bottom()),
+								QPoint(ev_wgt_rect.right(), ev_wgt_rect.bottom() - rect_inc));
 		}
 
-		for(auto &[corner_id, rect] : corner_rects)
+		for(auto &[c_id, rect] : corner_rects)
 		{
-			if(corner_rects[corner_id].contains(event->pos()))
-			{
-				widget->setCursor(cur_shapes[corner_id]);
-				return corner_id;
-			}
+			if(corner_rects[c_id].contains(event->pos()))
+				corner_id |= c_id;
 		}
 
-		widget->unsetCursor();
-		return WidgetCornerId::NoCorners;
+		if(corner_id == WidgetCornerId::NoCorners)
+			widget->unsetCursor();
+		else
+			widget->setCursor(cur_shapes[corner_id]);
+
+		return corner_id;
 	}
 
 	void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner)
@@ -866,19 +878,53 @@ namespace GuiUtilsNs {
 		QRect geom = widget->geometry();
 		QPoint pnt = widget->mapToParent(event->pos());
 
-		if(corner == WidgetCornerId::TopLeftCorner)
-			geom.setTopLeft(pnt);
-		else if(corner == WidgetCornerId::TopRightCorner)
-			geom.setTopRight(pnt);
-		else if(corner == WidgetCornerId::BottomRightCorner)
-			geom.setBottomRight(pnt);
-		else
-			geom.setBottomLeft(pnt);
+		switch (corner) {
+			case WidgetCornerId::LeftCorner:
+				geom.setLeft(pnt.x());
+			break;
+
+			case WidgetCornerId::TopCorner:
+				geom.setTop(pnt.y());
+			break;
+
+			case WidgetCornerId::RightCorner:
+				geom.setRight(pnt.x());
+			break;
+
+			case WidgetCornerId::BottomCorner:
+				geom.setBottom(pnt.y());
+			break;
+
+			case WidgetCornerId::TopLeftCorner:
+				geom.setTopLeft(pnt);
+			break;
+
+			case WidgetCornerId::TopRightCorner:
+				geom.setTopRight(pnt);
+			break;
+
+			case WidgetCornerId::BottomRightCorner:
+				geom.setBottomRight(pnt);
+			break;
+
+			default:
+				geom.setBottomLeft(pnt);
+			break;
+		}
 
 		if(geom.height() >= widget->minimumHeight() &&
 				geom.height() <= widget->maximumHeight() &&
 				geom.width() >= widget->minimumWidth() &&
 				geom.width() <= widget->maximumWidth())
 			widget->setGeometry(geom);
+	}
+
+	void moveFloatingWidget(QWidget *widget, QWidget *event_wgt, QMouseEvent *event)
+	{
+		if(!widget || !event_wgt || !event || event->type() != QEvent::MouseMove)
+			return;
+
+		widget->move(event->globalPosition().x() - widget->width() + (event_wgt->width() / 2),
+								 event->globalPosition().y() - (widget->height() - (event_wgt->height() / 2)));
 	}
 }

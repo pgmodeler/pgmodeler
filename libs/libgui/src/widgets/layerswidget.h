@@ -32,7 +32,7 @@
 
 class ModelWidget;
 
-class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
+class __libgui LayersWidget : public QDialog, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
@@ -41,6 +41,8 @@ class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 
 		//! \brief Indicates if the user have interacted with the layers checkboxes changing objects layers.
 		bool layers_changed;
+
+		bool eventFilter(QObject *object, QEvent *event) override;
 
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
@@ -56,6 +58,8 @@ class __libgui LayersWidget : public QWidget, Ui::LayersWidget {
 
 	signals:
 		void s_newLayerRequested(const QString &layer_name);
+
+		void s_objectsLayerChanged();
 };
 
 #endif

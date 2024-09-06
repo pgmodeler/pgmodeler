@@ -135,9 +135,6 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
-		//! \brief Stores the layers used by the "move to layer" operation
-		layers_menu,
-
 		break_rel_menu,
 
 		fade_menu,
@@ -332,8 +329,6 @@ class __libgui ModelWidget: public QWidget {
 		*action_bring_to_front,
 		*action_send_to_back,
 		*action_stacking;
-
-		QWidgetAction *wgt_action_layers;
 
 		//! \brief Actions used to create new objects on the model
 		std::map<ObjectType, QAction *> actions_new_objects;
@@ -671,6 +666,9 @@ class __libgui ModelWidget: public QWidget {
 		 *  the creation of a new layer. This signal just redirects the new layer name to the outside world do be
 		 *  handled properly (currently, in MainWindow) */
 		void s_newLayerRequested(const QString &layer_name);
+
+		//! \brief Signal emitted whenever the layers of the selected object is changed via "Set layers" menu item
+		void s_objectsLayerChanged();
 
 		friend class MainWindow;
 		friend class ModelExportForm;

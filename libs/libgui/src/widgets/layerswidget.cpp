@@ -18,10 +18,17 @@
 
 #include "layerswidget.h"
 #include "modelwidget.h"
+#include "guiutilsns.h"
 
-LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
+LayersWidget::LayersWidget(QWidget *parent) : QDialog(parent)
 {
 	setupUi(this);
+
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	setAttribute(Qt::WA_TranslucentBackground, true);
+
+	frame->installEventFilter(this);
+	handle_lbl->installEventFilter(this);
 
 	layers_changed = false;
 
@@ -39,6 +46,32 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 		QListWidgetItem *item = layers_lst->item(layers_lst->count() - 1);
 		item->setCheckState(Qt::Checked);
 	});
+
+	connect(apply_tb, &QToolButton::clicked, this, &LayersWidget::accept);
+	connect(cancel_tb, &QToolButton::clicked, this, &LayersWidget::reject);
+}
+
+bool LayersWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == handle_lbl && event->type() == QEvent::MouseMove)
+	{
+		GuiUtilsNs::moveFloatingWidget(this, handle_lbl, dynamic_cast<QMouseEvent *>(event));
+	}
+	else if(object == frame && event->type() == QEvent::MouseMove)
+	{
+		static GuiUtilsNs::WidgetCornerId corner_id;
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
+
+		if(m_event->buttons() == Qt::NoButton)
+		{
+			corner_id = GuiUtilsNs::getWidgetHoveredCorner(this, frame, m_event,
+																										 GuiUtilsNs::WidgetCornerId::AllCorners);
+		}
+
+		GuiUtilsNs::resizeFloatingWidget(this, m_event, corner_id);
+	}
+
+	return QDialog::eventFilter(object, event);
 }
 
 void LayersWidget::setAttributes(ModelWidget *model_wgt)
