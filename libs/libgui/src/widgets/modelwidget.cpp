@@ -306,6 +306,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema->setText(tr("Move to schema"));
 
 	action_set_layer = new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
+	action_set_layer->setShortcut(QKeySequence("F3"));
 	layers_wgt = new LayersWidget(this);
 
 	action_set_tag = tags_menu.menuAction();
