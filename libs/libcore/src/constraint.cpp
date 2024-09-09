@@ -732,6 +732,8 @@ QString Constraint::getDataDictionary(bool md_format, const attribs_map &extra_a
 		attribs[Attributes::Comment] = comment;
 		attribs[Attributes::RefTable] = ref_table ? ref_table->getSignature().remove('"') : "";
 		attribs[Attributes::Expression] = expression;
+		attribs[Attributes::UpdAction] = ~upd_action;
+		attribs[Attributes::DelAction] = ~del_action;
 
 		// Retrieving the columns that composes the constraint
 		for(auto &col : columns)

@@ -14,6 +14,14 @@
 
 [ | ]
 
+%if ({type} != "FOREIGN KEY") %then
+	[ | ]
+%else
+	{upd-action} [ | ] {del-action}
+%end
+
+[ | ]
+
 %if ({type} == "CHECK") %then
 	{expression}
 %end

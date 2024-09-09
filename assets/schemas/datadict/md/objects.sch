@@ -5,6 +5,7 @@
 %set {spc} \n\#\#\#\#\s
 %set {colsdiv} [ --- | --- | --- |]
 %set {t6cols} [| ] {colsdiv} {colsdiv} \n
+%set {t8cols} [| ] {colsdiv} {colsdiv} [ --- | --- |] \n
 
 %if {columns} %then
  	{columns}
@@ -13,8 +14,8 @@
 %if {constraints} %then
 	{spc} Constraints \n
 
-	[| Name | Type | Column(s) | References | Expression | Description |] \n
-	{t6cols}
+	[| Name | Type | Column(s) | References | On Update | On Delete | Expression | Description |] \n
+	{t8cols}
 
 	{constraints}
 %end

@@ -19,13 +19,15 @@
 	{spc} <td \s colspan="{colspan}" \s class="nested-tab-parent">
 	{spc} <table \s class="nested-tab">
 	{spc} <tr>
-	{spc} <td [ class="title" colspan="6"] > Constraints </td>
+	{spc} <td [ class="title" colspan="8"] > Constraints </td>
 	{spc} </tr>
 	{spc} <tr>
 	{spc} <td [ class="title"] > Name </td>
 	{spc} <td [ class="title"] > Type </td>
 	{spc} <td [ class="title"] > Column(s) </td>
 	{spc} <td [ class="title"] > References </td>
+	{spc} <td [ class="title"] > On \s Update </td>
+	{spc} <td [ class="title"] > On \s Delete </td>
 	{spc} <td [ class="title"] > Expression </td>
 	{spc} <td [ class="title"] > Description </td>
 	{spc} </tr>
