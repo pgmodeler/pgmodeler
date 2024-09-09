@@ -1581,13 +1581,19 @@ void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
+	/* Since plugins are singletons in pgModeler, we use the same tool button associated to
+	 * a certain plugin to execute its action in different DatabaseExplorerWidget instances.
+	 * Thus the action executed is the one connected to the clicked() event of the plugin's button. */
 	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+		/* We set general purpose button's properties (connection id and current database name)
+		 * so this information can be processed by the plugin execution slot. */
 		btn->setProperty(Attributes::Connection.toStdString().c_str(),
 										 connection.getConnectionId());
 
 		btn->setProperty(Attributes::Database.toStdString().c_str(),
 										 connection.getConnectionParam(Connection::ParamDbName));
 
+		// Emitting the signal btn->clicked() so the connected slot can be executed.
 		emit btn->clicked(checked);
 	});
 
