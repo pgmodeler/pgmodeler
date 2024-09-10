@@ -25,6 +25,7 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "tools/datamanipulationform.h"
+#include "pgmodelerguiplugin.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound { QT_TR_NOOP("(not found, OID: %1)") };
@@ -147,6 +148,9 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
+
+	for(auto &btn : PgModelerGuiPlugin::getPluginsToolButtons())
+		installPluginButton(btn);
 
 	pg_version_alert_frm->setVisible(false);
 	curr_scroll_value = 0;
@@ -1566,7 +1570,7 @@ void DatabaseExplorerWidget::restoreTreeState()
 	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
-void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
+void DatabaseExplorerWidget::installPluginButton(QToolButton *btn)
 {
 	if(!btn)
 		return;

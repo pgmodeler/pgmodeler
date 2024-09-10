@@ -33,9 +33,13 @@
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 
+class PgModelerGuiPlugin;
+
 class __libgui ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
+
+		static QList<const PgModelerGuiPlugin *> plugins;
 
 		enum RelBreakMode {
 			//Break vertically the line in one 90° angle
@@ -259,10 +263,6 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Applies the layer settings from the internal database model to the scene object
 		void updateSceneLayers();
-
-		/*! \brief Define the list of actions executed by installed plugins that is exposed in
-		 *  the ModelWidget context menu */
-		void setPluginActions(const QList<QAction *> &plugin_acts);
 
 	protected:
 		QAction *action_source_code,

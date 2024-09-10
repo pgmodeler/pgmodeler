@@ -69,6 +69,9 @@
 #include "schemaview.h"
 #include "styledtextboxview.h"
 #include "tableview.h"
+#include "pgmodelerguiplugin.h"
+
+QList<const PgModelerGuiPlugin *> ModelWidget::plugins;
 
 bool ModelWidget::cut_operation {false};
 bool ModelWidget::save_restore_pos {true};
@@ -98,6 +101,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
+	plugins_actions = PgModelerGuiPlugin::getPluginsActions(PgModelerGuiPlugin::ModelAction);
 	current_zoom = 1;
 	modified = panning_mode = wheel_move = scene_moving = false;
 	curr_show_grid = curr_show_delim = true;
@@ -1837,10 +1841,10 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
-void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
+/* void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 {
 	plugins_actions = plugin_acts;
-}
+} */
 
 void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 {

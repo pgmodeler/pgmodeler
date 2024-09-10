@@ -158,6 +158,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		try
 		{
 			plugin->initPlugin(main_window);
+			PgModelerGuiPlugin::registerPlugin(plugin);
 		}
 		catch(Exception &e)
 		{
@@ -208,33 +209,5 @@ void PluginsConfigWidget::postInitPlugins()
 		Messagebox msgbox;
 		msgbox.show(Exception(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
 													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
-	}
-}
-
-QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
-{
-	QList<QAction *> list;
-
-	for(auto &plugin : plugins)
-	{
-		if(plugin->getAction(PgModelerGuiPlugin::ModelAction))
-			list.append(plugin->getAction(PgModelerGuiPlugin::ModelAction));
-	}
-
-	return list;
-}
-
-void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
-{
-	for(auto &plugin : plugins)
-	{
-		if(conf_menu && plugin->getAction(PgModelerGuiPlugin::ConfigAction))
-			conf_menu->addAction(plugin->getAction(PgModelerGuiPlugin::ConfigAction));
-
-		if(plugin->getAction(PgModelerGuiPlugin::ToolbarAction))
-			tb_actions.append(plugin->getAction(PgModelerGuiPlugin::ToolbarAction));
-
-		if(plugin->getToolButton())
-			db_expl_btns.append(plugin->getToolButton());
 	}
 }

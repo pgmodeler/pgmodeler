@@ -176,7 +176,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		 *  This can be used to add custom actions for the current database explorer instance.
 		 *  the method will perform the need operations to create a copy of the provided button
 		 *  (icon, connect signal/slots, etc). */
-		void addPluginButton(QToolButton *btn);
+		void installPluginButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);

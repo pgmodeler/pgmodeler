@@ -32,6 +32,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	output_wgt->setVisible(false);
+	plugins_wgts_stc->setVisible(false);
+
 	sql_cmd_txt=GuiUtilsNs::createNumberedTextEditor(sql_cmd_wgt);
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
@@ -239,6 +242,11 @@ void SQLExecutionWidget::reloadHighlightConfigs()
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void SQLExecutionWidget::addPluginFeature(QToolButton *btn, QWidget *wgt)
+{
+
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -959,15 +967,6 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
-	if(!visible)
-	{
-		v_splitter->handle(1)->setCursor(Qt::ArrowCursor);
-		v_splitter->handle(1)->setEnabled(false);
-	}
-	else
-		v_splitter->handle(1)->setCursor(Qt::SplitVCursor);
-
-	v_splitter->handle(1)->setEnabled(visible);
 	output_wgt->setVisible(visible);
 
 	if(!visible)
