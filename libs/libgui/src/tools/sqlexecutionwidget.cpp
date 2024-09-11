@@ -23,6 +23,7 @@
 #include "utilsns.h"
 #include "csvdocument.h"
 #include "messagebox.h"
+#include "pgmodelerguiplugin.h"
 
 std::map<QString, QString> SQLExecutionWidget::cmd_history;
 int SQLExecutionWidget::cmd_history_max_len {1000};
@@ -31,6 +32,9 @@ const QString SQLExecutionWidget::ColumnNullValue {"␀"};
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
+
+	for(auto &[btn, wgt] : PgModelerGuiPlugin::getPluginsWidgets(this))
+		installPluginWidgets(btn, wgt);
 
 	output_wgt->setVisible(false);
 	plugins_wgts_stc->setVisible(false);
@@ -244,9 +248,24 @@ void SQLExecutionWidget::reloadHighlightConfigs()
 	}
 }
 
-void SQLExecutionWidget::addPluginFeature(QToolButton *btn, QWidget *wgt)
+void SQLExecutionWidget::installPluginWidgets(QToolButton *btn, QWidget *wgt)
 {
+	if(!btn)
+		return;
 
+	top_btns_lt->insertWidget(top_btns_lt->count() - 2, btn);
+
+	/* Forcing the button to have the same features of all other buttons in the
+	 * top area when they lie */
+	btn->setIconSize(run_sql_tb->iconSize());
+	btn->setSizePolicy(run_sql_tb->sizePolicy());
+	btn->setToolButtonStyle(run_sql_tb->toolButtonStyle());
+	btn->setAutoRaise(run_sql_tb->autoRaise());
+
+	if(wgt)
+	{
+
+	}
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -287,23 +306,24 @@ void SQLExecutionWidget::showEvent(QShowEvent *)
 
 void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 {
-	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+	Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon;
 
 	if(event->size().width() < this->baseSize().width())
-		style=Qt::ToolButtonIconOnly;
+		style = Qt::ToolButtonIconOnly;
 
-
-	if(file_tb->toolButtonStyle()!=style)
+	if(run_sql_tb->toolButtonStyle() != style)
 	{
-		file_tb->setToolButtonStyle(style);
-		run_sql_tb->setToolButtonStyle(style);
-		clear_btn->setToolButtonStyle(style);
-		search_tb->setToolButtonStyle(style);
-		snippets_tb->setToolButtonStyle(style);
-		export_tb->setToolButtonStyle(style);
-		output_tb->setToolButtonStyle(style);
-		stop_tb->setToolButtonStyle(style);
-		filter_tb->setToolButtonStyle(style);
+		QLayoutItem *li {};
+		QToolButton *btn {};
+
+		for(int idx = 0; idx < top_btns_lt->count(); idx++)
+		{
+			li = top_btns_lt->itemAt(idx);
+			btn = qobject_cast<QToolButton *>(li->widget());
+
+			if(btn)
+				btn->setToolButtonStyle(style);
+		}
 	}
 }
 

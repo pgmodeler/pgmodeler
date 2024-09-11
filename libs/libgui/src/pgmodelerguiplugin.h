@@ -157,6 +157,9 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 		//! \brief Returns the list of toolbuttons all registered plugins
 		static QList<QToolButton *> getPluginsToolButtons();
 
+		//! \brief Returns the list of custom widgets of all registered plugins
+		static QList<PluginWidgets> getPluginsWidgets(QWidget *parent);
+
 		friend class PluginsConfigWidget;
 };
 

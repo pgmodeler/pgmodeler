@@ -130,6 +130,24 @@ QList<QToolButton *> PgModelerGuiPlugin::getPluginsToolButtons()
 	return buttons;
 }
 
+QList<PgModelerGuiPlugin::PluginWidgets> PgModelerGuiPlugin::getPluginsWidgets(QWidget *parent)
+{
+	QList<PluginWidgets> widgets;
+	PluginWidgets p_wgt;
+
+	for(auto &plug : reg_plugins)
+	{
+		auto [btn, wgt] = p_wgt = plug->createWidgets(parent);
+
+		if(!btn && !wgt)
+			continue;
+
+		widgets.append(p_wgt);
+	}
+
+	return widgets;
+}
+
 void PgModelerGuiPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;

@@ -97,7 +97,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		bool eventFilter(QObject *object, QEvent *event);
 		void reloadHighlightConfigs();
 
-		void addPluginFeature(QToolButton *btn, QWidget *wgt);
+		void installPluginWidgets(QToolButton *btn, QWidget *wgt);
 
 	public:
 		static const QString ColumnNullValue;
