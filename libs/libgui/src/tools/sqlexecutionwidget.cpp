@@ -33,8 +33,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	for(auto &[btn, wgt] : PgModelerGuiPlugin::getPluginsWidgets(this))
-		installPluginWidgets(btn, wgt);
+	for(auto &p_wgt : PgModelerGuiPlugin::getPluginsWidgets(this))
+		installPluginWidgets(p_wgt.button, p_wgt.widget);
 
 	output_wgt->setVisible(false);
 	plugins_wgts_stc->setVisible(false);
@@ -145,7 +145,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(clear_btn, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
 	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, &SQLExecutionWidget::enableCommandButtons);
 
-	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
+	connect(run_sql_tb, &QToolButton::clicked, this, qOverload<>(&SQLExecutionWidget::runSQLCommand));
 	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
 
 	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
@@ -253,7 +253,7 @@ void SQLExecutionWidget::installPluginWidgets(QToolButton *btn, QWidget *wgt)
 	if(!btn)
 		return;
 
-	top_btns_lt->insertWidget(top_btns_lt->count() - 2, btn);
+	plugins_btns_lt->addWidget(btn);
 
 	/* Forcing the button to have the same features of all other buttons in the
 	 * top area when they lie */
@@ -261,11 +261,40 @@ void SQLExecutionWidget::installPluginWidgets(QToolButton *btn, QWidget *wgt)
 	btn->setSizePolicy(run_sql_tb->sizePolicy());
 	btn->setToolButtonStyle(run_sql_tb->toolButtonStyle());
 	btn->setAutoRaise(run_sql_tb->autoRaise());
+	btn->setParent(this);
+
+	connect(btn, &QToolButton::toggled, this, &SQLExecutionWidget::togglePluginButton);
+
+	int idx = -1;
 
 	if(wgt)
-	{
+		idx = plugins_wgts_stc->addWidget(wgt);
 
+	btn->setProperty(Attributes::Index.toStdString().c_str(), idx);
+}
+
+void SQLExecutionWidget::togglePluginButton(bool checked)
+{
+	QToolButton *p_btn = qobject_cast<QToolButton *>(sender());
+
+	if(!p_btn->isCheckable())
+		return;
+
+	for(auto &btn : findChildren<QToolButton *>())
+	{
+		if(btn != p_btn &&
+			 plugins_btns_lt->indexOf(btn) >= 0 && btn->isChecked())
+		{
+			btn->blockSignals(true);
+			btn->setChecked(false);
+			btn->blockSignals(false);
+		}
 	}
+
+	int wgt_idx = p_btn->property(Attributes::Index.toStdString().c_str()).toInt();
+
+	plugins_wgts_stc->setVisible(checked && wgt_idx >= 0);
+	plugins_wgts_stc->setCurrentIndex(wgt_idx);
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -313,17 +342,8 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 
 	if(run_sql_tb->toolButtonStyle() != style)
 	{
-		QLayoutItem *li {};
-		QToolButton *btn {};
-
-		for(int idx = 0; idx < top_btns_lt->count(); idx++)
-		{
-			li = top_btns_lt->itemAt(idx);
-			btn = qobject_cast<QToolButton *>(li->widget());
-
-			if(btn)
-				btn->setToolButtonStyle(style);
-		}
+		for(auto &btn : findChildren<QToolButton *>())
+			btn->setToolButtonStyle(style);
 	}
 }
 
@@ -674,18 +694,22 @@ void SQLExecutionWidget::destroyResultModel()
 
 void SQLExecutionWidget::runSQLCommand()
 {
-	QString cmd=sql_cmd_txt->textCursor().selectedText();
-
-	output_tb->setChecked(true);
+	QString cmd = sql_cmd_txt->textCursor().selectedText();
 
 	if(cmd.isEmpty())
-		cmd=sql_cmd_txt->toPlainText();
+		cmd = sql_cmd_txt->toPlainText();
 	else
 		cmd.replace(QChar::ParagraphSeparator, '\n');
 
+	runSQLCommand(cmd);
+}
+
+void SQLExecutionWidget::runSQLCommand(const QString &cmd)
+{
+	output_tb->setChecked(true);
 	msgoutput_lst->clear();
 	sql_exec_hlp.setCommand(cmd);
-	start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+	start_exec = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	sql_exec_thread.start();
 	switchToExecutionMode(true);
 
@@ -693,9 +717,9 @@ void SQLExecutionWidget::runSQLCommand()
 	output_tbw->setTabText(0, tr("Results"));
 	output_tbw->setCurrentIndex(1);
 	GuiUtilsNs::createOutputListItem(msgoutput_lst,
-																			tr("[%1]: SQL command is running...")
-																			.arg(QTime::currentTime().toString("hh:mm:ss.zzz")),
-																			QPixmap(GuiUtilsNs::getIconPath("info")), false);
+																		tr("[%1]: SQL command is running...")
+																				.arg(QTime::currentTime().toString("hh:mm:ss.zzz")),
+																		QPixmap(GuiUtilsNs::getIconPath("info")), false);
 }
 
 void SQLExecutionWidget::saveCommands()

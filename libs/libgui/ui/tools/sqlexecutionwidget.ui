@@ -428,6 +428,13 @@
       </widget>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="plugins_btns_lt">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+      </layout>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

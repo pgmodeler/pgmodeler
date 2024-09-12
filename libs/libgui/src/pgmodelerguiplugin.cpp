@@ -137,9 +137,9 @@ QList<PgModelerGuiPlugin::PluginWidgets> PgModelerGuiPlugin::getPluginsWidgets(Q
 
 	for(auto &plug : reg_plugins)
 	{
-		auto [btn, wgt] = p_wgt = plug->createWidgets(parent);
+		p_wgt = plug->createWidgets(parent);
 
-		if(!btn && !wgt)
+		if(!p_wgt.button && !p_wgt.widget)
 			continue;
 
 		widgets.append(p_wgt);

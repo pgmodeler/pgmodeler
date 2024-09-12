@@ -103,6 +103,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		static const QString ColumnNullValue;
 
 		SQLExecutionWidget(QWidget * parent = nullptr);
+
 		virtual ~SQLExecutionWidget();
 
 		//! \brief Configures the connection to query the server
@@ -155,12 +156,15 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Show the exception message in the output widget
 		void	handleExecutionAborted(Exception e);
 
+		//! \brief Runs the current typed sql command
+		void runSQLCommand();
+
+		//! \brief Runs the provided sql command
+		void runSQLCommand(const QString &cmd);
+
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
 		void enableCommandButtons();
-
-		//! \brief Runs the current typed sql command
-		void runSQLCommand();
 
 		//! \brief Save the current typed sql command on a file
 		void saveCommands();
@@ -180,6 +184,8 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void finishExecution(int rows_affected = 0);
 
 		void filterResults();
+
+		void togglePluginButton(bool checked);
 
 		friend class SQLToolWidget;
 };
