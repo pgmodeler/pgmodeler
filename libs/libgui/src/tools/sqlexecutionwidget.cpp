@@ -38,6 +38,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	output_wgt->setVisible(false);
 	plugins_wgts_stc->setVisible(false);
+	sql_cmd_splitter->setSizes({800, 200});
 
 	sql_cmd_txt=GuiUtilsNs::createNumberedTextEditor(sql_cmd_wgt);
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
@@ -293,8 +294,11 @@ void SQLExecutionWidget::togglePluginButton(bool checked)
 
 	int wgt_idx = p_btn->property(Attributes::Index.toStdString().c_str()).toInt();
 
+	// Disabling updates prevents flickering when hidding the stacked widgets
+	plugins_wgts_stc->setUpdatesEnabled(false);
 	plugins_wgts_stc->setVisible(checked && wgt_idx >= 0);
 	plugins_wgts_stc->setCurrentIndex(wgt_idx);
+	plugins_wgts_stc->setUpdatesEnabled(true);
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -1011,7 +1015,10 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
+	// Disabling updates prevents flickering when hidding the output panel
+	output_wgt->setUpdatesEnabled(false);
 	output_wgt->setVisible(visible);
+	output_wgt->setUpdatesEnabled(true);
 
 	if(!visible)
 		/* Force the splitter size to be the same as the sql_cmd_wgt maximum height
