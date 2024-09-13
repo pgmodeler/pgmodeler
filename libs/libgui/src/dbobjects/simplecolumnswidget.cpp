@@ -28,7 +28,7 @@ SimpleColumnsWidget::SimpleColumnsWidget(QWidget *parent) : QWidget(parent)
 
 	pgsqltype_wgt = new PgSQLTypeWidget(this);
 
-	columns_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
+	columns_tab = new CustomTableWidget(CustomTableWidget::AllButtons, true, this);
 	columns_tab->setColumnCount(3);
 	columns_tab->setHeaderLabel(tr("Name"), 0);
 	columns_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
@@ -46,10 +46,10 @@ SimpleColumnsWidget::SimpleColumnsWidget(QWidget *parent) : QWidget(parent)
 
 	setMinimumSize(640, 480);
 
-	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, &SimpleColumnsWidget::addColumn);
-	connect(columns_tab, &ObjectsTableWidget::s_rowUpdated, this, &SimpleColumnsWidget::updateColumn);
-	connect(columns_tab, &ObjectsTableWidget::s_rowEdited, this, &SimpleColumnsWidget::editColumn);
-	connect(columns_tab, &ObjectsTableWidget::s_rowDuplicated, this, &SimpleColumnsWidget::duplicateColumn);
+	connect(columns_tab, &CustomTableWidget::s_rowAdded, this, &SimpleColumnsWidget::addColumn);
+	connect(columns_tab, &CustomTableWidget::s_rowUpdated, this, &SimpleColumnsWidget::updateColumn);
+	connect(columns_tab, &CustomTableWidget::s_rowEdited, this, &SimpleColumnsWidget::editColumn);
+	connect(columns_tab, &CustomTableWidget::s_rowDuplicated, this, &SimpleColumnsWidget::duplicateColumn);
 }
 
 void SimpleColumnsWidget::setAttributes(DatabaseModel *model, const std::vector<SimpleColumn> &cols)

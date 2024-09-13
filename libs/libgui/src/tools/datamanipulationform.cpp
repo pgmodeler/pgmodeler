@@ -21,7 +21,7 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "messagebox.h"
@@ -1103,14 +1103,14 @@ void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
 		QColor item_fg_colors[3] = {
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemFgColor),
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemFgColor),
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemFgColor) },
+			CustomTableWidget::getTableItemColor(CustomTableWidget::AddedItemFgColor),
+			CustomTableWidget::getTableItemColor(CustomTableWidget::UpdatedItemFgColor),
+			CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemFgColor) },
 
 			item_bg_colors[3] = {
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemBgColor),
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemBgColor),
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor) };
+						CustomTableWidget::getTableItemColor(CustomTableWidget::AddedItemBgColor),
+						CustomTableWidget::getTableItemColor(CustomTableWidget::UpdatedItemBgColor),
+						CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemBgColor) };
 
 		if(operation==OpDelete)
 			tooltip=tooltip.arg(tr("deleted"));

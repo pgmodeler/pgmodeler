@@ -26,7 +26,7 @@
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {
-	ObjectsTableWidget *tab = nullptr;
+	CustomTableWidget *tab = nullptr;
 	ObjectType types[] = { ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 	QGridLayout *grid = nullptr;
 	QVBoxLayout *vbox = nullptr;
@@ -79,8 +79,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 	for(auto &type : types)
 	{
-		tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																(ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
+		tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																(CustomTableWidget::UpdateButton  | CustomTableWidget::MoveButtons), true, this);
 
 		objects_tab_map[type] = tab;
 
@@ -90,11 +90,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		attributes_tbw->widget(tab_id)->setLayout(grid);
 		tab_id++;
 
-		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
-		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
-		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
+		connect(tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
+		connect(tab, &CustomTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
+		connect(tab, &CustomTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
 	}
 
 	objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
@@ -154,7 +154,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	setMinimumSize(700, 650);
 }
 
-ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
+CustomTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return objects_tab_map[obj_type];
@@ -179,7 +179,7 @@ void ViewWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -209,7 +209,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
 	int op_id = -1;
 
@@ -314,7 +314,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, CustomTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -333,7 +333,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 void ViewWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
 	Index *index=nullptr;
@@ -399,7 +399,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 void ViewWidget::listObjects(ObjectType obj_type)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	unsigned count, i;
 	View *view=nullptr;
 

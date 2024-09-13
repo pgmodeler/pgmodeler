@@ -5,9 +5,9 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, Ob
 {
 	Ui_ExtensionWidget::setupUi(this);
 
-	types_tab = new ObjectsTableWidget(ObjectsTableWidget::AddButton |
-																		 ObjectsTableWidget::RemoveButton |
-																		 ObjectsTableWidget::RemoveAllButton, true, this);
+	types_tab = new CustomTableWidget(CustomTableWidget::AddButton |
+																		 CustomTableWidget::RemoveButton |
+																		 CustomTableWidget::RemoveAllButton, true, this);
 	types_tab->setCellsEditable(true);
 	types_tab->setColumnCount(1);
 	types_tab->setHeaderLabel(tr("Name"), 0);

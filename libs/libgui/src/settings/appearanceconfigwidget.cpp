@@ -18,7 +18,7 @@
 
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "customuistyle.h"
 #include "guiutilsns.h"
 #include "relationshipview.h"
@@ -930,7 +930,7 @@ void AppearanceConfigWidget::applyUiTheme()
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
-		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+		CustomTableWidget::setTableItemColor(static_cast<CustomTableWidget::TableItemColor>(idx),
 																					QColor(item_colors->at(idx)));
 	}
 

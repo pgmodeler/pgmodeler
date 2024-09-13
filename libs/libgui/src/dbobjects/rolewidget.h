@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rolewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
@@ -37,7 +37,7 @@ class __libgui RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		ModelObjectsWidget *object_selection_wgt;
 
 		//! \brief Store the table widgets used to reference the member roles
-		ObjectsTableWidget *members_tab[3];
+		CustomTableWidget *members_tab[3];
 
 		//! \brief Fills the tables with to member roles of the editing role
 		void fillMembersTable();

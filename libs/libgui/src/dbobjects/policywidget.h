@@ -23,7 +23,7 @@
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/modelobjectswidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
@@ -34,7 +34,7 @@ class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 
 		ModelObjectsWidget *model_objs_wgt;
 
-		ObjectsTableWidget *roles_tab;
+		CustomTableWidget *roles_tab;
 
 		SyntaxHighlighter *using_hl, *check_hl;
 

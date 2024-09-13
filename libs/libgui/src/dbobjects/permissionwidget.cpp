@@ -42,9 +42,9 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	configureFormLayout(permission_grid, ObjectType::Permission);
 
-	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
-									ObjectsTableWidget::RemoveButton |
-									ObjectsTableWidget::EditButton, false, this);
+	roles_tab=new CustomTableWidget(CustomTableWidget::AddButton |
+									CustomTableWidget::RemoveButton |
+									CustomTableWidget::EditButton, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(tr("Name"),0);
 	roles_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
@@ -54,9 +54,9 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	roles_gb->setLayout(grid);
 
-	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::RemoveButton |
-										  ObjectsTableWidget::EditButton |
-										  ObjectsTableWidget::RemoveAllButton, true, this);
+	permissions_tab=new CustomTableWidget(CustomTableWidget::RemoveButton |
+										  CustomTableWidget::EditButton |
+										  CustomTableWidget::RemoveAllButton, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(tr("Id"),0);
 	permissions_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
@@ -90,16 +90,16 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
-	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, roles_tab, &ObjectsTableWidget::selectRow);
-	connect(roles_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::selectRole);
-	connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::enableEditButtons);
-	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::enableEditButtons);
-	connect(roles_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::disableGrantOptions);
-	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::disableGrantOptions);
+	connect(roles_tab, &CustomTableWidget::s_rowAdded, roles_tab, &CustomTableWidget::selectRow);
+	connect(roles_tab, &CustomTableWidget::s_rowEdited, this, &PermissionWidget::selectRole);
+	connect(roles_tab, &CustomTableWidget::s_rowRemoved, this, &PermissionWidget::enableEditButtons);
+	connect(roles_tab, &CustomTableWidget::s_rowAdded, this, &PermissionWidget::enableEditButtons);
+	connect(roles_tab, &CustomTableWidget::s_rowRemoved, this, &PermissionWidget::disableGrantOptions);
+	connect(roles_tab, &CustomTableWidget::s_rowAdded, this, &PermissionWidget::disableGrantOptions);
 
-	connect(permissions_tab, &ObjectsTableWidget::s_rowRemoved, this, &PermissionWidget::removePermission);
-	connect(permissions_tab, &ObjectsTableWidget::s_rowEdited, this, &PermissionWidget::editPermission);
-	connect(permissions_tab, &ObjectsTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
+	connect(permissions_tab, &CustomTableWidget::s_rowRemoved, this, &PermissionWidget::removePermission);
+	connect(permissions_tab, &CustomTableWidget::s_rowEdited, this, &PermissionWidget::editPermission);
+	connect(permissions_tab, &CustomTableWidget::s_rowSelected, this, &PermissionWidget::selectPermission);
 
 	connect(cancel_tb, &QToolButton::clicked, this, &PermissionWidget::cancelOperation);
 	connect(add_perm_tb, &QToolButton::clicked, this, __slot(this, PermissionWidget::addPermission));
@@ -137,8 +137,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			__trycatch( showSelectedRoleData(); )
 		});
 
-		connect(roles_tab, &ObjectsTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
-		connect(permissions_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
+		connect(roles_tab, &CustomTableWidget::s_rowAdded, this, &PermissionWidget::selectRole);
+		connect(permissions_tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, PermissionWidget::removePermissions));
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 

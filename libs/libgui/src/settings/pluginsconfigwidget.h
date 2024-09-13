@@ -27,7 +27,7 @@
 
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "pgmodelerguiplugin.h"
 #include "widgets/fileselectorwidget.h"
 
@@ -39,7 +39,7 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		QList<PgModelerGuiPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
-		ObjectsTableWidget *plugins_tab;
+		CustomTableWidget *plugins_tab;
 
 		FileSelectorWidget *root_dir_sel;
 

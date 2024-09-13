@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_usermappingwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 	private:
@@ -35,7 +35,7 @@ class __libgui UserMappingWidget: public BaseObjectWidget, public Ui::UserMappin
 
 		ObjectSelectorWidget *server_sel;
 
-		ObjectsTableWidget *options_tab;
+		CustomTableWidget *options_tab;
 
 	public:
 		UserMappingWidget(QWidget * parent = nullptr);

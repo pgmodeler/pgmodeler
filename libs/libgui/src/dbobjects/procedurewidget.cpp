@@ -23,9 +23,9 @@ ProcedureWidget::ProcedureWidget(QWidget *parent): BaseFunctionWidget(parent, Ob
 	func_config_twg->widget(0)->layout()->addItem(new QSpacerItem(20, 20, QSizePolicy::Preferred, QSizePolicy::Expanding));
 	configureFormLayout(base_function_grid, ObjectType::Procedure);
 
-	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ProcedureWidget::showParameterForm));
-	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ProcedureWidget::showParameterForm));
-	connect(parameters_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ProcedureWidget::duplicateParameter);
+	connect(parameters_tab, &CustomTableWidget::s_rowAdded, this, __slot(this, ProcedureWidget::showParameterForm));
+	connect(parameters_tab, &CustomTableWidget::s_rowEdited, this, __slot(this, ProcedureWidget::showParameterForm));
+	connect(parameters_tab, &CustomTableWidget::s_rowDuplicated, this, &ProcedureWidget::duplicateParameter);
 
 	configureTabOrder();
 	setMinimumSize(650, 700);

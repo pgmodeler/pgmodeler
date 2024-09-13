@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_triggerwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "dbobjects/columnpickerwidget.h"
 #include "utils/syntaxhighlighter.h"
 
@@ -41,7 +41,7 @@ class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget 
 		SyntaxHighlighter *cond_expr_hl;
 
 		//! \brief Object tables used to control columns and agruments
-		ObjectsTableWidget *arguments_tab;
+		CustomTableWidget *arguments_tab;
 
 		//! \brief Selectors for reference table and trigger function
 		ObjectSelectorWidget *ref_table_sel,

@@ -27,14 +27,14 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tablewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "elementstablewidget.h"
 
 class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *parent_tables, *options_tab;
+		CustomTableWidget *parent_tables, *options_tab;
 
 		ElementsTableWidget *partition_keys_tab;
 
@@ -43,7 +43,7 @@ class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		QFrame *warn_frame;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
-		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, CustomTableWidget *> objects_tab_map;
 
 		//! \brief Lists (on the correct object table) the table objects according to the specified type
 		void listObjects(ObjectType obj_type);
@@ -52,7 +52,7 @@ class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void showObjectData(TableObject *object, int row);
 
 		//! \brief Returns the object table according with the child type
-		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
+		CustomTableWidget *getObjectTable(ObjectType obj_type);
 
 		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
 		ObjectType getObjectType(QObject *sender);

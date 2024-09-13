@@ -346,7 +346,7 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 
 	if(run_sql_tb->toolButtonStyle() != style)
 	{
-		for(auto &btn : findChildren<QToolButton *>())
+		for(auto &btn : findChildren<QToolButton *>(Qt::FindDirectChildrenOnly))
 			btn->setToolButtonStyle(style);
 	}
 }

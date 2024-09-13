@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "codecompletionwidget.h"
 
 class __libgui RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
@@ -39,7 +39,7 @@ class __libgui RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 
 		CodeCompletionWidget *command_cp;
 
-		ObjectsTableWidget *commands_tab;
+		CustomTableWidget *commands_tab;
 
 	public:
 		RuleWidget(QWidget * parent = nullptr);

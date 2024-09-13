@@ -32,8 +32,8 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 	connect(&element_form, &BaseForm::accepted, element_wgt, &ElementWidget::applyConfiguration);
 
 	QVBoxLayout *vbox = new QVBoxLayout(this);
-	elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																			(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
+	elements_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+																			(CustomTableWidget::UpdateButton | CustomTableWidget::DuplicateButton), true, this);
 
 	elements_tab->setColumnCount(7);
 	elements_tab->setHeaderLabel(tr("Element"), 0);
@@ -52,8 +52,8 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 	vbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	vbox->addWidget(elements_tab);
 
-	connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
-	connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
+	connect(elements_tab, &CustomTableWidget::s_rowAdded, this, &ElementsTableWidget::addElement);
+	connect(elements_tab, &CustomTableWidget::s_rowEdited, this, &ElementsTableWidget::editElement);
 }
 
 ElementsTableWidget::~ElementsTableWidget()

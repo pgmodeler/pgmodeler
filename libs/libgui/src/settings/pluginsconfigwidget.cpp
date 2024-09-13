@@ -32,14 +32,14 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 
-	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
+	plugins_tab=new CustomTableWidget(CustomTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(tr("Plugin"),0);
 	plugins_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("plugins")),0);
 	plugins_tab->setHeaderLabel(tr("Version"),1);
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
-	connect(plugins_tab, &ObjectsTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
+	connect(plugins_tab, &CustomTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
 
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->addWidget(plugins_tab,0,0,1,1);

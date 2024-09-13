@@ -18,20 +18,20 @@
 
 /**
 \ingroup libgui
-\class ObjectsTableWidget
-\brief Implements a basic table (grid) which can be used commonly to store
+\class CustomTableWidget
+\brief Implements a customized table widget (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This
 class also implements operations to handle insertion/deletion/update/movements
 of rows on the table.
 */
 
-#ifndef OBJECT_TABLE_WIDGET_H
-#define OBJECT_TABLE_WIDGET_H
+#ifndef CUSTOM_TABLE_WIDGET_H
+#define CUSTOM_TABLE_WIDGET_H
 
-#include "ui_objectstablewidget.h"
+#include "ui_customtablewidget.h"
 #include "guiglobal.h"
 
-class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
+class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 	private:
 		Q_OBJECT
 
@@ -100,7 +100,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 			RelAddedItemAltFgColor
 		};
 
-		ObjectsTableWidget(ButtonConf button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
+		CustomTableWidget(QWidget * parent = nullptr);
+
+		CustomTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget * parent = nullptr);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -232,7 +234,7 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		void selectRow(int lin_idx);
 
 		//! \brief Controls the enable state of each button
-		void setButtonsEnabled(ObjectsTableWidget::ButtonConf button_conf, bool value);
+		void setButtonsEnabled(CustomTableWidget::ButtonConf button_conf, bool value);
 
 		void setCellsEditable(bool value);
 

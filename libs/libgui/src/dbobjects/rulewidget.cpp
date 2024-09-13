@@ -33,7 +33,7 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 	command_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 	command_cp=new CodeCompletionWidget(comando_txt);
 
-	commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	commands_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^ CustomTableWidget::DuplicateButton, true, this);
 	commands_tab->setHeaderLabel(tr("SQL command"),0);
 	commands_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("sqlcode")),0);
 	dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
@@ -47,9 +47,9 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 	event_cmb->addItems(EventType::getTypes());
 	exec_type_cmb->addItems(ExecutionType::getTypes());
 
-	connect(commands_tab, &ObjectsTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
-	connect(commands_tab, &ObjectsTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
-	connect(commands_tab, &ObjectsTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
+	connect(commands_tab, &CustomTableWidget::s_rowAdded, this, &RuleWidget::handleCommand);
+	connect(commands_tab, &CustomTableWidget::s_rowUpdated, this, &RuleWidget::handleCommand);
+	connect(commands_tab, &CustomTableWidget::s_rowEdited, this, &RuleWidget::editCommand);
 
 	setRequiredField(event_lbl);
 	configureTabOrder();

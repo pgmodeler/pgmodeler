@@ -36,10 +36,10 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	check_hl = new SyntaxHighlighter(check_edt, false, false, font().pointSizeF());
 	check_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-	roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																		 (ObjectsTableWidget::DuplicateButton |
-																			ObjectsTableWidget::UpdateButton |
-																			ObjectsTableWidget::EditButton), true, this);
+	roles_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																		 (CustomTableWidget::DuplicateButton |
+																			CustomTableWidget::UpdateButton |
+																			CustomTableWidget::EditButton), true, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(tr("Name"), 0);
 	roles_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")), 0);
@@ -59,7 +59,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	configureFormLayout(policy_grid, ObjectType::Policy);
 	configureTabOrder({ command_cmb, permissive_chk, attribs_tbw });
 
-	connect(roles_tab, &ObjectsTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
+	connect(roles_tab, &CustomTableWidget::s_rowAdded, model_objs_wgt, &ModelObjectsWidget::show);
 	connect(model_objs_wgt, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, &PolicyWidget::selectRole);
 }
 

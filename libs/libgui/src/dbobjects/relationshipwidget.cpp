@@ -52,15 +52,15 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		patterns_hl[i]->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 	}
 
-	attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-										 (ObjectsTableWidget::UpdateButton |
-											ObjectsTableWidget::MoveButtons), true, this);
+	attributes_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+										 (CustomTableWidget::UpdateButton |
+											CustomTableWidget::MoveButtons), true, this);
 
-	constraints_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons  ^
-											(ObjectsTableWidget::UpdateButton |
-											 ObjectsTableWidget::MoveButtons), true, this);
+	constraints_tab=new CustomTableWidget(CustomTableWidget::AllButtons  ^
+											(CustomTableWidget::UpdateButton |
+											 CustomTableWidget::MoveButtons), true, this);
 
-	advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, true, this);
+	advanced_objs_tab=new CustomTableWidget(CustomTableWidget::EditButton, true, this);
 
 	attributes_tab->setColumnCount(2);
 	attributes_tab->setHeaderLabel(tr("Attribute"), 0);
@@ -80,7 +80,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
 	advanced_objs_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")),1);
 
-	connect(advanced_objs_tab, &ObjectsTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
+	connect(advanced_objs_tab, &CustomTableWidget::s_rowEdited, this, &RelationshipWidget::showAdvancedObject);
 
 	grid=new QGridLayout;
 	grid->addWidget(attributes_tab, 0,0,1,1);
@@ -157,17 +157,17 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																dynamic_cast<BaseRelationship *>(this->object)->getRelationshipType() != BaseRelationship::Relationship1n);
 	});
 
-	connect(attributes_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
-	connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
-	connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
-	connect(attributes_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
-	connect(attributes_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
+	connect(attributes_tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+	connect(attributes_tab, &CustomTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+	connect(attributes_tab, &CustomTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+	connect(attributes_tab, &CustomTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+	connect(attributes_tab, &CustomTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
 
-	connect(constraints_tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
-	connect(constraints_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
-	connect(constraints_tab, &ObjectsTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
-	connect(constraints_tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
-	connect(constraints_tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
+	connect(constraints_tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, RelationshipWidget::removeObjects));
+	connect(constraints_tab, &CustomTableWidget::s_rowAdded, this, __slot(this, RelationshipWidget::addObject));
+	connect(constraints_tab, &CustomTableWidget::s_rowEdited, this, __slot_n(this, RelationshipWidget::editObject));
+	connect(constraints_tab, &CustomTableWidget::s_rowRemoved, this, __slot_n(this, RelationshipWidget::removeObject));
+	connect(constraints_tab, &CustomTableWidget::s_rowDuplicated, this, __slot_n(this, RelationshipWidget::duplicateObject));
 
 	connect(defaults_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
 	connect(including_rb, &QRadioButton::toggled, this, &RelationshipWidget::selectCopyOptions);
@@ -310,8 +310,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		table2_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::DstTable));
 		identifier_chk->setChecked(aux_rel->isIdentifier());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
-		attributes_tab->setButtonsEnabled(ObjectsTableWidget::AllButtons, !aux_rel->isProtected());
-		constraints_tab->setButtonsEnabled(ObjectsTableWidget::AllButtons, !aux_rel->isProtected());
+		attributes_tab->setButtonsEnabled(CustomTableWidget::AllButtons, !aux_rel->isProtected());
+		constraints_tab->setButtonsEnabled(CustomTableWidget::AllButtons, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
 		listObjects(ObjectType::Column);
@@ -541,7 +541,7 @@ void RelationshipWidget::generateBoundingExpr()
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	Relationship *rel=nullptr;
 	unsigned count, i;
 
@@ -566,7 +566,7 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 		tab->clearSelection();
 		tab->blockSignals(false);
 
-		constraints_tab->setButtonsEnabled(ObjectsTableWidget::AddButton,
+		constraints_tab->setButtonsEnabled(CustomTableWidget::AddButton,
 										   attributes_tab->getRowCount() > 0);
 	}
 	catch(Exception &e)
@@ -775,7 +775,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 	BaseObject *object = nullptr, *dup_object = nullptr;
 	Relationship *rel = dynamic_cast<Relationship *>(this->object);
 	std::vector<TableObject *> obj_list;
-	ObjectsTableWidget *tab = nullptr;
+	CustomTableWidget *tab = nullptr;
 	int op_id = -1;
 
 	if(!rel)
@@ -858,7 +858,7 @@ void RelationshipWidget::editObject(int row)
 
 void RelationshipWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 
 	if(object->getObjectType()==ObjectType::Column)
 	{
