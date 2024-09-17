@@ -63,7 +63,7 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 	connect(resize_cols_tb, &QToolButton::clicked, this, &CustomTableWidget::resizeContents);
 
 	this->conf_exclusion=conf_exclusion;
-	cells_editable = false;
+	tab_adds_row = false;
 
 	setButtonConfiguration(button_conf);
 	setColumnCount(1);
@@ -169,6 +169,19 @@ void CustomTableWidget::setVerticalHeaderVisible(bool value)
 {
 	table_tbw->verticalHeader()->setVisible(value);
 	table_tbw->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+}
+
+void CustomTableWidget::setAddRowOnTabPress(bool value)
+{
+	tab_adds_row = value;
+
+	if(tab_adds_row)
+	{
+		connect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress,
+						Qt::UniqueConnection | Qt::QueuedConnection);
+	}
+	else
+		disconnect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress);
 }
 
 void CustomTableWidget::setColumnCount(unsigned col_count)
@@ -722,7 +735,6 @@ void CustomTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 
 void CustomTableWidget::setCellsEditable(bool value)
 {
-	//table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
 	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
 }
 
@@ -749,4 +761,15 @@ void CustomTableWidget::emitRowSelected()
 void CustomTableWidget::resizeEvent(QResizeEvent *)
 {
 	table_tbw->resizeRowsToContents();
+}
+
+void CustomTableWidget::addRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
+{
+	if(qApp->mouseButtons() == Qt::NoButton && tab_adds_row &&
+		 table_tbw->editTriggers() == QTableWidget::AllEditTriggers &&
+		 curr_row == 0 && curr_col == 0 &&
+		 prev_row == table_tbw->rowCount() - 1 && prev_col == table_tbw->columnCount() - 1)
+	{
+		addRow();
+	}
 }

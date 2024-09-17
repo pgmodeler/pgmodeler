@@ -39,11 +39,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		/*! \brief Indicates that a confirmation message must be shown when the user try
 		to remove an element from table. By default, the exclusions are made without confirmation */
-		bool conf_exclusion;
+		bool conf_exclusion,
 
-		/*! \brief Indicates that cells' texts can be edited by the user. When changing the text of a cell
-		 * the signal s_cellTextChanged(int,int) is emitted */
-		bool cells_editable;
+		tab_adds_row;
 
 		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
 
@@ -195,6 +193,8 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		void setVerticalHeaderVisible(bool value);
 
+		void setAddRowOnTabPress(bool value);
+
 		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
 		static QColor getTableItemColor(TableItemColor color_idx);
@@ -223,6 +223,8 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		void setButtonsEnabled();
 
 		void emitRowSelected();
+
+		void addRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 
 	public slots:
 		//! \brief Adds a new row at the end of the table
