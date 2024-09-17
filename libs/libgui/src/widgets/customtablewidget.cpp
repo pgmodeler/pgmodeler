@@ -132,6 +132,11 @@ void CustomTableWidget::setButtonConfiguration(ButtonConf button_conf)
 	}
 }
 
+void CustomTableWidget::setSelectionMode(QAbstractItemView::SelectionMode sel_mode)
+{
+	table_tbw->setSelectionMode(sel_mode);
+}
+
 QTableWidgetItem *CustomTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 {
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
@@ -143,25 +148,42 @@ QTableWidgetItem *CustomTableWidget::getItem(unsigned row_idx, unsigned col_idx)
 	return table_tbw->item(row_idx, col_idx);
 }
 
+void CustomTableWidget::updateVerticalHeader()
+{
+	QHeaderView *v_header = table_tbw->verticalHeader();
+
+	if(!v_header->isVisible())
+		return;
+
+	for(int row = 0; row < table_tbw->rowCount(); row++)
+		v_header->model()->setHeaderData(row, Qt::Vertical, QString::number(row + 1), Qt::DisplayRole);
+}
+
 void CustomTableWidget::adjustColumnToContents(int col)
 {
 	table_tbw->resizeColumnToContents(col);
 	table_tbw->resizeRowsToContents();
 }
 
+void CustomTableWidget::setVerticalHeaderVisible(bool value)
+{
+	table_tbw->verticalHeader()->setVisible(value);
+	table_tbw->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+}
+
 void CustomTableWidget::setColumnCount(unsigned col_count)
 {
 	if(col_count > 0)
 	{
-		unsigned i;
-		QTableWidgetItem *item=nullptr;
+		unsigned i = 0;
+		QTableWidgetItem *item = nullptr;
 
-		i=table_tbw->columnCount();
+		i = table_tbw->columnCount();
 		table_tbw->setColumnCount(col_count);
 
 		for(;i < col_count; i++)
 		{
-			item=new QTableWidgetItem;
+			item = new QTableWidgetItem;
 			item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 			table_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
 		}
@@ -436,56 +458,57 @@ void CustomTableWidget::addRow()
 
 void CustomTableWidget::removeRow(unsigned row_idx)
 {
-	unsigned i, count;
-	bool conf;
+	int count = table_tbw->columnCount();
+	bool conf = false;
 
 	if(row_idx >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Before remove the row, clears the selection
 	table_tbw->clearSelection();
-	count=table_tbw->columnCount();
 
 	//Selects all the columns of the row to be removed
-	for(i=0; i < count; i++)
+	for(int i = 0; i < count; i++)
 		table_tbw->item(row_idx, i)->setSelected(true);
 
-	table_tbw->setCurrentItem(table_tbw->item(row_idx,0));
+	table_tbw->setCurrentItem(table_tbw->item(row_idx, 0));
 
 	//Disable temporarily the exclusion confirmation
-	conf=conf_exclusion;
-	conf_exclusion=false;
+	conf = conf_exclusion;
+	conf_exclusion = false;
 	removeRow();
-	conf_exclusion=conf;
+	conf_exclusion = conf;
 }
 
 void CustomTableWidget::removeRow()
 {
-	if(table_tbw->currentRow()>=0)
+	if(table_tbw->currentRow() < 0)
+		return;
+
+	Messagebox msg_box;
+	unsigned 	row_idx = table_tbw->currentRow();
+	QTableWidgetItem *item = table_tbw->currentItem();
+
+	if(item->isSelected())
 	{
-		Messagebox msg_box;
-		unsigned 	row_idx=table_tbw->currentRow();
-		QTableWidgetItem *item=table_tbw->currentItem();
+		if(conf_exclusion)
+			msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item?"),
+									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(item->isSelected())
+		if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 		{
-			if(conf_exclusion)
-				msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+			setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
+			item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
 
-			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
-			{
-				setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
-				item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
+			emit s_rowAboutToRemove(row_idx);
 
-				emit s_rowAboutToRemove(row_idx);
+			table_tbw->removeRow(row_idx);
+			table_tbw->setCurrentItem(nullptr);
+			setButtonsEnabled();
 
-				table_tbw->removeRow(row_idx);
-				table_tbw->setCurrentItem(nullptr);
-				setButtonsEnabled();
+			emit s_rowRemoved(row_idx);
 
-				emit s_rowRemoved(row_idx);
-			}
+			updateVerticalHeader();
 		}
 	}
 }
@@ -630,7 +653,10 @@ void CustomTableWidget::moveRows()
 
 		setButtonsEnabled();
 		table_tbw->resizeRowsToContents();
+
 		emit s_rowsMoved(row, row1);
+
+		updateVerticalHeader();
 	}
 }
 
@@ -653,37 +679,42 @@ void CustomTableWidget::clearSelection()
 
 void CustomTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 {
-	int lin=-1;
-	QTableWidgetItem *item=table_tbw->currentItem();
+	int row = -1, last_row = table_tbw->rowCount() - 1;
+	bool multi_sel = false;
+	QTableWidgetItem *item = table_tbw->currentItem();
+	QList<QTableWidgetSelectionRange> sel_ranges = table_tbw->selectedRanges();
 
 	if(item)
-		lin=item->row();
+		row = item->row();
+
+	if(!sel_ranges.isEmpty())
+		multi_sel = sel_ranges.first().rowCount() > 1 || sel_ranges.size() > 1;
 
 	if((button_conf & MoveButtons) == MoveButtons)
 	{
-		move_up_tb->setEnabled(value && lin > 0);
-		move_down_tb->setEnabled(value && lin >= 0 && lin < table_tbw->rowCount()-1);
-		move_first_tb->setEnabled(value && lin > 0 && lin<=table_tbw->rowCount()-1);
-		move_last_tb->setEnabled(value && lin >=0 && lin < table_tbw->rowCount()-1);
+		move_up_tb->setEnabled(value && row > 0 && !multi_sel);
+		move_down_tb->setEnabled(value && row >= 0 && row < last_row && !multi_sel);
+		move_first_tb->setEnabled(value && row > 0 && row <= last_row && !multi_sel);
+		move_last_tb->setEnabled(value && row >=0 && row < last_row && !multi_sel);
 	}
 
 	if((button_conf & EditButton) == EditButton)
-		edit_tb->setEnabled(value && lin >= 0);
+		edit_tb->setEnabled(value && row >= 0 && !multi_sel);
 
 	if((button_conf & AddButton) == AddButton)
 		add_tb->setEnabled(value);
 
 	if((button_conf & RemoveButton) == RemoveButton)
-		remove_tb->setEnabled(value && lin >= 0);
+		remove_tb->setEnabled(value && row >= 0 && !multi_sel);
 
 	if((button_conf & RemoveAllButton) == RemoveAllButton)
 		remove_all_tb->setEnabled(value && table_tbw->rowCount() > 0);
 
 	if((button_conf & UpdateButton) == UpdateButton)
-		update_tb->setEnabled(value && lin >= 0);
+		update_tb->setEnabled(value && row >= 0 && !multi_sel);
 
 	if((button_conf & DuplicateButton) == DuplicateButton)
-		duplicate_tb->setEnabled(value && lin >= 0);
+		duplicate_tb->setEnabled(value && row >= 0 && !multi_sel);
 
 	if((button_conf & ResizeColsButton) == ResizeColsButton)
 		resize_cols_tb->setEnabled(value && table_tbw->rowCount() > 0);
@@ -691,7 +722,7 @@ void CustomTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 
 void CustomTableWidget::setCellsEditable(bool value)
 {
-	table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
+	//table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
 	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
 }
 

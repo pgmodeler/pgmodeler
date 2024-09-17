@@ -33,9 +33,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
-	for(auto &p_wgt : PgModelerGuiPlugin::getPluginsWidgets(this))
-		installPluginWidgets(p_wgt.button, p_wgt.widget);
-
 	output_wgt->setVisible(false);
 	plugins_wgts_stc->setVisible(false);
 	sql_cmd_splitter->setSizes({800, 200});
@@ -190,6 +187,10 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, &sql_exec_thread, &QThread::quit);
 	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, this, &SQLExecutionWidget::handleExecutionAborted);
 	connect(stop_tb, &QToolButton::clicked, &sql_exec_hlp, &SQLExecutionHelper::cancelCommand, Qt::DirectConnection);
+
+	// After completing the SQLExecutionWidget construction we install the plugins features
+	for(auto &p_wgt : PgModelerGuiPlugin::getPluginsWidgets(this))
+		installPluginWidgets(p_wgt.button, p_wgt.widget);
 }
 
 SQLExecutionWidget::~SQLExecutionWidget()

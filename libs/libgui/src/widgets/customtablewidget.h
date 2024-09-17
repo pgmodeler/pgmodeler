@@ -47,6 +47,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
 
+		//! \brief Updates the row numbers in the vertical header after remove/moving rows in the table
+		void updateVerticalHeader();
+
 	public:
 		//! \brief Constants used to configure the table buttons
 		enum ButtonConf: unsigned {
@@ -186,7 +189,11 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
 		void setButtonConfiguration(ButtonConf button_conf);
 
+		void setSelectionMode(QTableWidget::SelectionMode sel_mode);
+
 		void adjustColumnToContents(int col);
+
+		void setVerticalHeaderVisible(bool value);
 
 		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
@@ -236,6 +243,7 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		//! \brief Controls the enable state of each button
 		void setButtonsEnabled(CustomTableWidget::ButtonConf button_conf, bool value);
 
+		//! \brief Toggle the edition of individual cells
 		void setCellsEditable(bool value);
 
 		//! \brief Resize equally the rows and columns to their contents
