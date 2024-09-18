@@ -176,10 +176,7 @@ void CustomTableWidget::setAddRowOnTabPress(bool value)
 	tab_adds_row = value;
 
 	if(tab_adds_row)
-	{
-		connect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress,
-						Qt::UniqueConnection | Qt::QueuedConnection);
-	}
+		connect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress, Qt::UniqueConnection);
 	else
 		disconnect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress);
 }
@@ -495,34 +492,47 @@ void CustomTableWidget::removeRow(unsigned row_idx)
 
 void CustomTableWidget::removeRow()
 {
-	if(table_tbw->currentRow() < 0)
+	QList<QTableWidgetItem *> sel_items = table_tbw->selectedItems();
+
+	if(sel_items.isEmpty())
 		return;
+
+	std::vector<int> row_idxs;
+
+	// Storing all items row ids so we can delete the correct rows
+	std::for_each(sel_items.begin(), sel_items.end(), [&row_idxs](auto &item){
+		row_idxs.push_back(item->row());
+	});
+
+	// Sorting the row ids and removing the duplicates
+	std::sort(row_idxs.begin(), row_idxs.end());
+	row_idxs.erase(std::unique(row_idxs.begin(), row_idxs.end()), row_idxs.end());
 
 	Messagebox msg_box;
 	unsigned 	row_idx = table_tbw->currentRow();
-	QTableWidgetItem *item = table_tbw->currentItem();
 
-	if(item->isSelected())
+	if(conf_exclusion)
 	{
-		if(conf_exclusion)
-			msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item?"),
-									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item(s)?"),
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	}
 
-		if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
+	if(!conf_exclusion || (conf_exclusion && msg_box.result() == QDialog::Accepted))
+	{
+		// Now we iterate reverselly over the row ids list and remove each row
+		for(auto itr = row_idxs.rbegin(); itr != row_idxs.rend(); itr++)
 		{
-			setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
-			item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
+			emit s_rowAboutToRemove(*itr);
 
-			emit s_rowAboutToRemove(row_idx);
-
-			table_tbw->removeRow(row_idx);
+			setRowData(QVariant::fromValue<void *>(nullptr), *itr);
+			table_tbw->removeRow(*itr);
 			table_tbw->setCurrentItem(nullptr);
 			setButtonsEnabled();
 
 			emit s_rowRemoved(row_idx);
-
-			updateVerticalHeader();
 		}
+
+		updateVerticalHeader();
 	}
 }
 
@@ -718,7 +728,7 @@ void CustomTableWidget::setButtonsEnabled(ButtonConf button_conf, bool value)
 		add_tb->setEnabled(value);
 
 	if((button_conf & RemoveButton) == RemoveButton)
-		remove_tb->setEnabled(value && row >= 0 && !multi_sel);
+		remove_tb->setEnabled(value && row >= 0);
 
 	if((button_conf & RemoveAllButton) == RemoveAllButton)
 		remove_all_tb->setEnabled(value && table_tbw->rowCount() > 0);
