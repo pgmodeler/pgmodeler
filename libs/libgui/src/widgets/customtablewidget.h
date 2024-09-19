@@ -123,6 +123,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		//! \brief Sets the text of the specified cell
 		void setCellText(const QString &text, unsigned row_idx, unsigned col_idx);
 
+		//! \brief Sets the flags of the specified cell
+		void setCellFlags(Qt::ItemFlags flags, unsigned row_idx, unsigned col_idx);
+
 		//! \brief Sets the data which the specified row stores
 		void setRowData(const QVariant &data, unsigned row_idx);
 
@@ -156,9 +159,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
 
-		void setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state);
+		void setCellCheckState(Qt::CheckState check_state, unsigned row_idx, unsigned col_idx);
 
-		void setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled);
+		void setCellDisabled(bool disabled, unsigned row_idx, unsigned col_idx);
 
 		bool isCellDisabled(unsigned row_idx, unsigned col_idx);
 

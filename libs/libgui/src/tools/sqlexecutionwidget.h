@@ -116,7 +116,7 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		bool hasSQLCommand();
 
 		//! \brief Returns the currently typed command
-		QString getSQLCommand();
+		QString getSQLCommand(bool selected);
 
 		/*! \brief Fills up the results grid based upon the specified result set.
 		 * The parameter store_data will make each item store the text as its data. */

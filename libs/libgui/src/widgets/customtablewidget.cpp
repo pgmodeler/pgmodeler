@@ -240,6 +240,11 @@ void CustomTableWidget::setCellText(const QString &text, unsigned row_idx, unsig
 	getItem(row_idx, col_idx)->setText(text);
 }
 
+void CustomTableWidget::setCellFlags(Qt::ItemFlags flags, unsigned int row_idx, unsigned int col_idx)
+{
+	getItem(row_idx, col_idx)->setFlags(flags);
+}
+
 void CustomTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 {
 	try
@@ -353,12 +358,12 @@ Qt::CheckState CustomTableWidget::getCellCheckState(unsigned row_idx, unsigned c
 	return getItem(row_idx, col_idx)->checkState();
 }
 
-void CustomTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
+void CustomTableWidget::setCellCheckState(Qt::CheckState check_state, unsigned row_idx, unsigned col_idx)
 {
 	getItem(row_idx, col_idx)->setCheckState(check_state);
 }
 
-void CustomTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled)
+void CustomTableWidget::setCellDisabled(bool disabled, unsigned row_idx, unsigned col_idx)
 {
 	QTableWidgetItem *item = getItem(row_idx, col_idx);
 

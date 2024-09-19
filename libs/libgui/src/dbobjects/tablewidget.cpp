@@ -465,7 +465,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 			if(pk_col >= tab->getRowCount())
 				continue;
 
-			tab->setCellCheckState(pk_col, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, pk_col, 0);
 		}
 
 		tab->resizeContents();
@@ -608,12 +608,12 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(str_aux1,row,4);
 
 		if(str_aux.indexOf(TableObjectView::TextPrimaryKey) >= 0)
-			tab->setCellCheckState(row, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, row, 0);
 		else
-			tab->setCellCheckState(row, 0, Qt::Unchecked);
+			tab->setCellCheckState(Qt::Unchecked, row, 0);
 
 		if(column->isAddedByRelationship() || (pk && pk->isAddedByRelationship()))
-			tab->setCellDisabled(row, 0, true);
+			tab->setCellDisabled(true, row, 0);
 
 		tab->setCellText(column->getAlias(), row, 5);
 		tab->adjustColumnToContents(0);
@@ -869,7 +869,7 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 	if(has_pk && !pk_col_rows.isEmpty() && msgbox.result() == QDialog::Rejected)
 	{
 		for(auto &row : pk_col_rows)
-			tab->setCellCheckState(row, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, row, 0);
 	}
 }
 

@@ -321,9 +321,17 @@ bool SQLExecutionWidget::hasSQLCommand()
 	return !sql_cmd_txt->document()->isEmpty();
 }
 
-QString SQLExecutionWidget::getSQLCommand()
+QString SQLExecutionWidget::getSQLCommand(bool selected)
 {
-	return sql_cmd_txt->toPlainText();
+	QString cmd;
+
+	if(selected)
+	{
+		cmd = sql_cmd_txt->textCursor().selectedText();
+		cmd.replace(QChar::ParagraphSeparator, '\n');
+	}
+
+	return !cmd.isEmpty() ? cmd : sql_cmd_txt->toPlainText();
 }
 
 void SQLExecutionWidget::enableCommandButtons()
@@ -477,7 +485,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	output_tbw->setCurrentIndex(1);
 	output_tbw->setTabEnabled(0, false);
 
-	addToSQLHistory(sql_cmd_txt->toPlainText(), 0, e.getErrorMessage());
+	addToSQLHistory(sql_exec_hlp.getCommand(), 0, e.getErrorMessage());
 	qApp->alert(this);
 }
 
@@ -517,7 +525,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		columns_cmb->blockSignals(false);
 
-		addToSQLHistory(sql_cmd_txt->toPlainText(), rows_affected);
+		addToSQLHistory(sql_exec_hlp.getCommand(), rows_affected);
 
 		empty = (!res_model || res_model->rowCount() == 0);
 		output_tbw->setTabEnabled(0, !empty);
@@ -699,14 +707,7 @@ void SQLExecutionWidget::destroyResultModel()
 
 void SQLExecutionWidget::runSQLCommand()
 {
-	QString cmd = sql_cmd_txt->textCursor().selectedText();
-
-	if(cmd.isEmpty())
-		cmd = sql_cmd_txt->toPlainText();
-	else
-		cmd.replace(QChar::ParagraphSeparator, '\n');
-
-	runSQLCommand(cmd);
+	runSQLCommand(getSQLCommand(true));
 }
 
 void SQLExecutionWidget::runSQLCommand(const QString &cmd)
