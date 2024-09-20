@@ -36,7 +36,7 @@
     <number>5</number>
    </property>
    <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="buttons_lt">
      <property name="spacing">
       <number>5</number>
      </property>

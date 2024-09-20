@@ -181,6 +181,19 @@ void CustomTableWidget::setAddRowOnTabPress(bool value)
 		disconnect(table_tbw, &QTableWidget::currentCellChanged, this, &CustomTableWidget::addRowOnTabPress);
 }
 
+void CustomTableWidget::addCustomButton(QToolButton *btn)
+{
+	if(!btn)
+		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	buttons_lt->addWidget(btn);
+	btn->setIconSize(add_tb->iconSize());
+	btn->setToolButtonStyle(add_tb->toolButtonStyle());
+	btn->setSizePolicy(add_tb->sizePolicy());
+	btn->setMaximumSize(add_tb->maximumSize());
+	btn->setParent(this);
+}
+
 void CustomTableWidget::setColumnCount(unsigned col_count)
 {
 	if(col_count > 0)

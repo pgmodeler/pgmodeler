@@ -196,7 +196,13 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		void setVerticalHeaderVisible(bool value);
 
+		/*! \brief Toggles the addition of rows by using tab press when the cursor
+		 *  is at the last cell of the last row */
 		void setAddRowOnTabPress(bool value);
+
+		/*! \brief Adds a custom tool button to the end of buttons' list.
+		 *  The parent of the button is changed to the custom table itself */
+		void addCustomButton(QToolButton *btn);
 
 		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
@@ -222,9 +228,6 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		the emitted signal. */
 		void updateRow();
 
-		//! \brief Enables the handle buttons according to the selected row
-		void setButtonsEnabled();
-
 		void emitRowSelected();
 
 		void addRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
@@ -244,6 +247,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		//! \brief Selects the specified row
 		void selectRow(int lin_idx);
+
+		//! \brief Enables the handle buttons according to the selected row
+		void setButtonsEnabled();
 
 		//! \brief Controls the enable state of each button
 		void setButtonsEnabled(CustomTableWidget::ButtonConf button_conf, bool value);
