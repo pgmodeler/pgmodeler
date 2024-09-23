@@ -216,7 +216,7 @@ public:
 		void openNewWindow();
 
 		//! \brief Shows the popup menu over the current selection
-		void showPopupMenu();
+		void showPopupMenu(const QPoint &pnt);
 
 		//! \brief Save the selected items to external file
 		void saveSelectedItems(bool csv_format);

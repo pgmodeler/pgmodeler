@@ -79,7 +79,7 @@ class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWid
 		void clearColumns();
 		void changeColumnName(int col_idx);
 		void enableButtons();
-		void handleItemPressed();
+		void showItemContextMenu(const QPoint &pos);
 };
 
 #endif

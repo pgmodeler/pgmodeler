@@ -233,7 +233,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
-	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
+	connect(results_tbw, &QTableWidget::customContextMenuRequested, this, &DataManipulationForm::showPopupMenu);
 
 	connect(results_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
 		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
@@ -1783,13 +1783,10 @@ void DataManipulationForm::openNewWindow()
 	data_manip->show();
 }
 
-void DataManipulationForm::showPopupMenu()
+void DataManipulationForm::showPopupMenu(const QPoint &pnt)
 {
-	if(QApplication::mouseButtons()!=Qt::RightButton)
-		return;
-
 	QAction *act = nullptr;
-	ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+	ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
 	items_menu.clear();
 
@@ -1822,7 +1819,7 @@ void DataManipulationForm::showPopupMenu()
 		items_menu.addAction(action_bulk_edit);
 	}
 
-	items_menu.exec(QCursor::pos());
+	items_menu.exec(results_tbw->viewport()->mapToGlobal(pnt));
 }
 
 void DataManipulationForm::saveSelectedItems(bool csv_format)
