@@ -30,6 +30,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	code_field_txt = parent;
+
 	this->setDocument(parent->document());
 	this->single_line_mode = single_line_mode;
 	custom_font_size = custom_fnt_size;
@@ -604,11 +605,17 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						bold = attribs[Attributes::Bold] == Attributes::True;
 						underline = attribs[Attributes::Underline] == Attributes::True;
 						strikeout = attribs[Attributes::Stikeout] == Attributes::True;
-						fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
-						//If the attribute isn't defined the bg color will be transparent
+						/* If the attribute isn't defined the fg color will be the same as the
+						 * parent's default text color */
+						if(attribs[Attributes::ForegroundColor].isEmpty())
+							fg_color = code_field_txt->palette().color(QPalette::WindowText);
+						else
+							fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+
+						// If the attribute isn't defined the default the bg color will be transparent
 						if(attribs[Attributes::BackgroundColor].isEmpty())
-							bg_color.setRgb(0,0,0,0);
+							bg_color = Qt::transparent;
 						else
 							bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
 
