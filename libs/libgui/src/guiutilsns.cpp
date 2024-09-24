@@ -467,12 +467,18 @@ namespace GuiUtilsNs {
 			{
 				settings.setValue("geometry", file_dlg->saveGeometry());
 				settings.setValue("state", file_dlg->saveState());
+				settings.setValue("directory", file_dlg->directory().absolutePath());
 				settings.sync();
 			}
 			else
 			{
 				file_dlg->restoreGeometry(settings.value("geometry").toByteArray());
 				file_dlg->restoreState(settings.value("state").toByteArray());
+
+				QString dir = settings.value("directory").toByteArray();
+
+				if(!dir.isEmpty())
+					file_dlg->setDirectory(dir);
 			}
 		}
 		catch(Exception &){}
@@ -562,6 +568,7 @@ namespace GuiUtilsNs {
 		file_dlg.setWindowTitle(title);
 		file_dlg.setDefaultSuffix(default_suffix);
 		file_dlg.selectFile(selected_file);
+		file_dlg.setDirectory(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
 		if(!name_filters.isEmpty())
 		 file_dlg.setNameFilters(name_filters);
