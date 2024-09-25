@@ -56,8 +56,11 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, qOverload<>(&CustomTableWidget::setButtonsEnabled));
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &CustomTableWidget::emitRowSelected);
 
-	connect(table_tbw, &QTableWidget::cellClicked, this, [this](int row, int col){
-		emit s_cellClicked(row, col);
+	connect(table_tbw, &QTableWidget::cellClicked, this, &CustomTableWidget::s_cellClicked);
+
+	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, [this](){
+		if(table_tbw->selectedRanges().isEmpty())
+			emit s_selectionCleared();
 	});
 
 	connect(resize_cols_tb, &QToolButton::clicked, this, &CustomTableWidget::resizeContents);
@@ -475,13 +478,14 @@ void CustomTableWidget::addRow(unsigned lin_idx)
 	table_tbw->setCurrentItem(item);
 }
 
-void CustomTableWidget::addRow()
+int CustomTableWidget::addRow()
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
 	table_tbw->resizeRowsToContents();
 
-	emit s_rowAdded(table_tbw->rowCount()-1);
+	emit s_rowAdded(table_tbw->rowCount() - 1);
+	return table_tbw->rowCount() - 1;
 }
 
 void CustomTableWidget::removeRow(unsigned row_idx)

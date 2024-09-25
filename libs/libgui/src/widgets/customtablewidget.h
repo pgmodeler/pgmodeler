@@ -233,8 +233,8 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		void addRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 
 	public slots:
-		//! \brief Adds a new row at the end of the table
-		void addRow();
+		//! \brief Adds a new row at the end of the table and returns its id
+		int addRow();
 
 		//! \brief Removes all the rows from table
 		void removeRows();
@@ -299,6 +299,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		//! \brief Signal emitted when a specific cell has its text changed. The column and rows indexes are sent together with the signal
 		void s_cellTextChanged(int, int);
+
+		//! \brief Signal emitted when the table selection is cleared
+		void s_selectionCleared();
 
 	protected:
 		void resizeEvent(QResizeEvent *);
