@@ -918,6 +918,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			index = model->index(row, col);
 			value = index.data().toString();
 
+			/* If the index value is empty but it has a check state value
+			 * we assume the value of the columns as true/false to reflect
+			 * the check state of the item */
+			if(value.isEmpty() && !index.data(Qt::CheckStateRole).isNull())
+				value = index.data(Qt::CheckStateRole) == Qt::Checked ? Attributes::True : Attributes::False;
+
 			if(csv_format)
 				value.replace(CsvDocument::TextDelimiter, QString("%1%1").arg(CsvDocument::TextDelimiter));
 
