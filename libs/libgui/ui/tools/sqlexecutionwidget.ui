@@ -646,8 +646,10 @@
             </property>
            </widget>
            <widget class="QStackedWidget" name="plugins_wgts_stc">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
             <widget class="QWidget" name="page"/>
-            <widget class="QWidget" name="page_2"/>
            </widget>
           </widget>
          </item>

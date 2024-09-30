@@ -862,11 +862,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!results_tbw->selectionModel())
+	if((results_tbw->model() && results_tbw->model()->rowCount() == 0) ||
+		 !results_tbw->selectionModel())
 		return QByteArray();
 
 	QAbstractItemModel *model = results_tbw->model();
-	QModelIndexList sel_indexes = results_tbw->selectionModel()->selectedIndexes();
+	QModelIndexList sel_indexes;
 	QByteArray buf;
 	QStringList line;
 	QModelIndex index;
@@ -877,6 +878,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	int start_row = -1, start_col = -1,
 			row_cnt = 0, col_cnt = 0;
 
+	sel_indexes = results_tbw->selectionModel()->selectedIndexes();
 	start_row = sel_indexes.at(0).row();
 	start_col = sel_indexes.at(0).column();
 	row_cnt = (sel_indexes.last().row() - start_row) + 1;
