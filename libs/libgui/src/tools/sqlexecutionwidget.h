@@ -122,14 +122,18 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		 * The parameter store_data will make each item store the text as its data. */
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data = false);
 
-		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false);
+		/*! \brief Copy to clipboard (in csv format) the current selected items on results grid
+		 * Optionally, the column names can be included/excluded in the resulting buffer */
+		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false, bool incl_col_names = true);
 
-		//! \brief Generates a CSV buffer based upon the selection on the results grid
-		static QByteArray generateCSVBuffer(QTableView *results_tbw);
+		/*! \brief Generates a CSV buffer based upon the selection on the results grid
+		 *  Optionally, the column names can be included/excluded in the resulting buffer */
+		static QByteArray generateCSVBuffer(QTableView *results_tbw, bool inc_col_names = true);
 
-		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
-		static QByteArray generateTextBuffer(QTableView *results_tbw);
+		/*! \brief Generates a Plain text buffer based upon the selection on the results grid
+		 * Optionally, the column names can be included/excluded in the resulting buffer.
+		 * In this method the column names are by default excluded */
+		static QByteArray generateTextBuffer(QTableView *results_tbw, bool inc_col_names = false);
 
 		/*! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and if the output
 		 *  buffer is whether in CSV format or not */

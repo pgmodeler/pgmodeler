@@ -847,14 +847,14 @@ int SQLExecutionWidget::clearAll()
 	return res;
 }
 
-QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
+QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw, bool inc_col_names)
 {
-	return generateBuffer(results_tbw, CsvDocument::Separator, true, true);
+	return generateBuffer(results_tbw, CsvDocument::Separator, inc_col_names, true);
 }
 
-QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
+QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw, bool inc_col_names)
 {
-	return generateBuffer(results_tbw, QChar('\t'), false, false);
+	return generateBuffer(results_tbw, QChar('\t'), inc_col_names, false);
 }
 
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format)
@@ -940,7 +940,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	return buf;
 }
 
-void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
+void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default, bool incl_col_names)
 {
 	if(!results_tbw)
 		return;
@@ -953,7 +953,7 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 		{
 			QMenu copy_menu, copy_mode_menu, save_menu;
 			QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr,
-																											*act_save = nullptr, *act_save_txt = nullptr, *act_save_csv = nullptr;
+							*act_save = nullptr, *act_save_txt = nullptr, *act_save_csv = nullptr;
 
 			if(use_popup)
 			{
@@ -992,8 +992,8 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 						is_save = (use_popup && (act == act_save_txt || act == act_save_csv));
 
 				buffer = is_csv ?
-										 generateCSVBuffer(results_tbw) :
-										 generateTextBuffer(results_tbw);
+									generateCSVBuffer(results_tbw, incl_col_names) :
+									generateTextBuffer(results_tbw, incl_col_names);
 
 				if(!is_save)
 					qApp->clipboard()->setText(buffer);
