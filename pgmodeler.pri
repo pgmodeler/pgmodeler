@@ -8,7 +8,12 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
-contains(CONFIG, debug):DEFINES+=PGMODELER_DEBUG
+contains(CONFIG, debug):{
+	DEFINES+=PGMODELER_DEBUG
+
+	# Enabling ccache (https://ccache.dev) in debug mode to speed up recompilations
+	isEqual(USE_CCACHE, true):CONFIG+=ccache
+}
 
 # Disables all the APIs deprecated before Qt 6.0.0
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
