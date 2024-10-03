@@ -297,11 +297,14 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		//! \brief Signal emitted when a specific cell is clicked. The column and rows indexes are sent together with the signal
 		void s_cellClicked(int, int);
 
-		//! \brief Signal emitted when a specific cell has its text changed. The column and rows indexes are sent together with the signal
-		void s_cellTextChanged(int, int);
+		//! \brief Signal emitted when a specific cell has its text or other attribute changed. The column and rows indexes are sent together with the signal
+		void s_cellChanged(int, int);
 
 		//! \brief Signal emitted when the table selection is cleared
 		void s_selectionCleared();
+
+		//! \brief Signal emitted when the table row count changes by adding, deleting, duplicating rows
+		void s_rowCountChanged(int);
 
 	protected:
 		void resizeEvent(QResizeEvent *);

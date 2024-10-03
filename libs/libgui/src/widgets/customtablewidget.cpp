@@ -57,6 +57,7 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, &CustomTableWidget::emitRowSelected);
 
 	connect(table_tbw, &QTableWidget::cellClicked, this, &CustomTableWidget::s_cellClicked);
+	connect(table_tbw, &QTableWidget::cellChanged, this, &CustomTableWidget::s_cellChanged);
 
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, [this](){
 		if(table_tbw->selectedRanges().isEmpty())
@@ -485,6 +486,8 @@ int CustomTableWidget::addRow()
 	table_tbw->resizeRowsToContents();
 
 	emit s_rowAdded(table_tbw->rowCount() - 1);
+	emit s_rowCountChanged(table_tbw->rowCount());
+
 	return table_tbw->rowCount() - 1;
 }
 
@@ -552,6 +555,7 @@ void CustomTableWidget::removeRow()
 			setButtonsEnabled();
 
 			emit s_rowRemoved(row_idx);
+			emit s_rowCountChanged(table_tbw->rowCount());
 		}
 
 		updateVerticalHeader();
@@ -578,6 +582,7 @@ void CustomTableWidget::duplicateRow()
 		}
 
 		emit s_rowDuplicated(curr_row, row);
+		emit s_rowCountChanged(table_tbw->rowCount());
 	}
 }
 
@@ -600,7 +605,9 @@ void CustomTableWidget::removeRows()
 			table_tbw->clearContents();
 			table_tbw->setRowCount(0);
 			setButtonsEnabled();
+
 			emit s_rowsRemoved();
+			emit s_rowCountChanged(table_tbw->rowCount());
 		}
 	}
 }
