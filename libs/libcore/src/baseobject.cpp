@@ -872,12 +872,12 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 		{
 			if(def_type==SchemaParser::SqlCode)
 			{
-				attributes[Attributes::Owner]=owner->getName(format);
+				attributes[Attributes::Owner] = owner->getName(format);
 
 				/* Only tablespaces, database and user mapping do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
 				 with just a command line isolated from the others */
-				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
+				if(obj_type != ObjectType::Tablespace && obj_type != ObjectType::Database && obj_type != ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Owner);
