@@ -33,7 +33,8 @@ const QStringList CodeCompletionWidget::dml_keywords {
 	"select", "insert", "update", "delete",
 	"truncate", "alter", "drop", "from",
 	"join",	"into", "as", "set", "table",
-	"only", "where",
+	"only", "where", "exists",
+	"partition", "like", "inherits",
 
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
