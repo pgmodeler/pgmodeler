@@ -196,6 +196,8 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		void setVerticalHeaderVisible(bool value);
 
+		void setSortingEnabled(bool value);
+
 		/*! \brief Toggles the addition of rows by using tab press when the cursor
 		 *  is at the last cell of the last row */
 		void setAddRowOnTabPress(bool value);

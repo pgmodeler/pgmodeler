@@ -175,6 +175,11 @@ void CustomTableWidget::setVerticalHeaderVisible(bool value)
 	table_tbw->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 
+void CustomTableWidget::setSortingEnabled(bool value)
+{
+	table_tbw->setSortingEnabled(value);
+}
+
 void CustomTableWidget::setAddRowOnTabPress(bool value)
 {
 	tab_adds_row = value;
@@ -296,6 +301,10 @@ void CustomTableWidget::setRowColors(int row_idx, const QColor &fg_color, const 
 	for(int col = 0; col < col_count; col++)
 	{
 		item = table_tbw->item(row_idx, col);
+
+		if(!item)
+			continue;
+
 		item->setForeground(fg_color);
 		item->setBackground(bg_color);
 	}
