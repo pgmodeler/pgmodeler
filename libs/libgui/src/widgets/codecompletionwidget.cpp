@@ -58,7 +58,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Dialog);
+	completion_wgt->setWindowFlags(Qt::Popup);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
 	completion_wgt->setMinimumHeight(50);
@@ -961,6 +961,43 @@ void CodeCompletionWidget::setCurrentItem(QListWidgetItem *item)
 	}
 }
 
+ObjectType CodeCompletionWidget::identifyObjectType(QTextCursor tc)
+{
+	static QStringList lv1_words {"user", "foreign", "materialized", "event", "operator"},
+										 lv2_words {"family", "class", "data", "table", "view"};
+	QString word, next_word;
+
+	tc.movePosition(QTextCursor::NextWord);
+	tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+	word = tc.selectedText();
+
+	if(lv1_words.contains(word, Qt::CaseInsensitive))
+	{
+		tc.movePosition(QTextCursor::NextWord);
+		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+
+		next_word = tc.selectedText();
+
+		if(lv2_words.contains(next_word))
+		{
+			word += " " + next_word;
+
+			if(next_word.endsWith("data", Qt::CaseInsensitive))
+			{
+				tc.movePosition(QTextCursor::NextWord);
+				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+				word += " " + tc.selectedText();
+			}
+			else if(next_word.endsWith("view"))
+			{
+				word.remove("materialized ");
+			}
+		}
+	}
+
+	return BaseObject::getObjectType(word, true);
+}
+
 bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
@@ -1003,34 +1040,7 @@ bool CodeCompletionWidget::updateObjectsList()
 				 * of object is being altered/dropped by getting the two previous
 				 * words in order */
 				if(kw_id == Alter || kw_id == Drop)
-				{
-					QTextCursor tc = code_field_txt->textCursor();
-					QString word;
-
-					tc.movePosition(QTextCursor::NextWord);
-					tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-					word = tc.selectedText();
-
-					if(word.contains("user", Qt::CaseInsensitive) ||
-						 word.contains("foreign", Qt::CaseInsensitive) ||
-						 word.contains("materialized", Qt::CaseInsensitive) ||
-						 word.contains("event", Qt::CaseInsensitive) ||
-						 word.contains("operator", Qt::CaseInsensitive))
-					{
-						tc.movePosition(QTextCursor::NextWord);
-						tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-						word += " " + tc.selectedText();
-
-						if(word.endsWith("data", Qt::CaseInsensitive))
-						{
-							tc.movePosition(QTextCursor::NextWord);
-							tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-							word += " " + tc.selectedText();
-						}
-					}
-
-					filter_obj_type = BaseObject::getObjectType(word, true);
-				}
+					filter_obj_type = identifyObjectType(code_field_txt->textCursor());
 
 				if(!cursor_after_kw && orig_tc.position() >= dml_kwords_pos[kw_id])
 					cursor_after_kw = true;
@@ -1418,7 +1428,7 @@ void CodeCompletionWidget::adjustNameListSize()
 	{
 		item = name_list->item(row);
 
-		if(item->isHidden())
+		if(!item || item->isHidden())
 			continue;
 
 		vis_item_cnt++;
