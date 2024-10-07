@@ -1102,29 +1102,44 @@ std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vec
 
 std::vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
-	if(obj_type==ObjectType::Database)
-		return std::vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
-																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
-																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																	ObjectType::UserMapping, ObjectType::Transform };
+	if(obj_type == ObjectType::Database)
+	{
+		static std::vector<ObjectType> db_child { ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+																							ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
+																							ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																							ObjectType::UserMapping, ObjectType::Transform };
+		return db_child;
+	}
 
-	if(obj_type==ObjectType::Schema)
-		return std::vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
-																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
-																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
-																	ObjectType::Type, ObjectType::Table, ObjectType::View };
+	if(obj_type == ObjectType::Schema)
+	{
+		static std::vector<ObjectType> sch_child { ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+																							 ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
+																							 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
+																							 ObjectType::Type, ObjectType::Table, ObjectType::View };
+		return sch_child;
+	}
 
-	if(obj_type==ObjectType::Table)
-		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
-																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
+	if(obj_type == ObjectType::Table)
+	{
+		static std::vector<ObjectType> tb_child { ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																							ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
+		return tb_child;
+	}
 
-	if(obj_type==ObjectType::ForeignTable)
-		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+	if(obj_type == ObjectType::ForeignTable)
+	{
+		static std::vector<ObjectType> ft_child {	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+		return ft_child;
+	}
 
 	if(obj_type==ObjectType::View)
-		return std::vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+	{
+		static std::vector<ObjectType> vw_child {ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+		return vw_child;
+	}
 
-	return std::vector<ObjectType>()={};
+	return {};
 }
 
 bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type)
