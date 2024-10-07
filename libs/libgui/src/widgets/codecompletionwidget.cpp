@@ -58,7 +58,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	completion_wgt=new QWidget(this);
-	completion_wgt->setWindowFlags(Qt::Popup);
+	completion_wgt->setWindowFlags(Qt::Dialog);
 	completion_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	completion_wgt->setMaximumHeight(350);
 	completion_wgt->setMinimumHeight(50);
@@ -260,7 +260,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 				/* Since keywords are exact match patterns (see SyntaxHighlighter::loadConfiguration)
 				 * we need to remove from the pattern the regexp operators in order to extract only the
 				 * work itself. */
-				keywords.append(expr.remove("^").remove(regexp));
+				keywords.append(expr.remove("(?<=\\s|\\b)").remove(regexp));
 			}
 
 			completion_trigger = syntax_hl->getCompletionTrigger();
@@ -659,9 +659,13 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
+		/* We break the name extraction when:
+		 * 1) Finding a comma indicating a separation of keywords/identifiers
+		 * 2) The current word is a DML keyword
+		 * 3) The current word is a keyword registered in the syntax highlighter config file */
 		if(curr_word == "," ||
 			 dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-			 keywords.contains(curr_word))
+			 keywords.contains(curr_word, Qt::CaseInsensitive))
 			break;
 
 		curr_word.removeIf([](const QChar &chr){
@@ -689,13 +693,19 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		obj_types.append(ObjectType::Schema);
 	else if(names.size() == 2)
 	{
-		obj_types.append({ ObjectType::Table,
-											 ObjectType::ForeignTable,
-											 ObjectType::View,
-											 ObjectType::Aggregate,
-											 ObjectType::Function,
-											 ObjectType::Procedure,
-											 ObjectType::Sequence });
+		if(filter_obj_type == ObjectType::BaseObject)
+		{
+			obj_types.append({ ObjectType::Table,
+												 ObjectType::ForeignTable,
+												 ObjectType::View,
+												 ObjectType::Aggregate,
+												 ObjectType::Function,
+												 ObjectType::Procedure,
+												 ObjectType::Sequence });
+		}
+		else
+			obj_types.append(filter_obj_type);
+
 		sch_name = names[0];
 		obj_name = names[1];
 	}
@@ -965,6 +975,7 @@ bool CodeCompletionWidget::updateObjectsList()
 
 	dml_cmds = dml_keywords.mid(Select, 7);
 	orig_tc = tc = code_field_txt->textCursor();
+	filter_obj_type = ObjectType::BaseObject;
 	resetKeywordsPos();
 
 	for(auto &kw : dml_keywords)
@@ -987,6 +998,39 @@ bool CodeCompletionWidget::updateObjectsList()
 
 				if(found_kw_id < 0 && dml_cmds.contains(kw))
 					found_kw_id = kw_id;
+
+				/* Special case for ALTER/DROP: we try to identify which type
+				 * of object is being altered/dropped by getting the two previous
+				 * words in order */
+				if(kw_id == Alter || kw_id == Drop)
+				{
+					QTextCursor tc = code_field_txt->textCursor();
+					QString word;
+
+					tc.movePosition(QTextCursor::NextWord);
+					tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+					word = tc.selectedText();
+
+					if(word.contains("user", Qt::CaseInsensitive) ||
+						 word.contains("foreign", Qt::CaseInsensitive) ||
+						 word.contains("materialized", Qt::CaseInsensitive) ||
+						 word.contains("event", Qt::CaseInsensitive) ||
+						 word.contains("operator", Qt::CaseInsensitive))
+					{
+						tc.movePosition(QTextCursor::NextWord);
+						tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+						word += " " + tc.selectedText();
+
+						if(word.endsWith("data", Qt::CaseInsensitive))
+						{
+							tc.movePosition(QTextCursor::NextWord);
+							tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+							word += " " + tc.selectedText();
+						}
+					}
+
+					filter_obj_type = BaseObject::getObjectType(word, true);
+				}
 
 				if(!cursor_after_kw && orig_tc.position() >= dml_kwords_pos[kw_id])
 					cursor_after_kw = true;

@@ -52,6 +52,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 			Except, Distinct,	Values, All
 		};
 
+		ObjectType filter_obj_type;
+
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
 		 *  This is used to help pgModeler retrieve columns/objects names from the database */
 		int dml_kwords_pos[All + 1];

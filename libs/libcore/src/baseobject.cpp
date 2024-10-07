@@ -163,13 +163,14 @@ QString BaseObject::getTypeName(const QString &type_str)
 	return getTypeName(getObjectType(type_str));
 }
 
-ObjectType BaseObject::getObjectType(const QString &type_name)
+ObjectType BaseObject::getObjectType(const QString &type_name, bool is_sql_name)
 {
-	ObjectType obj_type=ObjectType::BaseObject;
+	ObjectType obj_type = ObjectType::BaseObject;
 
 	for(unsigned i=0; i < BaseObject::ObjectTypeCount; i++)
 	{
-		if(objs_schemas[i]==type_name)
+		if((!is_sql_name && objs_schemas[i] == type_name.toLower()) ||
+			 (is_sql_name && objs_sql[i] == type_name.toUpper()))
 		{
 			obj_type=static_cast<ObjectType>(i);
 			break;
