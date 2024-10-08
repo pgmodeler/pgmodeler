@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ObjectsTableWidget</class>
- <widget class="QWidget" name="ObjectsTableWidget">
+ <class>CustomTableWidget</class>
+ <widget class="QWidget" name="CustomTableWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -36,7 +36,7 @@
     <number>5</number>
    </property>
    <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="buttons_lt">
      <property name="spacing">
       <number>5</number>
      </property>
@@ -464,6 +464,9 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>

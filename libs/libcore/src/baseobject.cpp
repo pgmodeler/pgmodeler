@@ -163,20 +163,18 @@ QString BaseObject::getTypeName(const QString &type_str)
 	return getTypeName(getObjectType(type_str));
 }
 
-ObjectType BaseObject::getObjectType(const QString &type_name)
+ObjectType BaseObject::getObjectType(const QString &type_name, bool is_sql_name)
 {
-	ObjectType obj_type=ObjectType::BaseObject;
-
-	for(unsigned i=0; i < BaseObject::ObjectTypeCount; i++)
+	for(unsigned i = 0; i < BaseObject::ObjectTypeCount; i++)
 	{
-		if(objs_schemas[i]==type_name)
+		if((is_sql_name && !objs_sql[i].isEmpty() && objs_sql[i] == type_name.toUpper()) ||
+			 (!is_sql_name && objs_schemas[i] == type_name.toLower()))
 		{
-			obj_type=static_cast<ObjectType>(i);
-			break;
+			return static_cast<ObjectType>(i);
 		}
 	}
 
-	return obj_type;
+	return ObjectType::BaseObject;
 }
 
 QString BaseObject::getSchemaName(ObjectType obj_type)
@@ -872,12 +870,12 @@ QString BaseObject::getSourceCode(SchemaParser::CodeType def_type, bool reduced_
 		{
 			if(def_type==SchemaParser::SqlCode)
 			{
-				attributes[Attributes::Owner]=owner->getName(format);
+				attributes[Attributes::Owner] = owner->getName(format);
 
 				/* Only tablespaces, database and user mapping do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
 				 with just a command line isolated from the others */
-				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
+				if(obj_type != ObjectType::Tablespace && obj_type != ObjectType::Database && obj_type != ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Owner);
@@ -1104,29 +1102,44 @@ std::vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, std::vec
 
 std::vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
-	if(obj_type==ObjectType::Database)
-		return std::vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
-																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
-																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																	ObjectType::UserMapping, ObjectType::Transform };
+	if(obj_type == ObjectType::Database)
+	{
+		static std::vector<ObjectType> db_child { ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+																							ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
+																							ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																							ObjectType::UserMapping, ObjectType::Transform };
+		return db_child;
+	}
 
-	if(obj_type==ObjectType::Schema)
-		return std::vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
-																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
-																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
-																	ObjectType::Type, ObjectType::Table, ObjectType::View };
+	if(obj_type == ObjectType::Schema)
+	{
+		static std::vector<ObjectType> sch_child { ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+																							 ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
+																							 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
+																							 ObjectType::Type, ObjectType::Table, ObjectType::View };
+		return sch_child;
+	}
 
-	if(obj_type==ObjectType::Table)
-		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
-																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
+	if(obj_type == ObjectType::Table)
+	{
+		static std::vector<ObjectType> tb_child { ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																							ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
+		return tb_child;
+	}
 
-	if(obj_type==ObjectType::ForeignTable)
-		return std::vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+	if(obj_type == ObjectType::ForeignTable)
+	{
+		static std::vector<ObjectType> ft_child {	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+		return ft_child;
+	}
 
 	if(obj_type==ObjectType::View)
-		return std::vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+	{
+		static std::vector<ObjectType> vw_child {ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
+		return vw_child;
+	}
 
-	return std::vector<ObjectType>()={};
+	return {};
 }
 
 bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type)

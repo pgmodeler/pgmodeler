@@ -27,13 +27,13 @@
 
 #include "baseobjectwidget.h"
 #include "ui_extensionwidget.h"
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
 
 class __libgui ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *types_tab;
+		CustomTableWidget *types_tab;
 		
 	public:
 		ExtensionWidget(QWidget * parent = nullptr);

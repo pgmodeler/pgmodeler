@@ -136,7 +136,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
 		QString str_aux = " <span style='color: #ff0000;'>*</span> ";
-		QColor border_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor);
+		QColor border_color = CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemBgColor);
 
 		if(lbl || pgtype || grp)
 		{

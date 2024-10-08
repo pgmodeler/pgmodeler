@@ -34,7 +34,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	grid->addWidget(data_type, 1, 0, 1, 2);
 	grid->addItem(new QSpacerItem(10, 1, QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0, 1, 1);
 
-	constr_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ (ObjectsTableWidget::DuplicateButton), true, this);
+	constr_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^ (CustomTableWidget::DuplicateButton), true, this);
 	constr_tab->setColumnCount(2);
 
 	constr_tab->setHeaderLabel(tr("Name"), 0);
@@ -46,9 +46,9 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 	grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
 	grid->addWidget(constr_tab, 2, 0, 1, 2);
 
-	connect(constr_tab, &ObjectsTableWidget::s_rowAdded, this, &DomainWidget::handleConstraint);
-	connect(constr_tab, &ObjectsTableWidget::s_rowUpdated, this, &DomainWidget::handleConstraint);
-	connect(constr_tab, &ObjectsTableWidget::s_rowEdited, this, &DomainWidget::editConstraint);
+	connect(constr_tab, &CustomTableWidget::s_rowAdded, this, &DomainWidget::handleConstraint);
+	connect(constr_tab, &CustomTableWidget::s_rowUpdated, this, &DomainWidget::handleConstraint);
+	connect(constr_tab, &CustomTableWidget::s_rowEdited, this, &DomainWidget::editConstraint);
 
 	configureFormLayout(domain_grid, ObjectType::Domain);
 	setRequiredField(data_type);

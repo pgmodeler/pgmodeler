@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/colorpickerwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
@@ -64,7 +64,7 @@ class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::Relations
 		*part_bound_expr_hl;
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
-		ObjectsTableWidget *attributes_tab,
+		CustomTableWidget *attributes_tab,
 		*constraints_tab,
 		*advanced_objs_tab;
 

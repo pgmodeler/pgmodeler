@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreignserverwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
 	private:
@@ -35,7 +35,7 @@ class __libgui ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignS
 
 		ObjectSelectorWidget *fdw_sel;
 
-		ObjectsTableWidget *options_tab;
+		CustomTableWidget *options_tab;
 
 	public:
 		ForeignServerWidget(QWidget * parent = nullptr);

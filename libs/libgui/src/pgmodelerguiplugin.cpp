@@ -19,6 +19,8 @@
 #include "pgmodelerguiplugin.h"
 #include "guiutilsns.h"
 
+QList<const PgModelerGuiPlugin *> PgModelerGuiPlugin::reg_plugins;
+
 PgModelerGuiPlugin::PgModelerGuiPlugin()
 {
 	QGridLayout *gridLayout=nullptr;
@@ -82,6 +84,70 @@ PgModelerGuiPlugin::~PgModelerGuiPlugin()
 	delete plugin_info_frm;
 }
 
+bool PgModelerGuiPlugin::registerPlugin(const PgModelerGuiPlugin *plugin)
+{
+	if(!plugin || reg_plugins.contains(plugin))
+		return false;
+
+	reg_plugins.append(plugin);
+
+	return true;
+}
+
+QList<QAction *> PgModelerGuiPlugin::getPluginsActions(ActionId act_id)
+{
+	QAction *act {};
+	QList<QAction *> actions;
+
+	for(auto &plug : reg_plugins)
+	{
+		act = plug->getAction(act_id);
+
+		if(!act)
+			continue;
+
+		actions.append(act);
+	}
+
+	return actions;
+}
+
+QList<QToolButton *> PgModelerGuiPlugin::getPluginsToolButtons()
+{
+	QToolButton *btn {};
+	QList<QToolButton *> buttons;
+
+	for(auto &plug : reg_plugins)
+	{
+		btn = plug->getToolButton();
+
+		if(!btn)
+			continue;
+
+		buttons.append(btn);
+	}
+
+	return buttons;
+}
+
+QList<PgModelerGuiPlugin::PluginWidgets> PgModelerGuiPlugin::getPluginsWidgets(QWidget *parent)
+{
+	QList<PluginWidgets> widgets;
+	PluginWidgets p_wgt;
+
+	for(auto &plug : reg_plugins)
+	{
+		p_wgt = plug->createWidgets(parent);
+
+		if(!p_wgt.button && !p_wgt.widget)
+			continue;
+
+		widgets.append(p_wgt);
+	}
+
+	return widgets;
+}
+
 void PgModelerGuiPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
@@ -118,4 +184,9 @@ void PgModelerGuiPlugin::showPluginInfo() const
 QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name) const
 {
 	return QString(":/%1/%2.png").arg(getPluginName(), icon_name);
+}
+
+PgModelerGuiPlugin::PluginWidgets PgModelerGuiPlugin::createWidgets(QWidget *) const
+{
+	return {};
 }

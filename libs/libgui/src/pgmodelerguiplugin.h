@@ -67,11 +67,18 @@ class PluginsConfigWidget;
 
 class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 	private:
+		//! \brief Stores all successfully loaded plugins
+		static QList<const PgModelerGuiPlugin *> reg_plugins;
+
 		QLabel	*icon_lbl,
 		*title_lbl,
 		*author_lbl,
 		*version_lbl,
 		*description_lbl;
+
+		/*! \brief Register a successfully loaded plugin so it can accessible globally
+		 * via getPluginsActions() and getPluginsToolButtons() */
+		static bool registerPlugin(const PgModelerGuiPlugin *plugin);
 
 	protected:
 		BaseForm *plugin_info_frm;
@@ -93,7 +100,20 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author, const QString &description);
 
 	public:
-		enum ActionId {
+		struct PluginWidgets {
+			QToolButton *button;
+			QWidget *widget;
+
+			PluginWidgets(QToolButton *btn, QWidget *wgt)
+			{
+				button = btn;
+				widget = wgt;
+			}
+
+			PluginWidgets() : PluginWidgets(nullptr, nullptr) {}
+		};
+
+		enum ActionId: unsigned {
 			//! \brief References the action that will be put in the toolbar at main window
 			ToolbarAction,
 
@@ -134,6 +154,21 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 
 		//! \brief Returns the path to a plugin icon in the plugin's qrc file
 		QString getPluginIcon(const QString &icon_name) const;
+
+		/*! \brief Returns an struct containing a toolbutton and a widget
+		 *  that are installed in the areas in SQLExecutionWidget reserved for plugin
+		 *  widgets. The toolbutton is inserted in the top area that holds other buttons.
+		 *  The widget is inserted in the right area of the execution widget */
+		virtual PluginWidgets createWidgets(QWidget *parent) const;
+
+		//! \brief Returns the list of actions identified by act_id of all registered plugins
+		static QList<QAction *> getPluginsActions(ActionId act_id);
+
+		//! \brief Returns the list of toolbuttons all registered plugins
+		static QList<QToolButton *> getPluginsToolButtons();
+
+		//! \brief Returns the list of custom widgets of all registered plugins
+		static QList<PluginWidgets> getPluginsWidgets(QWidget *parent);
 
 		friend class PluginsConfigWidget;
 };

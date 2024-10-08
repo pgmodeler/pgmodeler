@@ -99,6 +99,7 @@ src/utils/syntaxhighlighter.cpp \
 src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
     src/widgets/columndatawidget.cpp \
+	src/widgets/customtablewidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
@@ -128,7 +129,6 @@ src/widgets/taskprogresswidget.cpp \
 src/widgets/customsqlwidget.cpp \
 src/widgets/linenumberswidget.cpp \
 src/widgets/newobjectoverlaywidget.cpp \
-src/widgets/objectstablewidget.cpp \
 src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
@@ -223,6 +223,7 @@ src/utils/syntaxhighlighter.h \
 src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
     src/widgets/columndatawidget.h \
+	src/widgets/customtablewidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
@@ -252,7 +253,6 @@ src/widgets/taskprogresswidget.h \
 src/widgets/customsqlwidget.h \
 src/widgets/linenumberswidget.h \
 src/widgets/newobjectoverlaywidget.h \
-src/widgets/objectstablewidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
@@ -322,6 +322,7 @@ ui/tools/modelrestorationform.ui \
 ui/tools/swapobjectsidswidget.ui \
 ui/tools/modelvalidationwidget.ui \
 ui/widgets/aboutwidget.ui \
+	ui/widgets/customtablewidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
@@ -338,7 +339,6 @@ ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \
 ui/widgets/layersconfigwidget.ui \
 ui/widgets/newobjectoverlaywidget.ui \
-ui/widgets/objectstablewidget.ui \
 ui/widgets/taskprogresswidget.ui \
 ui/widgets/csvloadwidget.ui \
 ui/widgets/layerswidget.ui \

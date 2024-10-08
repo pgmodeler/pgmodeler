@@ -369,8 +369,11 @@ class __libcore BaseObject {
 		The string parameter is the value returned by getSchemaName() */
 		static QString getTypeName(const QString &type_str);
 
-		//! \brief Returns the object's type related to the passed type name
-		static ObjectType getObjectType(const QString &type_name);
+		/*! \brief Returns the object's type related to the passed type name.
+		 *  If the flag is_sql_name is true then the method tries to identify the type
+		 *  from the SQL name of the object otherwise it tries to identify by comparing
+		 *  with objects' schema names */
+		static ObjectType getObjectType(const QString &type_name, bool is_sql_name = false);
 
 		/*! \brief Returns the schema identifier used to generate the code definition related to the
 		 passed object type */

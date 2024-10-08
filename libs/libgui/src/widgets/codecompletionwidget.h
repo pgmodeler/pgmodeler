@@ -44,11 +44,17 @@ class __libgui CodeCompletionWidget: public QWidget {
 			Select, Insert, Update, Delete,
 			Truncate, Alter, Drop,	From,
 			Join, Into,	As, Set, Table,
-			Only,	Where,
+			Only,	Where, Exists, Partition,
+			Like, Inherits, On,
+
 			Inner, Outer, Left,	Right,
 			Full, Union, Intersect,
 			Except, Distinct,	Values, All
 		};
+
+		ObjectType filter_obj_type;
+
+		int filter_kw_pos;
 
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
 		 *  This is used to help pgModeler retrieve columns/objects names from the database */
@@ -129,7 +135,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 		
 		attribs_map custom_items_tips;
 
-					 //! \brief Puts the selected object name on the current cursor position.
+		//! \brief Puts the selected object name on the current cursor position.
 		void insertObjectName(BaseObject *obj);
 		
 		//! \brief Filters the necessary events to trigger the completion as well to control/select items
@@ -171,6 +177,10 @@ class __libgui CodeCompletionWidget: public QWidget {
 		int getTablePosition(const QString &name);
 
 		QStringList getTableAliases(const QString &name);
+
+		/*! \brief Returns the ObjectType based on the sequential keywords type in the current text cursor position
+		 *  This is used by updateObjectsList() when triggering the completion on ALTER/DROP commandas */
+		ObjectType identifyObjectType(QTextCursor tc);
 
 		//! \brief Set the provided item as the one selected in the name list
 		void setCurrentItem(QListWidgetItem *item);

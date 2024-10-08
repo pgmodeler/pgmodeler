@@ -33,8 +33,8 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 	source_code_hl = new SyntaxHighlighter(source_code_txt);
 	source_code_cp = new CodeCompletionWidget(source_code_txt, true);
 
-	parameters_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																					ObjectsTableWidget::UpdateButton, true, this);
+	parameters_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																					CustomTableWidget::UpdateButton, true, this);
 	parameters_tab->setColumnCount(4);
 	parameters_tab->setHeaderLabel(tr("Name"), 0);
 	parameters_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("parameter")), 0);
@@ -51,10 +51,10 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 
 	transform_type_wgt = new PgSQLTypeWidget(this);
-	transform_types_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																							 (ObjectsTableWidget::UpdateButton |
-																								ObjectsTableWidget::EditButton |
-																								ObjectsTableWidget::ResizeColsButton), true, this);
+	transform_types_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																							 (CustomTableWidget::UpdateButton |
+																								CustomTableWidget::EditButton |
+																								CustomTableWidget::ResizeColsButton), true, this);
 	transform_types_tab->setColumnCount(1);
 	transform_types_tab->setHeaderLabel(tr("Type"), 0);
 	transform_types_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("usertype")), 0);
@@ -66,9 +66,9 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 	func_config_twg->widget(2)->setLayout(grid);
 
 
-	config_params_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																							 (ObjectsTableWidget::UpdateButton |
-																								ObjectsTableWidget::EditButton), true, this);
+	config_params_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																							 (CustomTableWidget::UpdateButton |
+																								CustomTableWidget::EditButton), true, this);
 	config_params_tab->setColumnCount(2);
 	config_params_tab->setHeaderLabel(tr("Parameter"), 0);
 	config_params_tab->setHeaderLabel(tr("Value"), 1);
@@ -82,7 +82,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 
 	connect(language_cmb, &QComboBox::currentIndexChanged, this, __slot(this, BaseFunctionWidget::selectLanguage));
 
-	connect(transform_types_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int row){
+	connect(transform_types_tab, &CustomTableWidget::s_rowAdded, this, [this](int row){
 		__trycatch( transform_types_tab->setCellText(~transform_type_wgt->getPgSQLType(), row, 0); )
 	});
 
@@ -92,7 +92,7 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : B
 	setRequiredField(sourc_code_lbl);
 }
 
-void BaseFunctionWidget::handleParameter(ObjectsTableWidget *params_tab, Parameter param, int result, bool handle_param_modes)
+void BaseFunctionWidget::handleParameter(CustomTableWidget *params_tab, Parameter param, int result, bool handle_param_modes)
 {
 	if(!params_tab) return;
 
@@ -119,7 +119,7 @@ void BaseFunctionWidget::handleParameter(ObjectsTableWidget *params_tab, Paramet
 	}
 }
 
-void BaseFunctionWidget::duplicateParameter(ObjectsTableWidget *params_tab, int curr_row, int new_row, bool dup_param_modes)
+void BaseFunctionWidget::duplicateParameter(CustomTableWidget *params_tab, int curr_row, int new_row, bool dup_param_modes)
 {
 	Parameter new_param;
 	new_param = getParameter(params_tab, curr_row, dup_param_modes);
@@ -127,7 +127,7 @@ void BaseFunctionWidget::duplicateParameter(ObjectsTableWidget *params_tab, int 
 	showParameterData(params_tab, new_param, new_row, dup_param_modes);
 }
 
-void BaseFunctionWidget::showParameterForm(ObjectsTableWidget *params_tab, bool enable_param_modes)
+void BaseFunctionWidget::showParameterForm(CustomTableWidget *params_tab, bool enable_param_modes)
 {
 	if(!params_tab) return;
 
@@ -161,7 +161,7 @@ void BaseFunctionWidget::showParameterForm(ObjectsTableWidget *params_tab, bool 
 	}
 }
 
-Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes)
+Parameter BaseFunctionWidget::getParameter(CustomTableWidget *params_tab, unsigned row, bool set_param_modes)
 {
 	Parameter param;
 
@@ -191,7 +191,7 @@ Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *params_tab, unsig
 	return param;
 }
 
-void BaseFunctionWidget::showParameterData(ObjectsTableWidget *params_tab, Parameter param, unsigned row, bool show_param_modes)
+void BaseFunctionWidget::showParameterData(CustomTableWidget *params_tab, Parameter param, unsigned row, bool show_param_modes)
 {
 	if(!params_tab) return;
 

@@ -30,8 +30,8 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 	Ui_ReferencesWidget::setupUi(this);
 
 	object_sel = new ObjectSelectorWidget(types, this);
-	references_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																								 ObjectsTableWidget::DuplicateButton, true, this);
+	references_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																								 CustomTableWidget::DuplicateButton, true, this);
 
 	this->conf_view_refs = conf_view_refs;
 
@@ -64,16 +64,16 @@ ReferencesWidget::ReferencesWidget(const std::vector<ObjectType> &types, bool co
 		sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
-	connect(references_tab, &ObjectsTableWidget::s_rowAdded, this, &ReferencesWidget::handleReference);
-	connect(references_tab, &ObjectsTableWidget::s_rowEdited, this, &ReferencesWidget::editReference);
-	connect(references_tab, &ObjectsTableWidget::s_rowUpdated, this, &ReferencesWidget::handleReference);
+	connect(references_tab, &CustomTableWidget::s_rowAdded, this, &ReferencesWidget::handleReference);
+	connect(references_tab, &CustomTableWidget::s_rowEdited, this, &ReferencesWidget::editReference);
+	connect(references_tab, &CustomTableWidget::s_rowUpdated, this, &ReferencesWidget::handleReference);
 
 	connect(ref_name_edt, &QLineEdit::textChanged, this, [this](const QString &txt){
-		references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !txt.isEmpty() && object_sel->getSelectedObject());
+		references_tab->setButtonsEnabled(CustomTableWidget::AddButton, !txt.isEmpty() && object_sel->getSelectedObject());
 	});
 
 	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, this, [this](bool obj_selected){
-		references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !ref_name_edt->text().isEmpty() && obj_selected);
+		references_tab->setButtonsEnabled(CustomTableWidget::AddButton, !ref_name_edt->text().isEmpty() && obj_selected);
 		use_columns_chk->setEnabled(obj_selected &&
 																(BaseTable::isBaseTable(object_sel->getSelectedObject()->getObjectType()) ||
 																 object_sel->getSelectedObject()->getObjectType() == ObjectType::Column));
@@ -100,7 +100,7 @@ void ReferencesWidget::setAttributes(DatabaseModel *model, const std::vector<Ref
 	references_tab->clearSelection();
 	references_tab->blockSignals(false);
 	object_sel->setModel(model);
-	references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	references_tab->setButtonsEnabled(CustomTableWidget::AddButton, false);
 }
 
 std::vector<Reference> ReferencesWidget::getObjectReferences()
@@ -145,7 +145,7 @@ void ReferencesWidget::clearReferenceForm()
 	use_signature_chk->setChecked(false);
 	format_name_chk->setChecked(false);
 	references_tab->clearSelection();
-	references_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	references_tab->setButtonsEnabled(CustomTableWidget::AddButton, false);
 }
 
 void ReferencesWidget::showReferenceData(int row, BaseObject *object, const QString &ref_name, const QString &ref_alias,

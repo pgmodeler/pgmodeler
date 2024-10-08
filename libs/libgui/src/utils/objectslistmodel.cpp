@@ -19,7 +19,7 @@
 #include "objectslistmodel.h"
 #include "guiutilsns.h"
 #include <pgsqltypes/pgsqltype.h>
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
 #include "tableobject.h"
 #include "permission.h"
 #include "baserelationship.h"
@@ -192,13 +192,13 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 		if(obj->isProtected() || obj->isSystemObject())
 		{
 			item_dt.italic = true;
-			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+			item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor).name();
 		}
 		else if(dynamic_cast<TableObject *>(obj) &&
 						 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
 		{
 			item_dt.italic = true;
-			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor).name();
+			item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemAltFgColor).name();
 		}
 
 		item_dt.strikeout = obj->isSQLDisabled() && !obj->isSystemObject();
@@ -243,7 +243,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 			if(parent_obj->isProtected() || parent_obj->isSystemObject())
 			{
 				item_dt.italic = true;
-				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+				item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor).name();
 			}
 		}
 

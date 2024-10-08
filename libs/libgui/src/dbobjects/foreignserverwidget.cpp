@@ -33,8 +33,8 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 	hbox->addWidget(fdw_sel);
 	fdw_wgt->setLayout(hbox);
 
-	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																			 (CustomTableWidget::EditButton | CustomTableWidget::UpdateButton), true, this);
 	options_tab->setCellsEditable(true);
 	options_tab->setColumnCount(2);
 	options_tab->setHeaderLabel(tr("Option"), 0);

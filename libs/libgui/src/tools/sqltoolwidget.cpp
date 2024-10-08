@@ -151,10 +151,10 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
+/* void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
 {
 	plugins_btns = list;
-}
+} */
 
 void SQLToolWidget::resizeEvent(QResizeEvent *)
 {
@@ -316,8 +316,8 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
-			for(auto &btn : plugins_btns)
-				db_explorer_wgt->addPluginButton(btn);
+			//for(auto &btn : plugins_btns)
+			//	db_explorer_wgt->addPluginButton(btn);
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));

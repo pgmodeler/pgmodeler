@@ -57,7 +57,7 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	protected:
-		void setPluginsButtons(const QList<QToolButton *> &list);
+		//void setPluginsButtons(const QList<QToolButton *> &list);
 
 		void resizeEvent(QResizeEvent *);
 

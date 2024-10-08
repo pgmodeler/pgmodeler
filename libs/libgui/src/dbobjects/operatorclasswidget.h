@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_operatorclasswidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidget {
 	private:
@@ -44,7 +44,7 @@ class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::Operator
 		*storage_type;
 
 		//! \brief Stores the elements of operator class
-		ObjectsTableWidget *elements_tab;
+		CustomTableWidget *elements_tab;
 
 	public:
 		OperatorClassWidget(QWidget * parent = nullptr);

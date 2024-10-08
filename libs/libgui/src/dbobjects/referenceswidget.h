@@ -26,14 +26,14 @@
 #define REFERENCES_WIDGET_H
 
 #include "ui_referenceswidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/objectselectorwidget.h"
 
 class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *references_tab;
+		CustomTableWidget *references_tab;
 
 		ObjectSelectorWidget *object_sel;
 

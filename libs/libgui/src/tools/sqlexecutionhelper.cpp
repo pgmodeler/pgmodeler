@@ -34,6 +34,11 @@ void SQLExecutionHelper::setCommand(const QString &cmd)
 	command = cmd;
 }
 
+QString SQLExecutionHelper::getCommand()
+{
+	return command;
+}
+
 ResultSetModel *SQLExecutionHelper::getResultSetModel()
 {
 	return result_model;

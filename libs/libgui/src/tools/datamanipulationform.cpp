@@ -21,7 +21,7 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 #include "utils/plaintextitemdelegate.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "databaseexplorerwidget.h"
 #include "settings/generalconfigwidget.h"
 #include "messagebox.h"
@@ -233,7 +233,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	//Using the QueuedConnection here to avoid the "edit: editing failed" when editing and navigating through items using tab key
 	connect(results_tbw, &QTableWidget::currentCellChanged, this, &DataManipulationForm::insertRowOnTabPress, Qt::QueuedConnection);
-	connect(results_tbw, &QTableWidget::itemPressed, this, &DataManipulationForm::showPopupMenu);
+	connect(results_tbw, &QTableWidget::customContextMenuRequested, this, &DataManipulationForm::showPopupMenu);
 
 	connect(results_tbw, &QTableWidget::itemDoubleClicked, this, [this](QTableWidgetItem *item){
 		if(PlainTextItemDelegate::getMaxDisplayLength() > 0 &&
@@ -1103,14 +1103,14 @@ void DataManipulationForm::markOperationOnRow(OperationId operation, int row)
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
 		QColor item_fg_colors[3] = {
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemFgColor),
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemFgColor),
-			ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemFgColor) },
+			CustomTableWidget::getTableItemColor(CustomTableWidget::AddedItemFgColor),
+			CustomTableWidget::getTableItemColor(CustomTableWidget::UpdatedItemFgColor),
+			CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemFgColor) },
 
 			item_bg_colors[3] = {
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::AddedItemBgColor),
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::UpdatedItemBgColor),
-						ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor) };
+						CustomTableWidget::getTableItemColor(CustomTableWidget::AddedItemBgColor),
+						CustomTableWidget::getTableItemColor(CustomTableWidget::UpdatedItemBgColor),
+						CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemBgColor) };
 
 		if(operation==OpDelete)
 			tooltip=tooltip.arg(tr("deleted"));
@@ -1783,13 +1783,10 @@ void DataManipulationForm::openNewWindow()
 	data_manip->show();
 }
 
-void DataManipulationForm::showPopupMenu()
+void DataManipulationForm::showPopupMenu(const QPoint &pnt)
 {
-	if(QApplication::mouseButtons()!=Qt::RightButton)
-		return;
-
 	QAction *act = nullptr;
-	ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
+	ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
 	items_menu.clear();
 
@@ -1822,7 +1819,7 @@ void DataManipulationForm::showPopupMenu()
 		items_menu.addAction(action_bulk_edit);
 	}
 
-	items_menu.exec(QCursor::pos());
+	items_menu.exec(results_tbw->viewport()->mapToGlobal(pnt));
 }
 
 void DataManipulationForm::saveSelectedItems(bool csv_format)

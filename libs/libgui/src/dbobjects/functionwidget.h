@@ -38,7 +38,7 @@ class __libgui FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWid
 		PgSQLTypeWidget *ret_type;
 
 		//! \brief Table that represents the table returned by the function
-		ObjectsTableWidget *return_tab;
+		CustomTableWidget *return_tab;
 
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction();
