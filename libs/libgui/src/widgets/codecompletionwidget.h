@@ -44,8 +44,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 			Select, Insert, Update, Delete,
 			Truncate, Alter, Drop,	From,
 			Join, Into,	As, Set, Table,
-			Only,	Where, Exists,
-			Partition, Like, Inherits,
+			Only,	Where, Exists, Partition,
+			Like, Inherits, On,
 
 			Inner, Outer, Left,	Right,
 			Full, Union, Intersect,
@@ -53,6 +53,8 @@ class __libgui CodeCompletionWidget: public QWidget {
 		};
 
 		ObjectType filter_obj_type;
+
+		int filter_kw_pos;
 
 		/*! \brief Stores the first occurency of the DML keywords in the current typed command.
 		 *  This is used to help pgModeler retrieve columns/objects names from the database */

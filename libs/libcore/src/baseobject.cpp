@@ -167,7 +167,7 @@ ObjectType BaseObject::getObjectType(const QString &type_name, bool is_sql_name)
 {
 	for(unsigned i = 0; i < BaseObject::ObjectTypeCount; i++)
 	{
-		if((is_sql_name && objs_sql[i] == type_name.toUpper()) ||
+		if((is_sql_name && !objs_sql[i].isEmpty() && objs_sql[i] == type_name.toUpper()) ||
 			 (!is_sql_name && objs_schemas[i] == type_name.toLower()))
 		{
 			return static_cast<ObjectType>(i);
