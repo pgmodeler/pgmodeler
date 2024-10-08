@@ -261,21 +261,21 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence("Ctrl+Shift+V"));
+		act = ctx_menu->addAction(tr("Paste code"), QKeySequence("Ctrl+Shift+V"), this, &NumberedTextEditor::pasteCode);
 		act->setEnabled(!qApp->clipboard()->text().isEmpty());
 
-		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence("Ctrl+U"));
+		act = ctx_menu->addAction(tr("Upper case"), QKeySequence("Ctrl+U"), this, &NumberedTextEditor::changeSelectionToUpper);
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence("Ctrl+Shift+U"));
+		act = ctx_menu->addAction(tr("Lower case"), QKeySequence("Ctrl+Shift+U"), this, &NumberedTextEditor::changeSelectionToLower);
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence("Tab"));
+		act = ctx_menu->addAction(tr("Ident right"), QKeySequence("Tab"), this, &NumberedTextEditor::identSelectionRight);
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence("Shift+Tab"));
+		act = ctx_menu->addAction(tr("Ident left"), QKeySequence("Shift+Tab"), this, &NumberedTextEditor::identSelectionLeft);
 		act->setEnabled(textCursor().hasSelection());
 	}
 

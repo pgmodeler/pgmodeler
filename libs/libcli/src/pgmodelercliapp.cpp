@@ -876,7 +876,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(opts.count(PartialDiff) && !opts[Input].count() && (opts.count(StartDate) || opts.count(EndDate)))
+			if(opts.count(PartialDiff) && opts[Input].isEmpty() && (opts.count(StartDate) || opts.count(EndDate)))
 				throw Exception(tr("The date filters are allowed only on partial diff using an input model!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(PartialDiff) && opts.count(FilterObjects) && (opts.count(StartDate) || opts.count(EndDate)))

@@ -129,7 +129,7 @@ void TableDataWidget::showItemContextMenu(const QPoint &pos)
 			item_menu.addAction(act);
 		}
 		else
-			act = item_menu.addAction(btn->icon(), btn->text(), btn, &QToolButton::click, btn->shortcut());
+			act = item_menu.addAction(btn->icon(), btn->text(), btn->shortcut(), btn, &QToolButton::click);
 
 		act->setEnabled(btn->isEnabled());
 	}

@@ -26,7 +26,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+	output_menu.addAction(tr("Copy as text"), QKeySequence("Ctrl+Shift+C"), this, &ModelValidationWidget::copyTextOutput);
 	output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
 	output_btn->setMenu(&output_menu);
 
