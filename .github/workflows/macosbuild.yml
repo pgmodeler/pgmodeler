@@ -18,6 +18,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Installing PostgreSQL
+      uses: tj-actions/install-postgresql@v3
+      with:
+        postgresql-version: 16
       
     - name: Installing Qt framework
       uses: jurplel/install-qt-action@v3
