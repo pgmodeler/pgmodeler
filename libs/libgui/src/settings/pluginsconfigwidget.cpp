@@ -182,9 +182,8 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 
 	if(!errors.empty())
 	{
-		Messagebox msgbox;
-		msgbox.show(Exception(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
-													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+		Messagebox::error(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
+											ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
 	}
 }
 
@@ -206,8 +205,7 @@ void PluginsConfigWidget::postInitPlugins()
 
 	if(!errors.empty())
 	{
-		Messagebox msgbox;
-		msgbox.show(Exception(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
-													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+		Messagebox::error(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
+											ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
 	}
 }

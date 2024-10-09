@@ -303,13 +303,13 @@ void DatabaseImportForm::importDatabase()
 {
 	try
 	{
-		Messagebox msg_box;
-
 		std::map<ObjectType, std::vector<unsigned>> obj_oids;
 		std::map<unsigned, std::vector<unsigned>> col_oids;
 
 		if(import_to_model_chk->isChecked())
 		{
+			Messagebox msg_box;
+
 			msg_box.show(tr("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 

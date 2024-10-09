@@ -253,9 +253,7 @@ void ConstraintWidget::applyConfiguration()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
 		cancelConfiguration();
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

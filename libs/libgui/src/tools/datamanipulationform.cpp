@@ -115,10 +115,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	edit_tb->setMenu(&edit_menu);
 
-	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), this, &DataManipulationForm::addRow, QKeySequence("Ins"));
+	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), QKeySequence("Ins"), this, &DataManipulationForm::addRow);
 	action_add->setToolTip(tr("Add empty rows"));
 
-	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), this, &DataManipulationForm::markDeleteOnRows, QKeySequence("Del"));
+	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), QKeySequence("Del"), this, &DataManipulationForm::markDeleteOnRows);
 	action_delete->setToolTip(tr("Mark the selected rows to be deleted"));
 
 	action_bulk_edit = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("bulkedit")), tr("Edit cells"));
@@ -129,16 +129,16 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		GuiUtilsNs::openColumnDataForm(results_tbw);
 	});
 
-	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), this, &DataManipulationForm::duplicateRows, QKeySequence("Ctrl+D"));
+	action_duplicate = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("duprow")), tr("Duplicate row(s)"), QKeySequence("Ctrl+D"), this, &DataManipulationForm::duplicateRows);
 	action_duplicate->setToolTip(tr("Duplicate the selected rows"));
 
-	action_clear = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear cell(s)"), this, &DataManipulationForm::clearItemsText, QKeySequence("Ctrl+R"));
+	action_clear = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear cell(s)"), QKeySequence("Ctrl+R"), this, &DataManipulationForm::clearItemsText);
 	action_clear->setToolTip(tr("Clears the items selected on the grid"));
 
 	paste_tb->setMenu(&paste_menu);
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, &DataManipulationForm::truncateTable, QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("truncate")), tr("Truncate"), QKeySequence("Ctrl+Del"), this, &DataManipulationForm::truncateTable)->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(GuiUtilsNs::getIconPath("trunccascade")), tr("Truncate cascade"), QKeySequence("Ctrl+Shift+Del"), this, &DataManipulationForm::truncateTable)->setData(QVariant::fromValue<bool>(true));
 
 	selection_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -434,7 +434,6 @@ void DataManipulationForm::retrieveData()
 	if(table_cmb->currentIndex() <= 0)
 		return;
 
-	Messagebox msg_box;
 	Catalog catalog;
 	Connection conn_sql=Connection(tmpl_conn_params),
 			conn_cat=Connection(tmpl_conn_params);
@@ -443,6 +442,8 @@ void DataManipulationForm::retrieveData()
 	{
 		if(!changed_rows.empty())
 		{
+			Messagebox msg_box;
+
 			msg_box.show(tr("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 

@@ -61,11 +61,7 @@ void ExtensionWidget::applyConfiguration()
 		finishConfiguration();
 
 		if(update_types && !model->updateExtensionTypes(extension))
-		{
-			Messagebox msgbox;
-			msgbox.show(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."),
-									Messagebox::AlertIcon);
-		}
+			Messagebox::alert(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."));
 	}
 	catch(Exception &e)
 	{

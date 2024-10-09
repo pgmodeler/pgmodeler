@@ -15,13 +15,13 @@ contains(CONFIG, debug):{
 	isEqual(USE_CCACHE, true):CONFIG+=ccache
 }
 
-# Disables all the APIs deprecated before Qt 6.0.0
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+# Disables all the APIs deprecated before Qt 6.4.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060400
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
 
-# Forcing the compilation using Qt 6.x
-!versionAtLeast(QT_VERSION, "6.0.0") {
-   error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.0.0.")
+# Forcing the compilation using Qt 6.4.x
+!versionAtLeast(QT_VERSION, "6.4.0") {
+	 error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.4.0")
 }
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files

@@ -2656,7 +2656,6 @@ void ModelWidget::protectObject()
 		TableObject *tab_obj=nullptr;
 		bool protect=false;
 		QList<BaseGraphicObject *> upd_objects;
-		Messagebox msgbox;
 
 		scene->blockSignals(true);
 
@@ -2690,6 +2689,8 @@ void ModelWidget::protectObject()
 				// Applying protection status for the schema children objects
 				if(obj_type==ObjectType::Schema)
 				{
+					Messagebox msgbox;
+
 					if(!msgbox.isCustomOptionChecked())
 					{
 						msgbox.setCustomOptionText("Apply to all other selected schemas");
@@ -3086,7 +3087,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		obj_type = object->getObjectType();
 		itr++;
 
-		if(orig_names[object].count() && obj_type != ObjectType::Cast)
+		if(!orig_names[object].isEmpty() && obj_type != ObjectType::Cast)
 			object->setName(orig_names[object]);
 	}
 

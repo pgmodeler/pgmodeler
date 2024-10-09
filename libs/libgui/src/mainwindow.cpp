@@ -231,26 +231,21 @@ void MainWindow::configureMenusActionsWidgets()
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
-	expand_canvas_menu.addAction(tr("Expand to top"),
-															 this, &MainWindow::expandSceneRect,
-															 QKeySequence("Ctrl+Shift+Up"))->setData(ObjectsScene::ExpandTop);
+	expand_canvas_menu.addAction(tr("Expand to top"), QKeySequence("Ctrl+Shift+Up"),
+															 this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandTop);
 
-	expand_canvas_menu.addAction(tr("Expand to left"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Left"))->setData(ObjectsScene::ExpandLeft);
+	expand_canvas_menu.addAction(tr("Expand to left"), QKeySequence("Ctrl+Shift+Left"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandLeft);
 
-	expand_canvas_menu.addAction(tr("Expand to bottom"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Down"))->setData(ObjectsScene::ExpandBottom);
+	expand_canvas_menu.addAction(tr("Expand to bottom"), QKeySequence("Ctrl+Shift+Down"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandBottom);
 
-	expand_canvas_menu.addAction(tr("Expand to right"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Right"))->setData(ObjectsScene::ExpandRight);
+	expand_canvas_menu.addAction(tr("Expand to right"), QKeySequence("Ctrl+Shift+Right"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandRight);
 
 	expand_canvas_menu.addSeparator();
-	expand_canvas_menu.addAction(tr("Reset geometry"),
-																this, &MainWindow::expandSceneRect,
-																QKeySequence("Ctrl+Shift+="))->setData(-1);
+	expand_canvas_menu.addAction(tr("Reset geometry"), QKeySequence("Ctrl+Shift+="),
+																this, &MainWindow::expandSceneRect)->setData(-1);
 
 	action_expand_canvas = expand_canvas_menu.menuAction();
 	action_expand_canvas->setEnabled(false);
@@ -779,8 +774,7 @@ void MainWindow::restoreTemporaryModels()
 					if(!restoration_form->keep_models_chk->isChecked())
 						restoration_form->removeTemporaryModel(model_file);
 
-					Messagebox msg_box;
-					msg_box.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -863,8 +857,6 @@ void MainWindow::restoreLastSession()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
-			//Messagebox msg_box;
-			//msg_box.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -2560,7 +2552,9 @@ void MainWindow::arrangeObjects()
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"),
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{

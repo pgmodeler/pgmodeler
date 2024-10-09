@@ -688,6 +688,7 @@ void GeneralConfigWidget::setConfigurationChanged(bool changed)
 void GeneralConfigWidget::resetDialogsSizes()
 {
 	Messagebox msg_box;
+
 	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 

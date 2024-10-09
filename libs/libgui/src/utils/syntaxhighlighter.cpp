@@ -303,7 +303,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 		len = end - m_info.start + 1;
 	}
 
-	fmt.setFontFamily(default_font.family());
+	fmt.setFontFamilies({ default_font.family() });
 	fmt.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(m_info.start, len, fmt);
 
@@ -570,14 +570,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						EnclosingCharsCfg cfg;
 						cfg.open_char = attribs[Attributes::OpenChar].front();
 						cfg.close_char = attribs[Attributes::CloseChar].front();
-
-						#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-							cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
-							cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
-						#else
-							cfg.fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
-							cfg.bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
-						#endif
+						cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+						cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
 
 						enclosing_chrs.push_back(cfg);
 					}
@@ -611,15 +605,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						if(attribs[Attributes::ForegroundColor].isEmpty())
 							fg_color = code_field_txt->palette().color(QPalette::WindowText);
 						else
-							fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+							fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
 
 						// If the attribute isn't defined the default the bg color will be transparent
 						if(attribs[Attributes::BackgroundColor].isEmpty())
 							bg_color = Qt::transparent;
 						else
-							bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+							bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
 
-						format.setFontFamily(default_font.family());
+						format.setFontFamilies({ default_font.family() });
 						format.setFontPointSize(default_font.pointSizeF());
 						format.setFontItalic(italic);
 						format.setFontUnderline(underline);

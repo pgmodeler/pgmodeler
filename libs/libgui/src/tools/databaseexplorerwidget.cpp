@@ -273,10 +273,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QMenu *refresh_menu=new QMenu(refresh_tb);
 
-	act=refresh_menu->addAction(tr("Quick refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Alt+F5"));
+	act=refresh_menu->addAction(tr("Quick refresh"), QKeySequence("Alt+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(true));
 
-	act=refresh_menu->addAction(tr("Full refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Ctrl+F5"));
+	act=refresh_menu->addAction(tr("Full refresh"), QKeySequence("Ctrl+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(false));
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
@@ -383,8 +383,6 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 

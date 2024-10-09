@@ -92,7 +92,6 @@ void BugReportForm::enableGeneration()
 
 void BugReportForm::generateReport(const QByteArray &buf)
 {
-	Messagebox msgbox;
 	QFile output;
 	QFileInfo fi(QString(output_sel->getSelectedFile() +
 											 GlobalAttributes::DirSeparator +
@@ -105,7 +104,10 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename), Messagebox::ErrorIcon);
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
+											ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 	else
 	{
 		QByteArray comp_buf;
@@ -117,9 +119,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong><a href='file://%1'>%2<a/></strong> to <em>%3</em> in order be analyzed. Thank you for the collaboration!")
-								.arg(fi.absolutePath(), QDir::toNativeSeparators(filename), GlobalAttributes::BugReportEmail),
-					Messagebox::InfoIcon);
+		Messagebox::info(tr("Bug report successfuly generated! Please, send the file <strong><a href='file://%1'>%2<a/></strong> to <em>%3</em> in order be analyzed. Thank you for the collaboration!")
+										 .arg(fi.absolutePath(), QDir::toNativeSeparators(filename), GlobalAttributes::BugReportEmail));
 	}
 }
 
