@@ -605,8 +605,10 @@ void CustomTableWidget::removeRows()
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
+		{
 			msg_box.show(tr("Confirmation"),tr("Do you really want to remove all the items?"),
 						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		}
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
 				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))

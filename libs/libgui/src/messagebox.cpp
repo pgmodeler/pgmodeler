@@ -259,7 +259,7 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																											 QRegularExpression::CaseInsensitiveOption),
+																		QRegularExpression::CaseInsensitiveOption),
 																		"\n").count('\n');
 
 	if(ln_cnt > 0)

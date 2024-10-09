@@ -605,13 +605,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						if(attribs[Attributes::ForegroundColor].isEmpty())
 							fg_color = code_field_txt->palette().color(QPalette::WindowText);
 						else
-							fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
+							fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
 
 						// If the attribute isn't defined the default the bg color will be transparent
 						if(attribs[Attributes::BackgroundColor].isEmpty())
 							bg_color = Qt::transparent;
 						else
-							bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+							bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
 
 						format.setFontFamilies({ default_font.family() });
 						format.setFontPointSize(default_font.pointSizeF());

@@ -715,11 +715,13 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
+	{
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Apply diff"), tr("Preview diff"), "",
 					 GuiUtilsNs::getIconPath("diff"), GuiUtilsNs::getIconPath("sqlcode"));
+	}
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{

@@ -124,10 +124,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 			file.setPermissions(file.permissions() | QFileDevice::WriteOwner);
 
 		if(bkp_saved && !silent)
-		{
-			Messagebox msg_box;
-			msg_box.show(tr("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::InfoIcon);
-		}
+			Messagebox::info(tr("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename));
 	}
 }
 

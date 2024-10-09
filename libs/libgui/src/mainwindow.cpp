@@ -774,8 +774,7 @@ void MainWindow::restoreTemporaryModels()
 					if(!restoration_form->keep_models_chk->isChecked())
 						restoration_form->removeTemporaryModel(model_file);
 
-					Messagebox msg_box;
-					msg_box.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -858,8 +857,6 @@ void MainWindow::restoreLastSession()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
-			//Messagebox msg_box;
-			//msg_box.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -2555,7 +2552,9 @@ void MainWindow::arrangeObjects()
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"),
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{

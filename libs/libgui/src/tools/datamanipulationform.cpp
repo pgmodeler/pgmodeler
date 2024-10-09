@@ -434,7 +434,6 @@ void DataManipulationForm::retrieveData()
 	if(table_cmb->currentIndex() <= 0)
 		return;
 
-	Messagebox msg_box;
 	Catalog catalog;
 	Connection conn_sql=Connection(tmpl_conn_params),
 			conn_cat=Connection(tmpl_conn_params);
@@ -443,6 +442,8 @@ void DataManipulationForm::retrieveData()
 	{
 		if(!changed_rows.empty())
 		{
+			Messagebox msg_box;
+
 			msg_box.show(tr("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
