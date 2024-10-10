@@ -28,6 +28,7 @@ v1.2.0-alpha1
 * [New] Created the struct PgModelerGuiPlugin::PluginWidgets.
 * [New] Added support for plugin widgets in SQLExecutionWidget.
 * [New] Added the methods registerPlugin, createWidgets, getPluginsActions, getPluginsToolButtons on PgModelerGuiPlugin.
+* [Change] Removed the support for Qt 6.2 and 6.3.
 * [Change] Improved the CodeCompletionWidget in such a way as to correctly suggest names in ALTER/DROP commands depending on the objects being handled.
 * [Change] Minor refactor in BaseObject::getChildObjectTypes.
 * [Change] Minor change in method BaseObject::getObjectType by adding the paramenter is_sql_name.
@@ -35,7 +36,7 @@ v1.2.0-alpha1
 * [Change] Minor adjustment in sql-highlight.conf.
 * [Change] Minor change in methods copySelection and generateBuffer in SQLExecutionWidget.
 * [Change] Minor change in CustomTableWidget::addRow that now returns the id of the row added.
-* [Change] The file selection dialog now starts on the user's home by default and saves that last accessed directory, using it the next time a file is being selected via that dialog.
+* [Change] The file selection dialog now starts on the user's home by default and saves that last accessed directory, using it the next time it is opened.
 * [Change] Minor adjustment in DataManipulationForm and TableDataWidget to use signals customContextMenuRequested when displaying items context menus.
 * [Change] Changed the signature of some methods in CustomTableWidget.
 * [Change] Renamed ObjectsTableWidget to CustomTableWidget
