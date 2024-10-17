@@ -18,20 +18,20 @@
 
 /**
 \ingroup libgui
-\class DataHandlingForm
-\brief Implements the operations to handle table's data
+\class DataGridWidget
+\brief Implements the operations to handle data on a single table
 */
 
-#ifndef DATA_MANIPULATION_FORM_H
-#define DATA_MANIPULATION_FORM_H
+#ifndef DATA_GRID_WIDGET_H
+#define DATA_GRID_WIDGET_H
 
-#include "ui_datamanipulationform.h"
+#include "ui_datagridwidget.h"
 #include "catalog.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/codecompletionwidget.h"
 #include "widgets/csvloadwidget.h"
 
-class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
+class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
 	private:
 		Q_OBJECT
 		
@@ -49,14 +49,22 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QAction *action_add, *action_delete, *action_bulk_edit,
-		*action_duplicate, *action_clear;
+		QString sch_name, tab_name;
+
+		ObjectType obj_type;
+
+		Connection conn_sql;
+
+		Catalog catalog;
+
+		/* QAction *action_add, *action_delete, *action_bulk_edit,
+		*action_duplicate, *action_clear; */
 
 		QMenu items_menu, fks_menu, copy_menu, truncate_menu,
 		paste_menu, edit_menu, export_menu, save_menu;
 
-		//! \brief Store the template connection params to be used by catalogs and command execution connections
-		attribs_map tmpl_conn_params;
+		//! \brief Store the connection params to be used by catalogs and command execution connections
+		attribs_map conn_params;
 		
 		//! \brief Current editing table columns names
 		QStringList col_names,
@@ -65,9 +73,9 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		pk_col_names;
 
 		//! \brief Stores the current table's name (schema.table)
-		QString curr_table_name,
+		//QString curr_table_name,
 
-		tmpl_window_title;
+		//tmpl_window_title;
 
 		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
 		and it is used to retrieve all foreign keys that references the current table */
@@ -89,21 +97,21 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
-		void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema="");
+		//void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema="");
 		
 		//! \brief Retrieve the primary key column ids for the specified table
-		void retrievePKColumns(const QString &schema, const QString &table);
+		void retrievePKColumns();
 
 		/*! \brief Retrieve the foreign key columns info for the specified table. These data is used to browse referenced tables in the data
 		 that the selected line holds */
-		void retrieveFKColumns(const QString &schema, const QString &table);
+		void retrieveFKColumns();
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */
 		void markOperationOnRow(OperationId operation, int row);
 		
 		//! \brief Generates a DML command for the row depending on the it's operation type
-		QString getDMLCommand(int row);
+		//QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
 		void removeNewRows(std::vector<int> ins_rows);
@@ -114,88 +122,92 @@ class __libgui DataManipulationForm: public QDialog, public Ui::DataManipulation
 		//! \brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
-		void resizeEvent(QResizeEvent *event);
+		//void resizeEvent(QResizeEvent *event);
 
-		void closeEvent(QCloseEvent *event);
+		//void closeEvent(QCloseEvent *event);
 
 		void setColumnsCheckState(Qt::CheckState state);
 
-		bool eventFilter(QObject *object, QEvent *event);
+		//bool eventFilter(QObject *object, QEvent *event);
 
 		//! \brief Shows a confirmation message before closing the form when there are pending operations in the grid
-		int confirmFormClose();
+		//int confirmFormClose();
 
 public:
-		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+		DataGridWidget(const QString &sch_name, const QString &tab_name,
+									 ObjectType obj_type, const attribs_map &conn_params,
+									 QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
+		//void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
 
 	private slots:
-		void reject();
+		void resetDataGrid();
 
-		void clearItemsText();
+		//void reject();
 
-		void sortResults(int column, Qt::SortOrder order);
+		//void clearItemsText();
 
-		void selectColumn(int column, Qt::SortOrder order);
+		//void sortResults(int column, Qt::SortOrder order);
+
+		//void selectColumn(int column, Qt::SortOrder order);
 
 		//! \brief List the tables based upon the current schema
-		void listTables();
+		//void listTables();
 		
 		//! \brief List the columns based upon the current table
-		void listColumns();
+		void listColumns(const std::vector<attribs_map> &cols);
 		
 		//! \brief Retrieve the data for the current table filtering the data as configured on the advanced tab
 		void retrieveData();
 		
 		//! \brief Disable the buttons used to handle data
-		void disableControlButtons();
+		//void disableControlButtons();
 
 		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
-		void enableRowControlButtons();
+		//void enableRowControlButtons();
 		
-		//! \brief Reset the state of advaced tab's controls
-		void resetAdvancedControls();
+		//! \brief Reset the state of filter's controls
+		void resetFilterControls();
 		
 		//! \brief Enables/disables the buttons of the order by list depending on the state of it
-		void enableColumnControlButtons();
+		//void enableColumnControlButtons();
 		
 		//! \brief Add a column to the "order by" list
-		void addSortColumnToList();
+		//void addSortColumnToList();
 		
 		//! \brief Remove a column from the "order by" list
-		void removeSortColumnFromList();
+		//void removeSortColumnFromList();
 		
 		//! \brief Clears the "order by" list
-		void clearSortColumnList();
+		//void clearSortColumnList();
 		
 		//! \brief Toggles the sort mode between ASC and DESC when right clicking on a element at order by list
-		void changeOrderMode(QListWidgetItem *item);
+		//void changeOrderMode(QListWidgetItem *item);
 		
 		//! \brief Mark the entire row in which the item resides
-		void markUpdateOnRow(QTableWidgetItem *item);
+		//void markUpdateOnRow(QTableWidgetItem *item);
 		
 		//! \brief Mark a seleciton of rows to be delete. New rows are automatically removed
-		void markDeleteOnRows();
+		//void markDeleteOnRows();
 		
 		//! \brief Add a new row on the grid with the first column with edition enabled
 		void addRow(bool focus_new_row = true);
 		
 		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
-		void duplicateRows();
+		//void duplicateRows();
 
 		//! \brief Undo the operation made on all rows or in a set of selected rows
-		void undoOperations();
+		//void undoOperations();
 		
 		//! \brief Insert a new row as the user press tab key on the last column at last row
-		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
+		//void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 		
 		//! \brief Commit all changes made on the rows rolling back changes when some error is triggered
-		void saveChanges();
+		//void saveChanges();
 		
 		//! \brief Swap two rows on the order by list
-		void swapColumns();
+		//void swapColumns();
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
 		void loadDataFromCsv(bool load_from_clipboard = false, bool force_csv_parsing = false);
@@ -213,13 +225,15 @@ public:
 		void toggleColumnDisplay(QListWidgetItem *item);
 
 		//! \brief Opens a new data manipulation windows
-		void openNewWindow();
+		//void openNewWindow();
 
 		//! \brief Shows the popup menu over the current selection
-		void showPopupMenu(const QPoint &pnt);
+		//void showPopupMenu(const QPoint &pnt);
 
 		//! \brief Save the selected items to external file
 		void saveSelectedItems(bool csv_format);
+
+		friend class DataHandlingForm;
 };
 
 #endif
