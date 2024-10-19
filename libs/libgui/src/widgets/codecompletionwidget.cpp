@@ -666,7 +666,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		 * 3) The current word is a keyword registered in the syntax highlighter config file */
 		if(curr_word == "," ||
 			 dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-			 keywords.contains(curr_word, Qt::CaseInsensitive))
+			 (curr_word != "public" && keywords.contains(curr_word, Qt::CaseInsensitive)))
 			break;
 
 		curr_word.removeIf([](const QChar &chr){
