@@ -6,6 +6,7 @@ v1.2.0-alpha1
 <em>Release date: October 31, 2024</em><br/>
 
 * [New] Added support for PostgreSQL 17.
+* [New] Added support for tabbed table data handling.
 * [New] Added an option in LayersConfigWidget that makes relationships follow tables visibility.
 * [New] Added support for quickly creating a new layer and assigning it to the selected objects in ModelWidget.
 * [New] Added support for the removal of recent models that aren't accessible anymore.
