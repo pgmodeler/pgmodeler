@@ -69,12 +69,13 @@ src/settings/pluginsconfigwidget.cpp \
 src/settings/snippetsconfigwidget.cpp \
 src/tools/bugreportform.cpp \
 src/tools/databaseimporthelper.cpp \
+	src/tools/datagridwidget.cpp \
+	src/tools/datahandlingform.cpp \
 src/tools/modeldatabasediffform.cpp \
 src/tools/modelfixform.cpp \
 src/tools/objectsdiffinfo.cpp \
 src/tools/sqltoolwidget.cpp \
 src/tools/databaseexplorerwidget.cpp \
-src/tools/datamanipulationform.cpp \
 src/tools/modelexportform.cpp \
 src/tools/modelrestorationform.cpp \
 src/tools/sqlexecutionhelper.cpp \
@@ -193,12 +194,13 @@ src/settings/pluginsconfigwidget.h \
 src/settings/snippetsconfigwidget.h \
 src/tools/bugreportform.h \
 src/tools/databaseimporthelper.h \
+	src/tools/datagridwidget.h \
+	src/tools/datahandlingform.h \
 src/tools/modeldatabasediffform.h \
 src/tools/modelfixform.h \
 src/tools/objectsdiffinfo.h \
 src/tools/sqltoolwidget.h \
 src/tools/databaseexplorerwidget.h \
-src/tools/datamanipulationform.h \
 src/tools/modelexportform.h \
 src/tools/modelrestorationform.h \
 src/tools/sqlexecutionhelper.h \
@@ -309,7 +311,8 @@ ui/settings/configurationform.ui \
 ui/settings/generalconfigwidget.ui \
 ui/settings/relationshipconfigwidget.ui \
 ui/tools/bugreportform.ui \
-ui/tools/datamanipulationform.ui \
+	ui/tools/datagridwidget.ui \
+	ui/tools/datahandlingform.ui \
 ui/tools/modelexportform.ui \
 ui/tools/sqlexecutionwidget.ui \
 ui/tools/databaseexplorerwidget.ui \

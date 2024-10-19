@@ -24,7 +24,7 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "tools/datamanipulationform.h"
+#include "tools/datahandlingform.h"
 #include "pgmodelerguiplugin.h"
 
 const QString DatabaseExplorerWidget::DepNotDefined;
@@ -307,7 +307,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					if(oid!=0 && BaseTable::isBaseTable(obj_type))
 					{
 						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-												 item->text(0), obj_type!=ObjectType::View);
+												 item->text(0), obj_type != ObjectType::View, obj_type);
 					}
 				}
 			}
@@ -1232,9 +1232,12 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			loadObjectSource(true);
 		else if(exec_action==handle_data_action)
 		{
+			ObjectType obj_type = static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
+
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_t(ObjectType::View));
+									 obj_type != ObjectType::View,
+									 obj_type);
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -1460,7 +1463,6 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 	catch(Exception &e)
 	{
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2234,17 +2236,16 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	return source;
 }
 
-void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
+void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views, ObjectType obj_type)
 {
-	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=Connection(this->connection.getConnectionParams());
+	DataHandlingForm *data_hand = new DataHandlingForm;
 
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
+	data_hand->setWindowModality(Qt::NonModal);
+	data_hand->setAttribute(Qt::WA_DeleteOnClose, true);
+	data_hand->hide_views_chk->setChecked(hide_views);
+	data_hand->setAttributes(connection.getConnectionParams(), schema, table, obj_type);
 
-	data_manip->setAttributes(conn, schema, table);
-	GuiUtilsNs::resizeDialog(data_manip);
-	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
-	data_manip->show();
+	GuiUtilsNs::resizeDialog(data_hand);
+	GeneralConfigWidget::restoreWidgetGeometry(data_hand);
+	data_hand->show();
 }

@@ -222,7 +222,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		void cancelObjectRename();
 
 		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
+		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views = true, ObjectType obj_type = ObjectType::Table);
 
 		void loadObjectSource(bool show_code);
 
