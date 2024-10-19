@@ -114,6 +114,9 @@
    </item>
    <item>
     <widget class="QWidget" name="csv_load_parent" native="true">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -184,6 +187,9 @@
       </property>
      </widget>
      <widget class="QTabWidget" name="filter_tbw">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>

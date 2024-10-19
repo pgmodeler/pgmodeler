@@ -235,7 +235,7 @@
       <item row="7" column="0">
        <widget class="QToolButton" name="edit_tb">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -289,7 +289,7 @@
       <item row="13" column="0">
        <widget class="QToolButton" name="selection_tb">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -734,7 +734,7 @@
       <item row="27" column="0">
        <widget class="QToolButton" name="csv_load_tb">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
