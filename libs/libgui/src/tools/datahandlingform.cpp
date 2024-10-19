@@ -52,34 +52,49 @@ DataHandlingForm::DataHandlingForm(QWidget * parent, Qt::WindowFlags f): QDialog
 	new_window_tb->setToolTip(new_window_tb->toolTip() + QString(" (%1)").arg(new_window_tb->shortcut().toString()));
 
 	connect(data_grids_tbw, &QTabWidget::currentChanged, this, &DataHandlingForm::setCurrentDataGrid);
-	connect(data_grids_tbw, &QTabWidget::tabCloseRequested, this, &DataHandlingForm::closeDataGrid);
+
+	connect(data_grids_tbw, &QTabWidget::tabCloseRequested, this, [this](int idx){
+		closeDataGrid(idx, true);
+	});
+
 	connect(close_btn, &QPushButton::clicked, this, &DataHandlingForm::reject);
 	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataHandlingForm::listTables);
 	connect(hide_views_chk, &QCheckBox::toggled, this, &DataHandlingForm::listTables);
-	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataHandlingForm::disableControlButtons);
-	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataHandlingForm::disableControlButtons);
-	connect(table_cmb, &QComboBox::activated, this, qOverload<>(&DataHandlingForm::addDataGrid));
+	connect(schema_cmb, &QComboBox::currentIndexChanged, this, &DataHandlingForm::enableRefreshButton);
+	connect(table_cmb, &QComboBox::currentIndexChanged, this, &DataHandlingForm::enableRefreshButton);
+
+	connect(table_cmb, &QComboBox::activated, this, [this](){
+		addDataGrid(schema_cmb->currentText(), table_cmb->currentText(), "",
+								static_cast<ObjectType>(table_cmb->currentData().toUInt()));
+	});
 
 	connect(new_window_tb, &QToolButton::clicked, this, &DataHandlingForm::openNewWindow);
 }
 
 DataHandlingForm::~DataHandlingForm()
 {
-	#warning "Destroy tabs"
+	while(data_grids_tbw->count() > 0)
+	{
+		data_grids_tbw->blockSignals(true);
+		closeDataGrid(0, false);
+	}
 }
 
-void DataHandlingForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
+void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QString curr_schema, const QString curr_table, const QString &filter)
 {
 	try
 	{
-		tmpl_conn_params = conn.getConnectionParams();
+		Connection conn { conn_params };
+
+		connection_id = conn.getConnectionId(true, true, false);
+		tmpl_conn_params = conn_params;
 		db_name_lbl->setText(conn.getConnectionId(true, true, true));
 		catalog.setConnection(conn);
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { ObjectType::Schema });
 
-		disableControlButtons();
+		enableRefreshButton();
 		schema_cmb->setCurrentText(curr_schema);
 
 		if(!filter.isEmpty() && !curr_schema.isEmpty() && !curr_table.isEmpty())
@@ -104,6 +119,13 @@ void DataHandlingForm::setCurrentDataGrid(int tab_idx)
 
 	if(curr_grid_wgt)
 	{
+		browse_tabs_tb->menu()->removeEventFilter(this);
+		edit_tb->menu()->removeEventFilter(this);
+		paste_tb->menu()->removeEventFilter(this);
+		truncate_tb->menu()->removeEventFilter(this);
+		export_tb->menu()->removeEventFilter(this);
+		selection_tb->menu()->removeEventFilter(this);
+
 		disconnect(filter_tb, nullptr, curr_grid_wgt, nullptr);
 		disconnect(csv_load_tb, nullptr, curr_grid_wgt, nullptr);
 		disconnect(refresh_tb, nullptr, curr_grid_wgt, nullptr);
@@ -138,21 +160,27 @@ void DataHandlingForm::setCurrentDataGrid(int tab_idx)
 
 		browse_tabs_tb->setEnabled(data_grid_wgt->isBrowseEnabled());
 		browse_tabs_tb->setMenu(&data_grid_wgt->fks_menu);
+		browse_tabs_tb->menu()->installEventFilter(this);
 
 		edit_tb->setEnabled(data_grid_wgt->isEditEnabled());
 		edit_tb->setMenu(&data_grid_wgt->edit_menu);
+		edit_tb->menu()->installEventFilter(this);
 
 		paste_tb->setEnabled(data_grid_wgt->isPasteEnabled());
 		paste_tb->setMenu(&data_grid_wgt->paste_menu);
+		paste_tb->menu()->installEventFilter(this);
 
 		truncate_tb->setEnabled(data_grid_wgt->isTruncateEnabled());
 		truncate_tb->setMenu(&data_grid_wgt->truncate_menu);
+		truncate_tb->menu()->installEventFilter(this);
 
 		export_tb->setEnabled(data_grid_wgt->isExportEnabled());
 		export_tb->setMenu(&data_grid_wgt->export_menu);
+		export_tb->menu()->installEventFilter(this);
 
 		selection_tb->setEnabled(data_grid_wgt->isSelectionEnabled());
 		selection_tb->setMenu(&data_grid_wgt->copy_menu);
+		selection_tb->menu()->installEventFilter(this);
 
 		connect(filter_tb, &QToolButton::toggled, data_grid_wgt, &DataGridWidget::toggleFilter);
 		connect(csv_load_tb, &QToolButton::toggled, data_grid_wgt, &DataGridWidget::toggleCsvLoader);
@@ -169,12 +197,42 @@ void DataHandlingForm::setCurrentDataGrid(int tab_idx)
 		connect(data_grid_wgt, &DataGridWidget::s_editEnabled, edit_tb, &QToolButton::setEnabled);
 		connect(data_grid_wgt, &DataGridWidget::s_editEnabled, csv_load_tb, &QToolButton::setEnabled);
 		connect(data_grid_wgt, &DataGridWidget::s_filterEnabled, filter_tb, &QToolButton::setEnabled);
+		connect(data_grid_wgt, &DataGridWidget::s_pasteEnabled, paste_tb, &QToolButton::setEnabled);
+
+		connect(data_grid_wgt, &DataGridWidget::s_dataModified, this, &DataHandlingForm::setDataGridModified);
 
 		connect(data_grid_wgt, &DataGridWidget::s_browseTableRequested, this,
 						qOverload<const QString &, const QString &, const QString &, ObjectType>(&DataHandlingForm::addDataGrid));
 
 		curr_grid_wgt = data_grid_wgt;
 	}
+
+	if(curr_grid_wgt)
+	{
+		setWindowTitle(tr("Data handling") +
+									 QString(" - %1 / %2").arg(curr_grid_wgt->objectName(), connection_id));
+	}
+	else
+		setWindowTitle(tr("Data handling"));
+}
+
+void DataHandlingForm::setDataGridModified(bool modified)
+{
+	DataGridWidget *data_grid_wgt = qobject_cast<DataGridWidget *>(sender());
+	int idx = data_grids_tbw->indexOf(data_grid_wgt);
+
+	if(idx < 0)
+		return;
+
+	QString tab_txt = data_grids_tbw->tabText(idx);
+	static const QString mod_str { " *" };
+
+	if(modified && !tab_txt.endsWith(mod_str))
+		tab_txt.append(mod_str);
+	else if(!modified && tab_txt.endsWith(mod_str))
+		tab_txt.remove(mod_str);
+
+	data_grids_tbw->setTabText(idx, tab_txt);
 }
 
 void DataHandlingForm::reject()
@@ -186,15 +244,39 @@ void DataHandlingForm::reject()
 	QDialog::reject();
 }
 
-void DataHandlingForm::addDataGrid()
+void DataHandlingForm::closeDataGrid(int idx, bool confirm_close)
 {
-	addDataGrid(schema_cmb->currentText(), table_cmb->currentText(), "",
-							static_cast<ObjectType>(table_cmb->currentData().toUInt()));
-}
+	if(confirm_close)
+	{
+		auto [ msg_displayed , msg_res ] = confirmDataGridClose(idx);
 
-void DataHandlingForm::closeDataGrid(int idx)
-{
-	#warning "Destroy the data grid!"
+		if(msg_displayed && msg_res == QDialog::Rejected)
+			return;
+	}
+
+	DataGridWidget *data_grid_wgt = qobject_cast<DataGridWidget *>(data_grids_tbw->widget(idx));
+
+	curr_grid_wgt = nullptr;
+	data_grids_tbw->removeTab(idx);
+
+	delete(data_grid_wgt);
+
+	if(data_grids_tbw->count() == 0)
+	{
+		filter_tb->setEnabled(false);
+		filter_tb->setChecked(false);
+		refresh_tb->setEnabled(false);
+		edit_tb->setEnabled(false);
+		save_tb->setEnabled(false);
+		selection_tb->setEnabled(false);
+		paste_tb->setEnabled(false);
+		undo_tb->setEnabled(false);
+		truncate_tb->setEnabled(false);
+		browse_tabs_tb->setEnabled(false);
+		export_tb->setEnabled(false);
+		csv_load_tb->setEnabled(false);
+		csv_load_tb->setChecked(false);
+	}
 }
 
 void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, const QString &filter, ObjectType obj_type)
@@ -204,6 +286,8 @@ void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, 
 
 	DataGridWidget *data_grid_wgt = new DataGridWidget(schema, table, obj_type, tmpl_conn_params);
 	QString data_grid_name = schema + "." + table;
+
+	data_grid_wgt->setObjectName(data_grid_name);
 	int tab_idx = data_grids_tbw->addTab(data_grid_wgt,
 																			 QIcon(GuiUtilsNs::getIconPath(obj_type)),
 																			 data_grid_name);
@@ -211,8 +295,7 @@ void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, 
 	data_grids_tbw->setCurrentIndex(tab_idx);
 
 	try
-	{
-		data_grid_wgt->setObjectName(data_grid_name);
+	{	
 		data_grid_wgt->filter_txt->setPlainText(filter);
 		data_grid_wgt->retrieveData();
 	}
@@ -246,15 +329,10 @@ void DataHandlingForm::listTables()
 	}
 }
 
-void DataHandlingForm::disableControlButtons()
+void DataHandlingForm::enableRefreshButton()
 {
-	refresh_tb->setEnabled(schema_cmb->currentIndex() > 0 && table_cmb->currentIndex() > 0);
-/*	edit_tb->setEnabled(false);
-	export_tb->setEnabled(false);
-	paste_tb->setEnabled(false);
-	truncate_tb->setEnabled(false);
-	csv_load_tb->setEnabled(false);
-	csv_load_tb->setChecked(false); */
+	refresh_tb->setEnabled(schema_cmb->currentIndex() > 0 &&
+												 table_cmb->currentIndex() > 0);
 }
 
 void DataHandlingForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema)
@@ -330,18 +408,37 @@ void DataHandlingForm::resizeEvent(QResizeEvent *event)
 	}
 }
 
-int DataHandlingForm::confirmFormClose()
+std::pair<bool, int> DataHandlingForm::confirmDataGridClose(int idx)
 {
-	#warning "Check for tabs that still have items under edition"
-	/* if(!changed_rows.empty())
+	DataGridWidget *data_grid_wgt = qobject_cast<DataGridWidget *>(data_grids_tbw->widget(idx));
+
+	if(data_grid_wgt && data_grid_wgt->hasChangedRows())
 	{
 		Messagebox msgbox;
 
-		msgbox.show(tr("There are rows in the grid that were modified but not saved yet! Do you really want to close and abort the pending operations?"),
+		data_grids_tbw->setCurrentIndex(idx);
+
+		msgbox.show(tr("The table <strong>%1</strong> is modified but the changes are not yet saved! Do you really want to close and discard the pending operations?").arg(data_grid_wgt->objectName()),
 								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		return msgbox.result();
-	} */
+		return { true, msgbox.result() };
+	}
+
+	return { false, QDialog::Rejected };
+}
+
+int DataHandlingForm::confirmFormClose()
+{
+	for(int idx = 0; idx < data_grids_tbw->count(); idx++)
+	{
+		auto [ msg_displayed, msg_res ] = confirmDataGridClose(idx);
+
+		if(msg_displayed && msg_res == QDialog::Accepted)
+			return QDialog::Accepted;
+
+		if(msg_displayed)
+			return QDialog::Rejected;
+	}
 
 	return QDialog::Accepted;
 }
@@ -367,6 +464,11 @@ bool DataHandlingForm::eventFilter(QObject *object, QEvent *event)
 	{
 		QMenu *menu = dynamic_cast<QMenu *>(object);
 		QWidget *btn = bnts_parent_wgt->childAt(bnts_parent_wgt->mapFromGlobal(QCursor::pos()));
+
+		/* Sometime the button can be null indicating that the menu was called by right clicking
+		 * in the data grid items. In that case, we just ignore skip the menu position adjustment */
+		if(!btn)
+			return false;
 
 		/* Since the menus in this form have no parent we calculate their new position
 		 * taking into account the position of the button associated to the menu as

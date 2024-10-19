@@ -185,6 +185,9 @@
       <property name="columnCount">
        <number>0</number>
       </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
      </widget>
      <widget class="QTabWidget" name="filter_tbw">
       <property name="enabled">

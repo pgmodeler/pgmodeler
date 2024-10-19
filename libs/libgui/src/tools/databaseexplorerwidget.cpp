@@ -24,7 +24,6 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-//#include "tools/datamanipulationform.h"
 #include "tools/datahandlingform.h"
 #include "pgmodelerguiplugin.h"
 
@@ -1461,7 +1460,6 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 	catch(Exception &e)
 	{
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -2237,26 +2235,13 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 
 void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
-	/* DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=Connection(this->connection.getConnectionParams());
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
-
-	data_manip->setAttributes(conn, schema, table);
-	GuiUtilsNs::resizeDialog(data_manip);
-	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
-	data_manip->show(); */
-
 	DataHandlingForm *data_hand = new DataHandlingForm;
-	Connection conn { this->connection.getConnectionParams() };
 
 	data_hand->setWindowModality(Qt::NonModal);
 	data_hand->setAttribute(Qt::WA_DeleteOnClose, true);
 	data_hand->hide_views_chk->setChecked(hide_views);
 
-	data_hand->setAttributes(conn, schema, table);
+	data_hand->setAttributes(connection.getConnectionParams(), schema, table);
 	GuiUtilsNs::resizeDialog(data_hand);
 	GeneralConfigWidget::restoreWidgetGeometry(data_hand);
 	data_hand->show();

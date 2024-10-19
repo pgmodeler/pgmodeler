@@ -41,10 +41,10 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
 
+		QString connection_id;
+
 		Catalog catalog;
 
-		Connection connection;
-		
 		void resizeEvent(QResizeEvent *event);
 
 		void closeEvent(QCloseEvent *event);
@@ -54,8 +54,15 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		//! \brief Shows a confirmation message before closing the form when there are pending operations in the grid
 		int confirmFormClose();
 
+		/*! \brief Shows a confirmation message before closing the tab identified by its index.
+		 *  This method returns a flag indication the confirmation message display (in case the data grid is modified)
+		 *  and the confirmation result */
+		std::pair<bool, int> confirmDataGridClose(int idx);
+
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema = "");
+
+		void closeDataGrid(int idx, bool confirm_close);
 
 	public:
 		DataHandlingForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -63,16 +70,12 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		virtual ~DataHandlingForm();
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
+		void setAttributes(const attribs_map &conn_params, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
 
 	private slots:
 		void setCurrentDataGrid(int tab_idx);
 
 		void reject();
-
-		void addDataGrid();
-
-		void closeDataGrid(int idx);
 
 		void addDataGrid(const QString &schema, const QString &table, const QString &filter, ObjectType obj_type);
 
@@ -80,10 +83,12 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		void listTables();
 		
 		//! \brief Disable the buttons used to handle data
-		void disableControlButtons();
+		void enableRefreshButton();
 
 		//! \brief Opens a new data manipulation windows
 		void openNewWindow();
+
+		void setDataGridModified(bool changed);
 };
 
 #endif

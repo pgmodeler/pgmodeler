@@ -25,7 +25,7 @@
 #include "utilsns.h"
 #include "databaseexplorerwidget.h"
 
-DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name, ObjectType obj_type, const attribs_map &conn_params, QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
+DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name, ObjectType obj_type, const attribs_map &conn_params, QWidget * parent, Qt::WindowFlags f): QWidget(parent, f)
 {
 	setupUi(this);
 
@@ -33,8 +33,7 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 
 	save_enabled = undo_enabled = false;
 	selection_enabled = browse_enabled = false;
-	paste_enabled = edit_enabled = false;
-	export_enabled = filter_enabled = false;
+	edit_enabled = export_enabled = filter_enabled = false;
 
 	conn_sql = Connection(conn_params);
 	table_oid = 0;
@@ -59,7 +58,7 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 
 	connect(act, &QAction::triggered,	this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
-		emit s_pasteEnabled(qApp->clipboard()->ownsClipboard());
+		emit s_pasteEnabled(isPasteEnabled());
 	});
 
 	act = copy_menu.addAction(tr("Copy as CSV"));
@@ -68,7 +67,7 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 
 	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::copySelection(results_tbw, false, true);
-		emit s_pasteEnabled(qApp->clipboard()->ownsClipboard());
+		emit s_pasteEnabled(isPasteEnabled());
 	});
 
 	act = save_menu.menuAction();
@@ -110,11 +109,16 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 		emit s_pasteEnabled(false);
 	});
 
-	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")), tr("Add row(s)"), QKeySequence("Ins"),
-																	 this, &DataGridWidget::addRow);
+	action_add = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("addrow")),
+																	 tr("Add row(s)"), QKeySequence("Ins"));
 	action_add->setToolTip(tr("Add empty rows"));
 
-	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")), tr("Delete row(s)"), QKeySequence("Del"),
+	connect(action_add, &QAction::triggered, this, [this](){
+		addRow();
+	});
+
+	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")),
+																			tr("Delete row(s)"), QKeySequence("Del"),
 																			this, &DataGridWidget::markDeleteOnRows);
 	action_delete->setToolTip(tr("Mark the selected rows to be deleted"));
 
@@ -244,10 +248,6 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 		browse_enabled = value;
 	});
 
-	connect(this, &DataGridWidget::s_pasteEnabled, this, [this](bool value) {
-		paste_enabled = value;
-	});
-
 	connect(this, &DataGridWidget::s_editEnabled, this, [this](bool value) {
 		edit_enabled = value;
 	});
@@ -325,21 +325,29 @@ void DataGridWidget::listColumns(const std::vector<attribs_map> &cols)
 {
 	try
 	{
-		resetFilterControls();
 		col_names.clear();
 		code_compl_wgt->clearCustomItems();
+		ord_column_cmb->clear();
+
+		QStringList sel_ord_cols;
+
+		for(int row = 0; row < ord_columns_lst->count(); row++)
+			sel_ord_cols.append(ord_columns_lst->item(row)->text().split(' ').at(0));
 
 		for(auto &col : cols)
 		{
 			col_names.push_back(col.at(Attributes::Name));
 			code_compl_wgt->insertCustomItem(col.at(Attributes::Name), {},
-			QPixmap(GuiUtilsNs::getIconPath("column")));
+																			 QPixmap(GuiUtilsNs::getIconPath("column")));
+
+			if(!sel_ord_cols.contains(col.at(Attributes::Name)))
+				ord_column_cmb->addItem(col.at(Attributes::Name));
 		}
 
-		ord_column_cmb->addItems(col_names);
-		add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
+		add_ord_col_tb->setEnabled(!col_names.isEmpty());
+		emit s_filterEnabled(!col_names.isEmpty());
 
-		emit s_filterEnabled(ord_column_cmb->count() > 0);
+		filter_tbw->setEnabled(filter_enabled);
 	}
 	catch(Exception &e)
 	{
@@ -362,7 +370,7 @@ void DataGridWidget::retrieveData()
 				return;
 		}
 
-		QString query = QString("SELECT * FROM \"%1\".\"%2\"").arg(sch_name).arg(tab_name);
+		QString query = QString("SELECT * FROM \"%1\".\"%2\"").arg(sch_name, tab_name);
 		ResultSet res;
 		unsigned limit = limit_spb->value();
 		std::vector<int> curr_hidden_cols;
@@ -389,7 +397,7 @@ void DataGridWidget::retrieveData()
 
 			for(int idx = 0; idx < ord_columns_lst->count(); idx++)
 			{
-				col=ord_columns_lst->item(idx)->text().split(" ");
+				col = ord_columns_lst->item(idx)->text().split(" ");
 				ord_cols.push_back("\"" + col[0] + "\" " + col[1]);
 			}
 
@@ -411,7 +419,6 @@ void DataGridWidget::retrieveData()
 
 		retrievePKColumns();
 		retrieveFKColumns();
-
 		listColumns(catalog.getObjectsAttributes(ObjectType::Column, sch_name, tab_name));
 
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
@@ -433,7 +440,7 @@ void DataGridWidget::retrieveData()
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && PhysicalTable::isPhysicalTable(obj_type))
+		if(results_tbw->rowCount() == 0 && PhysicalTable::isPhysicalTable(obj_type))
 			addRow();
 		else
 			results_tbw->setFocus();
@@ -525,7 +532,7 @@ void DataGridWidget::enableRowControlButtons()
 													 sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
-void DataGridWidget::resetFilterControls()
+/* void DataGridWidget::resetFilterControls()
 {
 	ord_column_cmb->clear();
 	ord_columns_lst->clear();
@@ -533,7 +540,7 @@ void DataGridWidget::resetFilterControls()
 	filter_txt->clear();
 	asc_rb->setChecked(true);
 	clear_ord_cols_tb->setEnabled(false);
-}
+} */
 
 void DataGridWidget::addSortColumnToList()
 {
@@ -984,6 +991,7 @@ void DataGridWidget::markOperationOnRow(OperationId operation, int row)
 
 			emit s_saveEnabled(!changed_rows.empty());
 			emit s_undoEnabled(!changed_rows.empty());
+			emit s_dataModified(!changed_rows.empty());
 		}
 
 		results_tbw->blockSignals(false);
@@ -1154,6 +1162,7 @@ void DataGridWidget::clearChangedRows()
 
 	emit s_saveEnabled(false);
 	emit s_undoEnabled(false);
+	emit s_dataModified(false);
 }
 
 void DataGridWidget::browseTable(const QString &fk_name, bool browse_ref_tab)
@@ -1306,6 +1315,7 @@ void DataGridWidget::saveChanges()
 
 			emit s_undoEnabled(false);
 			emit s_saveEnabled(false);
+			emit s_dataModified(false);
 		}
 	}
 	catch(Exception &e)
@@ -1518,7 +1528,7 @@ void DataGridWidget::showPopupMenu(const QPoint &pnt)
 	act = paste_menu.menuAction();
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("paste")));
 	act->setText(tr("Paste items"));
-	act->setEnabled(paste_enabled);
+	act->setEnabled(isPasteEnabled());
 	items_menu.addAction(act);
 
 	act = items_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear items"),
@@ -1631,4 +1641,9 @@ bool DataGridWidget::isPasteEnabled()
 {
 	return !qApp->clipboard()->text().isEmpty() &&
 				 !col_names.isEmpty();
+}
+
+bool DataGridWidget::hasChangedRows()
+{
+	return !changed_rows.empty();
 }

@@ -31,7 +31,7 @@
 #include "widgets/codecompletionwidget.h"
 #include "widgets/csvloadwidget.h"
 
-class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
+class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 	private:
 		Q_OBJECT
 		
@@ -64,7 +64,7 @@ class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
 		paste_menu, edit_menu, export_menu, save_menu;
 
 		bool save_enabled, undo_enabled, browse_enabled,
-		selection_enabled, paste_enabled, edit_enabled,
+		selection_enabled, edit_enabled,
 		export_enabled, truncate_enabled, filter_enabled;
 
 		//! \brief Store the connection params to be used by catalogs and command execution connections
@@ -149,6 +149,8 @@ class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
 
 		bool isPasteEnabled();
 
+		bool hasChangedRows();
+
 	private slots:
 		void resetDataGrid();
 
@@ -166,9 +168,6 @@ class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
 		
 		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
 		void enableRowControlButtons();
-		
-		//! \brief Reset the state of filter's controls
-		void resetFilterControls();
 		
 		//! \brief Enables/disables the buttons of the order by list depending on the state of it
 		void enableColumnControlButtons();
@@ -235,6 +234,8 @@ class __libgui DataGridWidget: public QDialog, public Ui::DataGridWidget {
 		void toggleCsvLoader(bool toggle);
 
 	signals:
+		void s_dataModified(bool);
+
 		void s_undoEnabled(bool);
 
 		void s_saveEnabled(bool);
