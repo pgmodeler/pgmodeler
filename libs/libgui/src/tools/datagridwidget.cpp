@@ -307,12 +307,13 @@ void DataGridWidget::sortResults(int column, Qt::SortOrder order)
 
 void DataGridWidget::selectColumn(int column, Qt::SortOrder order)
 {
-	// If the column was clicked but the Control key was not pressed
-	// then whe reset to sorting settings and then apply a column selection
+	/* If the column was clicked but the Control key was not pressed
+	 * then whe reset to sorting settings and then apply a column selection */
 	clearSortColumnList();
 
-	// Since the sorting order was changed by clicking the column we revert the sorting order to the previous value (before the click)
-	// so the next time the user uses Ctrl+Click the sort is applied correctly based on the sort indicatior
+	/* Since the sorting order was changed by clicking the column we revert the sorting
+	 * order to the previous value (before the click) so the next time the user uses
+	 * Ctrl+Click the sort is applied correctly based on the sort indicatior */
 	results_tbw->horizontalHeader()->blockSignals(true);
 	results_tbw->horizontalHeader()->setSortIndicator(column, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
 	results_tbw->horizontalHeader()->setSortIndicatorShown(false);

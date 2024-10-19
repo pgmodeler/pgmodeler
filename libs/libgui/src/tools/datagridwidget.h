@@ -19,7 +19,7 @@
 /**
 \ingroup libgui
 \class DataGridWidget
-\brief Implements the operations to handle data on a single table
+\brief Implements the operations to handle data on of a single table in a grid
 */
 
 #ifndef DATA_GRID_WIDGET_H
@@ -43,18 +43,28 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 			OpDelete
 		};
 
+		//! \brief A CSV loader widget that loads data from CSV to the data grid
 		CsvLoadWidget *csv_load_wgt;
 
+		//! \brief A syntax highlighter installed on filter input field
 		SyntaxHighlighter *filter_hl;
 		
+		//! \brief A code completion widget that displays column names in the filter input field
 		CodeCompletionWidget *code_compl_wgt;
 
-		QString sch_name, tab_name;
+		//! \brief The name of the schema of the currently browsed table
+		QString sch_name,
 
+		//! \brief The name of the currently browsed table
+		tab_name;
+
+		//! \brief The object type of the table (table, foreign table, view)
 		ObjectType obj_type;
 
+		//! \brief The connection instance that is used to run SQL commands
 		Connection conn_sql;
 
+		//! \brief The catalog instance that is used to retrive objects information from system catalogs
 		Catalog catalog;
 
 		QAction *action_add, *action_delete, *action_bulk_edit,
@@ -118,8 +128,11 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		//! \brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
+		//! \brief Set the check state of the columns in the "Columns" tab in the filter widget
 		void setColumnsCheckState(Qt::CheckState state);
 
+		/*! \brief This event filter toggles the visibility of the columns in the data grid
+		 *  when clicking the columns items in the "Columns"tab in the filter widget */
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
@@ -127,37 +140,53 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 									 ObjectType obj_type, const attribs_map &conn_params,
 									 QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
+		//! \brief Returns whether the filter widget is toggled
 		bool isFilterToggled();
 
+		//! \brief Returns whether the CSV loader widget is toggled
 		bool isCsvLoaderToggled();
 
+		//! \brief Returns whether a save operation is enabled for the data grid
 		bool isSaveEnabled();
 
+		//! \brief Returns whether a undo operation is enabled for the data grid
 		bool isUndoEnabled();
 
+		//! \brief Returns whether a table browse operation is enabled for the data grid
 		bool isBrowseEnabled();
 
+		//! \brief Returns whether a selection is enabled/available for the data grid
 		bool isSelectionEnabled();
 
+		//! \brief Returns whether a export operation is enabled/available for the data grid
 		bool isExportEnabled();
 
+		//! \brief Returns whether a truncate operation is enabled for the data grid
 		bool isTruncateEnabled();
 
+		//! \brief Returns whether the filter widget is enabled
 		bool isFilterEnabled();
 
+		//! \brief Returns whether one or more edit operations are enabled for the data grid
 		bool isEditEnabled();
 
+		//! \brief Returns whether a paste operation is enabled for the data grid
 		bool isPasteEnabled();
 
+		//! \brief Returns whether the data grid has modified rows waiting a commit
 		bool hasChangedRows();
 
 	private slots:
+		//! \brief Reset the entire UI of the data grid
 		void resetDataGrid();
 
+		//! \brief Clears the text of the selected cells
 		void clearItemsText();
 
+		//! \brief Sorts the results when the user clicks a section in the vertical header by holding Control key
 		void sortResults(int column, Qt::SortOrder order);
 
+		//! \brief Selected a entire section in the results when the user clicks a section in the vertical header without holding Control key
 		void selectColumn(int column, Qt::SortOrder order);
 
 		//! \brief List the columns based upon the current table
@@ -229,31 +258,44 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		//! \brief Save the selected items to external file
 		void saveSelectedItems(bool csv_format);
 
+		//! \brief Toggles the visibility of the filter widget
 		void toggleFilter(bool toggle);
 
+		//! \brief Toggles the visibility of the CSV loader widget
 		void toggleCsvLoader(bool toggle);
 
 	signals:
+		//! \brief Signal emitted whenever the data changes in the grid
 		void s_dataModified(bool);
 
+		//! \brief Signal emitted whenever the undo operation availiability changes in the grid
 		void s_undoEnabled(bool);
 
+		//! \brief Signal emitted whenever the save operation availiability changes in the grid
 		void s_saveEnabled(bool);
 
+		//! \brief Signal emitted whenever the selection availiability changes in the grid
 		void s_selectionEnabled(bool);
 
+		//! \brief Signal emitted whenever the table browsing availiability changes in the grid
 		void s_browseEnabled(bool);
 
+		//! \brief Signal emitted whenever the paste operation availiability changes in the grid
 		void s_pasteEnabled(bool);
 
+		//! \brief Signal emitted whenever the edit operation availiability changes in the grid
 		void s_editEnabled(bool);
 
+		//! \brief Signal emitted whenever the export operation availiability changes in the grid
 		void s_exportEnabled(bool);
 
+		//! \brief Signal emitted whenever the truncate operation availiability changes in the grid
 		void s_truncateEnabled(bool);
 
+		//! \brief Signal emitted whenever the filter widget availiability changes in the grid
 		void s_filterEnabled(bool);
 
+		//! \brief Signal emitted whenever the user tries to browse a referenced/referred table
 		void s_browseTableRequested(const QString &schema, const QString &table, const QString &filter, ObjectType obj_type);
 
 		friend class DataHandlingForm;

@@ -80,7 +80,8 @@ DataHandlingForm::~DataHandlingForm()
 	}
 }
 
-void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QString curr_schema, const QString curr_table, const QString &filter)
+void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QString curr_schema,
+																		 const QString curr_table, ObjectType obj_type)
 {
 	try
 	{
@@ -97,14 +98,13 @@ void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QStri
 		enableRefreshButton();
 		schema_cmb->setCurrentText(curr_schema);
 
-		if(!filter.isEmpty() && !curr_schema.isEmpty() && !curr_table.isEmpty())
+		if(!curr_schema.isEmpty() && !curr_table.isEmpty())
 		{
 			table_cmb->blockSignals(true);
 			table_cmb->setCurrentText(curr_table);
 			table_cmb->blockSignals(false);
+			addDataGrid(curr_schema, curr_table, "", obj_type);
 		}
-		else
-			table_cmb->setCurrentText(curr_table);
 	}
 	catch(Exception &e)
 	{
@@ -233,15 +233,6 @@ void DataHandlingForm::setDataGridModified(bool modified)
 		tab_txt.remove(mod_str);
 
 	data_grids_tbw->setTabText(idx, tab_txt);
-}
-
-void DataHandlingForm::reject()
-{
-	if(confirmFormClose() == QDialog::Rejected)
-		return;
-
-  GeneralConfigWidget::saveWidgetGeometry(this);
-	QDialog::reject();
 }
 
 void DataHandlingForm::closeDataGrid(int idx, bool confirm_close)
@@ -418,8 +409,8 @@ std::pair<bool, int> DataHandlingForm::confirmDataGridClose(int idx)
 
 		data_grids_tbw->setCurrentIndex(idx);
 
-		msgbox.show(tr("The table <strong>%1</strong> is modified but the changes are not yet saved! Do you really want to close and discard the pending operations?").arg(data_grid_wgt->objectName()),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		msgbox.show(tr("<strong>WARNING: </strong> The table <strong>%1</strong> is modified but the changes are not yet saved! Do you really want to close and discard the pending operations?").arg(data_grid_wgt->objectName()),
+								Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 		return { true, msgbox.result() };
 	}
@@ -452,6 +443,16 @@ void DataHandlingForm::closeEvent(QCloseEvent *event)
 	}
 
 	GeneralConfigWidget::saveWidgetGeometry(this);
+}
+
+void DataHandlingForm::reject()
+{
+	if(confirmFormClose() == QDialog::Rejected)
+		return;
+
+	GeneralConfigWidget::saveWidgetGeometry(this);
+
+	QDialog::reject();
 }
 
 bool DataHandlingForm::eventFilter(QObject *object, QEvent *event)
@@ -487,6 +488,6 @@ bool DataHandlingForm::eventFilter(QObject *object, QEvent *event)
 void DataHandlingForm::openNewWindow()
 {
 	DataHandlingForm *data_manip = new DataHandlingForm;
-	data_manip->setAttributes(tmpl_conn_params, "");
+	data_manip->setAttributes(tmpl_conn_params);
 	data_manip->show();
 }

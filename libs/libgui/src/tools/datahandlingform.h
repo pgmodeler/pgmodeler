@@ -19,7 +19,7 @@
 /**
 \ingroup libgui
 \class DataHandlingForm
-\brief Implements the operations to handle several tables' data in a tabbed way
+\brief Implements the operations to handle several tables' data in separate tabs
 */
 
 #ifndef DATA_HANDLING_FORM_H
@@ -36,19 +36,23 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 	private:
 		Q_OBJECT
 		
+		//! \brief Stores ther reference to the currently focused data grid widget (see setCurrentDataGrid)
 		DataGridWidget *curr_grid_wgt;
 
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
 
+		//! \brief Stores the id of the connection used by the data handling form
 		QString connection_id;
 
+		//! \brief A catalog instance used by the handling form
 		Catalog catalog;
 
 		void resizeEvent(QResizeEvent *event);
 
 		void closeEvent(QCloseEvent *event);
 
+		//! \brief This event filter override the tool buttons menus
 		bool eventFilter(QObject *object, QEvent *event);
 
 		//! \brief Shows a confirmation message before closing the form when there are pending operations in the grid
@@ -62,6 +66,8 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
 		void listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema = "");
 
+		/*! \brief Closes the data grid specified by idx. If confirm_close is true then the closing operation
+		 *  is conditional to the confirmation message result */
 		void closeDataGrid(int idx, bool confirm_close);
 
 	public:
@@ -69,14 +75,17 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 
 		virtual ~DataHandlingForm();
 		
-		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(const attribs_map &conn_params, const QString curr_schema="public", const QString curr_table_name="", const QString &filter="");
+		/*! \brief Defines the connection and current schema and table to be handled,
+		 * this method should be called before show the dialog */
+		void setAttributes(const attribs_map &conn_params, const QString curr_schema = "public",
+											 const QString curr_table_name = "", ObjectType obj_type = ObjectType::Table);
 
 	private slots:
 		void setCurrentDataGrid(int tab_idx);
 
 		void reject();
 
+		//! \brief Adds a new data grid by automatically loading the data of the specified table with the specified filter
 		void addDataGrid(const QString &schema, const QString &table, const QString &filter, ObjectType obj_type);
 
 		//! \brief List the tables based upon the current schema
@@ -88,6 +97,8 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		//! \brief Opens a new data manipulation windows
 		void openNewWindow();
 
+		/*! \brief Appeds or removes the '*' to the tab name that called this slot indicating
+		 *  depending on the value of 'changed', indicating that the tab has unsaved modifications */
 		void setDataGridModified(bool changed);
 };
 
