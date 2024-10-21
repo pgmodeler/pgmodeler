@@ -221,9 +221,6 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		//! \brief Cancels the rename and restore the original item's name
 		void cancelObjectRename();
 
-		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views = true, ObjectType obj_type = ObjectType::Table);
-
 		void loadObjectSource(bool show_code);
 
 		void filterObjects();

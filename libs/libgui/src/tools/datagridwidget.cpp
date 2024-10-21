@@ -35,7 +35,6 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 	selection_enabled = browse_enabled = false;
 	edit_enabled = export_enabled = filter_enabled = false;
 
-	conn_sql = Connection(conn_params);
 	table_oid = 0;
 
 	this->sch_name = sch_name;
@@ -358,6 +357,9 @@ void DataGridWidget::listColumns(const std::vector<attribs_map> &cols)
 
 void DataGridWidget::retrieveData()
 {
+	Connection conn_sql { conn_params };
+	Catalog catalog;
+
 	try
 	{
 		if(!changed_rows.empty())
@@ -412,14 +414,11 @@ void DataGridWidget::retrieveData()
 		qApp->setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn_sql);
-
-		if(!conn_sql.isStablished())
-			conn_sql.connect();
-
+		conn_sql.connect();
 		conn_sql.executeDMLCommand(query, res);
 
-		retrievePKColumns();
-		retrieveFKColumns();
+		retrievePKColumns(catalog);
+		retrieveFKColumns(catalog);
 		listColumns(catalog.getObjectsAttributes(ObjectType::Column, sch_name, tab_name));
 
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
@@ -485,6 +484,9 @@ void DataGridWidget::retrieveData()
 		}
 
 		results_tbw->horizontalHeader()->blockSignals(false);
+
+		conn_sql.close();
+		catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
@@ -733,7 +735,7 @@ void DataGridWidget::changeOrderMode(QListWidgetItem *item)
 	}
 }
 
-void DataGridWidget::retrievePKColumns()
+void DataGridWidget::retrievePKColumns(Catalog &catalog)
 {
 	try
 	{
@@ -776,7 +778,7 @@ void DataGridWidget::retrievePKColumns()
 	}
 }
 
-void DataGridWidget::retrieveFKColumns()
+void DataGridWidget::retrieveFKColumns(Catalog &catalog)
 {
 	try
 	{
@@ -1286,6 +1288,7 @@ void DataGridWidget::saveChanges()
 				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	int row = 0;
+	Connection conn_sql { conn_params };
 
 	try
 	{
@@ -1300,6 +1303,8 @@ void DataGridWidget::saveChanges()
 		{
 			//Forcing the cell editor to be closed by selecting an unexistent cell and clearing the selection
 			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);
+
+			conn_sql.connect();
 			conn_sql.executeDDLCommand("START TRANSACTION");
 
 			for(unsigned idx=0; idx < changed_rows.size(); idx++)
@@ -1310,6 +1315,7 @@ void DataGridWidget::saveChanges()
 			}
 
 			conn_sql.executeDDLCommand("COMMIT");
+			conn_sql.close();
 
 			changed_rows.clear();
 			retrieveData();
@@ -1329,6 +1335,8 @@ void DataGridWidget::saveChanges()
 		unsigned op_type = results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt();
 
 		conn_sql.executeDDLCommand("ROLLBACK");
+		conn_sql.close();
+
 		results_tbw->selectRow(row);
 		results_tbw->scrollToItem(results_tbw->item(row, 0));
 

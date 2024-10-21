@@ -62,10 +62,10 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		ObjectType obj_type;
 
 		//! \brief The connection instance that is used to run SQL commands
-		Connection conn_sql;
+		Connection _conn_sql;
 
 		//! \brief The catalog instance that is used to retrive objects information from system catalogs
-		Catalog catalog;
+		Catalog _catalog;
 
 		QAction *action_add, *action_delete, *action_bulk_edit,
 		*action_duplicate, *action_clear;
@@ -106,11 +106,11 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		ref_fk_infos;
 		
 		//! \brief Retrieve the primary key column ids for the specified table
-		void retrievePKColumns();
+		void retrievePKColumns(Catalog &catalog);
 
 		/*! \brief Retrieve the foreign key columns info for the specified table. These data is used to browse referenced tables in the data
 		 that the selected line holds */
-		void retrieveFKColumns();
+		void retrieveFKColumns(Catalog &catalog);
 		
 		/*! \brief Mark the line as changed, changing its background color and applying the respective operation (see OP_??? constant)
 				when user call saveChanged() */

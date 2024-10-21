@@ -68,7 +68,9 @@ DataHandlingForm::DataHandlingForm(QWidget * parent, Qt::WindowFlags f): QDialog
 								static_cast<ObjectType>(table_cmb->currentData().toUInt()));
 	});
 
-	connect(new_window_tb, &QToolButton::clicked, this, &DataHandlingForm::openNewWindow);
+	connect(new_window_tb, &QToolButton::clicked, this, [this](){
+			openNewWindow(tmpl_conn_params);
+	});
 }
 
 DataHandlingForm::~DataHandlingForm()
@@ -83,6 +85,12 @@ DataHandlingForm::~DataHandlingForm()
 void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QString curr_schema,
 																		 const QString curr_table, ObjectType obj_type)
 {
+	if(!BaseTable::isBaseTable(obj_type))
+	{
+		Messagebox::error(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return;
+	}
+
 	try
 	{
 		Connection conn { conn_params };
@@ -90,7 +98,6 @@ void DataHandlingForm::setAttributes(const attribs_map &conn_params, const QStri
 		connection_id = conn.getConnectionId(true, true, false);
 		tmpl_conn_params = conn_params;
 		db_name_lbl->setText(conn.getConnectionId(true, true, true));
-		catalog.setConnection(conn);
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { ObjectType::Schema });
@@ -328,6 +335,9 @@ void DataHandlingForm::enableRefreshButton()
 
 void DataHandlingForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj_types, const QString &schema)
 {
+	Connection conn { tmpl_conn_params };
+	Catalog catalog;
+
 	try
 	{
 		attribs_map objects;
@@ -336,7 +346,9 @@ void DataHandlingForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj
 
 		qApp->setOverrideCursor(Qt::WaitCursor);
 
+		catalog.setConnection(conn);
 		catalog.setQueryFilter(Catalog::ListAllObjects);
+
 		combo->blockSignals(true);
 		combo->clear();
 
@@ -370,9 +382,11 @@ void DataHandlingForm::listObjects(QComboBox *combo, std::vector<ObjectType> obj
 		combo->blockSignals(false);
 
 		qApp->restoreOverrideCursor();
+		catalog.closeConnection();
 	}
 	catch(Exception &e)
 	{
+		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -485,9 +499,29 @@ bool DataHandlingForm::eventFilter(QObject *object, QEvent *event)
 	return QDialog::eventFilter(object, event);
 }
 
-void DataHandlingForm::openNewWindow()
+void DataHandlingForm::openNewWindow(const attribs_map &conn_params, const QString &schema, const QString &table, ObjectType obj_type)
 {
-	DataHandlingForm *data_manip = new DataHandlingForm;
-	data_manip->setAttributes(tmpl_conn_params);
-	data_manip->show();
+	if(!BaseTable::isBaseTable(obj_type))
+	{
+		Messagebox::error(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return;
+	}
+
+	try
+	{
+		DataHandlingForm *data_hand = new DataHandlingForm;
+
+		data_hand->setWindowModality(Qt::NonModal);
+		data_hand->setAttribute(Qt::WA_DeleteOnClose, true);
+		data_hand->hide_views_chk->setChecked(obj_type != ObjectType::View);
+		data_hand->setAttributes(conn_params, schema, table, obj_type);
+
+		GuiUtilsNs::resizeDialog(data_hand);
+		GeneralConfigWidget::restoreWidgetGeometry(data_hand);
+		data_hand->show();
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 }

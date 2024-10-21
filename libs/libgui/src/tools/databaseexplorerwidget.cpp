@@ -229,7 +229,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	});
 
 	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
-		__trycatch( openDataGrid(); )
+		DataHandlingForm::openNewWindow(connection.getConnectionParams());
 	});
 
 	connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
@@ -306,8 +306,9 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 
 					if(oid!=0 && BaseTable::isBaseTable(obj_type))
 					{
-						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-												 item->text(0), obj_type != ObjectType::View, obj_type);
+						DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																						item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																						item->text(0), obj_type);
 					}
 				}
 			}
@@ -1232,12 +1233,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			loadObjectSource(true);
 		else if(exec_action==handle_data_action)
 		{
-			ObjectType obj_type = static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-
-			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-									 item->text(0),
-									 obj_type != ObjectType::View,
-									 obj_type);
+			DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																			item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																			item->text(0), obj_type);
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -2234,18 +2232,4 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 		source+=perm->getSourceCode(SchemaParser::SqlCode);
 
 	return source;
-}
-
-void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views, ObjectType obj_type)
-{
-	DataHandlingForm *data_hand = new DataHandlingForm;
-
-	data_hand->setWindowModality(Qt::NonModal);
-	data_hand->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_hand->hide_views_chk->setChecked(hide_views);
-	data_hand->setAttributes(connection.getConnectionParams(), schema, table, obj_type);
-
-	GuiUtilsNs::resizeDialog(data_hand);
-	GeneralConfigWidget::restoreWidgetGeometry(data_hand);
-	data_hand->show();
 }

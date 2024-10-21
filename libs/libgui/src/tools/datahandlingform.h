@@ -45,9 +45,6 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		//! \brief Stores the id of the connection used by the data handling form
 		QString connection_id;
 
-		//! \brief A catalog instance used by the handling form
-		Catalog catalog;
-
 		void resizeEvent(QResizeEvent *event);
 
 		void closeEvent(QCloseEvent *event);
@@ -80,6 +77,10 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		void setAttributes(const attribs_map &conn_params, const QString curr_schema = "public",
 											 const QString curr_table_name = "", ObjectType obj_type = ObjectType::Table);
 
+		//! \brief Opens a new data handling window
+		static void openNewWindow(const attribs_map &conn_params, const QString &schema = "public",
+															const QString &table = "", ObjectType obj_type = ObjectType::Table);
+
 	private slots:
 		void setCurrentDataGrid(int tab_idx);
 
@@ -93,9 +94,6 @@ class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
 		
 		//! \brief Disable the buttons used to handle data
 		void enableRefreshButton();
-
-		//! \brief Opens a new data manipulation windows
-		void openNewWindow();
 
 		/*! \brief Appeds or removes the '*' to the tab name that called this slot indicating
 		 *  depending on the value of 'changed', indicating that the tab has unsaved modifications */
