@@ -3,7 +3,7 @@ Changelog
 
 v1.2.0-alpha1
 ------
-<em>Release date: October 31, 2024</em><br/>
+<em>Release date: October 25, 2024</em><br/>
 
 * [New] Added support for PostgreSQL 17.
 * [New] Added support for tabbed table data handling.
