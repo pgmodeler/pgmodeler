@@ -1206,8 +1206,24 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 		else
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
 
+#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: truncating generated SQL code."
+		QString code_def = getSourceCode(filename, attribs);
+
+		if(def_type == SchemaParser::SqlCode && !code_def.isEmpty() &&
+			 obj_name != Attributes::DbModel)
+		{
+			bool ends_with_lf = code_def.endsWith("\n");
+			code_def = code_def.mid(0, code_def.size() * 0.60);
+			code_def += "...";
+			code_def += ends_with_lf ? "\n" : "";
+		}
+
+		return code_def;
+#else
 		//Try to get the object definitin from the specified path
 		return getSourceCode(filename, attribs);
+#endif
 	}
 	catch(Exception &e)
 	{

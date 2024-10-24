@@ -127,30 +127,24 @@ void SourceCodeWidget::generateSQLCode()
 			sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
 		else
 			sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: SQL code preview truncated."
-		if(!sqlcode_txt->toPlainText().isEmpty())
-		{
-			int factor = obj_type == ObjectType::Database ? 4 : 2;
-			QString code = sqlcode_txt->toPlainText();
-			code = code.mid(0, code.size()/factor);
-			code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-			sqlcode_txt->setPlainText(code);
-
-			sqlcode_txt->setCustomContextMenuEnabled(false);
-			sqlcode_txt->setContextMenuPolicy(Qt::NoContextMenu);
-			save_sql_tb->setEnabled(false);
-		}
-#endif
 	}
 
 #ifndef DEMO_VERSION
 	save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
+#else
+	if(!sqlcode_txt->toPlainText().isEmpty())
+	{
+		QString code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") +
+		sqlcode_txt->toPlainText();
+		sqlcode_txt->setPlainText(code);
+	}
 #endif
 
 	if(sqlcode_txt->toPlainText().isEmpty())
-		sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));
+		sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));		
 }
 
 void SourceCodeWidget::generateXMLCode()

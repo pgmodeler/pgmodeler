@@ -372,17 +372,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
 	obj_type=object->getObjectType();
 
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: database model object creation limit."
-	obj_list=getObjectList(obj_type);
-	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
-		throw Exception(tr("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
-						.arg(GlobalAttributes::MaxObjectCount)
-						.arg(BaseObject::getTypeName(obj_type)),
-						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-#endif
-
 	if(obj_type==ObjectType::Tablespace)
 	{
 		Tablespace *tabspc=nullptr, *aux_tabspc=nullptr;

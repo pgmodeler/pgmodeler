@@ -167,7 +167,19 @@ void ModelExportForm::exec(ModelWidget *model)
 
 	this->model = model;
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
+
 	selectExportMode();
+
+#ifdef DEMO_VERSION
+	#warning "DEMO VERSION: export to DBMS is disabled in demo version."
+	export_to_dbms_rb->blockSignals(true);
+	export_to_dbms_rb->setEnabled(false);
+	export_to_dbms_gb->setEnabled(false);
+	export_to_dbms_rb->setChecked(false);
+	export_to_dbms_rb->blockSignals(false);
+	export_to_file_rb->setChecked(true);
+#endif
+
 	QDialog::exec();
 }
 
@@ -232,7 +244,6 @@ void ModelExportForm::exportModel()
 			if(msg_box.result() == QDialog::Rejected)
 				return;
 		}
-
 
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);

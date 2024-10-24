@@ -75,6 +75,12 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	});
 
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
+
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: disabling SQL validation in model validation widget."
+		sql_validation_chk->setChecked(false);
+		sql_validation_chk->setEnabled(false);
+	#endif
 }
 
 bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)

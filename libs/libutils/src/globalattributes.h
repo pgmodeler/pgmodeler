@@ -224,11 +224,6 @@ class __libutils GlobalAttributes {
 		DefaultQtStyle,
 		UiStyleOption;
 
-		#ifdef DEMO_VERSION
-			//Maximum object creation counter for demo version
-			static constexpr unsigned MaxObjectCount = 15;
-		#endif
-
 		/*! \brief Performs the initialization of the global attributes by setting the
 		 * application's search path (and all assets/executable paths based upon search_path).
 		 *

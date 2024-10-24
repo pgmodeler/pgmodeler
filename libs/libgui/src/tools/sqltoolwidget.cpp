@@ -527,12 +527,16 @@ void SQLToolWidget::showSourceCode(const QString &source, bool force_display)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
+	QString code = source;
+
 	if(!source.isEmpty())
 	{
-		QString trunc_code = source.mid(0, source.size() / 2);
-		trunc_code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-		sourcecode_txt->setPlainText(trunc_code);
+		code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") + source;
 	}
+	sourcecode_txt->setPlainText(code);
 #else
 	sourcecode_txt->setPlainText(source);
 #endif
