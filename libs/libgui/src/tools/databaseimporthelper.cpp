@@ -385,75 +385,75 @@ void DatabaseImportHelper::createObjects()
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: disabling object recreation in reverse engineering."
 	#else
-	//Trying to recreate objects that failed to be created previously
-	if(!not_created_objs.empty())
-	{
-		unsigned max_tries=10, tries=1;
-
-		do
+		//Trying to recreate objects that failed to be created previously
+		if(!not_created_objs.empty())
 		{
-			/* Store the current size of the objects list. If this size is the same after
-		 scan the list recreating the objects means that any object was not created
-		 which determines an unrecoverable errors, e.g., objects that references
-		 system objects and this ones was not imported */
-			prev_size=not_created_objs.size();
+			unsigned max_tries=10, tries=1;
 
-			progress=0;
-			oids=not_created_objs;
-			not_created_objs.clear();
-			itr=oids.begin();
-			itr_end=oids.end();
-
-			//Scan the oid list recreating the objects
-			while(itr!=itr_end && !import_canceled)
+			do
 			{
-				attribs=user_objs[*itr];
-				obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
-				itr++;
+				/* Store the current size of the objects list. If this size is the same after
+			 scan the list recreating the objects means that any object was not created
+			 which determines an unrecoverable errors, e.g., objects that references
+			 system objects and this ones was not imported */
+				prev_size=not_created_objs.size();
 
-				emit s_progressUpdated(progress,
-										 tr("Trying to recreate `%1' (%2), oid `%3'...")
-										.arg(/* attribs[Attributes::Name] */ getObjectName(attribs[Attributes::Oid], true))
-										.arg(BaseObject::getTypeName(obj_type))
-										.arg(attribs[Attributes::Oid]),
-						obj_type);
+				progress=0;
+				oids=not_created_objs;
+				not_created_objs.clear();
+				itr=oids.begin();
+				itr_end=oids.end();
 
-				try
+				//Scan the oid list recreating the objects
+				while(itr!=itr_end && !import_canceled)
 				{
-					createObject(attribs);
+					attribs=user_objs[*itr];
+					obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
+					itr++;
+
+					emit s_progressUpdated(progress,
+											 tr("Trying to recreate `%1' (%2), oid `%3'...")
+											.arg(/* attribs[Attributes::Name] */ getObjectName(attribs[Attributes::Oid], true))
+											.arg(BaseObject::getTypeName(obj_type))
+											.arg(attribs[Attributes::Oid]),
+							obj_type);
+
+					try
+					{
+						createObject(attribs);
+					}
+					catch(Exception &e)
+					{
+						//In case of some error store the oid and the error in separated lists
+						not_created_objs.push_back(*itr);
+						aux_errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
+					}
+
+					progress=(i/static_cast<double>(not_created_objs.size())) * 100;
 				}
-				catch(Exception &e)
+
+				tries++;
+
+				if(tries >= max_tries)
+					emit s_progressUpdated(progress,
+											 tr("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
+											 ObjectType::BaseObject);
+
+				if(!import_canceled)
 				{
-					//In case of some error store the oid and the error in separated lists
-					not_created_objs.push_back(*itr);
-					aux_errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
+					/* If the previous list size is the same as the not_created_object list means
+				 that no object was created in this interaction which means error */
+					if(prev_size==not_created_objs.size() && !ignore_errors)
+						throw Exception(aux_errors.back().getErrorMessage(), aux_errors.back().getErrorCode(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, aux_errors);
+					else if(ignore_errors)
+						errors.insert(errors.end(), aux_errors.begin(), aux_errors.end());
+
+					aux_errors.clear();
 				}
-
-				progress=(i/static_cast<double>(not_created_objs.size())) * 100;
 			}
-
-			tries++;
-
-			if(tries >= max_tries)
-				emit s_progressUpdated(progress,
-									   tr("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
-									   ObjectType::BaseObject);
-
-			if(!import_canceled)
-			{
-				/* If the previous list size is the same as the not_created_object list means
-		   that no object was created in this interaction which means error */
-				if(prev_size==not_created_objs.size() && !ignore_errors)
-					throw Exception(aux_errors.back().getErrorMessage(), aux_errors.back().getErrorCode(),
-									__PRETTY_FUNCTION__,__FILE__,__LINE__, aux_errors);
-				else if(ignore_errors)
-					errors.insert(errors.end(), aux_errors.begin(), aux_errors.end());
-
-				aux_errors.clear();
-			}
+			while(!not_created_objs.empty() && !import_canceled && tries < max_tries);
 		}
-		while(!not_created_objs.empty() && !import_canceled && tries < max_tries);
-	}
 	#endif
 }
 

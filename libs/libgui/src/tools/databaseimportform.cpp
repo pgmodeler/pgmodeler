@@ -129,7 +129,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	});
 
 #ifdef DEMO_VERSION
-	#warning "DEMO VERSION: forcing ignore errors in reverse engineering due to the object count limit."
+	#warning "DEMO VERSION: forcing ignore errors in reverse engineering."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
 #endif

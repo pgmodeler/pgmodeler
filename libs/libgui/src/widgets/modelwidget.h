@@ -41,7 +41,7 @@ class __libgui ModelWidget: public QWidget {
 
 		#ifdef DEMO_VERSION
 			//Maximum number of objects' operations (create, move, delete, etc)
-			static constexpr unsigned MaxObjActions = 30;
+			static constexpr unsigned MaxObjActions = 200;
 			unsigned obj_actions_cnt;
 
 			bool updateObjActionCounter() {

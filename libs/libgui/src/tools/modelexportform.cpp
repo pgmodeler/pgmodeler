@@ -177,6 +177,20 @@ void ModelExportForm::exec(ModelWidget *model)
 	export_to_dbms_gb->setEnabled(false);
 	export_to_dbms_rb->setChecked(false);
 	export_to_dbms_rb->blockSignals(false);
+
+	#warning "DEMO VERSION: export to data dictionary is disabled in demo version."
+	export_to_dict_rb->blockSignals(true);
+	export_to_dict_rb->setEnabled(false);
+	export_to_dict_gb->setEnabled(false);
+	export_to_dict_rb->blockSignals(false);
+
+	#warning "DEMO VERSION: export to data PNG limited to zoom factor of 50%."
+	zoom_cmb->setCurrentText("30%");
+	zoom_cmb->setEnabled(false);
+
+	#warning "DEMO VERSION: export to data SVG is disabled in demo version."
+	img_fmt_cmb->setEnabled(false);
+
 	export_to_file_rb->setChecked(true);
 #endif
 

@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
-		QTimer::singleShot(5000, this, [this](){
+		QTimer::singleShot(2000, this, [this](){
 			showDemoVersionWarning();
 		});
 	#endif
