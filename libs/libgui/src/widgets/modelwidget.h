@@ -39,6 +39,25 @@ class __libgui ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		#ifdef DEMO_VERSION
+			//Maximum number of objects' operations (create, move, delete, etc)
+			static constexpr unsigned MaxObjActions = 30;
+			unsigned obj_actions_cnt;
+
+			bool updateObjActionCounter() {
+				obj_actions_cnt++;
+
+				// If maximum actions is reached
+				if(obj_actions_cnt > MaxObjActions)
+				{
+					Messagebox::alert("You have reached the maximum number of actions that can be taken over the database object in the demo version!");
+					return true;
+				}
+
+				return false;
+			}
+		#endif
+
 		static QList<const PgModelerGuiPlugin *> plugins;
 
 		enum RelBreakMode {

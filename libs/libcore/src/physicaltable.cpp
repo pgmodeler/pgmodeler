@@ -378,19 +378,6 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 		int idx;
 		obj_type=obj->getObjectType();
 
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: table children objects creation limit."
-		std::vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
-
-		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
-			throw Exception(tr("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
-							.arg(GlobalAttributes::MaxObjectCount)
-							.arg(BaseObject::getTypeName(obj_type)),
-							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-#endif
-
 		try
 		{
 			//Raises an error if already exists a object with the same name and type

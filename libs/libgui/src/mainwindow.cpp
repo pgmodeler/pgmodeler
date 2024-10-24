@@ -1246,9 +1246,11 @@ void MainWindow::addModel(const QString &filename)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model creation limit."
-	if(models_tbw->count()==1)
-		throw Exception(tr("The demonstration version can create only `one' instance of a database model!"),
-										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(models_tbw->count() >= 3)
+	{
+		Messagebox::alert(tr("The demonstration version can create only <strong>three</strong> instances of a database model! Close the open models before trying to create other ones."));
+		return;
+	}
 #endif
 
 	try
@@ -1344,6 +1346,15 @@ void MainWindow::addModel(const QString &filename)
 
 void MainWindow::addModel(ModelWidget *model_wgt)
 {
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: database model creation limit."
+	if(models_tbw->count() >= 3)
+	{
+		Messagebox::alert(tr("The demonstration version can create only <strong>three</strong> instances of a database model! Close the open models before trying to create other ones."));
+		return;
+	}
+#endif
+
 	try
 	{
 		if(!model_wgt)
@@ -1789,11 +1800,9 @@ void MainWindow::saveModel(ModelWidget *model)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: model saving disabled."
-	Messagebox msg_box;
-	msg_box.show(tr("Warning"),
-				 tr("You're running a demonstration version! The model saving feature is available only in the full version!"),
-				 Messagebox::AlertIcon, Messagebox::OkButton);
+	Messagebox::alert(tr("You're running a demonstration version! The model saving feature is available only in the full version!"));
 #else
+
 	try
 	{
 		if(!model)
@@ -2377,12 +2386,14 @@ void MainWindow::restoreDockWidgetsSettings()
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	std::map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
+#ifndef DEMO_VERSION
 	if(confs.count(Attributes::Validator))
 	{
 		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::Validator][Attributes::SqlValidation]==Attributes::True);
 		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::Validator][Attributes::UseUniqueNames]==Attributes::True);
 		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::Version]);
 	}
+#endif
 
 	if(confs.count(Attributes::ObjectFinder))
 	{
@@ -2413,17 +2424,16 @@ void MainWindow::showDemoVersionWarning(bool exit_msg)
 	if(!exit_msg)
 	{
 		msg_box.show(tr("Warning"),
-					 tr("You're running a demonstration version of pgModeler! Note that you are able to create only <strong>%1</strong> instances \
-							of each type of object and some key features like <strong>saving the model</strong>, <strong>code generation</strong>, and some others will be disabled or limited!<br/><br/>Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
-							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>\
-							<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.")
-							.arg(GlobalAttributes::MaxObjectCount).arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
+					 tr("You're running a demonstration version of pgModeler! Some key features like <strong>saving the model</strong>, <strong>code generation</strong>, and some others will be disabled or limited!<br/><br/>\
+							Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
+							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>")
+							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
 							Messagebox::AlertIcon, Messagebox::OkButton);
 	}
 	else
 	{
 		msg_box.show(tr("Info"),
-					 tr("Thank you for testing pgModeler! Don't forget that you can support this project by <a href='%2'>buying a full binary copy</a> using the promo code <strong>DEMOTESTER</strong> to receive a special discount. Also, you can get the <a href='%3'>source code</a> and compile it yourself, instructions on the site.")
+					 tr("Thank you for testing pgModeler! Don't forget that you can support this project by <a href='%2'>buying a full binary copy</a> using the promo code <strong>DEMOTESTER</strong> to receive a special discount. Also, you can get the <a href='%3'>source code</a> and compile it yourself, instructions are on the site.")
 							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
 							Messagebox::InfoIcon, Messagebox::OkButton);
 	}

@@ -176,15 +176,15 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	});
 
 #ifdef DEMO_VERSION
-	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
+	#warning "DEMO VERSION: forcing ignore errors in diff."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
 
 	ignore_error_codes_chk->setChecked(false);
 	ignore_error_codes_chk->setEnabled(false);
 
-	apply_on_server_rb->setChecked(false);
-	apply_on_server_rb->setEnabled(false);
+	apply_on_server_btn->setEnabled(false);
+	open_in_sql_tool_btn->setEnabled(false);
 #endif
 }
 
@@ -944,13 +944,12 @@ void ModelDatabaseDiffForm::handleDiffFinished()
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
-	if(!sqlcode_txt->toPlainText().isEmpty())
-	{
-		QString code=sqlcode_txt->toPlainText();
-		code=code.mid(0, code.size()/2);
-		code+=tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-		sqlcode_txt->setPlainText(code);
-	}
+	QString code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") +
+	sqlcode_txt->toPlainText();
+	sqlcode_txt->setPlainText(code);
 #endif
 
 	settings_tbw->setTabEnabled(2, true);
@@ -959,7 +958,17 @@ void ModelDatabaseDiffForm::handleDiffFinished()
 	if(store_in_file_rb->isChecked())
 		saveDiffToFile();
 	else if(!sqlcode_txt->toPlainText().isEmpty())
+	{
+#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: forcing code preview after diff."
+		close_btn->setEnabled(true);
+		settings_tbw->setCurrentIndex(3);
+		settings_tbw->setTabEnabled(3, true);
+		output_trw->collapseItem(diff_item);
+#else
 		exportDiff();
+#endif
+	}
 	else
 		finishDiff();
 
