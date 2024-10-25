@@ -26,7 +26,7 @@
 #define ELEMENTS_TABLES_WIDGET_H
 
 #include <QtWidgets>
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "indexelement.h"
 #include "excludeelement.h"
 #include "partitionkey.h"
@@ -51,7 +51,7 @@ class __libgui ElementsTableWidget: public QWidget {
 		BaseObject *parent_obj;
 
 		//! \brief Table widget used to control the index elements
-		ObjectsTableWidget *elements_tab;
+		CustomTableWidget *elements_tab;
 		
 		//! \brief Shows the element data on the elements table at the specified line
 		void showElementData(Element *elem, int elem_idx);

@@ -28,6 +28,9 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
+std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
+std::map<QString, attribs_map> GeneralConfigWidget::config_params;
+
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	std::vector<QPageSize::PageSizeId> page_ids={ QPageSize::A0, QPageSize::A1, QPageSize::A2, QPageSize::A3, QPageSize::A4, QPageSize::A5,
@@ -512,7 +515,8 @@ void GeneralConfigWidget::saveConfiguration()
 			}
 			else if(itr->first==Attributes::Validator ||
 							itr->first==Attributes::ObjectFinder ||
-							itr->first==Attributes::SqlTool)
+							itr->first==Attributes::SqlTool ||
+							itr->first==Attributes::LayersConfig)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
@@ -684,6 +688,7 @@ void GeneralConfigWidget::setConfigurationChanged(bool changed)
 void GeneralConfigWidget::resetDialogsSizes()
 {
 	Messagebox msg_box;
+
 	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 

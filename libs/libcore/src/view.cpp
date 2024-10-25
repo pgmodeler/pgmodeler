@@ -19,6 +19,8 @@
 #include "view.h"
 #include "physicaltable.h"
 
+const QString View::ExtraSCRegExp {"((\\;)+(\\s|\\t)*)+$"};
+
 View::View() : BaseTable()
 {
 	obj_type = ObjectType::View;
@@ -927,6 +929,12 @@ QString View::getAlterCode(BaseObject *object)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+bool View::acceptsReplaceCommand()
+{
+	// Materialized views don't accept CREATE OR REPLACE command
+	return !materialized;
 }
 
 void View::updateDependencies()

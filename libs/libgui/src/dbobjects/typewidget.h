@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_typewidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 	private:
@@ -46,7 +46,7 @@ class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		*range_subtype;
 
 		//! \brief Tables that store enumaration elementas and composite attributes
-		ObjectsTableWidget *enumerations_tab,
+		CustomTableWidget *enumerations_tab,
 		*attributes_tab;
 
 		//! \brief Composite type attribute collation selector

@@ -21,6 +21,10 @@
 #include "utilsns.h"
 #include "baseform.h"
 
+const QString ConnectionsConfigWidget::DefaultFor {"default-for-%1"};
+std::vector<Connection *> ConnectionsConfigWidget::connections;
+std::map<QString, attribs_map> ConnectionsConfigWidget::config_params;
+
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
@@ -417,19 +421,18 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn, bool is_upda
 void ConnectionsConfigWidget::testConnection()
 {
 	Connection conn;
-	Messagebox msg_box;
 	attribs_map srv_info;
 
 	try
 	{
 		this->configureConnection(&conn, false);
 		conn.connect();
-		srv_info=conn.getServerInfo();
-		msg_box.show(tr("Success"),
-					 UtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
-					 .arg(srv_info[Connection::ServerPid])
-				.arg(srv_info[Connection::ServerProtocol])
-				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
+		srv_info = conn.getServerInfo();
+
+		Messagebox::info(UtilsNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+										 .arg(srv_info[Connection::ServerPid])
+										 .arg(srv_info[Connection::ServerProtocol])
+										 .arg(srv_info[Connection::ServerVersion]));
 	}
 	catch(Exception &e)
 	{

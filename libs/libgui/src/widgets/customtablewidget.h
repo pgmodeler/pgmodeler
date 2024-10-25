@@ -18,39 +18,35 @@
 
 /**
 \ingroup libgui
-\class ObjectsTableWidget
-\brief Implements a basic table (grid) which can be used commonly to store
+\class CustomTableWidget
+\brief Implements a customized table widget (grid) which can be used commonly to store
 objects references and show information about them on it's rows. This
 class also implements operations to handle insertion/deletion/update/movements
 of rows on the table.
 */
 
-#ifndef OBJECT_TABLE_WIDGET_H
-#define OBJECT_TABLE_WIDGET_H
+#ifndef CUSTOM_TABLE_WIDGET_H
+#define CUSTOM_TABLE_WIDGET_H
 
-#include "ui_objectstablewidget.h"
+#include "ui_customtablewidget.h"
 #include "guiglobal.h"
 
-class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
+class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 	private:
 		Q_OBJECT
 
-		inline static QColor item_colors[12] {
-			"#ffb4b4", "#303030", "#a4f9b0",
-			"#303030", "#c0ffc0", "#000",
-			"#ffffc0", "#000", "#ffc0c0",
-			"#000", "#f00000", "#00f000"
-		};
+		static QColor item_colors[12];
 
 		/*! \brief Indicates that a confirmation message must be shown when the user try
 		to remove an element from table. By default, the exclusions are made without confirmation */
-		bool conf_exclusion;
+		bool conf_exclusion,
 
-		/*! \brief Indicates that cells' texts can be edited by the user. When changing the text of a cell
-		 * the signal s_cellTextChanged(int,int) is emitted */
-		bool cells_editable;
+		tab_adds_row;
 
 		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
+
+		//! \brief Updates the row numbers in the vertical header after remove/moving rows in the table
+		void updateVerticalHeader();
 
 	public:
 		//! \brief Constants used to configure the table buttons
@@ -105,7 +101,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 			RelAddedItemAltFgColor
 		};
 
-		ObjectsTableWidget(ButtonConf button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
+		CustomTableWidget(QWidget * parent = nullptr);
+
+		CustomTableWidget(ButtonConf button_conf, bool conf_exclusion, QWidget * parent = nullptr);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -124,6 +122,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 
 		//! \brief Sets the text of the specified cell
 		void setCellText(const QString &text, unsigned row_idx, unsigned col_idx);
+
+		//! \brief Sets the flags of the specified cell
+		void setCellFlags(Qt::ItemFlags flags, unsigned row_idx, unsigned col_idx);
 
 		//! \brief Sets the data which the specified row stores
 		void setRowData(const QVariant &data, unsigned row_idx);
@@ -158,9 +159,9 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 
 		Qt::CheckState getCellCheckState(unsigned row_idx, unsigned col_idx);
 
-		void setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state);
+		void setCellCheckState(Qt::CheckState check_state, unsigned row_idx, unsigned col_idx);
 
-		void setCellDisabled(unsigned row_idx, unsigned col_idx, bool disabled);
+		void setCellDisabled(bool disabled, unsigned row_idx, unsigned col_idx);
 
 		bool isCellDisabled(unsigned row_idx, unsigned col_idx);
 
@@ -189,7 +190,21 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
 		void setButtonConfiguration(ButtonConf button_conf);
 
+		void setSelectionMode(QTableWidget::SelectionMode sel_mode);
+
 		void adjustColumnToContents(int col);
+
+		void setVerticalHeaderVisible(bool value);
+
+		void setSortingEnabled(bool value);
+
+		/*! \brief Toggles the addition of rows by using tab press when the cursor
+		 *  is at the last cell of the last row */
+		void setAddRowOnTabPress(bool value);
+
+		/*! \brief Adds a custom tool button to the end of buttons' list.
+		 *  The parent of the button is changed to the custom table itself */
+		void addCustomButton(QToolButton *btn);
 
 		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
@@ -215,14 +230,13 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		the emitted signal. */
 		void updateRow();
 
-		//! \brief Enables the handle buttons according to the selected row
-		void setButtonsEnabled();
-
 		void emitRowSelected();
 
+		void addRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
+
 	public slots:
-		//! \brief Adds a new row at the end of the table
-		void addRow();
+		//! \brief Adds a new row at the end of the table and returns its id
+		int addRow();
 
 		//! \brief Removes all the rows from table
 		void removeRows();
@@ -236,9 +250,13 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		//! \brief Selects the specified row
 		void selectRow(int lin_idx);
 
-		//! \brief Controls the enable state of each button
-		void setButtonsEnabled(ObjectsTableWidget::ButtonConf button_conf, bool value);
+		//! \brief Enables the handle buttons according to the selected row
+		void setButtonsEnabled();
 
+		//! \brief Controls the enable state of each button
+		void setButtonsEnabled(CustomTableWidget::ButtonConf button_conf, bool value);
+
+		//! \brief Toggle the edition of individual cells
 		void setCellsEditable(bool value);
 
 		//! \brief Resize equally the rows and columns to their contents
@@ -281,8 +299,14 @@ class __libgui ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget
 		//! \brief Signal emitted when a specific cell is clicked. The column and rows indexes are sent together with the signal
 		void s_cellClicked(int, int);
 
-		//! \brief Signal emitted when a specific cell has its text changed. The column and rows indexes are sent together with the signal
-		void s_cellTextChanged(int, int);
+		//! \brief Signal emitted when a specific cell has its text or other attribute changed. The column and rows indexes are sent together with the signal
+		void s_cellChanged(int, int);
+
+		//! \brief Signal emitted when the table selection is cleared
+		void s_selectionCleared();
+
+		//! \brief Signal emitted when the table row count changes by adding, deleting, duplicating rows
+		void s_rowCountChanged(int);
 
 	protected:
 		void resizeEvent(QResizeEvent *);

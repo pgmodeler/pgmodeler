@@ -29,14 +29,7 @@
 
 class __libcore PolicyCmdType: public TemplateType<PolicyCmdType> {
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"ALL",
-			"SELECT",
-			"INSERT",
-			"DELETE",
-			"UPDATE"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned All = 1,

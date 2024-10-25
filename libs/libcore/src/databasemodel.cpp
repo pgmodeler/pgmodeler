@@ -24,6 +24,8 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
+unsigned DatabaseModel::dbmodel_id {2000};
+
 DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
@@ -369,17 +371,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_type=object->getObjectType();
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: database model object creation limit."
-	obj_list=getObjectList(obj_type);
-	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
-		throw Exception(tr("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
-						.arg(GlobalAttributes::MaxObjectCount)
-						.arg(BaseObject::getTypeName(obj_type)),
-						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-#endif
 
 	if(obj_type==ObjectType::Tablespace)
 	{
@@ -8960,7 +8951,24 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 		obj->configureSearchAttributes();
 		srch_attribs = obj->getSearchAttributes();
 
-		if(regexp.match(srch_attribs[search_attr]).hasMatch())
+		/* If we are searching in the constraints' source and referenced columns
+		 * we have to split the list of names so the regexp can be correctly matched */
+		if(search_attr == Attributes::SrcColumns || search_attr == Attributes::RefColumns)
+		{
+			QStringList aux_names, ref_names = srch_attribs[search_attr].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
+
+			for(auto &ref_name : ref_names)
+			{
+				// Splitting the column names since they are schema qualified
+				aux_names = ref_name.split('.');
+
+				/* We always use the last name in the generated list above in the matching
+				 * since it probably contains the name of the column */
+				if(regexp.match(aux_names.constLast()).hasMatch())
+					list.push_back(obj);
+			}
+		}
+		else if(regexp.match(srch_attribs[search_attr]).hasMatch())
 			list.push_back(obj);
 	}
 

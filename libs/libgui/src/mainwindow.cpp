@@ -26,6 +26,9 @@
 #include "tools/databaseimportform.h"
 #include "tools/modeldatabasediffform.h"
 
+int MainWindow::ToolsActionsCount {0};
+bool MainWindow::confirm_validation {true};
+
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
@@ -36,6 +39,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	recent_models_menu = new QMenu(this);
 	recent_models_menu->setObjectName("recent_models_menu");
+
+	connect(recent_models_menu, &QMenu::aboutToShow, this, &MainWindow::validateRecentModelsActions);
+
+	QAction *act = clear_recent_menu.menuAction();
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("delete")));
+	act->setText(tr("Clear menu"));
+
+	clear_recent_menu.addAction(tr("Missing files only"), this, [this](){
+		clearRecentModelsMenu(true);
+	});
+
+	clear_recent_menu.addAction(tr("All files"), this, [this]{
+		clearRecentModelsMenu(false);
+	});
 
 	#ifdef DEMO_VERSION
 		window_title+=tr(" (Demo)");
@@ -103,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	#ifdef DEMO_VERSION
 		#warning "DEMO VERSION: demonstration version startup alert."
-		QTimer::singleShot(5000, this, [this](){
+		QTimer::singleShot(2000, this, [this](){
 			showDemoVersionWarning();
 		});
 	#endif
@@ -177,6 +194,12 @@ void MainWindow::loadModelsFromMimeData(const QMimeData *mime_data)
 	loadModels(dbm_files);
 }
 
+void MainWindow::addNewLayer(const QString &layer_name)
+{
+	layers_cfg_wgt->addLayer(layer_name, false);
+	current_model->layers_wgt->setAttributes(current_model);
+}
+
 void MainWindow::dropEvent(QDropEvent *event)
 {
 	loadModelsFromMimeData(event->mimeData());
@@ -208,26 +231,21 @@ void MainWindow::configureMenusActionsWidgets()
 	tool_btn = qobject_cast<QToolButton *>(model_acts_tb->widgetForAction(act_arrange_objs));
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 
-	expand_canvas_menu.addAction(tr("Expand to top"),
-															 this, &MainWindow::expandSceneRect,
-															 QKeySequence("Ctrl+Shift+Up"))->setData(ObjectsScene::ExpandTop);
+	expand_canvas_menu.addAction(tr("Expand to top"), QKeySequence("Ctrl+Shift+Up"),
+															 this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandTop);
 
-	expand_canvas_menu.addAction(tr("Expand to left"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Left"))->setData(ObjectsScene::ExpandLeft);
+	expand_canvas_menu.addAction(tr("Expand to left"), QKeySequence("Ctrl+Shift+Left"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandLeft);
 
-	expand_canvas_menu.addAction(tr("Expand to bottom"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Down"))->setData(ObjectsScene::ExpandBottom);
+	expand_canvas_menu.addAction(tr("Expand to bottom"), QKeySequence("Ctrl+Shift+Down"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandBottom);
 
-	expand_canvas_menu.addAction(tr("Expand to right"),
-															this, &MainWindow::expandSceneRect,
-															QKeySequence("Ctrl+Shift+Right"))->setData(ObjectsScene::ExpandRight);
+	expand_canvas_menu.addAction(tr("Expand to right"), QKeySequence("Ctrl+Shift+Right"),
+															this, &MainWindow::expandSceneRect)->setData(ObjectsScene::ExpandRight);
 
 	expand_canvas_menu.addSeparator();
-	expand_canvas_menu.addAction(tr("Reset geometry"),
-																this, &MainWindow::expandSceneRect,
-																QKeySequence("Ctrl+Shift+="))->setData(-1);
+	expand_canvas_menu.addAction(tr("Reset geometry"), QKeySequence("Ctrl+Shift+="),
+																this, &MainWindow::expandSceneRect)->setData(-1);
 
 	action_expand_canvas = expand_canvas_menu.menuAction();
 	action_expand_canvas->setEnabled(false);
@@ -380,15 +398,6 @@ void MainWindow::configureMenusActionsWidgets()
 	resizeGeneralToolbarButtons();
 }
 
-void MainWindow::setPluginsActions(ModelWidget *model_wgt)
-{
-	if(!model_wgt)
-		return;
-
-	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-	model_wgt->setPluginActions(plugins_conf_wgt->getPluginsModelsActions());
-}
-
 void MainWindow::handleInitializationFailure(Exception &e)
 {
 	Messagebox msgbox;
@@ -501,9 +510,13 @@ void MainWindow::loadConfigurations()
 
 		PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->initPlugins(this);
-		plugins_conf_wgt->installPluginsActions(&plugins_config_menu, plugins_tb_acts, plugins_tool_btns);
+
+		plugins_tb_acts = PgModelerGuiPlugin::getPluginsActions(PgModelerGuiPlugin::ToolbarAction);
+
+		for(auto &act : PgModelerGuiPlugin::getPluginsActions(PgModelerGuiPlugin::ConfigAction))
+			plugins_config_menu.addAction(act);
+
 		plugins_config_menu.setEnabled(!plugins_config_menu.isEmpty());
-		sql_tool_wgt->setPluginsButtons(plugins_tool_btns);
 
 		QAction *action_plugins_config = plugins_config_menu.menuAction();
 		action_plugins_config->setText(tr("Plug-ins"));
@@ -761,8 +774,7 @@ void MainWindow::restoreTemporaryModels()
 					if(!restoration_form->keep_models_chk->isChecked())
 						restoration_form->removeTemporaryModel(model_file);
 
-					Messagebox msg_box;
-					msg_box.show(e);
+					Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -845,8 +857,6 @@ void MainWindow::restoreLastSession()
 		catch(Exception &e)
 		{
 			qApp->restoreOverrideCursor();
-			//Messagebox msg_box;
-			//msg_box.show(e);
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -1117,19 +1127,57 @@ void MainWindow::saveTemporaryModels()
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		tmpmodel_save_timer.start();
 	}
 #endif
 }
 
+void MainWindow::clearRecentModelsMenu(bool missing_only)
+{
+	if(missing_only)
+	{
+		for(auto &act : recent_models_menu->actions())
+		{
+			if(act->isSeparator() || act->data().toString().isEmpty())
+				continue;
+
+			if(act->font().strikeOut())
+				recent_models.removeAll(act->data().toString());
+		}
+	}
+	else
+		recent_models.clear();
+
+	updateRecentModelsMenu();
+}
+
+void MainWindow::validateRecentModelsActions()
+{
+	QFont fnt;
+	QFileInfo fi;
+
+	for(auto &act : recent_models_menu->actions())
+	{
+		fi.setFile(act->data().toString());
+
+		if(act->isSeparator() || fi.fileName().isEmpty())
+			continue;
+
+		fnt = act->font();
+		fnt.setStrikeOut(!fi.exists() || !fi.isReadable() || !fi.isFile());
+		act->setFont(fnt);
+		act->setToolTip(fi.fileName() + (fnt.strikeOut() ? tr(" (not accessible)") : ""));
+	}
+}
+
 void MainWindow::updateRecentModelsMenu()
 {
 	QAction *act=nullptr;
 	QFileInfo fi;
+	QString dbm_ext = GlobalAttributes::DbModelExt;
 
+	dbm_ext.remove('.');
 	recent_models_menu->setToolTipsVisible(true);
 	recent_models_menu->clear();
 	recent_models.removeDuplicates();
@@ -1139,24 +1187,27 @@ void MainWindow::updateRecentModelsMenu()
 
 	for(int i = 0; i < recent_models.size(); i++)
 	{
-		act=recent_models_menu->addAction(QFileInfo(recent_models[i]).fileName(),this, &MainWindow::loadModelFromAction);
+		fi.setFile(recent_models[i]);
+
+		act=recent_models_menu->addAction(fi.fileName(),this, &MainWindow::loadModelFromAction);
 		act->setToolTip(recent_models[i]);
 		act->setData(recent_models[i]);
 
-		if(recent_models[i].endsWith(GlobalAttributes::DbModelExt))
+		if(fi.suffix() == dbm_ext)
 			act->setIcon(QIcon(GuiUtilsNs::getIconPath("dbmfile")));
 		else
 		{
-			fi.setFile(recent_models[i]);
 			if(recent_models_icons.contains(fi.suffix()))
 				act->setIcon(recent_models_icons[fi.suffix()]);
 		}
 	}
 
+	validateRecentModelsActions();
+
 	if(!recent_models_menu->isEmpty())
 	{
 		recent_models_menu->addSeparator();
-		recent_models_menu->addAction(QIcon(GuiUtilsNs::getIconPath("delete")), tr("Clear menu"), this, &MainWindow::clearRecentModelsMenu);
+		recent_models_menu->addAction(clear_recent_menu.menuAction());
 	}
 
 	recent_models_menu->menuAction()->setEnabled(!recent_models_menu->isEmpty());
@@ -1191,19 +1242,15 @@ void MainWindow::loadModelFromAction()
 	}
 }
 
-void MainWindow::clearRecentModelsMenu()
-{
-	recent_models.clear();
-	updateRecentModelsMenu();
-}
-
 void MainWindow::addModel(const QString &filename)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model creation limit."
-	if(models_tbw->count()==1)
-		throw Exception(tr("The demonstration version can create only `one' instance of a database model!"),
-										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(models_tbw->count() >= 3)
+	{
+		Messagebox::alert(tr("The demonstration version can create only <strong>three</strong> instances of a database model! Close the open models before trying to create other ones."));
+		return;
+	}
 #endif
 
 	try
@@ -1221,7 +1268,6 @@ void MainWindow::addModel(const QString &filename)
 
 		model_tab=new ModelWidget;
 		model_tab->setObjectName(obj_name);
-		setPluginsActions(model_tab);
 
 		//Add the tab to the tab widget
 		obj_name=model_tab->db_model->getName();
@@ -1300,14 +1346,21 @@ void MainWindow::addModel(const QString &filename)
 
 void MainWindow::addModel(ModelWidget *model_wgt)
 {
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: database model creation limit."
+	if(models_tbw->count() >= 3)
+	{
+		Messagebox::alert(tr("The demonstration version can create only <strong>three</strong> instances of a database model! Close the open models before trying to create other ones."));
+		return;
+	}
+#endif
+
 	try
 	{
 		if(!model_wgt)
 			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(model_wgt->parent())
 			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		setPluginsActions(model_wgt);
 
 		model_nav_wgt->addModel(model_wgt);
 		models_tbw->blockSignals(true);
@@ -1467,6 +1520,8 @@ void MainWindow::setCurrentModel()
 		connect(current_model, qOverload<int, const QRectF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateSelectedObjects, Qt::UniqueConnection);
 		connect(current_model, qOverload<const QPointF &>(&ModelWidget::s_sceneInteracted), scene_info_wgt, &SceneInfoWidget::updateMousePosition, Qt::UniqueConnection);
 		connect(current_model, &ModelWidget::s_zoomModified, scene_info_wgt, &SceneInfoWidget::updateSceneZoom, Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_newLayerRequested, this, &MainWindow::addNewLayer);
+		connect(current_model, &ModelWidget::s_objectsLayerChanged, layers_cfg_wgt, &LayersConfigWidget::updateRelsVisibility);
 
 		connect(current_model, &ModelWidget::s_zoomModified, this, [this](double zoom) {
 			ObjectsScene::setLockDelimiterScale(action_lock_delim->isChecked(), zoom);
@@ -1745,11 +1800,9 @@ void MainWindow::saveModel(ModelWidget *model)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: model saving disabled."
-	Messagebox msg_box;
-	msg_box.show(tr("Warning"),
-				 tr("You're running a demonstration version! The model saving feature is available only in the full version!"),
-				 Messagebox::AlertIcon, Messagebox::OkButton);
+	Messagebox::alert(tr("You're running a demonstration version! The model saving feature is available only in the full version!"));
 #else
+
 	try
 	{
 		if(!model)
@@ -1763,7 +1816,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			if(confirm_validation && db_model->isInvalidated())
 			{
 				msg_box.show(tr("Confirmation"),
-							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
+							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::AlertIcon, Messagebox::AllButtons,
 							 tr("Validate"), tr("Save anyway"), "",
 								GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("save"));
@@ -1863,7 +1916,7 @@ void MainWindow::exportModel()
 	if(confirm_validation && db_model->isInvalidated())
 	{
 		msg_box.show(tr("Confirmation"),
-					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Export anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("export"));
@@ -1931,7 +1984,7 @@ void MainWindow::diffModelDatabase()
 	if(confirm_validation && db_model && db_model->isInvalidated())
 	{
 		msg_box.show(tr("Confirmation"),
-					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Validate"), tr("Diff anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("diff"));
@@ -2083,6 +2136,7 @@ void MainWindow::loadModels(const QStringList &files)
 	catch(Exception &e)
 	{
 		qApp->restoreOverrideCursor();
+		registerRecentModels(loaded_files);
 
 		if(files[i].endsWith(GlobalAttributes::DbModelExt))
 			showFixMessage(e, files[i]);
@@ -2320,6 +2374,11 @@ void MainWindow::storeDockWidgetsSettings()
 	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : "");
 	conf_wgt->setConfigurationSection(Attributes::SqlTool, params);
 	params.clear();
+
+	params[Attributes::LayersConfig] = Attributes::True;
+	params[Attributes::RelsFollowTabsVisibility] = layers_cfg_wgt->rels_tabs_visibility_chk->isChecked() ? Attributes::True : "";
+	conf_wgt->setConfigurationSection(Attributes::LayersConfig, params);
+	params.clear();
 }
 
 void MainWindow::restoreDockWidgetsSettings()
@@ -2327,12 +2386,14 @@ void MainWindow::restoreDockWidgetsSettings()
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	std::map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
+#ifndef DEMO_VERSION
 	if(confs.count(Attributes::Validator))
 	{
 		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::Validator][Attributes::SqlValidation]==Attributes::True);
 		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::Validator][Attributes::UseUniqueNames]==Attributes::True);
 		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::Version]);
 	}
+#endif
 
 	if(confs.count(Attributes::ObjectFinder))
 	{
@@ -2348,6 +2409,11 @@ void MainWindow::restoreDockWidgetsSettings()
 		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowAttributesGrid]==Attributes::True);
 		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowSourcePane]==Attributes::True);
 	}
+
+	if(confs.count(Attributes::LayersConfig))
+	{
+		layers_cfg_wgt->rels_tabs_visibility_chk->setChecked(confs[Attributes::LayersConfig][Attributes::RelsFollowTabsVisibility]==Attributes::True);
+	}
 }
 
 #ifdef DEMO_VERSION
@@ -2358,17 +2424,16 @@ void MainWindow::showDemoVersionWarning(bool exit_msg)
 	if(!exit_msg)
 	{
 		msg_box.show(tr("Warning"),
-					 tr("You're running a demonstration version of pgModeler! Note that you are able to create only <strong>%1</strong> instances \
-							of each type of object and some key features like <strong>saving the model</strong>, <strong>code generation</strong>, and some others will be disabled or limited!<br/><br/>Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
-							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>\
-							<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.")
-							.arg(GlobalAttributes::MaxObjectCount).arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
+					 tr("You're running a demonstration version of pgModeler! Some key features like <strong>saving the model</strong>, <strong>code generation</strong>, and some others will be disabled or limited!<br/><br/>\
+							Please, support this project <a href='%2'>buying a full binary copy</a>, use the promo code <strong>DEMOTESTER</strong> and receive a special discount on any purchase. You can also get the <a href='%3'>source code</a> and compile it yourself.\
+							<strong>NOTE:</strong> pgModeler is open-source software, but purchasing binary copies or providing a donation of any amount will support the project and keep its development alive!<br/><br/>")
+							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
 							Messagebox::AlertIcon, Messagebox::OkButton);
 	}
 	else
 	{
 		msg_box.show(tr("Info"),
-					 tr("Thank you for testing pgModeler! Don't forget that you can support this project by <a href='%2'>buying a full binary copy</a> using the promo code <strong>DEMOTESTER</strong> to receive a special discount. Also, you can get the <a href='%3'>source code</a> and compile it yourself, instructions on the site.")
+					 tr("Thank you for testing pgModeler! Don't forget that you can support this project by <a href='%2'>buying a full binary copy</a> using the promo code <strong>DEMOTESTER</strong> to receive a special discount. Also, you can get the <a href='%3'>source code</a> and compile it yourself, instructions are on the site.")
 							.arg(GlobalAttributes::PgModelerDownloadURL + "?purchase=true&promocode=DEMOTESTER", GlobalAttributes::PgModelerDownloadURL + "?source=true"),
 							Messagebox::InfoIcon, Messagebox::OkButton);
 	}
@@ -2497,7 +2562,9 @@ void MainWindow::arrangeObjects()
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"),
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{

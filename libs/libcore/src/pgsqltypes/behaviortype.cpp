@@ -18,6 +18,15 @@
 
 #include "behaviortype.h"
 
+const QStringList BehaviorType::type_names
+{
+	"", // Reserved for Class::Null
+
+	"CALLED ON NULL INPUT",
+	"RETURNS NULL ON NULL INPUT",
+	"STRICT"
+};
+
 BehaviorType::BehaviorType(unsigned type_id)
 {
 	setType(type_id);

@@ -20,7 +20,7 @@
 #include "tools/databaseimportform.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -287,12 +287,12 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	if(tab_obj && tab_obj->isAddedByRelationship())
 	{
 		font.setItalic(true);
-		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
+		item->setForeground(0, CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemAltFgColor));
 	}
 	else if(object->isProtected() || object->isSystemObject())
 	{
 		font.setItalic(true);
-		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+		item->setForeground(0, CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor));
 	}
 
 	item->setFont(0,font);

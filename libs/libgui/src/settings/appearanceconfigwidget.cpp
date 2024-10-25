@@ -18,13 +18,88 @@
 
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "customuistyle.h"
 #include "guiutilsns.h"
 #include "relationshipview.h"
 #include "tableview.h"
 #include "styledtextboxview.h"
 #include "graphicalview.h"
+
+QPalette AppearanceConfigWidget::system_pal;
+std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
+QString AppearanceConfigWidget::UiThemeId;
+
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors {
+	{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
+	{ QPalette::Midlight, {"#25292c", "#25292c", "#25292c"} },
+	{ QPalette::Mid, {"#41484e", "#41484e", "#41484e"} },
+	{ QPalette::Dark, {"#626c76", "#626c76", "#626c76"} },
+	{ QPalette::Text, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::ButtonText, {"#eff0f1", "#eff0f1", "#626c76"} },
+	{ QPalette::Base, {"#232629", "#232629", "#31363b"} },
+	{ QPalette::Window, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
+	{ QPalette::Highlight, {"#3daee9", "#3daee9", "#41484e"} },
+	{ QPalette::HighlightedText, {"#eff0f1", "#eff0f1", "#25292c"} },
+	{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
+	{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
+	{ QPalette::AlternateBase, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::ToolTipBase, {"#31363b", "#31363b", "#31363b"} },
+	{ QPalette::ToolTipText, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::PlaceholderText, {"#48494b", "#48494b", "#48494b"} }
+};
+
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors {
+	{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
+	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::Midlight, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::Mid, {"#9fa0a1", "#9fa0a1", "#9fa0a1"} },
+	{ QPalette::Dark, {"#777878", "#777878", "#777878"} },
+	{ QPalette::Text, {"#232627", "#232627", "#777878"} },
+	{ QPalette::BrightText, {"#ffffff", "#ffffff", "#ffffff"} },
+	{ QPalette::ButtonText, {"#232627", "#232627", "#777878"} },
+	{ QPalette::Base, {"#fcfcfc", "#fcfcfc", "#eff0f1"} },
+	{ QPalette::Window, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::Shadow, {"#767676", "#767676", "#b1b1b1"} },
+	{ QPalette::Highlight, {"#3daee9", "#3daee9", "#9fa0a1"} },
+	{ QPalette::HighlightedText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
+	{ QPalette::Link, {"#2980b9", "#2980b9", "#2980b9"} },
+	{ QPalette::LinkVisited, {"#7f8c8d", "#7f8c8d", "#7f8c8d"} },
+	{ QPalette::AlternateBase, {"#eff0f1", "#eff0f1", "#eff0f1"} },
+	{ QPalette::ToolTipBase, {"#232627", "#232627", "#232627"} },
+	{ QPalette::ToolTipText, {"#fcfcfc", "#fcfcfc", "#fcfcfc"} },
+	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+};
+
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors {
+	{ QPalette::WindowText, {} }, { QPalette::Button, {} },
+	{ QPalette::Light, {} }, { QPalette::Midlight, {} },
+	{ QPalette::Dark, {} }, { QPalette::Mid, {} },
+	{ QPalette::Text, {} }, { QPalette::BrightText, {} },
+	{ QPalette::ButtonText, {} }, { QPalette::Base, {} },
+	{ QPalette::Window, {} }, { QPalette::Shadow, {} },
+	{ QPalette::Highlight, {} }, { QPalette::HighlightedText, {} },
+	{ QPalette::Link, {} }, { QPalette::LinkVisited, {} },
+	{ QPalette::AlternateBase, {} }, { QPalette::ToolTipBase, {} },
+	{ QPalette::ToolTipText, {} }, { QPalette::PlaceholderText, {} }
+};
+
+QStringList AppearanceConfigWidget::dark_tab_item_colors {
+	"#b54225", "#fff", "#54a800", "#fff",
+	"#54a800", "#fff", "#e2e236", "#000",
+	"#b54225", "#fff", "#fa0000", "#00f000"
+};
+
+QStringList AppearanceConfigWidget::light_tab_item_colors {
+	"#ffb4b4", "#303030",	"#a4f9b0", "#303030",
+	"#c0ffc0", "#000", "#ffffc0", "#000",
+	"#ffc0c0", "#000", "#fa0000", "#00f000"
+};
 
 AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -855,7 +930,7 @@ void AppearanceConfigWidget::applyUiTheme()
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
-		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+		CustomTableWidget::setTableItemColor(static_cast<CustomTableWidget::TableItemColor>(idx),
 																					QColor(item_colors->at(idx)));
 	}
 

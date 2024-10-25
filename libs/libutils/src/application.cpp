@@ -23,7 +23,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	/* Checking if the user specified another widget style using the -style param
 	 * If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler) */
-	if(!arguments().contains("-style"))
+	if(!arguments().contains(GlobalAttributes::UiStyleOption))
 		setStyle(GlobalAttributes::DefaultQtStyle);
 }
 

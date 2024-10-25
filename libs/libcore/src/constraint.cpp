@@ -17,6 +17,7 @@
 */
 
 #include "constraint.h"
+#include "utilsns.h"
 
 Constraint::Constraint()
 {
@@ -633,8 +634,8 @@ void Constraint::configureSearchAttributes()
 	for(auto &col : ref_columns)
 		ref_col_names.append(col->getSignature());
 
-	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
-	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
+	search_attribs[Attributes::SrcColumns] = src_col_names.join(UtilsNs::DataSeparator);
+	search_attribs[Attributes::RefColumns] = ref_col_names.join(UtilsNs::DataSeparator);
 }
 
 QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
@@ -731,6 +732,8 @@ QString Constraint::getDataDictionary(bool md_format, const attribs_map &extra_a
 		attribs[Attributes::Comment] = comment;
 		attribs[Attributes::RefTable] = ref_table ? ref_table->getSignature().remove('"') : "";
 		attribs[Attributes::Expression] = expression;
+		attribs[Attributes::UpdAction] = ~upd_action;
+		attribs[Attributes::DelAction] = ~del_action;
 
 		// Retrieving the columns that composes the constraint
 		for(auto &col : columns)

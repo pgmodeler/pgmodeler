@@ -21,6 +21,8 @@
 #include "guiutilsns.h"
 #include "qtconnectmacros.h"
 
+const QString CrashHandlerForm::AnalysisMode {"-analysis-mode"};
+
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {
 	QFile input;
@@ -115,8 +117,7 @@ void CrashHandlerForm::loadReport(QString filename)
 {
 	QFile input;
 	QFileInfo fi;
-	char *buf=nullptr;
-	Messagebox msgbox;
+	char *buf = nullptr;
 
 	fi.setFile(filename);
 	input.setFileName(filename);
@@ -124,7 +125,10 @@ void CrashHandlerForm::loadReport(QString filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 	else
 	{
 		QByteArray uncomp_buf;
@@ -176,8 +180,6 @@ void CrashHandlerForm::saveModel()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

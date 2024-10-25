@@ -24,7 +24,14 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "tools/datamanipulationform.h"
+#include "tools/datahandlingform.h"
+#include "pgmodelerguiplugin.h"
+
+const QString DatabaseExplorerWidget::DepNotDefined;
+const QString DatabaseExplorerWidget::DepNotFound { QT_TR_NOOP("(not found, OID: %1)") };
+const QString DatabaseExplorerWidget::DefaultSourceCode {
+	QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."))
+};
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::AdminRoles, QT_TR_NOOP("Admin. roles")},	{Attributes::Alignment, QT_TR_NOOP("Alignment")},
@@ -142,6 +149,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
+	for(auto &btn : PgModelerGuiPlugin::getPluginsToolButtons())
+		installPluginButton(btn);
+
 	pg_version_alert_frm->setVisible(false);
 	curr_scroll_value = 0;
 	filter_parent->setVisible(false);
@@ -219,7 +229,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	});
 
 	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
-		__trycatch( openDataGrid(); )
+		DataHandlingForm::openNewWindow(connection.getConnectionParams());
 	});
 
 	connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
@@ -263,10 +273,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QMenu *refresh_menu=new QMenu(refresh_tb);
 
-	act=refresh_menu->addAction(tr("Quick refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Alt+F5"));
+	act=refresh_menu->addAction(tr("Quick refresh"), QKeySequence("Alt+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(true));
 
-	act=refresh_menu->addAction(tr("Full refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Ctrl+F5"));
+	act=refresh_menu->addAction(tr("Full refresh"), QKeySequence("Ctrl+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(false));
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
@@ -296,8 +306,9 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 
 					if(oid!=0 && BaseTable::isBaseTable(obj_type))
 					{
-						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-												 item->text(0), obj_type!=ObjectType::View);
+						DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																						item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																						item->text(0), obj_type);
 					}
 				}
 			}
@@ -373,8 +384,6 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
@@ -1224,9 +1233,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			loadObjectSource(true);
 		else if(exec_action==handle_data_action)
 		{
-			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_t(ObjectType::View));
+			DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																			item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																			item->text(0), obj_type);
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -1452,7 +1461,6 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 	catch(Exception &e)
 	{
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -1560,7 +1568,7 @@ void DatabaseExplorerWidget::restoreTreeState()
 	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
-void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
+void DatabaseExplorerWidget::installPluginButton(QToolButton *btn)
 {
 	if(!btn)
 		return;
@@ -1575,13 +1583,19 @@ void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
+	/* Since plugins are singletons in pgModeler, we use the same tool button associated to
+	 * a certain plugin to execute its action in different DatabaseExplorerWidget instances.
+	 * Thus the action executed is the one connected to the clicked() event of the plugin's button. */
 	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+		/* We set general purpose button's properties (connection id and current database name)
+		 * so this information can be processed by the plugin execution slot. */
 		btn->setProperty(Attributes::Connection.toStdString().c_str(),
 										 connection.getConnectionId());
 
 		btn->setProperty(Attributes::Database.toStdString().c_str(),
 										 connection.getConnectionParam(Connection::ParamDbName));
 
+		// Emitting the signal btn->clicked() so the connected slot can be executed.
 		emit btn->clicked(checked);
 	});
 
@@ -2218,19 +2232,4 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 		source+=perm->getSourceCode(SchemaParser::SqlCode);
 
 	return source;
-}
-
-void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
-{
-	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=Connection(this->connection.getConnectionParams());
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
-
-	data_manip->setAttributes(conn, schema, table);
-	GuiUtilsNs::resizeDialog(data_manip);
-	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
-	data_manip->show();
 }

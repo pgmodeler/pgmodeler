@@ -52,9 +52,9 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
-		inline static bool low_verbosity {false};
+		static bool low_verbosity;
 
-		inline static std::map<QString, attribs_map> config_params;
+		static std::map<QString, attribs_map> config_params;
 
 		QEventLoop event_loop;
 

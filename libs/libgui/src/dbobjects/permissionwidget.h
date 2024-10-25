@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_permissionwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/modelobjectswidget.h"
 #include "utils/syntaxhighlighter.h"
 
@@ -41,7 +41,7 @@ class __libgui PermissionWidget: public BaseObjectWidget, public Ui::PermissionW
 		Permission *permission;
 
 		//! \brief Table widget that stores the roles that has permission over the object
-		ObjectsTableWidget *roles_tab,
+		CustomTableWidget *roles_tab,
 
 		//! \brief Table widget that stores the permissions related to the object
 		*permissions_tab;

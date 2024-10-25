@@ -18,6 +18,13 @@
 
 #include "functiontype.h"
 
+const QStringList FunctionType::type_names {
+	"", // Reserved for Class::Null
+	"VOLATILE",
+	"STABLE",
+	"IMMUTABLE"
+};
+
 FunctionType::FunctionType(unsigned type_id)
 {
 	setType(type_id);

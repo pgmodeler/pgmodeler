@@ -151,10 +151,10 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
+/* void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
 {
 	plugins_btns = list;
-}
+} */
 
 void SQLToolWidget::resizeEvent(QResizeEvent *)
 {
@@ -316,8 +316,8 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
-			for(auto &btn : plugins_btns)
-				db_explorer_wgt->addPluginButton(btn);
+			//for(auto &btn : plugins_btns)
+			//	db_explorer_wgt->addPluginButton(btn);
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
@@ -422,8 +422,6 @@ void SQLToolWidget::reloadHighlightConfigs()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -529,12 +527,16 @@ void SQLToolWidget::showSourceCode(const QString &source, bool force_display)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
+	QString code = source;
+
 	if(!source.isEmpty())
 	{
-		QString trunc_code = source.mid(0, source.size() / 2);
-		trunc_code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-		sourcecode_txt->setPlainText(trunc_code);
+		code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") + source;
 	}
+	sourcecode_txt->setPlainText(code);
 #else
 	sourcecode_txt->setPlainText(source);
 #endif

@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreigndatawrapperwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
 	private:
@@ -36,7 +36,7 @@ class __libgui ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::For
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel;
 
-		ObjectsTableWidget *options_tab;
+		CustomTableWidget *options_tab;
 
 	public:
 		ForeignDataWrapperWidget(QWidget * parent = nullptr);

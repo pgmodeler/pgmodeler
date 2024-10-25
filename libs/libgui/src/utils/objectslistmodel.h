@@ -42,12 +42,14 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 		QSize sz_hint;
 		BaseObject *object;
 		ObjectType obj_type;
+		unsigned id;
 
 		ItemData() {
 			clear();
 		}
 
 		inline void clear() {
+			id = 0;
 			text = icon = "";
 			fg_color = bg_color = "";
 			italic = strikeout = false;
@@ -64,15 +66,9 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 
 	QList<ItemData> header_data;
 
-	inline static const QStringList HeaderTexts {
-		QT_TR_NOOP("Object"), QT_TR_NOOP("Type"), QT_TR_NOOP("ID"),
-		QT_TR_NOOP("Parent"), QT_TR_NOOP("Parent type")
-	},
+	static const QStringList HeaderTexts,
 
-	HeaderIcons {
-		"objects", "usertype", "typeoid",
-		"schema", "usertype", "attribute"
-	};
+	HeaderIcons;
 
 	inline QVariant getItemData(const ItemData &item_dt, int role) const;
 	static std::tuple<int, int, int> getIndexMargins();

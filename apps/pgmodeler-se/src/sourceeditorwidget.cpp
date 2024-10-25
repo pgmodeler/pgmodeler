@@ -3,6 +3,19 @@
 #include "guiutilsns.h"
 #include "utilsns.h"
 
+attribs_map SourceEditorWidget::snippets {
+	{"ifend", "%if {} %then\n\n%end\n"},
+	{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
+	{"ifexpr", "%if ({}) %then\n\n%end\n"},
+	{"ifexprelse", "%if ({}) %then\n\n%else\n\n%end\n"},
+	{"setattrstr", "%set {} \"\"\n"},
+	{"setattrtxt", "%set {} [ ]\n"},
+	{"unsetattr", "%unset {}\n"},
+	{"unsetattr", "%unset {}\n"},
+};
+
+QPalette SourceEditorWidget::def_editor_pal;
+
 SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -211,7 +224,6 @@ void SourceEditorWidget::loadFile(const QString &filename)
 void SourceEditorWidget::validateSyntax()
 {
 	SchemaParser schparser;
-	Messagebox msgbox;
 
 	try
 	{
@@ -222,7 +234,7 @@ void SourceEditorWidget::validateSyntax()
 		schparser.loadBuffer(editor_txt->toPlainText());
 		schparser.getSourceCode({});
 
-		msgbox.show(tr("No lexical or sytactical errors found."), Messagebox::InfoIcon);
+		Messagebox::info(tr("No lexical or sytactical errors found."));
 	}
 	catch(Exception &e)
 	{
@@ -241,7 +253,6 @@ void SourceEditorWidget::validateSyntax()
 		pal.setColor(QPalette::HighlightedText, QColor("#ffffff"));
 		editor_txt->setPalette(pal);
 
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

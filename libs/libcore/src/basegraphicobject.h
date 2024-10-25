@@ -62,7 +62,7 @@ class __libcore BaseGraphicObject: public QObject, public BaseObject {
 		 it in the QGraphcisScene) */
 		QObject *receiver_object;
 
-		inline static bool updates_enabled { true };
+		static bool updates_enabled;
 
 	protected:
 		//! \brief This attribute holds the layers in which the object is visible.

@@ -34,9 +34,6 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Holds the last mouse position while moving the cursor over the widget (used during resize event filter)
-		QPoint old_pos;
-
 		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 
@@ -69,10 +66,6 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setModel(ModelWidget *model);
 
 	private slots:
-		/*! \brief This slot adds an item to the layers grid and performs the need operations
-		 * to make the new layer available to the scene and model widget */
-		void addLayer(const QString &name = "");
-
 		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming();
 
@@ -95,6 +88,10 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setLayersActive();
 
 	public slots:
+		/*! \brief This slot adds an item to the layers grid and performs the need operations
+		 * to make the new layer available to the scene and model widget */
+		QString addLayer(const QString &name = "", bool config_obj_sel = true);
+
 		void setVisible(bool value) override;
 
 		void toggleLayersRects();
@@ -106,12 +103,16 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		 * scene layers without force the update of other graphical objects. */
 		void updateLayersRects();
 
+		void updateRelsVisibility();
+
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility
 		void s_visibilityChanged(bool);
 
 		//! \brief Signal emitted whenever the current active layers change
 		void s_activeLayersChanged();
+
+		friend class MainWindow;
 };
 
 #endif

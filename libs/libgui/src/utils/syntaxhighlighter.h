@@ -70,7 +70,7 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		XmlParser xmlparser;
 
 		//! \brief Default font configuratoin for all instances os syntax highlighter
-		inline static QFont default_font {"Source Code Pro", 12};
+		static QFont default_font;
 
 		//! \brief Indicates that the current block has no special meaning
 		static constexpr int SimpleBlock = -1,

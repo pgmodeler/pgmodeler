@@ -5,9 +5,9 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, Ob
 {
 	Ui_ExtensionWidget::setupUi(this);
 
-	types_tab = new ObjectsTableWidget(ObjectsTableWidget::AddButton |
-																		 ObjectsTableWidget::RemoveButton |
-																		 ObjectsTableWidget::RemoveAllButton, true, this);
+	types_tab = new CustomTableWidget(CustomTableWidget::AddButton |
+																		 CustomTableWidget::RemoveButton |
+																		 CustomTableWidget::RemoveAllButton, true, this);
 	types_tab->setCellsEditable(true);
 	types_tab->setColumnCount(1);
 	types_tab->setHeaderLabel(tr("Name"), 0);
@@ -61,11 +61,7 @@ void ExtensionWidget::applyConfiguration()
 		finishConfiguration();
 
 		if(update_types && !model->updateExtensionTypes(extension))
-		{
-			Messagebox msgbox;
-			msgbox.show(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."),
-									Messagebox::AlertIcon);
-		}
+			Messagebox::alert(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."));
 	}
 	catch(Exception &e)
 	{

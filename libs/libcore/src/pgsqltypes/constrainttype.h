@@ -29,14 +29,7 @@
 
 class __libcore ConstraintType: public TemplateType<ConstraintType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"PRIMARY KEY",
-			"FOREIGN KEY",
-			"CHECK",
-			"UNIQUE",
-			"EXCLUDE",
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned PrimaryKey = 1,

@@ -22,12 +22,15 @@
 #include "exception.h"
 #include "globalattributes.h"
 
+QFont SyntaxHighlighter::default_font {"Source Code Pro", 12};
+
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	code_field_txt = parent;
+
 	this->setDocument(parent->document());
 	this->single_line_mode = single_line_mode;
 	custom_font_size = custom_fnt_size;
@@ -300,7 +303,7 @@ bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *gr
 		len = end - m_info.start + 1;
 	}
 
-	fmt.setFontFamily(default_font.family());
+	fmt.setFontFamilies({ default_font.family() });
 	fmt.setFontPointSize(getCurrentFontSize());
 	QSyntaxHighlighter::setFormat(m_info.start, len, fmt);
 
@@ -567,14 +570,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						EnclosingCharsCfg cfg;
 						cfg.open_char = attribs[Attributes::OpenChar].front();
 						cfg.close_char = attribs[Attributes::CloseChar].front();
-
-						#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-							cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
-							cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
-						#else
-							cfg.fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
-							cfg.bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
-						#endif
+						cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+						cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
 
 						enclosing_chrs.push_back(cfg);
 					}
@@ -602,15 +599,21 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						bold = attribs[Attributes::Bold] == Attributes::True;
 						underline = attribs[Attributes::Underline] == Attributes::True;
 						strikeout = attribs[Attributes::Stikeout] == Attributes::True;
-						fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
-						//If the attribute isn't defined the bg color will be transparent
-						if(attribs[Attributes::BackgroundColor].isEmpty())
-							bg_color.setRgb(0,0,0,0);
+						/* If the attribute isn't defined the fg color will be the same as the
+						 * parent's default text color */
+						if(attribs[Attributes::ForegroundColor].isEmpty())
+							fg_color = code_field_txt->palette().color(QPalette::WindowText);
 						else
-							bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
+							fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
 
-						format.setFontFamily(default_font.family());
+						// If the attribute isn't defined the default the bg color will be transparent
+						if(attribs[Attributes::BackgroundColor].isEmpty())
+							bg_color = Qt::transparent;
+						else
+							bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+
+						format.setFontFamilies({ default_font.family() });
 						format.setFontPointSize(default_font.pointSizeF());
 						format.setFontItalic(italic);
 						format.setFontUnderline(underline);

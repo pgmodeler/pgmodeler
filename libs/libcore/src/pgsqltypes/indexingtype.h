@@ -29,15 +29,7 @@
 
 class __libcore IndexingType: public TemplateType<IndexingType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"btree",
-			"gist",
-			"hash",
-			"gin",
-			"spgist",
-			"brin"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned Btree = 1,

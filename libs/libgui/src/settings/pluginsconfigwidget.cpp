@@ -32,14 +32,14 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsPath());
 	plugins_layout->insertWidget(1, root_dir_sel);
 
-	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
+	plugins_tab=new CustomTableWidget(CustomTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(tr("Plugin"),0);
 	plugins_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("plugins")),0);
 	plugins_tab->setHeaderLabel(tr("Version"),1);
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
-	connect(plugins_tab, &ObjectsTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
+	connect(plugins_tab, &CustomTableWidget::s_rowEdited, this, &PluginsConfigWidget::showPluginInfo);
 
 	grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 	grid->addWidget(plugins_tab,0,0,1,1);
@@ -158,6 +158,7 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 		try
 		{
 			plugin->initPlugin(main_window);
+			PgModelerGuiPlugin::registerPlugin(plugin);
 		}
 		catch(Exception &e)
 		{
@@ -181,9 +182,8 @@ void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 
 	if(!errors.empty())
 	{
-		Messagebox msgbox;
-		msgbox.show(Exception(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
-													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
+		Messagebox::error(tr("One or more plug-ins failed to initialize and were discarded! Please, check the error stack for more details."),
+											ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
 	}
 }
 
@@ -205,36 +205,7 @@ void PluginsConfigWidget::postInitPlugins()
 
 	if(!errors.empty())
 	{
-		Messagebox msgbox;
-		msgbox.show(Exception(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
-													ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors));
-	}
-}
-
-QList<QAction *> PluginsConfigWidget::getPluginsModelsActions()
-{
-	QList<QAction *> list;
-
-	for(auto &plugin : plugins)
-	{
-		if(plugin->getAction(PgModelerGuiPlugin::ModelAction))
-			list.append(plugin->getAction(PgModelerGuiPlugin::ModelAction));
-	}
-
-	return list;
-}
-
-void PluginsConfigWidget::installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns)
-{
-	for(auto &plugin : plugins)
-	{
-		if(conf_menu && plugin->getAction(PgModelerGuiPlugin::ConfigAction))
-			conf_menu->addAction(plugin->getAction(PgModelerGuiPlugin::ConfigAction));
-
-		if(plugin->getAction(PgModelerGuiPlugin::ToolbarAction))
-			tb_actions.append(plugin->getAction(PgModelerGuiPlugin::ToolbarAction));
-
-		if(plugin->getToolButton())
-			db_expl_btns.append(plugin->getToolButton());
+		Messagebox::error(tr("One or more plug-ins failed to perform post initialization operations! Please, check the error stack for more details."),
+											ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__, errors);
 	}
 }

@@ -53,6 +53,8 @@ class __libgui SQLExecutionHelper : public QObject {
 
 		void setCommand(const QString &cmd);
 
+		QString getCommand();
+
 		//! \brief Returns the result set model created in the execution. This object is not deleted after the execution.
 		ResultSetModel *getResultSetModel();
 

@@ -34,28 +34,18 @@ class __libgui ModelsDiffHelper: public QObject {
 		Q_OBJECT
 
 		//! \brief List of attributes ignored when comparing XML code of table children objects
-		inline static const QStringList
+		static const QStringList
 
-		TableObjsIgnoredAttribs { Attributes::Alias },
+		TableObjsIgnoredAttribs,
 
 		//! \brief List of tags ignored when comparing XML code of roles specifically
-		RolesIgnoredTags {
-			Attributes::AppendedSql,	Attributes::PrependedSql
-		},
+		RolesIgnoredTags,
 
 		//! \brief List of attributes ignored when comparing XML code of other database objects
-		ObjectsIgnoredAttribs {
-			Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
-			Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
-			Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
-			Attributes::Pagination,	Attributes::Alias,	Attributes::Layers
-		},
+		ObjectsIgnoredAttribs,
 
 		//! \brief List of tags ignored when comparing XML code of other database objects
-		ObjectsIgnoredTags {
-			Attributes::Role, Attributes::Tablespace, Attributes::Collation,
-			Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql
-		};
+		ObjectsIgnoredTags;
 
 		//! \brief Stores the SQL code that represents the diff between model and database
 		QString diff_def,
@@ -67,7 +57,7 @@ class __libgui ModelsDiffHelper: public QObject {
 		bool diff_canceled,
 
 		//!brief Diff options. See OPT_??? constants
-		diff_opts[10];
+		diff_opts[9];
 
 		//! \brief Stores the count of objects to be dropped, changed or created
 		unsigned diffs_counter[4];

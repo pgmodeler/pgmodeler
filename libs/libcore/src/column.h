@@ -83,7 +83,7 @@ class __libcore Column: public TableObject{
 
 	public:
 		//! \brief Holds the pattern for nextval() function call
-		inline static const QString NextValFuncTmpl {"nextval('%1'::regclass)"};
+		static const QString NextValFuncTmpl;
 
 		Column();
 

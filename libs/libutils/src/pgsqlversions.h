@@ -38,6 +38,7 @@ namespace PgSqlVersions {
 	PgSqlVersion140,
 	PgSqlVersion150,
 	PgSqlVersion160,
+	PgSqlVersion170,
 	MinimumVersion,
 	DefaulVersion;
 

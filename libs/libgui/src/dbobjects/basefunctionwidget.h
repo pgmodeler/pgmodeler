@@ -29,7 +29,7 @@ treat other attribute of those classes.
 
 #include "baseobjectwidget.h"
 #include "ui_basefunctionwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "codecompletionwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "pgsqltypewidget.h"
@@ -48,7 +48,7 @@ class __libgui BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunct
 		CodeCompletionWidget *source_code_cp;
 
 		//! \brief Table used to store the function's parameters
-		ObjectsTableWidget *parameters_tab,
+		CustomTableWidget *parameters_tab,
 
 		//! \brief Table used to store the function's transform types
 		*transform_types_tab,
@@ -60,19 +60,19 @@ class __libgui BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunct
 		PgSQLTypeWidget *transform_type_wgt;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
-		Parameter getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes);
+		Parameter getParameter(CustomTableWidget *params_tab, unsigned row, bool set_param_modes);
 
 		//! \brief Shows the parameter data on the specified table at the specified line
-		void showParameterData(ObjectsTableWidget *param_tab, Parameter param, unsigned row, bool show_param_modes);
+		void showParameterData(CustomTableWidget *param_tab, Parameter param, unsigned row, bool show_param_modes);
 
 		//! \brief Shows the parameter configuration form
-		void showParameterForm(ObjectsTableWidget *params_tab, bool enable_param_modes);
+		void showParameterForm(CustomTableWidget *params_tab, bool enable_param_modes);
 
 		//! \brief Shows the configured parameter on the table that called the form
-		void handleParameter(ObjectsTableWidget *table, Parameter param, int result, bool handle_param_modes);
+		void handleParameter(CustomTableWidget *table, Parameter param, int result, bool handle_param_modes);
 
 		//! \brief Duplicates the parameter in the curr_row placing it in new_row
-		void duplicateParameter(ObjectsTableWidget *table, int curr_row, int new_row, bool dup_param_modes);
+		void duplicateParameter(CustomTableWidget *table, int curr_row, int new_row, bool dup_param_modes);
 
 		//! \brief Applies the values in the widget to the base function's instance
 		void applyBasicConfiguration(BaseFunction *func);

@@ -29,7 +29,7 @@
 #include "baseobjectwidget.h"
 #include "ui_aggregatewidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 	private:
@@ -44,7 +44,7 @@ class __libgui AggregateWidget: public BaseObjectWidget, public Ui::AggregateWid
 		/*! \brief Table that stores the multiple input data types. The elements
 		in this table are converted to class PgSQLType and assigned as input types
 		to the aggregat */
-		ObjectsTableWidget *input_types_tab;
+		CustomTableWidget *input_types_tab;
 		
 		//! \brief Syntax highlighter used by the initial condition field
 		SyntaxHighlighter *initial_cond_hl;

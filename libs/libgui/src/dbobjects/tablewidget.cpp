@@ -35,7 +35,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 {
 	QGridLayout *grid=nullptr;
 	QVBoxLayout *vbox=nullptr;
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
 											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
 	std::map<QString, std::vector<QWidget *> > fields_map;	
@@ -60,7 +60,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	table_grid->addWidget(warn_frame, table_grid->count()+1, 0, 1, 2);
 	warn_frame->setParent(this);
 
-	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NoButtons, true, this);
+	parent_tables = new CustomTableWidget(CustomTableWidget::NoButtons, true, this);
 	parent_tables->setColumnCount(3);
 	parent_tables->setHeaderLabel(tr("Name"), 0);
 	parent_tables->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
@@ -77,8 +77,8 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	vbox->addWidget(server_sel);
 	server_wgt->setLayout(vbox);
 
-	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																			 (CustomTableWidget::EditButton | CustomTableWidget::UpdateButton), true, this);
 	options_tab->setCellsEditable(true);
 	options_tab->setColumnCount(2);
 	options_tab->setHeaderLabel(tr("Option"), 0);
@@ -102,8 +102,8 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i <= 5; i++)
 	{
-		tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-								ObjectsTableWidget::UpdateButton, true, this);
+		tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+								CustomTableWidget::UpdateButton, true, this);
 
 		objects_tab_map[types[i]]=tab;
 
@@ -112,12 +112,12 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
 		attributes_tbw->widget(i + 1)->setLayout(grid);
 
-		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
-		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));
-		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, TableWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, TableWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, TableWidget::duplicateObject));
-		connect(tab, &ObjectsTableWidget::s_rowsMoved, this, __slot_n(this, TableWidget::swapObjects));
+		connect(tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, TableWidget::removeObjects));
+		connect(tab, &CustomTableWidget::s_rowRemoved, this, __slot_n(this, TableWidget::removeObject));
+		connect(tab, &CustomTableWidget::s_rowAdded, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowEdited, this, __slot(this, TableWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowDuplicated, this, __slot_n(this, TableWidget::duplicateObject));
+		connect(tab, &CustomTableWidget::s_rowsMoved, this, __slot_n(this, TableWidget::swapObjects));
 	}
 
 	objects_tab_map[ObjectType::Column]->setColumnCount(7);
@@ -132,7 +132,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	objects_tab_map[ObjectType::Column]->setHeaderLabel(tr("Comment"), 6);
 	objects_tab_map[ObjectType::Column]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[ObjectType::Column], &ObjectsTableWidget::s_cellClicked, this, [this](int row, int col) {
+	connect(objects_tab_map[ObjectType::Column], &CustomTableWidget::s_cellClicked, this, [this](int row, int col) {
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			PhysicalTable *table = dynamic_cast<Table *>(this->object);
@@ -235,7 +235,7 @@ int TableWidget::openEditingForm(TableObject *object)
 	return res;
 }
 
-ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
+CustomTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return objects_tab_map[obj_type];
@@ -249,7 +249,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, CustomTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -423,7 +423,7 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 
 void TableWidget::listObjects(ObjectType obj_type)
 {
-	ObjectsTableWidget *tab = nullptr;
+	CustomTableWidget *tab = nullptr;
 	PhysicalTable *table = nullptr;
 	std::vector<unsigned> pk_cols;
 
@@ -465,7 +465,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 			if(pk_col >= tab->getRowCount())
 				continue;
 
-			tab->setCellCheckState(pk_col, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, pk_col, 0);
 		}
 
 		tab->resizeContents();
@@ -475,13 +475,18 @@ void TableWidget::listObjects(ObjectType obj_type)
 		//Enables the add button on the constraints, triggers and index tab only when there is columns created
 		if(obj_type==ObjectType::Column)
 		{
-			objects_tab_map[ObjectType::Constraint]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+			objects_tab_map[ObjectType::Constraint]->setButtonsEnabled(CustomTableWidget::AddButton,
 																																 objects_tab_map[ObjectType::Column]->getRowCount() > 0);
-			objects_tab_map[ObjectType::Trigger]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+			objects_tab_map[ObjectType::Trigger]->setButtonsEnabled(CustomTableWidget::AddButton,
 																															objects_tab_map[ObjectType::Column]->getRowCount() > 0);
-			objects_tab_map[ObjectType::Index]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+			objects_tab_map[ObjectType::Index]->setButtonsEnabled(CustomTableWidget::AddButton,
 																														objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 		}
+
+		/* Disabling the table widget if the table object is protected
+		 * avoiding the addition to new object to the table, preserving
+		 * the protection status */
+		tab->setEnabled(!table->isProtected());
 	}
 	catch(Exception &e)
 	{
@@ -493,7 +498,7 @@ void TableWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -533,7 +538,7 @@ void TableWidget::handleObject()
 
 void TableWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	Column *column=nullptr;
 	Constraint *constr=nullptr;
 	Trigger *trigger=nullptr;
@@ -603,12 +608,12 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(str_aux1,row,4);
 
 		if(str_aux.indexOf(TableObjectView::TextPrimaryKey) >= 0)
-			tab->setCellCheckState(row, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, row, 0);
 		else
-			tab->setCellCheckState(row, 0, Qt::Unchecked);
+			tab->setCellCheckState(Qt::Unchecked, row, 0);
 
 		if(column->isAddedByRelationship() || (pk && pk->isAddedByRelationship()))
-			tab->setCellDisabled(row, 0, true);
+			tab->setCellDisabled(true, row, 0);
 
 		tab->setCellText(column->getAlias(), row, 5);
 		tab->adjustColumnToContents(0);
@@ -716,15 +721,15 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		{
 			tab->setRowFont(row, font);
 			tab->setRowColors(row,
-												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+												CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemFgColor),
+												CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
 			tab->setRowFont(row, font);
 			tab->setRowColors(row,
-												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-												ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+												CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemFgColor),
+												CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemBgColor));
 		}
 	}
 
@@ -841,7 +846,7 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 {
 	Messagebox msgbox;
 	QList<unsigned> pk_col_rows;
-	ObjectsTableWidget *tab = objects_tab_map[ObjectType::Column];
+	CustomTableWidget *tab = objects_tab_map[ObjectType::Column];
 
 	if(has_pk)
 	{
@@ -864,7 +869,7 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 	if(has_pk && !pk_col_rows.isEmpty() && msgbox.result() == QDialog::Rejected)
 	{
 		for(auto &row : pk_col_rows)
-			tab->setCellCheckState(row, 0, Qt::Checked);
+			tab->setCellCheckState(Qt::Checked, row, 0);
 	}
 }
 
@@ -872,7 +877,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
 	int op_id = -1;
 
@@ -968,7 +973,7 @@ void TableWidget::applyConfiguration()
 		std::vector<BaseRelationship *> rels;
 		std::vector<Column *> pk_cols;
 		std::vector<PartitionKey> part_keys;
-		ObjectsTableWidget *col_tab = objects_tab_map[ObjectType::Column];
+		CustomTableWidget *col_tab = objects_tab_map[ObjectType::Column];
 		PartitioningType part_type;
 
 		if(!this->new_object)
@@ -1088,10 +1093,7 @@ void TableWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			//Messagebox msg_box;
-
 			if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-				//msg_box.show(e);
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

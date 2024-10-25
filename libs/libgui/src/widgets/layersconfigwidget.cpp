@@ -19,13 +19,13 @@
 #include "layersconfigwidget.h"
 #include "colorpickerwidget.h"
 #include "guiutilsns.h"
+#include "relationshipview.h"
 
 LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setModel(nullptr);
 
-	old_pos = QPoint(-1, -1);
 	curr_item = nullptr;
 	curr_item = nullptr;
 	curr_row = -1;
@@ -53,7 +53,7 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 	connect(hide_tb, &QToolButton::clicked, this, &LayersConfigWidget::s_visibilityChanged);
 
 	connect(add_tb, &QToolButton::clicked, this, [this](){
-		addLayer();
+		addLayer("", true);
 	});
 
 	connect(remove_tb, &QToolButton::clicked, this, &LayersConfigWidget::removeLayer);
@@ -65,6 +65,13 @@ LayersConfigWidget::LayersConfigWidget(QWidget *parent) : QWidget(parent)
 
 	connect(remove_all_tb, &QToolButton::clicked, this, [this](){
 		removeLayer(true);
+	});
+
+	connect(rels_tabs_visibility_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+			updateRelsVisibility();
+		else
+			updateActiveLayers();
 	});
 }
 
@@ -82,33 +89,21 @@ bool LayersConfigWidget::eventFilter(QObject *watched, QEvent *event)
 		else if(event->type() == QEvent::FocusIn && curr_item && curr_item != layers_tab->currentItem())
 			finishLayerRenaming();
 	}
-	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	else if(watched == frame && event->type() == QEvent::MouseMove)
 	{
-		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+		static GuiUtilsNs::WidgetCornerId corner_id;
+		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
 
-		if(event->type() == QEvent::MouseButtonPress)
-			old_pos = QPoint(-1,-1);
-		else
+		if(m_event->buttons() == Qt::NoButton)
 		{
-			if(m_event->buttons() == Qt::LeftButton)
-			{
-				QPoint pnt = this->mapToParent(m_event->pos());
-				int w = 0, h = 0;
-
-				//Calculates the width and height based upon the delta between the points
-				w = this->width() + (pnt.x() - old_pos.x());
-				h = this->geometry().bottom() - pnt.y() + 1;
-
-				if(h >= this->minimumHeight() && h <= this->maximumHeight() &&
-					 w >= this->minimumWidth() && w <= this->maximumWidth())
-					this->setGeometry(this->pos().x(), pnt.y(), w, h);
-
-				old_pos = pnt;
-			}
+			corner_id = GuiUtilsNs::getWidgetHoveredCorner(this, frame, m_event,
+																										 GuiUtilsNs::WidgetCornerId::TopRightCorner);
 		}
+
+		GuiUtilsNs::resizeFloatingWidget(this, m_event, corner_id);
 	}
 
-	return false;
+	return QWidget::eventFilter(watched, event);
 }
 
 void LayersConfigWidget::updateActiveLayers()
@@ -125,6 +120,10 @@ void LayersConfigWidget::updateActiveLayers()
 	}
 
 	model->scene->setActiveLayers(active_layers);
+
+	if(rels_tabs_visibility_chk->isChecked())
+		updateRelsVisibility();
+
 	model->getDatabaseModel()->setObjectsModified({ ObjectType::Schema });
 	emit s_activeLayersChanged();
 }
@@ -361,7 +360,7 @@ void LayersConfigWidget::__addLayer(const QString &name, Qt::CheckState chk_stat
 	enableButtons();
 }
 
-void LayersConfigWidget::addLayer(const QString &name)
+QString LayersConfigWidget::addLayer(const QString &name, bool config_obj_sel)
 {
 	QString fmt_name = name.isEmpty() ? tr("New layer") : name;
 	QStringList act_layers = model->scene->getActiveLayers();
@@ -376,8 +375,10 @@ void LayersConfigWidget::addLayer(const QString &name)
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can
 	 * appear in the "Move to layer" quick action */
-	if(!model->scene->selectedItems().isEmpty())
+	if(config_obj_sel && !model->scene->selectedItems().isEmpty())
 		model->configureObjectSelection();
+
+	return fmt_name;
 }
 
 void LayersConfigWidget::startLayerRenaming()
@@ -418,3 +419,25 @@ void LayersConfigWidget::finishLayerRenaming()
 	}
 }
 
+void LayersConfigWidget::updateRelsVisibility()
+{
+	if(!model)
+		return;
+
+	RelationshipView *rel_view = nullptr;
+
+	for(auto &item : model->scene->items())
+	{
+		rel_view = dynamic_cast<RelationshipView *>(item);
+
+		if(!rel_view)
+			continue;
+
+		if(rel_view->isVisible() &&
+				(!rel_view->isTableVisible(BaseRelationship::SrcTable) ||
+				 !rel_view->isTableVisible(BaseRelationship::DstTable)))
+		{
+			rel_view->setVisible(false);
+		}
+	}
+}

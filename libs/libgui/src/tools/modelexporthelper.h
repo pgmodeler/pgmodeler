@@ -66,6 +66,7 @@ class __libgui ModelExportHelper: public QObject {
 		//! \brief Indicates if the exporting thread was canceled by the user (only in thread mode)
 		export_canceled,
 
+		//! \brief Indicates if the SQL code of the database model was reenabled to avoid exporting errors
 		db_sql_reenabled,
 
 		//! \brief Indicates if the grid should be displayed during exporting to graphical format
@@ -93,7 +94,11 @@ class __libgui ModelExportHelper: public QObject {
 		force_db_drop,
 
 		//! \brief Indicates if the script containing DROP commandos of all objects must be created
-		gen_drop_file;
+		gen_drop_file,
+
+		/*! \brief Indicates if the export to DBMS must be run inside a transaction block. This option
+				has no effect when creating the database itself as well tablespaces */
+		transactional;
 
 		//! \brief Database model used as reference on export operation (only in thread mode)
 		DatabaseModel *db_model;
@@ -144,7 +149,7 @@ class __libgui ModelExportHelper: public QObject {
 		void restoreObjectNames();
 
 		//! \brief Exports the contents of the buffer to a previously opened connection
-		void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false);
+		void exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs=false, bool transactional = false);
 
 		//! \brief Returns if the error code is one of the treated by the export process as object duplication error
 		bool isDuplicationError(const QString &error_code);
@@ -191,7 +196,7 @@ class __libgui ModelExportHelper: public QObject {
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver="", bool ignore_dup=false,
 											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
-											bool forced_db_drop = false);
+											bool forced_db_drop = false, bool transactional = false);
 
 		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
 		 * respectively, that the data dictionary should have an object index and the dictionary should be split
@@ -203,11 +208,11 @@ class __libgui ModelExportHelper: public QObject {
 		\note The params drop_db and drop_objs can't be true at the same time. */
 		void setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver="", bool ignore_dup=false,
 															 bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false,
-															 bool force_db_drop = false);
+															 bool force_db_drop = false, bool transactional = false);
 
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a previously generated sql buffer to be exported the the helper */
-		void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false);
+		void setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup=false, bool transactional = false);
 
 		/*! \brief Configures the SQL export params before start the export thread (when in thread mode).
 		This form receive the model, output filename and pgsql version to be used */

@@ -26,14 +26,14 @@
 #define EVENT_TRIGGER_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "ui_eventtriggerwidget.h"
 
 class __libgui EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
 	private:
 		Q_OBJECT
 		
-		ObjectsTableWidget *filter_tab;
+		CustomTableWidget *filter_tab;
 		
 		ObjectSelectorWidget *function_sel;
 		

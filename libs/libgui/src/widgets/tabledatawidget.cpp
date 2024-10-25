@@ -22,6 +22,8 @@
 #include "csvparser.h"
 #include "utils/plaintextitemdelegate.h"
 
+const QString TableDataWidget::PlaceholderColumn {"$placeholder$"};
+
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {
 	Ui_TableDataWidget::setupUi(this);
@@ -98,14 +100,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
-	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
+	connect(data_tbw, &QTableWidget::customContextMenuRequested, this, &TableDataWidget::showItemContextMenu);
 }
 
-void TableDataWidget::handleItemPressed()
+void TableDataWidget::showItemContextMenu(const QPoint &pos)
 {
-	if(QApplication::mouseButtons() != Qt::RightButton)
-		return;
-
 	QMenu item_menu;
 	QAction *act = nullptr;
 	QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
@@ -130,12 +129,12 @@ void TableDataWidget::handleItemPressed()
 			item_menu.addAction(act);
 		}
 		else
-			act = item_menu.addAction(btn->icon(), btn->text(), btn, &QToolButton::click, btn->shortcut());
+			act = item_menu.addAction(btn->icon(), btn->text(), btn->shortcut(), btn, &QToolButton::click);
 
 		act->setEnabled(btn->isEnabled());
 	}
 
-	item_menu.exec(QCursor::pos());
+	item_menu.exec(data_tbw->viewport()->mapToGlobal(pos));
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)

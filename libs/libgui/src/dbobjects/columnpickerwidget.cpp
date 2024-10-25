@@ -29,10 +29,10 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 
 	parent_obj = nullptr;
 
-	columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																		 (ObjectsTableWidget::EditButton |
-																			ObjectsTableWidget::UpdateButton |
-																			ObjectsTableWidget::DuplicateButton), true, this);
+	columns_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+																		 (CustomTableWidget::EditButton |
+																			CustomTableWidget::UpdateButton |
+																			CustomTableWidget::DuplicateButton), true, this);
 
 	columns_tab->setColumnCount(2);
 	columns_tab->setHeaderLabel(tr("Column"), 0);
@@ -42,15 +42,15 @@ ColumnPickerWidget::ColumnPickerWidget(QWidget *parent) :	QWidget(parent)
 
 	col_picker_grid->addWidget(columns_tab, 1, 0, 1, 3);
 
-	connect(columns_tab, &ObjectsTableWidget::s_rowAdded, this, [this](int idx){
+	connect(columns_tab, &CustomTableWidget::s_rowAdded, this, [this](int idx){
 		__trycatch( addColumn(idx); )
 	});
 
-	connect(columns_tab, &ObjectsTableWidget::s_rowRemoved, this, [this](int){
+	connect(columns_tab, &CustomTableWidget::s_rowRemoved, this, [this](int){
 		__trycatch( updateColumnsCombo(); )
 	});
 
-	connect(columns_tab, &ObjectsTableWidget::s_rowsRemoved, this, [this](){
+	connect(columns_tab, &CustomTableWidget::s_rowsRemoved, this, [this](){
 		__trycatch( updateColumnsCombo(); )
 	});
 
@@ -169,7 +169,7 @@ void ColumnPickerWidget::updateColumnsCombo()
 			}
 		}
 
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, columns_cmb->count() != 0);
+		columns_tab->setButtonsEnabled(CustomTableWidget::AddButton, columns_cmb->count() != 0);
 		columns_cmb->adjustSize();
 	}
 	catch(Exception &e)
@@ -194,7 +194,7 @@ void ColumnPickerWidget::addColumn(int row)
 		}
 
 		columns_cmb->removeItem(columns_cmb->currentIndex());
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (columns_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(CustomTableWidget::AddButton, (columns_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -223,15 +223,15 @@ void ColumnPickerWidget::addColumn(Column *column, int row)
 		{
 			columns_tab->setRowFont(row, fnt);
 			columns_tab->setRowColors(row,
-																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemFgColor),
-																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemBgColor));
+																CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemFgColor),
+																CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemBgColor));
 		}
 		else
 		{
 			columns_tab->setRowFont(row, fnt);
 			columns_tab->setRowColors(row,
-																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemFgColor),
-																ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemBgColor));
+																CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemFgColor),
+																CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemBgColor));
 		}
 	}
 }

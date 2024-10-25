@@ -29,7 +29,7 @@
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
 #include "dbobjects/referenceswidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "widgets/numberedtexteditor.h"
 

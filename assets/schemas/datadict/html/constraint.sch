@@ -20,6 +20,14 @@
 
 </td>
 
+%if ({type} != "FOREIGN KEY") %then
+	{spc} <td> \&nbsp; </td>
+	{spc} <td> \&nbsp; </td>
+%else
+	{spc} <td [ class="value"] > {upd-action} </td>
+	{spc} <td [ class="value"] > {del-action} </td>
+%end
+
 {spc} <td [ class="value"] >
 
 %if ({type} == "CHECK") %then

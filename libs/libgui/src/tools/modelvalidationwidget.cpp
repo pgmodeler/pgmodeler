@@ -26,7 +26,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	output_menu.addAction(tr("Copy as text"), this, &ModelValidationWidget::copyTextOutput, QKeySequence("Ctrl+Shift+C"));
+	output_menu.addAction(tr("Copy as text"), QKeySequence("Ctrl+Shift+C"), this, &ModelValidationWidget::copyTextOutput);
 	output_menu.addAction(tr("Clear"), this, &ModelValidationWidget::clearOutput);
 	output_btn->setMenu(&output_menu);
 
@@ -75,6 +75,12 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	});
 
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
+
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: disabling SQL validation in model validation widget."
+		sql_validation_chk->setChecked(false);
+		sql_validation_chk->setEnabled(false);
+	#endif
 }
 
 bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)

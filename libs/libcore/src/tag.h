@@ -33,7 +33,7 @@ that replaces the original colors of tables/views that owns them.
 
 class __libcore Tag: public BaseObject {
 	private:
-		inline static unsigned tag_id {4000};
+		static unsigned tag_id;
 
 		//! \brief Stores the object colors configuration
 		std::map<QString, std::vector<QColor>> color_config;

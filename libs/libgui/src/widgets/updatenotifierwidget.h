@@ -61,9 +61,6 @@ class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWi
 		//! \brief This pointer stores the reply after the update manager make a call to server
 		QNetworkReply *update_chk_reply;
 
-		//! \brief Stores the old mouse position to simulate the widget resizing
-		QPoint old_pos;
-
 		/*! \brief This attribute indicates wether a message informing that no updates are available
 	  must be shown. Generally, this attribute is true when the user call the checkForUpdate()
 	  from a QAction */

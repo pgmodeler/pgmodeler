@@ -80,6 +80,16 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		 * Also, it uses an error icon and only OK button */
 		static void error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e = nullptr);
 
+		/*! \brief Shows an error message box in which can an error code and exact local of the code is specified.
+		 *  Additionally, a list of errors captured previously can be specified and will be used to fill up the stack trace.
+		 * Also, it uses an error icon and only OK button */
+		static void error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions);
+
+		/*! \brief Shows an error message box in which can an error code and exact local of the code is specified.
+		 *  Additionally, a reference to a captured exception can be specified and will be used to fill up the stack trace.
+		 * Also, it uses an error icon and only OK button */
+		static void error(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e = nullptr);
+
 		/*! \brief Shows an error message box in which massage and stacktrace is retrived from the provided exception.
 		 * Also, it uses an error icon and only OK button */
 		static void error(Exception &e, const QString &method, const QString &file, int line);

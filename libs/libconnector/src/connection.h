@@ -54,7 +54,7 @@ class __libconnector Connection {
 
 		/*! \brief List of notices generated during the command execution
 		The list is filled only if notice_enabled is true */
-		inline static QStringList notices;
+		static QStringList notices;
 
 		//! \brief Generates the connection string based on the parameter map
 		void generateConnectionString();
@@ -72,17 +72,17 @@ class __libconnector Connection {
 		static void noticeProcessor(void *, const char *message);
 
 		//! \brief Indicates if notices are enabled
-		inline static bool notice_enabled {false},
+		static bool notice_enabled,
 
 		//! \brief Indicates if executed sql must be printed (stdout) [default is false]
-		print_sql {false},
+		print_sql,
 
 		//! \brief Indicates if error silence is enabled
-		silence_conn_err {true},
+		silence_conn_err,
 
 		/*! \brief Indicates if the PostgreSQL version checking must be ignored during connection.
 		 * This flag allows connecting (poorly and error-prone!) to older versions ( < 10). */
-		ignore_db_version {false};
+		ignore_db_version;
 
 		/*! \brief Indicates that the initial database configured in the connection can be automatically
 		browsed after connect the server. This attribute is useful only in SQLTool */
@@ -99,40 +99,40 @@ class __libconnector Connection {
 
 	public:
 		//! \brief Constants used to reference the connections parameters
-		inline static const QString	ParamAlias {"alias"},
-		ParamApplicationName {"application_name"},
-		ParamServerFqdn {"host"},
-		ParamServerIp {"hostaddr"},
-		ParamPort {"port"},
-		ParamDbName {"dbname"},
-		ParamUser {"user"},
-		ParamPassword {"password"},
-		ParamConnTimeout {"connect_timeout"},
-		ParamOthers {"options"},
-		ParamSslMode {"sslmode"},
-		ParamSslCert {"sslcert"},
-		ParamSslKey {"sslkey"},
-		ParamSslRootCert {"sslrootcert"},
-		ParamSslCrl {"sslcrl"},
-		ParamKerberosServer {"krbsrvname"},
-		ParamLibGssapi {"gsslib"},
+		static const QString	ParamAlias,
+		ParamApplicationName,
+		ParamServerFqdn,
+		ParamServerIp,
+		ParamPort,
+		ParamDbName,
+		ParamUser,
+		ParamPassword,
+		ParamConnTimeout,
+		ParamOthers,
+		ParamSslMode,
+		ParamSslCert,
+		ParamSslKey,
+		ParamSslRootCert,
+		ParamSslCrl,
+		ParamKerberosServer,
+		ParamLibGssapi,
 
 		/*! \brief Special parameter that store the name of the role
 		 *  to be switched in case of a successful connection */
-		ParamSetRole {"setrole"},
+		ParamSetRole,
 
 		//! \brief Constants used to reference the connection ssl mode
-		SslDisable {"disable"},
-		SslAllow {"allow"},
-		SslPrefer {"prefer"},
-		SslRequire {"require"},
-		SslCaVerify {"verify-ca"},
-		SslFullVerify {"verify-full"},
+		SslDisable,
+		SslAllow,
+		SslPrefer,
+		SslRequire,
+		SslCaVerify,
+		SslFullVerify,
 
 		//! \brief Constants used to reference the server info details (see getServerInfo())
-		ServerVersion {"server-version"},
-		ServerProtocol {"server-protocol"},
-		ServerPid {"server-pid"};
+		ServerVersion,
+		ServerProtocol,
+		ServerPid;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
 		enum ConnOperation: unsigned {

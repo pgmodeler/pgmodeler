@@ -40,27 +40,27 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		};
 
 		//! \brief Stores the default grid line color
-		inline static const QColor DefaultGridColor { "#e1e1e1"},
+		static const QColor DefaultGridColor,
 
 		//! \brief Stores the default grid line color
-		DefaultCanvasColor {"#fff"},
+		DefaultCanvasColor,
 
 		//! \brief Stores the default page delimiter lines color
-		DefaultDelimitersColor {"#4b73c3"};
+		DefaultDelimitersColor;
 
 	private:
 		Q_OBJECT
 
-		inline static GridPattern grid_pattern { ObjectsScene::SquarePattern };
+		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color
-		inline static QColor grid_color { DefaultGridColor },
+		static QColor grid_color,
 
 		//! \brief Stores the canvas background color
-		canvas_color { DefaultCanvasColor },
+		canvas_color,
 
 		//! \brief Stores the page delimiter lines color
-		delimiters_color { DefaultDelimitersColor };
+		delimiters_color;
 
 		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
 		QStringList layers,
@@ -105,41 +105,37 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		int scene_move_dx, scene_move_dy;
 
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
-		inline static bool align_objs_grid {false},
+		static bool align_objs_grid,
 
-		show_grid {true},
+		show_grid,
 
-		show_page_delim {true},
+		show_page_delim,
 
 		//! \brief Indicates if the corner move is enabled for the scene
-		corner_move {true},
+		corner_move,
 
 		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
 		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger {false},
+		invert_rangesel_trigger,
 
-		lock_delim_scale {false};
+		lock_delim_scale;
 
 		//! \brief Scene grid size
-		inline static unsigned grid_size {20},
+		static unsigned grid_size,
 
 		//! \brief The number of pages in which the scene rect is expanded
-		expansion_factor {2};
+		expansion_factor;
 
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
-		inline static QPageLayout page_layout {
-			QPageSize(QPageSize::A4),
-			QPageLayout::Landscape,
-			QMarginsF(10,10,10,10)
-		};
+		static QPageLayout page_layout;
 
-		inline static double delimiter_scale {1},
+		static double delimiter_scale,
 
 		//! \brief The minimum scene width is defined to be width of the current page layout * 2
-		min_scene_width { page_layout.paintRect().width() },
+		min_scene_width,
 
 		//! \brief The minimum scene height is defined to be height of the current page layout * 2
-		min_scene_height { page_layout.paintRect().height() };
+		min_scene_height;
 
 		//! \brief Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
 		bool moving_objs,

@@ -29,12 +29,7 @@
 
 class __libcore PartitioningType: public TemplateType<PartitioningType> {
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"RANGE",
-			"LIST",
-			"HASH"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned Range = 1,

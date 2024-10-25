@@ -492,6 +492,12 @@ void Trigger::validateTrigger()
 	}
 }
 
+bool Trigger::acceptsReplaceCommand()
+{
+	// Constraint triggers don't accept CREATE OR REPLACE command
+	return !is_constraint;
+}
+
 QString Trigger::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try

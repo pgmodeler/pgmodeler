@@ -33,8 +33,24 @@
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
 #include "csvdocument.h"
+#include "roundedrectitem.h"
 
 namespace GuiUtilsNs {
+	/*! \brief WidgetCornerId used by resizeFloatingWidget() to determine
+	 *  which corners of an widget can be used to resize it */
+	enum WidgetCornerId: unsigned {
+		NoCorners = 0,
+		LeftCorner = 2,
+		TopCorner = 4,
+		RightCorner = 8,
+		BottomCorner = 16,
+		TopLeftCorner = TopCorner | LeftCorner,
+		TopRightCorner = TopCorner | RightCorner,
+		BottomLeftCorner = BottomCorner | LeftCorner,
+		BottomRightCorner = BottomCorner | RightCorner,
+		AllCorners = 31
+	};
+
 	static constexpr int LtMargin = 5,
 	LtSpacing = 5;
 
@@ -148,7 +164,23 @@ namespace GuiUtilsNs {
 	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
 	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
 
+	/*! \brief Resizes the toolbuttons under the widget wgt according to its width.
+	 *  If the widget's width isn't enough to display the tool buttons with icons and texts
+	 *  the this function changes the tool buttons to icon-only style */
 	extern __libgui void resizeChildToolButtons(QWidget *wgt, const QSize &new_size);
+
+	/*! \brief Returns the corner id (see WidgetCornerId) that is currently hovered in the provided widget.
+	 *  The event_wgt is the widget that has triggered the mouse event.
+	 *  The corners params holds the corner ids that the hovered is allowed for the widget */
+	extern __libgui WidgetCornerId getWidgetHoveredCorner(QWidget *widget, QWidget *event_wgt, QMouseEvent *event, WidgetCornerId corners);
+
+	/*! \brief Resizes a widget based a mouse move event.
+	 *  The corner param is used to identify from which corner the widget must be resized */
+	extern __libgui void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner);
+
+	/*! \brief Moves a widget based a mouse move event that is captured by a handle widget
+	 *  in the the edge of the widget */
+	extern __libgui void moveFloatingWidget(QWidget *widget, QWidget *event_wgt, QMouseEvent *event);
 }
 
 #endif

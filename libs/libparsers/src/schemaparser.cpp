@@ -22,6 +22,66 @@
 #include "pgsqlversions.h"
 #include "globalattributes.h"
 
+const QRegularExpression SchemaParser::AttribRegExp {
+	QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+"),
+	QRegularExpression::CaseInsensitiveOption
+};
+
+const QChar SchemaParser::CharComment {'#'};
+const QChar SchemaParser::CharLineEnd {'\n'};
+const QChar SchemaParser::CharSpace {' '};
+const QChar SchemaParser::CharTabulation {'\t'};
+const QChar SchemaParser::CharStartAttribute {'{'};
+const QChar SchemaParser::CharEndAttribute {'}'};
+const QChar SchemaParser::CharStartConditional {'%'};
+const QChar SchemaParser::CharStartMetachar {'$'};
+const QChar SchemaParser::CharStartPlainText {'['};
+const QChar SchemaParser::CharEndPlainText {']'};
+const QChar SchemaParser::CharStartCompExpr {'('};
+const QChar SchemaParser::CharEndCompExpr {')'};
+const QChar SchemaParser::CharValueDelim {'"'};
+const QChar SchemaParser::CharValueOf {'@'};
+const QChar SchemaParser::CharToXmlEntity {'&'};
+const QChar SchemaParser::CharStartEscaped {'\\'};
+
+const QString	SchemaParser::TokenIf {"if"};
+const QString	SchemaParser::TokenThen {"then"};
+const QString	SchemaParser::TokenElse {"else"};
+const QString	SchemaParser::TokenEnd {"end"};
+const QString	SchemaParser::TokenOr {"or"};
+const QString	SchemaParser::TokenAnd {"and"};
+const QString	SchemaParser::TokenNot {"not"};
+const QString	SchemaParser::TokenSet {"set"};
+const QString	SchemaParser::TokenUnset {"unset"};
+const QString	SchemaParser::TokenInclude{ QString(SchemaParser::CharValueOf) + "include"};
+
+const QString	SchemaParser::TokenMetaSp {"sp"};
+const QString	SchemaParser::TokenMetaBr {"br"};
+const QString	SchemaParser::TokenMetaTb {"tb"};
+const QString	SchemaParser::TokenMetaOb {"ob"};
+const QString	SchemaParser::TokenMetaCb {"cb"};
+const QString	SchemaParser::TokenMetaOc {"oc"};
+const QString	SchemaParser::TokenMetaCc {"cc"};
+const QString	SchemaParser::TokenMetaMs {"ms"};
+const QString	SchemaParser::TokenMetaHs {"hs"};
+const QString	SchemaParser::TokenMetaPs {"ps"};
+const QString	SchemaParser::TokenMetaAt {"at"};
+const QString	SchemaParser::TokenMetaDs {"ds"};
+const QString	SchemaParser::TokenMetaAm {"am"};
+const QString	SchemaParser::TokenMetaBs {"bs"};
+
+const QString	SchemaParser::TokenEqOper {"=="};
+const QString	SchemaParser::TokenNeOper {"!="};
+const QString	SchemaParser::TokenGtOper {">"};
+const QString	SchemaParser::TokenLtOper {"<"};
+const QString	SchemaParser::TokenGtEqOper {">="};
+const QString	SchemaParser::TokenLtEqOper {"<="};
+
+const QRegularExpression SchemaParser::TokenIncludeRegexp { "^\\s*" +
+																													 TokenInclude +
+																													 "\\s+([\"])((.*)?)\\1\\s*$",
+																													 QRegularExpression::MultilineOption };
+
 SchemaParser::SchemaParser()
 {
 	line = column = 0;
@@ -224,6 +284,10 @@ bool SchemaParser::parseInclude(const QString &include_ln, QString &src_buf, qin
 		{
 			// Load the code of the included file
 			QString incl_buf = UtilsNs::loadFile(fi.absoluteFilePath());
+
+			/* Appending a line feed char to the loaded include file to avoid
+			 * errors when the loaded include is followed by another @include */
+			incl_buf.append(QChar::LineFeed);
 
 			/* If the loaded code contains one or more @include statements we abort
 			 * the parsing because chained/nested file inclusion is not yet supported. */
@@ -1142,8 +1206,24 @@ QString SchemaParser::getSourceCode(const QString & obj_name, attribs_map &attri
 		else
 			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
 
+#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: truncating generated SQL code."
+		QString code_def = getSourceCode(filename, attribs);
+
+		if(def_type == SchemaParser::SqlCode && !code_def.isEmpty() &&
+			 obj_name != Attributes::DbModel)
+		{
+			bool ends_with_lf = code_def.endsWith("\n");
+			code_def = code_def.mid(0, code_def.size() * 0.60);
+			code_def += "...";
+			code_def += ends_with_lf ? "\n" : "";
+		}
+
+		return code_def;
+#else
 		//Try to get the object definitin from the specified path
 		return getSourceCode(filename, attribs);
+#endif
 	}
 	catch(Exception &e)
 	{

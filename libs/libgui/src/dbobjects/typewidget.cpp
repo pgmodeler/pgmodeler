@@ -45,13 +45,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		grid->addWidget(functions_sel[i],i,1,1,1);
 	}
 
-	enumerations_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-											 (ObjectsTableWidget::EditButton | ObjectsTableWidget::DuplicateButton), true, this);
+	enumerations_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+											 (CustomTableWidget::EditButton | CustomTableWidget::DuplicateButton), true, this);
 	grid=dynamic_cast<QGridLayout *>(enumerations_gb->layout());
 	grid->addWidget(enumerations_tab,1,0,1,2);
 	enumerations_gb->setVisible(false);
 
-	attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	attributes_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^ CustomTableWidget::DuplicateButton, true, this);
 	attributes_tab->setColumnCount(3);
 	attributes_tab->setHeaderLabel(tr("Name"),0);
 	attributes_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("uid")),0);
@@ -99,12 +99,12 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 	connect(base_type_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
 	connect(composite_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
 	connect(enumeration_rb, &QRadioButton::toggled, this, &TypeWidget::selectTypeConfiguration);
-	connect(enumerations_tab, &ObjectsTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
-	connect(enumerations_tab, &ObjectsTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
-	connect(attributes_tab, &ObjectsTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
+	connect(enumerations_tab, &CustomTableWidget::s_rowAdded, this, &TypeWidget::handleEnumeration);
+	connect(enumerations_tab, &CustomTableWidget::s_rowUpdated, this, &TypeWidget::handleEnumeration);
+	connect(attributes_tab, &CustomTableWidget::s_rowEdited, this, &TypeWidget::editAttribute);
 
-	connect(attributes_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
-	connect(attributes_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
+	connect(attributes_tab, &CustomTableWidget::s_rowAdded, this, __slot_n(this, TypeWidget::handleAttribute));
+	connect(attributes_tab, &CustomTableWidget::s_rowUpdated, this, __slot_n(this, TypeWidget::handleAttribute));
 
 	storage_cmb->addItems(StorageType::getTypes());
 	category_cmb->addItems(CategoryType::getTypes());

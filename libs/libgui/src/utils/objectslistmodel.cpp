@@ -19,10 +19,21 @@
 #include "objectslistmodel.h"
 #include "guiutilsns.h"
 #include <pgsqltypes/pgsqltype.h>
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
 #include "tableobject.h"
 #include "permission.h"
 #include "baserelationship.h"
+#include "utilsns.h"
+
+const QStringList ObjectsListModel::HeaderTexts {
+	QT_TR_NOOP("Object"), QT_TR_NOOP("Type"), QT_TR_NOOP("ID"),
+	QT_TR_NOOP("Parent"), QT_TR_NOOP("Parent type")
+};
+
+const QStringList ObjectsListModel::HeaderIcons {
+	"objects", "usertype", "typeoid",
+	"schema", "usertype", "attribute"
+};
 
 ObjectsListModel::ObjectsListModel(const std::vector<BaseObject *> &obj_list, const QString &search_attr, QObject *parent) : QAbstractTableModel(parent)
 {
@@ -102,7 +113,12 @@ void ObjectsListModel::configureHeader(const QString &search_attr)
 QVariant ObjectsListModel::getItemData(const ItemData &item_dt, int role) const
 {
 	if(role == Qt::DisplayRole)
+	{
+		if(item_dt.id > 0)
+			return item_dt.id;
+
 		return item_dt.text;
+	}
 
 	if(role == Qt::ForegroundRole && !item_dt.fg_color.isEmpty())
 		return QColor(item_dt.fg_color);
@@ -176,13 +192,13 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 		if(obj->isProtected() || obj->isSystemObject())
 		{
 			item_dt.italic = true;
-			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+			item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor).name();
 		}
 		else if(dynamic_cast<TableObject *>(obj) &&
 						 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
 		{
 			item_dt.italic = true;
-			item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor).name();
+			item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemAltFgColor).name();
 		}
 
 		item_dt.strikeout = obj->isSQLDisabled() && !obj->isSystemObject();
@@ -198,6 +214,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 
 		//Third column: Object id
 		item_dt.clear();
+		item_dt.id = obj->getObjectId();
 		item_dt.text = QString::number(obj->getObjectId());
 		item_dt.sz_hint = fm.boundingRect(item_dt.text).size() + QSize(h_margin_no_ico, v_margin);
 		item_data.append(item_dt);
@@ -226,7 +243,7 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 			if(parent_obj->isProtected() || parent_obj->isSystemObject())
 			{
 				item_dt.italic = true;
-				item_dt.fg_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor).name();
+				item_dt.fg_color = CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor).name();
 			}
 		}
 
@@ -251,6 +268,12 @@ void ObjectsListModel::fillModel(const std::vector<BaseObject*>& obj_list, const
 					search_attr != Attributes::Comment)
 			{
 				item_dt.text = search_attribs[search_attr];
+
+				if(search_attr == Attributes::SrcColumns ||
+						search_attr == Attributes::RefColumns)
+				{
+					item_dt.text.replace(UtilsNs::DataSeparator, ", ");
+				}
 			}
 			else
 				item_dt.text = obj->getComment();

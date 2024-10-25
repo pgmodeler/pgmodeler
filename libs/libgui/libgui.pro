@@ -69,12 +69,13 @@ src/settings/pluginsconfigwidget.cpp \
 src/settings/snippetsconfigwidget.cpp \
 src/tools/bugreportform.cpp \
 src/tools/databaseimporthelper.cpp \
+	src/tools/datagridwidget.cpp \
+	src/tools/datahandlingform.cpp \
 src/tools/modeldatabasediffform.cpp \
 src/tools/modelfixform.cpp \
 src/tools/objectsdiffinfo.cpp \
 src/tools/sqltoolwidget.cpp \
 src/tools/databaseexplorerwidget.cpp \
-src/tools/datamanipulationform.cpp \
 src/tools/modelexportform.cpp \
 src/tools/modelrestorationform.cpp \
 src/tools/sqlexecutionhelper.cpp \
@@ -99,6 +100,7 @@ src/utils/syntaxhighlighter.cpp \
 src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
     src/widgets/columndatawidget.cpp \
+	src/widgets/customtablewidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
@@ -128,7 +130,6 @@ src/widgets/taskprogresswidget.cpp \
 src/widgets/customsqlwidget.cpp \
 src/widgets/linenumberswidget.cpp \
 src/widgets/newobjectoverlaywidget.cpp \
-src/widgets/objectstablewidget.cpp \
 src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
@@ -193,12 +194,13 @@ src/settings/pluginsconfigwidget.h \
 src/settings/snippetsconfigwidget.h \
 src/tools/bugreportform.h \
 src/tools/databaseimporthelper.h \
+	src/tools/datagridwidget.h \
+	src/tools/datahandlingform.h \
 src/tools/modeldatabasediffform.h \
 src/tools/modelfixform.h \
 src/tools/objectsdiffinfo.h \
 src/tools/sqltoolwidget.h \
 src/tools/databaseexplorerwidget.h \
-src/tools/datamanipulationform.h \
 src/tools/modelexportform.h \
 src/tools/modelrestorationform.h \
 src/tools/sqlexecutionhelper.h \
@@ -223,6 +225,7 @@ src/utils/syntaxhighlighter.h \
 src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
     src/widgets/columndatawidget.h \
+	src/widgets/customtablewidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
@@ -252,7 +255,6 @@ src/widgets/taskprogresswidget.h \
 src/widgets/customsqlwidget.h \
 src/widgets/linenumberswidget.h \
 src/widgets/newobjectoverlaywidget.h \
-src/widgets/objectstablewidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
@@ -309,7 +311,8 @@ ui/settings/configurationform.ui \
 ui/settings/generalconfigwidget.ui \
 ui/settings/relationshipconfigwidget.ui \
 ui/tools/bugreportform.ui \
-ui/tools/datamanipulationform.ui \
+	ui/tools/datagridwidget.ui \
+	ui/tools/datahandlingform.ui \
 ui/tools/modelexportform.ui \
 ui/tools/sqlexecutionwidget.ui \
 ui/tools/databaseexplorerwidget.ui \
@@ -322,6 +325,7 @@ ui/tools/modelrestorationform.ui \
 ui/tools/swapobjectsidswidget.ui \
 ui/tools/modelvalidationwidget.ui \
 ui/widgets/aboutwidget.ui \
+	ui/widgets/customtablewidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
@@ -338,7 +342,6 @@ ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \
 ui/widgets/layersconfigwidget.ui \
 ui/widgets/newobjectoverlaywidget.ui \
-ui/widgets/objectstablewidget.ui \
 ui/widgets/taskprogresswidget.ui \
 ui/widgets/csvloadwidget.ui \
 ui/widgets/layerswidget.ui \

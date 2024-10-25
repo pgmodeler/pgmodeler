@@ -22,7 +22,7 @@
 #include <QWidget>
 #include "ui_simplecolumnswidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
 	private:
@@ -30,7 +30,7 @@ class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
 
 		PgSQLTypeWidget *pgsqltype_wgt;
 
-		ObjectsTableWidget *columns_tab;
+		CustomTableWidget *columns_tab;
 
 		DatabaseModel *model;
 

@@ -18,6 +18,13 @@
 
 #include "firingtype.h"
 
+const QStringList FiringType::type_names {
+	"", // Reserved for Class::Null
+	"BEFORE",
+	"AFTER",
+	"INSTEAD OF"
+};
+
 FiringType::FiringType()
 {
 	type_idx = Before;

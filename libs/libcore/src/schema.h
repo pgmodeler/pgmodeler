@@ -31,7 +31,7 @@
 
 class __libcore Schema: public BaseGraphicObject {
 	private:
-		inline static unsigned schema_id {3000};
+		static unsigned schema_id;
 
 		QColor fill_color, name_color;
 

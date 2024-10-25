@@ -26,12 +26,12 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	Ui_EventTriggerWidget::setupUi(this);
 
 	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
-	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
-									 ObjectsTableWidget::EditButton |
-									 ObjectsTableWidget::UpdateButton |
-									 ObjectsTableWidget::RemoveButton |
-									 ObjectsTableWidget::RemoveAllButton |
-									 ObjectsTableWidget::MoveButtons, false, this);
+	filter_tab=new CustomTableWidget(CustomTableWidget::AddButton |
+									 CustomTableWidget::EditButton |
+									 CustomTableWidget::UpdateButton |
+									 CustomTableWidget::RemoveButton |
+									 CustomTableWidget::RemoveAllButton |
+									 CustomTableWidget::MoveButtons, false, this);
 	filter_tab->setColumnCount(1);
 	filter_tab->setHeaderLabel(tr("Tag command"), 0);
 
@@ -45,20 +45,20 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	event_cmb->addItems(EventTriggerType::getTypes());
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowAdded, this, &EventTriggerWidget::handleTagValue);
-	connect(filter_tab, &ObjectsTableWidget::s_rowUpdated, this, &EventTriggerWidget::handleTagValue);
+	connect(filter_tab, &CustomTableWidget::s_rowAdded, this, &EventTriggerWidget::handleTagValue);
+	connect(filter_tab, &CustomTableWidget::s_rowUpdated, this, &EventTriggerWidget::handleTagValue);
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,	this,[this](){
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	connect(filter_tab, &CustomTableWidget::s_rowsRemoved,	this,[this](){
+		filter_tab->setButtonsEnabled(CustomTableWidget::AddButton, false);
 	});
 
-	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,	this, [this](int row){
+	connect(filter_tab, &CustomTableWidget::s_rowEdited,	this, [this](int row){
 		tag_edt->setText(filter_tab->getCellText(row, 0));
 	});
 
 	connect(tag_edt, &QLineEdit::textChanged, this, [this](){
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !tag_edt->text().isEmpty());
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::UpdateButton, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(CustomTableWidget::AddButton, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(CustomTableWidget::UpdateButton, !tag_edt->text().isEmpty());
 	});
 
 	setMinimumSize(500, 440);
@@ -91,7 +91,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		filter_tab->clearSelection();
 	}
 
-	filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+	filter_tab->setButtonsEnabled(CustomTableWidget::AddButton, false);
 }
 
 void EventTriggerWidget::applyConfiguration()
@@ -127,7 +127,7 @@ void EventTriggerWidget::handleTagValue(int row)
 		filter_tab->setCellText(tag_edt->text().simplified(), row, 0);
 		tag_edt->clear();
 		filter_tab->clearSelection();
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
+		filter_tab->setButtonsEnabled(CustomTableWidget::AddButton, false);
 	}
 	else if(filter_tab->getCellText(row, 0).isEmpty())
 		filter_tab->removeRow(row);

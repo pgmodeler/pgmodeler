@@ -29,12 +29,7 @@
 
 class __libcore FunctionType: public TemplateType<FunctionType>{
 	private:
-		inline static const QStringList type_names {
-			"", // Reserved for Class::Null
-			"VOLATILE",
-			"STABLE",
-			"IMMUTABLE"
-		};
+		static const QStringList type_names;
 
 	public:
 		static constexpr unsigned Volatile = 1,

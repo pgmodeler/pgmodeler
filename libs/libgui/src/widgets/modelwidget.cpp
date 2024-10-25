@@ -69,9 +69,27 @@
 #include "schemaview.h"
 #include "styledtextboxview.h"
 #include "tableview.h"
+#include "pgmodelerguiplugin.h"
+
+QList<const PgModelerGuiPlugin *> ModelWidget::plugins;
+
+bool ModelWidget::cut_operation {false};
+bool ModelWidget::save_restore_pos {true};
+bool ModelWidget::simple_obj_creation {true};
+bool ModelWidget::disable_render_smooth {false};
+
+double ModelWidget::min_object_opacity {0.10};
+
+ModelWidget *ModelWidget::src_model {};
+std::vector<BaseObject *> ModelWidget::copied_objects;
+std::vector<BaseObject *> ModelWidget::cut_objects;
 
 ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
+	#ifdef DEMO_VERSION
+		obj_actions_cnt = 0;
+	#endif
+
 	QFont font;
 	QLabel *label=nullptr;
 	QGridLayout *grid=nullptr;
@@ -87,6 +105,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	std::vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
 																																					ObjectType::BaseRelationship, ObjectType::Relationship });
 
+	plugins_actions = PgModelerGuiPlugin::getPluginsActions(PgModelerGuiPlugin::ModelAction);
 	current_zoom = 1;
 	modified = panning_mode = wheel_move = scene_moving = false;
 	curr_show_grid = curr_show_delim = true;
@@ -294,14 +313,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema->setIcon(QIcon(GuiUtilsNs::getIconPath("movetoschema")));
 	action_moveto_schema->setText(tr("Move to schema"));
 
-	action_set_layer = layers_menu.menuAction();
-	action_set_layer->setIcon(QIcon(GuiUtilsNs::getIconPath("layers")));
-	action_set_layer->setText(tr("Set layers"));
-
+	action_set_layer = new QAction(QIcon(GuiUtilsNs::getIconPath("layers")), tr("Set layers"), this);
+	action_set_layer->setShortcut(QKeySequence("F3"));
 	layers_wgt = new LayersWidget(this);
-	wgt_action_layers = new QWidgetAction(this);
-	wgt_action_layers->setDefaultWidget(layers_wgt);
-	layers_menu.addAction(wgt_action_layers);
 
 	action_set_tag = tags_menu.menuAction();
 	action_set_tag->setIcon(QIcon(GuiUtilsNs::getIconPath("tag")));
@@ -547,9 +561,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_convert_rel1n, &QAction::triggered, this, &ModelWidget::convertRelationship1N);
 	connect(action_deps_refs, &QAction::triggered, this, &ModelWidget::showDependenciesReferences);
 
-	//connect(action_cut, &QAction::triggered, this, __slot(this, ModelWidget::cutObjects));
-	//connect(action_copy, &QAction::triggered, this, __slot(this, ModelWidget::copyObjects));
-
 	connect(action_paste, &QAction::triggered, this, __slot(this, ModelWidget::pasteObjects));
 	connect(action_duplicate, &QAction::triggered, this, &ModelWidget::duplicateObject);
 
@@ -590,6 +601,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_no_collapse_attribs, &QAction::triggered, this, &ModelWidget::setCollapseMode);
 	connect(action_show_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
 	connect(action_hide_schemas_rects, &QAction::triggered, this, &ModelWidget::toggleSchemasRectangles);
+	connect(action_set_layer, &QAction::triggered, this, &ModelWidget::updateObjectsLayers);
+
+	connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	connect(db_model, &DatabaseModel::s_objectAdded, this, &ModelWidget::handleObjectAddition);
 	connect(db_model, &DatabaseModel::s_objectRemoved, this, &ModelWidget::handleObjectRemoval);
@@ -638,7 +652,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, &ObjectsScene::s_scenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 
-	connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
+	//connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
 
 	wheel_timer.setInterval(300);
 
@@ -647,6 +661,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		wheel_timer.stop();
 		wheel_move = false;
 	});
+
+	//connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -1197,6 +1213,12 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: limiting the user interaction over objects."
+		if(updateObjActionCounter())
+			return;
+	#endif
+
 	op_list->registerObject(object, Operation::ObjModified);
 	setModified(true);
 	emit s_objectModified();
@@ -1829,10 +1851,10 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
-void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
+/* void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
 {
 	plugins_actions = plugin_acts;
-}
+} */
 
 void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 {
@@ -2140,6 +2162,12 @@ void ModelWidget::configurePluginsActionsMenu()
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: limiting the user interaction over objects."
+		if(updateObjActionCounter())
+			return;
+	#endif
+
 	try
 	{
 		BaseRelationship::RelType rel_type;
@@ -2450,13 +2478,18 @@ void ModelWidget::moveToSchema()
 
 void ModelWidget::updateObjectsLayers()
 {
-	if(!layers_wgt->isLayersChanged())
-		return;
+	layers_wgt->setAttributes(this);
 
-	qApp->setOverrideCursor(Qt::WaitCursor);
-	scene->updateActiveLayers();
-	db_model->setObjectsModified({ ObjectType::Schema });
-	qApp->restoreOverrideCursor();
+	if(layers_wgt->exec() == QDialog::Accepted &&
+		 layers_wgt->isLayersChanged())
+	{
+		qApp->setOverrideCursor(Qt::WaitCursor);
+		scene->updateActiveLayers();
+		db_model->setObjectsModified({ ObjectType::Schema });
+		qApp->restoreOverrideCursor();
+
+		emit s_objectsLayerChanged();
+	}
 }
 
 void ModelWidget::changeOwner()
@@ -2639,7 +2672,6 @@ void ModelWidget::protectObject()
 		TableObject *tab_obj=nullptr;
 		bool protect=false;
 		QList<BaseGraphicObject *> upd_objects;
-		Messagebox msgbox;
 
 		scene->blockSignals(true);
 
@@ -2673,6 +2705,8 @@ void ModelWidget::protectObject()
 				// Applying protection status for the schema children objects
 				if(obj_type==ObjectType::Schema)
 				{
+					Messagebox msgbox;
+
 					if(!msgbox.isCustomOptionChecked())
 					{
 						msgbox.setCustomOptionText("Apply to all other selected schemas");
@@ -2717,6 +2751,12 @@ void ModelWidget::protectObject()
 
 void ModelWidget::cutObjects(bool copy_deps)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: limiting the user interaction over objects."
+		if(updateObjActionCounter())
+			return;
+	#endif
+
 	//Set the flag indicating that a cut operation started
 	ModelWidget::cut_operation=true;
 	copyObjects(false, copy_deps);
@@ -2724,6 +2764,12 @@ void ModelWidget::cutObjects(bool copy_deps)
 
 void ModelWidget::copyObjects(bool duplicate_mode, bool copy_deps)
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: limiting the user interaction over objects."
+		if(updateObjActionCounter())
+			return;
+	#endif
+
 	std::map<unsigned, BaseObject *> objs_map;
 	std::vector<BaseObject *> sel_obj_deps, deps;
 	BaseObject *object = nullptr;
@@ -3069,7 +3115,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		obj_type = object->getObjectType();
 		itr++;
 
-		if(orig_names[object].count() && obj_type != ObjectType::Cast)
+		if(!orig_names[object].isEmpty() && obj_type != ObjectType::Cast)
 			object->setName(orig_names[object]);
 	}
 
@@ -3191,6 +3237,12 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 void ModelWidget::duplicateObject()
 {
+	#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: limiting the user interaction over objects."
+		if(updateObjActionCounter())
+			return;
+	#endif
+
 	int op_id = -1;
 
 	try
@@ -3838,14 +3890,11 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 			action_rename->setData(QVariant::fromValue<void *>(object));
 		}
 
+		if(is_graph_obj)
+			quick_actions_menu.addAction(action_set_layer);
+
 		if(accepts_schema)
 			quick_actions_menu.addAction(action_moveto_schema);
-
-		if(is_graph_obj)
-		{
-			quick_actions_menu.addAction(action_set_layer);
-			layers_wgt->setAttributes(scene->getLayers(), selected_objects);
-		}
 
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);
@@ -4755,6 +4804,11 @@ QGraphicsView *ModelWidget::getViewport()
 OperationList *ModelWidget::getOperationList()
 {
 	return op_list;
+}
+
+std::vector<BaseObject *> ModelWidget::getSelectedObjects()
+{
+	return selected_objects;
 }
 
 void ModelWidget::setSaveLastCanvasPosition(bool value)

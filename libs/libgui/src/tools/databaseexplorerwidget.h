@@ -45,11 +45,9 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		 * This attribute is used by saveTreeState() and restoreTreeState() */
 		QStringList items_state;
 
-		inline static const QString DepNotDefined,
-		DepNotFound { QT_TR_NOOP("(not found, OID: %1)") },
-		DefaultSourceCode {
-			QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."))
-		};
+		static const QString DepNotDefined,
+		DepNotFound,
+		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;
@@ -178,7 +176,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		 *  This can be used to add custom actions for the current database explorer instance.
 		 *  the method will perform the need operations to create a copy of the provided button
 		 *  (icon, connect signal/slots, etc). */
-		void addPluginButton(QToolButton *btn);
+		void installPluginButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
@@ -222,9 +220,6 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		
 		//! \brief Cancels the rename and restore the original item's name
 		void cancelObjectRename();
-
-		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
 		void loadObjectSource(bool show_code);
 

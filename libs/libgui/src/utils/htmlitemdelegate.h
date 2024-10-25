@@ -39,7 +39,7 @@ class __libgui HtmlItemDelegate : public PlainTextItemDelegate {
 		bool ignore_tags_sz_hint;
 
 	public:
-		inline static const QRegularExpression TagRegExp {"<(\\/)?[a-z]+(>|\\/>)"};
+		static const QRegularExpression TagRegExp;
 
 		HtmlItemDelegate(QObject * parent = nullptr, bool ignore_tags_sz_hint = false);
 

@@ -28,7 +28,7 @@
 #include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
 #include "dbobjects/referenceswidget.h"
@@ -46,12 +46,12 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		NumberedTextEditor *sql_preview_txt, *sql_definition_txt;
 
-		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, CustomTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *sql_preview_hl, *sql_definition_hl;
 
 		//! \brief Returns the object table according with the child type
-		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
+		CustomTableWidget *getObjectTable(ObjectType obj_type);
 
 		ObjectType getObjectType(QObject *sender);
 

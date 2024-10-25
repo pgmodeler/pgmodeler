@@ -68,7 +68,8 @@ void SchemaFilesSyntaxTest::schemasDontGenerateSyntaxErrors()
 				QFAIL(e.getErrorMessage().toStdString().c_str());
 			}
 
-			QWARN(e.getErrorMessage().toStdString().c_str());
+			QTextStream out(stdout);
+			out << e.getErrorMessage() << Qt::endl;
 		}
 	}
 }

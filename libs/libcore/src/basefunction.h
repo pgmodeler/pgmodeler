@@ -68,8 +68,7 @@ class __libcore BaseFunction: public BaseObject {
 		virtual void configureSearchAttributes();
 
 	public:
-		inline static const QRegularExpression ConfigParamPattern { QRegularExpression::anchoredPattern("([a-z]+)([a-z]|(_))*"),
-																																QRegularExpression::CaseInsensitiveOption };
+		static const QRegularExpression ConfigParamPattern;
 
 		BaseFunction();
 

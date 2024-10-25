@@ -38,8 +38,7 @@ CONFIG(debug, debug|release): {
 }
 
 # Deployment settings
-isEqual(DEMO_VERSION, true): samples.files = assets/samples/demo.dbm
-!isEqual(DEMO_VERSION, true): samples.files = assets/samples/*
+samples.files = assets/samples/*
 samples.path = $$SAMPLESDIR
 
 schemas.files = assets/schemas/*

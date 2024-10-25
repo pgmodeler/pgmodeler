@@ -41,7 +41,7 @@ store the expressions that are matched against the captured words.
 
 name: the name of the group
 background-color: the color of the background of words matching the group (omitting this attribute causes transparent background to be applied).
-foreground-color: the color of the foreground of words matching the group (omitting this attribute causes black foreground to be applied)
+foreground-color: the color of the foreground of words matching the group (omitting this attribute causes the default foreground color to be applied)
 case-sensitive: indicates if the expressions matching must be case sensitive or not.
 bold: words matching the group will have a bold style.
 italic: words matching the group will have a italic style.

@@ -28,6 +28,186 @@
 #include "pgsqlversions.h"
 #include "compat/compatns.h"
 
+QTextStream PgModelerCliApp::out {stdout};
+
+const QRegularExpression PgModelerCliApp::PasswordRegExp { "(password)(=)(.)*( )" };
+const QString PgModelerCliApp::PasswordPlaceholder { "password=******" };
+
+const QString PgModelerCliApp::AllChildren {"all"};
+const QString PgModelerCliApp::Input {"--input"};
+const QString PgModelerCliApp::Output {"--output"};
+const QString PgModelerCliApp::InputDb {"--input-db"};
+const QString PgModelerCliApp::ExportToFile {"--export-to-file"};
+const QString PgModelerCliApp::ExportToPng {"--export-to-png"};
+const QString PgModelerCliApp::ExportToSvg {"--export-to-svg"};
+const QString PgModelerCliApp::ExportToDbms {"--export-to-dbms"};
+const QString PgModelerCliApp::ExportToDict {"--export-to-dict"};
+const QString PgModelerCliApp::ImportDb {"--import-db"};
+const QString PgModelerCliApp::NoIndex {"--no-index"};
+const QString PgModelerCliApp::Split {"--split"};
+const QString PgModelerCliApp::Markdown {"--markdown"};
+const QString PgModelerCliApp::DependenciesSql {"--dependencies"};
+const QString PgModelerCliApp::ChildrenSql {"--children"};
+const QString PgModelerCliApp::GroupByType {"--group-by-type"};
+const QString PgModelerCliApp::GenDropScript {"--gen-drop-script"};
+const QString PgModelerCliApp::Diff {"--diff"};
+const QString PgModelerCliApp::DropDatabase {"--drop-database"};
+const QString PgModelerCliApp::DropObjects {"--drop-objects"};
+const QString PgModelerCliApp::NonTransactional {"--non-transactional"};
+const QString PgModelerCliApp::PgSqlVer {"--pgsql-ver"};
+const QString PgModelerCliApp::Help {"--help"};
+const QString PgModelerCliApp::ShowGrid {"--show-grid"};
+const QString PgModelerCliApp::ShowDelimiters {"--show-delimiters"};
+const QString PgModelerCliApp::PageByPage {"--page-by-page"};
+const QString PgModelerCliApp::OverrideBgColor {"--override-bg-color"};
+const QString PgModelerCliApp::IgnoreDuplicates {"--ignore-duplicates"};
+const QString PgModelerCliApp::IgnoreErrorCodes {"--ignore-error-codes"};
+const QString PgModelerCliApp::ConnAlias {"--conn-alias"};
+const QString PgModelerCliApp::Host {"--host"};
+const QString PgModelerCliApp::Port {"--port"};
+const QString PgModelerCliApp::User {"--user"};
+const QString PgModelerCliApp::Passwd {"--passwd"};
+const QString PgModelerCliApp::InitialDb {"--initial-db"};
+const QString PgModelerCliApp::Silent {"--silent"};
+const QString PgModelerCliApp::ListConns {"--list-conns"};
+const QString PgModelerCliApp::Simulate {"--simulate"};
+const QString PgModelerCliApp::FixModel {"--fix-model"};
+const QString PgModelerCliApp::FixTries {"--fix-tries"};
+const QString PgModelerCliApp::ZoomFactor {"--zoom"};
+const QString PgModelerCliApp::UseTmpNames {"--use-tmp-names"};
+const QString PgModelerCliApp::DbmMimeType {"--dbm-mime-type"};
+const QString PgModelerCliApp::Install {"install"};
+const QString PgModelerCliApp::Uninstall {"uninstall"};
+const QString PgModelerCliApp::SystemWide {"--system-wide"};
+const QString PgModelerCliApp::IgnoreImportErrors {"--ignore-errors"};
+const QString PgModelerCliApp::ImportSystemObjs {"--import-sys-objs"};
+const QString PgModelerCliApp::ImportExtensionObjs {"--import-ext-objs"};
+const QString PgModelerCliApp::DebugMode {"--debug-mode"};
+const QString PgModelerCliApp::FilterObjects {"--filter-objects"};
+const QString PgModelerCliApp::MatchByName {"--match-by-name"};
+const QString PgModelerCliApp::ForceChildren {"--force-children"};
+const QString PgModelerCliApp::OnlyMatching {"--only-matching"};
+const QString PgModelerCliApp::CommentsAsAliases {"--comments-as-aliases"};
+const QString PgModelerCliApp::PartialDiff {"--partial"};
+const QString PgModelerCliApp::Force {"--force"};
+const QString PgModelerCliApp::StartDate {"--start-date"};
+const QString PgModelerCliApp::EndDate {"--end-date"};
+const QString PgModelerCliApp::CompareTo {"--compare-to"};
+const QString PgModelerCliApp::SaveDiff {"--save"};
+const QString PgModelerCliApp::ApplyDiff {"--apply"};
+const QString PgModelerCliApp::NoDiffPreview {"--no-preview"};
+const QString PgModelerCliApp::DropClusterObjs {"--drop-cluster-objs"};
+const QString PgModelerCliApp::RevokePermissions {"--revoke-perms"};
+const QString PgModelerCliApp::DropMissingObjs {"--drop-missing"};
+const QString PgModelerCliApp::ForceDropColsConstrs {"--force-drop-cols"};
+const QString PgModelerCliApp::RenameDb {"--rename-db"};
+const QString PgModelerCliApp::NoSequenceReuse {"--no-sequence-reuse"};
+const QString PgModelerCliApp::NoCascadeDrop {"--no-cascade"};
+const QString PgModelerCliApp::RecreateUnmod {"--recreate-unmod"};
+const QString PgModelerCliApp::ReplaceModified {"--replace-mod"};
+const QString PgModelerCliApp::CreateConfigs {"--create-configs"};
+const QString PgModelerCliApp::MissingOnly {"--missing-only"};
+const QString PgModelerCliApp::IgnoreFaultyPlugins {"--ignore-faulty"};
+const QString PgModelerCliApp::ListPlugins {"--list-plugins"};
+
+const QString PgModelerCliApp::ConnOptions {"connopts"};
+const QString PgModelerCliApp::TagExpr {"<%1"};
+const QString PgModelerCliApp::EndTagExpr {"</%1"};
+const QString PgModelerCliApp::AttributeExpr {"(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(|\\-| )+(\")"};
+
+const QString PgModelerCliApp::ModelFixLog {"model_fix.log"};
+
+const QString PgModelerCliApp::MsgFileAssociated {
+	QString(QT_TR_NOOP("Database model files (*%1) are already associated with pgModeler! Try using the option `%2' to install the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force)
+};
+
+const QString PgModelerCliApp::MsgNoFileAssociation {
+	QString(QT_TR_NOOP("There is no file association related to pgModeler and *%1 files! Try using the option `%2' to uninstall the file association anyway.")).arg(GlobalAttributes::DbModelExt, Force)
+};
+
+std::map<QString, bool> PgModelerCliApp::long_opts {
+	{ Input, true }, { Output, true }, { InputDb, true },
+	{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
+	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
+	{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
+	{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
+	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ OverrideBgColor, false },
+	{ IgnoreErrorCodes, true }, { ConnAlias, true },	{ Host, true },	{ Port, true },
+	{ User, true },	{ Passwd, true },	{ InitialDb, true },
+	{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
+	{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
+	{ DbmMimeType, true },	{ IgnoreImportErrors, false },	{ ImportSystemObjs, false },
+	{ ImportExtensionObjs, false },	{ FilterObjects, true },	{ ForceChildren, true },
+	{ OnlyMatching, false },	{ MatchByName, false },	{ DebugMode, false },
+	{ PartialDiff, false },	{ StartDate, true },	{ EndDate, true },
+	{ CompareTo, true },	{ SaveDiff, false },	{ ApplyDiff, false },
+	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
+	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
+	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
+	{ RecreateUnmod, false }, { ReplaceModified, false },	{ ExportToDict, false },
+	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
+	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
+	{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
+	{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
+	{ ListPlugins, false }, { Markdown, false }, { NonTransactional, false }
+};
+
+attribs_map PgModelerCliApp::short_opts {
+	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
+	{ ExportToFile, "-ef" },	{ ExportToPng, "-ep" },	{ ExportToSvg, "-es" },
+	{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
+	{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
+	{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
+	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },
+	{ IgnoreDuplicates, "-ir" }, { OverrideBgColor, "-oc" },
+	{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
+	{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
+	{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
+	{ Simulate, "-sm" },	{ FixModel, "-fm" },	{ FixTries, "-ft" },
+	{ ZoomFactor, "-zf" },	{ UseTmpNames, "-tn" },	{ DbmMimeType, "-mt" },
+	{ IgnoreImportErrors, "-ie" },	{ ImportSystemObjs, "-is" },	{ ImportExtensionObjs, "-ix" },
+	{ FilterObjects, "-fo" },	{ MatchByName, "-mn" },	{ ForceChildren, "-fc" },
+	{ OnlyMatching, "-om" },	{ DebugMode, "-d" },	{ PartialDiff, "-pd" },
+	{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
+	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
+	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
+	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
+	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },
+	{ RecreateUnmod, "-ru" }, { ReplaceModified, "-rm" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
+	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
+	{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
+	{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }, { Markdown, "-md" },
+	{ NonTransactional, "-nt" }
+};
+
+std::map<QString, QStringList> PgModelerCliApp::accepted_opts {
+	{{ ConnOptions }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex, Markdown }},
+
+	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
+												DropDatabase, DropObjects, Simulate, UseTmpNames, Force,
+												NonTransactional }},
+
+	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
+										FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
+										Host, Port, User, Passwd, InitialDb, CommentsAsAliases }},
+
+	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
+								StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
+								DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
+								NoSequenceReuse, RecreateUnmod, ReplaceModified, NonTransactional }},
+
+	{{ DbmMimeType }, { SystemWide, Force }},
+	{{ FixModel },	{ Input, Output, FixTries }},
+	{{ ListConns }, { }},
+	{{ CreateConfigs }, { MissingOnly, Force }},
+	{{ ListPlugins }, { IgnoreFaultyPlugins }}
+};
+
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
 	try
@@ -358,6 +538,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t\t    Runs the DROP commands attached to objects in which SQL code is enabled.").arg(short_opts[DropObjects]).arg(DropObjects));
 	printText(tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate));
 	printText(tr("  %1, %2\t\t    Generates temporary names for database, roles, and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames));
+	printText(tr("  %1, %2\t    Run the export process in a non-transactional mode where changes are not rolled back in case of errors.").arg(short_opts[NonTransactional]).arg(NonTransactional));
 	printText();
 
 	printText(tr("Connection options: "));
@@ -497,7 +678,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution."));
 	printText();
 	printText(tr("** The diff process allows the usage of all options related to the import operation."));
-	printText(tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes));
+	printText(tr("   It also accepts the following export operation options: `%1', `%2' and `%3'").arg(IgnoreDuplicates, IgnoreErrorCodes, NonTransactional));
 	printText();
 	printText(tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren));
 	printText(tr("   * The options %1 and %2 accept the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate));
@@ -654,6 +835,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(export_dbms && opts.count(Force) && !opts.count(DropDatabase))
 			throw Exception(tr("The option `%1' must be used only with `%2' when exporting to DBMS!").arg(Force).arg(DropDatabase), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		if(export_dbms && opts.count(Simulate) && opts.count(NonTransactional))
+			throw Exception(tr("The options `%1' and `%2' can't be used together when exporting to DBMS!").arg(Simulate).arg(NonTransactional), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
@@ -692,7 +876,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(opts.count(PartialDiff) && !opts[Input].count() && (opts.count(StartDate) || opts.count(EndDate)))
+			if(opts.count(PartialDiff) && opts[Input].isEmpty() && (opts.count(StartDate) || opts.count(EndDate)))
 				throw Exception(tr("The date filters are allowed only on partial diff using an input model!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(PartialDiff) && opts.count(FilterObjects) && (opts.count(StartDate) || opts.count(EndDate)))
@@ -763,7 +947,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		// Diff, import and export (to DBMS) share the same connection options
 		if(diff || import_db || export_dbms)
-			acc_opts.append(accepted_opts[Attributes::Connection]);
+			acc_opts.append(accepted_opts[ConnOptions]);
 
 		// Diff also accepts all import parameters
 		if(diff)
@@ -1864,12 +2048,13 @@ void PgModelerCliApp::exportModel()
 			export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
 		export_hlp->exportToDBMS(model, connection, parsed_opts[PgSqlVer],
-								parsed_opts.count(IgnoreDuplicates) > 0,
-								parsed_opts.count(DropDatabase) > 0,
-								parsed_opts.count(DropObjects) > 0,
-								parsed_opts.count(Simulate) > 0,
-								parsed_opts.count(UseTmpNames) > 0,
-								parsed_opts.count(Force) > 0);
+								parsed_opts.count(IgnoreDuplicates),
+								parsed_opts.count(DropDatabase),
+								parsed_opts.count(DropObjects),
+								parsed_opts.count(Simulate),
+								parsed_opts.count(UseTmpNames),
+								parsed_opts.count(Force),
+								!parsed_opts.count(Simulate) && !parsed_opts.count(NonTransactional));
 	}
 
 	printMessage(tr("Export successfully ended!\n"));
@@ -2114,7 +2299,9 @@ void PgModelerCliApp::diffModelDatabase()
 				printMessage(tr("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp->setExportToDBMSParams(diff_hlp->getDiffDefinition(),
 												 &extra_connection,
-												 parsed_opts[CompareTo], parsed_opts.count(IgnoreDuplicates));
+												 parsed_opts[CompareTo],
+												 parsed_opts.count(IgnoreDuplicates),
+												 !parsed_opts.count(NonTransactional));
 
 				if(parsed_opts.count(IgnoreErrorCodes))
 					export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
