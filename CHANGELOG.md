@@ -51,6 +51,8 @@ v1.2.0-alpha1
 * [Change] Disabling objects' grids in TableWidget when the edited table is protected.
 * [Change] Minor adjustment in the diff_opts size in ModelsDiffHelper.
 * [Change] Refactoring the SQL schema files including the use of the new special keyword @include to diminish code duplication.
+* [Change] Minor update on attributes translations in DatabaseExplorerWidget.
+* [Fix] Fixed the catalog queries of collation and domain objects for PostgreSQL 17.
 * [Fix] Minor bug fix in code generation of tablespace, database, and user mapping objects.
 * [Fix] Minor fix in SQLExecutionWidget::generateBuffer.
 * [Fix] Minor fix in SQLExecutionWidget::generateCSVBuffer to consider the check state of items during CSV buffer generation.

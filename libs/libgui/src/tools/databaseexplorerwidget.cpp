@@ -139,10 +139,12 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")} , {Attributes::TransformTypes, QT_TR_NOOP("Transform types")},
 	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters") }, {Attributes::IsTemplate, QT_TR_NOOP("Is template")},
 	{Attributes::TemplateDb, QT_TR_NOOP("Template DB") }, {Attributes::AllowConns, QT_TR_NOOP("Allows connection")},
-	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE Modifier")},
-	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE Modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
+	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE modifier")},
+	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
 	{Attributes::IsExtType, QT_TR_NOOP("Is extension type")}, {Attributes::RefTables, QT_TR_NOOP("Referenced tables")},
-	{Attributes::NullsNotDistinct, QT_TR_NOOP("Nulls not distinct")}
+	{Attributes::NullsNotDistinct, QT_TR_NOOP("Nulls not distinct")}, {Attributes::Constraints, QT_TR_NOOP("Constraints")},
+	{Attributes::Deterministic, QT_TR_NOOP("Deterministic")}, {Attributes::LcCtypeMod, QT_TR_NOOP("LC CTYPE modifier")},
+	{Attributes::TypeClass, QT_TR_NOOP("Type class")}, {Attributes::Locale, QT_TR_NOOP("Locale")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
