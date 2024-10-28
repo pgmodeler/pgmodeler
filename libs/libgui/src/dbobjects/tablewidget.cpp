@@ -482,6 +482,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 			objects_tab_map[ObjectType::Index]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 																														objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 		}
+
+		/* Disabling the table widget if the table object is protected
+		 * avoiding the addition to new object to the table, preserving
+		 * the protection status */
+		tab->setEnabled(!table->isProtected());
 	}
 	catch(Exception &e)
 	{

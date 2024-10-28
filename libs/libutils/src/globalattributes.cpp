@@ -24,7 +24,7 @@
 #include <QSettings>
 
 /** Base version number **/
-const QString GlobalAttributes::PgModelerVersion = QString("1.1.4")
+const QString GlobalAttributes::PgModelerVersion = QString("1.1.5")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */

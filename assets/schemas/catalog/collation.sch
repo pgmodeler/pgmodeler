@@ -70,7 +70,15 @@
 		%end
 
 		%if ({pgsql-ver} >=f "15.0") %then
-			[ colliculocale AS locale, ]
+
+			%if ({pgsql-ver} <=f "16.0") %then
+				[ colliculocale ]
+			%else
+				[ colllocale ]
+			%end
+
+			[ AS locale, ]
+
 		%else
 			[ null AS locale, ]
 		%end

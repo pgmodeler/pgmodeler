@@ -1,6 +1,81 @@
 Changelog
 ---------
 
+v1.1.5
+------
+<em>Release date: October 28, 2024</em><br/>
+
+* [New] Added support for PostgreSQL 17.
+* [Fix] Fixed the catalog queries of collation and domain objects for PostgreSQL 17.
+* [Change] Disabling objects' grids in TableWidget when the edited table is protected.
+
+v1.2.0-alpha1
+------
+<em>Release date: October 25, 2024</em><br/>
+
+* [New] Added support for PostgreSQL 17.
+* [New] Added support for tabbed table data handling.
+* [New] Added an option in LayersConfigWidget that makes relationships follow tables visibility.
+* [New] Added support for quickly creating a new layer and assigning it to the selected objects in ModelWidget.
+* [New] Added support for the removal of recent models that aren't accessible anymore.
+* [New] Added support for transactional export in pgmodeler-cli.
+* [New] Added support for transactional export in ModelExportForm.
+* [New] Added support for running diff code in a transaction.
+* [New] Added support for displaying FK's update/delete actions in the data dictionary.
+* [New] Added a confirmation message in ModelExportForm when exporting to DBMS with one of the drop options set.
+* [New] Added the method CodeCompletionWidget::identifyObjectType.
+* [New] Added the method CustomTableWidget::setSortingEnabled.
+* [New] Added the signal CustomTableWidget::s_rowCountChanged.
+* [New] Added support for ccache tool in the compilation process on Linux.
+* [New] Added a new version of Messagebox::error.
+* [New] Added the method CustomTableWidget::addCustomButton.
+* [New] Added the method SQLExecutionHelper::getCommand.
+* [New] CustomTableWidget now allows the removal of multiple rows at once.
+* [New] Added the method CustomTableWidget::setAddRowOnTabPress.
+* [New] Added the methods CustomTableWidget::setVerticalHeaderVisible and CustomTableWidget::updateVerticalHeader.
+* [New] Created the slot SQLExecutionWidget::runSQLCommand(QString).
+* [New] Created the struct PgModelerGuiPlugin::PluginWidgets.
+* [New] Added support for plugin widgets in SQLExecutionWidget.
+* [New] Added the methods registerPlugin, createWidgets, getPluginsActions, getPluginsToolButtons on PgModelerGuiPlugin.
+* [Change] Removed the support for Qt 6.2 and 6.3.
+* [Change] Improved the CodeCompletionWidget in such a way as to correctly suggest names in ALTER/DROP commands depending on the objects being handled.
+* [Change] Minor refactor in BaseObject::getChildObjectTypes.
+* [Change] Minor change in method BaseObject::getObjectType by adding the paramenter is_sql_name.
+* [Change] Minor improvement in CodeCompletionWidget in order to trigger completion in the presence of more keywords.
+* [Change] Minor adjustment in sql-highlight.conf.
+* [Change] Minor change in methods copySelection and generateBuffer in SQLExecutionWidget.
+* [Change] Minor change in CustomTableWidget::addRow that now returns the id of the row added.
+* [Change] The file selection dialog now starts on the user's home by default and saves that last accessed directory, using it the next time it is opened.
+* [Change] Minor adjustment in DataManipulationForm and TableDataWidget to use signals customContextMenuRequested when displaying items context menus.
+* [Change] Changed the signature of some methods in CustomTableWidget.
+* [Change] Renamed ObjectsTableWidget to CustomTableWidget
+* [Change] Refactored MainWindow, PluginsConfigWidget, SQLToolWidget, and SQLExecutionWidget to use the new structure of PgModelerGuiPlugin for extra features inclusion.
+* [Change] Moved the layers selection widget from the popup menu to a standalone dialog.
+* [Change] Refactored the GuiUtilsNs::getHoveredWidgetCorner and GuiUtilsNs::resizeFloatingWidget.
+* [Change] Materialized views and constraint trigger will ignore the option "Replace modified" option in diff.
+* [Change] Avoid adding the "OR REPLACE" keywords to constraint triggers code.
+* [Change] Improved the resizing of floating widgets via mouse move by creating the functions GuiUtilsNs::getHoveredWidgetCorner and GuiUtilsNs::resizeFloatingWidget.
+* [Change] Minor adjustment in dark theme color palette.
+* [Change] Disabling objects' grids in TableWidget when the edited table is protected.
+* [Change] Minor adjustment in the diff_opts size in ModelsDiffHelper.
+* [Change] Refactoring the SQL schema files including the use of the new special keyword @include to diminish code duplication.
+* [Change] Minor update on attributes translations in DatabaseExplorerWidget.
+* [Fix] Fixed the catalog queries of collation and domain objects for PostgreSQL 17.
+* [Fix] Minor bug fix in code generation of tablespace, database, and user mapping objects.
+* [Fix] Minor fix in SQLExecutionWidget::generateBuffer.
+* [Fix] Minor fix in SQLExecutionWidget::generateCSVBuffer to consider the check state of items during CSV buffer generation.
+* [Fix] Minor fix in SyntaxHighlighter to use default window text color if no foreground color is defined for a group in the syntax highlight config file.
+* [Fix] Minor fix to avoid flickering when hiding widgets that lie in splitters.
+* [Fix] Minor fix in the object search feature when searching by source/referenced constraint columns.
+* [Fix] Minor fix in ObjectListModel to allow sorting the ID column as an integer value.
+* [Fix] Fixed a bug in Function that was not resetting SETOF flag when changing to return table mode.
+* [Fix] Fixed a malformed markdown code when the table/view has a comment.
+* [Fix] Fixed a bug in ModelsDiffHelper that was ignoring changes in columns.
+* [Fix] Fixed a crash in DatabaseImportHelper when destroying detached inherited columns.
+* [Fix] Fixed a bug in Catalog::getCommentQuery that was crashing the application while trying to retrieve user mapping comments.
+* [Fix] Minor fix in SchemaParser to avoid breaking the parsing when there are two or more @include statements on each row.
+* [Fix] Fix a bug in the Index class that was preventing the removal of included columns.
+
 v1.1.4
 ------
 <em>Release date: August 21, 2024</em><br/>
