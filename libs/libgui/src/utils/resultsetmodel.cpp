@@ -154,19 +154,10 @@ void ResultSetModel::append(ResultSet &res)
 			{
 				do
 				{
-					for(int col=0; col < col_count; col++)
+					for(int col = 0; col < col_count; col++)
 					{
-						if(col < res.getColumnCount())
-						{
-							if(res.isColumnBinaryFormat(col))
-								item_data.push_back(tr("[binary data]"));
-							else
-								item_data.push_back(res.getColumnValue(col));
-						}
-						else
-						{
-							item_data.push_back("");
-						}
+						item_data.push_back(col < res.getColumnCount() ?
+																res.getColumnValue(col) : "");
 					}
 				}
 				while(res.accessTuple(ResultSet::NextTuple));

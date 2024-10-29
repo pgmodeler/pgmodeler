@@ -1061,16 +1061,7 @@ void DataGridWidget::addRow(bool focus_new_row)
 	for(int col = 0; col < results_tbw->columnCount(); col++)
 	{
 		item = new QTableWidgetItem;
-
-		//bytea (binary data) columns can't be handled this way the new item is disabled
-		if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole) == "bytea")
-		{
-			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			item->setText(tr("[binary data]"));
-		}
-		else
-			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
+		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		results_tbw->setItem(row, col, item);
 	}
 
@@ -1376,7 +1367,7 @@ QString DataGridWidget::getDMLCommand(int row)
 		}
 
 		//Creating the where clause with original column's values
-		for(QString pk_col : pk_col_names)
+		for(auto &pk_col : pk_col_names)
 		{
 			data = results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole);
 
@@ -1398,52 +1389,47 @@ QString DataGridWidget::getDMLCommand(int row)
 		for(int col=0; col < results_tbw->columnCount(); col++)
 		{
 			item = results_tbw->item(row, col);
+			value = item->text();
+			col_name = results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole).toString();
 
-			//bytea columns are ignored
-			if(results_tbw->horizontalHeaderItem(col)->data(Qt::ToolTipRole) != "bytea")
+			if(op_type==OpInsert || (op_type==OpUpdate && value != item->data(Qt::UserRole)))
 			{
-				value = item->text();
-				col_name = results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole).toString();
-
-				if(op_type==OpInsert || (op_type==OpUpdate && value != item->data(Qt::UserRole)))
+				//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
+				if((value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(QString("\\") + UtilsNs::UnescValueEnd)) ||
+						(value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(UtilsNs::UnescValueEnd)) ||
+						(!value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + UtilsNs::UnescValueEnd) && value.endsWith(UtilsNs::UnescValueEnd)))
 				{
-					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(QString("\\") + UtilsNs::UnescValueEnd)) ||
-							(value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(UtilsNs::UnescValueEnd)) ||
-							(!value.startsWith(UtilsNs::UnescValueStart) && !value.endsWith(QString("\\") + UtilsNs::UnescValueEnd) && value.endsWith(UtilsNs::UnescValueEnd)))
-					{
-						throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
-														.arg(row + 1).arg(col_name),
-														ErrorCode::MalformedUnescapedValue, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-					}
-
-					col_list.push_back(QString("\"%1\"").arg(col_name));
-
-					//Empty values as considered as DEFAULT
-					if(value.isEmpty())
-					{
-						value = "DEFAULT";
-					}
-					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
-					{
-						value.remove(0, 1);
-						value.remove(value.length()-1, 1);
-					}
-					//Quoting value
-					else
-					{
-						value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
-						value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
-						value.replace("\'","''");
-						value = "E'" + value + "'";
-					}
-
-					if(op_type == OpInsert)
-						val_list.push_back(value);
-					else
-						val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
+					throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
+													.arg(row + 1).arg(col_name),
+													ErrorCode::MalformedUnescapedValue, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
+
+				col_list.push_back(QString("\"%1\"").arg(col_name));
+
+				//Empty values as considered as DEFAULT
+				if(value.isEmpty())
+				{
+					value = "DEFAULT";
+				}
+				//Unescaped values will not be enclosed in quotes
+				else if(value.startsWith(UtilsNs::UnescValueStart) && value.endsWith(UtilsNs::UnescValueEnd))
+				{
+					value.remove(0, 1);
+					value.remove(value.length()-1, 1);
+				}
+				//Quoting value
+				else
+				{
+					value.replace(QString("\\") + UtilsNs::UnescValueStart, UtilsNs::UnescValueStart);
+					value.replace(QString("\\") + UtilsNs::UnescValueEnd, UtilsNs::UnescValueEnd);
+					value.replace("\'","''");
+					value = "E'" + value + "'";
+				}
+
+				if(op_type == OpInsert)
+					val_list.push_back(value);
+				else
+					val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
 			}
 		}
 
