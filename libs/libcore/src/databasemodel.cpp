@@ -2107,6 +2107,7 @@ void DatabaseModel::storeSpecialObjectsXML()
 					}
 					else
 					{
+						#warning "TODO: Indexes created by relationship must be ignored"
 						index=dynamic_cast<Index *>(tab_obj);
 						found=index->isReferRelationshipAddedColumn();
 

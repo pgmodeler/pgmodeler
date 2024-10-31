@@ -1955,6 +1955,8 @@ void Relationship::addColumnsRel11()
 
 			if(!identifier)
 				addUniqueKey(recv_tab);
+
+			#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 		}
 	}
 	catch(Exception &e)
@@ -2032,6 +2034,8 @@ void Relationship::addColumnsRel1n()
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
 			addForeignKey(ref_tab, recv_tab, del_action, upd_action);
+
+			#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 		}
 	}
 	catch(Exception &e)
@@ -2128,6 +2132,8 @@ void Relationship::addColumnsRelNn()
 		//For single pk column mode the generated column is added at the end of gen_columns vector
 		if(pk_col)
 			gen_columns.push_back(pk_col);
+
+		#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 	}
 	catch(Exception &e)
 	{
@@ -2443,6 +2449,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						if(pk_original)
 							table->addObject(pk_original);
 					}
+
+					#warning "TODO: Destroy the index on the FK columns if it exists"
 				}
 				else if(rel_type==RelationshipNn)
 				{
@@ -2462,6 +2470,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 							discardObject(constr);
 						}
 					}
+
+					#warning "TODO: Destroy the index on the FK columns if it exists"
 				}
 			}
 
