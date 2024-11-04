@@ -270,6 +270,8 @@ namespace Attributes {
 	FkColumn("fk-column"),
 	FkConstr("fk-constr"),
 	FkDefs("fk-defs"),
+	FkIdxPattern("fk-idx-pattern"),
+	FkIdxType("fk-idx-type"),
 	Font("font"),
 	FontSize("font-size"),
 	ForegroundColor("foreground-color"),

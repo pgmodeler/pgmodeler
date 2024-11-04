@@ -2108,8 +2108,9 @@ void DatabaseModel::storeSpecialObjectsXML()
 					else
 					{
 						#warning "TODO: Indexes created by relationship must be ignored"
-						index=dynamic_cast<Index *>(tab_obj);
-						found=index->isReferRelationshipAddedColumn();
+						index = dynamic_cast<Index *>(tab_obj);
+						found = !index->isAddedByRelationship() &&
+										index->isReferRelationshipAddedColumn();
 
 						if(found)
 							xml_special_objs[index->getObjectId()]=index->getSourceCode(SchemaParser::XmlCode);
@@ -7116,7 +7117,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 					src_mand, dst_mand,
 					identifier, deferrable, defer_type, del_action, upd_action,
 					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
-											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
+											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())),
+					IndexingType(attribs[Attributes::FkIdxType]));
 
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);

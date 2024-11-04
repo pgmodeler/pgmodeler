@@ -369,7 +369,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_type=object->getObjectType();
 		object_protected=(parent_type!=ObjectType::Relationship &&
 																	 (object->isProtected() ||
-																		((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
+																		(TableObject::isTableObject(obj_type) &&
 																		 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());

@@ -1646,10 +1646,10 @@ void ModelWidget::convertRelationship1N()
 		Table *recv_tab = dynamic_cast<Table *>(rel->getReceiverTable()),
 				*ref_tab = dynamic_cast<Table *>(rel->getReferenceTable());
 		QStringList constrs_xmls;
-		Column *column = nullptr;
+		Column *column = nullptr;		
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
 		std::vector<Column *> columns;
-		QString pk_name, rel_name = rel->getName();
+		QString pk_name, rel_name = rel->getName(), fk_index_xml;
 		bool register_pk = false;
 		QColor rel_color = rel->getCustomColor();
 		QList<unsigned> layers = rel->getLayers();
@@ -1701,6 +1701,9 @@ void ModelWidget::convertRelationship1N()
 			columns.push_back(column);
 		}
 
+		if(rel->getGeneratedIndex())
+			fk_index_xml = rel->getGeneratedIndex()->getSourceCode(SchemaParser::XmlCode);
+
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		op_list->startOperationChain();
 
@@ -1741,6 +1744,14 @@ void ModelWidget::convertRelationship1N()
 			constr = db_model->createConstraint(recv_tab);
 			recv_tab->addConstraint(constr);
 			op_list->registerObject(constr, Operation::ObjCreated, - 1, recv_tab);
+		}
+
+		if(!fk_index_xml.isEmpty())
+		{
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(fk_index_xml);
+			Index *index = db_model->createIndex();
+			op_list->registerObject(index, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		/* Resetting the relatinship added columns/constraint indexes in the table
