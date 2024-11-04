@@ -37,9 +37,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 
 Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *src_tab,
 													 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
-													 bool identifier) /* ,  bool deferrable, DeferralType deferral_type,
-													 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op,
-													 IndexingType fk_idx_type) */ :
+													 bool identifier) :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
 	try
@@ -2910,7 +2908,7 @@ bool Relationship::isInvalidated()
 
 QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 {
-	QString code_def=getCachedCode(def_type);
+	QString code_def = getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlCode)
@@ -2960,48 +2958,47 @@ QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 	}
 	else
 	{
-		unsigned count, i;
-		bool reduced_form;
+		bool reduced_form = false;
 		QStringList sp_pk_cols;
 
 		setRelationshipAttributes();
-		attributes[Attributes::Identifier]=(identifier ? Attributes::True : "");
-		attributes[Attributes::SinglePkColumn]=(single_pk_column ? Attributes::True : "");
-		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : "");
-		attributes[Attributes::DeferType]=~deferral_type;
-		attributes[Attributes::UpdAction]=~upd_action;
-		attributes[Attributes::DelAction]=~del_action;
+		attributes[Attributes::Identifier] = (identifier ? Attributes::True : "");
+		attributes[Attributes::SinglePkColumn] = (single_pk_column ? Attributes::True : "");
+		attributes[Attributes::Deferrable] = (deferrable ? Attributes::True : "");
+		attributes[Attributes::DeferType] = ~deferral_type;
+		attributes[Attributes::UpdAction] = ~upd_action;
+		attributes[Attributes::DelAction] = ~del_action;
+		attributes[Attributes::FkIdxType] = ~fk_idx_type;
 
-		attributes[Attributes::TableName]=tab_name_relnn;
-		attributes[Attributes::RelationshipGen]=(rel_type==RelationshipGen ? Attributes::True : "");
-		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : "");
-		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : "");
+		attributes[Attributes::TableName] = tab_name_relnn;
+		attributes[Attributes::RelationshipGen] = (rel_type==RelationshipGen ? Attributes::True : "");
+		attributes[Attributes::RelationshipDep] = (rel_type==RelationshipDep ? Attributes::True : "");
+		attributes[Attributes::RelationshipPart] = (rel_type==RelationshipPart ? Attributes::True : "");
 
-		attributes[Attributes::SrcColPattern]=name_patterns[SrcColPattern];
-		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
-		attributes[Attributes::PkPattern]=name_patterns[PkPattern];
-		attributes[Attributes::UqPattern]=name_patterns[UqPattern];
-		attributes[Attributes::SrcFkPattern]=name_patterns[SrcFkPattern];
-		attributes[Attributes::DstFkPattern]=name_patterns[DstFkPattern];
-		attributes[Attributes::PkColPattern]=name_patterns[PkColPattern];
+		attributes[Attributes::SrcColPattern] = name_patterns[SrcColPattern];
+		attributes[Attributes::DstColPattern] = name_patterns[DstColPattern];
+		attributes[Attributes::PkPattern] = name_patterns[PkPattern];
+		attributes[Attributes::UqPattern] = name_patterns[UqPattern];
+		attributes[Attributes::SrcFkPattern] = name_patterns[SrcFkPattern];
+		attributes[Attributes::DstFkPattern] = name_patterns[DstFkPattern];
+		attributes[Attributes::PkColPattern] = name_patterns[PkColPattern];
+		attributes[Attributes::FkIdxPattern] = name_patterns[FkIdxPattern];
 
-		attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
+		attributes[Attributes::PartitionBoundExpr] = part_bounding_expr;
+		attributes[Attributes::Columns] = "";
+		attributes[Attributes::Constraints] = "";
 
-		attributes[Attributes::Columns]="";
-		count=rel_attributes.size();
-		for(i=0; i < count; i++)
+		for(auto &rel_attr : rel_attributes)
 		{
-			attributes[Attributes::Columns]+=dynamic_cast<Column *>(rel_attributes[i])->
-													getSourceCode(SchemaParser::XmlCode);
+			attributes[Attributes::Columns] += dynamic_cast<Column *>(rel_attr)->
+																				 getSourceCode(SchemaParser::XmlCode);
 		}
 
-		attributes[Attributes::Constraints]="";
-		count=rel_constraints.size();
-		for(i=0; i < count; i++)
+		for(auto &rel_constr : rel_constraints)
 		{
-			if(!rel_constraints[i]->isProtected())
-				attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->
-															getSourceCode(SchemaParser::XmlCode, true);
+			if(!rel_constr->isProtected())
+				attributes[Attributes::Constraints] += dynamic_cast<Constraint *>(rel_constr)->
+																							 getSourceCode(SchemaParser::XmlCode, true);
 		}
 
 		if(pk_original)
@@ -3011,9 +3008,8 @@ QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 			pk_original->setParentTable(nullptr);
 		}
 
-		count=column_ids_pk_rel.size();
-		for(i=0; i < count; i++)
-			sp_pk_cols.append(QString::number(column_ids_pk_rel[i]));
+		for(auto &id : column_ids_pk_rel)
+			sp_pk_cols.append(QString::number(id));
 
 		attributes[Attributes::SpecialPkCols] = sp_pk_cols.join(',');
 

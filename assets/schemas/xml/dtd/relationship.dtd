@@ -21,6 +21,7 @@
 <!ATTLIST relationship defer-type CDATA #IMPLIED>
 <!ATTLIST relationship copy-mode CDATA #IMPLIED>
 <!ATTLIST relationship copy-options CDATA #IMPLIED>
+<!ATTLIST relationship fk-idx-type CDATA #IMPLIED>
 <!ATTLIST relationship sql-disabled (false|true) "false">
 <!ATTLIST relationship src-col-pattern CDATA #IMPLIED>
 <!ATTLIST relationship dst-col-pattern CDATA #IMPLIED>
@@ -29,6 +30,7 @@
 <!ATTLIST relationship src-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship dst-fk-pattern CDATA #IMPLIED>
 <!ATTLIST relationship pk-col-pattern CDATA #IMPLIED>
+<!ATTLIST relationship fk-idx-pattern CDATA #IMPLIED>
 <!ATTLIST relationship upd-action CDATA #IMPLIED>
 <!ATTLIST relationship del-action CDATA #IMPLIED>
 <!ATTLIST relationship custom-color CDATA #IMPLIED>

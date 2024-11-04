@@ -6950,8 +6950,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
 	std::map<QString, BaseRelationship::LabelId> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
-																																			{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
-																																			{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
+																														{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
+																														{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
 
 	try
 	{
@@ -7077,16 +7077,18 @@ BaseRelationship *DatabaseModel::createRelationship()
 		}
 		else
 		{
-			QString pat_attrib[]= { Attributes::SrcColPattern, Attributes::DstColPattern,
-									Attributes::SrcFkPattern, Attributes::DstFkPattern,
-									Attributes::PkPattern, Attributes::UqPattern,
-									Attributes::PkColPattern };
+			QString pat_attrib[]= {
+				Attributes::SrcColPattern, Attributes::DstColPattern,
+				Attributes::SrcFkPattern, Attributes::DstFkPattern,
+				Attributes::PkPattern, Attributes::UqPattern,
+				Attributes::PkColPattern, Attributes::FkIdxPattern
+			};
 
 			std::vector<Relationship::PatternId>	pattern_ids= {
 				Relationship::SrcColPattern, Relationship::DstColPattern,
 				Relationship::SrcFkPattern, Relationship::DstFkPattern,
 				Relationship::PkPattern, Relationship::UqPattern,
-				Relationship::PkColPattern
+				Relationship::PkColPattern, Relationship::FkIdxPattern
 			};
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
@@ -7107,18 +7109,13 @@ BaseRelationship *DatabaseModel::createRelationship()
 				rel_type=BaseRelationship::RelationshipGen;
 			else if(attribs[Attributes::Type]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else /* if(attribs[Attributes::Type]==Attributes::RelationshipPart) */
+			else
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
 													 dynamic_cast<PhysicalTable *>(tables[0]),
 													 dynamic_cast<PhysicalTable *>(tables[1]),
 													 src_mand, dst_mand, identifier);
-					/*,
-					identifier, deferrable, defer_type, del_action, upd_action,
-					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
-											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())),
-					IndexingType(attribs[Attributes::FkIdxType])); */
 
 			rel->setActionType(upd_action, Constraint::UpdateAction);
 			rel->setActionType(del_action, Constraint::DeleteAction);
@@ -7135,7 +7132,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 
 			rel->setName(attribs[Attributes::Name]);
 			rel->setAlias(attribs[Attributes::Alias]);
-			base_rel=rel;
+			base_rel = rel;
 
 			//Configuring the name patterns
 			for(auto &pat_id : pattern_ids)
@@ -7628,8 +7625,8 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	try
 	{
 		cancel_saving = false;
-		objects_map=getCreationOrder(def_type);
-		general_obj_cnt=objects_map.size();
+		objects_map = getCreationOrder(def_type, false, false, true, def_type == SchemaParser::SqlCode);
+		general_obj_cnt = objects_map.size();
 		gen_defs_count=0;
 
 		attribs_aux[Attributes::ShellTypes]="";
@@ -7651,8 +7648,8 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			if(cancel_saving)
 				return "";
 
-			object=obj_itr.second;
-			obj_type=object->getObjectType();
+			object = obj_itr.second;
+			obj_type = object->getObjectType();
 
 			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlCode)
 			{
@@ -7796,7 +7793,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 	}
 }
 
-std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms)
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms, bool incl_rel1n_fkidx)
 {
 	BaseObject *object=nullptr;
 	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
@@ -7810,9 +7807,9 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag };
 
 	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
-																															ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
+																																	 ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
 
-	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
+	unsigned i=0, aux_obj_cnt = sizeof(aux_obj_types)/sizeof(ObjectType);
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(i=0; i < aux_obj_cnt; i++)
@@ -7879,12 +7876,11 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 		for(auto &obj : *table->getObjectList(ObjectType::Constraint))
 		{
-			//table->getConstraint(i);
 			constr = dynamic_cast<Constraint *>(obj);
 
 			/* Case the constraint is a special object stores it on the objects map. Independently to the
-		configuration, foreign keys are discarded in this iteration because on the end of the method
-		they have the definition generated */
+			 * configuration, foreign keys are discarded in this iteration because on the end of the method
+			 * they have the definition generated */
 			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
 					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
 				objects_map[constr->getObjectId()]=constr;
@@ -7892,8 +7888,18 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 				fkeys.push_back(constr);
 		}
 
-		for(auto obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
-			objects_map[obj->getObjectId()]=obj;
+		for(auto &obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
+		{
+			/* Ignoring generated FK column indexes if the parameter is
+			 * incl_rel1n_fkidx is false and the current object is an index and
+			 * was created by a relationship */
+			if(!incl_rel1n_fkidx &&
+				 obj->getObjectType() == ObjectType::Index &&
+				 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
+				continue;
+
+			objects_map[obj->getObjectId()] = obj;
+		}
 	}
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
@@ -8017,89 +8023,6 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 	return objects_map;
 }
-
-
-/* void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs)
-{
-	std::vector<BaseObject *> dep_objs, chld_objs;
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
-	ObjectType obj_type=ObjectType::BaseObject;
-
-	if(!object) return;
-
-	getObjectDependecies(object, objs, true);
-	obj_type=object->getObjectType();
-
-	//If the object is a table include as dependency the copy table as well any ancestor table
-	if(table)
-	{
-		//Including copy table and its dependencies
-		if(table->getCopyTable())
-		{
-			__getObjectDependencies(table->getCopyTable(), dep_objs);
-			objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-		}
-
-		//Including ancestor tables and their dependencies
-		dep_objs.clear();
-		for(unsigned i=0; i < table->getAncestorTableCount(); i++)
-		{
-			__getObjectDependencies(table->getAncestorTable(i), dep_objs);
-			objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-		}
-	}
-
-	//If there is the need to include the children objects
-	if(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Schema)
-	{
-		std::vector<BaseObject *>::iterator end;
-
-		if(obj_type==ObjectType::Schema)
-		{
-			//Retrieve all objects that belongs to the schema
-			chld_objs=getObjects(object);
-			objs.insert(objs.end(), chld_objs.begin(), chld_objs.end());
-
-			for(BaseObject *aux_obj : chld_objs)
-			{
-				__getObjectDependencies(aux_obj, dep_objs);
-				objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-			}
-		}
-		else
-		{
-			BaseTable *tab=dynamic_cast<BaseTable *>(object);
-			Constraint *constr=nullptr;
-
-			chld_objs=tab->getObjects();
-
-			for(BaseObject *child : chld_objs)
-			{
-				constr=dynamic_cast<Constraint *>(child);
-
-				/// Columns are discarded but constraint included only if they are included by relationship
-			 //or foreign keys in which referenced table resides in the same schema as their parent tables
-				if((!constr && child->getObjectType()!=ObjectType::Column) ||
-						(constr &&
-						 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
-							(constr->getConstraintType()!=ConstraintType::ForeignKey &&
-							 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
-						   constr->isReferRelationshipAddedColumns()))))
-				{
-					__getObjectDependencies(child, objs);
-
-					if(constr && constr->getReferencedTable() && std::find(objs.begin(), objs.end(), constr->getReferencedTable())==objs.end())
-						__getObjectDependencies(constr->getReferencedTable(), objs);
-				}
-			}
-		}
-
-		//Cleaning up the resulting list removing duplicate elements
-		std::sort(objs.begin(), objs.end());
-		end=std::unique(objs.begin(), objs.end());
-		objs.erase(end, objs.end());
-	}
-} */
 
 std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
 {

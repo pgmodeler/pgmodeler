@@ -31,6 +31,12 @@
 	$br $tb [ pk-col-pattern=] "&{pk-col-pattern}"
 %end
 
+%if {fk-idx-type} %or {fk-idx-pattern} %then
+	$br $tb
+	%if {fk-idx-type} %then [ fk-idx-type=] "{fk-idx-type}" %end
+	%if {fk-idx-pattern} %then [ fk-idx-pattern=] "&{fk-idx-pattern}" %end
+%end
+
 %if {custom-color} %then
 	$br $tb [ custom-color=] "{custom-color}"
 %end

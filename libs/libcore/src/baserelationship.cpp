@@ -121,6 +121,7 @@ void BaseRelationship::configureRelationship()
 	attributes[Attributes::PartitionBoundExpr]="";
 	attributes[Attributes::OriginalPk]="";
 	attributes[Attributes::FkIdxType]="";
+	attributes[Attributes::FkIdxPattern]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RelationshipFk)
