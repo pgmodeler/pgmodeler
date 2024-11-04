@@ -37,9 +37,9 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 
 Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *src_tab,
 													 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
-													 bool identifier,  bool deferrable, DeferralType deferral_type,
+													 bool identifier) /* ,  bool deferrable, DeferralType deferral_type,
 													 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op,
-													 IndexingType fk_idx_type) :
+													 IndexingType fk_idx_type) */ :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
 	try
@@ -125,18 +125,16 @@ Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *sr
 		}
 
 		fk_index = nullptr;
-		this->fk_idx_type = fk_idx_type;
-		copy_options = copy_op;
+		fk_idx_type = IndexingType::Null;
 		table_relnn = nullptr;
 		fk_rel1n = pk_relident = pk_special = nullptr;
 		uq_rel11 = pk_original = nullptr;
-		this->deferrable = deferrable;
-		this->deferral_type = deferral_type;
-		this->del_action = fk_del_act;
-		this->upd_action = fk_upd_act;
-
-		this->invalidated = true;
-		this->single_pk_column = false;
+		deferrable = false;
+		deferral_type = DeferralType::Null;
+		del_action = ActionType::Null;
+		upd_action = ActionType::Null;
+		invalidated = true;
+		single_pk_column = false;
 
 		if(rel_type == Relationship11)
 			str_aux = QApplication::translate("Relationship","%1_has_one_%2","");
@@ -444,7 +442,7 @@ void Relationship::setFKIndexType(IndexingType idx_type)
 	fk_idx_type = idx_type;
 }
 
-void Relationship::setActionType(ActionType act_type, unsigned act_id)
+void Relationship::setActionType(ActionType act_type, Constraint::ActionEvent act_id)
 {
 	if(act_id == Constraint::DeleteAction)
 	{
@@ -2065,7 +2063,6 @@ void Relationship::addColumnsRel11()
 			if(!identifier)
 				addUniqueKey(recv_tab);
 
-			#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 			addForeignKeyIndex(recv_tab);
 		}
 	}
@@ -2144,8 +2141,6 @@ void Relationship::addColumnsRel1n()
 			addAttributes(recv_tab);
 			addConstraints(recv_tab);
 			addForeignKey(ref_tab, recv_tab, del_action, upd_action);
-
-			#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 			addForeignKeyIndex(recv_tab);
 		}
 	}
@@ -2244,7 +2239,6 @@ void Relationship::addColumnsRelNn()
 		if(pk_col)
 			gen_columns.push_back(pk_col);
 
-		#warning "TODO: Create an index on the FK columns if the option to do is set to true"
 		addForeignKeyIndex(table_relnn);
 	}
 	catch(Exception &e)
@@ -2444,8 +2438,6 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				  but is related to relationship disconnection, mixing fk rels and 1:n rels, and validation. */
 				(!connected && (fk_rel1n || pk_relident || uq_rel11 || table_relnn || pk_special || fk_index)))
 		{
-			std::vector<Column *>::iterator itr, itr_end;
-			Column *column = nullptr;
 			PhysicalTable *table = nullptr;
 			unsigned list_idx = 0;
 			std::vector<TableObject *> *attr_list = nullptr;

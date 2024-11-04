@@ -2107,7 +2107,6 @@ void DatabaseModel::storeSpecialObjectsXML()
 					}
 					else
 					{
-						#warning "TODO: Indexes created by relationship must be ignored"
 						index = dynamic_cast<Index *>(tab_obj);
 						found = !index->isAddedByRelationship() &&
 										index->isReferRelationshipAddedColumn();
@@ -7112,16 +7111,24 @@ BaseRelationship *DatabaseModel::createRelationship()
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
-					dynamic_cast<PhysicalTable *>(tables[0]),
-					dynamic_cast<PhysicalTable *>(tables[1]),
-					src_mand, dst_mand,
+													 dynamic_cast<PhysicalTable *>(tables[0]),
+													 dynamic_cast<PhysicalTable *>(tables[1]),
+													 src_mand, dst_mand, identifier);
+					/*,
 					identifier, deferrable, defer_type, del_action, upd_action,
 					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
 											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())),
-					IndexingType(attribs[Attributes::FkIdxType]));
+					IndexingType(attribs[Attributes::FkIdxType])); */
 
+			rel->setActionType(upd_action, Constraint::UpdateAction);
+			rel->setActionType(del_action, Constraint::DeleteAction);
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);
+			rel->setDeferrable(deferrable);
+			rel->setDeferralType(defer_type);
+			rel->setCopyOptions(CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
+																			static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
+			rel->setFKIndexType(IndexingType(attribs[Attributes::FkIdxType]));
 
 			if(!attribs[Attributes::TableName].isEmpty())
 				rel->setTableNameRelNN(attribs[Attributes::TableName]);

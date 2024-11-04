@@ -355,16 +355,9 @@ class __libcore Relationship: public BaseRelationship {
 		Relationship(Relationship *rel);
 
 		Relationship(BaseRelationship::RelType rel_type,
-					 PhysicalTable *src_tab, PhysicalTable *dst_tab,
-					 bool src_mdtry = false, bool dst_mdtry = false,
-					 bool identifier = false, bool deferrable = false,
-					 DeferralType deferral_type = DeferralType::Immediate,
-					 ActionType fk_del_act = ActionType::Null,
-					 ActionType fk_upd_act = ActionType::Null,
-					 CopyOptions copy_op = CopyOptions(),
-					 IndexingType fk_idx_type = IndexingType::Null);
-
-		virtual ~Relationship(){}
+								 PhysicalTable *src_tab, PhysicalTable *dst_tab,
+								 bool src_mdtry = false, bool dst_mdtry = false,
+								 bool identifier = false);
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship();
@@ -422,7 +415,7 @@ class __libcore Relationship: public BaseRelationship {
 
 		/*! \brief Defines the type of action for generated foreign keys (ON DELETE and ON UPDATE)
 		 User must use Constraint::[DELETE_ACTION|UPDATE_ACTION] (only for 1-1, 1-n relationships) */
-		void setActionType(ActionType act_type, unsigned act_id);
+		void setActionType(ActionType act_type, Constraint::ActionEvent act_id);
 
 		//! \brief Returns the deferral tyep for the created foreign key (only for 1-1, 1-n relationships)
 		DeferralType getDeferralType();

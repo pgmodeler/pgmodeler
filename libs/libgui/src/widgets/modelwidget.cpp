@@ -1560,7 +1560,8 @@ void ModelWidget::convertRelationshipNN()
 						/* Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
 							The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel1 = new Relationship(Relationship::Relationship1n,
-																		src_tab, tab, src_mand, false, !rel->isSiglePKColumn());
+																		src_tab, tab, src_mand, false,
+																		!rel->isSiglePKColumn());
 						rel1->setLayers(layers);
 						rel1->setCustomColor(rel_color);
 						rel1->setLayers(layers);
@@ -1571,7 +1572,8 @@ void ModelWidget::convertRelationshipNN()
 						/*Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 							The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel2 = new Relationship(Relationship::Relationship1n,
-																		dst_tab, tab, dst_mand, false, !rel->isSiglePKColumn());
+																		dst_tab, tab, dst_mand,
+																		false, !rel->isSiglePKColumn());
 						rel2->setLayers(layers);
 						rel2->setCustomColor(rel_color);
 						rel2->setLayers(layers);
