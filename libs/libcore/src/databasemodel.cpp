@@ -7626,7 +7626,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	try
 	{
 		cancel_saving = false;
-		objects_map = getCreationOrder(def_type, false, false, true, is_sql_def);
+		objects_map = getCreationOrder(def_type);
 		general_obj_cnt = objects_map.size();
 		gen_defs_count=0;
 
@@ -7638,7 +7638,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 
 		if(is_sql_def)
 		{
-			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
+			attribs_aux[Attributes::Function] = (!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
 
@@ -7794,17 +7794,15 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 	}
 }
 
-std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms, bool incl_rel1n_fkidx)
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms)
 {
-	BaseObject *object=nullptr;
 	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list = nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
-	PhysicalTable *table=nullptr;
-	Constraint *constr=nullptr;
-	View *view=nullptr;
-	Relationship *rel=nullptr;
+	PhysicalTable *table = nullptr;
+	Constraint *constr = nullptr;
+	View *view = nullptr;
+	Relationship *rel = nullptr;
 	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag };
 
 	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
@@ -7891,11 +7889,8 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 		for(auto &obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
 		{
-			/* Ignoring generated FK column indexes if the parameter is
-			 * incl_rel1n_fkidx is false and the current object is an index and
-			 * was created by a relationship */
-			if(!incl_rel1n_fkidx &&
-				 obj->getObjectType() == ObjectType::Index &&
+			// Ignoring generated FK column indexes created by a relationship
+			if(obj->getObjectType() == ObjectType::Index &&
 				 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
 				continue;
 

@@ -734,6 +734,12 @@ void Relationship::destroyObjects()
 		delete constrs_stack.top();
 		constrs_stack.pop();
 	}
+
+	while(!indexes_stack.empty())
+	{
+		delete indexes_stack.top();
+		indexes_stack.pop();
+	}
 }
 
 void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
@@ -1663,7 +1669,8 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 
 void Relationship::addForeignKeyIndex(PhysicalTable *recv_tab)
 {
-	if(fk_idx_type == IndexingType::Null)
+	if(fk_idx_type == IndexingType::Null ||
+		 (!fk_rel1n && !table_relnn))
 		return;
 
 	try
@@ -1678,7 +1685,27 @@ void Relationship::addForeignKeyIndex(PhysicalTable *recv_tab)
 		fk_index->setIndexingType(fk_idx_type);
 		fk_index->removeIndexElements();
 
-		for(auto &col : gen_columns)
+		std::vector<Column *> fk_cols;
+
+		// For one-to-(one|many) we use the fk_rel1n constraint source columns
+		if(fk_rel1n)
+			fk_cols = fk_rel1n->getColumns(Constraint::SourceCols);
+		else
+		{
+			// For many-to-many we use source columns of both foreign key created in table_relnn
+			std::vector<Constraint *> fks;
+			std::vector<Column *> aux_cols;
+
+			table_relnn->getForeignKeys(fks, true);
+
+			for(auto &fk : fks)
+			{
+				aux_cols = fk->getColumns(Constraint::SourceCols);
+				fk_cols.insert(fk_cols.end(), aux_cols.begin(), aux_cols.end());
+			}
+		}
+
+		for(auto &col : fk_cols)
 			fk_index->addIndexElement(col, nullptr, nullptr, false, true, false);
 
 		fk_index->setName(generateObjectName(FkIdxPattern));
@@ -2913,6 +2940,9 @@ QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 
 	if(def_type == SchemaParser::SqlCode)
 	{
+		if(fk_index)
+			attributes[Attributes::Index] = fk_index->getSourceCode(def_type);
+
 		if(fk_rel1n && (rel_type == Relationship11 || rel_type == Relationship1n))
 		{
 			attributes[Attributes::Relationship1n] = Attributes::True;
