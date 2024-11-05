@@ -7809,56 +7809,56 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
 																																	 ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
 
-	unsigned i=0, aux_obj_cnt = sizeof(aux_obj_types)/sizeof(ObjectType);
+	unsigned i = 0;
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
-	for(i=0; i < aux_obj_cnt; i++)
+	for(auto &obj_tp : aux_obj_types)
 	{
-		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlCode)
+		if(obj_tp != ObjectType::Tag || def_type == SchemaParser::XmlCode)
 		{
-			obj_list=getObjectList(aux_obj_types[i]);
+			obj_list = getObjectList(obj_tp);
 
 			for(auto &object : (*obj_list))
-				objects_map[object->getObjectId()]=object;
+				objects_map[object->getObjectId()] = object;
 		}
 	}
 
 	//Includes the database model on the objects map permitting to create the code in a correct order
-	objects_map[this->getObjectId()]=this;
+	objects_map[this->getObjectId()] = this;
 
 	for(auto &obj_type : obj_types_vect)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
-		if(def_type==SchemaParser::SqlCode &&
-			 (obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
-			obj_list=nullptr;
+		if(def_type == SchemaParser::SqlCode &&
+			 (obj_type == ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
+			obj_list = nullptr;
 		else
-			obj_list=getObjectList(obj_type);
+			obj_list = getObjectList(obj_type);
 
 		if(obj_list)
 		{
 			for(auto &object : (*obj_list))
 			{
 				/* If the object is a FK relationship it's stored in a separeted list in order to have the
-			 code generated at end of whole definition (after foreign keys definition) */
-				if(object->getObjectType()==ObjectType::BaseRelationship &&
-						dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
+				 * code generated at end of whole definition (after foreign keys definition) */
+				if(object->getObjectType() == ObjectType::BaseRelationship &&
+						dynamic_cast<BaseRelationship *>(object)->getRelationshipType() == BaseRelationship::RelationshipFk)
 				{
 					fk_rels.push_back(object);
 				}
 				else
 				{
-					if(def_type==SchemaParser::XmlCode || !incl_relnn_objs)
-						objects_map[object->getObjectId()]=object;
+					if(def_type == SchemaParser::XmlCode || !incl_relnn_objs)
+						objects_map[object->getObjectId()] = object;
 					else
 					{
-						rel=dynamic_cast<Relationship *>(object);
+						rel = dynamic_cast<Relationship *>(object);
 
 						/* Avoiding many-to-many relationships to be included in the map.
-			 They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
-			 need to be compared to other tables not the relationship itself */
-						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RelationshipNn))
-							objects_map[object->getObjectId()]=object;
+						 * They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
+						 * need to be compared to other tables not the relationship itself */
+						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType() != BaseRelationship::RelationshipNn))
+							objects_map[object->getObjectId()] = object;
 					}
 				}
 			}
@@ -7881,10 +7881,10 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 			/* Case the constraint is a special object stores it on the objects map. Independently to the
 			 * configuration, foreign keys are discarded in this iteration because on the end of the method
 			 * they have the definition generated */
-			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
-					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
-				objects_map[constr->getObjectId()]=constr;
-			else if(constr->getConstraintType()==ConstraintType::ForeignKey && !constr->isAddedByLinking())
+			if(constr->getConstraintType() != ConstraintType::ForeignKey && !constr->isAddedByLinking() &&
+					((constr->getConstraintType() != ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
+				objects_map[constr->getObjectId()] = constr;
+			else if(constr->getConstraintType() == ConstraintType::ForeignKey && !constr->isAddedByLinking())
 				fkeys.push_back(constr);
 		}
 
@@ -7909,7 +7909,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 		view=dynamic_cast<View *>(obj);
 
 		for(auto obj : view->getObjects())
-			objects_map[obj->getObjectId()]=obj;
+			objects_map[obj->getObjectId()] = obj;
 	}
 
 	/* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
@@ -7919,71 +7919,64 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	 2) Other tables came after the objects on the step 1.
 	 3) The sequences must have their code generated after the tables
 	 4) View are the last objects in the list avoiding table/column reference breaking */
-	if(def_type==SchemaParser::SqlCode)
+	if(def_type == SchemaParser::SqlCode)
 	{
-		BaseObject *objs[3]={nullptr, nullptr, nullptr};
+		BaseObject *objs[3] = { nullptr, nullptr, nullptr };
 		std::vector<BaseObject *> vet_aux, rel_constrs;
 
-		vet_aux=relationships;
-		vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
-		vet_aux.insert(vet_aux.end(), foreign_tables.begin(),foreign_tables.end());
-		vet_aux.insert(vet_aux.end(), sequences.begin(),sequences.end());
-		vet_aux.insert(vet_aux.end(), views.begin(),views.end());
-		itr=vet_aux.begin();
-		itr_end=vet_aux.end();
+		vet_aux = relationships;
+		vet_aux.insert(vet_aux.end(), tables.begin(), tables.end());
+		vet_aux.insert(vet_aux.end(), foreign_tables.begin(), foreign_tables.end());
+		vet_aux.insert(vet_aux.end(), sequences.begin(), sequences.end());
+		vet_aux.insert(vet_aux.end(), views.begin(), views.end());
 
-		while(itr!=itr_end)
+		for(auto &object : vet_aux)
 		{
-			object=(*itr);
-			itr++;
-
-			if(object->getObjectType()==ObjectType::Relationship)
+			if(object->getObjectType() == ObjectType::Relationship)
 			{
-				rel=dynamic_cast<Relationship *>(object);
-				objs[0]=rel->getTable(Relationship::SrcTable);
-				objs[1]=rel->getTable(Relationship::DstTable);
+				rel = dynamic_cast<Relationship *>(object);
+				objs[0] = rel->getTable(Relationship::SrcTable);
+				objs[1] = rel->getTable(Relationship::DstTable);
 
 				/* For many-to-many relationship, the generated table and the foreign keys that represents
-		   the link are included on the creation order map instead of the relationship itself. This is
-		   done to permit the table to be accessed and compared on the diff process */
+				 * the link are included on the creation order map instead of the relationship itself. This is
+				 * done to permit the table to be accessed and compared on the diff process */
 				if(incl_relnn_objs &&
-						rel->getRelationshipType()==BaseRelationship::RelationshipNn &&
+						rel->getRelationshipType() == BaseRelationship::RelationshipNn &&
 						rel->getGeneratedTable())
 				{
-					table=rel->getGeneratedTable();
-					objs[2]=table;
+					table = rel->getGeneratedTable();
+					objs[2] = table;
 
-					for(BaseObject *tab_obj : *table->getObjectList(ObjectType::Constraint))
+					for(auto &tab_obj : *table->getObjectList(ObjectType::Constraint))
 					{
-						constr=dynamic_cast<Constraint *>(tab_obj);
+						constr = dynamic_cast<Constraint *>(tab_obj);
 
-						if(constr->getConstraintType()==ConstraintType::ForeignKey)
+						if(constr->getConstraintType() == ConstraintType::ForeignKey)
 							fkeys.push_back(constr);
 					}
 				}
 				else if(incl_rel1n_constrs)
 				{
-					std::vector<Constraint *> constrs=rel->getGeneratedConstraints();
-
-					for(auto &constr : constrs)
+					for(auto &constr : rel->getGeneratedConstraints())
 					{
 						if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 							rel_constrs.push_back(constr);
 					}
 				}
 				else
-					objs[2]=rel;
+					objs[2] = rel;
 
-				for(i=0; i < 3; i++)
+				for(auto &obj : objs)
 				{
-					if(objs[i] && objects_map.count(objs[i]->getObjectId())==0)
-						objects_map[objs[i]->getObjectId()]=objs[i];
+					if(obj && objects_map.count(obj->getObjectId()) == 0)
+						objects_map[obj->getObjectId()] = obj;
 				}
 			}
 			else
 			{
-				if(objects_map.count(object->getObjectId())==0)
-					objects_map[object->getObjectId()]=object;
+				if(objects_map.count(object->getObjectId()) == 0)
+					objects_map[object->getObjectId()] = object;
 			}
 		}
 
@@ -7999,7 +7992,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 		for(auto &obj : fkeys)
 		{
-			objects_map[i]=obj;
+			objects_map[i] = obj;
 			i++;
 		}
 
@@ -8008,7 +8001,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 		for(auto &obj : permissions)
 		{
-			objects_map[i]=obj;
+			objects_map[i] = obj;
 			i++;
 		}
 	}
