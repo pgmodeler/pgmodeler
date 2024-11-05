@@ -1094,8 +1094,8 @@ void RelationshipWidget::applyConfiguration()
 		std::vector<unsigned> col_ids;
 
 		/* Due to the complexity of the Relationship class and the strong link between all
-		 the relationships on the model is necessary to store the XML of the special objects
-		 and disconnect all relationships, edit the relationshi and revalidate all the relationships again */
+		 * the relationships on the model is necessary to store the XML of the special objects
+		 * and disconnect all relationships, edit the relationshi and revalidate all the relationships again */
 		if(this->object->getObjectType()==ObjectType::Relationship)
 		{
 			model->storeSpecialObjectsXML();
@@ -1114,17 +1114,17 @@ void RelationshipWidget::applyConfiguration()
 		else
 			base_rel->setCustomColor(Qt::transparent);
 
-		if(this->object->getObjectType()==ObjectType::Relationship)
+		if(this->object->getObjectType() == ObjectType::Relationship)
 		{
 			std::vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
 																										 src_fk_pattern_txt, dst_fk_pattern_txt,
 																										 pk_pattern_txt, uq_pattern_txt,
-																										 pk_col_pattern_txt };
+																										 pk_col_pattern_txt, fk_idx_pattern_txt };
 
 			std::vector<Relationship::PatternId> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
 																													Relationship::SrcFkPattern, Relationship::DstFkPattern,
 																													Relationship::PkPattern, Relationship::UqPattern,
-																													Relationship::PkColPattern };
+																													Relationship::PkColPattern, Relationship::FkIdxPattern };
 
 			rel = dynamic_cast<Relationship *>(base_rel);
 
@@ -1142,9 +1142,9 @@ void RelationshipWidget::applyConfiguration()
 			if(!defaults_rb->isChecked())
 			{
 				if(including_rb->isChecked())
-					copy_mode=CopyOptions::Including;
+					copy_mode = CopyOptions::Including;
 				else
-					copy_mode=CopyOptions::Excluding;
+					copy_mode = CopyOptions::Excluding;
 
 				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : CopyOptions::NoOpts);
 				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : CopyOptions::NoOpts);

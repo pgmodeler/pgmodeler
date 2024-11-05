@@ -7808,8 +7808,6 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
 																																	 ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
 
-	unsigned i = 0;
-
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(auto &obj_tp : aux_obj_types)
 	{
@@ -7958,7 +7956,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 					{
 						if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 							rel_constrs.push_back(constr);
-					}
+					}					
 				}
 				else
 					objs[2] = rel;
@@ -7968,6 +7966,9 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 					if(obj && objects_map.count(obj->getObjectId()) == 0)
 						objects_map[obj->getObjectId()] = obj;
 				}
+
+				if(rel->getGeneratedIndex() && (incl_rel1n_constrs || incl_relnn_objs))
+					objects_map[rel->getGeneratedIndex()->getObjectId()] = rel->getGeneratedIndex();
 			}
 			else
 			{
@@ -7984,7 +7985,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	if(realloc_fk_perms)
 	{
 		//Adding fk relationships and foreign keys at end of objects map
-		i = BaseObject::getGlobalId() + 1;
+		unsigned i = BaseObject::getGlobalId() + 1;
 
 		for(auto &obj : fkeys)
 		{

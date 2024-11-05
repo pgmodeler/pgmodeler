@@ -199,9 +199,9 @@ void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 	if(pattern.isEmpty())
 		return;
 
-	QString aux_name=pattern,
-			pat_tokens[]={ SrcTabToken, DstTabToken,
-										 GenTabToken, SrcColToken };
+	QString aux_name = pattern,
+			pat_tokens[] = { SrcTabToken, DstTabToken,
+											 GenTabToken, SrcColToken };
 
 	for(unsigned i = 0; i < 4; i++)
 		aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
@@ -217,8 +217,8 @@ void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 						.arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
+	invalidated = name_patterns[pat_id] != pattern;
 	name_patterns[pat_id] = pattern;
-	this->invalidated = true;
 }
 
 QString Relationship::getNamePattern(PatternId pat_id)
@@ -2711,11 +2711,12 @@ void Relationship::forceInvalidate()
 
 bool Relationship::isInvalidated()
 {
-	unsigned rel_cols_count=0, tab_cols_count=0, i=0, count=0;
-	PhysicalTable *table=nullptr, *table1=nullptr;
-	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
-	bool valid=false;
-	Column *rel_pk_col=nullptr, *gen_col=nullptr, *col_aux=nullptr, *col_aux1 = nullptr, *pk_col=nullptr;
+	unsigned rel_cols_count = 0, tab_cols_count = 0, i = 0, count = 0;
+	PhysicalTable *table = nullptr, *table1 = nullptr;
+	Constraint *fk = nullptr, *fk1 = nullptr, *constr = nullptr, *pk = nullptr;
+	bool valid = false;
+	Column *rel_pk_col = nullptr, *gen_col = nullptr, *col_aux = nullptr,
+			*col_aux1 = nullptr, *pk_col = nullptr;
 	QString col_name;
 
 	if(invalidated)
@@ -2727,8 +2728,9 @@ bool Relationship::isInvalidated()
 		if(pk_relident && pk_relident->isAddedByLinking())
 		{
 			dynamic_cast<PhysicalTable *>(pk_relident->getParentTable())->removeObject(pk_relident);
-			pk_relident=nullptr;
+			pk_relident = nullptr;
 		}
+
 		return true;
 	}
 	else if(connected)
