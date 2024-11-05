@@ -7611,13 +7611,14 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type)
 
 QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool export_file)
 {
+	bool is_sql_def = (def_type == SchemaParser::SqlCode);
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
 	BaseObject *object=nullptr;
 	QString def, search_path="pg_catalog,public",
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlCode ? "SQL" : "XML");
+			def_type_str =(is_sql_def ? "SQL" : "XML");
 	Type *usr_type=nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
@@ -7625,7 +7626,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	try
 	{
 		cancel_saving = false;
-		objects_map = getCreationOrder(def_type, false, false, true, def_type == SchemaParser::SqlCode);
+		objects_map = getCreationOrder(def_type, false, false, true, is_sql_def);
 		general_obj_cnt = objects_map.size();
 		gen_defs_count=0;
 
@@ -7635,7 +7636,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
 
-		if(def_type==SchemaParser::SqlCode)
+		if(is_sql_def)
 		{
 			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
@@ -7651,63 +7652,63 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			object = obj_itr.second;
 			obj_type = object->getObjectType();
 
-			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlCode)
+			if(obj_type == ObjectType::Type && is_sql_def)
 			{
-				usr_type=dynamic_cast<Type *>(object);
-				attribs_aux[attrib]+=usr_type->getSourceCode(def_type);
+				usr_type = dynamic_cast<Type *>(object);
+				attribs_aux[attrib] += usr_type->getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Database)
+			else if(obj_type == ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlCode)
+				if(is_sql_def)
 					attribs_aux[this->getSchemaName()] += this->__getSourceCode(def_type);
 				else
-					attribs_aux[attrib]+=this->__getSourceCode(def_type);
+					attribs_aux[attrib] += this->__getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Permission)
+			else if(obj_type == ObjectType::Permission)
 			{
-				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getSourceCode(def_type);
+				attribs_aux[Attributes::Permission] += dynamic_cast<Permission *>(object)->getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Constraint)
+			else if(obj_type == ObjectType::Constraint)
 			{
-				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
+				attribs_aux[attrib] += dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
 			}
-			else if(obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace ||  obj_type==ObjectType::Schema)
+			else if(obj_type == ObjectType::Role || obj_type == ObjectType::Tablespace || obj_type == ObjectType::Schema)
 			{
 				//The "public" schema does not have the SQL code definition generated
-				if(def_type==SchemaParser::SqlCode)
-					attrib_aux=BaseObject::getSchemaName(obj_type);
+				if(is_sql_def)
+					attrib_aux = BaseObject::getSchemaName(obj_type);
 				else
-					attrib_aux=attrib;
+					attrib_aux = attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
 				 * code of the entire model because this object cannot be created from a multiline sql command */
-				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlCode)
-					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
+				if(obj_type == ObjectType::Tablespace && !object->isSystemObject() && is_sql_def)
+					attribs_aux[attrib_aux] += object->getSourceCode(def_type);
 				//System object doesn't has the XML generated (the only exception is for public schema)
-				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
-								(obj_type==ObjectType::Schema &&
-								 ((object->getName()=="public" && def_type==SchemaParser::XmlCode) ||
-									(object->getName()!="public" && object->getName()!="pg_catalog"))))
+				else if((obj_type != ObjectType::Schema && !object->isSystemObject()) ||
+								(obj_type == ObjectType::Schema &&
+								 ((object->getName() == "public" && !is_sql_def) ||
+									(object->getName() != "public" && object->getName() != "pg_catalog"))))
 				{
-					if(object->getObjectType()==ObjectType::Schema)
+					if(object->getObjectType() == ObjectType::Schema)
 						search_path+="," + object->getName(true);
 
 					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
+					attribs_aux[attrib_aux] += object->getSourceCode(def_type);
 				}
 			}
 			else
 			{
 				if(object->isSystemObject())
-					attribs_aux[attrib]+="";
+					attribs_aux[attrib] += "";
 				else
-					attribs_aux[attrib]+=object->getSourceCode(def_type);
+					attribs_aux[attrib] += object->getSourceCode(def_type);
 			}
 
 			gen_defs_count++;
 
-			if((def_type==SchemaParser::SqlCode && !object->isSQLDisabled()) ||
-					(def_type==SchemaParser::XmlCode && !object->isSystemObject()))
+			if((is_sql_def && !object->isSQLDisabled()) ||
+					(!is_sql_def && !object->isSystemObject()))
 			{
 				emit s_objectLoaded((gen_defs_count/static_cast<double>(general_obj_cnt)) * 100,
 									msg.arg(def_type_str)
@@ -7719,24 +7720,24 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 
 		attribs_aux[Attributes::SearchPath]=search_path;
 
-		if(def_type == SchemaParser::SqlCode)
+		if(is_sql_def)
 			configureShellTypes(true);
 	}
 	catch(Exception &e)
 	{
-		if(def_type==SchemaParser::SqlCode)
+		if(is_sql_def)
 			configureShellTypes(true);
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : "");
-	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
+	attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
+	def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
 
-	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
+	if(prepend_at_bod && is_sql_def)
 		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
 
-	if(append_at_eod && def_type==SchemaParser::SqlCode)
+	if(append_at_eod && is_sql_def)
 		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
