@@ -22,3 +22,4 @@
 <!ATTLIST patterns pk-pattern CDATA #IMPLIED>
 <!ATTLIST patterns uq-pattern CDATA #IMPLIED>
 <!ATTLIST patterns pk-col-pattern CDATA #IMPLIED>
+<!ATTLIST patterns fk-idx-pattern CDATA #IMPLIED>

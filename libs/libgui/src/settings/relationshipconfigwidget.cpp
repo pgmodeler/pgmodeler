@@ -37,8 +37,9 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 	SyntaxHighlighter *pattern_hl=nullptr;
 	QList<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
-											 src_fk_pattern_txt, dst_fk_pattern_txt,
-											 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
+																					 src_fk_pattern_txt, dst_fk_pattern_txt,
+																					 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt,
+																					 fk_idx_pattern_txt };
 
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
@@ -207,13 +208,13 @@ void RelationshipConfigWidget::fillNamePatterns()
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
 	QList<QPlainTextEdit *> inputs={ pk_pattern_txt, uq_pattern_txt, src_col_pattern_txt,
-									 dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
-									 pk_col_pattern_txt };
+																	 dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
+																	 pk_col_pattern_txt, fk_idx_pattern_txt };
 
 	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UqPattern,
 								 Attributes::SrcColPattern, Attributes::DstColPattern,
 								 Attributes::SrcFkPattern, Attributes::DstFkPattern,
-								 Attributes::PkColPattern };
+								 Attributes::PkColPattern, Attributes::FkIdxPattern };
 
 	relnn=(rel_type==Attributes::RelationshipNn);
 	reldep=(rel_type==Attributes::RelationshipDep || rel_type==Attributes::RelationshipPart);
@@ -225,6 +226,7 @@ void RelationshipConfigWidget::fillNamePatterns()
 	src_fk_pattern_txt->setEnabled(!relgen && !reldep);
 	uq_pattern_txt->setEnabled(!relgen && !reldep);
 	pk_col_pattern_txt->setEnabled(relnn);
+	fk_idx_pattern_txt->setEnabled(!relgen && !reldep);
 
 	dst_col_pattern_lbl->setEnabled(relnn);
 	dst_fk_pattern_lbl->setEnabled(relnn);
@@ -232,16 +234,20 @@ void RelationshipConfigWidget::fillNamePatterns()
 	src_fk_pattern_lbl->setEnabled(!relgen && !reldep);
 	uq_pattern_lbl->setEnabled(!relgen && !reldep);
 	pk_col_pattern_lbl->setEnabled(relnn);
+	fk_idx_pattern_lbl->setEnabled(!relgen && !reldep);
 
-	for(int i=0; i < inputs.size(); i++)
+	int i = 0;
+
+	for(auto &input : inputs)
 	{
-		inputs[i]->blockSignals(true);
-		inputs[i]->clear();
+		input->blockSignals(true);
+		input->clear();
 
-		if(inputs[i]->isEnabled() && patterns[rel_type].count(pattern_ids[i]))
-			inputs[i]->setPlainText(patterns[rel_type][pattern_ids[i]]);
+		if(input->isEnabled() && patterns[rel_type].count(pattern_ids[i]))
+			input->setPlainText(patterns[rel_type][pattern_ids[i]]);
 
-		inputs[i]->blockSignals(false);
+		input->blockSignals(false);
+		i++;
 	}
 }
 
@@ -255,10 +261,11 @@ void RelationshipConfigWidget::updatePattern()
 												{ dst_col_pattern_txt, Attributes::DstColPattern },
 												{ src_fk_pattern_txt, Attributes::SrcFkPattern   },
 												{ dst_fk_pattern_txt, Attributes::DstFkPattern   },
-												{ pk_col_pattern_txt, Attributes::PkColPattern   } };
+												{ pk_col_pattern_txt, Attributes::PkColPattern   },
+												{ fk_idx_pattern_txt, Attributes::FkIdxPattern   } };
 
 	setConfigurationChanged(true);
-	patterns[rel_type][inputs_map[input]]=input->toPlainText();
+	patterns[rel_type][inputs_map[input]] = input->toPlainText();
 }
 
 void RelationshipConfigWidget::enableConnModePreview()
