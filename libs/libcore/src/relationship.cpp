@@ -2911,47 +2911,47 @@ QString Relationship::getSourceCode(SchemaParser::CodeType def_type)
 	QString code_def = getCachedCode(def_type);
 	if(!code_def.isEmpty()) return code_def;
 
-	if(def_type==SchemaParser::SqlCode)
+	if(def_type == SchemaParser::SqlCode)
 	{
-		if(fk_rel1n && (rel_type==Relationship11 || rel_type==Relationship1n))
+		if(fk_rel1n && (rel_type == Relationship11 || rel_type == Relationship1n))
 		{
-			unsigned count, i;
-
-			attributes[Attributes::Relationship1n]=Attributes::True;
-			attributes[Attributes::Constraints]=fk_rel1n->getSourceCode(def_type);
+			attributes[Attributes::Relationship1n] = Attributes::True;
+			attributes[Attributes::Constraints] = fk_rel1n->getSourceCode(def_type);
 
 			if(uq_rel11)
-				attributes[Attributes::Constraints]+=uq_rel11->getSourceCode(def_type);
+				attributes[Attributes::Constraints] += uq_rel11->getSourceCode(def_type);
 
-			count=rel_constraints.size();
-			for(i=0; i < count; i++)
+			for(auto &constr : rel_constraints)
 			{
-				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::PrimaryKey)
-					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getSourceCode(def_type, false);
-
+				if(dynamic_cast<Constraint *>(constr)->getConstraintType() != ConstraintType::PrimaryKey)
+				{
+					attributes[Attributes::Constraints] +=
+							dynamic_cast<Constraint *>(constr)->getSourceCode(def_type, false);
+				}
 			}
 
-			attributes[Attributes::Table]=getReceiverTable()->getName(true);
+			attributes[Attributes::Table] = getReceiverTable()->getName(true);
 		}
-		else if(table_relnn && rel_type==RelationshipNn)
+		else if(table_relnn && rel_type == RelationshipNn)
 		{
-			unsigned count, i;
+			Constraint *constr = nullptr;
 
-			attributes[Attributes::RelationshipNn]=Attributes::True;
-			attributes[Attributes::Table]=table_relnn->getSourceCode(def_type);
+			attributes[Attributes::RelationshipNn] = Attributes::True;
+			attributes[Attributes::Table] = table_relnn->getSourceCode(def_type);
 
-			count=table_relnn->getConstraintCount();
-			for(i=0; i < count; i++)
+			for(auto &obj : *table_relnn->getObjectList(ObjectType::Constraint))
 			{
-				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::PrimaryKey &&
-						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::Check)
-					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getSourceCode(def_type, true);
+				constr = dynamic_cast<Constraint *>(obj);
+
+				if(constr->getConstraintType() != ConstraintType::PrimaryKey &&
+						constr->getConstraintType()!= ConstraintType::Check)
+					attributes[Attributes::Constraints] += constr->getSourceCode(def_type, true);
 			}
 		}
-		else if(rel_type==RelationshipGen)
+		else if(rel_type == RelationshipGen)
 		{
-			attributes[Attributes::RelationshipGen]=Attributes::True;
-			attributes[Attributes::Table]=getReceiverTable()->getName(true);
+			attributes[Attributes::RelationshipGen] = Attributes::True;
+			attributes[Attributes::Table] = getReceiverTable()->getName(true);
 		}
 
 		return this->BaseObject::__getSourceCode(SchemaParser::SqlCode);
