@@ -41,12 +41,12 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 																					 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt,
 																					 fk_idx_pattern_txt };
 
-	for(int i=0; i < pattern_fields.size(); i++)
+	for(auto &patt_field : pattern_fields)
 	{
-		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true, false, font().pointSizeF());
+		pattern_hl = new SyntaxHighlighter(patt_field, true, false, font().pointSizeF());
 		pattern_hl->loadConfiguration(GlobalAttributes::getPatternHighlightConfPath());
 
-		connect(pattern_fields[i], &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
+		connect(patt_field, &QPlainTextEdit::textChanged, this, &RelationshipConfigWidget::updatePattern);
 	}
 
 	deferral_cmb->addItems(DeferralType::getTypes());
@@ -56,8 +56,15 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	del_action_cmb->addItems(list);
 	upd_action_cmb->addItems(list);
 
-	for(int i=0; i < rel_types.size(); i++)
-		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
+	unsigned i = 0;
+
+	for(auto &rel_type : rel_types)
+		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i++]), rel_type);
+
+	index_type_cmb->addItem(tr("None"));
+
+	for(auto &type : IndexingType::getTypes())
+		index_type_cmb->addItem(type, type);
 
 	settings_twg->widget(0)->setFocusProxy(crows_foot_rb);
 	foreign_key_gb->setFocusProxy(deferrable_chk);
@@ -87,6 +94,10 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferral_cmb, &QComboBox::currentTextChanged, this, [this](){
 		setConfigurationChanged(true);
 	});
+
+	connect(index_type_cmb, &QComboBox::currentTextChanged, this, [this](){
+		setConfigurationChanged(true);
+	});
 }
 
 std::map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
@@ -98,7 +109,7 @@ void RelationshipConfigWidget::loadConfiguration()
 {
 	try
 	{
-		int idx;
+		int idx = -1;
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, { Attributes::Type });
 
 		fk_to_pk_rb->setChecked(config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]==Attributes::ConnectFkToPk);
@@ -109,11 +120,14 @@ void RelationshipConfigWidget::loadConfiguration()
 		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
 
-		idx=upd_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::UpdAction]);
+		idx = upd_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::UpdAction]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx=del_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::DelAction]);
+		idx = del_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::DelAction]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+
+		idx = index_type_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::FkIdxType]);
+		index_type_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		patterns[Attributes::Relationship11]=config_params[Attributes::Relationship11];
 		patterns[Attributes::Relationship1n]=config_params[Attributes::Relationship1n];
@@ -138,31 +152,32 @@ void RelationshipConfigWidget::saveConfiguration()
 	{
 		QString patterns_sch;
 
-		patterns_sch=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
-																																Attributes::Patterns +
-																																GlobalAttributes::SchemaExt);
+		patterns_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																	Attributes::Patterns +
+																																	GlobalAttributes::SchemaExt);
 		if(crows_foot_rb->isChecked())
-			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::CrowsFoot;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode] = Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())
-			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectFkToPk;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode] = Attributes::ConnectFkToPk;
 		else if(tab_edges_rb->isChecked())
-			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectTableEdges;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode] = Attributes::ConnectTableEdges;
 		else
-			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode]=Attributes::ConnectCenterPnts;
+			config_params[GlobalAttributes::RelationshipsConf][Attributes::LinkMode] = Attributes::ConnectCenterPnts;
 
-		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
-		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
-		config_params[Attributes::ForeignKeys][Attributes::UpdAction]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : "");
-		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : "");
+		config_params[Attributes::ForeignKeys][Attributes::Deferrable] = (deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
+		config_params[Attributes::ForeignKeys][Attributes::DeferType] = deferral_cmb->currentText();
+		config_params[Attributes::ForeignKeys][Attributes::UpdAction] = (upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : "");
+		config_params[Attributes::ForeignKeys][Attributes::DelAction] = (del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : "");
+		config_params[Attributes::ForeignKeys][Attributes::FkIdxType] = (index_type_cmb->currentIndex() > 0 ? index_type_cmb->currentText() : "");
 
-		config_params[Attributes::NamePatterns][Attributes::Patterns]="";
+		config_params[Attributes::NamePatterns][Attributes::Patterns] = "";
 
 		for(auto &itr : patterns)
 		{
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
-			config_params[itr.first]=itr.second;
-			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getSourceCode(patterns_sch, itr.second);
+			config_params[itr.first] = itr.second;
+			config_params[Attributes::NamePatterns][Attributes::Patterns] += schparser.getSourceCode(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);

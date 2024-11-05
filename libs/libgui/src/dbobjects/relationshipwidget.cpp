@@ -477,7 +477,7 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UpdAction]);
 		del_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DelAction]);
 
-		idx = deferral_cmb->findText(confs[Attributes::ForeignKeys][Attributes::FkIdxType]);
+		idx = index_type_cmb->findText(confs[Attributes::ForeignKeys][Attributes::FkIdxType]);
 		index_type_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 	}
 	else

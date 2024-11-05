@@ -10,6 +10,7 @@
 <!ATTLIST foreign-keys defer-type CDATA #IMPLIED>
 <!ATTLIST foreign-keys upd-action CDATA #IMPLIED>
 <!ATTLIST foreign-keys del-action CDATA #IMPLIED>
+<!ATTLIST foreign-keys fk-idx-type CDATA #IMPLIED>
 
 <!ELEMENT name-patterns (patterns+)>
 
