@@ -288,7 +288,7 @@ void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, 
 	data_grid_wgt->setObjectName(data_grid_name);
 	int tab_idx = data_grids_tbw->addTab(data_grid_wgt,
 																			 QIcon(GuiUtilsNs::getIconPath(obj_type)),
-																			 data_grid_name);
+																			 /* data_grid_name */ table);
 
 	data_grids_tbw->setCurrentIndex(tab_idx);
 

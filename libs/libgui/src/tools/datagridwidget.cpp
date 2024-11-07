@@ -503,7 +503,6 @@ void DataGridWidget::resetDataGrid()
 	results_tbw->setRowCount(0);
 	results_tbw->setColumnCount(0);
 	warning_frm->setVisible(false);
-	hint_frm->setVisible(false);
 	csv_load_parent->setVisible(false);
 	clearChangedRows();
 }
@@ -752,7 +751,6 @@ void DataGridWidget::retrievePKColumns(Catalog &catalog)
 		else
 			table_oid = pks[0][Attributes::Table].toUInt();
 
-		hint_frm->setVisible(true);
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -1071,7 +1069,6 @@ void DataGridWidget::addRow(bool focus_new_row)
 	markOperationOnRow(OpInsert, row);
 
 	item = results_tbw->item(row, 0);
-	hint_frm->setVisible(true);
 
 	if(focus_new_row)
 	{
@@ -1256,7 +1253,6 @@ void DataGridWidget::undoOperations()
 		removeNewRows(ins_rows);
 
 	results_tbw->clearSelection();
-	hint_frm->setVisible(results_tbw->rowCount() > 0);
 }
 
 void DataGridWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
