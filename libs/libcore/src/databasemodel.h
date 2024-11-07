@@ -518,7 +518,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		The parameter realloc_fk_perms causes foreign keys and permissions to have their position changed to the
 		end of the creation order to avoid being created before their parent objects or referenced objects */
-		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs = false, bool incl_rel1n_constrs = false, bool realloc_fk_perms = true);
+		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type,
+																											bool incl_relnn_objs = false, bool incl_rel1n_constrs = false,
+																											bool realloc_fk_perms = true);
 
 		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).

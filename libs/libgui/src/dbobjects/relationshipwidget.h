@@ -60,7 +60,7 @@ class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::Relations
 
 		SyntaxHighlighter *table1_hl,
 		*table2_hl,
-		*patterns_hl[7],
+		*patterns_hl[8],
 		*part_bound_expr_hl;
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship

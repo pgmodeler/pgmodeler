@@ -8,7 +8,15 @@
 
 <relationships $sp link-mode="{link-mode}" > $br
     
-$tb [<foreign-keys deferrable=] "{deferrable}" [ defer-type=] "{defer-type}" [ upd-action=] "{upd-action}" [ del-action=] "{del-action}" [/>] $br
+$tb [<foreign-keys deferrable=] "{deferrable}" 
+
+[ defer-type=] "{defer-type}" 
+[ upd-action=] "{upd-action}" 
+[ del-action=] "{del-action}" 
+[ fk-idx-type=] "{fk-idx-type}"
+
+[/>] $br
+
 $tb <name-patterns> $br
 {patterns}
 $tb </name-patterns> $br

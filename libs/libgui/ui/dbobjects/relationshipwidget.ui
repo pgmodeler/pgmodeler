@@ -142,10 +142,10 @@
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
+            <enum>QSizePolicy::Policy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -350,10 +350,10 @@
        <item row="6" column="0" colspan="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Policy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -366,7 +366,7 @@
        <item row="1" column="2">
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -417,10 +417,10 @@
             </font>
            </property>
            <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
            </property>
            <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
            </property>
            <property name="tabChangesFocus">
             <bool>true</bool>
@@ -473,10 +473,10 @@
             </font>
            </property>
            <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
            </property>
            <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
            </property>
            <property name="tabChangesFocus">
             <bool>true</bool>
@@ -549,10 +549,10 @@
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
+               <enum>QSizePolicy::Policy::Fixed</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -578,7 +578,7 @@
             <item>
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -607,7 +607,7 @@
                </size>
               </property>
               <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
+               <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
               </property>
              </widget>
             </item>
@@ -656,7 +656,7 @@
           </font>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Name patterns</string>
@@ -683,7 +683,7 @@
           <item>
            <widget class="QCheckBox" name="patterns_gconf_chk">
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="toolTip">
              <string>Use the values defined on settings dialogs for the fields below</string>
@@ -808,13 +808,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -842,13 +842,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -876,13 +876,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -910,13 +910,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -944,13 +944,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -978,13 +978,13 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
@@ -1012,16 +1012,60 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                </property>
                <property name="tabChangesFocus">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QPlainTextEdit" name="fk_idx_pattern_txt">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
+               </property>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="horizontalScrollBarPolicy">
+                <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="fk_idx_pattern_lbl">
+               <property name="toolTip">
+                <string>Pattern for primary key generated by identifier relationship.</string>
+               </property>
+               <property name="text">
+                <string>FK Index name:</string>
                </property>
               </widget>
              </item>
@@ -1040,7 +1084,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Foreign key settings</string>
@@ -1073,7 +1117,7 @@
              <bool>true</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="toolTip">
              <string>Use the values defined on settings dialogs for the fields below</string>
@@ -1113,6 +1157,67 @@
              <property name="spacing">
               <number>5</number>
              </property>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="deferrable_chk">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="on_delete_lbl">
+               <property name="text">
+                <string>ON DELETE:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="del_action_cmb">
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>28</width>
+                 <height>28</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QComboBox" name="upd_action_cmb">
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>28</width>
+                 <height>28</height>
+                </size>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="deferrable_lbl">
                <property name="sizePolicy">
@@ -1135,34 +1240,6 @@
                </property>
                <property name="text">
                 <string>Deferrable:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="deferrable_chk">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
-               </property>
-               <property name="text">
-                <string/>
                </property>
               </widget>
              </item>
@@ -1194,6 +1271,13 @@
                </property>
               </widget>
              </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="on_update_lbl">
+               <property name="text">
+                <string>ON UPDATE:</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="3">
               <widget class="QComboBox" name="deferral_cmb">
                <property name="enabled">
@@ -1218,10 +1302,10 @@
                 </size>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
+                <enum>Qt::FocusPolicy::WheelFocus</enum>
                </property>
                <property name="sizeAdjustPolicy">
-                <enum>QComboBox::AdjustToContents</enum>
+                <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
                </property>
                <property name="iconSize">
                 <size>
@@ -1231,45 +1315,33 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="on_delete_lbl">
+             <item row="2" column="0">
+              <widget class="QLabel" name="index_type_lbl">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>90</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>90</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
-                <string>ON DELETE:</string>
+                <string>Index type:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="del_action_cmb">
-               <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>28</width>
-                 <height>28</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="on_update_lbl">
-               <property name="text">
-                <string>ON UPDATE:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QComboBox" name="upd_action_cmb">
-               <property name="focusPolicy">
-                <enum>Qt::WheelFocus</enum>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>28</width>
-                 <height>28</height>
-                </size>
-               </property>
-              </widget>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="index_type_cmb"/>
              </item>
             </layout>
            </widget>
@@ -1286,7 +1358,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="title">
           <string>&amp;Copy options</string>
@@ -1313,7 +1385,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>INDEXES</string>
@@ -1326,7 +1398,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>COMMENTS</string>
@@ -1336,7 +1408,7 @@
           <item row="0" column="1">
            <widget class="QRadioButton" name="including_rb">
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>INCLUDING</string>
@@ -1349,7 +1421,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>DEFAULTS</string>
@@ -1365,7 +1437,7 @@
              </sizepolicy>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>E&amp;XCLUDING</string>
@@ -1378,7 +1450,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>CONSTRAINTS</string>
@@ -1394,7 +1466,7 @@
              </sizepolicy>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>Use defaults</string>
@@ -1410,7 +1482,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>ALL</string>
@@ -1423,7 +1495,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>STORAGE</string>
@@ -1445,10 +1517,10 @@
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+             <enum>QFrame::Shape::StyledPanel</enum>
             </property>
             <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
+             <enum>QFrame::Shadow::Sunken</enum>
             </property>
            </widget>
           </item>
@@ -1458,7 +1530,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>STATISTICS</string>
@@ -1471,7 +1543,7 @@
              <bool>false</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::WheelFocus</enum>
+             <enum>Qt::FocusPolicy::WheelFocus</enum>
             </property>
             <property name="text">
              <string>IDENTITY</string>
@@ -1484,7 +1556,7 @@
        <item row="3" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1547,13 +1619,13 @@
           </sizepolicy>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::SelectedClicked</set>
+          <set>QAbstractItemView::EditTrigger::SelectedClicked</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <property name="iconSize">
           <size>
