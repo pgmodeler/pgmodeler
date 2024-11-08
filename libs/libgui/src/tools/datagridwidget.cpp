@@ -29,6 +29,11 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 {
 	setupUi(this);
 
+	rows_cnt_lbl->setToolTip(rows_cnt_ico_lbl->toolTip());
+	rows_added_lbl->setToolTip(rows_added_ico_lbl->toolTip());
+	rows_changed_lbl->setToolTip(rows_changed_ico_lbl->toolTip());
+	rows_deleted_lbl->setToolTip(rows_deleted_ico_lbl->toolTip());
+
 	QAction *act = nullptr;
 
 	save_enabled = undo_enabled = false;
@@ -114,6 +119,7 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 
 	connect(action_add, &QAction::triggered, this, [this](){
 		addRow();
+		updateRowOperationsInfo();
 	});
 
 	action_delete = edit_menu.addAction(QIcon(GuiUtilsNs::getIconPath("delrow")),
@@ -262,6 +268,8 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 	connect(this, &DataGridWidget::s_truncateEnabled, this, [this](bool value) {
 		truncate_enabled = value;
 	});
+
+	connect(vaccuum_tb, &QToolButton::clicked, this, &DataGridWidget::runVacuum);
 
 	/* Installing event filters in the menus to override their
 	 * default position */
@@ -423,6 +431,8 @@ void DataGridWidget::retrieveData()
 
 		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
+		updateTotalRows(catalog);
+
 		end_dt = QDateTime::currentDateTime();
 		qint64 total_exec = end_dt.toMSecsSinceEpoch() - start_dt.toMSecsSinceEpoch();
 		QString exec_time_str = total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec);
@@ -441,7 +451,10 @@ void DataGridWidget::retrieveData()
 
 		//If the table is empty automatically creates a new row
 		if(results_tbw->rowCount() == 0 && PhysicalTable::isPhysicalTable(obj_type))
+		{
 			addRow();
+			updateRowOperationsInfo();
+		}
 		else
 			results_tbw->setFocus();
 
@@ -682,7 +695,8 @@ void DataGridWidget::loadDataFromCsv(bool load_from_clipboard, bool force_csv_pa
 		}
 
 		results_tbw->setUpdatesEnabled(true);
-		qApp->restoreOverrideCursor();
+		updateRowOperationsInfo();
+		qApp->restoreOverrideCursor();		
 	}
 	catch(Exception &e)
 	{
@@ -742,7 +756,7 @@ void DataGridWidget::retrievePKColumns(Catalog &catalog)
 		table_oid = 0;
 
 		//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-		pks=catalog.getObjectsAttributes(ObjectType::Constraint, sch_name, tab_name, {}, {{Attributes::CustomFilter, "contype='p'"}});
+		pks = catalog.getObjectsAttributes(ObjectType::Constraint, sch_name, tab_name, {}, {{Attributes::CustomFilter, "contype='p'"}});
 
 		warning_frm->setVisible(pks.empty());
 
@@ -1023,6 +1037,7 @@ void DataGridWidget::markUpdateOnRow(QTableWidgetItem *item)
 		fnt.setUnderline(items_changed);
 		item->setFont(fnt);
 		markOperationOnRow(items_changed ? OpUpdate : NoOperation, item->row());
+		updateRowOperationsInfo();
 	}
 }
 
@@ -1046,6 +1061,7 @@ void DataGridWidget::markDeleteOnRows()
 
 	removeNewRows(ins_rows);
 	results_tbw->clearSelection();
+	updateRowOperationsInfo();
 }
 
 void DataGridWidget::addRow(bool focus_new_row)
@@ -1100,6 +1116,8 @@ void DataGridWidget::duplicateRows()
 
 		results_tbw->setCurrentItem(results_tbw->item(results_tbw->rowCount() - 1, 0),
 																QItemSelectionModel::ClearAndSelect);
+
+		updateRowOperationsInfo();
 	}
 }
 
@@ -1253,6 +1271,7 @@ void DataGridWidget::undoOperations()
 		removeNewRows(ins_rows);
 
 	results_tbw->clearSelection();
+	updateRowOperationsInfo();
 }
 
 void DataGridWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -1262,6 +1281,7 @@ void DataGridWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_ro
 			prev_row == results_tbw->rowCount() - 1 && prev_col == results_tbw->columnCount() - 1)
 	{
 		addRow();
+		updateRowOperationsInfo();
 	}
 }
 
@@ -1469,6 +1489,24 @@ bool DataGridWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
+void DataGridWidget::updateTotalRows(Catalog &catalog)
+{
+	try
+	{
+		attribs_map tab_attrs = catalog.getObjectAttributes(obj_type, table_oid);
+		int row_cnt = -1;
+
+		row_cnt = tab_attrs[Attributes::RowAmount].toInt();
+		vaccuum_tb->setVisible(row_cnt < results_tbw->rowCount());
+		rows_cnt_lbl->setText((row_cnt < results_tbw->rowCount() ?
+														 "?" : QString::number(row_cnt)) + " " + tr("row(s)"));
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+}
+
 void DataGridWidget::truncateTable()
 {
 	try
@@ -1583,6 +1621,39 @@ void DataGridWidget::toggleCsvLoader(bool toggle)
 	csv_load_parent->setVisible(toggle);
 }
 
+void DataGridWidget::runVacuum()
+{
+	Connection conn_sql { conn_params };
+	Catalog catalog;
+
+	try
+	{
+		QString query = QString("VACUUM ANALYZE \"%1\".\"%2\"").arg(sch_name, tab_name);
+
+		qApp->setOverrideCursor(Qt::WaitCursor);
+
+		catalog.setConnection(conn_sql);
+		conn_sql.connect();
+		conn_sql.executeDDLCommand(query);
+
+		/* We force a sleep of 1 second to give time to the
+		 * vacuum command to finish properly */
+		sleep(1);
+		updateTotalRows(catalog);
+
+		conn_sql.close();
+		catalog.closeConnection();
+		qApp->restoreOverrideCursor();
+	}
+	catch(Exception &e)
+	{
+		qApp->restoreOverrideCursor();
+		conn_sql.close();
+		catalog.closeConnection();
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+}
+
 bool DataGridWidget::isCsvLoaderToggled()
 {
 	return csv_load_parent->isVisible();
@@ -1637,4 +1708,29 @@ bool DataGridWidget::isPasteEnabled()
 bool DataGridWidget::hasChangedRows()
 {
 	return !changed_rows.empty();
+}
+
+void DataGridWidget::updateRowOperationsInfo()
+{
+	QHeaderView *vert_header = results_tbw->verticalHeader();
+	std::map<OperationId, unsigned> oper_cnt {};
+	OperationId op_id;
+
+	for(int row = 0; row < vert_header->count(); row++)
+	{
+		op_id = static_cast<OperationId>(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt());
+		oper_cnt[op_id]++;
+	}
+
+	rows_added_lbl->setText(QString::number(oper_cnt[OpInsert]));
+	rows_added_lbl->setEnabled(oper_cnt[OpInsert] > 0);
+	rows_added_ico_lbl->setEnabled(rows_added_lbl->isEnabled());
+
+	rows_changed_lbl->setText(QString::number(oper_cnt[OpUpdate]));
+	rows_changed_lbl->setEnabled(oper_cnt[OpUpdate] > 0);
+	rows_changed_ico_lbl->setEnabled(rows_changed_lbl->isEnabled());
+
+	rows_deleted_lbl->setText(QString::number(oper_cnt[OpDelete]));
+	rows_deleted_lbl->setEnabled(oper_cnt[OpDelete] > 0);
+	rows_deleted_ico_lbl->setEnabled(rows_deleted_lbl->isEnabled());
 }
