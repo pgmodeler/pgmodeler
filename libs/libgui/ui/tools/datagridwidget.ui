@@ -254,7 +254,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of rows in the table. &lt;span style=&quot; font-weight:700;&quot;&gt;NOTE:&lt;/span&gt; An undefined number (?) of rows means that the table needs a vacuum to update its statistics.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of rows in the table.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string/>
@@ -291,44 +291,6 @@
           </property>
           <property name="indent">
            <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="vaccuum_tb">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>&lt;p&gt;Run a VACCUUM ANALYZE command on the table to update statistics&lt;/p&gt;</string>
-          </property>
-          <property name="text">
-           <string>Vacuum</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../res/resources.qrc">
-            <normaloff>:/icons/icons/vaccuum.png</normaloff>:/icons/icons/vaccuum.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>25</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
           </property>
          </widget>
         </item>

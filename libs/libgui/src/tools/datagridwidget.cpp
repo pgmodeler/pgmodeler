@@ -269,8 +269,6 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 		truncate_enabled = value;
 	});
 
-	connect(vaccuum_tb, &QToolButton::clicked, this, &DataGridWidget::runVacuum);
-
 	/* Installing event filters in the menus to override their
 	 * default position */
 	fks_menu.installEventFilter(this);
@@ -381,11 +379,13 @@ void DataGridWidget::retrieveData()
 				return;
 		}
 
-		QString query = QString("SELECT * FROM \"%1\".\"%2\"").arg(sch_name, tab_name);
-		ResultSet res;
+		static const QString tmpl_query = QString("SELECT %1 FROM \"%2\".\"%3\"");
+		QString	query = tmpl_query.arg("*", sch_name, tab_name),
+				cnt_query = tmpl_query.arg("count(*)", sch_name, tab_name);
+		ResultSet res, cnt_res;
 		unsigned limit = limit_spb->value();
 		std::vector<int> curr_hidden_cols;
-		int col_cnt = results_tbw->horizontalHeader()->count();
+		int col_cnt = results_tbw->horizontalHeader()->count(), row_cnt = -1;
 		QDateTime start_dt = QDateTime::currentDateTime(), end_dt;
 
 		// Storing the current hidden columns to make them hidden again after retrive data
@@ -424,14 +424,18 @@ void DataGridWidget::retrieveData()
 		catalog.setConnection(conn_sql);
 		conn_sql.connect();
 		conn_sql.executeDMLCommand(query, res);
+		conn_sql.executeDMLCommand(cnt_query, cnt_res);
 
 		retrievePKColumns(catalog);
 		retrieveFKColumns(catalog);
 		listColumns(catalog.getObjectsAttributes(ObjectType::Column, sch_name, tab_name));
 
-		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
+		cnt_res.accessTuple(ResultSet::FirstTuple);
+		QString val = cnt_res.getColumnValue("count");
+		row_cnt = val.toInt();
 
-		updateTotalRows(catalog);
+		rows_cnt_lbl->setText(QString::number(row_cnt) + " " + tr("row(s)"));
+		SQLExecutionWidget::fillResultsTable(catalog, res, results_tbw, true);
 
 		end_dt = QDateTime::currentDateTime();
 		qint64 total_exec = end_dt.toMSecsSinceEpoch() - start_dt.toMSecsSinceEpoch();
@@ -761,7 +765,7 @@ void DataGridWidget::retrievePKColumns(Catalog &catalog)
 		warning_frm->setVisible(pks.empty());
 
 		if(pks.empty())
-			warning_lbl->setText(tr("The table doesn't have a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
+			warning_lbl->setText(tr("The table doesn't have a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> these operations can affect more than one row."));
 		else
 			table_oid = pks[0][Attributes::Table].toUInt();
 
@@ -1489,24 +1493,6 @@ bool DataGridWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void DataGridWidget::updateTotalRows(Catalog &catalog)
-{
-	try
-	{
-		attribs_map tab_attrs = catalog.getObjectAttributes(obj_type, table_oid);
-		int row_cnt = -1;
-
-		row_cnt = tab_attrs[Attributes::RowAmount].toInt();
-		vaccuum_tb->setVisible(row_cnt < results_tbw->rowCount());
-		rows_cnt_lbl->setText((row_cnt < results_tbw->rowCount() ?
-														 "?" : QString::number(row_cnt)) + " " + tr("row(s)"));
-	}
-	catch(Exception &e)
-	{
-		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
-}
-
 void DataGridWidget::truncateTable()
 {
 	try
@@ -1619,39 +1605,6 @@ bool DataGridWidget::isFilterToggled()
 void DataGridWidget::toggleCsvLoader(bool toggle)
 {
 	csv_load_parent->setVisible(toggle);
-}
-
-void DataGridWidget::runVacuum()
-{
-	Connection conn_sql { conn_params };
-	Catalog catalog;
-
-	try
-	{
-		QString query = QString("VACUUM ANALYZE \"%1\".\"%2\"").arg(sch_name, tab_name);
-
-		qApp->setOverrideCursor(Qt::WaitCursor);
-
-		catalog.setConnection(conn_sql);
-		conn_sql.connect();
-		conn_sql.executeDDLCommand(query);
-
-		/* We force a sleep of 1 second to give time to the
-		 * vacuum command to finish properly */
-		sleep(1);
-		updateTotalRows(catalog);
-
-		conn_sql.close();
-		catalog.closeConnection();
-		qApp->restoreOverrideCursor();
-	}
-	catch(Exception &e)
-	{
-		qApp->restoreOverrideCursor();
-		conn_sql.close();
-		catalog.closeConnection();
-		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
 }
 
 bool DataGridWidget::isCsvLoaderToggled()

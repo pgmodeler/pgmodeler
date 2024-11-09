@@ -138,9 +138,6 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		//! \brief Updates the information about operations pending over the rows
 		void updateRowOperationsInfo();
 
-		//! \brief Updates the information about total rows of the table
-		void updateTotalRows(Catalog &catalog);
-
 	public:
 		DataGridWidget(const QString &sch_name, const QString &tab_name,
 									 ObjectType obj_type, const attribs_map &conn_params,
@@ -269,9 +266,6 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 
 		//! \brief Toggles the visibility of the CSV loader widget
 		void toggleCsvLoader(bool toggle);
-
-		//! \brief Runs a VACUUM ANALYZE on the table
-		void runVacuum();
 
 	signals:
 		//! \brief Signal emitted whenever the data changes in the grid
