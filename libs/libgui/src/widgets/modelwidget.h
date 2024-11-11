@@ -442,6 +442,9 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Returns the currently selected list of objects
 		std::vector<BaseObject *> getSelectedObjects();
 
+		//! \brief Returns the whether there are at least one object selected in the model
+		bool hasSelectedObjects();
+
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
 

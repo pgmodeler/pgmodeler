@@ -161,7 +161,15 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 		 *  The widget is inserted in the right area of the execution widget */
 		virtual PluginWidgets createWidgets(QWidget *parent) const;
 
-		//! \brief Returns the list of actions identified by act_id of all registered plugins
+		/*! \brief Returns whether the selection in the current database model in main window
+		 *  is valid according to the plugin's logic. This method is called in
+		 *  ModelWidget::configurePluginsActionsMenu to enable/disable the model action related
+		 *  to the plugin based on the current model widget's objects selection */
+		virtual bool isSelectionValid() const;
+
+		/*! \brief Returns the list of actions identified by act_id of all registered plugins
+		 *  This method set each action data with a const reference to the parent plugin
+		 *  so it can be used on specific operations when needed */
 		static QList<QAction *> getPluginsActions(ActionId act_id);
 
 		//! \brief Returns the list of toolbuttons all registered plugins

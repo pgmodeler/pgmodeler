@@ -106,6 +106,9 @@ QList<QAction *> PgModelerGuiPlugin::getPluginsActions(ActionId act_id)
 		if(!act)
 			continue;
 
+		/* The action's data receives a const reference to the parent plugin,
+		 * so it can be used for specific needs, e.g., in ModelWidget::configurePluginsActionMenu() */
+		act->setData(QVariant::fromValue(dynamic_cast<const PgModelerGuiPlugin *>(plug)));
 		actions.append(act);
 	}
 
@@ -189,4 +192,9 @@ QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name) const
 PgModelerGuiPlugin::PluginWidgets PgModelerGuiPlugin::createWidgets(QWidget *) const
 {
 	return {};
+}
+
+bool PgModelerGuiPlugin::isSelectionValid() const
+{
+	return true;
 }

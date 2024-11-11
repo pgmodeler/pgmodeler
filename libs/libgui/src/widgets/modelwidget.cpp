@@ -1864,11 +1864,6 @@ void ModelWidget::updateSceneLayers()
 	scene->blockSignals(false);
 }
 
-/* void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
-{
-	plugins_actions = plugin_acts;
-} */
-
 void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 {
 	if(ObjectsScene::isAlignObjectsToGrid())
@@ -2167,10 +2162,23 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 
 void ModelWidget::configurePluginsActionsMenu()
 {
+	const PgModelerGuiPlugin *plugin = nullptr;
+
 	popup_menu.addSeparator();
 
 	for(auto &act : plugins_actions)
+	{
 		popup_menu.addAction(act);
+
+		/* If the action carries a reference its parent plugin
+		 * via QAction::data() we call the method PgModelerGuiPlugin::isSelectionValid
+		 * of that pluign to enable/disable the action depending on the selection
+		 * in the model according to the plugin's rules */
+		plugin = act->data().value<const PgModelerGuiPlugin *>();
+
+		if(plugin)
+			act->setEnabled(plugin->isSelectionValid());
+	}
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4823,6 +4831,11 @@ OperationList *ModelWidget::getOperationList()
 std::vector<BaseObject *> ModelWidget::getSelectedObjects()
 {
 	return selected_objects;
+}
+
+bool ModelWidget::hasSelectedObjects()
+{
+	return !selected_objects.empty();
 }
 
 void ModelWidget::setSaveLastCanvasPosition(bool value)
