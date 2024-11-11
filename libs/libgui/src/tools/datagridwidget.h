@@ -135,6 +135,9 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		 *  when clicking the columns items in the "Columns"tab in the filter widget */
 		bool eventFilter(QObject *object, QEvent *event);
 
+		//! \brief Updates the information about operations pending over the rows
+		void updateRowOperationsInfo();
+
 	public:
 		DataGridWidget(const QString &sch_name, const QString &tab_name,
 									 ObjectType obj_type, const attribs_map &conn_params,
