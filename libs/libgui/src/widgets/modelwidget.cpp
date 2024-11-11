@@ -4566,7 +4566,8 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 
 	if(tab_obj &&
 			(tab_obj->getObjectType() == ObjectType::Column ||
-			 tab_obj->getObjectType() == ObjectType::Constraint))
+			 tab_obj->getObjectType() == ObjectType::Constraint ||
+			 tab_obj->getObjectType() == ObjectType::Index))
 	{
 		Column *col = dynamic_cast<Column *>(tab_obj);
 
