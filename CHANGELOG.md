@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+v1.1.5
+------
+<em>Release date: October 28, 2024</em><br/>
+
+* [New] Added support for PostgreSQL 17.
+* [Fix] Fixed the catalog queries of collation and domain objects for PostgreSQL 17.
+* [Change] Disabling objects' grids in TableWidget when the edited table is protected.
+
 v1.2.0-alpha1
 ------
 <em>Release date: October 25, 2024</em><br/>

@@ -22,6 +22,7 @@
 #include <QSettings>
 
 const QString GlobalAttributes::PgModelerVersion {
+	/** Base version number **/
 	QString("1.2.0-beta")
 
 /* Appending the snapshot build number to the version number
