@@ -1409,9 +1409,14 @@ bool Relationship::updateGeneratedObjects()
 
 	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
 			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
+	bool updated =  false;
+	unsigned cols_cnt = 0;
+
+	cols_cnt = gen_columns.size();
 
 	if(rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn)
 	{
+		updated = true;
 		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
 
 		// Refreshing the generated foreign key columns
@@ -1462,7 +1467,7 @@ bool Relationship::updateGeneratedObjects()
 	if(pk_special)
 		addGeneratedColsToSpecialPk();
 
-	return true;
+	return updated || (cols_cnt != gen_columns.size());
 }
 
 void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
