@@ -61,11 +61,11 @@ is present has the same effect as performing an exact match searching on the nam
 		tab_objs_lst->addItem(item);
 	}
 
-	action_only_matching = new QAction(tr("Only macthing"));
+	action_only_matching = new QAction(tr("Only macthing"), this);
 	action_only_matching->setCheckable(true);
 	action_only_matching->setChecked(true);
 
-	action_match_signature = new QAction(tr("Match by signature"));
+	action_match_signature = new QAction(tr("Match by signature"), this);
 	action_match_signature->setCheckable(true);
 	action_match_signature->setChecked(true);
 
