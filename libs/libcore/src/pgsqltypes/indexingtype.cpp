@@ -21,11 +21,11 @@
 const QStringList IndexingType::type_names {
 	"", // Reserved for Class::Null
 	"btree",
-	"gist",
-	"hash",
-	"gin",
-	"spgist",
 	"brin"
+	"gist",
+	"gin",
+	"hash",
+	"spgist",
 };
 
 IndexingType::IndexingType(unsigned type_id)

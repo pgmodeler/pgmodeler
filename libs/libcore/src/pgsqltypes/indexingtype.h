@@ -33,11 +33,11 @@ class __libcore IndexingType: public TemplateType<IndexingType>{
 
 	public:
 		static constexpr unsigned Btree = 1,
-		Gist = 2,
-		Hash = 3,
+		Brin = 2,
+		Gist = 3,
 		Gin = 4,
-		Spgist = 5,
-		Brin = 6;
+		Hash = 5,
+		Spgist = 6;
 
 		IndexingType(const QString &type_name);
 		IndexingType(unsigned type_id);
