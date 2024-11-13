@@ -199,12 +199,15 @@ void Relationship::setNamePattern(PatternId pat_id, const QString &pattern)
 	if(pattern.isEmpty())
 		return;
 
-	QString aux_name = pattern,
-			pat_tokens[] = { SrcTabToken, DstTabToken,
-											 GenTabToken, SrcColToken };
+	static const QString token { "tk" };
+	QString aux_name = pattern;
+	QStringList	pat_tokens { SrcTabToken, DstTabToken,
+													 GenTabToken, SrcColToken };
 
-	for(unsigned i = 0; i < 4; i++)
-		aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
+	/* Replacing the pattern ids by a placeholder text
+	 * so the resulting name can be validated */
+	for(auto &patt : pat_tokens)
+		aux_name.replace(patt, token);
 
 	if(pat_id > FkIdxPattern)
 	{
