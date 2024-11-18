@@ -182,7 +182,7 @@ class __libcli PgModelerCliApp: public Application {
 		void listConnections();
 		void loadPlugins();
 		void listPlugins();
-		bool isPluginOptsValid(const PgModelerCliPlugin *plugin);
+		bool isPluginOptsValid(PgModelerCliPlugin *plugin);
 
 		/*! \brief Determines the execution order of the plugins by reading the
 		 *  list of options provided. This method also returns the number of

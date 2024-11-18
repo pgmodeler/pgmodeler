@@ -2162,7 +2162,7 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 
 void ModelWidget::configurePluginsActionsMenu()
 {
-	const PgModelerGuiPlugin *plugin = nullptr;
+	PgModelerGuiPlugin *plugin = nullptr;
 
 	popup_menu.addSeparator();
 
@@ -2174,7 +2174,7 @@ void ModelWidget::configurePluginsActionsMenu()
 		 * via QAction::data() we call the method PgModelerGuiPlugin::isSelectionValid
 		 * of that pluign to enable/disable the action depending on the selection
 		 * in the model according to the plugin's rules */
-		plugin = act->data().value<const PgModelerGuiPlugin *>();
+		plugin = act->data().value<PgModelerGuiPlugin *>();
 
 		if(plugin)
 			act->setEnabled(plugin->isSelectionValid());

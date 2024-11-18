@@ -19,7 +19,7 @@
 #include "pgmodelerguiplugin.h"
 #include "guiutilsns.h"
 
-QList<const PgModelerGuiPlugin *> PgModelerGuiPlugin::reg_plugins;
+QList<PgModelerGuiPlugin *> PgModelerGuiPlugin::reg_plugins;
 
 PgModelerGuiPlugin::PgModelerGuiPlugin()
 {
@@ -84,7 +84,7 @@ PgModelerGuiPlugin::~PgModelerGuiPlugin()
 	delete plugin_info_frm;
 }
 
-bool PgModelerGuiPlugin::registerPlugin(const PgModelerGuiPlugin *plugin)
+bool PgModelerGuiPlugin::registerPlugin(PgModelerGuiPlugin *plugin)
 {
 	if(!plugin || reg_plugins.contains(plugin))
 		return false;
@@ -108,7 +108,7 @@ QList<QAction *> PgModelerGuiPlugin::getPluginsActions(ActionId act_id)
 
 		/* The action's data receives a const reference to the parent plugin,
 		 * so it can be used for specific needs, e.g., in ModelWidget::configurePluginsActionMenu() */
-		act->setData(QVariant::fromValue(dynamic_cast<const PgModelerGuiPlugin *>(plug)));
+		act->setData(QVariant::fromValue(dynamic_cast<PgModelerGuiPlugin *>(plug)));
 		actions.append(act);
 	}
 
@@ -179,22 +179,22 @@ void PgModelerGuiPlugin::configurePluginInfo(const QString &title, const QString
 	icon_lbl->setPixmap(QPixmap(getPluginIcon(getPluginName())));
 }
 
-void PgModelerGuiPlugin::showPluginInfo() const
+void PgModelerGuiPlugin::showPluginInfo()
 {
 	plugin_info_frm->show();
 }
 
-QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name) const
+QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name)
 {
 	return QString(":/%1/%2.png").arg(getPluginName(), icon_name);
 }
 
-PgModelerGuiPlugin::PluginWidgets PgModelerGuiPlugin::createWidgets(QWidget *) const
+PgModelerGuiPlugin::PluginWidgets PgModelerGuiPlugin::createWidgets(QWidget *)
 {
 	return {};
 }
 
-bool PgModelerGuiPlugin::isSelectionValid() const
+bool PgModelerGuiPlugin::isSelectionValid()
 {
 	return true;
 }

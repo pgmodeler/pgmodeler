@@ -67,41 +67,41 @@ class __libcli PgModelerCliPlugin: public PgModelerPlugin {
 		virtual ~PgModelerCliPlugin();
 
 		//! \brief Returns the plugin's title
-		virtual QString getPluginTitle() const = 0;
+		virtual QString getPluginTitle() = 0;
 
 		//! \brief Returns the plugin's author
-		virtual QString getPluginAuthor() const = 0;
+		virtual QString getPluginAuthor() = 0;
 
 		//! \brief Returns the plugin's version
-		virtual QString getPluginVersion() const = 0;
+		virtual QString getPluginVersion() = 0;
 
 		//! \brief Returns the plugin's complete description
-		virtual QString getPluginDescription() const = 0;
+		virtual QString getPluginDescription() = 0;
 
 		/*! \brief Returns a list of short options used by the plugin
 		 *  Short options must be formed of one dash and at most three
 		 *  alphanumeric characters (e.g. -foo) */
-		virtual attribs_map getShortOptions() const = 0;
+		virtual attribs_map getShortOptions() = 0;
 
 		/*! \brief Returns a list of long options used by the plugin
 		 *  Long options must be formed of two dashes and at least one
 		 *  alphanumeric character (e.g. --foo-bar-abc) */
-		virtual std::map<QString, bool> getLongOptions() const = 0;
+		virtual std::map<QString, bool> getLongOptions() = 0;
 
 		/*! \brief Returns a list of known/valid plugin's options that is used to trigger
 		 * the runOperation() method. */
-		virtual QStringList getOpModeOptions() const = 0;
+		virtual QStringList getOpModeOptions() = 0;
 
 		/*! \brief Returns a list of plugin's options descriptions.
 		 *  The key of the map must be the long option id and the
 		 *  value the full option description */
-		virtual attribs_map getOptsDescription() const = 0;
+		virtual attribs_map getOptsDescription() = 0;
 
 		//! \brief Returns the id of the operation that causes the triggering of the plugin
-		virtual OperationId getOperationId() const = 0;
+		virtual OperationId getOperationId() = 0;
 
 		//! \brief Returns if the provided option is accepted by the plugin
-		virtual bool isValidOption(const QString &opt) const;
+		virtual bool isValidOption(const QString &opt);
 
 		//! \brief This method is used to execute operations before the main plugin operation.
 		virtual void runPreOperation() = 0;

@@ -2796,7 +2796,7 @@ void PgModelerCliApp::listPlugins()
 	}
 }
 
-bool PgModelerCliApp::isPluginOptsValid(const PgModelerCliPlugin *plugin)
+bool PgModelerCliApp::isPluginOptsValid(PgModelerCliPlugin *plugin)
 {
 	QString opt;
 	QRegularExpression s_opt_rx("^\\-(\\w){1,3}$"),

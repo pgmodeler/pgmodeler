@@ -68,7 +68,7 @@ class PluginsConfigWidget;
 class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 	private:
 		//! \brief Stores all successfully loaded plugins
-		static QList<const PgModelerGuiPlugin *> reg_plugins;
+		static QList<PgModelerGuiPlugin *> reg_plugins;
 
 		QLabel	*icon_lbl,
 		*title_lbl,
@@ -78,7 +78,7 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 
 		/*! \brief Register a successfully loaded plugin so it can accessible globally
 		 * via getPluginsActions() and getPluginsToolButtons() */
-		static bool registerPlugin(const PgModelerGuiPlugin *plugin);
+		static bool registerPlugin(PgModelerGuiPlugin *plugin);
 
 	protected:
 		BaseForm *plugin_info_frm;
@@ -132,40 +132,40 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 		virtual ~PgModelerGuiPlugin();
 
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
-		virtual QString getPluginTitle(void) const = 0;
+		virtual QString getPluginTitle() = 0;
 
 		//! \brief Returns the plugin's author
-		virtual QString getPluginAuthor(void) const = 0;
+		virtual QString getPluginAuthor() = 0;
 
 		//! \brief Returns the plugin's version
-		virtual QString getPluginVersion(void) const = 0;
+		virtual QString getPluginVersion() = 0;
 
 		//! \brief Returns the plugin's complete description
-		virtual QString getPluginDescription(void) const = 0;
+		virtual QString getPluginDescription() = 0;
 
 		//! \brief Shows the plugin's information dialog
-		virtual void showPluginInfo(void) const;
+		virtual void showPluginInfo();
 
 		//! \brief Returns the action identified by act_id
-		virtual QAction *getAction(ActionId act_id) const = 0;
+		virtual QAction *getAction(ActionId act_id) = 0;
 
 		//! \brief Returns the tool button inserted in database explorer instances
-		virtual QToolButton *getToolButton() const = 0;
+		virtual QToolButton *getToolButton() = 0;
 
 		//! \brief Returns the path to a plugin icon in the plugin's qrc file
-		QString getPluginIcon(const QString &icon_name) const;
+		QString getPluginIcon(const QString &icon_name);
 
 		/*! \brief Returns an struct containing a toolbutton and a widget
 		 *  that are installed in the areas in SQLExecutionWidget reserved for plugin
 		 *  widgets. The toolbutton is inserted in the top area that holds other buttons.
 		 *  The widget is inserted in the right area of the execution widget */
-		virtual PluginWidgets createWidgets(QWidget *parent) const;
+		virtual PluginWidgets createWidgets(QWidget *parent);
 
 		/*! \brief Returns whether the selection in the current database model in main window
 		 *  is valid according to the plugin's logic. This method is called in
 		 *  ModelWidget::configurePluginsActionsMenu to enable/disable the model action related
 		 *  to the plugin based on the current model widget's objects selection */
-		virtual bool isSelectionValid() const;
+		virtual bool isSelectionValid();
 
 		/*! \brief Returns the list of actions identified by act_id of all registered plugins
 		 *  This method set each action data with a const reference to the parent plugin

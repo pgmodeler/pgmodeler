@@ -28,7 +28,7 @@ PgModelerCliPlugin::~PgModelerCliPlugin()
 
 }
 
-bool PgModelerCliPlugin::isValidOption(const QString &opt) const
+bool PgModelerCliPlugin::isValidOption(const QString &opt)
 {
 	for(auto &itr : getShortOptions())
 	{
