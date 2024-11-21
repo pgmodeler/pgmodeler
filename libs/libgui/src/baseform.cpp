@@ -22,7 +22,7 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
+	setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) /* ^ Qt::WindowContextHelpButtonHint */);
 }
 
 void BaseForm::setButtonConfiguration(Messagebox::ButtonsId button_conf)
@@ -139,7 +139,12 @@ void BaseForm::setMainWidget(QWidget *widget)
 	if(!widget)	return;
 
 	setWindowTitle(widget->windowTitle());
-	setWindowIcon(widget->windowIcon());
+
+	if(!widget->windowIcon().isNull())
+		setWindowIcon(widget->windowIcon());
+	else
+		setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
+
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
 	connect(cancel_btn, &QPushButton::clicked, this, &BaseForm::reject);
