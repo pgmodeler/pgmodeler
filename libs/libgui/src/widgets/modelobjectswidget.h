@@ -34,6 +34,10 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 	private:
 		Q_OBJECT
 
+		/*! \brief This event loop is used to make the widget enter in a loop (like QDialogs) when
+		 *  the show() is called and the widget is configured as a simplified view */
+		QEventLoop event_loop;
+
 		/*! \brief Indicates if the widget must be used as a simplified view (without the most interactions).
 		The purpose to use it as simplified view is to be serve as a object pick commonly used on the
 		object selectors. See ObjectSelectorWidget for details. */
@@ -128,6 +132,7 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void setObjectVisible(ObjectType obj_type, bool visible);
 		void close();
 		void hide();
+		void show();
 
 	private slots:
 		void setAllObjectsVisible(bool value);
