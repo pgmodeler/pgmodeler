@@ -2162,6 +2162,9 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 
 void ModelWidget::configurePluginsActionsMenu()
 {
+	if(plugins_actions.isEmpty())
+		return;
+
 	PgModelerGuiPlugin *plugin = nullptr;
 
 	popup_menu.addSeparator();
@@ -4637,7 +4640,6 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 	unsigned count, i;
 	std::vector<QMenu *> submenus;
 	TableObject *tab_obj=nullptr;
-	QString str_aux;
 	bool protected_obj=false, model_protected=db_model->isProtected();
 
 	new_object_menu.clear();
@@ -4657,7 +4659,7 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		{
 			tab_obj = dynamic_cast<TableObject *>(objects.front());
 			configureBasicActions(objects.front());
-		}
+		}		
 	}
 	else
 		configureQuickMenu(nullptr);
