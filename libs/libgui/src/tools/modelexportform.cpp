@@ -399,6 +399,8 @@ void ModelExportForm::handleExportFinished()
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
 	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
+
+	qApp->alert(this);
 }
 
 void ModelExportForm::finishExport(const QString &msg)

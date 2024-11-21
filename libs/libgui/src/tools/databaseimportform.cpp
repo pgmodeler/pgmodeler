@@ -730,6 +730,7 @@ void DatabaseImportForm::handleImportCanceled()
 	ico_lbl->setPixmap(ico);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
+	qApp->alert(this);
 }
 
 void DatabaseImportForm::handleImportFinished(Exception e)

@@ -21,7 +21,7 @@
 const QStringList IndexingType::type_names {
 	"", // Reserved for Class::Null
 	"btree",
-	"brin"
+	"brin",
 	"gist",
 	"gin",
 	"hash",

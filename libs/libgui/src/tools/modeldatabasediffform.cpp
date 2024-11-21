@@ -856,6 +856,8 @@ void ModelDatabaseDiffForm::finishDiff()
 	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	step_pb->setValue(100);
 	progress_pb->setValue(100);
+
+	qApp->alert(this);
 }
 
 void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
