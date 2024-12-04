@@ -127,6 +127,23 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 			OtherAction
 		};
 
+		/*! \brief This enum controls where the model widget action of the plugin
+		 *  should be placed in the model widget popup menu */
+		enum MenuSectionId: unsigned {
+			/*! \brief The action is placed at the default section reserved for plugin actions
+			 *  in the popup menu. Currently, this section is at the very bottom of the menu */
+			DefaultSection,
+
+			//! \brief The action is placed at the top section of the popup menu
+			TopSection,
+
+			//! \brief The action is placed at the middle section of the popup menu
+			MiddleSection,
+
+			//! \brief The action is placed at the bottom section of the popup menu
+			BottomSection
+		};
+
 		PgModelerGuiPlugin();
 
 		virtual ~PgModelerGuiPlugin();
@@ -148,6 +165,10 @@ class __libgui PgModelerGuiPlugin: public PgModelerPlugin {
 
 		//! \brief Returns the action identified by act_id
 		virtual QAction *getAction(ActionId act_id) = 0;
+
+		/*! \brief Returns the menu section id where the ModelAction should be placed in
+		 *  the model widget popup menu. */
+		virtual MenuSectionId getMenuSection() = 0;
 
 		//! \brief Returns the tool button inserted in database explorer instances
 		virtual QToolButton *getToolButton() = 0;

@@ -2160,27 +2160,59 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 	return openEditingForm(tab_wgt);
 }
 
-void ModelWidget::configurePluginsActionsMenu()
+void ModelWidget::configurePluginsActions()
 {
 	if(plugins_actions.isEmpty())
 		return;
 
 	PgModelerGuiPlugin *plugin = nullptr;
+	std::map<PgModelerGuiPlugin::MenuSectionId, QAction *> menu_sects_seps;
+	PgModelerGuiPlugin::MenuSectionId menu_sect;
+	bool sep_added = false;
 
-	popup_menu.addSeparator();
+	for(auto &act : popup_menu.actions())
+	{
+		if(!act->isSeparator())
+			continue;
+
+		if(!menu_sects_seps.count(PgModelerGuiPlugin::TopSection))
+			menu_sects_seps[PgModelerGuiPlugin::TopSection] = act;
+		else if(!menu_sects_seps.count(PgModelerGuiPlugin::MiddleSection))
+			menu_sects_seps[PgModelerGuiPlugin::MiddleSection] = act;
+		else
+		{
+			menu_sects_seps[PgModelerGuiPlugin::BottomSection] = action_edit_creation_order;
+			break;
+		}
+	}
 
 	for(auto &act : plugins_actions)
 	{
-		popup_menu.addAction(act);
-
 		/* If the action carries a reference its parent plugin
 		 * via QAction::data() we call the method PgModelerGuiPlugin::isSelectionValid
 		 * of that pluign to enable/disable the action depending on the selection
 		 * in the model according to the plugin's rules */
 		plugin = act->data().value<PgModelerGuiPlugin *>();
+		menu_sect = PgModelerGuiPlugin::DefaultSection;
 
 		if(plugin)
+		{
 			act->setEnabled(plugin->isSelectionValid());
+			menu_sect = plugin->getMenuSection();
+		}
+
+		if(menu_sect == PgModelerGuiPlugin::DefaultSection)
+		{
+			if(!sep_added)
+			{
+				popup_menu.addSeparator();
+				sep_added = true;
+			}
+
+			popup_menu.addAction(act);
+		}
+		else
+			popup_menu.insertAction(menu_sects_seps[menu_sect], act);
 	}
 }
 
@@ -4662,7 +4694,10 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		}		
 	}
 	else
+	{
 		configureQuickMenu(nullptr);
+		popup_menu.addSeparator();
+	}
 
 	if(objects.size() > 1)
 	{
@@ -4802,7 +4837,7 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		popup_menu.addAction(action_edit_creation_order);
 	}
 
-	configurePluginsActionsMenu();
+	configurePluginsActions();
 }
 
 bool ModelWidget::isModified()

@@ -242,7 +242,7 @@ class __libgui ModelWidget: public QWidget {
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the submenu related to the installed plugins actions
-		void configurePluginsActionsMenu();
+		void configurePluginsActions();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
