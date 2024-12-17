@@ -1090,10 +1090,7 @@ void TableWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			//Messagebox msg_box;
-
 			if(e.getErrorCode()==ErrorCode::RemInvalidatedObjects)
-				//msg_box.show(e);
 				Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
