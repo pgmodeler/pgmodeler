@@ -1805,13 +1805,13 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 
 			pk_columns.push_back(column_aux);
 
-			//column=new Column;
 			column = createObject<Column>();
 			gen_columns.push_back(column);
 
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
 			column->setDefaultValue("");
+			column->setGenerated(false);
 			column->setComment("");
 
 			prev_name=prev_ref_col_names[column_aux->getObjectId()];
@@ -1844,14 +1844,6 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 			column->setParentTable(nullptr);
 			column->setParentRelationship(this);
 
-			//Converting the serial like types
-			/* if(column->getType() == "serial")
-				column->setType(PgSqlType("integer"));
-			else if(column->getType() == "bigserial")
-				column->setType(PgSqlType("bigint"));
-			else if(column->getType() == "smallserial")
-				column->setType(PgSqlType("smallint")); */
-
 			if(column->getType().isSerialType())
 				column->setType(column->getType().getAliasType());
 
@@ -1882,7 +1874,12 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 	{
 		while(!gen_columns.empty())
 		{
-			recv_tab->removeObject(gen_columns.back());
+			try
+			{
+				recv_tab->removeObject(gen_columns.back());
+			}
+			catch(Exception &)	{}
+
 			gen_columns.pop_back();
 		}
 
