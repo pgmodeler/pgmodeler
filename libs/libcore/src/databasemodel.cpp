@@ -1495,96 +1495,91 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 	if(!table)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(table->getDatabase()==this)
+	if(table->getDatabase() != this)
+		return;
+
+	Table *ref_tab = nullptr;
+	BaseRelationship *rel = nullptr;
+	unsigned idx = 0;
+	std::vector<Constraint *> fks;
+	std::vector<BaseObject *>::iterator itr, itr_end;
+
+	table->getForeignKeys(fks);
+
+	/* First remove the invalid relationships (the foreign key that generates the
+		relationship no longer exists) */
+	itr = base_relationships.begin();
+	itr_end = base_relationships.end();
+
+	idx = 0;
+	while(itr != itr_end)
 	{
-		Table *ref_tab=nullptr;
-		BaseRelationship *rel=nullptr;
-		unsigned idx;
-		std::vector<Constraint *> fks;
-				std::vector<BaseObject *>::iterator itr, itr_end;
+		rel = dynamic_cast<BaseRelationship *>(*itr);
 
-		table->getForeignKeys(fks);
-
-		/* First remove the invalid relationships (the foreign key that generates the
-			relationship no longer exists) */
-		itr = base_relationships.begin();
-		itr_end = base_relationships.end();
-
-		idx = 0;
-		while(itr != itr_end)
+		if(rel->getRelationshipType() == BaseRelationship::RelationshipFk &&
+				(rel->getTable(BaseRelationship::SrcTable) == table))
 		{
-			rel = dynamic_cast<BaseRelationship *>(*itr);
+			Constraint *fk = rel->getReferenceForeignKey();
+			ref_tab = dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
 
-			if(rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
-					(rel->getTable(BaseRelationship::SrcTable)==table ||
-					 rel->getTable(BaseRelationship::DstTable)==table))
+			/* Removes the relationship if the following cases happen:
+			 * 1) The foreign key references a table different from ref_tab, which means, the user
+			 *		have changed the fk manually by setting a new referenced table but the relationship tied to the fk
+			 *		does not reflect the new reference.
+			 *
+			 * 2) The fk references the correct table but the source table does not own the fk anymore, which means,
+			 *		the fk as removed manually by the user. */
+			if((table->getObjectIndex(fk) >= 0 && fk->getReferencedTable() != ref_tab) ||
+				 (table->getObjectIndex(fk) < 0 && fk->getReferencedTable() == ref_tab))
 			{
-				Constraint *fk = rel->getReferenceForeignKey();
-
-				if(rel->getTable(BaseRelationship::SrcTable)==table)
-					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
-				else
-					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
-
-				/* Removes the relationship if the following cases happen:
-				 * 1) The foreign key references a table different from ref_tab, which means, the user
-				 *		have changed the fk manually by setting a new referenced table but the relationship tied to the fk
-				 *		does not reflect the new reference.
-				 *
-				 * 2) The fk references the correct table but the source table does not own the fk anymore, which means,
-				 *		the fk as removed manually by the user. */
-				if((table->getObjectIndex(fk) >= 0 && fk->getReferencedTable() != ref_tab) ||
-					 (table->getObjectIndex(fk) < 0 && fk->getReferencedTable() == ref_tab))
-				{
-					removeRelationship(rel);
-					itr=base_relationships.begin() + idx;
-					itr_end=base_relationships.end();
-				}
-				else
-				{
-					rel->setModified(!loading_model);
-					itr++; idx++;
-				}
+				removeRelationship(rel);
+				itr = base_relationships.begin() + idx;
+				itr_end = base_relationships.end();
 			}
 			else
 			{
+				rel->setModified(!loading_model);
 				itr++; idx++;
 			}
 		}
-
-		//Creating the relationships from the foreign keys
-		for(auto &fk : fks)
+		else
 		{
-			ref_tab = dynamic_cast<Table *>(fk->getReferencedTable());
+			itr++; idx++;
+		}
+	}
 
-			//Only creates the relationship if doesn't exist one between the tables
-			rel = getRelationship(table, ref_tab, fk);
+	//Creating the relationships from the foreign keys
+	for(auto &fk : fks)
+	{
+		ref_tab = dynamic_cast<Table *>(fk->getReferencedTable());
 
-			if(!rel && ref_tab->getDatabase()==this)
+		//Only creates the relationship if doesn't exist one between the tables
+		rel = getRelationship(table, ref_tab, fk);
+
+		if(!rel && ref_tab->getDatabase()==this)
+		{
+			bool ref_mandatory = false;
+
+			for(auto &col : fk->getColumns(Constraint::SourceCols))
 			{
-				bool ref_mandatory = false;
-
-				for(auto &col : fk->getColumns(Constraint::SourceCols))
+				if(col->isNotNull())
 				{
-					if(col->isNotNull())
-					{
-						ref_mandatory = true;
-						break;
-					}
+					ref_mandatory = true;
+					break;
 				}
-
-				rel = new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, ref_mandatory);
-				rel->setReferenceForeignKey(fk);
-				rel->setCustomColor(Qt::transparent);
-
-				/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
-					 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
-					 the name of the new one */
-				if(getObjectIndex(rel->getName(), ObjectType::BaseRelationship) >= 0)
-					rel->setName(CoreUtilsNs::generateUniqueName(rel, base_relationships));
-
-				addRelationship(rel);
 			}
+
+			rel = new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, ref_mandatory);
+			rel->setReferenceForeignKey(fk);
+			rel->setCustomColor(Qt::transparent);
+
+			/* Workaround: In some cases the combination of the two tablenames can generate a duplicated relationship
+				 name so it`s necessary to check if a relationship with the same name already exists. If exists changes
+				 the name of the new one */
+			if(getObjectIndex(rel->getName(), ObjectType::BaseRelationship) >= 0)
+				rel->setName(CoreUtilsNs::generateUniqueName(rel, base_relationships));
+
+			addRelationship(rel);
 		}
 	}
 }
