@@ -305,6 +305,7 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 
 	QString path, filename = search_path + DirSeparator + PgmPathsConfFile + ConfigurationExt;
 	QSettings pth_file(filename, QSettings::IniFormat);
+	QFileInfo fi;
 
 	for(auto &var : env_vars)
 	{
@@ -318,7 +319,8 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 		else
 			path = getenv(var.toStdString().c_str());
 
-		CustomPaths[var] = QDir::toNativeSeparators(path);
+		fi.setFile(path);
+		CustomPaths[var] = QDir::toNativeSeparators(fi.absoluteFilePath());
 	}
 }
 
