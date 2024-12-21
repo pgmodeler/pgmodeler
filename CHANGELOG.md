@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+v1.1.6
+------
+<em>Release date: December 21, 2024</em><br/>
+
+* [Fix] Fixed a bug in the FK relationships update routine that was causing more relationships to be deleted than what really needed to be.
+* [Fix] Fixed a crash when creating a many-to-many relationship where one or more columns of the involved primary keys use generated default values (GENERATED AS).
+* [Fix] Fixed a bug in the routine that updates relationships' generated objects that was causing the application to hang up when importing a simple hierarchy of tables.
+
 v1.1.5
 ------
 <em>Release date: October 28, 2024</em><br/>
