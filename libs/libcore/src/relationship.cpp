@@ -1409,9 +1409,14 @@ bool Relationship::updateGeneratedObjects()
 
 	Table *recv_tab = dynamic_cast<Table *>(getReceiverTable()),
 			*ref_tab = dynamic_cast<Table *>(getReferenceTable());
+	bool updated =  false;
+	unsigned cols_cnt = 0;
+
+	cols_cnt = gen_columns.size();
 
 	if(rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn)
 	{
+		updated = true;
 		copyColumns(ref_tab, recv_tab, gen_columns.front()->isNotNull(), false, true);
 
 		// Refreshing the generated foreign key columns
@@ -1462,7 +1467,7 @@ bool Relationship::updateGeneratedObjects()
 	if(pk_special)
 		addGeneratedColsToSpecialPk();
 
-	return true;
+	return updated || (cols_cnt != gen_columns.size());
 }
 
 void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
@@ -1800,13 +1805,13 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 
 			pk_columns.push_back(column_aux);
 
-			//column=new Column;
 			column = createObject<Column>();
 			gen_columns.push_back(column);
 
 			(*column)=(*column_aux);
 			column->setNotNull(not_null);
 			column->setDefaultValue("");
+			column->setGenerated(false);
 			column->setComment("");
 
 			prev_name=prev_ref_col_names[column_aux->getObjectId()];
@@ -1839,14 +1844,6 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 			column->setParentTable(nullptr);
 			column->setParentRelationship(this);
 
-			//Converting the serial like types
-			/* if(column->getType() == "serial")
-				column->setType(PgSqlType("integer"));
-			else if(column->getType() == "bigserial")
-				column->setType(PgSqlType("bigint"));
-			else if(column->getType() == "smallserial")
-				column->setType(PgSqlType("smallint")); */
-
 			if(column->getType().isSerialType())
 				column->setType(column->getType().getAliasType());
 
@@ -1877,7 +1874,12 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 	{
 		while(!gen_columns.empty())
 		{
-			recv_tab->removeObject(gen_columns.back());
+			try
+			{
+				recv_tab->removeObject(gen_columns.back());
+			}
+			catch(Exception &)	{}
+
 			gen_columns.pop_back();
 		}
 
