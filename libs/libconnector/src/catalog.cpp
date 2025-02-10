@@ -58,7 +58,7 @@ const std::map<ObjectType, QString> Catalog::obj_relnames {
 	{ObjectType::Database, "pg_database"},	{ObjectType::Domain, "pg_type"},
 	{ObjectType::Extension, "pg_extension"},	{ObjectType::EventTrigger, "pg_event_trigger"},
 	{ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},	{ObjectType::ForeignTable, "pg_foreign_table"},
-	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_index"},
+	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_class"},
 	{ObjectType::Operator, "pg_operator"},	{ObjectType::OpClass, "pg_opclass"},
 	{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
 	{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
