@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1560,7 +1560,8 @@ void ModelWidget::convertRelationshipNN()
 						/* Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
 							The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel1 = new Relationship(Relationship::Relationship1n,
-																		src_tab, tab, src_mand, false, !rel->isSiglePKColumn());
+																		src_tab, tab, src_mand, false,
+																		!rel->isSiglePKColumn());
 						rel1->setLayers(layers);
 						rel1->setCustomColor(rel_color);
 						rel1->setLayers(layers);
@@ -1571,7 +1572,8 @@ void ModelWidget::convertRelationshipNN()
 						/*Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 							The relationship will be identifier if the single pk column attribute of the original relationship is false */
 						rel2 = new Relationship(Relationship::Relationship1n,
-																		dst_tab, tab, dst_mand, false, !rel->isSiglePKColumn());
+																		dst_tab, tab, dst_mand,
+																		false, !rel->isSiglePKColumn());
 						rel2->setLayers(layers);
 						rel2->setCustomColor(rel_color);
 						rel2->setLayers(layers);
@@ -1646,10 +1648,10 @@ void ModelWidget::convertRelationship1N()
 		Table *recv_tab = dynamic_cast<Table *>(rel->getReceiverTable()),
 				*ref_tab = dynamic_cast<Table *>(rel->getReferenceTable());
 		QStringList constrs_xmls;
-		Column *column = nullptr;
+		Column *column = nullptr;		
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
 		std::vector<Column *> columns;
-		QString pk_name, rel_name = rel->getName();
+		QString pk_name, rel_name = rel->getName(), fk_index_xml;
 		bool register_pk = false;
 		QColor rel_color = rel->getCustomColor();
 		QList<unsigned> layers = rel->getLayers();
@@ -1701,6 +1703,9 @@ void ModelWidget::convertRelationship1N()
 			columns.push_back(column);
 		}
 
+		if(rel->getGeneratedIndex())
+			fk_index_xml = rel->getGeneratedIndex()->getSourceCode(SchemaParser::XmlCode);
+
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		op_list->startOperationChain();
 
@@ -1741,6 +1746,14 @@ void ModelWidget::convertRelationship1N()
 			constr = db_model->createConstraint(recv_tab);
 			recv_tab->addConstraint(constr);
 			op_list->registerObject(constr, Operation::ObjCreated, - 1, recv_tab);
+		}
+
+		if(!fk_index_xml.isEmpty())
+		{
+			xmlparser->restartParser();
+			xmlparser->loadXMLBuffer(fk_index_xml);
+			Index *index = db_model->createIndex();
+			op_list->registerObject(index, Operation::ObjCreated, - 1, recv_tab);
 		}
 
 		/* Resetting the relatinship added columns/constraint indexes in the table
@@ -1850,11 +1863,6 @@ void ModelWidget::updateSceneLayers()
 
 	scene->blockSignals(false);
 }
-
-/* void ModelWidget::setPluginActions(const QList<QAction *> &plugin_acts)
-{
-	plugins_actions = plugin_acts;
-} */
 
 void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 {
@@ -2152,12 +2160,60 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 	return openEditingForm(tab_wgt);
 }
 
-void ModelWidget::configurePluginsActionsMenu()
+void ModelWidget::configurePluginsActions()
 {
-	popup_menu.addSeparator();
+	if(plugins_actions.isEmpty())
+		return;
+
+	PgModelerGuiPlugin *plugin = nullptr;
+	std::map<PgModelerGuiPlugin::MenuSectionId, QAction *> menu_sects_seps;
+	PgModelerGuiPlugin::MenuSectionId menu_sect;
+	bool sep_added = false;
+
+	for(auto &act : popup_menu.actions())
+	{
+		if(!act->isSeparator())
+			continue;
+
+		if(!menu_sects_seps.count(PgModelerGuiPlugin::TopSection))
+			menu_sects_seps[PgModelerGuiPlugin::TopSection] = act;
+		else if(!menu_sects_seps.count(PgModelerGuiPlugin::MiddleSection))
+			menu_sects_seps[PgModelerGuiPlugin::MiddleSection] = act;
+		else
+		{
+			menu_sects_seps[PgModelerGuiPlugin::BottomSection] = action_edit_creation_order;
+			break;
+		}
+	}
 
 	for(auto &act : plugins_actions)
-		popup_menu.addAction(act);
+	{
+		/* If the action carries a reference its parent plugin
+		 * via QAction::data() we call the method PgModelerGuiPlugin::isSelectionValid
+		 * of that pluign to enable/disable the action depending on the selection
+		 * in the model according to the plugin's rules */
+		plugin = act->data().value<PgModelerGuiPlugin *>();
+		menu_sect = PgModelerGuiPlugin::DefaultSection;
+
+		if(plugin)
+		{
+			act->setEnabled(plugin->isSelectionValid());
+			menu_sect = plugin->getMenuSection();
+		}
+
+		if(menu_sect == PgModelerGuiPlugin::DefaultSection)
+		{
+			if(!sep_added)
+			{
+				popup_menu.addSeparator();
+				sep_added = true;
+			}
+
+			popup_menu.addAction(act);
+		}
+		else
+			popup_menu.insertAction(menu_sects_seps[menu_sect], act);
+	}
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4553,7 +4609,8 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 
 	if(tab_obj &&
 			(tab_obj->getObjectType() == ObjectType::Column ||
-			 tab_obj->getObjectType() == ObjectType::Constraint))
+			 tab_obj->getObjectType() == ObjectType::Constraint ||
+			 tab_obj->getObjectType() == ObjectType::Index))
 	{
 		Column *col = dynamic_cast<Column *>(tab_obj);
 
@@ -4615,7 +4672,6 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 	unsigned count, i;
 	std::vector<QMenu *> submenus;
 	TableObject *tab_obj=nullptr;
-	QString str_aux;
 	bool protected_obj=false, model_protected=db_model->isProtected();
 
 	new_object_menu.clear();
@@ -4635,10 +4691,13 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		{
 			tab_obj = dynamic_cast<TableObject *>(objects.front());
 			configureBasicActions(objects.front());
-		}
+		}		
 	}
 	else
+	{
 		configureQuickMenu(nullptr);
+		popup_menu.addSeparator();
+	}
 
 	if(objects.size() > 1)
 	{
@@ -4778,7 +4837,7 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 		popup_menu.addAction(action_edit_creation_order);
 	}
 
-	configurePluginsActionsMenu();
+	configurePluginsActions();
 }
 
 bool ModelWidget::isModified()
@@ -4809,6 +4868,11 @@ OperationList *ModelWidget::getOperationList()
 std::vector<BaseObject *> ModelWidget::getSelectedObjects()
 {
 	return selected_objects;
+}
+
+bool ModelWidget::hasSelectedObjects()
+{
+	return !selected_objects.empty();
 }
 
 void ModelWidget::setSaveLastCanvasPosition(bool value)

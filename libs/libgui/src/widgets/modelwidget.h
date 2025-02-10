@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ class __libgui ModelWidget: public QWidget {
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the submenu related to the installed plugins actions
-		void configurePluginsActionsMenu();
+		void configurePluginsActions();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
@@ -441,6 +441,9 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Returns the currently selected list of objects
 		std::vector<BaseObject *> getSelectedObjects();
+
+		//! \brief Returns the whether there are at least one object selected in the model
+		bool hasSelectedObjects();
 
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ LayersWidget::LayersWidget(QWidget *parent) : QDialog(parent)
 
 	frame->installEventFilter(this);
 	handle_lbl->installEventFilter(this);
+	layer_name_edt->installEventFilter(this);
+	layers_lst->installEventFilter(this);
 
 	layers_changed = false;
 
@@ -69,6 +71,16 @@ bool LayersWidget::eventFilter(QObject *object, QEvent *event)
 		}
 
 		GuiUtilsNs::resizeFloatingWidget(this, m_event, corner_id);
+	}
+	else if(event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+
+		if(k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return)
+		{
+			apply_tb->click();
+			return true;
+		}
 	}
 
 	return QDialog::eventFilter(object, event);
@@ -113,6 +125,7 @@ void LayersWidget::setAttributes(ModelWidget *model_wgt)
 	}
 
 	layers_lst->setEnabled(layers.size() > 1);
+	layer_name_edt->setFocus();
 }
 
 bool LayersWidget::isLayersChanged()

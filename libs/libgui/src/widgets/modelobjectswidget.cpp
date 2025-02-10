@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		model_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
 																				GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		setMinimumSize(250, 300);
-		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+		setWindowModality(Qt::ApplicationModal);
 		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
 		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
@@ -133,6 +133,23 @@ void ModelObjectsWidget::hide()
 	emit s_visibilityChanged(false);
 }
 
+void ModelObjectsWidget::show()
+{
+	QWidget::show();
+
+	/* When in simplified view we use an event loop to block the execution in
+	 * the show event until the user takes an action in the widget that
+	 * causes its closing */
+	if(simplified_view)
+	{
+		connect(this, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](BaseObject *, bool visible) {
+			if(!visible)
+				event_loop.quit();
+		});
+
+		event_loop.exec();
+	}
+}
 
 void ModelObjectsWidget::showObjectMenu()
 {

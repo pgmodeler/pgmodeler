@@ -11,3 +11,7 @@
 	{constraints}
 %end
 
+%if {rel1n} %or {relnn} %and {index} %then
+	{index}
+%end
+

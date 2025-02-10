@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -154,19 +154,10 @@ void ResultSetModel::append(ResultSet &res)
 			{
 				do
 				{
-					for(int col=0; col < col_count; col++)
+					for(int col = 0; col < col_count; col++)
 					{
-						if(col < res.getColumnCount())
-						{
-							if(res.isColumnBinaryFormat(col))
-								item_data.push_back(tr("[binary data]"));
-							else
-								item_data.push_back(res.getColumnValue(col));
-						}
-						else
-						{
-							item_data.push_back("");
-						}
+						item_data.push_back(col < res.getColumnCount() ?
+																res.getColumnValue(col) : "");
 					}
 				}
 				while(res.accessTuple(ResultSet::NextTuple));

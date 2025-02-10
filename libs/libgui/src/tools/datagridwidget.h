@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -134,6 +134,9 @@ class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
 		/*! \brief This event filter toggles the visibility of the columns in the data grid
 		 *  when clicking the columns items in the "Columns"tab in the filter widget */
 		bool eventFilter(QObject *object, QEvent *event);
+
+		//! \brief Updates the information about operations pending over the rows
+		void updateRowOperationsInfo();
 
 	public:
 		DataGridWidget(const QString &sch_name, const QString &tab_name,

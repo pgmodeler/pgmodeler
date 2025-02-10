@@ -10,5 +10,6 @@ $tb $tb [<patterns type=] "{type}"
 %if {pk-pattern} %then [ pk-pattern=] "&{pk-pattern}" %end
 %if {uq-pattern} %then [ uq-pattern=] "&{uq-pattern}" %end
 %if {pk-col-pattern} %then [ pk-col-pattern=] "&{pk-col-pattern}" %end
+%if {fk-idx-pattern} %then [ fk-idx-pattern=] "&{fk-idx-pattern}" %end
 
 [/>] $br

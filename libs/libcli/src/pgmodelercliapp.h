@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ class __libcli PgModelerCliApp: public Application {
 		void listConnections();
 		void loadPlugins();
 		void listPlugins();
-		bool isPluginOptsValid(const PgModelerCliPlugin *plugin);
+		bool isPluginOptsValid(PgModelerCliPlugin *plugin);
 
 		/*! \brief Determines the execution order of the plugins by reading the
 		 *  list of options provided. This method also returns the number of

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 #include <QSettings>
 
 const QString GlobalAttributes::PgModelerVersion {
-	QString("1.2.0-alpha1")
+	/** Base version number **/
+	QString("1.2.0-beta")
 
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
@@ -304,6 +305,7 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 
 	QString path, filename = search_path + DirSeparator + PgmPathsConfFile + ConfigurationExt;
 	QSettings pth_file(filename, QSettings::IniFormat);
+	QFileInfo fi;
 
 	for(auto &var : env_vars)
 	{
@@ -317,7 +319,8 @@ void GlobalAttributes::setCustomPaths(const QString &search_path)
 		else
 			path = getenv(var.toStdString().c_str());
 
-		CustomPaths[var] = QDir::toNativeSeparators(path);
+		fi.setFile(path);
+		CustomPaths[var] = QDir::toNativeSeparators(fi.absoluteFilePath());
 	}
 }
 

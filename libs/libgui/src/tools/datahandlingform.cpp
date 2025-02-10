@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ DataHandlingForm::DataHandlingForm(QWidget * parent, Qt::WindowFlags f): QDialog
 		fnt = btn->font();
 		fnt.setWeight(QFont::Normal);
 		btn->setFont(fnt);
-		GuiUtilsNs::createDropShadow(btn, 1, 1, 5);
+		GuiUtilsNs::updateDropShadow(btn);
 	}
 
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -288,7 +288,7 @@ void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, 
 	data_grid_wgt->setObjectName(data_grid_name);
 	int tab_idx = data_grids_tbw->addTab(data_grid_wgt,
 																			 QIcon(GuiUtilsNs::getIconPath(obj_type)),
-																			 data_grid_name);
+																			 /* data_grid_name */ table);
 
 	data_grids_tbw->setCurrentIndex(tab_idx);
 

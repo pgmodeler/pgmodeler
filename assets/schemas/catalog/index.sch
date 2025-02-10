@@ -40,10 +40,16 @@
 		[ AND ]
 	%end
 
-	# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
-	[ cl.relispartition IS FALSE
-	  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) 
-      AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+	%if ({pgsql-ver} >=f "10.0") %then
+		# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+		[ cl.relispartition IS FALSE
+		  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE) 
+    		  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+	%else
+		# This is just a place holder for the above clause 
+		# because in version below 10 there is no relispartition field	
+		[ TRUE ]
+	%end
 
 	%if {not-ext-object} %then
 		[ AND ]( {not-ext-object} )
@@ -123,10 +129,16 @@
 			[ AND ]
 		%end
 
-		# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
-		[ cl.relispartition IS FALSE
-		  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
-		  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+		%if ({pgsql-ver} >=f "10.0") %then
+			# cl.relispartition IS FALSE avoids retriving indexes created automatically in partition tables
+			[ cl.relispartition IS FALSE
+			  AND (id.indisprimary IS FALSE AND id.indisexclusion IS FALSE ) 
+			  AND ((SELECT count(oid) FROM pg_constraint WHERE conindid=id.indexrelid)=0) ]
+		%else
+			# This is just a place holder for the above clause 
+			# because in version below 10 there is no relispartition field	
+			[ TRUE ]
+		%end
 
 		%if {not-ext-object} %then
 			[ AND ]( {not-ext-object} )
