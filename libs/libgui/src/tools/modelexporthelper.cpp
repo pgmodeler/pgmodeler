@@ -835,11 +835,20 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
-			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
-			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
-			reg_aux;
+	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)", QRegularExpression::DontCaptureOption),
+
+			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab),
+									QRegularExpression::DontCaptureOption),
+
+			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+",
+							 QRegularExpression::DontCaptureOption),
+
+			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab),
+											 QRegularExpression::DontCaptureOption),
+			reg_aux,
+
+			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|DROP)(.)+)$").arg(Attributes::DdlEndToken, UtilsNs::DataSeparator),
+																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
 
 	std::vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
@@ -876,25 +885,26 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			aux_prog=progress + ((curr_size/static_cast<double>(buf_size)) * factor);
 
 			/* If the simulation mode is off and the drop objects option is checked,
-		 check if the current line matches one of the accepted drop commands
-		 (DROP [OBJECT] or ALTER TABLE...DROP) */
+			 * check if the current line matches one of the accepted drop commands
+			 * (DROP [OBJECT] or ALTER TABLE...DROP) */
 			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
-				comm_cnt=lin.count("--");
-				lin=lin.remove("--").trimmed();
+				comm_cnt = lin.count("--");
+				lin = lin.remove("--").trimmed();
 
 				/* If the count of comment indicators (--) is 1 indicates that the DDL of the
-		   object related to the DROP is enabled, so the DROP is executed otherwise ignored */
-				if(comm_cnt==1)
+				 * object related to the DROP is enabled, so the DROP is executed otherwise ignored */
+				if(comm_cnt == 1)
 				{
-					sql_cmd=lin + "\n";
-					ddl_tk_found=true;
+					sql_cmd = lin + "\n";
+					ddl_tk_found = true;
 				}
 			}
 			else
 			{
-				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegularExpression("^(--)+(.)+$"));
+				ddl_tk_found = lin.contains(Attributes::DdlEndToken);
+				//lin.remove(QRegularExpression("^(--)+(.)+$"));
+				lin.remove(comm_regexp);
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
