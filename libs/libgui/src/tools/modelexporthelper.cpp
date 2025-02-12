@@ -903,7 +903,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			else
 			{
 				ddl_tk_found = lin.contains(Attributes::DdlEndToken);
-				//lin.remove(QRegularExpression("^(--)+(.)+$"));
 				lin.remove(comm_regexp);
 
 				//If the line isn't empty after cleanup it will be included on sql command
