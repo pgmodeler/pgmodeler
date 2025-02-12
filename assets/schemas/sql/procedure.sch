@@ -37,10 +37,11 @@
 			[, ] '{symbol}'
 		%end
 	%else
-		[$$]
+		$br [$function$]
 
-		$br {definition} $br
-		[$$]
+		$br {definition} 
+
+		$br [$function$]
 	%end
 
 	;

@@ -65,10 +65,11 @@ $tb [AS ]
 	%if ({language} == "internal") %then
 		'{definition}'
 	%else
-		[$$]
+		$br [$function$]
 
-		$br {definition} $br
-		[$$]
+		$br {definition} 
+
+		$br [$function$]
 	%end
 %end
 
