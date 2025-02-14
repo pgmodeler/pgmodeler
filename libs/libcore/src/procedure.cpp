@@ -23,14 +23,6 @@ Procedure::Procedure() : BaseFunction()
 	obj_type = ObjectType::Procedure;
 }
 
-void Procedure::addParameter(Parameter param)
-{
-	if(param.isOut() && !param.isIn())
-		throw Exception(ErrorCode::InvProcedureParamOutMode, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-	BaseFunction::addParameter(param);
-}
-
 QString Procedure::getSourceCode(SchemaParser::CodeType def_type, bool)
 {
 	QString code_def = getCachedCode(def_type, false);
