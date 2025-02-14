@@ -18,6 +18,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install libext
+      run: sudo apt-get update && sudo apt-get install -y libext      
       
     - name: Installing Qt framework
       uses: jurplel/install-qt-action@v3
