@@ -1844,6 +1844,11 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		sig_idx = match.capturedStart();
 	}
 
+	//Renaming the function's behavior-type value STRICT to RETURNS NULL ON NULL INPUT
+	QString btype = QString(Attributes::BehaviorType + "=\"%1\"");
+	if(obj_xml.contains(Attributes::BehaviorType))
+		obj_xml.replace(btype.arg("STRICT"), btype.arg("RETURNS NULL ON NULL INPUT"));
+
 	//Rename the attribute layer to layers
 	QRegularExpression layer_regexp("(layer)( )*(=)");
 	if(obj_xml.contains(QRegularExpression(layer_regexp)))
