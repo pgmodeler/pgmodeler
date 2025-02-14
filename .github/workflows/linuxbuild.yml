@@ -1,12 +1,12 @@
-name: Linux build
+nname: Linux build
 
 on:
   push:
-    branches: [ main, develop, 1.* ]
+    branches: [ main, develop, 1.*, runner-tests ]
     tags: 1.*
     
   pull_request:
-    branches: [ main, develop, 1.* ]
+    branches: [ main, develop, 1.*, runner-tests ]
 
 jobs:
   build:
