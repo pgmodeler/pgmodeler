@@ -2816,8 +2816,8 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 		type_oid=itr->second[Attributes::TypeOid].toUInt();
 
 		/* If the type has an entry on the types map and its OID is greater than system object oids,
-	 means that it's a user defined type, thus, there is the need to check if the type
-	 is registered. */
+		 * means that it's a user defined type, thus, there is the need to check if the type
+		 * is registered. */
 		if(types.count(type_oid) !=0 && type_oid > catalog.getLastSysObjectOID())
 		{
 			/* Building the type name prepending the schema name in order to search it on
@@ -2861,9 +2861,9 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 		}
 
 		/* Checking if the type used by the column exists (is registered),
-	 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
-	 array types [] that will not be automatically created because they are derivated from
-	 the non-array type, this way, if the original type is created there is no need to create the array form */
+		 * if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+		 * array types [] that will not be automatically created because they are derivated from
+		 * the non-array type, this way, if the original type is created there is no need to create the array form */
 		if(auto_resolve_deps && !is_type_registered && !type_name.contains("[]"))
 			// Try to create the missing data type
 			getType(itr->second[Attributes::TypeOid], false);
@@ -3398,7 +3398,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				type_oid > catalog.getLastSysObjectOID()) &&
 			 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 		{
-			obj_name.prepend(sch_name + ".");
+			obj_name = BaseObject::formatName(obj_name, false);
+			obj_name.prepend(BaseObject::formatName(sch_name, false) + ".");
 		}
 
 		/* In case of auto resolve dependencies, if the type is a user defined one and is
