@@ -2367,11 +2367,12 @@ void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 	if(aux_table)
 	{
 		//Remove all indexes that reference columns added by relationship
-		count=aux_table->getIndexCount();
+		count = aux_table->getIndexCount();
 		for(i=0; i < count; i++)
 		{
-			index=aux_table->getIndex(i);
-			if(index->isReferRelationshipAddedColumn())
+			index = aux_table->getIndex(i);
+
+			if(!index->isAddedByLinking() && index->isReferRelationshipAddedColumn())
 			{
 				aux_table->removeObject(index);
 				delete index;
