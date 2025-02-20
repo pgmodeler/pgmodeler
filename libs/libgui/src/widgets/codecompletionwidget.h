@@ -26,7 +26,8 @@ the syntax highlighter installed on it.
 #ifndef CODE_COMPLETION_WIDGET_H
 #define CODE_COMPLETION_WIDGET_H
 
-#include <QWidget>
+#include <QCheckBox>
+#include <QListWidget>
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 #include "catalog.h"

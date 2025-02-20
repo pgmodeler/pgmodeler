@@ -18,6 +18,7 @@
 
 #include "pgmodelerapp.h"
 #include "mainwindow.h"
+#include <QSplashScreen>
 
 #ifndef Q_OS_WIN
 #include "execinfo.h"

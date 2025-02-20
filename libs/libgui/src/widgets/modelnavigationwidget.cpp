@@ -18,6 +18,7 @@
 
 #include "modelnavigationwidget.h"
 #include "guiutilsns.h"
+#include <QToolTip>
 
 ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 {

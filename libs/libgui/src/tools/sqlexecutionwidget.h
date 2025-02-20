@@ -25,6 +25,8 @@
 #ifndef SQL_EXECUTION_WIDGET_H
 #define SQL_EXECUTION_WIDGET_H
 
+#include <QThread>
+#include <QMenu>
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"

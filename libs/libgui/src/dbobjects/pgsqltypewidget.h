@@ -25,7 +25,7 @@
 #ifndef PGSQL_TYPE_WIDGET_H
 #define PGSQL_TYPE_WIDGET_H
 
-#include <QtWidgets>
+#include <QWidget>
 #include "ui_pgsqltypewidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"

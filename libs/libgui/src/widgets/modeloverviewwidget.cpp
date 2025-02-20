@@ -18,6 +18,7 @@
 
 #include "modeloverviewwidget.h"
 #include "modelwidget.h"
+#include <QScrollBar>
 
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint | Qt::Tool)
 {

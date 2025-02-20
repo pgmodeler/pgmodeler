@@ -20,6 +20,7 @@
 #include "guiutilsns.h"
 #include "coreutilsns.h"
 #include "messagebox.h"
+#include <QTimer>
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {

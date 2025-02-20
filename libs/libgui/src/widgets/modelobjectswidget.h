@@ -25,7 +25,6 @@
 #ifndef MODEL_OBJECTS_WIDGET_H
 #define MODEL_OBJECTS_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "objecttypeslistwidget.h"

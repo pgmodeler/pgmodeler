@@ -27,6 +27,8 @@
 #include "baseform.h"
 #include "utilsns.h"
 #include "qtconnectmacros.h"
+#include <QActionGroup>
+#include <QTemporaryFile>
 
 const QString SchemaEditorForm::UntitledFile { QT_TR_NOOP("(untitled)") };
 

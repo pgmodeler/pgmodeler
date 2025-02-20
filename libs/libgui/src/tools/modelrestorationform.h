@@ -26,7 +26,6 @@
 #define MODEL_RESTORATION_FORM_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
 #include "ui_modelrestorationform.h"
 
 class __libgui ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {

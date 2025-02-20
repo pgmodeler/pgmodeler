@@ -17,6 +17,7 @@
 */
 
 #include "textboxwidget.h"
+#include <QColorDialog>
 
 TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Textbox)
 {

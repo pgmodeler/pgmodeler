@@ -26,7 +26,9 @@
 #define FILE_SELECTOR_WIDGET_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
+#include <QFileDialog>
+#include <QLabel>
+#include <QRegularExpression>
 #include "ui_fileselectorwidget.h"
 
 class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {

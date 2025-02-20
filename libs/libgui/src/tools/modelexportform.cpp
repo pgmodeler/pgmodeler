@@ -21,6 +21,7 @@
 #include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
+#include <QThread>
 
 bool ModelExportForm::low_verbosity {false};
 

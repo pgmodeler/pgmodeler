@@ -25,7 +25,7 @@
 #ifndef MODEL_FIX_FORM_H
 #define MODEL_FIX_FORM_H
 
-#include <QtWidgets>
+#include <QProcess>
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
 

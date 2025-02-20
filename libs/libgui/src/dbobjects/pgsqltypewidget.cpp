@@ -17,6 +17,7 @@
 */
 
 #include "pgsqltypewidget.h"
+#include <QCompleter>
 
 const QString PgSQLTypeWidget::InvalidType {"invalid_type"};
 

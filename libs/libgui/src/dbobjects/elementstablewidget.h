@@ -25,7 +25,6 @@
 #ifndef ELEMENTS_TABLES_WIDGET_H
 #define ELEMENTS_TABLES_WIDGET_H
 
-#include <QtWidgets>
 #include "widgets/customtablewidget.h"
 #include "indexelement.h"
 #include "excludeelement.h"

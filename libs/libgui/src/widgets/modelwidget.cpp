@@ -70,6 +70,8 @@
 #include "styledtextboxview.h"
 #include "tableview.h"
 #include "pgmodelerguiplugin.h"
+#include <QTemporaryFile>
+#include <QScrollBar>
 
 QList<const PgModelerGuiPlugin *> ModelWidget::plugins;
 

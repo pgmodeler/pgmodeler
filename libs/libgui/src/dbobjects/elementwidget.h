@@ -25,7 +25,6 @@
 #ifndef ELEMENT_WIDGET_H
 #define ELEMENT_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_elementwidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "partitionkey.h"

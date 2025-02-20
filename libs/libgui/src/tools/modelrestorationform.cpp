@@ -19,6 +19,8 @@
 #include "modelrestorationform.h"
 #include "utilsns.h"
 #include "globalattributes.h"
+#include <QDir>
+#include <QFileInfo>
 
 ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

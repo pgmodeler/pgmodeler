@@ -25,6 +25,8 @@
 #include "tools/modelexportform.h"
 #include "tools/databaseimportform.h"
 #include "tools/modeldatabasediffform.h"
+#include <QMimeData>
+#include <QDesktopServices>
 
 int MainWindow::ToolsActionsCount {0};
 bool MainWindow::confirm_validation {true};

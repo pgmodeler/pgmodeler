@@ -25,7 +25,6 @@
 #ifndef OBJECT_SELECTOR_WIDGET_H
 #define OBJECT_SELECTOR_WIDGET_H
 
-#include <QtWidgets>
 #include "databasemodel.h"
 #include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"

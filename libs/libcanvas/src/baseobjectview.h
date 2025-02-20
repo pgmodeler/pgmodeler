@@ -25,7 +25,7 @@
 #ifndef BASE_OBJECT_VIEW_H
 #define BASE_OBJECT_VIEW_H
 
-#include <QtWidgets>
+#include <QTextCharFormat>
 #include "basegraphicobject.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"

@@ -25,7 +25,6 @@
 #ifndef VIEW_WIDGET_H
 #define VIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
 #include "widgets/customtablewidget.h"

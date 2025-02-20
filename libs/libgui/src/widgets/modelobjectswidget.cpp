@@ -21,6 +21,7 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "customtablewidget.h"
+#include <QScrollBar>
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {

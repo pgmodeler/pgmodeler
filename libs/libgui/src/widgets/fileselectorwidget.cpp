@@ -18,6 +18,7 @@
 
 #include "fileselectorwidget.h"
 #include "guiutilsns.h"
+#include <QDesktopServices>
 
 FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {

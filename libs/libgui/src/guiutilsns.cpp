@@ -18,6 +18,7 @@
 
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
+#include <QSettings>
 #include "guiutilsns.h"
 #include "messagebox.h"
 #include "widgets/numberedtexteditor.h"

@@ -40,7 +40,6 @@
 #ifndef UPDATE_NOTIFIER_WIDGET_H
 #define UPDATE_NOTIFIER_WIDGET_H
 
-#include <QtWidgets>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>

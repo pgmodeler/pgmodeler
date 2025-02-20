@@ -25,7 +25,6 @@
 #ifndef BASE_OBJECT_WIDGET_H
 #define BASE_OBJECT_WIDGET_H
 
-#include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "widgets/objectselectorwidget.h"

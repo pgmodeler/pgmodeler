@@ -25,7 +25,6 @@
 #ifndef BASE_FORM_H
 #define BASE_FORM_H
 
-#include <QtWidgets>
 #include "ui_baseform.h"
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
