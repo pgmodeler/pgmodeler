@@ -25,7 +25,6 @@
 #ifndef MODEL_NAVIGATION_WIDGET_H
 #define MODEL_NAVIGATION_WIDGET_H
 
-#include <QWidget>
 #include "modelwidget.h"
 #include "ui_modelnavigationwidget.h"
 

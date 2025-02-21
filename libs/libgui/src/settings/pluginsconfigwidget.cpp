@@ -18,6 +18,7 @@
 
 #include "pluginsconfigwidget.h"
 #include "guiutilsns.h"
+#include <QPluginLoader>
 
 PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(parent)
 {

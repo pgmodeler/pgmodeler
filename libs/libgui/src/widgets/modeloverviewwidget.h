@@ -25,7 +25,6 @@
 #ifndef MODEL_OVERVIEW_WIDGET_H
 #define MODEL_OVERVIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
 

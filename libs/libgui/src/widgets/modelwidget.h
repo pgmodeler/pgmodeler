@@ -25,7 +25,7 @@
 #ifndef MODEL_WIDGET_H
 #define MODEL_WIDGET_H
 
-#include <QtWidgets>
+#include <QMenu>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"

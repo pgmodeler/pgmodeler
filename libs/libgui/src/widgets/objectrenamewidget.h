@@ -25,7 +25,6 @@
 #ifndef OBJECT_RENAME_WIDGET_H
 #define OBJECT_RENAME_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_objectrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"

@@ -21,6 +21,8 @@
 #include "attributes.h"
 #include "exception.h"
 #include "globalattributes.h"
+#include <QClipboard>
+#include <QMimeData>
 
 QFont SyntaxHighlighter::default_font {"Source Code Pro", 12};
 

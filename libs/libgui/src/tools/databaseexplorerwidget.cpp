@@ -26,6 +26,7 @@
 #include "settings/generalconfigwidget.h"
 #include "tools/datahandlingform.h"
 #include "pgmodelerguiplugin.h"
+#include <QScrollBar>
 
 const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound { QT_TR_NOOP("(not found, OID: %1)") };

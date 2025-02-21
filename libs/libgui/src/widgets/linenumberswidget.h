@@ -26,7 +26,6 @@
 #define LINE_NUMBERS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include <QPlainTextEdit>
 
 class __libgui LineNumbersWidget : public QWidget {

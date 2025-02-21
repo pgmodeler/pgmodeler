@@ -25,6 +25,8 @@
 #ifndef BASE_TABLE_VIEW_H
 #define BASE_TABLE_VIEW_H
 
+#include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 #include "baseobjectview.h"
 #include "basetable.h"
 #include "tabletitleview.h"

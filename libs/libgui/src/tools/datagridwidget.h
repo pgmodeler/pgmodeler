@@ -25,6 +25,7 @@
 #ifndef DATA_GRID_WIDGET_H
 #define DATA_GRID_WIDGET_H
 
+#include <QMenu>
 #include "ui_datagridwidget.h"
 #include "catalog.h"
 #include "utils/syntaxhighlighter.h"

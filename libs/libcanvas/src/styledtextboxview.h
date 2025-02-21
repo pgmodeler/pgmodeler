@@ -26,6 +26,7 @@
 #define STYLED_TEXTBOX_VIEW_H
 
 #include "textboxview.h"
+#include <QGraphicsSceneMouseEvent>
 
 class __libcanvas StyledTextboxView: public TextboxView {
 	private:

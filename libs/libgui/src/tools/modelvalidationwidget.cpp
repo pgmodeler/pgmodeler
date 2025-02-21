@@ -21,6 +21,8 @@
 #include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
+#include <QThread>
+#include <QClipboard>
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {

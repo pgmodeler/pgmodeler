@@ -24,6 +24,7 @@
 #include "customtablewidget.h"
 #include "utilsns.h"
 #include "databaseexplorerwidget.h"
+#include <QClipboard>
 
 DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name, ObjectType obj_type, const attribs_map &conn_params, QWidget * parent, Qt::WindowFlags f): QWidget(parent, f)
 {

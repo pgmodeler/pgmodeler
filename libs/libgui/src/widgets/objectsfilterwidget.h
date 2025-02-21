@@ -26,13 +26,12 @@
 #define OBJECTS_FILTER_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
+#include "ui_objectsfilterwidget.h"
 #include <QComboBox>
 #include <QMenu>
 #include <QWidgetAction>
 #include <QListWidget>
 #include "baseobject.h"
-#include "ui_objectsfilterwidget.h"
 
 class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:

@@ -25,7 +25,6 @@
 #ifndef SWAP_OBJECTS_IDS_WIDGET_H
 #define SWAP_OBJECTS_IDS_WIDGET_H
 
-#include <QWidget>
 #include "ui_swapobjectsidswidget.h"
 #include "widgets/objectselectorwidget.h"
 

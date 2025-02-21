@@ -25,7 +25,6 @@
 #ifndef AGGREGATE_WIDGET_H
 #define AGGREGATE_WIDGET_H
 
-#include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_aggregatewidget.h"
 #include "pgsqltypewidget.h"

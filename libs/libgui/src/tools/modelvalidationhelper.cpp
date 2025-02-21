@@ -17,6 +17,7 @@
 */
 
 #include "modelvalidationhelper.h"
+#include <QThread>
 
 ModelValidationHelper::ModelValidationHelper()
 {

@@ -19,7 +19,6 @@
 #ifndef SIMPLE_COLUMNS_WIDGET_H
 #define SIMPLE_COLUMNS_WIDGET_H
 
-#include <QWidget>
 #include "ui_simplecolumnswidget.h"
 #include "pgsqltypewidget.h"
 #include "widgets/customtablewidget.h"

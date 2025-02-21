@@ -22,6 +22,8 @@
 #include "settings/snippetsconfigwidget.h"
 #include "utils/htmlitemdelegate.h"
 #include "utils/textblockinfo.h"
+#include <QScrollBar>
+#include <QToolTip>
 
 const QStringList CodeCompletionWidget::dml_keywords {
 	/* ATTENTION: the keywords in this list MUST have a counter part in

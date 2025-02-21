@@ -26,7 +26,6 @@
 #define TASK_PROGRESS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 

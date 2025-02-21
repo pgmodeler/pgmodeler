@@ -19,6 +19,7 @@
 #include "metadatahandlingform.h"
 #include "guiutilsns.h"
 #include "utilsns.h"
+#include <QTemporaryFile>
 
 MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

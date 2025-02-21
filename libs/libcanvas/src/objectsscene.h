@@ -25,8 +25,10 @@
 #ifndef OBJECTS_SCENE_H
 #define OBJECTS_SCENE_H
 
-#include <QtWidgets>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPrinter>
+#include <QKeyEvent>
 #include "layeritem.h"
 #include "baseobjectview.h"
 #include "basetableview.h"

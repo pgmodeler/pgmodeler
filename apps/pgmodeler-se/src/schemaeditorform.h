@@ -25,8 +25,7 @@
 #ifndef SCHEMA_EDITOR_FORM_H
 #define SCHEMA_EDITOR_FORM_H
 
-#include <QObject>
-#include <QWidget>
+#include <QMenu>
 #include "ui_schemaeditorform.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"

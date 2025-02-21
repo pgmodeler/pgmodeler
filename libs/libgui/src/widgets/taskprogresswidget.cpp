@@ -20,6 +20,7 @@
 #include "baseobject.h"
 #include "guiutilsns.h"
 #include "utilsns.h"
+#include <QTimer>
 
 TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

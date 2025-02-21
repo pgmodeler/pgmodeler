@@ -25,7 +25,6 @@
 #ifndef METADATA_HANDLING_FORM_H
 #define METADATA_HANDLING_FORM_H
 
-#include <QtWidgets>
 #include "ui_metadatahandlingform.h"
 #include "widgets/modelwidget.h"
 #include "utils/htmlitemdelegate.h"

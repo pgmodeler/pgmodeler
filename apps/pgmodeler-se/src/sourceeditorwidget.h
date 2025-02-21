@@ -25,7 +25,7 @@
 #ifndef SOURCE_EDITOR_WIDGET_H
 #define SOURCE_EDITOR_WIDGET_H
 
-#include <QWidget>
+#include <QMenu>
 #include "ui_sourceeditorwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"

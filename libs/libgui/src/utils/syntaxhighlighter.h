@@ -26,7 +26,10 @@
 #define SYNTAX_HIGHLIGHTER_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
+#include <QSyntaxHighlighter>
+#include <QRegularExpression>
+#include <QTimer>
+#include <QPlainTextEdit>
 #include "xmlparser.h"
 #include "textblockinfo.h"
 

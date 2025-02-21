@@ -27,7 +27,6 @@
 
 #include "guiglobal.h"
 #include <vector>
-#include <QWidget>
 #include "baseobject.h"
 #include "ui_newobjectoverlaywidget.h"
 

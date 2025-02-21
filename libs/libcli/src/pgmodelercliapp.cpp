@@ -27,6 +27,8 @@
 #include "relationshipview.h"
 #include "pgsqlversions.h"
 #include "compat/compatns.h"
+#include <QSettings>
+#include <QPluginLoader>
 
 QTextStream PgModelerCliApp::out {stdout};
 
