@@ -25,7 +25,6 @@
 #ifndef COLUMN_PICKER_WIDGET_H
 #define COLUMN_PICKER_WIDGET_H
 
-#include <QWidget>
 #include "ui_columnpickerwidget.h"
 #include "customtablewidget.h"
 #include "simplecolumn.h"

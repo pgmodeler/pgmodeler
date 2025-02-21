@@ -25,7 +25,6 @@
 #ifndef CHANGELOG_WIDGET_H
 #define CHANGELOG_WIDGET_H
 
-#include <QWidget>
 #include "ui_changelogwidget.h"
 #include "modelwidget.h"
 

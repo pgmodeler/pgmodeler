@@ -26,10 +26,9 @@
 #define COLOR_PICKER_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
+#include "ui_colorpickerwidget.h"
 #include <QColorDialog>
 #include <QHBoxLayout>
-#include "ui_colorpickerwidget.h"
 #include <QTime>
 #include <random>
 

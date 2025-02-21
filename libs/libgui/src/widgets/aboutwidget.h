@@ -26,7 +26,6 @@
 #define ABOUT_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include "ui_aboutwidget.h"
 

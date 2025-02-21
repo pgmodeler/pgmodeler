@@ -26,7 +26,6 @@
 #define LAYERS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 

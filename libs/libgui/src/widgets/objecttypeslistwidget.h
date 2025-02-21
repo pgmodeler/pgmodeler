@@ -25,10 +25,9 @@
 #ifndef OBJECT_TYPES_LIST_WIDGET_H
 #define OBJECT_TYPES_LIST_WIDGET_H
 
-#include <QWidget>
-#include "ui_objecttypeslistwidget.h"
-#include "baseobject.h"
 #include "guiglobal.h"
+#include "baseobject.h"
+#include "ui_objecttypeslistwidget.h"
 
 class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
 	private:

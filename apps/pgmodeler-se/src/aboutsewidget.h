@@ -25,7 +25,6 @@
 #ifndef ABOUT_SE_WIDGET_H
 #define ABOUT_SE_WIDGET_H
 
-#include <QWidget>
 #include "ui_aboutsewidget.h"
 
 class AboutSEWidget: public QWidget, public Ui::AboutSEWidget {

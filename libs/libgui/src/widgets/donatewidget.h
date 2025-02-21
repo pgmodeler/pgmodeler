@@ -26,9 +26,8 @@
 #define DONATE_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
-#include <QGraphicsDropShadowEffect>
 #include "ui_donatewidget.h"
+#include <QGraphicsDropShadowEffect>
 
 class __libgui DonateWidget: public QWidget, public Ui::DonateWidget {
 	private:

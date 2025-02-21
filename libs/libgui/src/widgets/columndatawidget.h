@@ -20,7 +20,6 @@
 #define COLUMN_DATA_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include "numberedtexteditor.h"
 
 class __libgui ColumnDataWidget: public QWidget {

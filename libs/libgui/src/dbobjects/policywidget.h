@@ -19,7 +19,6 @@
 #ifndef POLICY_WIDGET_H
 #define POLICY_WIDGET_H
 
-#include <QWidget>
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"

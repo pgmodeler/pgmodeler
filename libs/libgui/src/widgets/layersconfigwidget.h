@@ -25,7 +25,6 @@
 #ifndef LAYERS_CONFIG_WIDGET_H
 #define LAYERS_CONFIG_WIDGET_H
 
-#include <QWidget>
 #include "ui_layersconfigwidget.h"
 #include "modelwidget.h"
 #include "colorpickerwidget.h"
