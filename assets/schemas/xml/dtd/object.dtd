@@ -4,6 +4,7 @@
 -->
 <!ELEMENT object EMPTY>
 <!ATTLIST object name CDATA #REQUIRED>
+<!ATTLIST object signature CDATA #IMPLIED>
 <!ATTLIST object parent CDATA #IMPLIED>
 <!ATTLIST object type CDATA #IMPLIED>
 <!ATTLIST object index CDATA #IMPLIED>  <!-- Used only by custom column / constraint indexes (see customidxs.dtd) -->
