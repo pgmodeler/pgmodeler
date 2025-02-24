@@ -975,12 +975,10 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	try
 	{
 		__addObject(extension, obj_idx);
-		updateExtensionTypes(extension);	
-		#warning "Handle extension child schemas inclusion!"
+		updateExtensionObjects(extension);
 	}
 	catch(Exception &e)
 	{
-		#warning "Handle extension child schemas removal!"
 		removeExtensionTypes(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
@@ -1029,6 +1027,91 @@ void DatabaseModel::setRelTablesModified(BaseRelationship *rel)
 
 	if(dst_sch && dst_sch != src_sch)
 		dynamic_cast<BaseGraphicObject *>(dst_sch)->setModified(true);
+}
+
+bool DatabaseModel::updateExtensionObjects(Extension *ext)
+{
+	if(!ext)
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	std::vector<Type *> new_types;
+
+	try
+	{
+		/* Before inserting the extension, if it has child objects, we
+		 * need to check if there are object with the same name in the model */
+		QString obj_signature;
+		Type *type = nullptr;
+		BaseObject *obj = nullptr;
+		//QStringList type_names = ext->getTypeNames();
+		bool objs_removed = true;
+
+		for(auto ext_obj_type : { ObjectType::Schema, ObjectType::Type })
+		{
+			for(auto &obj_info : ext->getObjectNames(ext_obj_type))
+			{
+				/* Checking if the extension child object has a conflicting name with another object
+				 * of the same type in the model. For that, we get the first object that
+				 * contains the extension's child object signature */
+				obj = getObject(obj_info.signature, ext_obj_type);
+
+				if(obj)
+				{
+					/* If the object exists and is not one that is linked to the current extension it means
+					 * that if we try to create the object it'll be duplicated in the model, which is prohibited */
+					if(!obj->isDependingOn(ext))
+					{
+						throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
+														.arg(ext->getSignature(), obj_signature, obj->getTypeName()),
+														ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					// If the retrieved type is one of the extension's child types we just skip it
+					continue;
+				}
+
+				// Creating a new extension child type
+				/* type = new Type;
+				type->setName(tp_name);
+				type->setSchema(ext->getSchema());
+				type->setSystemObject(true);
+				type->setSQLDisabled(true);
+				type->setConfiguration(Type::EnumerationType);
+				type->getSourceCode(SchemaParser::SqlCode);
+				type->setDependency(ext);
+
+				new_types.push_back(type);
+				addType(type); */
+			}
+		}
+
+		/* for(auto &type : ext->getReferences())
+		{
+			if(!type_names.contains(type->getName()))
+			{
+				if(!type->isReferenced())
+					removeObject(type);
+				else
+				{
+					type_names.append(type->getName());
+					ext->setTypeNames(type_names);
+					types_removed = false;
+				}
+			}
+		} */
+
+		return objs_removed;
+	}
+	catch(Exception &e)
+	{
+		for(auto &tp : new_types)
+		{
+			removeType(tp);
+			delete tp;
+		}
+
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 bool DatabaseModel::updateExtensionTypes(Extension *ext)
@@ -6816,7 +6899,6 @@ Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
-	QStringList types;
 
 	try
 	{
@@ -6835,21 +6917,23 @@ Extension *DatabaseModel::createExtension()
 			{
 				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
 				{
-					if(xmlparser.getElementName() == Attributes::Type)
+					if(xmlparser.getElementName() == Attributes::Object)
 					{
 						xmlparser.getElementAttributes(attribs);
-						types.append(attribs[Attributes::Name]);
+						extension->addObject(Extension::ExtObject(attribs[Attributes::Name],
+																											BaseObject::getObjectType(attribs[Attributes::Type]),
+																											attribs[Attributes::Parent]));
 					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
-
-		extension->setTypeNames(types);
 	}
 	catch(Exception &e)
 	{
-		if(extension) delete extension;
+		if(extension)
+			delete extension;
+
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 

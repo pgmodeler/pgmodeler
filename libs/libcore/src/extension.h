@@ -26,9 +26,52 @@
 #define EXTENSION_H
 
 #include "baseobject.h"
-#include "type.h"
 
 class __libcore Extension: public BaseObject {
+	public:
+		struct ExtObject {
+			const QString name, parent;
+			const ObjectType obj_type;
+			const QString signature;
+
+			ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "") :
+				name(_name), parent(_parent),
+				obj_type(_obj_type),
+				signature((BaseObject::isChildObjectType(ObjectType::Schema, _obj_type) && _parent.isEmpty() ? "" :
+										(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) : ""))){}
+
+/*		ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "")
+			{
+				name = _name;
+				parent = _parent;
+				obj_type = _obj_type;
+
+				if(!parent.isEmpty())
+					signature = BaseObject::formatName(parent) + "." + BaseObject::formatName(name);
+				else if(BaseObject::isChildObjectType(ObjectType::Schema, obj_type))
+					signature = BaseObject::formatName(name);
+			} */
+
+			/*QString getSignature() const
+			{
+				return signature;
+			} */
+
+			bool isValid() const
+			{
+				return BaseObject::isValidName(name) &&
+							 (parent.isEmpty() || BaseObject::isValidName(parent)) &&
+							 (obj_type == ObjectType::Schema || obj_type == ObjectType::Type);
+			}
+
+			QString toString() const
+			{
+				return QT_TR_NOOP("Name:") + name + "\n" +
+							 QT_TR_NOOP("Type:") + BaseObject::getTypeName(obj_type) + "\n"
+							 QT_TR_NOOP("Parent:") + parent;
+			}
+		};
+
 	private:
 		/*! \brief Indicates if the extension handles a datatype. When
 		this attribute is set pgModeler will consider the extension as
@@ -45,7 +88,7 @@ class __libcore Extension: public BaseObject {
 
 		/*! \brief Store the child object names distinct by the object type.
 		 *  Currently only user-defined types and schemas are supported */
-		std::map<ObjectType, QStringList> ext_objects;
+		std::map<ObjectType, std::vector<ExtObject>> ext_objects;
 
 	public:
 		enum VersionId: unsigned {
@@ -57,13 +100,15 @@ class __libcore Extension: public BaseObject {
 
 		virtual void setSchema(BaseObject *schema) override;
 
-		void setTypeNames(const QStringList &tp_names);
+		[[deprecated]] void setTypeNames(const QStringList &tp_names);
 
-		void setObjectNames(const QStringList &names, ObjectType obj_type);
+		void addObject(const ExtObject &ext_obj);
 
-		QStringList getTypeNames();
+		void removeObjects(ObjectType obj_type = ObjectType::BaseObject);
 
-		QStringList getObjectNames(ObjectType obj_type);
+		[[deprecated]] QStringList getTypeNames();
+
+		std::vector<ExtObject> getObjectNames(ObjectType obj_type);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);

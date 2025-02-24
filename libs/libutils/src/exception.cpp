@@ -287,7 +287,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
 	{"InvalidEscapedCharacter", QT_TR_NOOP("Invalid escaped character `%1' in file `%2', line %3, column %4!")},
 	{"InvExprMultilineGroup", QT_TR_NOOP("The group `%1' contains an expression declared as both initial and final! An expression must be either initial or final, not both.")},
-	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")}
+	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")},
+	{"InvExtensionObject", QT_TR_NOOP("Invalid child object being assigned to the extension `%1'!")},
 };
 
 Exception::Exception()

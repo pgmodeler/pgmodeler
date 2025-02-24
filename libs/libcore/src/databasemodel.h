@@ -309,8 +309,12 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		void setBasicFunctionAttributes(BaseFunction *func);
 
 		//! \brief Updates (creating/removing) in the model the extension data types
+		[[deprecated]]
 		bool updateExtensionTypes(Extension *ext);
 
+		bool updateExtensionObjects(Extension *ext);
+
+		[[deprecated]]
 		void removeExtensionTypes(Extension *ext);
 
 		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
