@@ -1800,6 +1800,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Replacing attribute handles-type in extension by the tag <type name="extension-name"...
+	#warning "Include conversion from <type> to <object> tags in extensions!"
 	QRegularExpression handle_type_rx = QRegularExpression(AttributeExpr.arg("handles-type"));
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension))) &&
 			obj_xml.contains(handle_type_rx))

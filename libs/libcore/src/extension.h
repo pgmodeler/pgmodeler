@@ -43,6 +43,10 @@ class __libcore Extension: public BaseObject {
 		//! \brief Store the type names that are created when installing the extension
 		QStringList type_names;
 
+		/*! \brief Store the child object names distinct by the object type.
+		 *  Currently only user-defined types and schemas are supported */
+		std::map<ObjectType, QStringList> ext_objects;
+
 	public:
 		enum VersionId: unsigned {
 			CurVersion,
@@ -55,7 +59,11 @@ class __libcore Extension: public BaseObject {
 
 		void setTypeNames(const QStringList &tp_names);
 
+		void setObjectNames(const QStringList &names, ObjectType obj_type);
+
 		QStringList getTypeNames();
+
+		QStringList getObjectNames(ObjectType obj_type);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);

@@ -975,10 +975,12 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	try
 	{
 		__addObject(extension, obj_idx);
-		updateExtensionTypes(extension);
+		updateExtensionTypes(extension);	
+		#warning "Handle extension child schemas inclusion!"
 	}
 	catch(Exception &e)
 	{
+		#warning "Handle extension child schemas removal!"
 		removeExtensionTypes(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}

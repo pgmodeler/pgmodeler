@@ -54,9 +54,43 @@ void Extension::setTypeNames(const QStringList &tp_names)
 	setCodeInvalidated(type_names != tp_names);
 }
 
+void Extension::setObjectNames(const QStringList &names, ObjectType obj_type)
+{
+	if(obj_type != ObjectType::Type && obj_type != ObjectType::Schema)
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidObjectType)
+										.arg(obj_name, QString("%1 or %2").arg(BaseObject::getTypeName(ObjectType::Type), BaseObject::getTypeName(ObjectType::Schema))),
+										ErrorCode::AsgInvalidObjectType, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+										QString(QT_TR_NOOP("Invalid object type: %1")).arg(BaseObject::getTypeName(obj_type)));
+	}
+
+	for(auto &name : names)
+	{
+		if(!BaseObject::isValidName(name))
+		{
+			throw Exception(ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+											 QString(QT_TR_NOOP("Invalid type name: %1")).arg(name));
+		}
+	}
+
+	setCodeInvalidated(ext_objects[obj_type] != names);
+	ext_objects[obj_type] = names;
+}
+
 QStringList Extension::getTypeNames()
 {
 	return type_names;
+}
+
+QStringList Extension::getObjectNames(ObjectType obj_type)
+{
+	if(obj_type != ObjectType::Type && obj_type != ObjectType::Schema)
+	{
+		throw Exception(ErrorCode::ObtObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+										QString(QT_TR_NOOP("Invalid object type: %1")).arg(BaseObject::getTypeName(obj_type)));
+	}
+
+	return ext_objects[obj_type];
 }
 
 void Extension::setVersion(VersionId ver, const QString &value)

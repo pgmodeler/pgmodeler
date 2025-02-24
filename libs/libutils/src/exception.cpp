@@ -231,7 +231,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvColumnTableType", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"OprInvalidElementId", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
 	{"RefInvalidElementColorId", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
-	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
+	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of the type(s): `%3'.")},
 	{"IncompColumnTypeForSequence", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
 	{"InvUsageTempNamesExportOption", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
 	{"InvConversionIntegerToSerial", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
