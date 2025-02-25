@@ -979,30 +979,38 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	}
 	catch(Exception &e)
 	{
-		removeExtensionTypes(extension);
+		removeExtensionObjects(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
-void DatabaseModel::removeExtensionTypes(Extension *ext)
+void DatabaseModel::removeExtensionObjects(Extension *ext)
 {
 	if(!ext)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	/* We raise an error if the user tries to remove an extension that
+	/* Checking if the user tries to remove an extension that
 	 * has one or more children being referenced in the model */
 	for(auto &obj : ext->getReferences())
 	{
-		if(obj->isReferenced())
+		/* We iterate over the references of each extension referenced object (child)
+		 * to check if there are user-defined objects that is somehow linked to them */
+		for(auto &ref_obj : obj->getReferences())
 		{
-			BaseObject *ref_obj = obj->getReferences().at(0);
-			throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
-													 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
-																ref_obj->getSignature(), ref_obj->getTypeName()),
-											 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			/* If the referenced object is not a child object of the
+			 * extension being removed we raise an error indicating
+			 * that there is an object created by the user which
+			 * references the extension child object */
+			if(!ref_obj->isDependingOn(ext))
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
+														 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+																	ref_obj->getSignature(), ref_obj->getTypeName()),
+												 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 		}
 
-		removeObject(obj);
+		__removeObject(obj, -1, false);
 	}
 }
 
@@ -1034,26 +1042,24 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 	if(!ext)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	std::vector<Type *> new_types;
+	std::vector<BaseObject *> new_objs;
 
 	try
 	{
 		/* Before inserting the extension, if it has child objects, we
 		 * need to check if there are object with the same name in the model */
 		QString obj_signature;
-		Type *type = nullptr;
-		BaseObject *obj = nullptr;
-		//QStringList type_names = ext->getTypeNames();
+		BaseObject *obj = nullptr, *obj_sch = nullptr;
 		bool objs_removed = true;
 
 		for(auto ext_obj_type : { ObjectType::Schema, ObjectType::Type })
 		{
-			for(auto &obj_info : ext->getObjectNames(ext_obj_type))
+			for(auto &ext_obj : ext->getObjects(ext_obj_type))
 			{
 				/* Checking if the extension child object has a conflicting name with another object
 				 * of the same type in the model. For that, we get the first object that
 				 * contains the extension's child object signature */
-				obj = getObject(obj_info.signature, ext_obj_type);
+				obj = getObject(ext_obj.signature, ext_obj_type);
 
 				if(obj)
 				{
@@ -1070,125 +1076,66 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 					continue;
 				}
 
-				// Creating a new extension child type
-				/* type = new Type;
-				type->setName(tp_name);
-				type->setSchema(ext->getSchema());
-				type->setSystemObject(true);
-				type->setSQLDisabled(true);
-				type->setConfiguration(Type::EnumerationType);
-				type->getSourceCode(SchemaParser::SqlCode);
-				type->setDependency(ext);
+				if(ext_obj_type == ObjectType::Schema)
+					obj = new Schema;
+				else
+				{
+					obj = new Type;
+					obj_sch = getSchema(ext_obj.parent);
+					obj->setSchema(!obj_sch ? ext->getSchema() : obj_sch);
+					dynamic_cast<Type *>(obj)->setConfiguration(Type::EnumerationType);
+				}
 
-				new_types.push_back(type);
-				addType(type); */
+				/* Creating a new extension child object. Here, we force it to be a
+				 * protected object that can't be handled by the user directly, and
+				 * tie it to the extension itself, so when the extension is destroyed
+				 * the child objects are destroyed as well */
+				obj->setName(ext_obj.name);
+				obj->setSystemObject(true);
+				obj->setSQLDisabled(true);
+				obj->setDependency(ext);
+
+				addObject(obj);
+
+				/* Store the object in a temporary list so, in case of error,
+				 * it will be removed in the catch section */
+				new_objs.push_back(obj);
 			}
 		}
 
-		/* for(auto &type : ext->getReferences())
+		/* In this step we remove potentially unused child object of the extesion that
+		 * is in the model and add other ones that are still being referenced. This
+		 * situation occurs when the extension is edited by the user by removing/adding
+		 * other objects leaving behind the other ones previously created.*/
+		for(auto &ref_obj : ext->getReferences())
 		{
-			if(!type_names.contains(type->getName()))
+			Extension::ExtObject ext_obj { ref_obj->getName(),
+																		 ref_obj->getObjectType(),
+																		 ref_obj->getSchema() ? ref_obj->getSchema()->getName() : "" };
+
+			if(!ext->containsObject(ext_obj))
 			{
-				if(!type->isReferenced())
-					removeObject(type);
+				// If the object is not being reference we can safely remove it
+				if(!ref_obj->isReferenced())
+					removeObject(ref_obj);
 				else
 				{
-					type_names.append(type->getName());
-					ext->setTypeNames(type_names);
-					types_removed = false;
+					// If it is still referenced we add it to the extension again
+					ext->addObject(ext_obj);
+					objs_removed = false;
 				}
 			}
-		} */
+		}
 
 		return objs_removed;
 	}
 	catch(Exception &e)
 	{
-		for(auto &tp : new_types)
+		for(auto itr = new_objs.rbegin();
+						 itr != new_objs.rend(); itr++)
 		{
-			removeType(tp);
-			delete tp;
-		}
-
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
-	}
-}
-
-bool DatabaseModel::updateExtensionTypes(Extension *ext)
-{
-	if(!ext)
-		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-	std::vector<Type *> new_types;
-
-	try
-	{
-		/* Before inserting the extension, if it has child objects, we
-		 * need to check if there are object with the same name in the model */
-		QString tp_signature;
-		Type *type = nullptr;
-		QStringList type_names = ext->getTypeNames();
-		bool types_removed = true;
-
-		for(auto &tp_name : type_names)
-		{
-			/* Checking if the extension child type has a conflicting name with another type in the model
-			 * For that purpose, we get the first type that contains the extension type signature */
-			tp_signature = ext->getSchema()->getName(true) + "." + tp_name;
-			type = dynamic_cast<Type *>(getObject(tp_signature, ObjectType::Type));
-
-			if(type)
-			{
-				/* If the type exist and is not one that is linked to the current extension it means
-				 * that if we try to create the type it'll be duplicated in the model, which is prohibited */
-				if(!type->isDependingOn(ext))
-				{
-					throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
-															 .arg(ext->getSignature(), tp_name, type->getTypeName()),
-													 ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				}
-
-				// If the retrieved type is one of the extension's child types we just skip it
-				continue;
-			}
-
-			// Creating a new extension child type
-			type = new Type;
-			type->setName(tp_name);
-			type->setSchema(ext->getSchema());
-			type->setSystemObject(true);
-			type->setSQLDisabled(true);
-			type->setConfiguration(Type::EnumerationType);
-			type->getSourceCode(SchemaParser::SqlCode);
-			type->setDependency(ext);
-
-			new_types.push_back(type);
-			addType(type);
-		}
-
-		for(auto &type : ext->getReferences())
-		{
-			if(!type_names.contains(type->getName()))
-			{
-				if(!type->isReferenced())
-					removeObject(type);
-				else
-				{
-					type_names.append(type->getName());
-					ext->setTypeNames(type_names);
-					types_removed = false;
-				}
-			}
-		}
-
-		return types_removed;
-	}
-	catch(Exception &e)
-	{
-		for(auto &tp : new_types)
-		{
-			removeType(tp);
-			delete tp;
+			removeObject(*itr);
+			delete *itr;
 		}
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
@@ -1523,7 +1470,7 @@ void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 
 	try
 	{
-		removeExtensionTypes(extension);
+		removeExtensionObjects(extension);
 		__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
@@ -6920,9 +6867,9 @@ Extension *DatabaseModel::createExtension()
 					if(xmlparser.getElementName() == Attributes::Object)
 					{
 						xmlparser.getElementAttributes(attribs);
-						extension->addObject(Extension::ExtObject(attribs[Attributes::Name],
-																											BaseObject::getObjectType(attribs[Attributes::Type]),
-																											attribs[Attributes::Parent]));
+						extension->addObject(Extension::ExtObject { attribs[Attributes::Name],
+																												BaseObject::getObjectType(attribs[Attributes::Type]),
+																												attribs[Attributes::Parent] });
 					}
 				}
 			}

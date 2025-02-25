@@ -18,6 +18,7 @@ void Extension::setSchema(BaseObject *schema)
 	{
 		QString new_type_name;
 
+		#warning "Test schema change and update types signatures!"
 		for(auto &tp_name : type_names)
 		{
 			new_type_name = QString("%1.%2").arg(schema->getName(true, false), tp_name);
@@ -39,21 +40,6 @@ void Extension::setSchema(BaseObject *schema)
 	}
 }
 
-void Extension::setTypeNames(const QStringList &tp_names)
-{
-	for(auto &tp_name : tp_names)
-	{
-		if(!BaseObject::isValidName(tp_name))
-		{
-			throw Exception(ErrorCode::AsgInvalidNameObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-											 QString(QT_TR_NOOP("Invalid type name: %1")).arg(tp_name));
-		}
-	}
-
-	type_names = tp_names;
-	setCodeInvalidated(type_names != tp_names);
-}
-
 void Extension::addObject(const ExtObject &ext_obj)
 {
 	if(!ext_obj.isValid())
@@ -62,6 +48,9 @@ void Extension::addObject(const ExtObject &ext_obj)
 										ErrorCode::InvExtensionObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
 										QString(QT_TR_NOOP("Invalid object: %1")).arg(ext_obj.toString()));
 	}
+
+	if(containsObject(ext_obj))
+		return;
 
 	ext_objects[ext_obj.obj_type].push_back(ext_obj);
 	setCodeInvalidated(true);
@@ -75,12 +64,7 @@ void Extension::removeObjects(ObjectType obj_type)
 		ext_objects.erase(obj_type);
 }
 
-QStringList Extension::getTypeNames()
-{
-	return type_names;
-}
-
-std::vector<Extension::ExtObject> Extension::getObjectNames(ObjectType obj_type)
+std::vector<Extension::ExtObject> Extension::getObjects(ObjectType obj_type)
 {
 	if(obj_type != ObjectType::Type && obj_type != ObjectType::Schema)
 	{
@@ -108,6 +92,37 @@ QString Extension::getVersion(VersionId ver)
 	return versions[ver];
 }
 
+bool Extension::containsObject(const ExtObject &ext_obj)
+{
+	if(!ext_obj.isValid() || !ext_objects.count(ext_obj.obj_type))
+		return false;
+
+	QString obj_signature;
+
+	for(auto &obj : ext_objects[ext_obj.obj_type])
+	{
+		/* If the extension object is a schema child one and the attribute
+		 * parent is empty, we adopt the name of the same schema of the
+		 * parent extension in the comparison below */
+		if(BaseObject::isChildObjectType(ObjectType::Schema, obj.obj_type) &&
+			 obj.parent.isEmpty())
+		{
+			obj_signature = BaseObject::formatName(schema->getName()) + "." + BaseObject::formatName(obj.name);
+		}
+		else
+			obj_signature = obj.signature;
+
+		/* If the extension objects themselves aren't equal,
+		 * as a fallback, we compare the signature and their types */
+		if(obj == ext_obj ||
+			 (!obj_signature.isEmpty() &&
+				obj_signature == ext_obj.signature))
+			return true;
+	}
+
+	return false;
+}
+
 QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
@@ -122,6 +137,7 @@ QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 	{
 		attribs_map type_attr;
 
+		#warning "Change from <type> to <object>!"
 		for(auto &tp_name : type_names)
 		{
 			type_attr[Attributes::Name] = tp_name;

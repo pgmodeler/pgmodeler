@@ -308,14 +308,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
 		void setBasicFunctionAttributes(BaseFunction *func);
 
-		//! \brief Updates (creating/removing) in the model the extension data types
-		[[deprecated]]
-		bool updateExtensionTypes(Extension *ext);
-
+		//! \brief Updates (creating/removing) in the model the extension children objects
 		bool updateExtensionObjects(Extension *ext);
 
-		[[deprecated]]
-		void removeExtensionTypes(Extension *ext);
+		//! \brief Removes from the model all the extension children objects
+		void removeExtensionObjects(Extension *ext);
 
 		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
 		void setRelTablesModified(BaseRelationship *rel);

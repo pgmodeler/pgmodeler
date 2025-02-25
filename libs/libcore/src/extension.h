@@ -38,24 +38,15 @@ class __libcore Extension: public BaseObject {
 				name(_name), parent(_parent),
 				obj_type(_obj_type),
 				signature((BaseObject::isChildObjectType(ObjectType::Schema, _obj_type) && _parent.isEmpty() ? "" :
-										(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) : ""))){}
+										(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) :
+																					BaseObject::formatName(_name)))){}
 
-/*		ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "")
+			bool operator == (const ExtObject &obj) const
 			{
-				name = _name;
-				parent = _parent;
-				obj_type = _obj_type;
-
-				if(!parent.isEmpty())
-					signature = BaseObject::formatName(parent) + "." + BaseObject::formatName(name);
-				else if(BaseObject::isChildObjectType(ObjectType::Schema, obj_type))
-					signature = BaseObject::formatName(name);
-			} */
-
-			/*QString getSignature() const
-			{
-				return signature;
-			} */
+				return obj.name == name &&
+							 obj.obj_type == obj_type &&
+							 obj.parent == parent;
+			}
 
 			bool isValid() const
 			{
@@ -100,21 +91,19 @@ class __libcore Extension: public BaseObject {
 
 		virtual void setSchema(BaseObject *schema) override;
 
-		[[deprecated]] void setTypeNames(const QStringList &tp_names);
-
 		void addObject(const ExtObject &ext_obj);
 
 		void removeObjects(ObjectType obj_type = ObjectType::BaseObject);
 
-		[[deprecated]] QStringList getTypeNames();
-
-		std::vector<ExtObject> getObjectNames(ObjectType obj_type);
+		std::vector<ExtObject> getObjects(ObjectType obj_type);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(VersionId ver);
+
+		bool containsObject(const ExtObject &ext_obj);
 
 		//! \brief Returns the SQL / XML code definition for the extension
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;

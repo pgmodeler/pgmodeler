@@ -9,8 +9,11 @@ ExtensionWidget::ExtensionWidget(QWidget * parent) : BaseObjectWidget(parent, Ob
 																		 CustomTableWidget::RemoveButton |
 																		 CustomTableWidget::RemoveAllButton, true, this);
 	types_tab->setCellsEditable(true);
-	types_tab->setColumnCount(1);
+	types_tab->setColumnCount(2);
 	types_tab->setHeaderLabel(tr("Name"), 0);
+	types_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("uid")), 0);
+	types_tab->setHeaderLabel(tr("Schema"), 1);
+	types_tab->setHeaderIcon(QIcon(GuiUtilsNs::getIconPath("schema")), 1);
 
 	QVBoxLayout *vbox = new QVBoxLayout(types_gb);
 	vbox->addWidget(types_tab);
@@ -32,10 +35,11 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		cur_ver_edt->setText(ext->getVersion(Extension::CurVersion));
 		old_ver_edt->setText(ext->getVersion(Extension::OldVersion));
 
-		for(auto &tp_name : ext->getTypeNames())
+		for(auto &ext_obj : ext->getObjects(ObjectType::Type))
 		{
 			types_tab->addRow();
-			types_tab->setCellText(tp_name, types_tab->getRowCount() - 1, 0);
+			types_tab->setCellText(ext_obj.name, types_tab->getRowCount() - 1, 0);
+			types_tab->setCellText(ext_obj.parent, types_tab->getRowCount() - 1, 1);
 		}
 
 		types_tab->clearSelection();
@@ -48,7 +52,6 @@ void ExtensionWidget::applyConfiguration()
 	{
 		startConfiguration<Extension>();
 
-		bool update_types = !new_object;
 		Extension *extension = dynamic_cast<Extension *>(this->object);
 
 		BaseObjectWidget::applyConfiguration();
@@ -56,12 +59,23 @@ void ExtensionWidget::applyConfiguration()
 		extension->setVersion(Extension::CurVersion, cur_ver_edt->text());
 		extension->setVersion(Extension::OldVersion, old_ver_edt->text());
 
-		QStringList type_names = types_tab->getCellTexts(0, Qt::Vertical);
-		extension->setTypeNames(type_names);
+		extension->removeObjects();
+		QString sch_name, typ_name;
+
+		for(unsigned row = 0; row < types_tab->getRowCount(); row++)
+		{
+			typ_name = types_tab->getCellText(row, 0);
+			sch_name = types_tab->getCellText(row, 1);
+
+			extension->addObject(Extension::ExtObject(sch_name, ObjectType::Schema));
+			extension->addObject(Extension::ExtObject(typ_name, ObjectType::Type, sch_name));
+		}
+
 		finishConfiguration();
 
-		if(update_types && !model->updateExtensionTypes(extension))
-			Messagebox::alert(tr("Some removed data types were restored because they are still being referenced in the model! Please, undo the link between those types and the objects in the database model before trying to remove them."));
+		// Updating the extension objects in the model if the extension is being updated
+		if(!new_object && !model->updateExtensionObjects(extension))
+			Messagebox::alert(tr("Some removed objects were restored because they are still being referenced in the model! Please, undo the link between them and their referrer objects in the database model before trying to remove them again."));
 	}
 	catch(Exception &e)
 	{
