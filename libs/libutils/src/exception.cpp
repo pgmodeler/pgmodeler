@@ -289,6 +289,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvExprMultilineGroup", QT_TR_NOOP("The group `%1' contains an expression declared as both initial and final! An expression must be either initial or final, not both.")},
 	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")},
 	{"InvExtensionObject", QT_TR_NOOP("Invalid child object being assigned to the extension `%1'!")},
+	{"AsgInvSchemaExtension", QT_TR_NOOP("Assigning the schema `%1' to the extension `%2' is not allowed because the schema is a child of the extension!")},
 };
 
 Exception::Exception()

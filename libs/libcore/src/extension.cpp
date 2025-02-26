@@ -11,6 +11,14 @@ Extension::Extension()
 
 void Extension::setSchema(BaseObject *schema)
 {
+	/* We raise an error if the user tries to move the extension to a schema
+	 * which is created by the extension itself */
+	if(schema && schema->isDependingOn(this))
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvSchemaExtension).arg(schema->getName(), obj_name),
+										ErrorCode::AsgInvSchemaExtension, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
+
 	if(!schema)
 		this->schema = schema;
 	else
