@@ -1129,15 +1129,47 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 								ext_schemas = Catalog::parseArrayValues(attribs[Attributes::Schemas]);
 		attribs_map aux_attrs;
 
-		//attribs[Attributes::Objects].clear();
+		attribs[Attributes::Objects] = "";
 
-		/* for(auto &tp_name : ext_objs)
+		for(auto &sch_name : ext_schemas)
 		{
+			aux_attrs[Attributes::Name] = sch_name;
+			aux_attrs[Attributes::Type] = BaseObject::getSchemaName(ObjectType::Schema);
+
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			aux_attrs[Attributes::Name] = tp_name;
-			attribs[Attributes::Types] += schparser.getSourceCode(Attributes::PgSqlBaseType, aux_attrs, SchemaParser::XmlCode);
-		} */
+			attribs[Attributes::Objects] += schparser.getSourceCode(Attributes::Object, aux_attrs, SchemaParser::XmlCode);
+		}
+
+		QString typ_name, sch_name;
+		QStringList name_list;
+
+		for(auto &tp_name : ext_types)
+		{
+			name_list = tp_name.split('.');
+
+			if(name_list.isEmpty())
+				continue;
+
+			if(name_list.size() == 1)
+			{
+				typ_name = name_list.at(0);
+				sch_name = "";
+			}
+			else
+			{
+				typ_name = name_list.at(1);
+				sch_name = name_list.at(0);
+			}
+
+			aux_attrs[Attributes::Name] = typ_name;
+			aux_attrs[Attributes::Parent] = sch_name;
+			aux_attrs[Attributes::Type] = BaseObject::getSchemaName(ObjectType::Type);
+
+			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
+			attribs[Attributes::Objects] += schparser.getSourceCode(Attributes::Object, aux_attrs, SchemaParser::XmlCode);
+		}
 
 		loadObjectXML(ObjectType::Extension, attribs);
 		ext = dbmodel->createExtension();
