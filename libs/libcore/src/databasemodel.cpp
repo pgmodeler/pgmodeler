@@ -42,6 +42,7 @@ DatabaseModel::DatabaseModel()
 	is_template = false;
 	allow_conns = true;
 	cancel_saving = false;
+	incl_dis_objs_code = false;
 
 	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
@@ -7685,13 +7686,16 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			object = obj_itr.second;
 			obj_type = object->getObjectType();
 
+			/* Ignoring disabled SQL code if the flag to include this kind
+			 * of code is off. This will diminish the size of the resulting
+			 * script */
+			if(is_sql_def && object->isSQLDisabled() && !incl_dis_objs_code)
+				continue;
+
 			if(obj_type == ObjectType::Type && is_sql_def)
 			{
 				usr_type = dynamic_cast<Type *>(object);
-
-				// Avoiding writting system types SQL code (including the ones created by extensions)
-				if(!usr_type->isSystemObject())
-					attribs_aux[attrib] += usr_type->getSourceCode(def_type);
+				attribs_aux[attrib] += usr_type->getSourceCode(def_type);
 			}
 			else if(obj_type == ObjectType::Database)
 			{
@@ -8340,7 +8344,12 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 
 			if(obj->isSystemObject() ||
 				 obj_type == ObjectType::BaseRelationship ||
-				 obj_type == ObjectType::Relationship)
+				 obj_type == ObjectType::Relationship ||
+
+				 /* Ignoring disabled SQL code if the flag to include this kind
+					* of code is off. This will diminish the size of the resulting
+					* scripts */
+				 (obj->isSQLDisabled() && !incl_dis_objs_code))
 				continue;
 
 			// Saving the shell types before we start generating the files of other objects

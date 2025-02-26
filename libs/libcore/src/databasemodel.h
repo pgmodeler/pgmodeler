@@ -156,6 +156,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		is_layer_rects_visible,
 
+		//! \brief Indicates that disabled objects' SQL code must appear in the database creation script
+		incl_dis_objs_code,
+
 		/*! \brief This flag is used to notify the model to break the code generation/saving.
 		 *  This is only used by the export helper to cancel a running export to file process */
 		cancel_saving;
