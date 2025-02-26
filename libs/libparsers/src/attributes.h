@@ -592,6 +592,7 @@ namespace Attributes {
 	SaveRestoreGeometry("save-restore-geometry"),
 	SceneRect("scene-rect"),
 	Schema("schema"),
+	Schemas("schemas"),
 	SchemaOid("schema-oid"),
 	SearchPath("search-path"),
 	SecurityBarrier("security-barrier"),

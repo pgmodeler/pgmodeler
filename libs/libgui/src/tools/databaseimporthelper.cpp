@@ -1125,18 +1125,19 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 
 	try
 	{
-		QStringList type_names = 	Catalog::parseArrayValues(attribs[Attributes::Types]);
+		QStringList ext_types = Catalog::parseArrayValues(attribs[Attributes::Types]),
+								ext_schemas = Catalog::parseArrayValues(attribs[Attributes::Schemas]);
 		attribs_map aux_attrs;
 
-		attribs[Attributes::Types].clear();
+		//attribs[Attributes::Objects].clear();
 
-		for(auto &tp_name : type_names)
+		/* for(auto &tp_name : ext_objs)
 		{
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
 			aux_attrs[Attributes::Name] = tp_name;
 			attribs[Attributes::Types] += schparser.getSourceCode(Attributes::PgSqlBaseType, aux_attrs, SchemaParser::XmlCode);
-		}
+		} */
 
 		loadObjectXML(ObjectType::Extension, attribs);
 		ext = dbmodel->createExtension();
