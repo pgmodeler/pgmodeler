@@ -27,8 +27,8 @@
 
 %if {comment} %then {comment} %end
 
-%if {types} %then
-	{types}
+%if {objects} %then
+	{objects}
 %end
 
 %if {appended-sql} %then {appended-sql} %end

@@ -3,11 +3,10 @@
 
 Extension::Extension()
 {
-	obj_type=ObjectType::Extension;
-	handles_type=false;
-	attributes[Attributes::CurVersion]="";
-	attributes[Attributes::OldVersion]="";
-	attributes[Attributes::Types]="";
+	obj_type = ObjectType::Extension;
+	attributes[Attributes::CurVersion] = "";
+	attributes[Attributes::OldVersion] = "";
+	attributes[Attributes::Objects] = "";
 }
 
 void Extension::setSchema(BaseObject *schema)
@@ -16,22 +15,30 @@ void Extension::setSchema(BaseObject *schema)
 		this->schema = schema;
 	else
 	{
-		QString new_type_name;
+		QString new_type_sig;
 
-		#warning "Test schema change and update types signatures!"
-		for(auto &tp_name : type_names)
+		/* Checking if the schema changing will cause name conflicts with other data types
+		 * that are already registered in that schema */
+		for(auto &ext_obj : ext_objects[ObjectType::Type])
 		{
-			new_type_name = QString("%1.%2").arg(schema->getName(true, false), tp_name);
+			if(!ext_obj.parent.isEmpty() &&
+				 ext_obj.parent != schema->getName())
+				continue;
 
-			if(PgSqlType::getUserTypeIndex(new_type_name, nullptr, getDatabase()) != PgSqlType::Null)
+			// Configuring a new data type signature taking into account the new schema
+			new_type_sig = QString("%1.%2").arg(schema->getName(true, false), BaseObject::formatName(ext_obj.name));
+
+			// If we find a data type with that signature
+			if(PgSqlType::getUserTypeIndex(new_type_sig, nullptr, getDatabase()) != PgSqlType::Null)
 			{
-				PgSqlType user_type(new_type_name);
+				PgSqlType user_type(new_type_sig);
 
+				// If the type is not a child of this extension we raise a conflict error
 				if(!user_type.getObject()->isDependingOn(this))
 				{
 					throw Exception(Exception::getErrorMessage(ErrorCode::AsgSchExtTypeConflict)
-															 .arg(schema->getName(), obj_name, tp_name, BaseObject::getTypeName(ObjectType::Type)),
-													 ErrorCode::AsgSchExtTypeConflict, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+													.arg(schema->getName(), obj_name, ext_obj.name, BaseObject::getTypeName(ObjectType::Type)),
+													ErrorCode::AsgSchExtTypeConflict, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -46,7 +53,7 @@ void Extension::addObject(const ExtObject &ext_obj)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvExtensionObject).arg(obj_name),
 										ErrorCode::InvExtensionObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-										QString(QT_TR_NOOP("Invalid object: %1")).arg(ext_obj.toString()));
+										QString(QT_TR_NOOP("Invalid object: %1 (%2)")).arg(ext_obj.signature, BaseObject::getTypeName(ext_obj.obj_type)));
 	}
 
 	if(containsObject(ext_obj))
@@ -133,18 +140,22 @@ QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 	attributes[Attributes::OldVersion] = versions[OldVersion];
 	attributes[Attributes::Types] = "";
 
-	if(def_type == SchemaParser::XmlCode && !type_names.isEmpty())
+	if(def_type == SchemaParser::XmlCode && !ext_objects.empty())
 	{
-		attribs_map type_attr;
+		attribs_map obj_attr;
 
-		#warning "Change from <type> to <object>!"
-		for(auto &tp_name : type_names)
+		for(auto &ext_obj_typ : { ObjectType::Schema, ObjectType::Type })
 		{
-			type_attr[Attributes::Name] = tp_name;
+			for(auto &ext_obj : ext_objects[ext_obj_typ])
+			{
+				obj_attr[Attributes::Name] = ext_obj.name;
+				obj_attr[Attributes::Type] = BaseObject::getSchemaName(ext_obj.obj_type);
+				obj_attr[Attributes::Parent] = ext_obj.parent;
 
-			schparser.ignoreUnkownAttributes(true);
-			schparser.ignoreEmptyAttributes(true);
-			attributes[Attributes::Types] += schparser.getSourceCode(Attributes::PgSqlBaseType, type_attr, def_type);
+				schparser.ignoreUnkownAttributes(true);
+				schparser.ignoreEmptyAttributes(true);
+				attributes[Attributes::Objects] += schparser.getSourceCode(Attributes::Object, obj_attr, def_type);
+			}
 		}
 	}
 

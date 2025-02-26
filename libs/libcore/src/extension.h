@@ -54,28 +54,13 @@ class __libcore Extension: public BaseObject {
 							 (parent.isEmpty() || BaseObject::isValidName(parent)) &&
 							 (obj_type == ObjectType::Schema || obj_type == ObjectType::Type);
 			}
-
-			QString toString() const
-			{
-				return QT_TR_NOOP("Name:") + name + "\n" +
-							 QT_TR_NOOP("Type:") + BaseObject::getTypeName(obj_type) + "\n"
-							 QT_TR_NOOP("Parent:") + parent;
-			}
 		};
 
 	private:
-		/*! \brief Indicates if the extension handles a datatype. When
-		this attribute is set pgModeler will consider the extension as
-		a data type and will register it on PgSqlType class. */
-		bool handles_type;
-
 		/*! \brief Versions of the installed extension. The first one is the
 		current version and the last is the old version from which the extension
 		is being updated */
 		QString versions[2];
-
-		//! \brief Store the type names that are created when installing the extension
-		QStringList type_names;
 
 		/*! \brief Store the child object names distinct by the object type.
 		 *  Currently only user-defined types and schemas are supported */

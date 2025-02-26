@@ -67,7 +67,9 @@ void ExtensionWidget::applyConfiguration()
 			typ_name = types_tab->getCellText(row, 0);
 			sch_name = types_tab->getCellText(row, 1);
 
-			extension->addObject(Extension::ExtObject(sch_name, ObjectType::Schema));
+			if(!sch_name.isEmpty())
+				extension->addObject(Extension::ExtObject(sch_name, ObjectType::Schema));
+
 			extension->addObject(Extension::ExtObject(typ_name, ObjectType::Type, sch_name));
 		}
 

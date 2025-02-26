@@ -1048,8 +1048,8 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 	{
 		/* Before inserting the extension, if it has child objects, we
 		 * need to check if there are object with the same name in the model */
-		QString obj_signature;
 		BaseObject *obj = nullptr, *obj_sch = nullptr;
+		QString obj_signature;
 		bool objs_removed = true;
 
 		for(auto ext_obj_type : { ObjectType::Schema, ObjectType::Type })
@@ -1059,7 +1059,12 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				/* Checking if the extension child object has a conflicting name with another object
 				 * of the same type in the model. For that, we get the first object that
 				 * contains the extension's child object signature */
-				obj = getObject(ext_obj.signature, ext_obj_type);
+				if(ext_obj.parent.isEmpty() && BaseObject::isChildObjectType(ObjectType::Schema, ext_obj_type))
+					obj_signature = ext->getSchema()->getSignature() + "." + BaseObject::formatName(ext_obj.name);
+				else
+					obj_signature = ext_obj.signature;
+
+				obj = getObject(obj_signature, ext_obj_type);
 
 				if(obj)
 				{
@@ -1068,7 +1073,7 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 					if(!obj->isDependingOn(ext))
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
-														.arg(ext->getSignature(), obj_signature, obj->getTypeName()),
+														.arg(ext->getSignature(), obj->getSignature(), obj->getTypeName()),
 														ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
