@@ -42,9 +42,13 @@ $br
 
 %if {schema} %then
 	{schema}
+%end
+
+%if {search-path} %then
 	[SET search_path TO ] {search-path};
 	{ddl-end} $br
 %end
+	
 
 %if {shell-types} %then {shell-types} %end
 %if {objects} %then {objects} %end

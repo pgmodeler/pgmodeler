@@ -7688,7 +7688,10 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			if(obj_type == ObjectType::Type && is_sql_def)
 			{
 				usr_type = dynamic_cast<Type *>(object);
-				attribs_aux[attrib] += usr_type->getSourceCode(def_type);
+
+				// Avoiding writting system types SQL code (including the ones created by extensions)
+				if(!usr_type->isSystemObject())
+					attribs_aux[attrib] += usr_type->getSourceCode(def_type);
 			}
 			else if(obj_type == ObjectType::Database)
 			{
@@ -7717,17 +7720,23 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 				 * code of the entire model because this object cannot be created from a multiline sql command */
 				if(obj_type == ObjectType::Tablespace && !object->isSystemObject() && is_sql_def)
 					attribs_aux[attrib_aux] += object->getSourceCode(def_type);
+
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type != ObjectType::Schema && !object->isSystemObject()) ||
 								(obj_type == ObjectType::Schema &&
 								 ((object->getName() == "public" && !is_sql_def) ||
-									(object->getName() != "public" && object->getName() != "pg_catalog"))))
+									 (object->getName() != "public" && object->getName() != "pg_catalog"))))
 				{
 					if(object->getObjectType() == ObjectType::Schema)
-						search_path+="," + object->getName(true);
+						search_path += "," + object->getName(true);
 
-					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib_aux] += object->getSourceCode(def_type);
+					// Avoiding writting the code definition for system objects
+					if((is_sql_def && !object->isSystemObject()) ||
+						 (!is_sql_def && object->isSystemObject() && object->getName() == "public"))
+					{
+						//Generates the code definition and concatenates to the others
+						attribs_aux[attrib_aux] += object->getSourceCode(def_type);
+					}
 				}
 			}
 			else

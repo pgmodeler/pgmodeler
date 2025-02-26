@@ -383,7 +383,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 		DatabaseModel *aux_model=nullptr;
 		bool objs_differs=false, xml_differs=false;
 
-		if(diff_type==ObjectsDiffInfo::DropObject)
+		if(diff_type == ObjectsDiffInfo::DropObject)
 		{
 			/* For DROP detection, we must gather the objects from the database in order to check
 			 * if they exists on the model. The object drop order here is the inverse of the creation order
@@ -443,17 +443,17 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								(aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
 								 !diff_opts[OptKeepObjectPerms]))))
 					{
-						Permission *perm = dynamic_cast<Permission *>(object);
-						BaseObject *ref_obj = perm->getObject();
+						//Permission *perm = dynamic_cast<Permission *>(object);
+						//BaseObject *ref_obj = perm->getObject();
 
 						/* If the object being referenced by the permission is a system one
 						 * we just ignore it. For now, permissions can't be assigned to
 						 * object considered system ones in pgModeler implementation */
-						if(ref_obj &&
-							 (ref_obj->isSystemObject() || ref_obj->isSQLDisabled()))
-							generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
-						else
-							generateDiffInfo(diff_type, object);
+						//if(ref_obj &&
+						//	 (ref_obj->isSystemObject() || ref_obj->isSQLDisabled()))
+						//	generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
+						//else
+						generateDiffInfo(diff_type, object);
 					}
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
 					else if(obj_type==ObjectType::Relationship)
@@ -494,22 +494,22 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 							}
 						}
 					}
-					else if(obj_type!=ObjectType::Permission)
+					else if(obj_type != ObjectType::Permission)
 					{
 						//Get the object from the database
-						obj_name=object->getSignature();
-						aux_object=aux_model->getObject(obj_name, obj_type);
+						obj_name = object->getSignature();
+						aux_object = aux_model->getObject(obj_name, obj_type);
 
 						//Special case for many-to-many relationships
-						if(obj_type==ObjectType::Table && !aux_object)
-							aux_object=getRelNNTable(obj_name, aux_model);
+						if(obj_type == ObjectType::Table && !aux_object)
+							aux_object = getRelNNTable(obj_name, aux_model);
 
 						if(diff_type != ObjectsDiffInfo::DropObject && aux_object)
 						{
 							/* Try to get a diff from the retrieve object and the current object,
 							 * comparing only basic attributes like schema, tablespace and owner
 							 * this is why the BaseObject::getAlterCode is called */
-							objs_differs=!aux_object->BaseObject::getAlterCode(object).isEmpty();
+							objs_differs = !aux_object->BaseObject::getAlterCode(object).isEmpty();
 
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
@@ -550,7 +550,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 				else if(TableObject::isTableObject(obj_type))
 					diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
 				//Comparison between model db and the imported db
-				else if(diff_type==ObjectsDiffInfo::CreateObject)
+				else if(diff_type == ObjectsDiffInfo::CreateObject)
 				{
 					if(!source_model->getAlterCode(imported_model).isEmpty())
 						generateDiffInfo(ObjectsDiffInfo::AlterObject, source_model, imported_model);

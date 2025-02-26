@@ -2255,13 +2255,16 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
 			obj_pos=dynamic_cast<BaseGraphicObject *>(object)->getPosition();
 
-		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
-		that can be edited only on its fill color an rectangle attributes */
-		if(object && object->isSystemObject() &&
-				(object->getObjectType()!=ObjectType::Schema || object->getName()!="public"))
+		/* Raises an error if the user try to edit a reserverd object.
+		 * The only exception is for "public" schema that can be edited and permissions that can
+		 * be assigned to system objects */
+		if(object && object->isSystemObject() && obj_type != ObjectType::Permission &&
+				(object->getObjectType() != ObjectType::Schema || object->getName() != "public"))
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-											.arg(object->getName()).arg(object->getTypeName()),
+											.arg(object->getName(), object->getTypeName()),
 											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(obj_type==ObjectType::Schema)
 			res=openEditingForm<Schema,SchemaWidget>(object);
