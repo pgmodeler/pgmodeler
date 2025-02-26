@@ -443,16 +443,6 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								(aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
 								 !diff_opts[OptKeepObjectPerms]))))
 					{
-						//Permission *perm = dynamic_cast<Permission *>(object);
-						//BaseObject *ref_obj = perm->getObject();
-
-						/* If the object being referenced by the permission is a system one
-						 * we just ignore it. For now, permissions can't be assigned to
-						 * object considered system ones in pgModeler implementation */
-						//if(ref_obj &&
-						//	 (ref_obj->isSystemObject() || ref_obj->isSQLDisabled()))
-						//	generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
-						//else
 						generateDiffInfo(diff_type, object);
 					}
 					//Processing relationship (in this case only generalization and patitioning ones are considered)

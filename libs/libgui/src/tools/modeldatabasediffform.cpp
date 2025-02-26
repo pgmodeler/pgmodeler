@@ -630,11 +630,12 @@ void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 		 * complete imported model, diminishing false-positive results. */
 
 		/* catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-							   (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : 0) |
-								 (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : 0)); */
+													 (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : Catalog::NoFilter) |
+													 (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : Catalog::NoFilter)); */
 
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+														/* Catalog::ExclExtensionObjs | */ Catalog::ExclSystemObjs);
+
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
