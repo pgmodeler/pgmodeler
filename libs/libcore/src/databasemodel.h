@@ -157,7 +157,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		is_layer_rects_visible,
 
 		//! \brief Indicates that disabled objects' SQL code must appear in the database creation script
-		incl_dis_objs_code,
+		gen_dis_objs_code,
 
 		/*! \brief This flag is used to notify the model to break the code generation/saving.
 		 *  This is only used by the export helper to cancel a running export to file process */
@@ -879,6 +879,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 *  This is used to restore the original scene geometry when the model is loaded from file */
 		void setSceneRect(const QRectF &rect);
 		QRectF getSceneRect();
+
+		void setGenDisabledObjsCode(bool value);
+		bool isGenDisabledObjsCode();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

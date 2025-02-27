@@ -108,3 +108,4 @@
 <!ATTLIST dbmodel show-layer-names (false|true) "false">
 <!ATTLIST dbmodel show-layer-rects (false|true) "false">
 <!ATTLIST dbmodel use-changelog (false|true) "false">
+<!ATTLIST dbmodel gen-disabled-objs-code (false|true) "false">

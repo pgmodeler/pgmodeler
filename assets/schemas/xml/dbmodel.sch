@@ -8,6 +8,8 @@
 [-->] $br
 <dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
 
+[ gen-disabled-objs-code=] "{gen-disabled-objs-code}"
+
 %if {author} %then 
 	[ author=] "&{author}" 
 %end

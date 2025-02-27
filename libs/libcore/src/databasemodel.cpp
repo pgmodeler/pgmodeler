@@ -42,7 +42,7 @@ DatabaseModel::DatabaseModel()
 	is_template = false;
 	allow_conns = true;
 	cancel_saving = false;
-	incl_dis_objs_code = false;
+	gen_dis_objs_code = false;
 
 	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
@@ -66,6 +66,7 @@ DatabaseModel::DatabaseModel()
 	attributes[Attributes::IsTemplate]="";
 	attributes[Attributes::UseChangelog]="";
 	attributes[Attributes::Changelog]="";
+	attributes[Attributes::GenDisabledObjsCode]="";
 
 	obj_lists = {
 		{ ObjectType::Textbox, &textboxes },
@@ -3411,6 +3412,8 @@ void DatabaseModel::loadModel(const QString &filename)
 												 attribs[Attributes::AllowConns] == Attributes::True);
 
 		persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
+
+		gen_dis_objs_code = attribs[Attributes::GenDisabledObjsCode] == Attributes::True;
 
 		/* Compatibility with models created prior the multiple layers features:
 		 * We need to replace semi-colon by comma in the attribute Layers in order to split the
@@ -7689,7 +7692,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			/* Ignoring disabled SQL code if the flag to include this kind
 			 * of code is off. This will diminish the size of the resulting
 			 * script */
-			if(is_sql_def && object->isSQLDisabled() && !incl_dis_objs_code)
+			if(is_sql_def && object->isSQLDisabled() && !gen_dis_objs_code)
 				continue;
 
 			if(obj_type == ObjectType::Type && is_sql_def)
@@ -7801,6 +7804,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 			//Configuring the changelog attributes when generating XML code
 			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
 			attribs[Attributes::Changelog] = getChangelogDefinition();
+			attribs[Attributes::GenDisabledObjsCode]= gen_dis_objs_code ? Attributes::True : Attributes::False;
 		}
 		catch (Exception &e)
 		{
@@ -8349,7 +8353,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				 /* Ignoring disabled SQL code if the flag to include this kind
 					* of code is off. This will diminish the size of the resulting
 					* scripts */
-				 (obj->isSQLDisabled() && !incl_dis_objs_code))
+				 (obj->isSQLDisabled() && !gen_dis_objs_code))
 				continue;
 
 			// Saving the shell types before we start generating the files of other objects
@@ -10324,4 +10328,15 @@ void DatabaseModel::setSceneRect(const QRectF &rect)
 QRectF DatabaseModel::getSceneRect()
 {
 	return scene_rect;
+}
+
+void DatabaseModel::setGenDisabledObjsCode(bool value)
+{
+	setCodeInvalidated(gen_dis_objs_code != value);
+	gen_dis_objs_code = value;
+}
+
+bool DatabaseModel::isGenDisabledObjsCode()
+{
+	return gen_dis_objs_code;
 }

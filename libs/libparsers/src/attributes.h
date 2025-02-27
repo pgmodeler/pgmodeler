@@ -289,6 +289,7 @@ namespace Attributes {
 	Function("function"),
 	FunctionType("function-type"),
 	GenAlterCmds("gen-alter-cmds"),
+	GenDisabledObjsCode("gen-disabled-objs-code"),
 	General("general"),
 	Generated("generated"),
 	Global("global"),
