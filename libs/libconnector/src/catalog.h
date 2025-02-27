@@ -34,6 +34,9 @@ This class is the basis for the reverse engineering feature.
 class __libconnector Catalog {
 	public:
 		enum QueryFilter: unsigned {
+			//! \brief This entry is only for bitwise operation purposes
+			NoFilter = 0,
+
 			//! \brief Excludes the system objects from listing
 			ExclSystemObjs=1,
 

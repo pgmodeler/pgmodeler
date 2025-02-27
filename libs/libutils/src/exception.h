@@ -301,12 +301,14 @@ enum class ErrorCode: unsigned {
 	MalformedViewDefObject,
 	InvalidEscapedCharacter,
 	InvExprMultilineGroup,
-	InvExprPersistentGroup
+	InvExprPersistentGroup,
+	InvExtensionObject,
+	AsgInvSchemaExtension
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=269;
+		static constexpr unsigned ErrorCount=271;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

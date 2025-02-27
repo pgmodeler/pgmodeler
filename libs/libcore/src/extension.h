@@ -26,22 +26,45 @@
 #define EXTENSION_H
 
 #include "baseobject.h"
-#include "type.h"
 
 class __libcore Extension: public BaseObject {
-	private:
-		/*! \brief Indicates if the extension handles a datatype. When
-		this attribute is set pgModeler will consider the extension as
-		a data type and will register it on PgSqlType class. */
-		bool handles_type;
+	public:
+		struct ExtObject {
+			const QString name, parent;
+			const ObjectType obj_type;
+			const QString signature;
 
+			ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "") :
+				name(_name), parent(_parent),
+				obj_type(_obj_type),
+				signature((BaseObject::isChildObjectType(ObjectType::Schema, _obj_type) && _parent.isEmpty() ? "" :
+										(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) :
+																					BaseObject::formatName(_name)))){}
+
+			bool operator == (const ExtObject &obj) const
+			{
+				return obj.name == name &&
+							 obj.obj_type == obj_type &&
+							 obj.parent == parent;
+			}
+
+			bool isValid() const
+			{
+				return BaseObject::isValidName(name) &&
+							 (parent.isEmpty() || BaseObject::isValidName(parent)) &&
+							 (obj_type == ObjectType::Schema || obj_type == ObjectType::Type);
+			}
+		};
+
+	private:
 		/*! \brief Versions of the installed extension. The first one is the
 		current version and the last is the old version from which the extension
 		is being updated */
 		QString versions[2];
 
-		//! \brief Store the type names that are created when installing the extension
-		QStringList type_names;
+		/*! \brief Store the child object names distinct by the object type.
+		 *  Currently only user-defined types and schemas are supported */
+		std::map<ObjectType, std::vector<ExtObject>> ext_objects;
 
 	public:
 		enum VersionId: unsigned {
@@ -53,15 +76,19 @@ class __libcore Extension: public BaseObject {
 
 		virtual void setSchema(BaseObject *schema) override;
 
-		void setTypeNames(const QStringList &tp_names);
+		void addObject(const ExtObject &ext_obj);
 
-		QStringList getTypeNames();
+		void removeObjects(ObjectType obj_type = ObjectType::BaseObject);
+
+		std::vector<ExtObject> getObjects(ObjectType obj_type);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(VersionId ver);
+
+		bool containsObject(const ExtObject &ext_obj);
 
 		//! \brief Returns the SQL / XML code definition for the extension
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
