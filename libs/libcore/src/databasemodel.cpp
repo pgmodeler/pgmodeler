@@ -8734,6 +8734,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		public_sch=new Schema;
 		public_sch->setName("public");
 		public_sch->setSystemObject(true);
+		public_sch->setRectVisible(true);
 		addSchema(public_sch);
 	}
 
@@ -8741,6 +8742,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	pg_catalog=new Schema;
 	pg_catalog->BaseObject::setName("pg_catalog");
 	pg_catalog->setSystemObject(true);
+	pg_catalog->setRectVisible(true);
 	addSchema(pg_catalog);
 
 	//Creating default collations
