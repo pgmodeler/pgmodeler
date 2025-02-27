@@ -1000,11 +1000,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			case ObjectType::Schema:
-				if(!graph_obj->isSystemObject() ||
-						(graph_obj->isSystemObject() && graph_obj->getName()=="public"))
-				{
-					item = new SchemaView(dynamic_cast<Schema *>(graph_obj));
-				}
+				item = new SchemaView(dynamic_cast<Schema *>(graph_obj));
 			break;
 
 			default:

@@ -1084,7 +1084,10 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				}
 
 				if(ext_obj_type == ObjectType::Schema)
+				{
 					obj = new Schema;
+					dynamic_cast<Schema *>(obj)->setRectVisible(true);
+				}
 				else
 				{
 					obj = new Type;
