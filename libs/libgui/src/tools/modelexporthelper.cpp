@@ -847,7 +847,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 											 QRegularExpression::DontCaptureOption),
 			reg_aux,
 
-			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|DROP)(.)+)$").arg(Attributes::DdlEndToken, UtilsNs::DataSeparator),
+			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, UtilsNs::DataSeparator),
 																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
 
@@ -1012,7 +1012,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							is_drop=(!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
-							//lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
