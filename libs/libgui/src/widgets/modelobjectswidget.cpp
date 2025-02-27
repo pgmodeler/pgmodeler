@@ -240,6 +240,22 @@ void ModelObjectsWidget::selectObject()
 	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
+
+		/* If the user has selected only one graphical object in the tree and is holding
+		 * Alt key then the object will be highlighted in the canvas */
+		if(selected_objs.size() == 1 && qApp->keyboardModifiers() == Qt::AltModifier)
+		{
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(selected_objs.at(0));
+
+			if(!graph_obj)
+				return;
+
+			QGraphicsItem *item = dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject());
+
+			item->setSelected(true);
+			model_wgt->scene->views().at(0)->centerOn(item);
+		}
+
 		model_wgt->configurePopupMenu(selected_objs);
 		model_wgt->emitSceneInteracted();
 	}
