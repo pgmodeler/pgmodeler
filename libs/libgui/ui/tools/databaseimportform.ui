@@ -236,41 +236,6 @@
                   <property name="spacing">
                    <number>5</number>
                   </property>
-                  <item row="11" column="0" colspan="5">
-                   <widget class="QCheckBox" name="ignore_errors_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt; pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.&lt;/p&gt;</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Ignore import errors</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="15" column="0" colspan="6">
-                   <spacer name="verticalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Orientation::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>302</width>
-                      <height>168</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                   <item row="5" column="0" colspan="5">
                    <widget class="QCheckBox" name="rand_rel_color_chk">
                     <property name="sizePolicy">
@@ -293,29 +258,7 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="10" column="0" colspan="5">
-                   <widget class="QCheckBox" name="import_ext_objs_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt;Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.&lt;/p&gt;</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Import extension objects</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="12" column="0" colspan="5">
+                  <item row="11" column="0" colspan="5">
                    <widget class="QCheckBox" name="debug_mode_chk">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -338,6 +281,63 @@
                    </widget>
                   </item>
                   <item row="14" column="0" colspan="6">
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>302</width>
+                      <height>168</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="12" column="0">
+                   <widget class="QCheckBox" name="import_to_model_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Create all imported objects in the current working model instead of create a new one.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import objects to the working model</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="8" column="0" colspan="5">
+                   <widget class="QCheckBox" name="import_sys_objs_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Enables the import of system built-in objects. It's recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import system objects</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="13" column="0" colspan="6">
                    <layout class="QVBoxLayout" name="verticalLayout_5">
                     <property name="spacing">
                      <number>5</number>
@@ -427,7 +427,7 @@
                     </item>
                    </layout>
                   </item>
-                  <item row="7" column="0" colspan="5">
+                  <item row="6" column="0" colspan="5">
                    <widget class="QCheckBox" name="resolve_deps_chk">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -452,37 +452,15 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="13" column="0">
-                   <widget class="QCheckBox" name="import_to_model_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt;Create all imported objects in the current working model instead of create a new one.&lt;/p&gt;</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Import objects to the working model</string>
-                    </property>
-                    <property name="checked">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="8" column="0">
+                  <item row="7" column="0">
                    <widget class="QCheckBox" name="comments_as_aliases_chk">
                     <property name="text">
                      <string>Use objects' comments as aliases</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="9" column="0" colspan="5">
-                   <widget class="QCheckBox" name="import_sys_objs_chk">
+                  <item row="10" column="0" colspan="5">
+                   <widget class="QCheckBox" name="ignore_errors_chk">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -490,7 +468,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;p&gt;Enables the import of system built-in objects. It's recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.&lt;/p&gt;</string>
+                     <string>&lt;p&gt; pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -499,17 +477,29 @@
                      <string/>
                     </property>
                     <property name="text">
-                     <string>Import system objects</string>
+                     <string>Ignore import errors</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="6" column="0">
-                   <widget class="QCheckBox" name="hide_sys_ext_objs_chk">
-                    <property name="text">
-                     <string>Hide system and extension objects</string>
+                  <item row="9" column="0" colspan="5">
+                   <widget class="QCheckBox" name="import_ext_objs_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="checked">
-                     <bool>true</bool>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import extension objects</string>
                     </property>
                    </widget>
                   </item>
