@@ -4361,6 +4361,8 @@ void ModelWidget::toggleSchemasRectangles()
 		}
 	}
 
+	db_model->setShowSysSchemasRects(visible);
+
 	db_model->setObjectsModified({ ObjectType::Table,
 																 ObjectType::ForeignTable,
 																 ObjectType::View });

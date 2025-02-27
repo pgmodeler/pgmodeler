@@ -43,6 +43,7 @@ DatabaseModel::DatabaseModel()
 	allow_conns = true;
 	cancel_saving = false;
 	gen_dis_objs_code = false;
+	show_sys_sch_rects = true;
 
 	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
@@ -2560,6 +2561,9 @@ void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 {
 	try
 	{
+		if(schema && schema->isSystemObject() && schema->getName() != "public")
+			schema->setRectVisible(show_sys_sch_rects);
+
 		__addObject(schema, obj_idx);
 	}
 	catch(Exception &e)
@@ -3415,8 +3419,8 @@ void DatabaseModel::loadModel(const QString &filename)
 												 attribs[Attributes::AllowConns] == Attributes::True);
 
 		persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
-
 		gen_dis_objs_code = attribs[Attributes::GenDisabledObjsCode] == Attributes::True;
+		show_sys_sch_rects = attribs[Attributes::ShowSysSchemasRects] == Attributes::True;
 
 		/* Compatibility with models created prior the multiple layers features:
 		 * We need to replace semi-colon by comma in the attribute Layers in order to split the
@@ -7808,6 +7812,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
 			attribs[Attributes::Changelog] = getChangelogDefinition();
 			attribs[Attributes::GenDisabledObjsCode]= gen_dis_objs_code ? Attributes::True : Attributes::False;
+			attribs[Attributes::ShowSysSchemasRects]= show_sys_sch_rects ? Attributes::True : Attributes::False;
 		}
 		catch (Exception &e)
 		{
@@ -8734,7 +8739,6 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		public_sch=new Schema;
 		public_sch->setName("public");
 		public_sch->setSystemObject(true);
-		public_sch->setRectVisible(true);
 		addSchema(public_sch);
 	}
 
@@ -8742,7 +8746,6 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	pg_catalog=new Schema;
 	pg_catalog->BaseObject::setName("pg_catalog");
 	pg_catalog->setSystemObject(true);
-	pg_catalog->setRectVisible(true);
 	addSchema(pg_catalog);
 
 	//Creating default collations
@@ -10344,4 +10347,10 @@ void DatabaseModel::setGenDisabledObjsCode(bool value)
 bool DatabaseModel::isGenDisabledObjsCode()
 {
 	return gen_dis_objs_code;
+}
+
+void DatabaseModel::setShowSysSchemasRects(bool value)
+{
+	setCodeInvalidated(show_sys_sch_rects != value);
+	show_sys_sch_rects = value;
 }

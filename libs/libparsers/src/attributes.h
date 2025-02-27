@@ -621,6 +621,7 @@ namespace Attributes {
 	ShowMainMenu("show-main-menu"),
 	ShowPageDelimiters("show-page-delimiters"),
 	ShowSourcePane("show-source-pane"),
+	ShowSysSchemasRects("show-sys-schemas-rects"),
 	Signature("signature"),
 	SimpleCol("simplecol"),
 	SimpleExp("simple-exp"),

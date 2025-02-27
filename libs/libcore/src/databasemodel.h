@@ -159,6 +159,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Indicates that disabled objects' SQL code must appear in the database creation script
 		gen_dis_objs_code,
 
+		/*! \brief Indicates that system schemas (pg_catalog, information_schema, etc) must display their rectangles
+		 *  Since these objects can't have their attributes changes via editing form (except for public schema)
+		 *  this flag helps to persist the visibility state of the rectangles of that schemas */
+		show_sys_sch_rects,
+
 		/*! \brief This flag is used to notify the model to break the code generation/saving.
 		 *  This is only used by the export helper to cancel a running export to file process */
 		cancel_saving;
@@ -880,8 +885,13 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		void setSceneRect(const QRectF &rect);
 		QRectF getSceneRect();
 
+		//! \brief Toggles the generation of SQL code of object with code disabled
 		void setGenDisabledObjsCode(bool value);
+
 		bool isGenDisabledObjsCode();
+
+		//! \brief Toggles the display of system schemas rectangles
+		void setShowSysSchemasRects(bool value);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

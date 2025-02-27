@@ -8,8 +8,6 @@
 [-->] $br
 <dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
 
-[ gen-disabled-objs-code=] "{gen-disabled-objs-code}"
-
 %if {author} %then 
 	[ author=] "&{author}" 
 %end
@@ -21,6 +19,12 @@
 %if {max-obj-count} %then
 	[ max-obj-count=] "{max-obj-count}"
 %end
+
+$br $tb 
+
+[ gen-disabled-objs-code=] "{gen-disabled-objs-code}"
+
+[ show-sys-schemas-rects=] "{show-sys-schemas-rects}"
 
 %if {last-position} %or {last-position} %or {scene-rect} %then
 	$br $tb
