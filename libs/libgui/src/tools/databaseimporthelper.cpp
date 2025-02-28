@@ -2639,6 +2639,14 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 					QString oid = catalog.getObjectOID(role_name, ObjectType::Role);
 					getDependencyObject(oid, ObjectType::Role);
 					role = dynamic_cast<Role *>(dbmodel->getObject(role_name, ObjectType::Role));
+
+					if(oid == "0" && !role_name.isEmpty() && !role && !import_sys_objs)
+					{
+						qDebug() << QString("** createPermission(): Failed to create the permission: %1").arg(attribs[Attributes::Permission]);
+						qDebug() << QString("** Role `%1' was not imported and/or created in the database model.").arg(role_name);
+						qDebug() << "** Consider enabling the importing of system objects to avoid this warning." << Qt::endl;
+						return;
+					}
 				}
 				catch(Exception &e)
 				{

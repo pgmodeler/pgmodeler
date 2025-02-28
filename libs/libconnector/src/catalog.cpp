@@ -1002,13 +1002,11 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
 											ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		else if(res.isEmpty())
+		if(res.getTupleCount() == 0)
 			return "0";
-		else
-		{
-			res.accessTuple(ResultSet::FirstTuple);
-			return res.getColumnValue(Attributes::Oid);
-		}
+
+		res.accessTuple(ResultSet::FirstTuple);
+		return res.getColumnValue(Attributes::Oid);
 	}
 	catch(Exception &e)
 	{
