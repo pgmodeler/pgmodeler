@@ -2,7 +2,14 @@ include(../../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = gui
+
+# Including the private assets when building private plugins
+isEqual(PRIVATE_PLUGINS, true) {
+	RESOURCES += $$PRIV_RES_FOLDER/privres.qrc
+}
+
 RESOURCES += res/resources.qrc
+
 windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 

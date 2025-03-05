@@ -80,6 +80,7 @@ PLUGINS_FOLDER=plugins
 isEqual(PRIVATE_PLUGINS, true) {
   DEFINES+=PRIVATE_PLUGINS_SYMBOLS
   PLUGINS_FOLDER=priv-plugins
+	PRIV_RES_FOLDER=$$PWD/$$PLUGINS_FOLDER/res
 }
 
 # Include the plugins subprojects only if exists
