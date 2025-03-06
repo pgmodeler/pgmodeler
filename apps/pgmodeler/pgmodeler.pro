@@ -3,15 +3,20 @@ include(../apps.pri)
 TEMPLATE = app
 TARGET = pgmodeler
 
-unix:LIBS += $$QMAKE_LIBS_EXECINFO
-windows:RC_FILE=res/windows_ico.qrc
-windows:RCC_DIR=src/
-windows: DESTDIR = $$PWD
+#unix:LIBS += $$QMAKE_LIBS_EXECINFO
+
+isEqual(PRIVATE_PLUGINS, true) {
+  windows:RC_FILE=$$PRIV_RES_FOLDER/$$TARGET/windows_ico.qrc
+}
+
+#isEqual(PRIVATE_PLUGINS, false) {
+#  windows:RC_FILE=res/windows_ico.qrc
+#}
 
 HEADERS += src/pgmodelerapp.h
 
 SOURCES += src/main.cpp \
-	src/pgmodelerapp.cpp
+src/pgmodelerapp.cpp
 
 # Deployment settings
 target.path = $$BINDIR

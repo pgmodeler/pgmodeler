@@ -3,8 +3,13 @@ include(../apps.pri)
 TEMPLATE = app
 TARGET = pgmodeler-ch
 
-windows:RC_FILE=res/windows_ico.qrc
-windows:RCC_DIR=src/
+isEqual(PRIVATE_PLUGINS, true) {
+  windows:RC_FILE=$$PRIV_RES_FOLDER/$$TARGET/windows_ico.qrc
+}
+
+#isEqual(PRIVATE_PLUGINS, false) {
+#  windows:RC_FILE=res/windows_ico.qrc
+#}
 
 SOURCES += src/main.cpp \
            src/crashhandlerform.cpp
