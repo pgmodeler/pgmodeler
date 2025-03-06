@@ -1799,23 +1799,34 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(QString("%1=\"true\"").arg(Attributes::HideExtAttribs), QString("%1=\"1\"").arg(Attributes::CollapseMode));
 	}
 
-	//Replacing attribute handles-type in extension by the tag <type name="extension-name"...
-	#warning "Include conversion from <type> to <object> tags in extensions!"
+	/* Fixing extension attributes.
+	 * If it contains handles-type="true" then it will be added <object name="extension-name" type="usertype"
+	 * If it contains <type name="foo" then it will be replaced by <object type="usertype" name="foo" */
 	QRegularExpression handle_type_rx = QRegularExpression(AttributeExpr.arg("handles-type"));
+	bool is_handle_type = obj_xml.contains(handle_type_rx),
+			is_multi_types = obj_xml.contains(TagExpr.arg(Attributes::Type));
+
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension))) &&
-			obj_xml.contains(handle_type_rx))
+		 (is_handle_type || is_multi_types))
 	{
-		int end_sch_idx = -1, start_idx = -1, end_idx = -1;
-		QString name_attr="name=\"", ext_name;
+		if(is_handle_type)
+		{
+			int end_sch_idx = -1, start_idx = -1, end_idx = -1;
+			QString name_attr="name=\"", ext_name;
 
-		//Extracting the extension's name
-		start_idx=obj_xml.indexOf(name_attr);
-		end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
-		ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+			//Extracting the extension's name
+			start_idx=obj_xml.indexOf(name_attr);
+			end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
+			ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
 
-		obj_xml.remove(handle_type_rx);
-		end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
-		obj_xml.insert(end_sch_idx, QString("\n<type name=\"%1\"/>\n").arg(ext_name));
+			obj_xml.remove(handle_type_rx);
+			end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
+			obj_xml.insert(end_sch_idx, QString("\n<object type=\"usertype\" name=\"%1\"/>\n").arg(ext_name));
+		}
+		else
+		{
+			obj_xml.replace("<type", "<object type=\"usertype\"");
+		}
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent

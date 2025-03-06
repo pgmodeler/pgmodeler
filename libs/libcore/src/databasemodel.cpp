@@ -7744,9 +7744,9 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 					if(object->getObjectType() == ObjectType::Schema)
 						search_path += "," + object->getName(true);
 
-					// Avoiding writting the code definition for system objects
+					// Avoiding writting the code definition for system objects when generating SQL code
 					if((is_sql_def && !object->isSystemObject()) ||
-						 (!is_sql_def && object->isSystemObject() && object->getName() == "public"))
+						 (!is_sql_def && (!object->isSystemObject() || object->getName() == "public")))
 					{
 						//Generates the code definition and concatenates to the others
 						attribs_aux[attrib_aux] += object->getSourceCode(def_type);

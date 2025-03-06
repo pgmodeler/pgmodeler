@@ -5,7 +5,7 @@ TARGET = gui
 
 # Including the private assets when building private plugins
 isEqual(PRIVATE_PLUGINS, true) {
-  RESOURCES += $$PRIV_RES_FOLDER/privres.qrc
+	RESOURCES += $$PRIV_RES_FOLDER/logoicons.qrc
 }
 
 # Including the logo related resources
