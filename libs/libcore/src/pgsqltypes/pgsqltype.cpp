@@ -534,7 +534,7 @@ void PgSqlType::setSpatialType(SpatialType spat_type)
 
 void PgSqlType::setWithTimezone(bool with_tz)
 {
-	this->with_timezone = with_tz && !isTimezoneType();
+	this->with_timezone = with_tz && acceptsTimezone();
 }
 
 unsigned PgSqlType::setUserType(unsigned type_id)
@@ -836,8 +836,8 @@ bool PgSqlType::isTimezoneType()
 	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
-					(curr_type=="timetz" || curr_type == "timestamptz" ||
-					 curr_type=="time with time zone" || curr_type=="timestamp with time zone"));
+					(curr_type == "timetz" || curr_type == "timestamptz" ||
+					 curr_type == "time with time zone" || curr_type == "timestamp with time zone"));
 }
 
 bool PgSqlType::isNumericType()
@@ -974,6 +974,13 @@ bool PgSqlType::acceptsPrecision()
 {
 	return (isNumericType() ||
 					(!isUserType() && type_names[this->type_idx]!="date" && isDateTimeType()));
+}
+
+bool PgSqlType::acceptsTimezone()
+{
+	return !isUserType() &&
+				 (type_names[this->type_idx] == "time"  ||
+					type_names[this->type_idx] == "timestamp");
 }
 
 void PgSqlType::reset(bool all_attrs)

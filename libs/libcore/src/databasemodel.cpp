@@ -7679,6 +7679,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		attribs_aux[Attributes::Schema]="";
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
+		attribs_aux[Attributes::Objects]="";
 
 		if(is_sql_def)
 		{
