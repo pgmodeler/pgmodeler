@@ -847,7 +847,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 											 QRegularExpression::DontCaptureOption),
 			reg_aux,
 
-			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, UtilsNs::DataSeparator),
+			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, "\\*"),
 																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
 

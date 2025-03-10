@@ -13,7 +13,7 @@
 	[-- ** PostgreSQL version: ] {pgsql-ver} $br
 
 	$br
-	[-- ] $ob [ Diff summary ] $cb $br
+	[-- ** ] $ob [ Diff summary ] $cb $br
 	[-- ** Dropped objects: ] {drop} $br
 	[-- ** Created objects: ] {create} $br
 	[-- ** Changed objects: ] {change} $br
@@ -33,43 +33,43 @@
 
 	%if {unset-perms} %then
 		$br $br
-		[-- ] $ob [ Undone permissions ] $cb [ --] $br
+		[-- ** ] $ob [ Undone permissions ] $cb $br $br
 		{unset-perms}
 	%end
 
 	%if {drop-cmds} %then
 		$br $br
-		[-- ] $ob [ Dropped objects ] $cb [ --] $br
+		[-- ** ] $ob [ Dropped objects ] $cb $br $br
 		{drop-cmds}
 	%end
 
 	%if {create-cmds} %then
 		$br $br
-		[-- ] $ob [ Created objects ] $cb [ --] $br
+		[-- ** ] $ob [ Created objects ] $cb $br $br
 		{create-cmds}
 	%end
 
 	%if {alter-cmds} %then
 		$br $br
-		[-- ] $ob [ Changed objects ] $cb [ --] $br
+		[-- ** ] $ob [ Changed objects ] $cb $br $br
 		{alter-cmds}
 	%end
 
 	%if {constr-defs} %then
 		$br $br
-		[-- ] $ob [ Created constraints ] $cb [ --] $br
+		[-- ** ] $ob [ Created constraints ] $cb $br $br
 		{constr-defs}
 	%end
 
 	%if {fk-defs} %then
 		$br $br
-		[-- ] $ob [ Created foreign keys ] $cb [ --] $br
+		[-- ** ] $ob [ Created foreign keys ] $cb $br $br
 		{fk-defs}
 	%end
 
 	%if {set-perms} %then
 		$br $br
-		[-- ] $ob [ Created permissions ] $cb [ --] $br
+		[-- ** ] $ob [ Created permissions ] $cb $br $br
 		{set-perms}
 	%end
 %end
