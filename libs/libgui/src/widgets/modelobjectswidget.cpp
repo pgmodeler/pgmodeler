@@ -184,7 +184,7 @@ void ModelObjectsWidget::selectObject()
 	ObjectType obj_type = ObjectType::BaseObject;
 	ModelWidget *model_wgt = nullptr;
 	QList<QTreeWidgetItem *> sel_items = objectstree_tw->selectedItems();
-	static QList<QTreeWidgetItem *> prev_sel_items;
+	//static QList<QTreeWidgetItem *> prev_sel_items;
 	bool reconf_menu = true;
 
 	if(!simplified_view && this->model_wgt)
@@ -905,6 +905,7 @@ void ModelObjectsWidget::clearSelectedObject()
 	objectstree_tw->clearSelection();
 	objectstree_tw->blockSignals(false);
 	selected_objs.clear();
+	prev_sel_items.clear();
 	model_wgt->configurePopupMenu(nullptr);
 	model_wgt->emitSceneInteracted();
 }
