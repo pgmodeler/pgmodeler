@@ -2902,12 +2902,13 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 		}
 
 		/* Checking if the type used by the column exists (is registered),
-		 * if not it'll be created when auto_resolve_deps is checked. The only exception here if for
-		 * array types [] that will not be automatically created because they are derivated from
-		 * the non-array type, this way, if the original type is created there is no need to create the array form */
-		if(auto_resolve_deps && !is_type_registered && !type_name.contains("[]"))
+		 * if not it'll be created when auto_resolve_deps is checked. */
+		if(auto_resolve_deps && !is_type_registered &&
+			 type_oid > catalog.getLastSysObjectOID())
+		{
 			// Try to create the missing data type
 			getType(itr->second[Attributes::TypeOid], false);
+		}
 
 		col.setIdentityType(IdentityType::Null);
 		col.setGenerated(false);
@@ -3323,6 +3324,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 		attribs_map type_attr;
 		QString xml_def, sch_name, obj_name, aux_name;
+		static const QString brackets = "[]";
 		unsigned elem_tp_oid = 0, dimension=0, object_id=0;
 		bool is_derivated_from_obj = false, is_postgis_type = false;
 
@@ -3349,13 +3351,18 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					 * we have to extract the [], then format the name and then restore the
 					 * brackets. This avoids the brackets to be considered as part of the name and
 					 * thus causing the name to be quoted inconditionaly. */
-				int num_brkt = type_attr[Attributes::Name].count("[]");
-				QString aux_name = BaseObject::formatName(type_attr[Attributes::Name].remove("[]"));
+				int num_brkt = type_attr[Attributes::Name].count(brackets);
+				QString aux_name = BaseObject::formatName(type_attr[Attributes::Name].remove(brackets));
 
-				for(int i = 0; i < num_brkt; i++)
-					aux_name.append("[]");
-
+				aux_name += brackets.repeated(num_brkt);
 				type_attr[Attributes::Name] = aux_name;
+				types[type_oid] = type_attr;
+
+				/* For array types we also retrieve the original data type (element type)
+				 * and store its attributes in the types map, so the original type can be also
+				 * created if needed */
+				elem_tp_oid = type_attr[Attributes::Element].toUInt();
+				types[elem_tp_oid] = catalog.getObjectAttributes(ObjectType::Type, elem_tp_oid);
 			}
 			else
 				type_attr[Attributes::Name] = BaseObject::formatName(type_attr[Attributes::Name]);
@@ -3367,19 +3374,18 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 		//Special treatment for array types. Removes the [] descriptor when generating XML code for the type
 		if(!type_attr.empty() && type_attr[Attributes::Category]=="A" &&
-			 type_attr[Attributes::Name].contains("[]"))
+			 type_attr[Attributes::Name].contains(brackets))
 		{
-			obj_name=type_attr[Attributes::Name];
-			elem_tp_oid=type_attr[Attributes::Element].toUInt();
+			obj_name = type_attr[Attributes::Name];
 
 			if(generate_xml)
 			{
-				dimension=type_attr[Attributes::Name].count("[]");
-				obj_name.remove("[]");
+				dimension = type_attr[Attributes::Name].count(brackets);
+				obj_name.remove(brackets);
 			}
 		}
 		else
-			obj_name=type_attr[Attributes::Name];
+			obj_name = type_attr[Attributes::Name];
 
 		/* If the type was generated from a table/sequence/view/domain and the source object is not
 				 yet imported and the auto resolve deps is enabled, we need to import it */
@@ -3448,7 +3454,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			 * was not created in the database model but its attributes were retrieved, the object
 			 * will be created to avoid reference errors */
 		aux_name = obj_name;
-		aux_name.remove("[]");
+		aux_name.remove(brackets);
+
 		if(auto_resolve_deps && !type_attr.empty() && !is_derivated_from_obj && !is_postgis_type &&
 			 type_oid > catalog.getLastSysObjectOID() && !dbmodel->getType(aux_name))
 		{
