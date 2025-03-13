@@ -86,6 +86,8 @@ class __libgui ModelValidationHelper: public QObject {
 
 		void checkInvalidatedRels();
 
+		void checkUselessUqConstrs();
+
 	public:
 		ModelValidationHelper();
 		virtual ~ModelValidationHelper();

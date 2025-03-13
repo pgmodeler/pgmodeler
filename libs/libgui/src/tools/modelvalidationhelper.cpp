@@ -53,8 +53,13 @@ void ModelValidationHelper::generateValidationInfo(ValidationInfo::ValType val_t
 			 std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
 	{
 		//Configures a validation info
-		ValidationInfo info=ValidationInfo(val_type, object, refs);
-		error_count++;
+		ValidationInfo info = ValidationInfo(val_type, object, refs);
+
+		if(val_type == ValidationInfo::UniqueSameAsPk)
+			warn_count++;
+		else
+			error_count++;
+
 		val_infos.push_back(info);
 
 		if(val_type==ValidationInfo::BrokenRelConfig)
@@ -335,9 +340,16 @@ void ModelValidationHelper::validateModel()
 		 * is the need to do a revalidation of all relationships */
 		checkInvalidatedRels();
 
+		/*Step 5: Checking if unique constraints on tables reference the same columns as the primary keys.
+		 * In this, pgModeler emits an alert instead of a validation error this because PostgreSQL will
+		 * ignore the unique constraint having the mentioned configuration but without warn the user.
+		 * So this step is just here to help the user to understand why PostgreSQL doesn't create the
+		 * constraints */
+		checkUselessUqConstrs();
+
 		if(!valid_canceled && !fix_mode)
 		{
-			//Step 5 (optional): Validating the SQL code onto a local DBMS.
+			//Step 6 (optional): Validating the SQL code onto a local DBMS.
 			//Case the connection isn't specified indicates that the SQL validation will not be executed
 			if(!conn)
 			{
@@ -694,6 +706,43 @@ void ModelValidationHelper::checkInvalidatedRels()
 		itr++;
 		emit s_progressUpdated(41 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
 		handled_objs++;
+	}
+}
+
+void ModelValidationHelper::checkUselessUqConstrs()
+{
+	PhysicalTable *table = nullptr;
+	Constraint *pk = nullptr, *uq = nullptr;
+	std::vector<BaseObject *> tabs;
+
+	tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
+							db_model->getObjectList(ObjectType::Table)->end());
+
+	tabs.insert(tabs.end(),
+							db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+							db_model->getObjectList(ObjectType::ForeignTable)->end());
+
+	for(auto &tab : tabs)
+	{
+		if(valid_canceled)
+			break;
+
+		table = dynamic_cast<Table *>(tab);
+		pk = table->getPrimaryKey();
+
+		if(!pk)
+			continue;
+
+		for(auto &tab_obj : *table->getObjectList(ObjectType::Constraint))
+		{
+			uq = dynamic_cast<Constraint *>(tab_obj);
+
+			if(uq->getConstraintType() == ConstraintType::Unique &&
+				 uq->isColumnsExist(pk->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
+			{
+				generateValidationInfo(ValidationInfo::UniqueSameAsPk, uq, { pk });
+			}
+		}
 	}
 }
 

@@ -1000,17 +1000,17 @@ PhysicalTable *PhysicalTable::getAncestorTable(unsigned idx)
 
 Constraint *PhysicalTable::getPrimaryKey()
 {
-	unsigned count,i;
-	Constraint *pk=nullptr, *constr=nullptr;
+	Constraint *constr = nullptr;
 
-	count=constraints.size();
-	for(i=0; i < count && !pk; i++)
+	for(auto &tab_obj : constraints)
 	{
-		constr=dynamic_cast<Constraint *>(constraints[i]);
-		pk=(constr->getConstraintType()==ConstraintType::PrimaryKey ? constr : nullptr);
+		constr = dynamic_cast<Constraint *>(tab_obj);
+
+		if(constr->getConstraintType() == ConstraintType::PrimaryKey)
+			return constr;
 	}
 
-	return pk;
+	return nullptr;
 }
 
 Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
