@@ -30,9 +30,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *fdw_sel;
 
 		CustomTableWidget *options_tab;

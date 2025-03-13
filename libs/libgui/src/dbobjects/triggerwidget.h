@@ -32,9 +32,9 @@
 #include "utils/syntaxhighlighter.h"
 
 class __libgui TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ColumnPickerWidget *col_picker_wgt;
 
 		//! \brief Conditional expression syntax highlighter

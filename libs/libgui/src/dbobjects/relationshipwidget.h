@@ -33,9 +33,9 @@
 #include "utils/syntaxhighlighter.h"
 
 class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		enum TabId: unsigned {
 			GeneralTab,
 			SettingsTab,

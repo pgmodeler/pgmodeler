@@ -29,8 +29,7 @@
 #include "basetableview.h"
 
 class __libcanvas GraphicalView: public BaseTableView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		GraphicalView(View *view);

@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class SyntaxHighlighterTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		SyntaxHighlighterTest() : PgModelerUnitTest(SCHEMASDIR) {}

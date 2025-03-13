@@ -30,9 +30,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel;
 

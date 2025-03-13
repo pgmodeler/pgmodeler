@@ -32,9 +32,9 @@
 #include "utils/syntaxhighlighter.h"
 
 class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		NumberedTextEditor *sqlcode_txt, *xmlcode_txt;
 
 		SyntaxHighlighter *hl_sqlcode, *hl_xmlcode;

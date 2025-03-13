@@ -29,9 +29,9 @@
 #include "modelwidget.h"
 
 class __libgui OperationListWidget: public QWidget, public Ui::OperationListWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelWidget *model_wgt;
 
 		//! \brief Updates the operation list and emits the signal s_operationListUpdated to the connected objects

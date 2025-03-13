@@ -32,9 +32,9 @@ undo / redo all the operations made.
 #include "operation.h"
 
 class __libcore OperationList: public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Inidcates that operation chaining is ignored temporarily
 		bool ignore_chain;
 

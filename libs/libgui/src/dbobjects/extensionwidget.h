@@ -30,9 +30,9 @@
 #include "customtablewidget.h"
 
 class __libgui ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		CustomTableWidget *types_tab;
 		
 	public:

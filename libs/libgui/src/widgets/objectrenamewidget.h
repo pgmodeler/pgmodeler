@@ -31,9 +31,9 @@
 #include "guiglobal.h"
 
 class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Objects to be renamed
 		std::vector<BaseObject *> objects;
 

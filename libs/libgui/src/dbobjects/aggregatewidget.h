@@ -31,9 +31,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Function input data type widget
 		PgSQLTypeWidget *input_type,
 		

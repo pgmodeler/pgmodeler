@@ -38,6 +38,7 @@ class __libgui ValidationInfo {
 			SpObjBrokenReference,
 			BrokenRelConfig,
 			MissingExtension,
+			UniqueSameAsPk,
 			SqlValidationError,
 			ValidationAborted
 		};

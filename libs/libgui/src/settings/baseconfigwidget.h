@@ -33,9 +33,9 @@
 #include <QWidget>
 
 class __libgui BaseConfigWidget: public QWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		bool config_changed;
 		
 	protected:

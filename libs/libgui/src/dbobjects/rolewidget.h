@@ -30,9 +30,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Widget used to select roles on the database model
 		ModelObjectsWidget *object_selection_wgt;
 

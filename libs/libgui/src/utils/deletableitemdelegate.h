@@ -32,9 +32,9 @@ This button is used to trigger a delete action via signal.
 #include <QComboBox>
 
 class __libgui DeletableItemDelegate: public QStyledItemDelegate {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief The tool button which is displayed aside the selected item in the combo box
 		QToolButton *del_btn;
 

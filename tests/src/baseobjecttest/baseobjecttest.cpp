@@ -21,8 +21,7 @@
 #include "table.h"
 
 class BaseObjectTest: public QObject {
-  private:
-    Q_OBJECT
+	Q_OBJECT
 
   private slots:
     void quoteNameIfKeyword();

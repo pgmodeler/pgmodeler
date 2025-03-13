@@ -31,8 +31,7 @@
 #include "textpolygonitem.h"
 
 class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	protected:
 		/*! \brief Indicates if the placeholder object must be used when moving objects.

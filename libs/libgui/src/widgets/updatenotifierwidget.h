@@ -49,9 +49,9 @@
 #include "guiglobal.h"
 
 class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QString check_versions, blogpost;
 
 		//! \brief Object responsible to make request to server

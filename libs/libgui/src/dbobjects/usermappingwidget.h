@@ -30,9 +30,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *server_sel;
 
 		CustomTableWidget *options_tab;

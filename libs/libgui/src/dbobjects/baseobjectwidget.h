@@ -32,9 +32,8 @@
 #include "qtconnectmacros.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	protected:
 		static constexpr int MaxObjectSize=16777215;
 

@@ -35,8 +35,7 @@ treat other attribute of those classes.
 #include "pgsqltypewidget.h"
 
 class __libgui BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	protected:
 		NumberedTextEditor *source_code_txt;

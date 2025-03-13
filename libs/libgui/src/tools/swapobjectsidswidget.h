@@ -29,9 +29,9 @@
 #include "widgets/objectselectorwidget.h"
 
 class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString IdLabel;
 
 		unsigned selector_idx = 0;

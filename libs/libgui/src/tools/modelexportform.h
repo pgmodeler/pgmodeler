@@ -33,9 +33,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui ModelExportForm: public QDialog, public Ui::ModelExportForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
 		static bool low_verbosity;

@@ -31,9 +31,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelWidget *model_wgt;
 
 		HtmlItemDelegate *htmlitem_deleg;

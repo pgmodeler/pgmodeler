@@ -29,9 +29,9 @@
 #include "ui_languagewidget.h"
 
 class __libgui LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel,
 		*func_inline_sel;

@@ -31,9 +31,9 @@
 #include "columnpickerwidget.h"
 
 class __libgui IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Syntax highlighter for predicate
 		SyntaxHighlighter *predicate_hl;
 

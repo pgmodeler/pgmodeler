@@ -37,9 +37,9 @@
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static std::map<QString, QString> cmd_history;
 
 		static int cmd_history_max_len;

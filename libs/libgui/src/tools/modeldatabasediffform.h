@@ -39,9 +39,9 @@
 #include <QThread>
 
 class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
 		enum ThreadId {
 			SrcImportThread,

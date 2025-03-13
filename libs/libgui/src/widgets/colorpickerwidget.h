@@ -33,9 +33,9 @@
 #include <random>
 
 class __libgui ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Random number generator engine used to generate random colors for buttons
 		std::default_random_engine rand_num_engine;
 		

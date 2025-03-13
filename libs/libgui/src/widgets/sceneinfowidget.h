@@ -30,8 +30,7 @@
 #include "baseobjectview.h"
 
 class __libgui SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		SceneInfoWidget(QWidget * parent = nullptr);

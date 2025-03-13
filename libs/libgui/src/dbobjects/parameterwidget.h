@@ -30,9 +30,9 @@
 #include "pgsqltypewidget.h"
 
 class __libgui ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		PgSQLTypeWidget *data_type;
 		Parameter parameter;
 

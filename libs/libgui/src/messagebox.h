@@ -30,9 +30,9 @@
 #include "exception.h"
 
 class __libgui Messagebox: public QDialog, public Ui::Messagebox {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Indicates wether the message box was cancelled
 		bool cancelled;
 

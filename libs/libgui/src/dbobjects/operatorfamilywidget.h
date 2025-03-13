@@ -29,8 +29,7 @@
 #include "ui_operatorfamilywidget.h"
 
 class __libgui OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		OperatorFamilyWidget(QWidget * parent = nullptr);

@@ -30,9 +30,9 @@
 #include "roundedrectitem.h"
 
 class __libcanvas SchemaView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QGraphicsSimpleTextItem *sch_name;
 
 		RoundedRectItem *box;

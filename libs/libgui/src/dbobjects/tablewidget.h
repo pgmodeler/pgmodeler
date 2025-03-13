@@ -31,9 +31,9 @@
 #include "elementstablewidget.h"
 
 class __libgui TableWidget: public BaseObjectWidget, public Ui::TableWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		CustomTableWidget *parent_tables, *options_tab;
 
 		ElementsTableWidget *partition_keys_tab;

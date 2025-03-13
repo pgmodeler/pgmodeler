@@ -30,9 +30,9 @@
 #include "ui_schemawidget.h"
 
 class __libgui SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ColorPickerWidget *fill_color_picker,
 
 		*name_color_picker;

@@ -31,9 +31,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Family, funciton and operator selectors
 		ObjectSelectorWidget *family_sel,
 		*function_sel,

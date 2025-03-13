@@ -34,9 +34,9 @@
 #include "dbobjects/simplecolumnswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SimpleColumnsWidget *custom_cols_wgt;
 
 		ReferencesWidget *obj_refs_wgt;

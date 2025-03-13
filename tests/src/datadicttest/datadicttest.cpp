@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class DataDictTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		DataDictTest() : PgModelerUnitTest(SCHEMASDIR){}

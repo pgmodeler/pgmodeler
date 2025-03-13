@@ -29,9 +29,9 @@
 #include "connection.h"
 
 class __libgui ModelExportHelper: public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief  Stores the total progress
 		int progress,
 

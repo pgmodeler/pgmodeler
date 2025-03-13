@@ -35,9 +35,9 @@
 #include <algorithm>
 
 class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This palette instance holds the current system palette. It is used
 		 * to detect if the system uses dark or light theme and helps pgModeler to
 		 * determine the proper colors when user used System default theme setting */

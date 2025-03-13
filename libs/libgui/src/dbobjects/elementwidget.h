@@ -31,9 +31,9 @@
 #include "syntaxhighlighter.h"
 
 class __libgui ElementWidget: public QWidget, public Ui::ElementWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		Element *element;
 
 		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements

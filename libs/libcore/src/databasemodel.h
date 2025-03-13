@@ -68,9 +68,9 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 class ModelWidget;
 
 class __libcore DatabaseModel:  public QObject, public BaseObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Constants used to access the tuple columns in the internal changelog
 		enum LogFields: unsigned {
 			LogDate,
@@ -462,6 +462,8 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Returns the object count for all object types.
 		unsigned getObjectCount();
+
+		unsigned getObjectsCount(const std::vector<ObjectType> &obj_types);
 
 		unsigned getMaxObjectCount();
 

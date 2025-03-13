@@ -29,8 +29,7 @@
 #include <QSortFilterProxyModel>
 
 class __libgui CustomSortProxyModel: public QSortFilterProxyModel {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		CustomSortProxyModel(QObject *parent = nullptr);

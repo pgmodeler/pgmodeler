@@ -32,9 +32,9 @@
 #include <QIcon>
 
 class __libgui ResultSetModel: public QAbstractTableModel {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		int col_count, row_count;
 
 		QStringList item_data, header_data, tooltip_data;

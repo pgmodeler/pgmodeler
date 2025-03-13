@@ -30,9 +30,9 @@
 #include "widgets/objectselectorwidget.h"
 
 class __libgui ReferencesWidget: public QWidget, Ui::ReferencesWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		CustomTableWidget *references_tab;
 
 		ObjectSelectorWidget *object_sel;

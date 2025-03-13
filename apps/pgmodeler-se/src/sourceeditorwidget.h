@@ -34,9 +34,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static attribs_map snippets;
 
 		static QPalette def_editor_pal;

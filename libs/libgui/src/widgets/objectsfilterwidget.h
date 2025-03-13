@@ -34,9 +34,9 @@
 #include "baseobject.h"
 
 class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		std::vector<ObjectType> extra_obj_types;
 
 		QMenu tab_objs_menu, options_menu;

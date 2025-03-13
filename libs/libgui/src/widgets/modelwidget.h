@@ -36,9 +36,9 @@
 class PgModelerGuiPlugin;
 
 class __libgui ModelWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		#ifdef DEMO_VERSION
 			//Maximum number of objects' operations (create, move, delete, etc)
 			static constexpr unsigned MaxObjActions = 200;

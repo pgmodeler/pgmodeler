@@ -35,6 +35,8 @@
 #include "doublenan.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
+	Q_OBJECT
+
 	public:
 		enum GridPattern: unsigned {
 			SquarePattern,
@@ -51,8 +53,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		DefaultDelimitersColor;
 
 	private:
-		Q_OBJECT
-
 		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color

@@ -33,9 +33,9 @@ the syntax highlighter installed on it.
 #include "catalog.h"
 
 class __libgui CodeCompletionWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This enums is used to determine DML keywords
 		 * positions in the parsed SQL command. This one is used
 		 * together with dml_kwords_pos and dml_keywords, and the

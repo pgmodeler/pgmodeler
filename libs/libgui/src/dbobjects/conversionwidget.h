@@ -29,8 +29,9 @@
 #include "ui_conversionwidget.h"
 
 class __libgui ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
 		ObjectSelectorWidget *conv_func_sel;
 		
 	public:

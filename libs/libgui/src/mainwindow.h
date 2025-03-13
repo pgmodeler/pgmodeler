@@ -47,9 +47,9 @@
 #include "widgets/changelogwidget.h"
 
 class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static int ToolsActionsCount;
 
 		static bool confirm_validation;

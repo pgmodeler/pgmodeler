@@ -30,9 +30,9 @@
 #include "ui_tagwidget.h"
 
 class __libgui TagWidget: public BaseObjectWidget, public Ui::TagWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Stores all color picker using the attribute the represents as map key.
 		std::map<QString, ColorPickerWidget *> color_pickers;
 

@@ -34,9 +34,9 @@
 #include "textblockinfo.h"
 
 class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This struct stores the configuration of formatting groups
 		 *  and their respective foreground/background colors */
 		struct GroupConfig {

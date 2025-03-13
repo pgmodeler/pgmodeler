@@ -40,9 +40,9 @@ enum class ColorId: unsigned {
 };
 
 class __libcore BaseGraphicObject: public QObject, public BaseObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Stores the position of the object on the model. This attribute is used only
 		 to memorize the position of the object in xml code generation */
 		QPointF position;

@@ -31,8 +31,9 @@
 #include <type_traits>
 
 class __libgui BaseForm: public QDialog, public Ui::BaseForm {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
 		/*! \brief Resizes the dialog according to the minimum sizes of the provided widget.
 				If the widget size exceed 70% of the screen size a scroll area will be created and
 				the widget reparented to it. If the minimum size of the widget is 0 then the size

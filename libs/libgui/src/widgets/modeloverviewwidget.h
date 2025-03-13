@@ -29,9 +29,9 @@
 #include "modelwidget.h"
 
 class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 

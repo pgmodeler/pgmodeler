@@ -30,9 +30,9 @@
 #include "colorpickerwidget.h"
 
 class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 
