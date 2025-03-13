@@ -37,9 +37,9 @@
 #include "attributestoggleritem.h"
 
 class __libcanvas BaseTableView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This timer is used to control the selection enabling of the object
 		 * in mouse presse event in order to avoid select it instead of a child.
 		 * See mousePressEvent() for details */

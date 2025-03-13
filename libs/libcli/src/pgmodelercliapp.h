@@ -39,9 +39,9 @@
 #include "pgmodelercliplugin.h"
 
 class __libcli PgModelerCliApp: public Application {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		XmlParser *xmlparser;
 
 		qint64 buffer_size;

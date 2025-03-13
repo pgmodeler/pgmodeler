@@ -28,8 +28,7 @@
 #include "basefunctionwidget.h"
 
 class __libgui ProcedureWidget: public BaseFunctionWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		ProcedureWidget(QWidget * parent = nullptr);

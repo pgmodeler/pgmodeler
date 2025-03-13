@@ -31,9 +31,9 @@
 #include "basetable.h"
 
 class __libcanvas AttributesTogglerItem: public QObject, public RoundedRectItem {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static QPolygonF btn_polygons[7];
 
 		//! \brief Stores the selection rectangle of the item's internal elements

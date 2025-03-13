@@ -29,9 +29,9 @@
 #include "tools/bugreportform.h"
 
 class CrashHandlerForm: public BugReportForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Display the stacktrace
 		QPlainTextEdit *stack_txt;
 

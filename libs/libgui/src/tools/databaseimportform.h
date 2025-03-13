@@ -34,9 +34,9 @@
 #include <random>
 
 class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Random number generator engine used to generate random position for imported objects
 		std::default_random_engine rand_num_engine;
 

@@ -30,9 +30,8 @@
 #include <QGraphicsDropShadowEffect>
 
 class __libgui DonateWidget: public QWidget, public Ui::DonateWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	public:
 		DonateWidget(QWidget *parent = nullptr);
 		

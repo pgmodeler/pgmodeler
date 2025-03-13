@@ -30,9 +30,9 @@
 #include "objectsdiffinfo.h"
 
 class __libgui ModelsDiffHelper: public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief List of attributes ignored when comparing XML code of table children objects
 		static const QStringList
 

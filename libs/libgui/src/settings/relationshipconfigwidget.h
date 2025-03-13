@@ -29,9 +29,9 @@
 #include "baseconfigwidget.h"
 
 class __libgui RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static std::map<QString, attribs_map> config_params;
 
 		std::map<QString, attribs_map> patterns;

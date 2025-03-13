@@ -30,9 +30,9 @@
 #include "ui_castwidget.h"
 
 class __libgui CastWidget: public BaseObjectWidget, public Ui::CastWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Datatype configurations
 		PgSQLTypeWidget *src_datatype, *trg_datatype;
 		

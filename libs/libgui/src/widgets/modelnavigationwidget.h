@@ -29,9 +29,9 @@
 #include "ui_modelnavigationwidget.h"
 
 class __libgui ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QList<ModelWidget *> model_wgts;
 
 		void enableNavigationButtons();

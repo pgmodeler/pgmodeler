@@ -32,9 +32,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString UntitledFile;
 
 		NumberedTextEditor *syntax_txt, *dtd_txt;

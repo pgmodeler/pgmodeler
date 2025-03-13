@@ -31,6 +31,8 @@
 #include "beziercurveitem.h"
 
 class __libcanvas RelationshipView: public BaseObjectView {
+	Q_OBJECT
+
 	public:
 		enum LineConnectionMode: unsigned {
 			ConnectCenterPoints,
@@ -39,8 +41,6 @@ class __libcanvas RelationshipView: public BaseObjectView {
 		};
 
 	private:
-		Q_OBJECT
-
 		//! \brief Graphical point radius
 		static constexpr double GraphicPointRadius=6.0;
 

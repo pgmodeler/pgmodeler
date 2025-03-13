@@ -33,8 +33,9 @@
 #include "baseobject.h"
 
 class __libgui ObjectsListModel: public QAbstractTableModel {
- private:
 	Q_OBJECT
+
+	private:
 
 	struct ItemData {
 		QString text, fg_color, bg_color, icon;

@@ -30,9 +30,9 @@
 #include "ui_objecttypeslistwidget.h"
 
 class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		void setItemsCheckState(Qt::CheckState state);
 
 	public:

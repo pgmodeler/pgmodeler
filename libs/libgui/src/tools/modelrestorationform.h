@@ -29,9 +29,9 @@
 #include "ui_modelrestorationform.h"
 
 class __libgui ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QStringList ignored_files;
 
 	public:

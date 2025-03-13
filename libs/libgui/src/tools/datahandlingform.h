@@ -33,9 +33,9 @@
 class DataGridWidget;
 
 class __libgui DataHandlingForm: public QDialog, public Ui::DataHandlingForm {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Stores ther reference to the currently focused data grid widget (see setCurrentDataGrid)
 		DataGridWidget *curr_grid_wgt;
 

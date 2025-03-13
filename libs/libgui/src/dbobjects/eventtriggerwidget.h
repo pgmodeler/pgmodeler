@@ -30,9 +30,9 @@
 #include "ui_eventtriggerwidget.h"
 
 class __libgui EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		CustomTableWidget *filter_tab;
 		
 		ObjectSelectorWidget *function_sel;

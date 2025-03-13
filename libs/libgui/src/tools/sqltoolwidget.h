@@ -32,9 +32,9 @@
 #include "sqlexecutionwidget.h"
 
 class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QVBoxLayout *corner_wgt_lt;
 
 		QList<QToolButton *> plugins_btns;

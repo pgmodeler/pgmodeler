@@ -29,9 +29,9 @@
 #include <QGraphicsSceneMouseEvent>
 
 class __libcanvas StyledTextboxView: public TextboxView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Fold indicator appended at bottom-right corner of the object
 		QGraphicsPolygonItem *fold;
 

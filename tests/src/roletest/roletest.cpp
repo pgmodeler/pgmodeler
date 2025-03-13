@@ -22,8 +22,7 @@
 #include "pgmodelerunittest.h"
 
 class RoleTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		RoleTest() : PgModelerUnitTest(SCHEMASDIR) {}

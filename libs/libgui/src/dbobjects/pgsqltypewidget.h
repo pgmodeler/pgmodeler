@@ -30,9 +30,9 @@
 #include "databasemodel.h"
 
 class __libgui PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Stores the PostgreSQL type configured on the form
 		PgSqlType type;
 

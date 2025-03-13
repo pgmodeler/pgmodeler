@@ -29,9 +29,9 @@
 #include "dbobjects/baseobjectwidget.h"
 
 class __libgui ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelWidget *model_wgt;
 
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);

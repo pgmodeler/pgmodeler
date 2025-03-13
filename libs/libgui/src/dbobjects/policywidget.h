@@ -28,9 +28,9 @@
 #include "widgets/numberedtexteditor.h"
 
 class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelObjectsWidget *model_objs_wgt;
 
 		CustomTableWidget *roles_tab;

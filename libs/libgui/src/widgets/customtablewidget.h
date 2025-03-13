@@ -32,9 +32,9 @@ of rows on the table.
 #include "guiglobal.h"
 
 class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static QColor item_colors[12];
 
 		/*! \brief Indicates that a confirmation message must be shown when the user try

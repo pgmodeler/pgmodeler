@@ -31,9 +31,9 @@
 #include <QMenu>
 
 class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Holds the current vertical scrollbar position/value before the tree state saving is executed.
 		 * When the tree state is restored this value is used to return the scrollbar value to its original */
 		int curr_scroll_value;

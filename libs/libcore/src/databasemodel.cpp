@@ -669,20 +669,37 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj_idx >= obj_list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		return obj_list->at(obj_idx);
+
+	return obj_list->at(obj_idx);
 }
 
 unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 {
-	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *> *obj_list = nullptr;
 
-	obj_list=getObjectList(obj_type);
+	obj_list = getObjectList(obj_type);
 
 	if(!obj_list)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		return obj_list->size();
+
+	return obj_list->size();
+}
+
+unsigned DatabaseModel::getObjectsCount(const std::vector<ObjectType> &obj_types)
+{
+	try
+	{
+		unsigned count = 0;
+
+		for(auto &obj_typ : obj_types)
+			count += getObjectCount(obj_typ);
+
+		return count;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 unsigned DatabaseModel::getMaxObjectCount()

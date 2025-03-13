@@ -30,9 +30,9 @@
 #include "pgsqltypewidget.h"
 
 class __libgui ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		SyntaxHighlighter *hl_default_value;
 		PgSQLTypeWidget *data_type;
 		ObjectSelectorWidget *sequence_sel;

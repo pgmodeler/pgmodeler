@@ -29,9 +29,9 @@
 #include "baseobjectwidget.h"
 
 class __libgui DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
-		
 		ObjectSelectorWidget *def_collation_sel,
 		*def_schema_sel,
 		*def_owner_sel,

@@ -30,9 +30,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString PgModelerCli;
 
 		//! \brief Process used to execute pgmodeler-cli

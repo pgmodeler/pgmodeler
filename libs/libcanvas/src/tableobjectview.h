@@ -32,9 +32,9 @@
 #include "pgsqltypes/pgsqltype.h"
 
 class __libcanvas TableObjectView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static bool hide_sch_name_usr_type;
 
 		//! \brief Table object descriptor

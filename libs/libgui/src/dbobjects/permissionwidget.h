@@ -32,9 +32,9 @@
 #include "utils/syntaxhighlighter.h"
 
 class __libgui PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SyntaxHighlighter *code_hl;
 
 		//! \brief Stores the permission to be edited

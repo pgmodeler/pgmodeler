@@ -30,9 +30,9 @@
 #include "connection.h"
 
 class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user

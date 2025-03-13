@@ -31,9 +31,9 @@
 #include "column.h"
 
 class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Stores the object in which the columns to be listed will be retrieved (must be a table or relationship)
 		BaseObject *parent_obj;
 

@@ -30,9 +30,9 @@
 #include "csvdocument.h"
 
 class __libgui CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Holds the names of columns extracted from the csv file
 		QStringList csv_columns;
 

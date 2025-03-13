@@ -22,8 +22,7 @@
 #include <QDialog>
 
 class LineNumbersTest: public QObject {
-  private:
-    Q_OBJECT
+	Q_OBJECT
 
   private slots:
 		void handleLineSelectionUsingMouse();

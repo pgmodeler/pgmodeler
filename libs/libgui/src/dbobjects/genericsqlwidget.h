@@ -34,9 +34,9 @@
 #include "widgets/numberedtexteditor.h"
 
 class __libgui GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ReferencesWidget *obj_refs_wgt;
 
 		NumberedTextEditor *definition_txt, *preview_txt;

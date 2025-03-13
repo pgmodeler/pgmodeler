@@ -28,9 +28,8 @@
 #include "ui_aboutsewidget.h"
 
 class AboutSEWidget: public QWidget, public Ui::AboutSEWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	public:
 		AboutSEWidget(QWidget *parent = nullptr);
 };

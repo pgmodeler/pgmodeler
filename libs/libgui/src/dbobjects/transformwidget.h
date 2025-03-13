@@ -31,9 +31,9 @@
 #include "ui_transformwidget.h"
 
 class __libgui TransformWidget: public BaseObjectWidget, public Ui::TransformWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		PgSQLTypeWidget *type_wgt;
 
 		ObjectSelectorWidget *from_sql_func_sel, *to_sql_func_sel, *language_sel;

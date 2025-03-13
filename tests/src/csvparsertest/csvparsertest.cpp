@@ -22,8 +22,7 @@
 #include "exception.h"
 
 class CsvParserTest: public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	private slots:
 		void testColumnsInFirstRowAndOneRowUnquotedWithoutLastBreak();

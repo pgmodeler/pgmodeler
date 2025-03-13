@@ -31,9 +31,9 @@
 #include "columnpickerwidget.h"
 
 class __libgui ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		ColumnPickerWidget *col_picker_wgt, *ref_col_picker_wgt;
 
 		QFrame *info_frm;

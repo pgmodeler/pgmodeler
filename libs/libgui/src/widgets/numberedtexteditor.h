@@ -33,9 +33,9 @@ based upon the code editor example provided by Qt
 #include "linenumberswidget.h"
 
 class __libgui NumberedTextEditor : public QPlainTextEdit {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Controls if line numbers must be visible or not
 		static bool line_nums_visible,
 

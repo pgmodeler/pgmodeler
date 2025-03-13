@@ -29,9 +29,9 @@
 #include "modelwidget.h"
 
 class __libgui ChangelogWidget : public QWidget, Ui::ChangelogWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelWidget *model;
 
 	public:

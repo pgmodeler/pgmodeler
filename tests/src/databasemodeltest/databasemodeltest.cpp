@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class DatabaseModelTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		DatabaseModelTest() : PgModelerUnitTest(SCHEMASDIR){}

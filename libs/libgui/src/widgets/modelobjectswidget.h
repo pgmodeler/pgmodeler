@@ -30,9 +30,9 @@
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This event loop is used to make the widget enter in a loop (like QDialogs) when
 		 *  the show() is called and the widget is configured as a simplified view */
 		QEventLoop event_loop;
