@@ -847,6 +847,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 											 QRegularExpression::DontCaptureOption),
 			reg_aux,
 
+			name_rx("^((\".+\")|(\\w|_|\\d)+)(\\.((\".+\")|(\\w|_|\\d)+))*"),
+
 			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, "\\*"),
 																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
@@ -918,7 +920,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
-					aux_cmd.remove('"');
 					aux_cmd.remove("IF EXISTS ");
 					obj_type=(aux_cmd.contains("COLUMN") ? ObjectType::Column : ObjectType::Constraint);
 					reg_aux.setPattern("(COLUMN|CONSTRAINT)( )+");
@@ -1008,21 +1009,20 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						if(match.hasMatch())
 						{
-							is_create=lin.startsWith("CREATE");
-							is_drop=(!is_create && lin.startsWith("DROP"));
+							is_create = lin.startsWith("CREATE");
+							is_drop = (!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
 							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
-							lin.remove('"');
 
 							if(obj_tp != ObjectType::BaseObject)
 							{
-								if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
+								if(obj_tp != ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 								{
-									int spc_idx=lin.indexOf(' ');
-									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+									match = name_rx.match(lin);
+									obj_name = lin.mid(match.capturedStart(), match.capturedLength());
 
-									if(obj_tp!=ObjectType::Function && obj_tp!=ObjectType::Procedure)
+									if(obj_tp != ObjectType::Function && obj_tp != ObjectType::Procedure)
 									{
 										obj_name=obj_name.remove('(').simplified();
 										obj_name=obj_name.remove(')').simplified();
