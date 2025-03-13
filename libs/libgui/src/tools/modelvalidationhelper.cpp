@@ -23,11 +23,11 @@ const QString ModelValidationHelper::SignalMsg { "`%1' (%2)" };
 
 ModelValidationHelper::ModelValidationHelper()
 {
-	warn_count=error_count=progress=0;
+	warn_count = error_count = 0;
 	handled_objs = total_objs = 0;
-	db_model=nullptr;
-	conn=nullptr;
-	valid_canceled=fix_mode=use_tmp_names=false;
+	db_model = nullptr;
+	conn = nullptr;
+	valid_canceled = fix_mode = use_tmp_names = false;
 
 	export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
@@ -225,16 +225,6 @@ unsigned ModelValidationHelper::getErrorCount()
 	return error_count;
 }
 
-void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
-{
-	if(!export_thread->isRunning())
-		return;
-
-	progress=41 + (prog * 0.55);
-	if(progress > 99) progress=99;
-	emit s_progressUpdated(progress, msg, obj_type, cmd, is_code_gen);
-}
-
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver, bool use_tmp_names)
 {
 	if(!model)
@@ -275,13 +265,13 @@ void ModelValidationHelper::validateModel()
 			ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
 			ObjectType::ForeignTable, ObjectType::Procedure, ObjectType::Transform
 		};
-		unsigned prog = 1;
+
 		std::vector<BaseObject *> refs, refs_aux, *obj_list = nullptr, aux_tables;
 		std::vector<BaseObject *>::iterator itr;
 		std::map<QString, std::vector<BaseObject *> > dup_objects;
 		std::map<QString, std::vector<BaseObject *> >::iterator mitr;
 
-		warn_count=error_count=progress=0;
+		warn_count = error_count = 0;
 		handled_objs = total_objs = 0;
 		val_infos.clear();
 		valid_canceled=false;
@@ -290,6 +280,7 @@ void ModelValidationHelper::validateModel()
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
 		 which id is smaller than the id of the first one. */
+
 		for(auto &tp : types)
 		{
 			if(valid_canceled)
@@ -303,7 +294,8 @@ void ModelValidationHelper::validateModel()
 				if(valid_canceled)
 					break;
 
-				prog++;
+				//prog++;
+				handled_objs++;
 
 				//Excluding the validation of system objects (created automatically)
 				if(object->isSystemObject())
@@ -325,8 +317,7 @@ void ModelValidationHelper::validateModel()
 			}
 
 			//Emit a signal containing the validation progress
-			progress = (prog / static_cast<double>(types.size())) * 20;
-			emit s_progressUpdated(progress, "");
+			emit s_progressUpdated((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 20), "");
 		}
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
@@ -568,6 +559,7 @@ void ModelValidationHelper::checkConstrNameConflicts()
 										db_model->getObjectList(ObjectType::View)->begin(),
 										db_model->getObjectList(ObjectType::View)->end());
 
+
 	//Searching the model's tables and gathering all the constraints and index
 	for(auto &tab : aux_tables)
 	{
@@ -626,7 +618,7 @@ void ModelValidationHelper::checkConstrNameConflicts()
 
 	//Checking the map of duplicated objects
 	mitr = dup_objects.begin();
-	unsigned prog = 1;
+	total_objs += dup_objects.size();
 
 	while(mitr != dup_objects.end() && !valid_canceled)
 	{
@@ -639,11 +631,9 @@ void ModelValidationHelper::checkConstrNameConflicts()
 			refs.clear();
 		}
 
-		//Emit a signal containing the validation progress
-		progress = 20 + ((prog / static_cast<double>(dup_objects.size())) * 20);
-		emit s_progressUpdated(progress, "");
-
-		prog++; mitr++;
+		emit s_progressUpdated(21 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
+		mitr++;
 	}
 }
 
@@ -663,14 +653,15 @@ void ModelValidationHelper::checkMissingPostgisExt()
 	auto itr = tabs.begin();
 	PhysicalTable *table = nullptr;
 	Column *col = nullptr;
-	unsigned prog = 0;
 	std::vector<TableObject *> *obj_list = nullptr;
+
+	total_objs += tabs.size();
 
 	while(itr != tabs.end() && !valid_canceled)
 	{
 		table = dynamic_cast<PhysicalTable *>(*itr);
 		obj_list = table->getObjectList(ObjectType::Column);
-		prog++; itr++;
+		itr++;
 
 		for(auto &obj : *obj_list)
 		{
@@ -680,8 +671,8 @@ void ModelValidationHelper::checkMissingPostgisExt()
 				generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 		}
 
-		progress = 30 + ((prog / static_cast<double>(obj_list->size())) * 20);
-		emit s_progressUpdated(progress, "");
+		emit s_progressUpdated(31 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
 	}
 }
 
@@ -692,18 +683,30 @@ void ModelValidationHelper::checkInvalidatedRels()
 
 	auto obj_list = db_model->getObjectList(ObjectType::Relationship);
 	auto itr = db_model->getObjectList(ObjectType::Relationship)->begin();
-	unsigned prog = 1;
+
+	total_objs += obj_list->size();
 
 	while(itr != obj_list->end() && !valid_canceled)
 	{
-		progress = 40 + ((prog / static_cast<double>(obj_list->size())) * 20);
-		emit s_progressUpdated(progress, "");
-
 		if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
 			generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});
 
-		itr++; prog++;
+		itr++;
+		emit s_progressUpdated(41 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
 	}
+}
+
+void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
+{
+	if(!export_thread->isRunning())
+		return;
+
+	if(prog > 100)
+		prog = 100;
+
+	prog = 51 + (prog * 0.40);
+	emit s_progressUpdated(prog, msg, obj_type, cmd, is_code_gen);
 }
 
 void ModelValidationHelper::applyFixes()
@@ -801,6 +804,7 @@ void ModelValidationHelper::emitValidationFinished()
 	db_model->setInvalidated(error_count > 0);
 	emit s_validationFinished();
 
-	progress=100;
-	emit s_progressUpdated(progress,"");
+	//progress=100;
+	//emit s_progressUpdated(progress,"");
+	emit s_progressUpdated(100, "");
 }

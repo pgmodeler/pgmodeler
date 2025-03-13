@@ -480,7 +480,8 @@ void ModelValidationWidget::applyFixes()
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	if(validation_thread &&
-			(!validation_thread->isRunning() || validation_helper->isValidationCanceled()))
+			(!validation_thread->isRunning() ||
+			 validation_helper->isValidationCanceled()))
 		return;
 
 	QTreeWidgetItem *item=nullptr;
@@ -488,8 +489,8 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	validation_prog_pb->setValue(prog);
 
 	if(prog >= 100 &&
-			validation_helper->getErrorCount()==0 &&
-			validation_helper->getWarningCount()==0)
+			validation_helper->getErrorCount() == 0 &&
+			validation_helper->getWarningCount() == 0)
 	{
 		error_lbl->setEnabled(false);
 		error_count_lbl->setText(QString::number(0));

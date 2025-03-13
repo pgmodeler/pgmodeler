@@ -54,8 +54,8 @@ class __libgui ModelValidationHelper: public QObject {
 		//! \brief Warning and error counters
 		unsigned warn_count, error_count;
 
-		//! \brief Validation progress
-		int progress, handled_objs, total_objs;
+		//! \brief Validation progress variables
+		int handled_objs, total_objs;
 
 		//! \brief Indicates if the validation was canceled by the user
 		bool  valid_canceled,
