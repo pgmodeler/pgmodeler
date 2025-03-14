@@ -1024,8 +1024,19 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 									if(obj_tp != ObjectType::Function && obj_tp != ObjectType::Procedure)
 									{
-										obj_name=obj_name.remove('(').simplified();
-										obj_name=obj_name.remove(')').simplified();
+										obj_name = obj_name.remove('(').simplified();
+										obj_name = obj_name.remove(')').simplified();
+									}
+
+									if(obj_tp == ObjectType::Trigger || obj_tp == ObjectType::Index)
+									{
+										int on_idx = sql_cmd.indexOf("ON ") + 3,
+												lb_idx = sql_cmd.indexOf('\n', on_idx);
+
+										// Extracting the table name from command so it'll be prepended to object name
+										lin = sql_cmd.mid(on_idx, lb_idx - on_idx);
+										match = name_rx.match(lin);
+										obj_name.prepend(lin.mid(match.capturedStart(), match.capturedLength()) + '.');
 									}
 								}
 								else if(obj_tp == ObjectType::UserMapping)
@@ -1038,15 +1049,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								}
 
 								//Stores the object type name
-								obj_tp_name=BaseObject::getTypeName(obj_tp);
+								obj_tp_name = BaseObject::getTypeName(obj_tp);
 								obj_name.remove(';');
 
 								if(is_create)
-									msg=tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else if(is_drop)
-									msg=tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else
-									msg=tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 							}
 							// If the type of the object being create can't be identified
 							else
