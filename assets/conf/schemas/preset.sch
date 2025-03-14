@@ -1,6 +1,6 @@
-%set {spacer} $br $tb $tb
+%set {spacer} \n \t \t
 
-$tb [<preset ] name="&{name}"
+\t [<preset ] name="&{name}"
 
 %if {current-model} %then
 	{spacer} current-model="true"
@@ -41,4 +41,19 @@ $tb [<preset ] name="&{name}"
 	{spacer} ignore-error-codes="{ignore-error-codes}"
 %end
 
-/> $br $br
+{spacer} match-by-signature="{match-by-signature}"
+{spacer} only-matching="{only-matching}" 
+
+%if {forced-filtering} %then
+	{spacer} forced-filtering="{forced-filtering}"
+%end
+
+%if %not {filters} %then
+	/>
+%else
+	>
+	{spacer} [<!] \[ CDATA \[ &{filters} \] \] > \n
+\t </preset>
+%end
+
+\n

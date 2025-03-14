@@ -473,7 +473,7 @@ void DatabaseImportForm::listObjects()
 
 			import_helper->setObjectFilters(obj_filter,
 																			objs_filter_wgt->isOnlyMatching(),
-																			objs_filter_wgt->isMatchSignature(),
+																			objs_filter_wgt->isMatchBySignature(),
 																			objs_filter_wgt->getForceObjectsFilter());
 			if(obj_filter.isEmpty() &&
 				 import_helper->getCatalog().getObjectsCount({ ObjectType::Table, ObjectType::ForeignTable,

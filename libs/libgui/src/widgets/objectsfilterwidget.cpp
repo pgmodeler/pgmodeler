@@ -123,7 +123,8 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 		values = filter.split(UtilsNs::FilterSeparator);
 
 		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
-		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
+		if(values.size() != 3 || values.indexOf("") >= 0 ||
+			 (values[0] != Attributes::Any && !types.contains(values[0])))
 			continue;
 
 		addFilter();
@@ -220,12 +221,33 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 	return types;
 }
 
+void ObjectsFilterWidget::setForceObjectsFilter(const QStringList &tab_obj_types)
+{
+	for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
+	{
+		if(tab_obj_types.contains(item->data(Qt::UserRole).toString()))
+			item->setCheckState(Qt::Checked);
+		else
+			item->setCheckState(Qt::Unchecked);
+	}
+}
+
+void ObjectsFilterWidget::setMatchBySignature(bool value)
+{
+	action_match_signature->setChecked(value);
+}
+
+void ObjectsFilterWidget::setOnlyMatching(bool value)
+{
+	action_only_matching->setChecked(value);
+}
+
 bool ObjectsFilterWidget::isOnlyMatching()
 {
 	return action_only_matching->isChecked();
 }
 
-bool ObjectsFilterWidget::isMatchSignature()
+bool ObjectsFilterWidget::isMatchBySignature()
 {
 	return action_match_signature->isChecked();
 }

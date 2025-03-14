@@ -61,8 +61,15 @@ class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		//! \brief Returns a list of table children objects to be filtered forcebly
 		QStringList getForceObjectsFilter();
 
+		/*! \brief Set a list of table children objects to be filtered forcebly
+		 *  Invalid types are ignored by this method */
+		void setForceObjectsFilter(const QStringList &tab_obj_types);
+
+		void setMatchBySignature(bool value);
+		void setOnlyMatching(bool value);
+
 		bool isOnlyMatching();
-		bool isMatchSignature();
+		bool isMatchBySignature();
 		bool hasFiltersConfigured();
 
 		/*! \brief When value is true the widget disable some features that aren't used

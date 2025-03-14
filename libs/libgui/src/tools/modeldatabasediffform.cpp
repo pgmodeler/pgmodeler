@@ -615,12 +615,12 @@ void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
 			if(src_model_rb->isChecked())
-				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, gen_filters_from_log_chk->isChecked() || pd_filter_wgt->isMatchSignature()));
+				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, gen_filters_from_log_chk->isChecked() || pd_filter_wgt->isMatchBySignature()));
 
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),
 															 // When the filter by date is checked we always filter objects by their signature
-															 gen_filters_from_log_chk->isChecked() ? true : pd_filter_wgt->isMatchSignature(),
+															 gen_filters_from_log_chk->isChecked() ? true : pd_filter_wgt->isMatchBySignature(),
 															 pd_filter_wgt->getForceObjectsFilter());
 		}
 
@@ -1114,7 +1114,8 @@ void ModelDatabaseDiffForm::loadConfiguration()
 {
 	try
 	{
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params,
+																				{ Attributes::Name }, false);
 		applyConfiguration();
 	}
 	catch(Exception &e)
@@ -1254,6 +1255,19 @@ void ModelDatabaseDiffForm::selectPreset()
 	run_in_transaction_chk->setChecked(conf[Attributes::RunInTransaction] == Attributes::True);
 	ignore_error_codes_chk->setChecked(!conf[Attributes::IgnoreErrorCodes].isEmpty());
 	error_codes_edt->setText(conf[Attributes::IgnoreErrorCodes]);
+
+	/* Compatibility with previous versions of diff-presets.conf
+	 * We configure diff filters only when one of the attributes related
+	 * to them is present */
+	if(conf.count(Attributes::MatchBySignature) ||
+		 conf.count(Attributes::OnlyMatching) ||
+		 conf.count(Attributes::ForcedFiltering))
+	{
+		pd_filter_wgt->addFilters(conf[Attributes::Contents].split('\n'));
+		pd_filter_wgt->setForceObjectsFilter(conf[Attributes::ForcedFiltering].split(','));
+		pd_filter_wgt->setMatchBySignature(conf[Attributes::MatchBySignature] != Attributes::False);
+		pd_filter_wgt->setOnlyMatching(conf[Attributes::OnlyMatching] != Attributes::False);
+	}
 }
 
 void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
@@ -1300,67 +1314,79 @@ void ModelDatabaseDiffForm::removePreset()
 
 void ModelDatabaseDiffForm::savePreset()
 {
-	QString name, fmt_name;
-	attribs_map conf;
-	int idx = 0;
-
-	if(!is_adding_new_preset)
+	try
 	{
-		fmt_name = name = preset_name_edt->text().isEmpty() ? presets_cmb->currentText() : preset_name_edt->text();
-		config_params.erase(presets_cmb->currentText());
-		presets_cmb->removeItem(presets_cmb->currentIndex());
+		QString name, fmt_name;
+		attribs_map conf;
+		int idx = 0;
+
+		if(!is_adding_new_preset)
+		{
+			fmt_name = name = preset_name_edt->text().isEmpty() ? presets_cmb->currentText() : preset_name_edt->text();
+			config_params.erase(presets_cmb->currentText());
+			presets_cmb->removeItem(presets_cmb->currentIndex());
+		}
+		else
+			fmt_name = name = preset_name_edt->text();
+
+		// Checking the preset name duplication and performing a basic desambiguation if necessary
+		while(presets_cmb->findText(fmt_name, Qt::MatchExactly) >= 0)
+			fmt_name = name + QString::number(++idx);
+
+		conf[Attributes::Name] = fmt_name;
+		conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
+
+		if(src_database_rb->isChecked())
+		{
+			conf[Attributes::InputDatabase] = QString("%1@%2")
+																				.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : "-")
+																				.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : "-");
+		}
+		else
+			conf[Attributes::InputDatabase] = "";
+
+		conf[Attributes::CompareToDatabase] = QString("%1@%2")
+																					.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
+																					.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
+
+		conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
+		conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
+		conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
+		conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ReplaceModObjs] = replace_modified_chk->isChecked() ? Attributes::True : Attributes::False;
+
+		conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
+		conf[Attributes::RunInTransaction] = run_in_transaction_chk->isChecked() ? Attributes::True : Attributes::False;
+
+		conf[Attributes::MatchBySignature] = pd_filter_wgt->isMatchBySignature() ? Attributes::True : Attributes::False;
+		conf[Attributes::OnlyMatching] = pd_filter_wgt->isOnlyMatching() ? Attributes::True : Attributes::False;
+		conf[Attributes::ForcedFiltering] = pd_filter_wgt->getForceObjectsFilter().join(',' );
+		conf[Attributes::Filters] = pd_filter_wgt->getObjectFilters().join('\n');
+
+		config_params[fmt_name] = conf;
+
+		saveConfiguration();
+		togglePresetConfiguration(false);
+		applyConfiguration();
+
+		presets_cmb->setCurrentText(fmt_name);
+		selectPreset();
 	}
-	else
-		fmt_name = name = preset_name_edt->text();
-
-	// Checking the preset name duplication and performing a basic desambiguation if necessary
-	while(presets_cmb->findText(fmt_name, Qt::MatchExactly) >= 0)
-		fmt_name = name + QString::number(++idx);
-
-	conf[Attributes::Name] = fmt_name;
-	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
-
-	if(src_database_rb->isChecked())
+	catch(Exception &e)
 	{
-		conf[Attributes::InputDatabase] = QString("%1@%2")
-																			.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : "-")
-																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : "-");
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-	else
-		conf[Attributes::InputDatabase] = "";
-
-	conf[Attributes::CompareToDatabase] = QString("%1@%2")
-																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
-																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
-
-	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
-	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
-	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
-	conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ReplaceModObjs] = replace_modified_chk->isChecked() ? Attributes::True : Attributes::False;
-
-	conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
-	conf[Attributes::RunInTransaction] = run_in_transaction_chk->isChecked() ? Attributes::True : Attributes::False;
-
-	config_params[fmt_name] = conf;
-
-	saveConfiguration();
-	togglePresetConfiguration(false);
-	applyConfiguration();
-
-	presets_cmb->setCurrentText(fmt_name);
-	selectPreset();
 }
 
 void ModelDatabaseDiffForm::enablePartialDiff()
@@ -1405,7 +1431,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		if(src_model_rb->isChecked())
 		{
 			QString search_attr = (gen_filters_from_log_chk->isChecked() ||
-														 pd_filter_wgt->isMatchSignature()) ?
+														 pd_filter_wgt->isMatchBySignature()) ?
 																Attributes::Signature : Attributes::Name;
 
 			std::vector<BaseObject *> flt_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
@@ -1424,7 +1450,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 			import_helper.setConnection(conn);
 			import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
 																			pd_filter_wgt->isOnlyMatching(),
-																			pd_filter_wgt->isMatchSignature(),
+																			pd_filter_wgt->isMatchBySignature(),
 																			pd_filter_wgt->getForceObjectsFilter());
 
 			DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_view);
