@@ -548,7 +548,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			else
 			{
 				GuiUtilsNs::createOutputTreeItem(output_trw,
-																				 tr("Database model validation finished with warnings(s)."),
+																				 tr("Database model validation finished with warning(s)."),
 																				 QPixmap(GuiUtilsNs::getIconPath("alert")));
 			}
 		}
