@@ -189,6 +189,7 @@ class __libgui ModelsDiffHelper: public QObject {
 		/*! \brief Defines the object types that must be recreated forcebly.
 		 *  These object types are only used when OptForceRecreation option is set */
 		void setForcedRecreateTypes(const std::vector<ObjectType> &forced_rec_types);
+		void setForcedRecreateTypeNames(const QStringList &forced_rec_types);
 
 		//! \brief Returns if the provided type is one of the forced recreation ones
 		bool isForcedRecreateType(ObjectType obj_type);

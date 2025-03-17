@@ -274,6 +274,7 @@ class __libcli PgModelerCliApp: public Application {
 		NoCascadeDrop,
 		RecreateUnmod,
 		ReplaceModified,
+		ForceReCreateObjs,
 		CreateConfigs,
 		MissingOnly,
 		IgnoreFaultyPlugins,

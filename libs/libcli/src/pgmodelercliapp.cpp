@@ -107,6 +107,7 @@ const QString PgModelerCliApp::NoSequenceReuse {"--no-sequence-reuse"};
 const QString PgModelerCliApp::NoCascadeDrop {"--no-cascade"};
 const QString PgModelerCliApp::RecreateUnmod {"--recreate-unmod"};
 const QString PgModelerCliApp::ReplaceModified {"--replace-mod"};
+const QString PgModelerCliApp::ForceReCreateObjs { "--force-re-create" };
 const QString PgModelerCliApp::CreateConfigs {"--create-configs"};
 const QString PgModelerCliApp::MissingOnly {"--missing-only"};
 const QString PgModelerCliApp::IgnoreFaultyPlugins {"--ignore-faulty"};
@@ -146,8 +147,8 @@ std::map<QString, bool> PgModelerCliApp::long_opts {
 	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
-	{ RecreateUnmod, false }, { ReplaceModified, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
+	{ RecreateUnmod, false }, { ReplaceModified, false },	{ ForceReCreateObjs, true },
+	{ ExportToDict, false }, { NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 	{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
 	{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
@@ -174,8 +175,8 @@ attribs_map PgModelerCliApp::short_opts {
 	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
-	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },
-	{ RecreateUnmod, "-ru" }, { ReplaceModified, "-rm" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
+	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" }, { RecreateUnmod, "-ru" },
+	{ ReplaceModified, "-rm" },	{ ForceReCreateObjs, "-fr" }, { NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
 	{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
@@ -582,6 +583,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
 	printText(tr("  %1, %2\t\t    Recreates the unmodifiable objects. These objects are the ones that can't be changed via the ALTER command.").arg(short_opts[RecreateUnmod]).arg(RecreateUnmod));
 	printText(tr("  %1, %2\t\t    Replaces modifiable objects. These objects are the ones that supports CREATE OR REPLACE command.").arg(short_opts[ReplaceModified]).arg(ReplaceModified));
+	printText(tr("  %1, %2 [OBJECTS]  Uses a DROP and CREATE commands to do a full modification over changed objects. The OBJECTS is a comma-separated list of types.").arg(short_opts[ForceReCreateObjs]).arg(ForceReCreateObjs));
 	printText();
 
 	printText(tr("Model fix options: ") );
@@ -2239,6 +2241,8 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
+
+	diff_hlp->setForcedRecreateTypeNames(parsed_opts[ForceReCreateObjs].split(','));
 
 	if(!parsed_opts[PgSqlVer].isEmpty())
 		diff_hlp->setPgSQLVersion(parsed_opts[PgSqlVer]);

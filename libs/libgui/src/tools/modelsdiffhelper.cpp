@@ -75,8 +75,41 @@ void ModelsDiffHelper::setDiffOption(DiffOptions opt_id, bool value)
 		diff_opts[opt_id]=value;
 }
 
+void ModelsDiffHelper::setForcedRecreateTypeNames(const QStringList &forced_rec_types)
+{
+	try
+	{
+		std::vector<ObjectType> obj_types;
+
+		for(auto &tp_name : forced_rec_types)
+			obj_types.push_back(BaseObject::getObjectType(tp_name));
+
+		setForcedRecreateTypes(obj_types);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void ModelsDiffHelper::setForcedRecreateTypes(const std::vector<ObjectType> &forced_rec_types)
 {
+
+	static const std::vector<ObjectType> inv_types {
+		ObjectType::Relationship, ObjectType::Permission,
+		ObjectType::Database, ObjectType::Tag,
+		ObjectType::Textbox, ObjectType::GenericSql,
+		ObjectType::BaseObject, ObjectType::BaseRelationship,
+		ObjectType::BaseTable, ObjectType::TypeAttribute,
+		ObjectType::Parameter
+	};
+
+	for(auto &type : inv_types)
+	{
+		if(std::find(forced_rec_types.begin(), forced_rec_types.end(), type) != forced_rec_types.end())
+			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__, nullptr, QString::number(enum_t(type)));
+	}
+
 	forced_recreate_types = forced_rec_types;
 }
 
