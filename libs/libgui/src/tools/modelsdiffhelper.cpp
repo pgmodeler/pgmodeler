@@ -57,6 +57,7 @@ ModelsDiffHelper::ModelsDiffHelper()
 	diff_opts[OptPreserveDbName]=true;
 	diff_opts[OptDontDropMissingObjs]=false;
 	diff_opts[OptDropMissingColsConstr]=false;
+	diff_opts[OptForceRecreation]=false;
 }
 
 ModelsDiffHelper::~ModelsDiffHelper()
@@ -66,13 +67,25 @@ ModelsDiffHelper::~ModelsDiffHelper()
 
 void ModelsDiffHelper::setDiffOption(DiffOptions opt_id, bool value)
 {
-	if(opt_id > OptDropMissingColsConstr)
+	if(opt_id > OptForceRecreation)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(opt_id == OptDropMissingColsConstr)
 		diff_opts[opt_id]=value & !diff_opts[OptDropMissingColsConstr];
 	else
 		diff_opts[opt_id]=value;
+}
+
+void ModelsDiffHelper::setForcedRecreateTypes(const std::vector<ObjectType> &forced_rec_types)
+{
+	forced_recreate_types = forced_rec_types;
+}
+
+bool ModelsDiffHelper::isForcedRecreateType(ObjectType obj_type)
+{
+	return std::find(forced_recreate_types.begin(),
+									 forced_recreate_types.end(),
+									 obj_type) != forced_recreate_types.end();
 }
 
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
@@ -514,7 +527,8 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if(PhysicalTable::isPhysicalTable(object->getObjectType()))
+								if(!diff_opts[OptForceRecreation] &&
+									 PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
 											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
@@ -554,8 +568,8 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
 
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-									   tr("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-									   object->getObjectType());
+															 tr("Skipping object `%1' (%2)...").arg(object->getSignature(), object->getTypeName()),
+															 object->getObjectType());
 
 				if(diff_canceled)
 					break;
@@ -650,8 +664,8 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 			/* If the info is for ALTER and there is a DROP info on the list,
 			 * the object will be recreated instead of modified */
-			if(diff_opts[OptRecreateUnmodifiable] &&
-				 diff_type==ObjectsDiffInfo::AlterObject &&
+			if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
+				 diff_type == ObjectsDiffInfo::AlterObject &&
 				 isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
 				 !isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
 			{
@@ -756,13 +770,14 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 				/* If the info is for DROP, generate the drop for referer objects of the
 				 * one marked to be dropped */
-				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
-						diff_type==ObjectsDiffInfo::DropObject)
+				if((diff_opts[OptForceRecreation] ||
+						diff_opts[OptRecreateUnmodifiable]
+						/* diff_opts[OptReplaceModified] */) &&
+						diff_type == ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
-					ObjectType obj_type=object->getObjectType();
+					ObjectType obj_type = object->getObjectType();
 
-					//imported_model->getObjectReferences(object, ref_objs);
 					ref_objs = object->getReferences();
 
 					for(auto &obj : ref_objs)
@@ -975,20 +990,22 @@ void ModelsDiffHelper::processDiffInfos()
 			else if(diff_type == ObjectsDiffInfo::AlterObject)
 			{
 				QString obj_sql, old_obj_sql;
+				bool is_forced_create = diff_opts[OptForceRecreation] && isForcedRecreateType(object->getObjectType()),
+						 is_recreate_unmod = diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand(),
+						 is_replace_mod = diff_opts[OptReplaceModified] && object->acceptsReplaceCommand();
 
 				obj_sql = diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 
 				// If one or more options that controls the recreation of objects is set
 				if(obj_type != ObjectType::Database && obj_sql != old_obj_sql &&
-						((diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand()) ||
-							(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand())))
+						(is_forced_create || is_recreate_unmod || is_replace_mod))
 				{
 					// Replacing objects that accepts CREATE OR REPLACE
-					if(diff_opts[OptReplaceModified])
+					if(is_replace_mod)
 						alter_objs[object->getObjectId()] = getSourceCode(object, false);
 					// Recreating objects via DROP and CREATE
-					else if(diff_opts[OptRecreateUnmodifiable])
+					else if(is_recreate_unmod || is_forced_create)
 					{
 						recreateObject(object, drop_vect, create_vect);
 

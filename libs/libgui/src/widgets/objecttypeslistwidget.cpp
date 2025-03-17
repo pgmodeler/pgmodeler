@@ -19,13 +19,15 @@
 #include "objecttypeslistwidget.h"
 #include "guiutilsns.h"
 
-ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
+ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent, const std::vector<ObjectType> &excl_types)	: QWidget(parent)
 {
 	setupUi(this);
 
 	QListWidgetItem *item = nullptr;
+	std::vector<ObjectType> excluded_types { ObjectType::BaseRelationship };
+	excluded_types.insert(excluded_types.end(), excl_types.begin(), excl_types.end());
 
-	for(auto &type : BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship }))
+	for(auto &type : BaseObject::getObjectTypes(true, excluded_types))
 	{
 		item = new QListWidgetItem(BaseObject::getTypeName(type));
 		item->setIcon(QIcon(GuiUtilsNs::getIconPath(type)));

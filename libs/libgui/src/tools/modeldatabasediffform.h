@@ -36,6 +36,7 @@
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
 #include "widgets/searchreplacewidget.h"
+#include "widgets/objecttypeslistwidget.h"
 #include <QThread>
 
 class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -61,6 +62,8 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 		bool is_adding_new_preset;
 
 		NumberedTextEditor *sqlcode_txt;
+
+		ObjectTypesListWidget *obj_types_wgt;
 
 		FileSelectorWidget *file_sel;
 

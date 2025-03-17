@@ -32,6 +32,16 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	setupUi(this);
 	setWindowFlags(flags);
 
+	obj_types_wgt = new ObjectTypesListWidget(this, { ObjectType::Column, ObjectType::Constraint,
+																										ObjectType::Relationship, ObjectType::Permission });
+
+	QWidgetAction *wgt_act = new QWidgetAction(this);
+	wgt_act->setDefaultWidget(obj_types_wgt);
+
+	QMenu *obj_types_menu = new QMenu(this);
+	obj_types_menu->addAction(wgt_act);
+	filter_objs_types_tb->setMenu(obj_types_menu);
+
 	src_server_supported = server_supported = true;
 	pg_version_alert_frm->setVisible(false);
 
@@ -174,6 +184,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, this, [this](){
 		GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 	});
+
+	connect(force_objs_recreation_chk, &QCheckBox::toggled, filter_objs_types_tb, &QToolButton::setEnabled);
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff."
@@ -672,8 +684,8 @@ void ModelDatabaseDiffForm::diffModels()
 	step_lbl->setText(tr("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
 						.arg(curr_step)
 						.arg(total_steps)
-					  .arg(source_model->getName())
-					  .arg(imported_model->getName()));
+						.arg(source_model->getName(), imported_model->getName()));
+
 	step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("diff")));
 
 	if(src_import_item)
@@ -693,7 +705,9 @@ void ModelDatabaseDiffForm::diffModels()
 	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, dont_drop_missing_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, drop_missing_cols_constr_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_objs_recreation_chk->isChecked());
 
+	diff_helper->setForcedRecreateTypes(obj_types_wgt->getTypesPerCheckState(Qt::Checked));
 	diff_helper->setModels(source_model, imported_model);
 
 	/* If the user has chosen diff between a model and database
@@ -1091,16 +1105,33 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
-	ObjectsDiffInfo::DiffType diff_type=diff_info.getDiffType();
-	QToolButton *btn=buttons[diff_type];
-	QTreeWidgetItem *item=nullptr;
+	ObjectsDiffInfo::DiffType diff_type = diff_info.getDiffType();
+	QToolButton *btn = buttons[diff_type];
+	QTreeWidgetItem *item = nullptr;
 
 	if(!low_verbosity)
 	{
-		item=GuiUtilsNs::createOutputTreeItem(output_trw,
-												 UtilsNs::formatMessage(diff_info.getInfoMessage()),
-												 QPixmap(GuiUtilsNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
+		item = GuiUtilsNs::createOutputTreeItem(output_trw,
+																						UtilsNs::formatMessage(diff_info.getInfoMessage()),
+																						QPixmap(GuiUtilsNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
+
 		item->setData(0, Qt::UserRole, diff_info.getDiffType());
+
+		/* If in debug mode we display the XML code of the involved objects
+		 * when the diff info is related to a ALTER Object */
+		if(import_helper->debug_mode &&
+			 diff_info.getDiffType() == ObjectsDiffInfo::AlterObject)
+		{		
+			GuiUtilsNs::createOutputTreeItem(
+						output_trw,
+						QString("** Imported object: %1 \n ** Source object: %2")
+						.arg(diff_info.getOldObject()->getSourceCode(SchemaParser::XmlCode),
+								 diff_info.getObject()->getSourceCode(SchemaParser::XmlCode)),
+						QPixmap(),
+						item, false, true);
+
+			item->setExpanded(false);
+		}
 	}
 
 	if(diff_helper)

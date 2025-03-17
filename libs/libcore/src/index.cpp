@@ -128,10 +128,11 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 
 		//Case the column is not allocated raises an error
 		if(!column)
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
-							.arg(this->getName())
-							.arg(this->getTypeName()),
+							.arg(this->getName(), this->getTypeName()),
 							ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		//Configures the element
 		elem.setColumn(column);
@@ -469,7 +470,7 @@ QString Index::getSignature(bool format)
 	if(!getParentTable() || !getParentTable()->getSchema())
 		return BaseObject::getSignature(format);
 
-	return QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format));
+	return QString("%1.%2").arg(getParentTable()->getSchema()->getName(format), this->getName(format));
 }
 
 QString Index::getAlterCode(BaseObject *object)

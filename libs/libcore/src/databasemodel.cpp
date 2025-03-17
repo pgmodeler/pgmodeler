@@ -3050,7 +3050,6 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 			__addObject(type, obj_idx);
 
 			//When added to the model the user type is inserted on the pgsql base type list to be used as a column type
-			//PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
 			PgSqlType::addUserType(type->getName(true), type, UserTypeConfig::BaseType);
 		}
 		catch(Exception &e)

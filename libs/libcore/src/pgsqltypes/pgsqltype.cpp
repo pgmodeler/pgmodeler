@@ -574,7 +574,6 @@ void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, UserTyp
 
 		cfg.name = type_name;
 		cfg.ptype = ptype;
-		//cfg.pmodel=pmodel;
 		cfg.pmodel = ptype->getDatabase();
 		cfg.type_conf = type_conf;
 		PgSqlType::user_types.push_back(cfg);

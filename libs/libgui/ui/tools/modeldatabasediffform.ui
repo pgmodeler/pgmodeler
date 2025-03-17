@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>804</height>
+    <height>792</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1228,6 +1228,95 @@
                     <bool>false</bool>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QCheckBox" name="force_objs_recreation_chk">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Instead of using an ALTER command to modify the selected object kinds, a DROP and CREATE will be used for a full modification. This option does not affects the database object itself.&lt;/p&gt;</string>
+                     </property>
+                     <property name="statusTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>Force objects re-creation</string>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="filter_objs_types_tb">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../../res/resources.qrc">
+                       <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>25</width>
+                       <height>25</height>
+                      </size>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
+                     </property>
+                     <property name="autoRaise">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -2773,9 +2862,9 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/resources.qrc"/>
-  <include location="../../res/resources.qrc"/>
   <include location="../../res/logoicons.qrc"/>
+  <include location="../../res/resources.qrc"/>
+  <include location="../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>
