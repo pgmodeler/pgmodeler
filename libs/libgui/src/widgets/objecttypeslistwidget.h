@@ -32,17 +32,16 @@
 class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
 	Q_OBJECT
 
-	private:
-		void setItemsCheckState(Qt::CheckState state);
-
 	public:
 		explicit ObjectTypesListWidget(QWidget *parent = nullptr, const std::vector<ObjectType> &excl_types = {});
 
 		void setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state);
 		void setTypesCheckState(const std::vector<ObjectType> &obj_types, Qt::CheckState state);
+		void setTypesCheckState(Qt::CheckState state);
 
 		std::vector<ObjectType> getTypesPerCheckState(Qt::CheckState state);
 		QStringList getTypeNamesPerCheckState(Qt::CheckState state);
+		int getTypesCountPerCheckState(Qt::CheckState state);
 
 	signals:
 		void s_typeCheckStateChanged(ObjectType, Qt::CheckState);

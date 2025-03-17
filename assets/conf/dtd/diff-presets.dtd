@@ -30,3 +30,4 @@
 <!ATTLIST preset match-by-signature (false|true) "true">
 <!ATTLIST preset only-matching (false|true) "true">
 <!ATTLIST preset forced-filtering CDATA #IMPLIED>
+<!ATTLIST preset force-objs-re-creation CDATA #IMPLIED>

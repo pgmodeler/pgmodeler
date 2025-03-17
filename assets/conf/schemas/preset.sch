@@ -37,6 +37,10 @@
 {spacer} ignore-duplic-errors="{ignore-duplic-errors}"
 {spacer} run-in-transaction="{run-in-transaction}"
 
+%if {force-objs-re-creation} %then
+	{spacer} force-objs-re-creation="{force-objs-re-creation}"
+%end
+
 %if {ignore-error-codes} %then
 	{spacer} ignore-error-codes="{ignore-error-codes}"
 %end

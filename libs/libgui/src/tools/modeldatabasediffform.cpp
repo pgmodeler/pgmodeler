@@ -27,20 +27,25 @@
 bool ModelDatabaseDiffForm::low_verbosity {false};
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
 
+const QString ModelDatabaseDiffForm::ForceObjsBtnLabel { QT_TR_NOOP("Force re-creation (%1)") };
+
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
 	setupUi(this);
 	setWindowFlags(flags);
 
-	obj_types_wgt = new ObjectTypesListWidget(this, { ObjectType::Column, ObjectType::Constraint,
-																										ObjectType::Relationship, ObjectType::Permission });
+	forced_obj_types_wgt = new ObjectTypesListWidget(this, { /* ObjectType::Column, ObjectType::Constraint, */
+																										ObjectType::Relationship, ObjectType::Permission,
+																										ObjectType::Database, ObjectType::Tag,
+																										ObjectType::Textbox, ObjectType::GenericSql });
+	forced_obj_types_wgt->setTypesCheckState(Qt::Unchecked);
 
 	QWidgetAction *wgt_act = new QWidgetAction(this);
-	wgt_act->setDefaultWidget(obj_types_wgt);
+	wgt_act->setDefaultWidget(forced_obj_types_wgt);
 
-	QMenu *obj_types_menu = new QMenu(this);
-	obj_types_menu->addAction(wgt_act);
-	filter_objs_types_tb->setMenu(obj_types_menu);
+	QMenu *forced_obj_types_menu = new QMenu(this);
+	forced_obj_types_menu->addAction(wgt_act);
+	forced_objs_types_tb->setMenu(forced_obj_types_menu);
 
 	src_server_supported = server_supported = true;
 	pg_version_alert_frm->setVisible(false);
@@ -142,6 +147,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	connect(ignore_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 	connect(src_model_rb, &QRadioButton::toggled, src_model_name_lbl, &QLabel::setEnabled);
+	connect(src_model_rb, &QRadioButton::toggled, src_model_name_edt, &QLabel::setEnabled);
+
 
 	connect(src_connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
 	connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
@@ -185,7 +192,17 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 	});
 
-	connect(force_objs_recreation_chk, &QCheckBox::toggled, filter_objs_types_tb, &QToolButton::setEnabled);
+	connect(forced_obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, this, [this](Qt::CheckState) {
+		forced_objs_types_tb->setText(ForceObjsBtnLabel
+																	.arg(forced_obj_types_wgt->
+																			 getTypesCountPerCheckState(Qt::Checked)));
+	});
+
+	connect(forced_obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, this, [this](ObjectType, Qt::CheckState) {
+		forced_objs_types_tb->setText(ForceObjsBtnLabel
+																	.arg(forced_obj_types_wgt->
+																			 getTypesCountPerCheckState(Qt::Checked)));
+	});
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff."
@@ -219,18 +236,19 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 {
 	if(model_wgt)
 	{
-		QString filename = QFileInfo(model_wgt->getFilename()).fileName();
-		source_model=loaded_model=model_wgt->getDatabaseModel();
-		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(filename.isEmpty() ? tr("not saved") : filename));
-		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? tr("Model not saved yet") : model_wgt->getFilename());
+		source_model = loaded_model = model_wgt->getDatabaseModel();
+		src_model_name_lbl->setText(source_model->getName());
+		src_model_name_edt->setText(QString("%1").arg(model_wgt->getFilename().isEmpty() ? tr("(not yet saved to a file)") : model_wgt->getFilename()));
 	}
 	else
 	{
 		src_model_name_lbl->setText(tr("(none)"));
-		src_model_name_lbl->setToolTip("");
+		src_model_name_edt->setText(tr("(none)"));
 		src_database_rb->setChecked(true);
 		src_model_rb->setEnabled(false);
 	}
+
+	src_model_name_edt->setCursorPosition(0);
 }
 
 void ModelDatabaseDiffForm::setLowVerbosity(bool value)
@@ -705,9 +723,8 @@ void ModelDatabaseDiffForm::diffModels()
 	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, dont_drop_missing_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, drop_missing_cols_constr_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_objs_recreation_chk->isChecked());
 
-	diff_helper->setForcedRecreateTypes(obj_types_wgt->getTypesPerCheckState(Qt::Checked));
+	diff_helper->setForcedRecreateTypes(forced_obj_types_wgt->getTypesPerCheckState(Qt::Checked));
 	diff_helper->setModels(source_model, imported_model);
 
 	/* If the user has chosen diff between a model and database
@@ -1287,6 +1304,12 @@ void ModelDatabaseDiffForm::selectPreset()
 	ignore_error_codes_chk->setChecked(!conf[Attributes::IgnoreErrorCodes].isEmpty());
 	error_codes_edt->setText(conf[Attributes::IgnoreErrorCodes]);
 
+	forced_obj_types_wgt->blockSignals(true);
+	forced_obj_types_wgt->setTypesCheckState(Qt::Unchecked);
+	forced_obj_types_wgt->blockSignals(false);
+
+	forced_obj_types_wgt->setTypeNamesCheckState(conf[Attributes::ForceObjsReCreation].split(','), Qt::Checked);
+
 	/* Compatibility with previous versions of diff-presets.conf
 	 * We configure diff filters only when one of the attributes related
 	 * to them is present */
@@ -1312,7 +1335,7 @@ void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
 	edit_preset_tb->setVisible(!toggle);
 	remove_preset_tb->setVisible(!toggle);
 	preset_name_edt->clear();
-	save_preset_tb->setEnabled(toggle && (is_edit && presets_cmb->count() > 0));
+	//save_preset_tb->setEnabled(toggle && (is_edit && presets_cmb->count() > 0));
 
 	if(is_edit)
 		preset_name_edt->setText(presets_cmb->currentText());
@@ -1399,6 +1422,7 @@ void ModelDatabaseDiffForm::savePreset()
 		conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
 		conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
 		conf[Attributes::RunInTransaction] = run_in_transaction_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ForceObjsReCreation] = forced_obj_types_wgt->getTypeNamesPerCheckState(Qt::Checked).join(',');
 
 		conf[Attributes::MatchBySignature] = pd_filter_wgt->isMatchBySignature() ? Attributes::True : Attributes::False;
 		conf[Attributes::OnlyMatching] = pd_filter_wgt->isOnlyMatching() ? Attributes::True : Attributes::False;
@@ -1432,8 +1456,9 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 
 	if(src_model_rb->isChecked())
 	{
-		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
-		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
+		pd_input_lbl->setText(QString("<strong>%1 [%2]</strong>").arg(src_model_name_lbl->text(),
+																																	QFileInfo(src_model_name_edt->text()).fileName()));
+		pd_input_lbl->setToolTip(src_model_name_edt->text());
 		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("dbmodel")));
 	}
 	else if(src_database_cmb->currentIndex() > 0)

@@ -273,6 +273,7 @@ namespace Attributes {
 	FkDefs("fk-defs"),
 	FkIdxPattern("fk-idx-pattern"),
 	FkIdxType("fk-idx-type"),
+	ForceObjsReCreation("force-objs-re-creation"),
 	ForcedFiltering("forced-filtering"),
 	Font("font"),
 	FontSize("font-size"),

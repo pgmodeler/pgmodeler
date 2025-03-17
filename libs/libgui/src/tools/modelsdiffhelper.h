@@ -158,10 +158,7 @@ class __libgui ModelsDiffHelper: public QObject {
 			/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
 			try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
 			except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
-			OptDropMissingColsConstr,
-
-			//! \brief Forces the recreation of any object maked as ALTER in the output
-			OptForceRecreation
+			OptDropMissingColsConstr
 		};
 
 		ModelsDiffHelper();

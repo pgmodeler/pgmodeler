@@ -57,13 +57,15 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 
 		static std::map<QString, attribs_map> config_params;
 
+		static const QString ForceObjsBtnLabel;
+
 		QEventLoop event_loop;
 
 		bool is_adding_new_preset;
 
 		NumberedTextEditor *sqlcode_txt;
 
-		ObjectTypesListWidget *obj_types_wgt;
+		ObjectTypesListWidget *forced_obj_types_wgt;
 
 		FileSelectorWidget *file_sel;
 

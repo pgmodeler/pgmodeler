@@ -582,8 +582,34 @@
                      <property name="text">
                       <string>(model)</string>
                      </property>
+                     <property name="indent">
+                      <number>-1</number>
+                     </property>
                      <property name="textInteractionFlags">
                       <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>20</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLineEdit" name="src_model_name_edt">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -1235,34 +1261,9 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QCheckBox" name="force_objs_recreation_chk">
+                    <widget class="QToolButton" name="forced_objs_types_tb">
                      <property name="enabled">
                       <bool>true</bool>
-                     </property>
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="toolTip">
-                      <string>&lt;p&gt;Instead of using an ALTER command to modify the selected object kinds, a DROP and CREATE will be used for a full modification. This option does not affects the database object itself.&lt;/p&gt;</string>
-                     </property>
-                     <property name="statusTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>Force objects re-creation</string>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QToolButton" name="filter_objs_types_tb">
-                     <property name="enabled">
-                      <bool>false</bool>
                      </property>
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1276,8 +1277,11 @@
                        <height>0</height>
                       </size>
                      </property>
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Instead of using an ALTER command to modify the selected object kinds, a DROP and CREATE will be used for a full modification. This option does not affects the database object itself.&lt;/p&gt;</string>
+                     </property>
                      <property name="text">
-                      <string>...</string>
+                      <string>Force re-creation (0)</string>
                      </property>
                      <property name="icon">
                       <iconset resource="../../res/resources.qrc">
@@ -1297,6 +1301,9 @@
                      </property>
                      <property name="popupMode">
                       <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
+                     </property>
+                     <property name="toolButtonStyle">
+                      <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                      </property>
                      <property name="autoRaise">
                       <bool>false</bool>
