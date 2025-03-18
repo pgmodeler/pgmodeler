@@ -202,7 +202,7 @@ std::map<QString, QStringList> PgModelerCliApp::accepted_opts {
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 								StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 								DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-								NoSequenceReuse, RecreateUnmod, ReplaceModified, NonTransactional }},
+								NoSequenceReuse, RecreateUnmod, ReplaceModified, ForceReCreateObjs, NonTransactional }},
 
 	{{ DbmMimeType }, { SystemWide, Force }},
 	{{ FixModel },	{ Input, Output, FixTries }},

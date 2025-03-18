@@ -107,7 +107,15 @@ void ModelsDiffHelper::setForcedRecreateTypes(const std::vector<ObjectType> &for
 	for(auto &type : inv_types)
 	{
 		if(std::find(forced_rec_types.begin(), forced_rec_types.end(), type) != forced_rec_types.end())
-			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__, nullptr, QString::number(enum_t(type)));
+		{
+			QString type_name = BaseObject::getSchemaName(type);
+
+			if(type == ObjectType::BaseObject)
+				type_name = QString::number(enum_t(type)) + " " + tr("(unrecognized id)");
+
+			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__, nullptr,
+											tr("Object type id: %1").arg(type_name));
+		}
 	}
 
 	forced_recreate_types = forced_rec_types;

@@ -1086,6 +1086,9 @@
                  </item>
                  <item>
                   <layout class="QGridLayout" name="gridLayout_12">
+                   <property name="sizeConstraint">
+                    <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+                   </property>
                    <property name="spacing">
                     <number>5</number>
                    </property>
@@ -2472,7 +2475,7 @@
                 <bool>true</bool>
                </property>
                <property name="checked">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
