@@ -39,9 +39,9 @@ int main(int, char **argv)
 		result=QProcess::execute(test_dir + "/" + test, {});
 
     if(result == -2)
-      qDebug() << "** Could not start test executable:" << test;
+			qDebug().noquote() << "** Could not start test executable:" << test;
     else if(result == -1)
-      qDebug() << "** The test " << test << " crashed when running.";
+			qDebug().noquote() << "** The test " << test << " crashed when running.";
 
     if(result!=0) break;
   }

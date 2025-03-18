@@ -936,4 +936,24 @@ namespace GuiUtilsNs {
 		widget->move(event->globalPosition().x() - widget->width() + (event_wgt->width() / 2),
 								 event->globalPosition().y() - (widget->height() - (event_wgt->height() / 2)));
 	}
+
+	void configureTextEditFont(QPlainTextEdit *txt)
+	{
+		if(!txt)
+			return;
+
+		std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+
+		//Configuring font style for output widget
+		if(!confs[Attributes::Code][Attributes::Font].isEmpty())
+		{
+			double size = confs[Attributes::Code][Attributes::FontSize].toDouble();
+			if(size < 5.0) size = 5.0;
+
+			QFont fnt = txt->font();
+			fnt.setFamily(confs[Attributes::Code][Attributes::Font]);
+			fnt.setPointSizeF(size);
+			txt->setFont(fnt);
+		}
+	}
 }

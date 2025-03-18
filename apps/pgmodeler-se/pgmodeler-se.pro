@@ -7,15 +7,10 @@ isEqual(PRIVATE_PLUGINS, true) {
   windows:RC_FILE=$$PRIV_RES_FOLDER/$$TARGET/windows_ico.qrc
 }
 
-#isEqual(PRIVATE_PLUGINS, false) {
-#  windows:RC_FILE=res/windows_ico.qrc
-#}
-
 SOURCES += src/main.cpp \
     src/aboutsewidget.cpp \
 	    src/schemaeditorform.cpp \
-	    src/sourceeditorwidget.cpp \
-	    ../pgmodeler/src/pgmodelerapp.cpp \
+			src/sourceeditorwidget.cpp
 
 FORMS += \
 	 ui/aboutsewidget.ui \
@@ -29,7 +24,14 @@ HEADERS += \
 
 INCLUDEPATH += ../pgmodeler/src
 
-DEPENDPATH += ../pgmodeler
+DEPENDPATH += ../pgmodeler \
+../pgmodeler/src
+
+# Forcing the linker to use the objects files generated
+# during the compilation of the main executable since
+# pgmodeler-se uses the same application class
+OBJECTS += ../pgmodeler/obj/pgmodelerapp.o \
+../pgmodeler/obj/moc_pgmodelerapp.o
 
 # Deployment settings
 target.path = $$PRIVATEBINDIR

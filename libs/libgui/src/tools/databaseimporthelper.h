@@ -319,6 +319,8 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		//! \brief This signal is emited when the import has encountered a critical error (only in thread mode)
 		void s_importAborted(Exception e);
+
+		void s_debugMessage(const QString &msg);
 		
 	protected slots:
 		void cancelImport();

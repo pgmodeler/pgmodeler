@@ -2692,6 +2692,15 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/bugreport.png</normaloff>:/icons/icons/bugreport.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Debug</string>
+         </attribute>
+        </widget>
        </widget>
       </item>
      </layout>

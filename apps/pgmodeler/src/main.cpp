@@ -82,6 +82,8 @@ void startCrashHandler(int signal)
 	exit(1 + system(cmd.toStdString().c_str()));
 }
 
+
+
 int main(int argc, char **argv)
 {
 	try

@@ -49,7 +49,15 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
+	dbg_output_wgt = new DebugOutputWidget(this);
+	vbox = new QVBoxLayout(settings_tbw->widget(2));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	vbox->addWidget(dbg_output_wgt);
+
 	settings_tbw->setTabEnabled(1, false);
+	settings_tbw->setTabVisible(2, false);
+
 	objs_parent_wgt->setEnabled(false);
 	buttons_wgt->setEnabled(false);
 	connection_gb->setFocusProxy(connections_cmb);
@@ -320,6 +328,10 @@ void DatabaseImportForm::importDatabase()
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
+		settings_tbw->setTabVisible(2, debug_mode_chk->isChecked());
+
+		dbg_output_wgt->clearOutput();
+		dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -342,6 +354,7 @@ void DatabaseImportForm::importDatabase()
 																		comments_as_aliases_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
+
 		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
@@ -754,6 +767,8 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 void DatabaseImportForm::finishImport(const QString &msg)
 {
+	//dynamic_cast<Application *>(qApp)->unsetMsgOutputWidget();
+
 	if(import_thread->isRunning())
 		import_thread->quit();
 

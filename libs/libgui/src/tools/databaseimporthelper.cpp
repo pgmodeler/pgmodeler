@@ -20,6 +20,7 @@
 #include "defaultlanguages.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
+#include "application.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml {"\t<!--[ unknown object OID=%1 ]-->\n"};
 
@@ -796,8 +797,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 			if(debug_mode)
 			{
-				QTextStream ts(stdout);
-				ts << dumpObjectAttributes(attribs) << Qt::endl;
+				qDebug().noquote() << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
 			if(create_methods.count(obj_type))
@@ -809,7 +809,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				created_objs.push_back(oid);
 			}
 			else if (debug_mode)
-				qDebug() << QString("** create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
+				qDebug().noquote() << QString("** create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 		}
 	}
 	catch(Exception &e)
@@ -935,9 +935,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 		if(debug_mode)
 		{
-			QTextStream ts(stdout);
-			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
-			ts << xml_buf << Qt::endl;
+			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
+			qDebug().noquote() << xml_buf << Qt::endl;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -2642,9 +2641,9 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 
 					if(oid == "0" && !role_name.isEmpty() && !role && !import_sys_objs)
 					{
-						qDebug() << QString("** createPermission(): Failed to create the permission: %1").arg(attribs[Attributes::Permission]);
-						qDebug() << QString("** Role `%1' was not imported and/or created in the database model.").arg(role_name);
-						qDebug() << "** Consider enabling the importing of system objects to avoid this warning." << Qt::endl;
+						qInfo() << QString("** createPermission(): Failed to create the permission: %1").arg(attribs[Attributes::Permission]);
+						qInfo() << QString("** Role `%1' was not imported and/or created in the database model.").arg(role_name);
+						qInfo() << "** Consider enabling the importing of system objects to avoid this warning." << Qt::endl;
 						return;
 					}
 				}
@@ -3037,8 +3036,8 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				catch(Exception &e)
 				{
 					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
-					qDebug() << QString("** assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
-					qDebug() << e.getExceptionsText() << Qt::endl;
+					qInfo() << QString("** assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << Qt::endl;
+					qInfo() << e.getExceptionsText() << Qt::endl;
 				}
 
 				if(seq)

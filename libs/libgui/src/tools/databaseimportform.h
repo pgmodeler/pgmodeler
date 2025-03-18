@@ -30,6 +30,7 @@
 #include "widgets/modelwidget.h"
 #include "utils/htmlitemdelegate.h"
 #include "widgets/objectsfilterwidget.h"
+#include "widgets/debugoutputwidget.h"
 #include <QTimer>
 #include <random>
 
@@ -63,6 +64,8 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		QThread *import_thread;
 
 		ObjectsFilterWidget *objs_filter_wgt;
+
+		DebugOutputWidget *dbg_output_wgt;
 		
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */

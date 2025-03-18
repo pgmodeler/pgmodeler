@@ -982,7 +982,7 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+										qApp->translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
 
@@ -999,7 +999,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)
-			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
+			throw Exception(qApp->translate("Catalog","The catalog query returned more than one OID!","", -1),
 											ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(res.getTupleCount() == 0)
@@ -1011,7 +1011,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+										qApp->translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
 
@@ -1050,7 +1050,7 @@ attribs_map Catalog::getServerAttributes()
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: server","", -1));
+										qApp->translate("Catalog","Object type: server","", -1));
 	}
 
 	return attribs;

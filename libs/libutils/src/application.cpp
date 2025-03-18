@@ -19,6 +19,27 @@
 #include "exception.h"
 #include <QTranslator>
 
+void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+	QString message = qFormatLogMessage(type, context, msg);
+
+	if(type == QtInfoMsg || type == QtDebugMsg)
+	{
+		QTextStream out(stdout);
+		out << message << Qt::endl;
+	}
+	else
+	{
+		QTextStream err(stderr);
+		err << message << Qt::endl;
+	}
+
+	if(pgApp)
+		emit pgApp->s_messageLogged(type, context, msg);
+}
+
+QtMessageHandler Application::message_handler = qInstallMessageHandler(logMessage);
+
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	/* Checking if the user specified another widget style using the -style param

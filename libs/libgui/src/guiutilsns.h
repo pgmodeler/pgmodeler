@@ -181,6 +181,10 @@ namespace GuiUtilsNs {
 	/*! \brief Moves a widget based a mouse move event that is captured by a handle widget
 	 *  in the the edge of the widget */
 	extern __libgui void moveFloatingWidget(QWidget *widget, QWidget *event_wgt, QMouseEvent *event);
+
+	/*! \brief Configures the font family/size of the provided QPlainTextEdit instance
+	 *  to use the global settings defined in AppearanceSettingsWidget */
+	extern __libgui void configureTextEditFont(QPlainTextEdit *txt);
 }
 
 #endif

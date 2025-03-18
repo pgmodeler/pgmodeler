@@ -113,6 +113,7 @@ src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
     src/widgets/columndatawidget.cpp \
 	src/widgets/customtablewidget.cpp \
+	src/widgets/debugoutputwidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
@@ -238,6 +239,7 @@ src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
     src/widgets/columndatawidget.h \
 	src/widgets/customtablewidget.h \
+	src/widgets/debugoutputwidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
@@ -270,6 +272,7 @@ src/widgets/newobjectoverlaywidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
+	src/widgets/debugoutputwidget.ui \
 ui/dbobjects/columnpickerwidget.ui \
 	ui/dbobjects/referenceswidget.ui \
 	ui/dbobjects/simplecolumnswidget.ui \

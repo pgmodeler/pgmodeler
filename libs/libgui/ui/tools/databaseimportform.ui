@@ -35,7 +35,7 @@
    <string>Import database</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../res/resources.qrc">
+   <iconset resource="../../res/logoicons.qrc">
     <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_24">
@@ -1108,7 +1108,7 @@
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="1" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
              <number>5</number>
@@ -1213,7 +1213,7 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="0" colspan="2">
+          <item row="1" column="0" colspan="2">
            <widget class="QTreeWidget" name="output_trw">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1262,6 +1262,31 @@
            </widget>
           </item>
          </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/bugreport.png</normaloff>:/icons/icons/bugreport.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Debug</string>
+         </attribute>
+         <widget class="QWidget" name="search_wgt_parent" native="true">
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>596</y>
+            <width>900</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -1405,6 +1430,7 @@
   <tabstop>filtered_objs_view</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/logoicons.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

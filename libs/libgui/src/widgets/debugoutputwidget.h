@@ -17,26 +17,34 @@
 */
 
 /**
-\ingroup pgmodeler
-\class PgModelerApp
-\brief This class inherits from QApplication and has the notify() method modified
- to treat the exceptions raised by pgModeler components.
+\ingroup libgui
+\class DebugOutputWidget
+\brief Implements the a widget that captures messages from qDebug/qInfo/qWarning
+and display them in a QPlainTextEdit.
 */
 
-#ifndef PGMODELER_APP_H
-#define PGMODELER_APP_H
+#ifndef DEBUG_OUTPUT_WIDGET_H
+#define DEBUG_OUTPUT_WIDGET_H
 
-#include "application.h"
-#include <QTextStream>
-#include <QTranslator>
-#include <QFile>
+#include <QWidget>
+#include "ui_debugoutputwidget.h"
+#include "searchreplacewidget.h"
 
-class PgModelerApp: public Application {
+class DebugOutputWidget : public QWidget, public Ui::DebugOutputWidget {
 	Q_OBJECT
 
+	private:
+		SearchReplaceWidget *search_wgt;
+
 	public:
-		PgModelerApp(int & argc, char ** argv);
-		bool notify(QObject * receiver, QEvent * event);
+		explicit DebugOutputWidget(QWidget *parent = nullptr);
+
+		void setLogMessages(bool value);
+		void clearOutput();
+		void saveOutput();
+
+	private slots:
+		void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 };
 
 #endif

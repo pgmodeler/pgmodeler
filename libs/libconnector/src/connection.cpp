@@ -447,8 +447,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
 	{
-		QTextStream out(stdout);
-		out << "\n---\n" << sql << Qt::endl;
+		qDebug().noquote() << "\n---\n" << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -486,8 +485,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
 	{
-		QTextStream out(stdout);
-		out << "\n---\n" << sql << Qt::endl;
+		qDebug() << "\n---\n" << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful

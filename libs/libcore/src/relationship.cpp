@@ -135,17 +135,17 @@ Relationship::Relationship(BaseRelationship::RelType rel_type, PhysicalTable *sr
 		single_pk_column = false;
 
 		if(rel_type == Relationship11)
-			str_aux = QApplication::translate("Relationship","%1_has_one_%2","");
+			str_aux = qApp->translate("Relationship","%1_has_one_%2","");
 		else if(rel_type == Relationship1n)
-			str_aux = QApplication::translate("Relationship","%1_has_many_%2","");
+			str_aux = qApp->translate("Relationship","%1_has_many_%2","");
 		else if(rel_type == RelationshipNn)
-			str_aux = QApplication::translate("Relationship","many_%1_has_many_%2","");
+			str_aux = qApp->translate("Relationship","many_%1_has_many_%2","");
 		else if(rel_type == RelationshipGen)
-			str_aux = QApplication::translate("Relationship","%1_inherits_%2","");
+			str_aux = qApp->translate("Relationship","%1_inherits_%2","");
 		else if(rel_type == RelationshipPart)
-			str_aux = QApplication::translate("Relationship","%1_is_partition_of_%2","");
+			str_aux = qApp->translate("Relationship","%1_is_partition_of_%2","");
 		else
-			str_aux = QApplication::translate("Relationship","%1_copies_%2","");
+			str_aux = qApp->translate("Relationship","%1_copies_%2","");
 
 		if(rel_type == RelationshipNn)
 			str_aux = str_aux.arg(this->src_table->getName(), this->dst_table->getName());
