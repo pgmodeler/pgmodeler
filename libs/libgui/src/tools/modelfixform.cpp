@@ -19,7 +19,7 @@
 #include "modelfixform.h"
 #include "attribsmap.h"
 #include "attributes.h"
-#include "settings/appearanceconfigwidget.h"
+#include "guiutilsns.h"
 
 const QString ModelFixForm::PgModelerCli {
 #ifdef Q_OS_WIN
@@ -31,9 +31,9 @@ const QString ModelFixForm::PgModelerCli {
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
-
 	setupUi(this);
+
+	GuiUtilsNs::configureTextEditFont(output_txt);
 
 	input_file_sel = new FileSelectorWidget(this);
 	input_file_sel->setObjectName("input_file_sel");
@@ -67,16 +67,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setFileIsMandatory(true);
 	pgmodeler_cli_sel->setNamePattern(QString("(.)+(%1)$").arg(PgModelerCli));
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 0, 2);
-
-	//Configuring font style for output widget
-	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
-	{
-		double size=confs[Attributes::Code][Attributes::FontSize].toDouble();
-		if(size < 5.0) size=5.0;
-
-		output_txt->setFontFamily(confs[Attributes::Code][Attributes::Font]);
-		output_txt->setFontPointSize(size);
-	}
 
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardOutput, this, &ModelFixForm::updateOutput);
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardError, this, &ModelFixForm::updateOutput);
@@ -181,7 +171,7 @@ void ModelFixForm::cancelFix()
 	cancel_btn->setEnabled(false);
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
-	output_txt->append(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
+	output_txt->appendPlainText(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
 	enableFixOptions(true);
 }
 
@@ -216,7 +206,7 @@ void ModelFixForm::updateOutput()
 		}
 	}
 
-	output_txt->append(txt.trimmed());
+	output_txt->appendPlainText(txt.trimmed());
 }
 
 void ModelFixForm::handleProcessFinish(int res)
