@@ -37,6 +37,7 @@
 #include "widgets/objectsfilterwidget.h"
 #include "widgets/searchreplacewidget.h"
 #include "widgets/objecttypeslistwidget.h"
+#include "widgets/debugoutputwidget.h"
 #include <QThread>
 
 class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -58,6 +59,8 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 		static std::map<QString, attribs_map> config_params;
 
 		static const QString ForceObjsBtnLabel;
+
+		DebugOutputWidget *dbg_output_wgt;
 
 		QEventLoop event_loop;
 

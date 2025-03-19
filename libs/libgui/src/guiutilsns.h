@@ -34,6 +34,7 @@
 #include "widgets/numberedtexteditor.h"
 #include "csvdocument.h"
 #include "roundedrectitem.h"
+#include "settings/appearanceconfigwidget.h"
 
 namespace GuiUtilsNs {
 	/*! \brief WidgetCornerId used by resizeFloatingWidget() to determine
@@ -184,7 +185,30 @@ namespace GuiUtilsNs {
 
 	/*! \brief Configures the font family/size of the provided QPlainTextEdit instance
 	 *  to use the global settings defined in AppearanceSettingsWidget */
-	extern __libgui void configureTextEditFont(QPlainTextEdit *txt);
+	template<class Class, std::enable_if_t<std::is_same_v<Class, QPlainTextEdit> ||
+																				 std::is_same_v<Class, QTextEdit>, bool> = true>
+	void configureTextEditFont(Class *txt)
+	{
+		if(!txt)
+			return;
+
+		if constexpr (std::is_class_v<QPlainTextEdit> ||	std::is_class_v<QTextEdit>)
+		{
+			std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+
+			//Configuring font style for output widget
+			if(!confs[Attributes::Code][Attributes::Font].isEmpty())
+			{
+				double size = confs[Attributes::Code][Attributes::FontSize].toDouble();
+				if(size < 5.0) size = 5.0;
+
+				QFont fnt = txt->font();
+				fnt.setFamily(confs[Attributes::Code][Attributes::Font]);
+				fnt.setPointSizeF(size);
+				txt->setFont(fnt);
+			}
+		}
+	}
 }
 
 #endif

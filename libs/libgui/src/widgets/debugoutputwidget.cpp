@@ -36,6 +36,10 @@ DebugOutputWidget::DebugOutputWidget(QWidget *parent) : QWidget(parent)
 	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
 	connect(save_tb, &QToolButton::clicked, this, &DebugOutputWidget::saveOutput);
 	connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
+
+	connect(wrap_tb, &QToolButton::toggled, this, [this](bool toggled){
+		dbg_output_txt->setLineWrapMode(toggled ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+	});
 }
 
 void DebugOutputWidget::setLogMessages(bool value)

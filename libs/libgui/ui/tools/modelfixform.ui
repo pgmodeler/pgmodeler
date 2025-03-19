@@ -433,6 +433,12 @@
         <property name="lineWrapMode">
          <enum>QPlainTextEdit::LineWrapMode::NoWrap</enum>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="plainText">
+         <string>Waiting process to start...</string>
+        </property>
        </widget>
       </item>
      </layout>

@@ -272,7 +272,6 @@ src/widgets/newobjectoverlaywidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
-	src/widgets/debugoutputwidget.ui \
 ui/dbobjects/columnpickerwidget.ui \
 	ui/dbobjects/referenceswidget.ui \
 	ui/dbobjects/simplecolumnswidget.ui \
@@ -366,7 +365,8 @@ ui/widgets/updatenotifierwidget.ui \
 ui/widgets/customsqlwidget.ui \
 ui/widgets/modelnavigationwidget.ui \
 ui/widgets/sceneinfowidget.ui \
-ui/widgets/welcomewidget.ui
+ui/widgets/welcomewidget.ui \
+ui/widgets/debugoutputwidget.ui
 
 unix|windows: LIBS += $$LIBCANVAS_LIB \
 		      $$LIBCONNECTOR_LIB \

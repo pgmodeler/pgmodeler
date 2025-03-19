@@ -74,6 +74,13 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	vbox->addWidget(search_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
 
+	dbg_output_wgt = new DebugOutputWidget(this);
+	vbox = new QVBoxLayout(settings_tbw->widget(4));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	vbox->addWidget(dbg_output_wgt);
+	settings_tbw->setTabVisible(4, false);
+
 	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
 	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 
@@ -446,6 +453,7 @@ void ModelDatabaseDiffForm::destroyModel()
 
 void ModelDatabaseDiffForm::clearOutput()
 {
+	dbg_output_wgt->clearOutput();
 	output_trw->clear();
 	src_import_item=import_item=diff_item=export_item=nullptr;
 
@@ -595,6 +603,9 @@ void ModelDatabaseDiffForm::generateDiff()
 	settings_tbw->setTabEnabled(2, true);
 	settings_tbw->setTabEnabled(3, false);
 	settings_tbw->setCurrentIndex(2);
+
+	dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
+	settings_tbw->setTabVisible(4, debug_mode_chk->isChecked());
 }
 
 void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)

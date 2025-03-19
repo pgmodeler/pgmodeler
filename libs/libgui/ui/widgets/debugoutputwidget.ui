@@ -189,6 +189,44 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="wrap_tb">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Toggles the line wrap.</string>
+       </property>
+       <property name="text">
+        <string>Wrap</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/resources.qrc">
+         <normaloff>:/icons/icons/wordwrap.png</normaloff>:/icons/icons/wordwrap.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+F</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="search_tb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -235,7 +273,7 @@
         <string>Save the debug messages to a file.</string>
        </property>
        <property name="text">
-        <string>Save</string>
+        <string>Save log</string>
        </property>
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
