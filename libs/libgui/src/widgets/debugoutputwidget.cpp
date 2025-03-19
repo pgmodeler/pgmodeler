@@ -76,16 +76,12 @@ void DebugOutputWidget::saveOutput()
 
 void DebugOutputWidget::setButtonsEnabled(bool value)
 {
-	wrap_tb->setEnabled(value);
-	save_tb->setEnabled(value);
-	search_tb->setEnabled(value);
+	btns_parent_wgt->setEnabled(value);
 }
 
 void DebugOutputWidget::setButtonsVisible(bool value)
 {
-	wrap_tb->setVisible(value);
-	save_tb->setVisible(value);
-	search_tb->setVisible(value);
+	btns_parent_wgt->setVisible(value);
 }
 
 void DebugOutputWidget::logMessage(const QString &msg)

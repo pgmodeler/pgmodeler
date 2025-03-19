@@ -211,6 +211,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 																			 getTypesCountPerCheckState(Qt::Checked)));
 	});
 
+	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked) {
+		dbg_output_wgt->setVisible(checked);
+		dbg_output_wgt->setLogMessages(checked);
+		settings_tbw->setTabVisible(4, true);
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff."
 	ignore_errors_chk->setChecked(true);
@@ -490,6 +496,7 @@ void ModelDatabaseDiffForm::listDatabases()
 		}
 
 		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
+		dbg_output_wgt->clearOutput();
 
 		if(conn)
 		{

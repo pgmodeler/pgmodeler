@@ -17,9 +17,7 @@
 */
 
 #include "modelfixform.h"
-#include "attribsmap.h"
-#include "attributes.h"
-#include "guiutilsns.h"
+#include "globalattributes.h"
 
 const QString ModelFixForm::PgModelerCli {
 #ifdef Q_OS_WIN
@@ -98,10 +96,11 @@ void ModelFixForm::resetFixForm()
 	output_file_sel->clearSelector();
 
 	dbg_output_wgt->logMessage(tr("Waiting for the process to start..."));
-	dbg_output_wgt->setButtonsEnabled(false);
+	dbg_output_wgt->setButtonsVisible(false);
 
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
+
 	progress_pb->setVisible(false);
 	cancel_btn->setVisible(false);
 }
@@ -157,24 +156,26 @@ void ModelFixForm::fixModel()
 	args.append(output_file_sel->getSelectedFile());
 	args.append(extra_cli_args);
 
+	progress_pb->setValue(0);
+	progress_pb->setVisible(true);
+	cancel_btn->setEnabled(true);
+	cancel_btn->setVisible(true);
+
 	dbg_output_wgt->clearOutput();
+	dbg_output_wgt->setButtonsVisible(false);
+
+	enableFixOptions(false);
 
 	pgmodeler_cli_proc.blockSignals(false);
 	pgmodeler_cli_proc.setArguments(args);
 	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
 	pgmodeler_cli_proc.start();
-
-	progress_pb->setValue(0);
-	progress_pb->setVisible(true);
-	cancel_btn->setEnabled(true);
-	cancel_btn->setVisible(true);
-	enableFixOptions(false);
 }
 
 void ModelFixForm::cancelFix()
 {
 	cancel_btn->setEnabled(false);
-	dbg_output_wgt->setButtonsEnabled(true);
+	dbg_output_wgt->setButtonsVisible(true);
 
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
@@ -221,7 +222,7 @@ void ModelFixForm::handleProcessFinish(int res)
 	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
 	cancel_btn->setEnabled(false);
-	dbg_output_wgt->setButtonsEnabled(!load_model_chk->isChecked());
+	dbg_output_wgt->setButtonsVisible(!load_model_chk->isChecked());
 
 	if(res == 0)
 	{

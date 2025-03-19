@@ -136,6 +136,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		scattering_lvl_cmb->setEnabled(checked);
 	});
 
+	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked){
+		settings_tbw->setTabVisible(2, checked);
+		dbg_output_wgt->setLogMessages(checked);
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in reverse engineering."
 	ignore_errors_chk->setChecked(true);
@@ -328,10 +333,9 @@ void DatabaseImportForm::importDatabase()
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
-		settings_tbw->setTabVisible(2, debug_mode_chk->isChecked());
 
 		dbg_output_wgt->clearOutput();
-		dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
+		dbg_output_wgt->setButtonsVisible(false);
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -560,6 +564,7 @@ void DatabaseImportForm::listDatabases()
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 		db_objects_tw->clear();
+		dbg_output_wgt->clearOutput();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
@@ -767,10 +772,10 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 
 void DatabaseImportForm::finishImport(const QString &msg)
 {
-	//dynamic_cast<Application *>(qApp)->unsetMsgOutputWidget();
-
 	if(import_thread->isRunning())
 		import_thread->quit();
+
+	dbg_output_wgt->setButtonsVisible(debug_mode_chk->isChecked());
 
 	cancel_btn->setEnabled(false);
 	options_tbw->setEnabled(true);
