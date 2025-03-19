@@ -7,17 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>668</width>
-    <height>70</height>
+    <height>68</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -96,7 +102,7 @@
         <string>Shift+F3</string>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
@@ -136,7 +142,7 @@
         <string>F3</string>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
@@ -195,7 +201,7 @@
         <bool>true</bool>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
@@ -235,7 +241,7 @@
         <bool>true</bool>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
@@ -275,14 +281,14 @@
         <bool>true</bool>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonIconOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -390,7 +396,7 @@
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
           </property>
          </widget>
         </item>
@@ -418,7 +424,7 @@
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
           </property>
          </widget>
         </item>
@@ -446,14 +452,14 @@
            </size>
           </property>
           <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
+           <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
           </property>
          </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>

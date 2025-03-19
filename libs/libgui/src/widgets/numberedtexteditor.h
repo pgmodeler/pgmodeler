@@ -31,6 +31,7 @@ based upon the code editor example provided by Qt
 #include <QProcess>
 #include <QLabel>
 #include "linenumberswidget.h"
+#include "searchreplacewidget.h"
 
 class __libgui NumberedTextEditor : public QPlainTextEdit {
 	Q_OBJECT
@@ -58,16 +59,17 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		//! \brief Widget used to expose document line numbers
 		LineNumbersWidget *line_number_wgt;
 
-		//! \brief Indicates if the text editor can handle external files
-		bool handle_ext_files;
+		//! \brief Indicates if the text editor has the advanced text action buttons enabled.
+		bool action_btns_enabled;
 
-		QWidget *top_widget,
+		SearchReplaceWidget *search_wgt;
 
-		*editor_alert_wgt;
+		QWidget *top_widget, *editor_alert_wgt;
 
 		QLabel *msg_lbl;
 
-		QToolButton *load_file_btn, *edit_src_btn, *clear_btn, *save_file_btn, *word_wrap_btn;
+		QToolButton *load_file_btn, *edit_src_btn, *clear_btn,
+		*save_file_btn,	*word_wrap_btn, *search_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
@@ -79,6 +81,10 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		 * The default is to use the font size of the default font (see setDefaultFont) */
 		qreal custom_fnt_size;
 
+		QStringList file_filters;
+
+		QString default_ext;
+
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
 
@@ -87,7 +93,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		void keyPressEvent(QKeyEvent *event);
 
 	public:
-		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false, qreal custom_fnt_size = 0);
+		NumberedTextEditor(QWidget * parent = nullptr, bool edit_btns_enabled = false, qreal custom_fnt_size = 0);
 		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
@@ -105,6 +111,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		This method is useful when the user needs to create another context menu that executes actions
 		differents from the original ones */
 		void setCustomContextMenuEnabled(bool enabled);
+
+		void setFilenameFilters(const QStringList &list, const QString &default_ext);
 
 	private slots:
 		void showContextMenu();
