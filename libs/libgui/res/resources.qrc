@@ -208,7 +208,6 @@
         <file>icons/validity.png</file>
         <file>icons/validatesch.png</file>
         <file>icons/saveall.png</file>
-        <!--<file>icons/pgmodeler_logo.png</file>-->
         <file>icons/enablesql.png</file>
         <file>icons/print.png</file>
         <file>icons/samples.png</file>
@@ -218,8 +217,6 @@
         <file>icons/objfinder.png</file>
         <file>icons/objects.png</file>
         <file>icons/newdatamanip.png</file>
-        <!--<file>icons/update1.png</file>-->
-        <!--<file>icons/about.png</file>-->
         <file>icons/close2.png</file>
         <file>icons/indent.png</file>
         <file>icons/clearinput.png</file>
@@ -280,12 +277,12 @@
         <file>icons/tablerowcnt.png</file>
         <file>icons/collapsetree.png</file>
         <file>icons/expandtree.png</file>
+        <file>icons/debug.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
         <file>images/crashhandler.png</file>
         <file>images/pgmodeler_name.png</file>
-        <!--<file>images/pgmodeler_splash.png</file>-->
         <file>images/schemafile.png</file>
         <file>images/exporttosql.png</file>
         <file>images/exporttodatadict.png</file>

@@ -33,8 +33,6 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 {
 	setupUi(this);
 
-	GuiUtilsNs::configureTextEditFont(output_txt);
-
 	input_file_sel = new FileSelectorWidget(this);
 	input_file_sel->setObjectName("input_file_sel");
 	input_file_sel->setFileMustExist(true);
@@ -68,6 +66,9 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setNamePattern(QString("(.)+(%1)$").arg(PgModelerCli));
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 0, 2);
 
+	dbg_output_wgt = new DebugOutputWidget(this);
+	output_lt->addWidget(dbg_output_wgt);
+
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardOutput, this, &ModelFixForm::updateOutput);
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardError, this, &ModelFixForm::updateOutput);
 	connect(&pgmodeler_cli_proc, &QProcess::finished, this, &ModelFixForm::handleProcessFinish);
@@ -95,7 +96,10 @@ void ModelFixForm::resetFixForm()
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
 	output_file_sel->clearSelector();
-	output_txt->setPlainText(tr("Waiting for the process to start..."));
+
+	dbg_output_wgt->logMessage(tr("Waiting for the process to start..."));
+	dbg_output_wgt->setButtonsEnabled(false);
+
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
 	progress_pb->setVisible(false);
@@ -153,7 +157,8 @@ void ModelFixForm::fixModel()
 	args.append(output_file_sel->getSelectedFile());
 	args.append(extra_cli_args);
 
-	output_txt->clear();
+	dbg_output_wgt->clearOutput();
+
 	pgmodeler_cli_proc.blockSignals(false);
 	pgmodeler_cli_proc.setArguments(args);
 	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
@@ -169,9 +174,11 @@ void ModelFixForm::fixModel()
 void ModelFixForm::cancelFix()
 {
 	cancel_btn->setEnabled(false);
+	dbg_output_wgt->setButtonsEnabled(true);
+
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
-	output_txt->appendPlainText(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
+	dbg_output_wgt->logMessage(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
 	enableFixOptions(true);
 }
 
@@ -206,7 +213,7 @@ void ModelFixForm::updateOutput()
 		}
 	}
 
-	output_txt->appendPlainText(txt.trimmed());
+	dbg_output_wgt->logMessage(txt.trimmed());
 }
 
 void ModelFixForm::handleProcessFinish(int res)
@@ -214,6 +221,7 @@ void ModelFixForm::handleProcessFinish(int res)
 	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
 	cancel_btn->setEnabled(false);
+	dbg_output_wgt->setButtonsEnabled(!load_model_chk->isChecked());
 
 	if(res == 0)
 	{

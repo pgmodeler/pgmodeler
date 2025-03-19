@@ -45,9 +45,13 @@ DebugOutputWidget::DebugOutputWidget(QWidget *parent) : QWidget(parent)
 void DebugOutputWidget::setLogMessages(bool value)
 {
 	if(value)
-		connect(pgApp, &Application::s_messageLogged, this, &DebugOutputWidget::logMessage, Qt::QueuedConnection);
+	{
+		connect(pgApp, &Application::s_messageLogged, this,
+						qOverload<QtMsgType, const QMessageLogContext &, const QString &>(&DebugOutputWidget::logMessage),
+						Qt::QueuedConnection);
+	}
 	else
-		disconnect(pgApp, &Application::s_messageLogged, this, &DebugOutputWidget::logMessage);
+		disconnect(pgApp, &Application::s_messageLogged, this, nullptr);
 }
 
 void DebugOutputWidget::clearOutput()
@@ -70,8 +74,27 @@ void DebugOutputWidget::saveOutput()
 	}
 }
 
-void DebugOutputWidget::logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void DebugOutputWidget::setButtonsEnabled(bool value)
+{
+	wrap_tb->setEnabled(value);
+	save_tb->setEnabled(value);
+	search_tb->setEnabled(value);
+}
+
+void DebugOutputWidget::setButtonsVisible(bool value)
+{
+	wrap_tb->setVisible(value);
+	save_tb->setVisible(value);
+	search_tb->setVisible(value);
+}
+
+void DebugOutputWidget::logMessage(const QString &msg)
 {
 	dbg_output_txt->appendPlainText(msg);
 	dbg_output_txt->moveCursor(QTextCursor::End);
+}
+
+void DebugOutputWidget::logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+	logMessage(msg);
 }

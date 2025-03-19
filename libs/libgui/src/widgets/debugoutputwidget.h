@@ -43,6 +43,12 @@ class DebugOutputWidget : public QWidget, public Ui::DebugOutputWidget {
 		void clearOutput();
 		void saveOutput();
 
+		void setButtonsEnabled(bool value);
+		void setButtonsVisible(bool value);
+
+	public slots:
+		void logMessage(const QString &msg);
+
 	private slots:
 		void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 };
