@@ -212,9 +212,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	});
 
 	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked) {
-		dbg_output_wgt->setVisible(checked);
 		dbg_output_wgt->setLogMessages(checked);
-		settings_tbw->setTabVisible(4, true);
+		settings_tbw->setTabVisible(4, checked);
 	});
 
 #ifdef DEMO_VERSION

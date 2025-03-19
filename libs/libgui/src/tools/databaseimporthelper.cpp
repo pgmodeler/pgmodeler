@@ -260,55 +260,60 @@ void DatabaseImportHelper::retrieveSystemObjects()
 
 void DatabaseImportHelper::retrieveUserObjects()
 {
-	int progress=0;
-	std::map<ObjectType, std::vector<unsigned>>::iterator oid_itr=object_oids.begin();
-	std::vector<attribs_map>::iterator itr;
-	std::vector<attribs_map> objects;
-	unsigned i=0, oid=0;
+	int progress = 0;
+	std::vector<attribs_map> obj_attribs;
+	unsigned i = 0, oid = 0;
 	std::map<unsigned, std::vector<unsigned>>::iterator col_itr;
 	QStringList names;
 
-	i=0;
 	catalog.setQueryFilter(import_filter);
 
 	//Retrieving selected database level objects and table children objects (except columns)
-	while(oid_itr!=object_oids.end() && !import_canceled)
+	for(auto &[obj_type, obj_oids] : object_oids)
 	{
+		if(import_canceled)
+			break;
+
 		emit s_progressUpdated(progress,
-								 tr("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
-							   oid_itr->first);
+													 tr("Retrieving objects... `%1'").arg(BaseObject::getTypeName(obj_type)),
+													 obj_type);
 
-		objects=catalog.getObjectsAttributes(oid_itr->first, "", "", oid_itr->second);
-		itr=objects.begin();
+		obj_attribs = catalog.getObjectsAttributes(obj_type, "", "", obj_oids);
 
-		while(itr!=objects.end() && !import_canceled)
+		for(auto &attrs : obj_attribs)
 		{
-			oid=itr->at(Attributes::Oid).toUInt();
-			user_objs[oid]=(*itr);
-			itr++;
+			if(import_canceled)
+				break;
+
+			oid = attrs[Attributes::Oid].toUInt();
+			user_objs[oid] = attrs;
 		}
 
-		objects.clear();
-		progress=(i/static_cast<double>(object_oids.size()))*100;
-		oid_itr++; i++;
+		obj_attribs.clear();
+		progress = (i/static_cast<double>(object_oids.size()))*100;
+		i++;
 	}
 
 	//Retrieving all selected table columns
-	i=0;
-	col_itr=column_oids.begin();
-	while(col_itr!=column_oids.end())
+	i = 0;
+	for(auto &[tab_oid, col_oids] : column_oids)
 	{
-		names=getObjectName(QString::number(col_itr->first)).split(".");
+		if(import_canceled)
+			break;
+
+		names = getObjectName(QString::number(tab_oid)).split(".");
+
+		if(names.size() < 2)
+			continue;
 
 		emit s_progressUpdated(progress,
-								 tr("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
-							   ObjectType::Column);
+													 tr("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0], names[1]).arg(tab_oid),
+													 ObjectType::Column);
 
-		if(names.size() > 1)
-			retrieveTableColumns(names[0], names[1], col_itr->second);
+		retrieveTableColumns(names[0], names[1], col_oids);
 
 		progress=(i/static_cast<double>(column_oids.size()))*100;
-		col_itr++; i++;
+		i++;
 	}
 }
 
