@@ -212,7 +212,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 
 	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
 	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::resizeWidgets);
+	//connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::resizeWidgets);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -716,9 +716,12 @@ void NumberedTextEditor::resizeWidgets()
 
 			bt_margin = 0,
 
+			vscroll_h = horizontalScrollBar()->isVisible() ?
+									horizontalScrollBar()->height() : 0,
+
 			width = rect.width() -
-							(this->verticalScrollBar()->isVisible() ?
-								 this->verticalScrollBar()->width() : 0);
+							(verticalScrollBar()->isVisible() ?
+								 verticalScrollBar()->width() : 0);
 
 	if(search_wgt && show_act_btns)
 	{
@@ -727,7 +730,8 @@ void NumberedTextEditor::resizeWidgets()
 		bt_margin = search_wgt && search_wgt->isVisible() ?
 								search_wgt->height() : 0;
 
-		search_wgt->setGeometry(rect.left(), rect.bottom() - bt_margin + 1,
+		search_wgt->setGeometry(rect.left(),
+														rect.bottom() - (bt_margin +  vscroll_h) + 1,
 														width, search_wgt->height());
 	}
 
@@ -737,7 +741,7 @@ void NumberedTextEditor::resizeWidgets()
 	{
 		line_numbers_wgt->setGeometry(lt_margin, rect.top() + py,
 																 getLineNumbersWidth(),
-																 rect.height() - py - bt_margin);
+																 rect.height() - py - (bt_margin +  vscroll_h) + 1);
 	}
 
 	if(top_widget && show_act_btns)
