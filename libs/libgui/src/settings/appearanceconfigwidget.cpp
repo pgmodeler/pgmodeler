@@ -966,9 +966,9 @@ QString AppearanceConfigWidget::__getUiThemeId()
 	return getUiLightness(system_pal);
 }
 
-QString AppearanceConfigWidget::getUiThemeId()
+bool AppearanceConfigWidget::isDarkUiTheme()
 {
-	return UiThemeId;
+	return UiThemeId == Attributes::Dark;
 }
 
 QString AppearanceConfigWidget::getUiLightness(const QPalette &pal)

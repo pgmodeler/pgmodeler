@@ -152,8 +152,8 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 
-		//! \brief Returns the currently selected theme
-		static QString getUiThemeId();
+		//! \brief Returns whether the currently used theme is a dark one
+		static bool isDarkUiTheme();
 
 		/*! \brief Returns the currently UI palette lightness.
 		 * Return values can Attributes::Light or Attributes::Dark */

@@ -39,14 +39,14 @@ class DebugOutputWidget : public QWidget {
 		explicit DebugOutputWidget(QWidget *parent = nullptr);
 
 		void setLogMessages(bool value);
-		void clearOutput();
+		void clear();
 
 	public slots:
-		void logMessage(const QString &msg);
+		void logMessage(const QString &msg, const QColor &fg_color = Qt::transparent);
 		void showActionButtons(bool show);
 
 	private slots:
-		void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+		void logMessage(QtMsgType type, const QMessageLogContext &, const QString &msg);
 };
 
 #endif

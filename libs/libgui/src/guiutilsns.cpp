@@ -700,8 +700,7 @@ namespace GuiUtilsNs {
 		QColor color(0, 0, 0, 80);
 		int radius = 6, x = 1, y = 1;
 
-		if(AppearanceConfigWidget::getUiThemeId() == Attributes::Light ||
-				AppearanceConfigWidget::getUiThemeId() == Attributes::InkSaver)
+		if(!AppearanceConfigWidget::isDarkUiTheme())
 		{
 			radius = 1;
 			color.setRgb(225, 225, 225);

@@ -335,7 +335,7 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setCurrentIndex(1);
 
 		dbg_output_wgt->showActionButtons(false);
-		dbg_output_wgt->clearOutput();
+		dbg_output_wgt->clear();
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -566,7 +566,7 @@ void DatabaseImportForm::listDatabases()
 		db_objects_tw->clear();
 
 		dbg_output_wgt->showActionButtons(false);
-		dbg_output_wgt->clearOutput();
+		dbg_output_wgt->clear();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{

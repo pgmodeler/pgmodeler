@@ -161,7 +161,7 @@ void ModelFixForm::fixModel()
 	cancel_btn->setEnabled(true);
 	cancel_btn->setVisible(true);
 
-	dbg_output_wgt->clearOutput();
+	dbg_output_wgt->clear();
 
 	enableFixOptions(false);
 

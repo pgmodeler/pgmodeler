@@ -49,7 +49,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 	show_act_btns =	false;
 	show_line_nums = line_nums_visible;
 
-	line_number_wgt = new LineNumbersWidget(this);
+	line_numbers_wgt = new LineNumbersWidget(this);
+	line_numbers_wgt->setObjectName("line_numbers_wgt");
+	line_numbers_wgt->setAutoFillBackground(true);
 
 	top_widget = nullptr;
 	search_wgt = nullptr;
@@ -69,6 +71,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		top_wgt_lt->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
 																	 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		top_widget = new QWidget(this);
+		top_widget->setObjectName("top_widget");
 		top_widget->setAutoFillBackground(true);
 		top_widget->setLayout(top_wgt_lt);
 
@@ -78,6 +81,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 		search_wgt = new SearchReplaceWidget(this, this);
+		search_wgt->setObjectName("search_wgt");
 		search_wgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 		search_wgt->setVisible(false);
 		search_wgt->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
@@ -201,6 +205,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
 		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 	}
+
+	line_numbers_wgt->raise();
 
 	setWordWrapMode(QTextOption::NoWrap);
 
@@ -620,7 +626,7 @@ void NumberedTextEditor::setReadOnly(bool ro)
 void NumberedTextEditor::showLineNumbers(bool show)
 {
 	show_line_nums = line_nums_visible && show;
-	line_number_wgt->setVisible(show_line_nums);
+	line_numbers_wgt->setVisible(show_line_nums);
 	resizeWidgets();
 }
 
@@ -642,7 +648,7 @@ void NumberedTextEditor::setFocus()
 
 void NumberedTextEditor::updateLineNumbers()
 {
-	line_number_wgt->setVisible(line_nums_visible && show_line_nums);
+	line_numbers_wgt->setVisible(line_nums_visible && show_line_nums);
 
 	if(!line_nums_visible)
 		return;
@@ -653,7 +659,7 @@ void NumberedTextEditor::updateLineNumbers()
 		fnt.setPointSizeF(custom_fnt_size);
 
 	setFont(fnt);
-	line_number_wgt->setFont(fnt);
+	line_numbers_wgt->setFont(fnt);
 
 	QTextBlock block = firstVisibleBlock();
 	int block_number = block.blockNumber(),
@@ -667,6 +673,7 @@ void NumberedTextEditor::updateLineNumbers()
 			height = static_cast<int>(blockBoundingRect(block).height()) / block.lineCount(),
 			bottom = top + height,
 			dy = top;
+
 	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
 
@@ -692,7 +699,7 @@ void NumberedTextEditor::updateLineNumbers()
 			break;
 	}
 
-	line_number_wgt->drawLineNumbers(first_line, line_count, dy, height);
+	line_numbers_wgt->drawLineNumbers(first_line, line_count, dy, height);
 	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
@@ -703,7 +710,7 @@ void NumberedTextEditor::resizeWidgets()
 {
 	QRect rect = contentsRect();
 	int py = action_btns_enabled && show_act_btns ?
-						top_widget->height() : 0,
+						top_widget->height()  : 0,
 
 			lt_margin = line_nums_visible && show_line_nums ? rect.left() : 0,
 
@@ -720,7 +727,7 @@ void NumberedTextEditor::resizeWidgets()
 		bt_margin = search_wgt && search_wgt->isVisible() ?
 								search_wgt->height() : 0;
 
-		search_wgt->setGeometry(0, rect.bottom() - search_wgt->height(),
+		search_wgt->setGeometry(rect.left(), rect.bottom() - bt_margin + 1,
 														width, search_wgt->height());
 	}
 
@@ -728,16 +735,36 @@ void NumberedTextEditor::resizeWidgets()
 
 	if(line_nums_visible && show_line_nums)
 	{
-		line_number_wgt->setGeometry(lt_margin, rect.top() + py,
+		line_numbers_wgt->setGeometry(lt_margin, rect.top() + py,
 																 getLineNumbersWidth(),
 																 rect.height() - py - bt_margin);
 	}
 
 	if(top_widget && show_act_btns)
 	{
+		top_widget->setStyleSheet(QString("QWidget#%1 { background-color: palette(window); }")
+															.arg(top_widget->objectName()));
+
+		top_widget->adjustSize();
 		top_widget->setGeometry(lt_margin, rect.top(),
 														width, top_widget->height());
 	}
+
+	QString border_pal = AppearanceConfigWidget::isDarkUiTheme() ? "midlight" : "mid",
+
+			vp_style = QString("QWidget#%1 { \
+														background-color: palette(base); \
+														%2 \n \
+														%3 \n \
+														%4 \n }").arg(viewport()->objectName(),
+																		 show_act_btns ? "border-top: 1px solid palette(" + border_pal + ");" : "",
+																		 line_nums_visible && show_line_nums ? "border-left: 1px solid palette(" + border_pal + ");" : "",
+																		 search_wgt && search_wgt->isVisible() ? "border-bottom: 1px solid palette(" + border_pal + ");" : "");
+
+	viewport()->setStyleSheet(vp_style);
+
+	setStyleSheet(QString("NumberedTextEditor { border: 1px solid palette(%1); }")
+								.arg(AppearanceConfigWidget::isDarkUiTheme() ? "midlight" : "mid"));
 }
 
 int NumberedTextEditor::getLineNumbersWidth()

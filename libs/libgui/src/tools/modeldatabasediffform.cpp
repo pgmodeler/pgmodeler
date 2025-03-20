@@ -458,7 +458,7 @@ void ModelDatabaseDiffForm::destroyModel()
 
 void ModelDatabaseDiffForm::clearOutput()
 {
-	dbg_output_wgt->clearOutput();
+	dbg_output_wgt->clear();
 	dbg_output_wgt->showActionButtons(false);
 
 	output_trw->clear();
@@ -497,7 +497,7 @@ void ModelDatabaseDiffForm::listDatabases()
 		}
 
 		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
-		dbg_output_wgt->clearOutput();
+		dbg_output_wgt->clear();
 		dbg_output_wgt->showActionButtons(false);
 
 		if(conn)

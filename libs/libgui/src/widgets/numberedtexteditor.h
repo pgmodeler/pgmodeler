@@ -59,7 +59,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		static QString src_editor_app_args;
 
 		//! \brief Widget used to expose document line numbers
-		LineNumbersWidget *line_number_wgt;
+		LineNumbersWidget *line_numbers_wgt;
 
 		//! \brief Indicates if the text editor has the advanced text action buttons enabled.
 		bool action_btns_enabled;
