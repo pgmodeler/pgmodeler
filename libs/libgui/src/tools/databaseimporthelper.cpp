@@ -802,7 +802,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 			if(debug_mode)
 			{
-				qDebug().noquote() << dumpObjectAttributes(attribs) << Qt::endl;
+				qDebug().noquote() << dumpObjectAttributes(attribs);
 			}
 
 			if(create_methods.count(obj_type))
@@ -814,7 +814,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				created_objs.push_back(oid);
 			}
 			else if (debug_mode)
-				qDebug().noquote() << QString("** create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
+				qDebug().noquote() << QString("** create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type));
 		}
 	}
 	catch(Exception &e)
@@ -940,8 +940,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 		if(debug_mode)
 		{
-			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
-			qDebug().noquote() << xml_buf << Qt::endl;
+			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]);
+			qDebug().noquote() << xml_buf;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);

@@ -334,6 +334,7 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
+		dbg_output_wgt->showActionButtons(false);
 		dbg_output_wgt->clearOutput();
 
 		if(low_verbosity)
@@ -563,6 +564,8 @@ void DatabaseImportForm::listDatabases()
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 		db_objects_tw->clear();
+
+		dbg_output_wgt->showActionButtons(false);
 		dbg_output_wgt->clearOutput();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
@@ -780,7 +783,8 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
-	buttons_wgt->setEnabled(false);
+	buttons_wgt->setEnabled(false);	
+	dbg_output_wgt->showActionButtons(true);
 
 	if(model_wgt)
 	{

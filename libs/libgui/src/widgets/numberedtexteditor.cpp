@@ -182,6 +182,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 
 		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+			setHorizontalScrollBarPolicy(checked ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 		});
 
 		connect(clear_btn, &QToolButton::clicked, this, [this](){
