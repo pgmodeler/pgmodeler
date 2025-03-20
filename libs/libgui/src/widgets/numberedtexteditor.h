@@ -37,7 +37,9 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	Q_OBJECT
 
 	private:
-		//! \brief Controls if line numbers must be visible or not
+		/*! \brief Controls globally line numbers visibility.
+		 *  If this flag is set to false then toggleLineNumbers will
+		 *  have no effect */
 		static bool line_nums_visible,
 
 		//! \brief Controls if current line must be highlighted
@@ -81,9 +83,17 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		 * The default is to use the font size of the default font (see setDefaultFont) */
 		qreal custom_fnt_size;
 
+		//! \brief The filename filters used by the save action
 		QStringList file_filters;
 
+		//! \brief The default extension for file saved by the save action
 		QString default_ext;
+
+		//! \brief Indicates the current visiblity of the line numbers in the current object
+		bool show_line_nums,
+
+		//! \brief Indicates the current visiblity of the action buttons in the current object
+		show_act_btns;
 
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
@@ -107,11 +117,12 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		static void setSourceEditorApp(const QString &app);
 		static void setSourceEditorAppArgs(const QString &args);
 
-		/*! brief Disable the custom context menu designed specifically for this class.
+		/*! \brief Disable the custom context menu designed specifically for this class.
 		This method is useful when the user needs to create another context menu that executes actions
 		differents from the original ones */
 		void setCustomContextMenuEnabled(bool enabled);
 
+		//! \brief Configure the filename filters for the save action
 		void setFilenameFilters(const QStringList &list, const QString &default_ext);
 
 	private slots:
@@ -138,15 +149,23 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	public slots:
 		void setReadOnly(bool ro);
 
+		/*! \brief Toggles the line numbers widget visibility for this widget.
+		 *  This method will have no effect if the global flag for line numbers
+		 *  visiblity is set to false */
+		void showLineNumbers(bool show);
+
+		//! \brief Toggles the display of the action buttons top widget for this widget.
+		void showActionButtons(bool show);
+
 		//! \brief Grabs the keyboard input and also highlight the current line
 		void setFocus();
 
 		//! \brief Draw the line numbers according to the current visible lines
 		void updateLineNumbers();
 
-		/*! \brief Configures the line numbers widget sizes (w,h) depending on the current
-		visible lines and the text editor height */
-		void updateLineNumbersSize();
+		/*! \brief Configures the size of the internal widgets (top widget, line numbers and search widget)
+		 * depending on the current visible lines and the text editor height */
+		void resizeWidgets();
 
 		//! \brief Colors the background of the line where the cursor is
 		void highlightCurrentLine();

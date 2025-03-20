@@ -335,7 +335,6 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setCurrentIndex(1);
 
 		dbg_output_wgt->clearOutput();
-		dbg_output_wgt->setButtonsVisible(false);
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -774,8 +773,6 @@ void DatabaseImportForm::finishImport(const QString &msg)
 {
 	if(import_thread->isRunning())
 		import_thread->quit();
-
-	dbg_output_wgt->setButtonsVisible(debug_mode_chk->isChecked());
 
 	cancel_btn->setEnabled(false);
 	options_tbw->setEnabled(true);

@@ -46,6 +46,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 	file_filters = { tr("SQL file (*.sql)"),	tr("All files (*.*)") };
 	default_ext = "sql";
 	action_btns_enabled = act_btns_enabled;
+	show_act_btns =	false;
+	show_line_nums = line_nums_visible;
+
 	line_number_wgt = new LineNumbersWidget(this);
 
 	top_widget = nullptr;
@@ -59,6 +62,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		QPalette pal = this->palette();
 		QFont font = this->font();
 
+		show_act_btns = true;
 		font.setPointSizeF(font.pointSizeF() * 0.90);
 
 		QVBoxLayout *top_wgt_lt = new QVBoxLayout;
@@ -69,13 +73,11 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		top_widget->setLayout(top_wgt_lt);
 
 		pal.setColor(QPalette::Window, LineNumbersWidget::getBackgroundColor());
-		top_widget->setObjectName("top_widget");
 		top_widget->setPalette(pal);
 		top_widget->setVisible(act_btns_enabled);
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 		search_wgt = new SearchReplaceWidget(this, this);
-		search_wgt->setObjectName("search_wgt");
 		search_wgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 		search_wgt->setVisible(false);
 		search_wgt->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
@@ -173,7 +175,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		connect(search_btn, &QToolButton::toggled, this, [this](bool checked){
 			search_wgt->setVisible(checked);
 			search_wgt->raise();
-			updateLineNumbersSize();
+			resizeWidgets();
 		});
 
 		connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_btn, &QToolButton::toggle);
@@ -203,7 +205,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 
 	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
 	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
+	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::resizeWidgets);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -614,6 +616,23 @@ void NumberedTextEditor::setReadOnly(bool ro)
 	QPlainTextEdit::setReadOnly(ro);
 }
 
+void NumberedTextEditor::showLineNumbers(bool show)
+{
+	show_line_nums = line_nums_visible && show;
+	line_number_wgt->setVisible(show_line_nums);
+	resizeWidgets();
+}
+
+void NumberedTextEditor::showActionButtons(bool show)
+{
+	if(!top_widget)
+		return;
+
+	show_act_btns = show;
+	top_widget->setVisible(show);
+	resizeWidgets();
+}
+
 void NumberedTextEditor::setFocus()
 {
 	QPlainTextEdit::setFocus();
@@ -622,7 +641,7 @@ void NumberedTextEditor::setFocus()
 
 void NumberedTextEditor::updateLineNumbers()
 {
-	line_number_wgt->setVisible(line_nums_visible);
+	line_number_wgt->setVisible(line_nums_visible && show_line_nums);
 
 	if(!line_nums_visible)
 		return;
@@ -679,11 +698,13 @@ void NumberedTextEditor::updateLineNumbers()
 		setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
-void NumberedTextEditor::updateLineNumbersSize()
+void NumberedTextEditor::resizeWidgets()
 {
 	QRect rect = contentsRect();
-	int py = action_btns_enabled && top_widget ?
-						 top_widget->height() : 0,
+	int py = action_btns_enabled && show_act_btns ?
+						top_widget->height() : 0,
+
+			lt_margin = line_nums_visible && show_line_nums ? rect.left() : 0,
 
 			bt_margin = 0,
 
@@ -691,7 +712,7 @@ void NumberedTextEditor::updateLineNumbersSize()
 							(this->verticalScrollBar()->isVisible() ?
 								 this->verticalScrollBar()->width() : 0);
 
-	if(search_wgt)
+	if(search_wgt && show_act_btns)
 	{
 		search_wgt->adjustSize();
 
@@ -704,23 +725,23 @@ void NumberedTextEditor::updateLineNumbersSize()
 
 	setViewportMargins(getLineNumbersWidth(), py, 0, bt_margin);
 
-	if(line_nums_visible)
+	if(line_nums_visible && show_line_nums)
 	{
-		line_number_wgt->setGeometry(rect.left(), rect.top() + py,
+		line_number_wgt->setGeometry(lt_margin, rect.top() + py,
 																 getLineNumbersWidth(),
 																 rect.height() - py - bt_margin);
 	}
 
-	if(top_widget)
+	if(top_widget && show_act_btns)
 	{
-		top_widget->setGeometry(rect.left(), rect.top(),
+		top_widget->setGeometry(lt_margin, rect.top(),
 														width, top_widget->height());
 	}
 }
 
 int NumberedTextEditor::getLineNumbersWidth()
 {
-	if(!line_nums_visible)
+	if(!line_nums_visible || !show_line_nums)
 		return 0;
 
 	int digits = 1, max = qMax(1, blockCount()),
@@ -739,7 +760,7 @@ int NumberedTextEditor::getLineNumbersWidth()
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
 	QPlainTextEdit::resizeEvent(event);
-	updateLineNumbersSize();
+	resizeWidgets();
 }
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
