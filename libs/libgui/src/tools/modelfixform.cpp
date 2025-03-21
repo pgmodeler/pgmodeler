@@ -96,7 +96,7 @@ void ModelFixForm::resetFixForm()
 	output_file_sel->clearSelector();
 
 	dbg_output_wgt->logMessage(tr("Waiting for the process to start..."));
-	dbg_output_wgt->setButtonsVisible(false);
+	dbg_output_wgt->showActionButtons(false);
 
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
@@ -161,8 +161,7 @@ void ModelFixForm::fixModel()
 	cancel_btn->setEnabled(true);
 	cancel_btn->setVisible(true);
 
-	dbg_output_wgt->clearOutput();
-	dbg_output_wgt->setButtonsVisible(false);
+	dbg_output_wgt->clear();
 
 	enableFixOptions(false);
 
@@ -175,8 +174,6 @@ void ModelFixForm::fixModel()
 void ModelFixForm::cancelFix()
 {
 	cancel_btn->setEnabled(false);
-	dbg_output_wgt->setButtonsVisible(true);
-
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
 	dbg_output_wgt->logMessage(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
@@ -222,7 +219,7 @@ void ModelFixForm::handleProcessFinish(int res)
 	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
 	cancel_btn->setEnabled(false);
-	dbg_output_wgt->setButtonsVisible(!load_model_chk->isChecked());
+	dbg_output_wgt->showActionButtons(true);
 
 	if(res == 0)
 	{

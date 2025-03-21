@@ -334,8 +334,8 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
-		dbg_output_wgt->clearOutput();
-		dbg_output_wgt->setButtonsVisible(false);
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -564,7 +564,9 @@ void DatabaseImportForm::listDatabases()
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 		db_objects_tw->clear();
-		dbg_output_wgt->clearOutput();
+
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
@@ -775,15 +777,14 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	if(import_thread->isRunning())
 		import_thread->quit();
 
-	dbg_output_wgt->setButtonsVisible(debug_mode_chk->isChecked());
-
 	cancel_btn->setEnabled(false);
 	options_tbw->setEnabled(true);
 	database_gb->setEnabled(true);
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
-	buttons_wgt->setEnabled(false);
+	buttons_wgt->setEnabled(false);	
+	dbg_output_wgt->showActionButtons(true);
 
 	if(model_wgt)
 	{

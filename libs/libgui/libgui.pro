@@ -365,8 +365,7 @@ ui/widgets/updatenotifierwidget.ui \
 ui/widgets/customsqlwidget.ui \
 ui/widgets/modelnavigationwidget.ui \
 ui/widgets/sceneinfowidget.ui \
-ui/widgets/welcomewidget.ui \
-ui/widgets/debugoutputwidget.ui
+ui/widgets/welcomewidget.ui
 
 unix|windows: LIBS += $$LIBCANVAS_LIB \
 		      $$LIBCONNECTOR_LIB \

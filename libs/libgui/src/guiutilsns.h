@@ -66,10 +66,10 @@ namespace GuiUtilsNs {
 	extern __libgui void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
-		This method will create a layout if 'parent' doesn't has one. If parent has a layout
-		the method will do nothing. If parent is null creates an orphan object which means the
+		This function will create a layout if 'parent' doesn't has one. If parent has a layout
+		the function will do nothing. If parent is null creates an orphan object which means the
 		user must take care of the destruction of the object */
-	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false, qreal custom_fnt_size = 0);
+	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool act_btns_enabled = false, qreal custom_fnt_size = 0);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
 		The new item is automatically inserted on the QTreeWidget object.

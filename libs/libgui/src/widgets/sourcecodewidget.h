@@ -28,7 +28,6 @@
 #include "ui_sourcecodewidget.h"
 #include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
-#include "widgets/searchreplacewidget.h"
 #include "utils/syntaxhighlighter.h"
 
 class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
@@ -38,8 +37,6 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 		NumberedTextEditor *sqlcode_txt, *xmlcode_txt;
 
 		SyntaxHighlighter *hl_sqlcode, *hl_xmlcode;
-
-		SearchReplaceWidget *search_sql_wgt, *search_xml_wgt;
 
 		int prev_pg_ver, prev_code_opt;
 

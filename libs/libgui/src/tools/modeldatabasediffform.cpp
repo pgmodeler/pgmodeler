@@ -458,7 +458,9 @@ void ModelDatabaseDiffForm::destroyModel()
 
 void ModelDatabaseDiffForm::clearOutput()
 {
-	dbg_output_wgt->clearOutput();
+	dbg_output_wgt->clear();
+	dbg_output_wgt->showActionButtons(false);
+
 	output_trw->clear();
 	src_import_item=import_item=diff_item=export_item=nullptr;
 
@@ -495,7 +497,8 @@ void ModelDatabaseDiffForm::listDatabases()
 		}
 
 		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
-		dbg_output_wgt->clearOutput();
+		dbg_output_wgt->clear();
+		dbg_output_wgt->showActionButtons(false);
 
 		if(conn)
 		{
@@ -597,6 +600,9 @@ void ModelDatabaseDiffForm::generateDiff()
 	else
 		total_steps=4;
 
+	dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
+	settings_tbw->setTabVisible(4, debug_mode_chk->isChecked());
+
 	importDatabase(src_database_rb->isChecked() ? SrcImportThread : ImportThread);
 
 	buttons_wgt->setEnabled(false);
@@ -609,9 +615,6 @@ void ModelDatabaseDiffForm::generateDiff()
 	settings_tbw->setTabEnabled(2, true);
 	settings_tbw->setTabEnabled(3, false);
 	settings_tbw->setCurrentIndex(2);
-
-	dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
-	settings_tbw->setTabVisible(4, debug_mode_chk->isChecked());
 }
 
 void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
@@ -945,6 +948,8 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		export_helper->cancelExport();
 		export_thread->quit();
 	}
+
+	dbg_output_wgt->showActionButtons(debug_mode_chk->isChecked());
 
 	resetButtons();
 	process_paused=false;

@@ -27,30 +27,26 @@ and display them in a QPlainTextEdit.
 #define DEBUG_OUTPUT_WIDGET_H
 
 #include <QWidget>
-#include "ui_debugoutputwidget.h"
-#include "searchreplacewidget.h"
+#include "numberedtexteditor.h"
 
-class DebugOutputWidget : public QWidget, public Ui::DebugOutputWidget {
+class DebugOutputWidget : public QWidget {
 	Q_OBJECT
 
 	private:
-		SearchReplaceWidget *search_wgt;
+		NumberedTextEditor *dbg_output_txt;
 
 	public:
 		explicit DebugOutputWidget(QWidget *parent = nullptr);
 
 		void setLogMessages(bool value);
-		void clearOutput();
-		void saveOutput();
-
-		void setButtonsEnabled(bool value);
-		void setButtonsVisible(bool value);
+		void clear();
 
 	public slots:
-		void logMessage(const QString &msg);
+		void logMessage(const QString &msg, const QColor &fg_color = Qt::transparent);
+		void showActionButtons(bool show);
 
 	private slots:
-		void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+		void logMessage(QtMsgType type, const QMessageLogContext &, const QString &msg);
 };
 
 #endif

@@ -32,9 +32,9 @@ exists($$PLUGINS_PRO_FILE) {
 }
 
 # Include the tests subprojects only on debug mode when
-# NO_TESTS is set to true
+# BUILD_TESTS is set to true
 CONFIG(debug, debug|release): {
-	!isEqual(NO_TESTS, true):SUBDIRS += tests
+	isEqual(BUILD_TESTS, true):SUBDIRS += tests
 }
 
 # Deployment settings
