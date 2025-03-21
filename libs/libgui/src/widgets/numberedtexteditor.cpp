@@ -695,7 +695,7 @@ void NumberedTextEditor::updateLineNumbers()
 
 		/* Check if the line count converted to widget coordinates is higher than the widget height.
 		 This is done to avoid draw line numbers that are beyond the widget's height */
-		if((static_cast<int>(line_count) * fontMetrics().height()) > this->height())
+		if(bottom > this->height())
 			break;
 	}
 
@@ -716,32 +716,33 @@ void NumberedTextEditor::resizeWidgets()
 
 			bt_margin = 0,
 
-			vscroll_h = horizontalScrollBar()->isVisible() ?
+			hscroll_h = horizontalScrollBar()->isVisible() ?
 									horizontalScrollBar()->height() : 0,
 
-			width = rect.width() -
-							(verticalScrollBar()->isVisible() ?
-								 verticalScrollBar()->width() : 0);
+			vscroll_w = verticalScrollBar()->isVisible() ?
+									verticalScrollBar()->width() : 0,
+
+			width = rect.width() - vscroll_w;
 
 	if(search_wgt && show_act_btns)
 	{
-		search_wgt->adjustSize();
-
 		bt_margin = search_wgt && search_wgt->isVisible() ?
 								search_wgt->height() : 0;
 
 		search_wgt->setGeometry(rect.left(),
-														rect.bottom() - (bt_margin +  vscroll_h) + 1,
+														rect.bottom() - (bt_margin +  hscroll_h),
 														width, search_wgt->height());
 	}
 
-	setViewportMargins(getLineNumbersWidth(), py, 0, bt_margin);
+	setViewportMargins(getLineNumbersWidth(), py,
+										 vscroll_w * 0.05,
+										 bt_margin + (hscroll_h * 0.05));
 
 	if(line_nums_visible && show_line_nums)
 	{
 		line_numbers_wgt->setGeometry(lt_margin, rect.top() + py,
 																 getLineNumbersWidth(),
-																 rect.height() - py - (bt_margin +  vscroll_h) + 1);
+																 rect.height() - py - (bt_margin +  hscroll_h));
 	}
 
 	if(top_widget && show_act_btns)
@@ -749,7 +750,6 @@ void NumberedTextEditor::resizeWidgets()
 		top_widget->setStyleSheet(QString("QWidget#%1 { background-color: palette(window); }")
 															.arg(top_widget->objectName()));
 
-		top_widget->adjustSize();
 		top_widget->setGeometry(lt_margin, rect.top(),
 														width, top_widget->height());
 	}
@@ -760,10 +760,13 @@ void NumberedTextEditor::resizeWidgets()
 														background-color: palette(base); \
 														%2 \n \
 														%3 \n \
-														%4 \n }").arg(viewport()->objectName(),
+														%4 \n \
+														%5 \n \
+														}").arg(viewport()->objectName(),
 																		 show_act_btns ? "border-top: 1px solid palette(" + border_pal + ");" : "",
 																		 line_nums_visible && show_line_nums ? "border-left: 1px solid palette(" + border_pal + ");" : "",
-																		 search_wgt && search_wgt->isVisible() ? "border-bottom: 1px solid palette(" + border_pal + ");" : "");
+																		 hscroll_h > 0 || (search_wgt && search_wgt->isVisible()) ? "border-bottom: 1px solid palette(" + border_pal + ");" : "",
+																		 vscroll_w > 0 ? "border-right: 1px solid palette(" + border_pal + ");" : "");
 
 	viewport()->setStyleSheet(vp_style);
 
