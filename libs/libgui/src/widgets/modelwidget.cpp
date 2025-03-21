@@ -1833,10 +1833,8 @@ void ModelWidget::loadModel(const QString &filename)
 				unit = "s";
 			}
 
-			QTextStream out(stdout);
-			out << "File: " << filename << Qt::endl;
-			out << "Loaded in " << total << unit << Qt::endl;
-			out << "---" << Qt::endl;
+			qDebug().noquote() << "File: " << filename
+			<< "\nLoaded in " << total << unit << "\n---";
 		#endif
 	}
 	catch(Exception &e)

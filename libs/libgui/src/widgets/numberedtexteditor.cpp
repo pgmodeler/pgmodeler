@@ -19,7 +19,6 @@
 #include "numberedtexteditor.h"
 #include <QTextBlock>
 #include <QScrollBar>
-#include <QDebug>
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "guiutilsns.h"

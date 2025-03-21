@@ -940,8 +940,9 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 		if(debug_mode)
 		{
-			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]);
-			qDebug().noquote() << xml_buf;
+			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->")
+														.arg(attribs[Attributes::Name])
+														.arg(attribs[Attributes::Oid]) << xml_buf;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
