@@ -212,7 +212,6 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 
 	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
 	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	//connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::resizeWidgets);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -716,16 +715,24 @@ void NumberedTextEditor::resizeWidgets()
 
 			bt_margin = 0,
 
-			hscroll_h = horizontalScrollBar()->isVisible() ?
+			/* Workaround: using QScrollBar::maximum instead of
+			 * isVisible() because in certain moments this method
+			 * is called right before the editor scrollbars are displayed.
+			 * Getting the maximum value of the scrollbars enough to
+			 * indicate that Qt has prepared the use of scrollbars
+			 * in the editor */
+			hscroll_h = horizontalScrollBar()->maximum() > 0 ?
 									horizontalScrollBar()->height() : 0,
 
-			vscroll_w = verticalScrollBar()->isVisible() ?
+			vscroll_w = verticalScrollBar()->maximum() > 0 ?
 									verticalScrollBar()->width() : 0,
 
 			width = rect.width() - vscroll_w;
 
 	if(search_wgt && show_act_btns)
 	{
+		search_wgt->adjustSize();
+
 		bt_margin = search_wgt && search_wgt->isVisible() ?
 								search_wgt->height() : 0;
 
@@ -761,16 +768,14 @@ void NumberedTextEditor::resizeWidgets()
 														%2 \n \
 														%3 \n \
 														%4 \n \
-														%5 \n \
 														}").arg(viewport()->objectName(),
 																		 show_act_btns ? "border-top: 1px solid palette(" + border_pal + ");" : "",
 																		 line_nums_visible && show_line_nums ? "border-left: 1px solid palette(" + border_pal + ");" : "",
-																		 hscroll_h > 0 || (search_wgt && search_wgt->isVisible()) ? "border-bottom: 1px solid palette(" + border_pal + ");" : "",
-																		 vscroll_w > 0 ? "border-right: 1px solid palette(" + border_pal + ");" : "");
+																		 (search_wgt && search_wgt->isVisible()) ? "border-bottom: 1px solid palette(" + border_pal + ");" : "");
 
 	viewport()->setStyleSheet(vp_style);
 
-	setStyleSheet(QString("NumberedTextEditor { border: 1px solid palette(%1); }")
+	setStyleSheet(QString("NumberedTextEditor { background-color: palette(window); border: 1px solid palette(%1); }")
 								.arg(AppearanceConfigWidget::isDarkUiTheme() ? "midlight" : "mid"));
 }
 
@@ -800,6 +805,17 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
+	/* Ignoring the command Shift + Enter to breaking the line
+	 * If we don't ignore, the editor will understand that the line
+	 * was broken as if it was wrapped, painting a return character ↪
+	 * instead of the line number in the line numbers widget */
+	if((event->key() == Qt::Key_Enter ||
+			event->key() == Qt::Key_Return) && event->modifiers() == Qt::ShiftModifier)
+	{
+		event->ignore();
+		return;
+	}
+
 	if(!isReadOnly() && event->key()==Qt::Key_V && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
 	{
 		pasteCode();

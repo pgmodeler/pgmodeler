@@ -21,8 +21,7 @@
 #include <QPaintEvent>
 #include <QTextBlock>
 #include "exception.h"
-#include "guiutilsns.h"
-#include "appearanceconfigwidget.h"
+#include <QScrollBar>
 
 QColor LineNumbersWidget::font_color { Qt::lightGray };
 QColor LineNumbersWidget::bg_color { Qt::black };
@@ -127,8 +126,8 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
 
 		has_selection = true;
-		evnt_cursor.movePosition(QTextCursor::EndOfLine);
-		evnt_cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+		evnt_cursor.movePosition(QTextCursor::EndOfBlock);
+		evnt_cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
 		parent_edt->setTextCursor(evnt_cursor);
 		start_sel_line = evnt_cursor.blockNumber();
 		start_sel_pos = evnt_cursor.position();
@@ -142,11 +141,17 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
+		/* If the involved cursors are in the same block
+		 * in case the word wrap is active, we just ignore
+		 * the selection event */
+		if(evnt_cursor.blockNumber() == curr_cursor.blockNumber())
+			return;
+
 		//If the user wants to select the lines below the first
 		if(evnt_cursor.blockNumber() > start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
-			evnt_cursor.movePosition(QTextCursor::EndOfLine);
+			evnt_cursor.movePosition(QTextCursor::EndOfBlock);
 			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
@@ -154,16 +159,20 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		else if(evnt_cursor.blockNumber() < start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
-			curr_cursor.movePosition(QTextCursor::EndOfLine);
-			evnt_cursor.movePosition(QTextCursor::StartOfLine);
+			curr_cursor.movePosition(QTextCursor::EndOfBlock);
+			evnt_cursor.movePosition(QTextCursor::StartOfBlock);
 			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
 		else
 		{
-			evnt_cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			evnt_cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(evnt_cursor);
 		}
+
+		/* Moves the horizontal scrollbar to avoid moving
+		 * the viewport to the end of a block if it is too long */
+		parent_edt->horizontalScrollBar()->setValue(0);
 
 		this->update();
 	}

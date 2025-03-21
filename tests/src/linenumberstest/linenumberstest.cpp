@@ -36,7 +36,6 @@ void LineNumbersTest::handleLineSelectionUsingMouse()
 
 	LineNumbersWidget::setColors(Qt::darkGray, QColor(230,230,230));
 
-	edt->showActionButtons(true);
   layout->addWidget(edt);
 	dlg->setMinimumSize(800,600);
 
