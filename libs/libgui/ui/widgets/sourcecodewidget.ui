@@ -83,44 +83,6 @@
           <number>5</number>
          </property>
          <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Code display:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="code_options_cmb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
-           </property>
-           <property name="statusTip">
-            <string/>
-           </property>
-           <item>
-            <property name="text">
-             <string>Original</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Original + depedencies' SQL</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Original + children's SQL</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="pgsql_lbl">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -173,6 +135,47 @@
              <height>28</height>
             </size>
            </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Code display:</string>
+           </property>
+           <property name="indent">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="code_options_cmb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>&lt;strong&gt;Original:&lt;/strong&gt; generates only the original SQL code of the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; generates the original code including all dependencies needed to properly create the selected  object. &lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; generates the original code including all children's SQL code. This option is used only for schemas, tables, and views.</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <item>
+            <property name="text">
+             <string>Original</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Original + depedencies' SQL</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Original + children's SQL</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
