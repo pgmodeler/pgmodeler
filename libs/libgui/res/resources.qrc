@@ -278,6 +278,7 @@
         <file>icons/collapsetree.png</file>
         <file>icons/expandtree.png</file>
         <file>icons/debug.png</file>
+        <file>icons/resultset.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>
