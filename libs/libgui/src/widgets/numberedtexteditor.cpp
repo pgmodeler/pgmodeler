@@ -115,7 +115,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		load_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("open")));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
-		load_file_btn->setToolTip(tr("Load text from an external file"));
+		load_file_btn->setShortcut(QKeySequence("Ctrl+L"));
+		load_file_btn->setToolTip(tr("Load text from an external file (%1)")
+															.arg(load_file_btn->shortcut().toString()));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		buttons_lt->addWidget(load_file_btn);
@@ -124,7 +126,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
 		save_file_btn->setAutoRaise(true);
 		save_file_btn->setText(tr("Save"));
-		save_file_btn->setToolTip(tr("Save the text to a file"));
+		save_file_btn->setShortcut(QKeySequence("Ctrl+S"));
+		save_file_btn->setToolTip(tr("Save the text to a file (%1)")
+															.arg(load_file_btn->shortcut().toString()));
 		save_file_btn->setFont(font);
 		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		buttons_lt->addWidget(save_file_btn);
@@ -133,7 +137,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
-		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor"));
+		edit_src_btn->setShortcut(QKeySequence("Ctrl+E"));
+		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor (%1)")
+														 .arg(edit_src_btn->shortcut().toString()));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		buttons_lt->addWidget(edit_src_btn);
@@ -143,7 +149,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		search_btn->setAutoRaise(true);
 		search_btn->setCheckable(true);
 		search_btn->setText(tr("Search"));
-		search_btn->setToolTip(tr("Search in the text field"));
+		search_btn->setShortcut(QKeySequence("Ctrl+F"));
+		search_btn->setToolTip(tr("Search in the text field (%1)")
+													 .arg(search_btn->shortcut().toString()));
 		search_btn->setFont(font);
 		search_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		buttons_lt->addWidget(search_btn);
@@ -153,7 +161,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		word_wrap_btn->setAutoRaise(true);
 		word_wrap_btn->setCheckable(true);
 		word_wrap_btn->setText(tr("Wrap"));
-		word_wrap_btn->setToolTip(tr("Toggles the word wrap"));
+		word_wrap_btn->setShortcut(QKeySequence("Ctrl+W"));
+		word_wrap_btn->setToolTip(tr("Toggles the word wrap (%1)")
+															.arg(word_wrap_btn->shortcut().toString()));
 		word_wrap_btn->setFont(font);
 		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		word_wrap_btn->setDisabled(true);
@@ -163,6 +173,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		clear_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("cleartext")));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
+		clear_btn->setToolTip(tr("Clears the entire text"));
 		clear_btn->setFont(font);
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
@@ -715,10 +726,10 @@ void NumberedTextEditor::resizeWidgets()
 
 			bt_margin = 0,
 
-			hscroll_h = (word_wrap_btn && !word_wrap_btn->isChecked()) ?
-									horizontalScrollBar()->height() : 0,
+			hscroll_h = horizontalScrollBar()->isVisible() ?
+									horizontalScrollBar()->height(): 0,
 
-			vscroll_w = verticalScrollBar()->maximum() > 0 ?
+			vscroll_w = verticalScrollBar()->isVisible() ?
 									verticalScrollBar()->width() : 0,
 
 			width = rect.width() - vscroll_w;
@@ -727,7 +738,7 @@ void NumberedTextEditor::resizeWidgets()
 	{
 		search_wgt->adjustSize();
 
-		bt_margin = search_wgt && search_wgt->isVisible() ?
+		bt_margin = search_wgt && search_btn->isChecked() ?
 								search_wgt->height() : 0;
 
 		search_wgt->setGeometry(rect.left(),
