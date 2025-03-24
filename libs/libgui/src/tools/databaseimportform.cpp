@@ -769,7 +769,11 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	import_helper->closeConnection();
 	import_thread->quit();
 	import_thread->wait();
-	this->accept();
+
+	emit s_importFinished();
+
+	if(!debug_mode_chk->isChecked())
+		this->accept();
 }
 
 void DatabaseImportForm::finishImport(const QString &msg)

@@ -35,7 +35,7 @@
    <string>Diff tool</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../res/logoicons.qrc">
+   <iconset resource="../../../../priv-plugins/res/logoicons.qrc">
     <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
@@ -1424,7 +1424,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;p&gt;All catalog queries as well the created objects' source code are printed to standard output (stdout).&lt;/p&gt;</string>
+                    <string>&lt;p&gt;All catalog queries and the created objects' source code are printed on the standard output (stdout) and the &lt;strong&gt;Debug&lt;/strong&gt; tab.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
@@ -2881,7 +2881,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
-  <include location="../../res/logoicons.qrc"/>
+  <include location="../../../../priv-plugins/res/logoicons.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

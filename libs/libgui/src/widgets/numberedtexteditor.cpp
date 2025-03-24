@@ -186,6 +186,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 			setHorizontalScrollBarPolicy(checked ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+			resizeWidgets();
 		});
 
 		connect(clear_btn, &QToolButton::clicked, this, [this](){
@@ -714,13 +715,7 @@ void NumberedTextEditor::resizeWidgets()
 
 			bt_margin = 0,
 
-			/* Workaround: using QScrollBar::maximum instead of
-			 * isVisible() because in certain moments this method
-			 * is called right before the editor scrollbars are displayed.
-			 * Getting the maximum value of the scrollbars enough to
-			 * indicate that Qt has prepared the use of scrollbars
-			 * in the editor */
-			hscroll_h = horizontalScrollBar()->maximum() > 0 ?
+			hscroll_h = (word_wrap_btn && !word_wrap_btn->isChecked()) ?
 									horizontalScrollBar()->height() : 0,
 
 			vscroll_w = verticalScrollBar()->maximum() > 0 ?

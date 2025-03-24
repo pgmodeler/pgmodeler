@@ -184,6 +184,9 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest();
+
+		//! \brief This signal is emitted whenever the import has successfully finished
+		void s_importFinished();
 };
 
 #endif

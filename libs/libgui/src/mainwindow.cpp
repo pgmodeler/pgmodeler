@@ -1965,6 +1965,13 @@ void MainWindow::importDatabase()
 		updateConnections(true);
 	});
 
+	connect(&db_import_form, &DatabaseImportForm::s_importFinished, this, [this, &db_import_form](){
+		if(db_import_form.getModelWidget())
+			this->addModel(db_import_form.getModelWidget());
+		else if(current_model)
+			updateDockWidgets();
+	}, Qt::DirectConnection);
+
 	db_import_form.setModelWidget(current_model);
 	GuiUtilsNs::resizeDialog(&db_import_form);
 
@@ -1973,11 +1980,6 @@ void MainWindow::importDatabase()
 	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
 
 	stopTimers(false);
-
-	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
-		this->addModel(db_import_form.getModelWidget());
-	else if(current_model)
-		updateDockWidgets();
 }
 
 void MainWindow::diffModelDatabase()
