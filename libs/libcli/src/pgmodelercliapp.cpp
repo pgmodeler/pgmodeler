@@ -969,8 +969,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			long_opt.remove(QRegularExpression("[0-9]+$"));
 
 			if(!acc_opts.contains(long_opt))
+			{
 				throw Exception(tr("The option `%1' is not accepted by the operation mode `%2'!").arg(long_opt).arg(curr_op_mode),
 												ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 		}
 
 		parsed_opts = opts;
@@ -2829,27 +2831,27 @@ bool PgModelerCliApp::isPluginOptsValid(PgModelerCliPlugin *plugin)
 	QStringList op_mode_opts = plugin->getOpModeOptions();
 
 	/* Short options must start with an dash (-) and
-	 * contain no more than alphanumeric characters */
-	for(auto &itr : s_opts)
+	 * contain no more than three alphanumeric characters */
+	for(auto &[_, s_op] : s_opts)
 	{
-		opt = itr.second.trimmed();
+		opt = s_op.trimmed();
 
 		if(!opt.contains(s_opt_rx))
 			return false;
 
 		// Validates if the option conflicts with the original CLI list of short options
-		for(auto &s_itr : short_opts)
+		for(auto &[aux_s_op, _] : short_opts)
 		{
-			if(s_itr.second == opt)
+			if(aux_s_op == opt)
 				return false;
 		}
 	}
 
 	/* Long options must start with two dashes (--) and
 	 * contain a free number of alphanumeric characters */
-	for(auto &itr : l_opts)
+	for(auto &[l_op, _] : l_opts)
 	{
-		opt = itr.first.trimmed();
+		opt = l_op.trimmed();
 
 		if(!opt.contains(l_opt_rx))
 			return false;
@@ -2861,9 +2863,9 @@ bool PgModelerCliApp::isPluginOptsValid(PgModelerCliPlugin *plugin)
 
 	/* Validate if the long options keys are compatible with
 	 * short options keys. */
-	for(auto &itr : l_opts)
+	for(auto &[l_op, _] : l_opts)
 	{
-		if(!s_opts.count(itr.first))
+		if(!s_opts.count(l_op))
 			return false;
 	}
 
@@ -2884,7 +2886,7 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 	PgModelerCliPlugin::OperationId op_id;
 	QString acc_op_key;
 
-	QStringList export_opts = {
+	QStringList valid_opts, export_opts = {
 		ExportToFile, ExportToPng, ExportToSvg,
 		ExportToDbms, ExportToDict
 	};
@@ -2901,31 +2903,32 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 		{ PgModelerCliPlugin::CreateConfigs, CreateConfigs }
 	};
 
-	for(auto &opt : opts)
+	for(auto &[opt, _] : opts)
 	{
 		for(auto &plugin : plugins)
 		{
-			if(plugin->isValidOption(opt.first) && !plug_exec_order.contains(plugin))
-				plug_exec_order.append(plugin);
+			valid_opts = plugin->getValidOptions();
 
+			if(!valid_opts.contains(opt) || plug_exec_order.contains(plugin))
+				continue;
+
+			plug_exec_order.append(plugin);
 			op_id = plugin->getOperationId();
 
 			if(op_id == PgModelerCliPlugin::CustomCliOp &&
-					plugin->getOpModeOptions().contains(opt.first) && !accepted_opts.count(opt.first))
+				 plugin->isOpModeOption(opt) &&
+				 !accepted_opts.count(opt))
 			{
-				acc_op_key = opt.first;
+				acc_op_key = opt;
 				plug_op_modes++;
 			}
-			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt.first))
-				acc_op_key = opt.first;
+			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt))
+				acc_op_key = opt;
 			else if(cli_op.count(op_id))
 				acc_op_key = cli_op[op_id];
 
-			for(auto &l_opt : plugin->getLongOptions())
-			{
-				accepted_opts[acc_op_key].append(l_opt.first);
-				accepted_opts[acc_op_key].append(IgnoreFaultyPlugins);
-			}
+			accepted_opts[acc_op_key].append(valid_opts);
+			accepted_opts[acc_op_key].append(IgnoreFaultyPlugins);
 		}
 	}
 
