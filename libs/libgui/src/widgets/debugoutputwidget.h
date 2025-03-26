@@ -29,7 +29,7 @@ and display them in a QPlainTextEdit.
 #include <QWidget>
 #include "numberedtexteditor.h"
 
-class DebugOutputWidget : public QWidget {
+class __libgui DebugOutputWidget : public QWidget {
 	Q_OBJECT
 
 	private:
