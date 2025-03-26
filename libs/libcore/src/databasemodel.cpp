@@ -1079,10 +1079,10 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				/* Checking if the extension child object has a conflicting name with another object
 				 * of the same type in the model. For that, we get the first object that
 				 * contains the extension's child object signature */
-				if(ext_obj.parent.isEmpty() && BaseObject::isChildObjectType(ObjectType::Schema, ext_obj_type))
-					obj_signature = ext->getSchema()->getSignature() + "." + BaseObject::formatName(ext_obj.name);
+				if(ext_obj.getParent().isEmpty() && BaseObject::isChildObjectType(ObjectType::Schema, ext_obj_type))
+					obj_signature = ext->getSchema()->getSignature() + "." + BaseObject::formatName(ext_obj.getName());
 				else
-					obj_signature = ext_obj.signature;
+					obj_signature = ext_obj.getSignature();
 
 				obj = getObject(obj_signature, ext_obj_type);
 
@@ -1109,7 +1109,7 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				else
 				{
 					obj = new Type;
-					obj_sch = getSchema(ext_obj.parent);
+					obj_sch = getSchema(ext_obj.getParent());
 					obj->setSchema(!obj_sch ? ext->getSchema() : obj_sch);
 					dynamic_cast<Type *>(obj)->setConfiguration(Type::EnumerationType);
 				}
@@ -1118,7 +1118,7 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				 * protected object that can't be handled by the user directly, and
 				 * tie it to the extension itself, so when the extension is destroyed
 				 * the child objects are destroyed as well */
-				obj->setName(ext_obj.name);
+				obj->setName(ext_obj.getName());
 				obj->setSystemObject(true);
 				obj->setSQLDisabled(true);
 				obj->setDependency(ext);

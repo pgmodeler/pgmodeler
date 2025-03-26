@@ -30,30 +30,54 @@
 class __libcore Extension: public BaseObject {
 	public:
 		struct ExtObject {
-			const QString name, parent;
-			const ObjectType obj_type;
-			const QString signature;
+			protected:
+				QString name, parent;
+				ObjectType obj_type;
+				QString signature;
 
-			ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "") :
-				name(_name), parent(_parent),
-				obj_type(_obj_type),
-				signature((BaseObject::isChildObjectType(ObjectType::Schema, _obj_type) && _parent.isEmpty() ? "" :
-										(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) :
-																					BaseObject::formatName(_name)))){}
+			public:
+				ExtObject(const QString &_name, ObjectType _obj_type, const QString &_parent = "") :
+					name(_name), parent(_parent),
+					obj_type(_obj_type),
+					signature((BaseObject::isChildObjectType(ObjectType::Schema, _obj_type) && _parent.isEmpty() ? "" :
+											(!_parent.isEmpty() ?	BaseObject::formatName(_parent) + "." + BaseObject::formatName(_name) :
+																						BaseObject::formatName(_name)))){}
 
-			bool operator == (const ExtObject &obj) const
-			{
-				return obj.name == name &&
-							 obj.obj_type == obj_type &&
-							 obj.parent == parent;
-			}
 
-			bool isValid() const
-			{
-				return BaseObject::isValidName(name) &&
-							 (parent.isEmpty() || BaseObject::isValidName(parent)) &&
-							 (obj_type == ObjectType::Schema || obj_type == ObjectType::Type);
-			}
+
+				bool operator == (const ExtObject &obj) const
+				{
+					return obj.name == name &&
+								 obj.obj_type == obj_type &&
+								 obj.parent == parent;
+				}
+
+				bool isValid() const
+				{
+					return BaseObject::isValidName(name) &&
+								 (parent.isEmpty() || BaseObject::isValidName(parent)) &&
+								 (obj_type == ObjectType::Schema || obj_type == ObjectType::Type);
+				}
+
+				const QString &getName() const
+				{
+					return name;
+				}
+
+				const QString &getSignature() const
+				{
+					return signature;
+				}
+
+				const QString &getParent() const
+				{
+					return parent;
+				}
+
+				ObjectType getType() const
+				{
+					return obj_type;
+				}
 		};
 
 	private:
@@ -80,7 +104,7 @@ class __libcore Extension: public BaseObject {
 
 		void removeObjects(ObjectType obj_type = ObjectType::BaseObject);
 
-		std::vector<ExtObject> getObjects(ObjectType obj_type);
+		const std::vector<ExtObject> &getObjects(ObjectType obj_type);
 
 		//! \brief Set the versions of the extension
 		void setVersion(VersionId ver, const QString &value);

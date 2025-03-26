@@ -2885,6 +2885,7 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 	int plug_op_modes = 0;
 	PgModelerCliPlugin::OperationId op_id;
 	QString acc_op_key;
+	bool is_op_mode = false;
 
 	QStringList valid_opts, export_opts = {
 		ExportToFile, ExportToPng, ExportToSvg,
@@ -2908,16 +2909,18 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 		for(auto &plugin : plugins)
 		{
 			valid_opts = plugin->getValidOptions();
+			is_op_mode = plugin->isOpModeOption(opt);
 
-			if(!valid_opts.contains(opt) || plug_exec_order.contains(plugin))
+			if(!valid_opts.contains(opt) ||
+				 !is_op_mode ||
+				 plug_exec_order.contains(plugin))
 				continue;
 
 			plug_exec_order.append(plugin);
 			op_id = plugin->getOperationId();
 
 			if(op_id == PgModelerCliPlugin::CustomCliOp &&
-				 plugin->isOpModeOption(opt) &&
-				 !accepted_opts.count(opt))
+				 is_op_mode && !accepted_opts.count(opt))
 			{
 				acc_op_key = opt;
 				plug_op_modes++;

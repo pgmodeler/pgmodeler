@@ -38,8 +38,8 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		for(auto &ext_obj : ext->getObjects(ObjectType::Type))
 		{
 			types_tab->addRow();
-			types_tab->setCellText(ext_obj.name, types_tab->getRowCount() - 1, 0);
-			types_tab->setCellText(ext_obj.parent, types_tab->getRowCount() - 1, 1);
+			types_tab->setCellText(ext_obj.getName(), types_tab->getRowCount() - 1, 0);
+			types_tab->setCellText(ext_obj.getParent(), types_tab->getRowCount() - 1, 1);
 		}
 
 		types_tab->clearSelection();

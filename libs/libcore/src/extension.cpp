@@ -29,12 +29,12 @@ void Extension::setSchema(BaseObject *schema)
 		 * that are already registered in that schema */
 		for(auto &ext_obj : ext_objects[ObjectType::Type])
 		{
-			if(!ext_obj.parent.isEmpty() &&
-				 ext_obj.parent != schema->getName())
+			if(!ext_obj.getParent().isEmpty() &&
+				 ext_obj.getParent() != schema->getName())
 				continue;
 
 			// Configuring a new data type signature taking into account the new schema
-			new_type_sig = QString("%1.%2").arg(schema->getName(true, false), BaseObject::formatName(ext_obj.name));
+			new_type_sig = QString("%1.%2").arg(schema->getName(true, false), BaseObject::formatName(ext_obj.getName()));
 
 			// If we find a data type with that signature
 			if(PgSqlType::getUserTypeIndex(new_type_sig, nullptr, getDatabase()) != PgSqlType::Null)
@@ -45,7 +45,7 @@ void Extension::setSchema(BaseObject *schema)
 				if(!user_type.getObject()->isDependingOn(this))
 				{
 					throw Exception(Exception::getErrorMessage(ErrorCode::AsgSchExtTypeConflict)
-													.arg(schema->getName(), obj_name, ext_obj.name, BaseObject::getTypeName(ObjectType::Type)),
+													.arg(schema->getName(), obj_name, ext_obj.getName(), BaseObject::getTypeName(ObjectType::Type)),
 													ErrorCode::AsgSchExtTypeConflict, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 				}
 			}
@@ -61,13 +61,14 @@ void Extension::addObject(const ExtObject &ext_obj)
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvExtensionObject).arg(obj_name),
 										ErrorCode::InvExtensionObject, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
-										QString(QT_TR_NOOP("Invalid object: %1 (%2)")).arg(ext_obj.signature, BaseObject::getTypeName(ext_obj.obj_type)));
+										QString(QT_TR_NOOP("Invalid object: %1 (%2)")).arg(ext_obj.getSignature(),
+																																			 BaseObject::getTypeName(ext_obj.getType())));
 	}
 
 	if(containsObject(ext_obj))
 		return;
 
-	ext_objects[ext_obj.obj_type].push_back(ext_obj);
+	ext_objects[ext_obj.getType()].push_back(ext_obj);
 	setCodeInvalidated(true);
 }
 
@@ -79,7 +80,7 @@ void Extension::removeObjects(ObjectType obj_type)
 		ext_objects.erase(obj_type);
 }
 
-std::vector<Extension::ExtObject> Extension::getObjects(ObjectType obj_type)
+const std::vector<Extension::ExtObject> &Extension::getObjects(ObjectType obj_type)
 {
 	if(obj_type != ObjectType::Type && obj_type != ObjectType::Schema)
 	{
@@ -109,29 +110,30 @@ QString Extension::getVersion(VersionId ver)
 
 bool Extension::containsObject(const ExtObject &ext_obj)
 {
-	if(!ext_obj.isValid() || !ext_objects.count(ext_obj.obj_type))
+	if(!ext_obj.isValid() || !ext_objects.count(ext_obj.getType()))
 		return false;
 
 	QString obj_signature;
 
-	for(auto &obj : ext_objects[ext_obj.obj_type])
+	for(auto &obj : ext_objects[ext_obj.getType()])
 	{
 		/* If the extension object is a schema child one and the attribute
 		 * parent is empty, we adopt the name of the same schema of the
 		 * parent extension in the comparison below */
-		if(BaseObject::isChildObjectType(ObjectType::Schema, obj.obj_type) &&
-			 obj.parent.isEmpty())
+		if(BaseObject::isChildObjectType(ObjectType::Schema, obj.getType()) &&
+			 obj.getParent().isEmpty())
 		{
-			obj_signature = BaseObject::formatName(schema->getName()) + "." + BaseObject::formatName(obj.name);
+			obj_signature = BaseObject::formatName(schema->getName()) + "." +
+											BaseObject::formatName(obj.getName());
 		}
 		else
-			obj_signature = obj.signature;
+			obj_signature = obj.getSignature();
 
 		/* If the extension objects themselves aren't equal,
 		 * as a fallback, we compare the signature and their types */
 		if(obj == ext_obj ||
 			 (!obj_signature.isEmpty() &&
-				obj_signature == ext_obj.signature))
+				obj_signature == ext_obj.getSignature()))
 			return true;
 	}
 
@@ -156,9 +158,9 @@ QString Extension::getSourceCode(SchemaParser::CodeType def_type)
 		{
 			for(auto &ext_obj : ext_objects[ext_obj_typ])
 			{
-				obj_attr[Attributes::Name] = ext_obj.name;
-				obj_attr[Attributes::Type] = BaseObject::getSchemaName(ext_obj.obj_type);
-				obj_attr[Attributes::Parent] = ext_obj.parent;
+				obj_attr[Attributes::Name] = ext_obj.getName();
+				obj_attr[Attributes::Type] = BaseObject::getSchemaName(ext_obj.getType());
+				obj_attr[Attributes::Parent] = ext_obj.getParent();
 
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
