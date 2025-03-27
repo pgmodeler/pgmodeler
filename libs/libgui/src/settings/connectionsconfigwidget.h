@@ -70,8 +70,20 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		
 		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
-		 *  or removing current ones */
+		 *  or removing current ones. The provided combobox is filled with new connections added during the process. */
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
+
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones. Default values for connection alias, dbname, host, port and user can be provided */
+		static bool openConnectionsConfiguration(const QString &conn_alias = "", const QString &dbname = "",
+																						 const QString &host = "", int port = 5432, const QString &username = "");
+
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones. Default values for connection alias, dbname, host, port and user can be provided. */
+		static bool __openConnectionsConfiguration(const QString &conn_alias = "", const QString &dbname = "",
+																							 const QString &host = "", int port = 5432, const QString &username = "");
 
 		//! \brief Returns the first connection found which is defined as the default for the specified operation
 		static Connection *getDefaultConnection(Connection::ConnOperation operation);

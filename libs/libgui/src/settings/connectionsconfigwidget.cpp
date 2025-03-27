@@ -70,7 +70,6 @@ void ConnectionsConfigWidget::showEvent(QShowEvent *event)
 	if(!event->spontaneous())
 	{
 		updateConnectionsCombo();
-		newConnection();
 		conn_attribs_tbw->setCurrentIndex(0);
 	}
 }
@@ -593,11 +592,8 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	combo->blockSignals(false);
 }
 
-bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
+bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host, int port, const QString &username)
 {
-	if(!combo)
-		return false;
-
 	BaseForm parent_form;
 	ConnectionsConfigWidget conn_cfg_wgt;
 	bool conns_changed = false;
@@ -627,14 +623,51 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		parent_form.setMainWidget(&conn_cfg_wgt);
 		parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 		parent_form.adjustMinimumSize();
+
+		conn_cfg_wgt.alias_edt->setText(conn_alias);
+		conn_cfg_wgt.conn_db_edt->setText(dbname);
+		conn_cfg_wgt.host_edt->setText(host);
+		conn_cfg_wgt.port_sbp->setValue(port);
+		conn_cfg_wgt.user_edt->setText(username);
+
 		parent_form.exec();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+
+	return parent_form.result() == QDialog::Accepted || conns_changed;
+}
+
+bool ConnectionsConfigWidget::openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host, int port, const QString &username)
+{
+	try
+	{
+		return __openConnectionsConfiguration(conn_alias, dbname, host, port, username);
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		return false;
+	}
+}
+
+bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
+{
+	if(!combo)
+		return false;
+
+	try
+	{
+		bool conns_changed = __openConnectionsConfiguration();
 
 		if(conns_changed)
-			conn_cfg_wgt.fillConnectionsComboBox(combo, incl_placeholder);
+			fillConnectionsComboBox(combo, incl_placeholder);
 		else
 			combo->setCurrentIndex(0);
 
-		return parent_form.result() == QDialog::Accepted || conns_changed;
+		return conns_changed;
 	}
 	catch(Exception &e)
 	{

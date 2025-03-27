@@ -36,6 +36,8 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 {
 	setupUi(this);
 
+	table_tbw->setContextMenuPolicy(Qt::CustomContextMenu);
+
 	connect(move_down_tb, &QToolButton::clicked, this, &CustomTableWidget::moveRows);
 	connect(move_up_tb, &QToolButton::clicked, this, &CustomTableWidget::moveRows);
 	connect(move_first_tb, &QToolButton::clicked, this, &CustomTableWidget::moveRows);
@@ -58,6 +60,10 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 
 	connect(table_tbw, &QTableWidget::cellClicked, this, &CustomTableWidget::s_cellClicked);
 	connect(table_tbw, &QTableWidget::cellChanged, this, &CustomTableWidget::s_cellChanged);
+
+	connect(table_tbw, &QTableWidget::customContextMenuRequested, this, [this](const QPoint &pnt){
+		emit s_contextMenuRequested(table_tbw->mapToGlobal(pnt));
+	});
 
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, [this](){
 		if(table_tbw->selectedRanges().isEmpty())
