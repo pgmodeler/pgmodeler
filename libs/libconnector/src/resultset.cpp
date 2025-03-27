@@ -46,7 +46,6 @@ ResultSet::ResultSet(PGresult *sql_result)
 			throw Exception(ErrorCode::IncomprehensibleDBMSResponse, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Generating an error in case the server returns a fatal error
-		case PGRES_PIPELINE_ABORTED:
 		case PGRES_FATAL_ERROR:
 			str_aux=Exception::getErrorMessage(ErrorCode::DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
