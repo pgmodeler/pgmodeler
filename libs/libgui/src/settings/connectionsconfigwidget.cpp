@@ -70,6 +70,7 @@ void ConnectionsConfigWidget::showEvent(QShowEvent *event)
 	if(!event->spontaneous())
 	{
 		updateConnectionsCombo();
+		newConnection();
 		conn_attribs_tbw->setCurrentIndex(0);
 	}
 }
@@ -592,7 +593,8 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	combo->blockSignals(false);
 }
 
-bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host, int port, const QString &username)
+bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host,
+																														 int port, const QString &username, const QString &password)
 {
 	BaseForm parent_form;
 	ConnectionsConfigWidget conn_cfg_wgt;
@@ -629,6 +631,7 @@ bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn
 		conn_cfg_wgt.host_edt->setText(host);
 		conn_cfg_wgt.port_sbp->setValue(port);
 		conn_cfg_wgt.user_edt->setText(username);
+		conn_cfg_wgt.passwd_edt->setText(password);
 
 		parent_form.exec();
 	}
@@ -640,11 +643,12 @@ bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn
 	return parent_form.result() == QDialog::Accepted || conns_changed;
 }
 
-bool ConnectionsConfigWidget::openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host, int port, const QString &username)
+bool ConnectionsConfigWidget::openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host,
+																													 int port, const QString &username, const QString &password)
 {
 	try
 	{
-		return __openConnectionsConfiguration(conn_alias, dbname, host, port, username);
+		return __openConnectionsConfiguration(conn_alias, dbname, host, port, username, password);
 	}
 	catch(Exception &e)
 	{
