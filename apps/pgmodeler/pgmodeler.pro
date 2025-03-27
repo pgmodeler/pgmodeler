@@ -20,11 +20,11 @@ macx {
 	macdeps.files = $$PWD/res/Info.plist $$PWD/res/PkgInfo
 
 	isEqual(PRIVATE_PLUGINS, true) {
-		macdeps.files = $$PRIV_RES_FOLDER/$$TARGET/Resources
+		macdeps.files += $$PRIV_RES_FOLDER/$$TARGET/Resources
 	}
 
 	isEqual(PRIVATE_PLUGINS, false) {
-		macdeps.files = $$PWD/res/Resources
+		macdeps.files += $$PWD/res/Resources
 	}
 
 	macdeps.path = $$PREFIX
