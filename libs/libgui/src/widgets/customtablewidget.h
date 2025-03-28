@@ -311,8 +311,9 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		void s_rowCountChanged(int);
 
 		/*! \brief Signal emitted when the user request the context menu (right-click on table)
-		 *  The signal carries the point wheren the context menu was requested in global coordinate */
-		void s_contextMenuRequested(const QPoint &);
+		 *  The signal carries the point where the context menu was requested in global coordinate,
+		 *  as well as if one or more items are selected */
+		void s_contextMenuRequested(const QPoint &, bool);
 
 	protected:
 		void resizeEvent(QResizeEvent *);

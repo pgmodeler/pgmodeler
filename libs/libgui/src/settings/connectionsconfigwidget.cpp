@@ -30,6 +30,8 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	Ui_ConnectionsConfigWidget::setupUi(this);
 	GuiUtilsNs::createPasswordShowAction(passwd_edt);
 
+	one_time_conn_edit = false;
+
 	connect(ssl_mode_cmb, &QComboBox::currentIndexChanged, this, &ConnectionsConfigWidget::enableCertificates);
 
 	connect(new_tb, &QToolButton::clicked, this, &ConnectionsConfigWidget::newConnection);
@@ -62,7 +64,14 @@ ConnectionsConfigWidget::~ConnectionsConfigWidget()
 void ConnectionsConfigWidget::hideEvent(QHideEvent *event)
 {
 	if(!event->spontaneous())
-		this->newConnection();
+	{
+		newConnection();
+		one_time_conn_edit = false;
+		host_edt->setEnabled(true);
+		port_sbp->setEnabled(true);
+		conn_btns_wgt->setVisible(true);
+		add_tb->setVisible(true);
+	}
 }
 
 void ConnectionsConfigWidget::showEvent(QShowEvent *event)
@@ -151,6 +160,21 @@ void ConnectionsConfigWidget::loadConfiguration()
 	}
 }
 
+void ConnectionsConfigWidget::setOneTimeEditMode(bool one_time_edit, const QString &conn_alias, const QString &dbname, const QString &host, int port, const QString &username, const QString &password)
+{
+	one_time_conn_edit = one_time_edit;
+	conn_btns_wgt->setVisible(!one_time_edit);
+	add_tb->setVisible(!one_time_edit);
+	host_edt->setDisabled(one_time_edit && !host.isEmpty());
+	port_sbp->setDisabled(one_time_edit && port > 0);
+	alias_edt->setText(conn_alias);
+	conn_db_edt->setText(dbname);
+	host_edt->setText(host);
+	port_sbp->setValue(port);
+	user_edt->setText(username);
+	passwd_edt->setText(password);
+}
+
 void ConnectionsConfigWidget::enableCertificates()
 {
 	client_cert_lbl->setEnabled(ssl_mode_cmb->currentIndex()!=0);
@@ -178,13 +202,21 @@ void ConnectionsConfigWidget::enableConnectionTest()
 
 void ConnectionsConfigWidget::newConnection()
 {
-	conn_db_edt->clear();
-	alias_edt->clear();
-	user_edt->clear();
-	host_edt->clear();
-	port_sbp->setValue(5432);
-	passwd_edt->clear();
-	passwd_edt->clearFocus();
+	/* If we aren't in one time edit mode
+	 * we clear the fields below, otherwise we avoid clear
+	 * the fields and reset the flag one_time_conn_edit in the
+	 * first call to this method */
+	if(!one_time_conn_edit)
+	{
+		conn_db_edt->clear();
+		alias_edt->clear();
+		user_edt->clear();
+		host_edt->clear();
+		port_sbp->setValue(5432);
+		passwd_edt->clear();
+		passwd_edt->clearFocus();
+	}
+
 	other_params_edt->clear();
 	set_role_edt->clear();
 
@@ -204,7 +236,7 @@ void ConnectionsConfigWidget::newConnection()
 	krb_server_edt->clear();
 
 	timeout_sbp->setValue(2);
-	add_tb->setVisible(true);
+	add_tb->setVisible(!one_time_conn_edit);
 	update_tb->setVisible(false);
 	connections_cmb->setEnabled(true);
 
@@ -474,13 +506,20 @@ void ConnectionsConfigWidget::saveConfiguration()
 	   so in order to do not lost the data pgModeler will ask to save the connection. */
 		if(add_tb->isEnabled() || update_tb->isEnabled())
 		{
-			Messagebox msg_box;
+			if(!one_time_conn_edit)
+			{
+				Messagebox msg_box;
 
-			msg_box.show(tr("There is a connection being configured! Do you want to save it before applying settings?"),
-									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+				msg_box.show(tr("There is a connection being configured! Do you want to save it before applying settings?"),
+										 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Accepted)
+				if(msg_box.result()==QDialog::Accepted)
+					handleConnection();
+			}
+			else
+			{
 				handleConnection();
+			}
 		}
 
 		config_params[GlobalAttributes::ConnectionsConf].clear();
@@ -593,68 +632,42 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	combo->blockSignals(false);
 }
 
-bool ConnectionsConfigWidget::__openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host,
-																														 int port, const QString &username, const QString &password)
+bool ConnectionsConfigWidget::openConnectionsConfiguration(bool one_time_edit,
+																													 const QString &conn_alias, const QString &dbname, const QString &host,
+																													 int port, const QString &username, const QString &password)
 {
 	BaseForm parent_form;
 	ConnectionsConfigWidget conn_cfg_wgt;
 	bool conns_changed = false;
 
-	parent_form.setWindowTitle(tr("Edit database connections"));
-	parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
-
-	try
-	{
-		connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &conns_changed]() {
+	connect(parent_form.cancel_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &conns_changed]() {
+		__trycatch(
 			if(conn_cfg_wgt.isConfigurationChanged())
 			{
 				// Restore the original connection file if the user clicked "Cancel" after changing connections
 				conn_cfg_wgt.loadConfiguration();
 				conns_changed = true;
 			}
-		});
+		)
+	});
 
-		connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form, &conns_changed](){
-			__trycatch(
-				conn_cfg_wgt.saveConfiguration();
-				parent_form.accept();
-				conns_changed = true;
-			)
-		});
+	connect(parent_form.apply_ok_btn, &QPushButton::clicked, &parent_form, [&conn_cfg_wgt, &parent_form, &conns_changed](){
+		__trycatch(
+			conn_cfg_wgt.saveConfiguration();
+			parent_form.accept();
+			conns_changed = true;
+		)
+	});
 
-		parent_form.setMainWidget(&conn_cfg_wgt);
-		parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
-		parent_form.adjustMinimumSize();
-
-		conn_cfg_wgt.alias_edt->setText(conn_alias);
-		conn_cfg_wgt.conn_db_edt->setText(dbname);
-		conn_cfg_wgt.host_edt->setText(host);
-		conn_cfg_wgt.port_sbp->setValue(port);
-		conn_cfg_wgt.user_edt->setText(username);
-		conn_cfg_wgt.passwd_edt->setText(password);
-
-		parent_form.exec();
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
-	}
+	conn_cfg_wgt.setOneTimeEditMode(one_time_edit, conn_alias, dbname, host, port, username, password);
+	parent_form.setWindowTitle(tr("Edit database connections"));
+	parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+	parent_form.setMainWidget(&conn_cfg_wgt);
+	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+	parent_form.adjustMinimumSize();
+	parent_form.exec();
 
 	return parent_form.result() == QDialog::Accepted || conns_changed;
-}
-
-bool ConnectionsConfigWidget::openConnectionsConfiguration(const QString &conn_alias, const QString &dbname, const QString &host,
-																													 int port, const QString &username, const QString &password)
-{
-	try
-	{
-		return __openConnectionsConfiguration(conn_alias, dbname, host, port, username, password);
-	}
-	catch(Exception &e)
-	{
-		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		return false;
-	}
 }
 
 bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder)
@@ -662,23 +675,14 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 	if(!combo)
 		return false;
 
-	try
-	{
-		bool conns_changed = __openConnectionsConfiguration();
+	bool conns_changed = openConnectionsConfiguration();
 
-		if(conns_changed)
-			fillConnectionsComboBox(combo, incl_placeholder);
-		else
-			combo->setCurrentIndex(0);
-
-		return conns_changed;
-	}
-	catch(Exception &e)
-	{
+	if(conns_changed)
+		fillConnectionsComboBox(combo, incl_placeholder);
+	else
 		combo->setCurrentIndex(0);
-		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		return false;
-	}
+
+	return conns_changed;
 }
 
 Connection *ConnectionsConfigWidget::getDefaultConnection(Connection::ConnOperation operation)
