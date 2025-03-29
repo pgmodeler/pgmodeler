@@ -63,7 +63,7 @@ CustomTableWidget::CustomTableWidget(ButtonConf button_conf, bool conf_exclusion
 
 	connect(table_tbw, &QTableWidget::customContextMenuRequested, this, [this](const QPoint &pnt){
 		emit s_contextMenuRequested(table_tbw->mapToGlobal(pnt),
-																table_tbw->selectionModel()->hasSelection());
+																table_tbw->itemAt(pnt) != nullptr);
 	});
 
 	connect(table_tbw, &QTableWidget::itemSelectionChanged, this, [this](){

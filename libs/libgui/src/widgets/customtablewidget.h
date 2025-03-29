@@ -312,7 +312,7 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		/*! \brief Signal emitted when the user request the context menu (right-click on table)
 		 *  The signal carries the point where the context menu was requested in global coordinate,
-		 *  as well as if one or more items are selected */
+		 *  as well as if an item is selected on the cursor's position */
 		void s_contextMenuRequested(const QPoint &, bool);
 
 	protected:
