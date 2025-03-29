@@ -607,22 +607,16 @@ void PgSqlType::removeUserType(const QString &type_name, BaseObject *ptype)
 
 void PgSqlType::renameUserType(const QString &type_name, BaseObject *ptype, const QString &new_name)
 {
-	if(PgSqlType::user_types.size() > 0 &&
-			!type_name.isEmpty() && ptype && type_name!=new_name)
+	if(PgSqlType::user_types.empty() ||
+		 type_name.isEmpty() || !ptype || type_name == new_name)
+		return;
+
+	for(auto &tp : user_types)
 	{
-		std::vector<UserTypeConfig>::iterator itr, itr_end;
-
-		itr=PgSqlType::user_types.begin();
-		itr_end=PgSqlType::user_types.end();
-
-		while(itr!=itr_end)
+		if(!tp.invalidated && tp.name == type_name && tp.ptype == ptype)
 		{
-			if(!itr->invalidated && itr->name==type_name && itr->ptype==ptype)
-			{
-				itr->name=new_name;
-				break;
-			}
-			itr++;
+			tp.name = new_name;
+			break;
 		}
 	}
 }

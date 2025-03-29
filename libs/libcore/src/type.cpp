@@ -73,6 +73,14 @@ void Type::setSchema(BaseObject *schema)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
+void Type::setCodeInvalidated(bool value)
+{
+	BaseObject::setCodeInvalidated(value);
+
+	for(auto &typ_attr : type_attribs)
+		typ_attr.setCodeInvalidated(value);
+}
+
 int Type::getAttributeIndex(const QString &attrib_name)
 {
 	std::vector<TypeAttribute>::iterator itr, itr_end;
