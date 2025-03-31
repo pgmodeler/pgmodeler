@@ -1,25 +1,23 @@
-v1.2.0-beta
+v1.2.0-beta1
 ------
-<em>Release date: February 10, 2025</em><br/>
-<em>Changes since: <strong>v1.2.0-alpha1</strong></em><br/>
+<em>Release date: March 31, 2025</em><br/>
+<em>Changes since: <strong>v1.2.0-beta</strong></em><br/>
 
-<em><strong>Attention:</strong> Some configuration files were changed in pgModeler 1.2.0-beta causing a break in the backward compatibility with some pgModeler 1.1.x settings. This way, at the first start of the newer version, pgModeler will automatically try to migrate the older settings to the newer ones! Be advised that this is a release of a version in the early stages of development. Bugs, malfunctioning, crashes, and other problems are expected and will be resolved as soon as they are reported. Make sure to make backups of your models and databases before using this version!</em><br/><br/>
+<em><strong>Attention:</strong> pgModeler 1.2.0-beta1 introduces configuration changes that may affect compatibility with 1.1.x settings. On the first launch, pgModeler will automatically attempt to migrate your existing settings. Please note that this is an early development release where stability issues may occur. It's recommended to back up all models and databases before use. Please report any found bugs for prompt resolution. The mentioned migration process helps transition to improved configurations while minimizing disruption to your workflow.</em><br/><br/>
 
-After almost 4 months since the release of the last development version of 1.2.0, here we are announcing its first beta! This means that 1.2.0 has reached its final shape and from now on I will work exclusively on fixing bugs and polishing the new features that will be arriving in the stable version! Below some new features and changes are detailed.
+**New features** <br/>
 
-* **Relationships' FK columns indexes:** Now, the relationships that automatically create foreign key columns, can also create indexes over that columns too. This can speed up a bit more the modeling process. The generated indexes, like relationships, are named after the specific pattern and the user has total control over the generated names in the relationship editing form or by defining a global name pattern under relationships settings.
+This release introduces several enhancements to improve database modeling workflows. The SQL source code editor now offers per-instance control line wrap along with an integrated search/replace widget. Debugging capabilities have been expanded with dedicated output tabs in the database import and diff forms. The diff feature restored the force object re-creation support in both CLI and GUI, but now with a type selection popup menu for fine-tuned object re-creation. The database model now provides finer control over SQL generation by allowing the disabled SQL code to go into the generated scripts. The extension object handling has been upgraded for better child object management (currently, only children types and schemas are tracked). The system objects can now have permissions assigned. <br/>
 
-* **Quick create constraints, indexes, and relationships:** This feature, introduced through an exclusive plugin in the paid version of the tool, allows the creation of constraints, indexes, and relationships based on the objects selected in the design view, without the need to open a single editing form or fill lots of fields. The objects created also support name patterns, and they can be configured in the plugin's settings menu in the main window.
+**Changes and enhancements** <br/>
 
-* **Miscellaneous:**
+The model objects widget now accepts an Alt + click over a graphical object, highlighting it in the design view. Redundant search/replace instances all over the tool were removed due to the integrated search/replace widget in the source code editor. The extension editing form now properly supports custom schema names in data types, while the database import process and the database model itself have been refactored for more reliable handling of extension-owned objects using the new extension object structure. The comparison operations in the diff process have been optimized to filter system objects correctly, and the function behavior type was simplified by dropping the STRICT type since it has the same semantics as RETURNS NULL ON NULL INPUT. The database import form, when in debug mode, will remain open so the user can inspect the commands and objects created during the process. <br/>
 
-* [New] When the export, import, and diff processes finish, the taskbar blinks when the window is not visible.
-* [New] Added support for the total number of rows in the table being handled in the data handling form.
-* [Change] Set new icons for tree widgets collapse and expand actions.
-* [Change] Updates on icons-*.conf files.
-* [Change] Minor layout adjustment in the data handling form.
-* [Change] Minor adjustment in the layers configuration widget to accept Enter/Return to apply settings.
-* [Fix] Fixed some shortcut conflicts in the main window.
-* [Fix] Minor fix in the "Open relationship" action in the design view.
-* [Fix] Fixed the index catalog queries when using pgModeler in compatibility mode (PG 9.x).
-* [Fix] Minor fix in buttons' drop shadows in data handling form.
+**Bug fixes** <br/>
+
+* Fixed some crashes during diff operations on extension-created tables.
+* Fixed the importing of columns using arrays of user-defined types.
+* Fixed the time zone persistence on the timestamp data type.
+* Removed false-positive diffs for functions with comments or STRICT behavior.
+* Fixed reverse engineering of uppercase type names.
+* Addressed crashes in identifier relationships with FK indexes.

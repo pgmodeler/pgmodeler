@@ -25,6 +25,7 @@
 #ifndef DATA_GRID_WIDGET_H
 #define DATA_GRID_WIDGET_H
 
+#include <QMenu>
 #include "ui_datagridwidget.h"
 #include "catalog.h"
 #include "utils/syntaxhighlighter.h"
@@ -32,9 +33,9 @@
 #include "widgets/csvloadwidget.h"
 
 class __libgui DataGridWidget: public QWidget, public Ui::DataGridWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Constants used to mark the type of operation performed on rows
 		enum OperationId: unsigned {
 			NoOperation,

@@ -55,7 +55,7 @@ class __libconnector ResultSet {
 		int current_tuple;
 
 		/*! \brief Indicates that the result was generated from a command
-	 which generates no tuples. Example: INSERT, DELETE, CREATE .. */
+		 * which generates no tuples. Example: INSERT, DELETE, CREATE .. */
 		bool empty_result;
 
 		//! \brief Stores the result object of a SQL command

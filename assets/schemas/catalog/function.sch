@@ -92,7 +92,7 @@
 		END AS function_type,
 
 		CASE
-			WHEN pr.proisstrict THEN 'STRICT'
+			WHEN pr.proisstrict THEN 'RETURNS NULL ON NULL INPUT'
 			ELSE 'CALLED ON NULL INPUT'
 		END AS behavior_type, 
 

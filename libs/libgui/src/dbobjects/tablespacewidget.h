@@ -29,8 +29,7 @@
 #include "ui_tablespacewidget.h"
 
 class __libgui TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		TablespaceWidget(QWidget * parent = nullptr);

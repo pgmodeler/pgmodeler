@@ -25,15 +25,14 @@
 #ifndef MODEL_OBJECTS_WIDGET_H
 #define MODEL_OBJECTS_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This event loop is used to make the widget enter in a loop (like QDialogs) when
 		 *  the show() is called and the widget is configured as a simplified view */
 		QEventLoop event_loop;
@@ -54,6 +53,11 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 
 		//! \brief Stores the objects currently selected on the tree/list
 		std::vector<BaseObject *> selected_objs;
+
+		/*! \brief Stores the objects previously selected on the tree/list
+		 *  This list is compared against the currently selected object
+		 *  to determine if the popup menu should be reconfigured */
+		QList<QTreeWidgetItem *> prev_sel_items;
 
 		//! \brief Reference model widget. This is the object used to populate the tree and list
 		ModelWidget *model_wgt;

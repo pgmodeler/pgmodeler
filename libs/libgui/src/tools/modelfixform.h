@@ -25,18 +25,21 @@
 #ifndef MODEL_FIX_FORM_H
 #define MODEL_FIX_FORM_H
 
-#include <QtWidgets>
+#include <QProcess>
 #include "ui_modelfixform.h"
 #include "widgets/fileselectorwidget.h"
+#include "widgets/debugoutputwidget.h"
 
 class __libgui ModelFixForm: public QDialog, public Ui::ModelFixForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString PgModelerCli;
 
 		//! \brief Process used to execute pgmodeler-cli
 		QProcess pgmodeler_cli_proc;
+
+		DebugOutputWidget *dbg_output_wgt;
 
 		FileSelectorWidget *input_file_sel,
 		*output_file_sel,

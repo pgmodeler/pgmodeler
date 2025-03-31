@@ -23,8 +23,7 @@
 #include "defaultlanguages.h"
 
 class BaseFunctionTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		BaseFunctionTest() : PgModelerUnitTest(SCHEMASDIR) {}

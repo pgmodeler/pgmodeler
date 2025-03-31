@@ -231,7 +231,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvColumnTableType", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"OprInvalidElementId", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
 	{"RefInvalidElementColorId", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
-	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
+	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of the type(s): `%3'.")},
 	{"IncompColumnTypeForSequence", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
 	{"InvUsageTempNamesExportOption", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
 	{"InvConversionIntegerToSerial", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
@@ -287,7 +287,9 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
 	{"InvalidEscapedCharacter", QT_TR_NOOP("Invalid escaped character `%1' in file `%2', line %3, column %4!")},
 	{"InvExprMultilineGroup", QT_TR_NOOP("The group `%1' contains an expression declared as both initial and final! An expression must be either initial or final, not both.")},
-	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")}
+	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")},
+	{"InvExtensionObject", QT_TR_NOOP("Invalid child object being assigned to the extension `%1'!")},
+	{"AsgInvSchemaExtension", QT_TR_NOOP("Assigning the schema `%1' to the extension `%2' is not allowed because the schema is a child of the extension!")},
 };
 
 Exception::Exception()
@@ -306,7 +308,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
+	configureException(qApp->translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
 										 error_code, method, file, line, extra_info);
 
 	addException(exception);
@@ -325,7 +327,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
+	configureException(qApp->translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
 										 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
@@ -385,7 +387,7 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 	 so the translation method is called  directly from the application specifying the
 	 context (Exception) in the ts file and the text to be translated */
-	return QApplication::translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
+	return qApp->translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)

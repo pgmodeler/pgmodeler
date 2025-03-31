@@ -75,6 +75,59 @@ void ModelsDiffHelper::setDiffOption(DiffOptions opt_id, bool value)
 		diff_opts[opt_id]=value;
 }
 
+void ModelsDiffHelper::setForcedRecreateTypeNames(const QStringList &forced_rec_types)
+{
+	try
+	{
+		std::vector<ObjectType> obj_types;
+
+		for(auto &tp_name : forced_rec_types)
+			obj_types.push_back(BaseObject::getObjectType(tp_name));
+
+		setForcedRecreateTypes(obj_types);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelsDiffHelper::setForcedRecreateTypes(const std::vector<ObjectType> &forced_rec_types)
+{
+
+	static const std::vector<ObjectType> inv_types {
+		ObjectType::Relationship, ObjectType::Permission,
+		ObjectType::Database, ObjectType::Tag,
+		ObjectType::Textbox, ObjectType::GenericSql,
+		ObjectType::BaseObject, ObjectType::BaseRelationship,
+		ObjectType::BaseTable, ObjectType::TypeAttribute,
+		ObjectType::Parameter
+	};
+
+	for(auto &type : inv_types)
+	{
+		if(std::find(forced_rec_types.begin(), forced_rec_types.end(), type) != forced_rec_types.end())
+		{
+			QString type_name = BaseObject::getSchemaName(type);
+
+			if(type == ObjectType::BaseObject)
+				type_name = QString::number(enum_t(type)) + " " + tr("(unrecognized id)");
+
+			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__, nullptr,
+											tr("Object type id: %1").arg(type_name));
+		}
+	}
+
+	forced_recreate_types = forced_rec_types;
+}
+
+bool ModelsDiffHelper::isForcedRecreateType(ObjectType obj_type)
+{
+	return std::find(forced_recreate_types.begin(),
+									 forced_recreate_types.end(),
+									 obj_type) != forced_recreate_types.end();
+}
+
 void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
 {
 	this->pgsql_version=pgsql_ver;
@@ -383,7 +436,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 		DatabaseModel *aux_model=nullptr;
 		bool objs_differs=false, xml_differs=false;
 
-		if(diff_type==ObjectsDiffInfo::DropObject)
+		if(diff_type == ObjectsDiffInfo::DropObject)
 		{
 			/* For DROP detection, we must gather the objects from the database in order to check
 			 * if they exists on the model. The object drop order here is the inverse of the creation order
@@ -408,38 +461,43 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 
 		for(auto &obj_itr : obj_order)
 		{
-			object=obj_itr.second;
-			obj_type=object->getObjectType();
+			object = obj_itr.second;
+			obj_type = object->getObjectType();
 			idx++;
 
 			/* If this checking the following objects are discarded:
 			 * 1) ObjectType::ObjBaseRelationship objects
 			 * 2) Objects which SQL code is disabled or system objects
 			 * 3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
-			if(obj_type!=ObjectType::BaseRelationship &&
+			if(obj_type != ObjectType::BaseRelationship &&
 					!object->isSystemObject() && !object->isSQLDisabled() &&
-					((diff_type==ObjectsDiffInfo::DropObject && (!diff_opts[OptKeepClusterObjs] || (diff_opts[OptKeepClusterObjs] && obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace))) ||
-					 (diff_type!=ObjectsDiffInfo::DropObject)))
+
+				 ((diff_type == ObjectsDiffInfo::DropObject &&
+						(!diff_opts[OptKeepClusterObjs] ||
+						 (diff_opts[OptKeepClusterObjs] && obj_type != ObjectType::Role && obj_type != ObjectType::Tablespace))) ||
+
+					 (diff_type != ObjectsDiffInfo::DropObject)))
 			{
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
 															 tr("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 															 object->getObjectType());
 
 				//Processing objects that are not database, table child object (they are processed further)
-				if(obj_type!=ObjectType::Database && !TableObject::isTableObject(obj_type))
+				if(obj_type != ObjectType::Database && !TableObject::isTableObject(obj_type))
 				{
 					/* Processing permissions. If the operation is DROP and keep_obj_perms is true the
 					 * the permission is ignored */
-					if(obj_type==ObjectType::Permission &&
+					if(obj_type == ObjectType::Permission &&
 
-							((diff_type==ObjectsDiffInfo::DropObject &&
+							((diff_type == ObjectsDiffInfo::DropObject &&
 								!diff_opts[OptKeepObjectPerms]) ||
 
-							 (diff_type==ObjectsDiffInfo::CreateObject &&
+							 (diff_type == ObjectsDiffInfo::CreateObject &&
 								(aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
 								 !diff_opts[OptKeepObjectPerms]))))
+					{
 						generateDiffInfo(diff_type, object);
-
+					}
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
 					else if(obj_type==ObjectType::Relationship)
 					{
@@ -479,22 +537,22 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 							}
 						}
 					}
-					else if(obj_type!=ObjectType::Permission)
+					else if(obj_type != ObjectType::Permission)
 					{
 						//Get the object from the database
-						obj_name=object->getSignature();
-						aux_object=aux_model->getObject(obj_name, obj_type);
+						obj_name = object->getSignature();
+						aux_object = aux_model->getObject(obj_name, obj_type);
 
 						//Special case for many-to-many relationships
-						if(obj_type==ObjectType::Table && !aux_object)
-							aux_object=getRelNNTable(obj_name, aux_model);
+						if(obj_type == ObjectType::Table && !aux_object)
+							aux_object = getRelNNTable(obj_name, aux_model);
 
 						if(diff_type != ObjectsDiffInfo::DropObject && aux_object)
 						{
 							/* Try to get a diff from the retrieve object and the current object,
 							 * comparing only basic attributes like schema, tablespace and owner
 							 * this is why the BaseObject::getAlterCode is called */
-							objs_differs=!aux_object->BaseObject::getAlterCode(object).isEmpty();
+							objs_differs = !aux_object->BaseObject::getAlterCode(object).isEmpty();
 
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
@@ -509,7 +567,8 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if(PhysicalTable::isPhysicalTable(object->getObjectType()))
+								if(!isForcedRecreateType(object->getObjectType()) &&
+									 PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
 											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
@@ -535,7 +594,7 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 				else if(TableObject::isTableObject(obj_type))
 					diffTableObject(dynamic_cast<TableObject *>(object), diff_type);
 				//Comparison between model db and the imported db
-				else if(diff_type==ObjectsDiffInfo::CreateObject)
+				else if(diff_type == ObjectsDiffInfo::CreateObject)
 				{
 					if(!source_model->getAlterCode(imported_model).isEmpty())
 						generateDiffInfo(ObjectsDiffInfo::AlterObject, source_model, imported_model);
@@ -547,9 +606,10 @@ void ModelsDiffHelper::diffModels(ObjectsDiffInfo::DiffType diff_type)
 			else
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
+
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-									   tr("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-									   object->getObjectType());
+															 tr("Skipping object `%1' (%2)...").arg(object->getSignature(), object->getTypeName()),
+															 object->getObjectType());
 
 				if(diff_canceled)
 					break;
@@ -644,8 +704,9 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 			/* If the info is for ALTER and there is a DROP info on the list,
 			 * the object will be recreated instead of modified */
-			if(diff_opts[OptRecreateUnmodifiable] &&
-				 diff_type==ObjectsDiffInfo::AlterObject &&
+			if((!isForcedRecreateType(object->getObjectType()) ||
+					diff_opts[OptRecreateUnmodifiable]) &&
+				 diff_type == ObjectsDiffInfo::AlterObject &&
 				 isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
 				 !isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
 			{
@@ -750,13 +811,14 @@ void ModelsDiffHelper::generateDiffInfo(ObjectsDiffInfo::DiffType diff_type, Bas
 
 				/* If the info is for DROP, generate the drop for referer objects of the
 				 * one marked to be dropped */
-				if((diff_opts[OptRecreateUnmodifiable] || diff_opts[OptReplaceModified]) &&
-						diff_type==ObjectsDiffInfo::DropObject)
+				if((isForcedRecreateType(object->getObjectType()) ||
+						diff_opts[OptRecreateUnmodifiable]
+						/* diff_opts[OptReplaceModified] */) &&
+						diff_type == ObjectsDiffInfo::DropObject)
 				{
 					std::vector<BaseObject *> ref_objs;
-					ObjectType obj_type=object->getObjectType();
+					ObjectType obj_type = object->getObjectType();
 
-					//imported_model->getObjectReferences(object, ref_objs);
 					ref_objs = object->getReferences();
 
 					for(auto &obj : ref_objs)
@@ -839,7 +901,7 @@ void ModelsDiffHelper::processDiffInfos()
 		//Separating the base types
 		for(auto &diff : diff_infos)
 		{
-			type=dynamic_cast<Type *>(diff.getObject());
+			type = dynamic_cast<Type *>(diff.getObject());
 
 			if(type && type->getConfiguration()==Type::BaseType)
 			{
@@ -850,59 +912,63 @@ void ModelsDiffHelper::processDiffInfos()
 
 		for(auto &diff : diff_infos)
 		{
-			diff_type=diff.getDiffType();
-			object=diff.getObject();
-			obj_type=object->getObjectType();
-			rel=dynamic_cast<Relationship *>(object);
-			constr=dynamic_cast<Constraint *>(object);
-			col=dynamic_cast<Column *>(object);
+			diff_type = diff.getDiffType();
+			object = diff.getObject();
+			obj_type = object->getObjectType();
+			rel = dynamic_cast<Relationship *>(object);
+			constr = dynamic_cast<Constraint *>(object);
+			col = dynamic_cast<Column *>(object);
 
 			emit s_progressUpdated((idx++/static_cast<double>(diff_infos.size())) * 100,
-								   tr("Processing `%1' info for object `%2' (%3)...")
-								   .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
-								   obj_type);
+														 tr("Processing `%1' info for object `%2' (%3)...")
+														 .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
+														 obj_type);
 
 			/* Preliminary verification for check constraints: there is the need to
-		 check if the constraint is added by generalization or if this is not the case
-		 if it already exists in a ancestor table of its parent, this avoid the generation
-		 of commands to create or drop an inherited constraint raising errors when export the diff */
-			if(constr && constr->getConstraintType()==ConstraintType::Check)
+			 * check if the constraint is added by generalization or if this is not the case
+			 * if it already exists in a ancestor table of its parent, this avoid the generation
+			 * of commands to create or drop an inherited constraint raising errors when export the diff */
+			if(constr && constr->getConstraintType() == ConstraintType::Check)
 			{
-				parent_tab=dynamic_cast<PhysicalTable *>(constr->getParentTable());
-				skip_obj=constr->isAddedByGeneralization();
+				parent_tab = dynamic_cast<PhysicalTable *>(constr->getParentTable());
+				skip_obj = constr->isAddedByGeneralization();
 
 				for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
 					skip_obj=(parent_tab->getAncestorTable(i)->getConstraint(constr->getName())!=nullptr);
 
-				if(skip_obj) continue;
+				if(skip_obj)
+					continue;
 			}
 			//Igoring any operation done over inherited columns
 			else if(col)
 			{
-				parent_tab=dynamic_cast<PhysicalTable *>(col->getParentTable());
-				skip_obj=col->isAddedByGeneralization();
+				parent_tab = dynamic_cast<PhysicalTable *>(col->getParentTable());
+				skip_obj = col->isAddedByGeneralization();
 
-				for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
+				for(unsigned i = 0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
 				{
-					aux_col=parent_tab->getAncestorTable(i)->getColumn(col->getName());
-					skip_obj=(aux_col && aux_col->getType().getAliasType()==col->getType());
+					aux_col = parent_tab->getAncestorTable(i)->getColumn(col->getName());
+					skip_obj = (aux_col && aux_col->getType().getAliasType() == col->getType());
 				}
 
-				if(skip_obj) continue;
+				if(skip_obj)
+					continue;
 			}
 
 			//Generating the DROP commands
-			if(diff_type==ObjectsDiffInfo::DropObject)
+			if(diff_type == ObjectsDiffInfo::DropObject)
 			{
-				if(rel && (rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
-									 rel->getRelationshipType()==BaseRelationship::RelationshipPart))
+				if(rel && (rel->getRelationshipType() == BaseRelationship::RelationshipGen ||
+									 rel->getRelationshipType() == BaseRelationship::RelationshipPart))
 				{
 					//Undoing inheritances
 					no_inherit_def+=rel->getAlterRelationshipDefinition(true);
 				}
-				else if(obj_type==ObjectType::Permission)
+				else if(obj_type == ObjectType::Permission)
+				{
 					//Unsetting permissions
-					unset_perms+=object->getDropCode(diff_opts[OptCascadeMode]);
+					unset_perms += object->getDropCode(diff_opts[OptCascadeMode]);
+				}
 				else
 				{
 					//Ordinary drop commands for any object except columns
@@ -919,27 +985,29 @@ void ModelsDiffHelper::processDiffInfos()
 				}
 			}
 			//Generating the CREATE commands
-			else if(diff_type==ObjectsDiffInfo::CreateObject)
+			else if(diff_type == ObjectsDiffInfo::CreateObject)
 			{
-				if(rel && (rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
-									 rel->getRelationshipType()==BaseRelationship::RelationshipPart))
+				if(rel && (rel->getRelationshipType() == BaseRelationship::RelationshipGen ||
+									 rel->getRelationshipType() == BaseRelationship::RelationshipPart))
 				{
 					//Creating inheritances
-					inherit_def+=rel->getAlterRelationshipDefinition(false);
+					inherit_def += rel->getAlterRelationshipDefinition(false);
 				}
-				else if(obj_type==ObjectType::Permission)
+				else if(obj_type == ObjectType::Permission)
+				{
 					//Setting permissions
-					set_perms+=object->getSourceCode(SchemaParser::SqlCode);
+					set_perms += object->getSourceCode(SchemaParser::SqlCode);
+				}
 				else
 				{
 					/* Special case for constaints: the creation commands for these objects are appended at the very end of create commands secion.
 						Primary keys, unique keys, check constraints and exclude constraints are created after foreign keys */
-					if(object->getObjectType()==ObjectType::Constraint)
+					if(object->getObjectType() == ObjectType::Constraint)
 					{
 						Constraint *constr = dynamic_cast<Constraint *>(object);
 
 						if(constr->getConstraintType() == ConstraintType::ForeignKey)
-							create_fks[constr->getObjectId()]=getSourceCode(constr, false);
+							create_fks[constr->getObjectId()] = getSourceCode(constr, false);
 						// We only create a constraint if the parent is not being created
 						else if(create_objs.count(constr->getParentTable()->getObjectId()) == 0 ||
 									 /* Special case for unique constraints: in a very specific scenario, when diff against an empty database,
@@ -948,35 +1016,37 @@ void ModelsDiffHelper::processDiffInfos()
 										* ALTER TABLE command. */
 										(create_objs.count(constr->getParentTable()->getObjectId()) &&
 										 constr->isReferRelationshipAddedColumns() && constr->getConstraintType() == ConstraintType::Unique))
-							create_constrs[constr->getObjectId()]=getSourceCode(constr, false);
+							create_constrs[constr->getObjectId()] = getSourceCode(constr, false);
 					}
 					else
 					{
-						create_objs[object->getObjectId()]=getSourceCode(object, false);
+						create_objs[object->getObjectId()] = getSourceCode(object, false);
 
-						if(obj_type==ObjectType::Schema)
+						if(obj_type == ObjectType::Schema)
 							sch_names.push_back(object->getName(true));
 					}
 				}
 			}
 			//Generating the ALTER commands
-			else if(diff_type==ObjectsDiffInfo::AlterObject)
+			else if(diff_type == ObjectsDiffInfo::AlterObject)
 			{
 				QString obj_sql, old_obj_sql;
+				bool is_forced_create = isForcedRecreateType(object->getObjectType()),
+						 is_recreate_unmod = diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand(),
+						 is_replace_mod = diff_opts[OptReplaceModified] && object->acceptsReplaceCommand();
 
 				obj_sql = diff.getObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 				old_obj_sql = diff.getOldObject()->getSourceCode(SchemaParser::SqlCode).simplified();
 
 				// If one or more options that controls the recreation of objects is set
 				if(obj_type != ObjectType::Database && obj_sql != old_obj_sql &&
-						((diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand()) ||
-							(diff_opts[OptReplaceModified] && object->acceptsReplaceCommand())))
+						(is_forced_create || is_recreate_unmod || is_replace_mod))
 				{
 					// Replacing objects that accepts CREATE OR REPLACE
-					if(diff_opts[OptReplaceModified])
+					if(is_replace_mod)
 						alter_objs[object->getObjectId()] = getSourceCode(object, false);
 					// Recreating objects via DROP and CREATE
-					else if(diff_opts[OptRecreateUnmodifiable])
+					else if(is_recreate_unmod || is_forced_create)
 					{
 						recreateObject(object, drop_vect, create_vect);
 
@@ -995,12 +1065,12 @@ void ModelsDiffHelper::processDiffInfos()
 								if(obj->getObjectType()==ObjectType::Constraint)
 								{
 									if(dynamic_cast<Constraint *>(obj)->getConstraintType()==ConstraintType::ForeignKey)
-										create_fks[obj->getObjectId()]=getSourceCode(obj, false);
+										create_fks[obj->getObjectId()] = getSourceCode(obj, false);
 									else
-										create_constrs[obj->getObjectId()]=getSourceCode(obj, false);
+										create_constrs[obj->getObjectId()] = getSourceCode(obj, false);
 								}
 								else
-									create_objs[obj->getObjectId()]=getSourceCode(obj, false);
+									create_objs[obj->getObjectId()] = getSourceCode(obj, false);
 							}
 						}
 
@@ -1011,14 +1081,14 @@ void ModelsDiffHelper::processDiffInfos()
 				else
 				{
 					if(diff.getOldObject())
-						alter_def=diff.getOldObject()->getAlterCode(object);
+						alter_def = diff.getOldObject()->getAlterCode(object);
 
 					if(obj_type == ObjectType::Database && diff_opts[OptPreserveDbName])
 						alter_def.remove(QRegularExpression(QString("(ALTER)( )+(DATABASE)( )+(%1)( )+(RENAME)( )+(TO)(.)*(\\n)")
 																								.arg(diff.getOldObject()->getSignature()), QRegularExpression::DotMatchesEverythingOption));
 
 					if(!alter_def.isEmpty())
-						alter_objs[object->getObjectId()]=alter_def;
+						alter_objs[object->getObjectId()] = alter_def;
 				}
 			}
 		}
@@ -1213,7 +1283,6 @@ void ModelsDiffHelper::recreateObject(BaseObject *object, std::vector<BaseObject
 		}
 
 		//Get all references to the retrieved object on the database
-		//imported_model->getObjectReferences(aux_obj, ref_objs, false, true);
 		ref_objs = aux_obj->getReferences(false, { ObjectType::Permission });
 
 		/* If the to-be recreate object is a constraint check if it's a pk,

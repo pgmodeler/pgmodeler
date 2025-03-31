@@ -25,15 +25,14 @@
 #ifndef LAYERS_CONFIG_WIDGET_H
 #define LAYERS_CONFIG_WIDGET_H
 
-#include <QWidget>
 #include "ui_layersconfigwidget.h"
 #include "modelwidget.h"
 #include "colorpickerwidget.h"
 
 class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 

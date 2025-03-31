@@ -31,9 +31,9 @@
 #include "utils/resultsetmodel.h"
 
 class __libgui SQLExecutionHelper : public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		Connection connection;
 
 		QString command;

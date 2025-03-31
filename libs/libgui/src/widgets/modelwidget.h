@@ -25,7 +25,7 @@
 #ifndef MODEL_WIDGET_H
 #define MODEL_WIDGET_H
 
-#include <QtWidgets>
+#include <QMenu>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
@@ -36,9 +36,9 @@
 class PgModelerGuiPlugin;
 
 class __libgui ModelWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		#ifdef DEMO_VERSION
 			//Maximum number of objects' operations (create, move, delete, etc)
 			static constexpr unsigned MaxObjActions = 200;

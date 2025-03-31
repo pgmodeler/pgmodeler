@@ -25,7 +25,7 @@
 #ifndef SOURCE_EDITOR_WIDGET_H
 #define SOURCE_EDITOR_WIDGET_H
 
-#include <QWidget>
+#include <QMenu>
 #include "ui_sourceeditorwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
@@ -34,9 +34,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static attribs_map snippets;
 
 		static QPalette def_editor_pal;

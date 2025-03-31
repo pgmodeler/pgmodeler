@@ -30,9 +30,9 @@
 #include "ui_operatorwidget.h"
 
 class __libgui OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		PgSQLTypeWidget *arg_types[2];
 
 		ObjectSelectorWidget *functions_sel[3],

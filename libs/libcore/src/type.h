@@ -133,6 +133,8 @@ class __libcore Type: public BaseObject {
 		//! \brief Sets the type schema
 		virtual void setSchema(BaseObject *schema) override;
 
+		virtual void setCodeInvalidated(bool value) override;
+
 		/*! \brief Defines the type configuration (BASE | ENUMARATION | COMPOSITE | RANGE).
 		Calling this method causes all attribute to be reset, so it may be executed before
 		any other attribute of the type be defined. */

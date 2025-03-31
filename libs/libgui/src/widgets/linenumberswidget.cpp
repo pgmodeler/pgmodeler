@@ -21,6 +21,7 @@
 #include <QPaintEvent>
 #include <QTextBlock>
 #include "exception.h"
+#include <QScrollBar>
 
 QColor LineNumbersWidget::font_color { Qt::lightGray };
 QColor LineNumbersWidget::bg_color { Qt::black };
@@ -58,7 +59,7 @@ void LineNumbersWidget::setColors(const QColor &font_color, const QColor &bg_col
 void LineNumbersWidget::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	int y = dy,	last_line=first_line + line_count;
+	int y = dy, prev_y = 0, last_line=first_line + line_count;
 	QFont font = painter.font();
 	QTextCursor cursor = parent_edt->textCursor();
 
@@ -68,15 +69,17 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 
 	QTextCursor aux_cur;
 	QTextBlock block;
-	int blk_num = 0, prev_blk_num = -1, padding = (line_count == 1 ? -3 : 1);
+	int blk_num = 0, prev_blk_num = -1,
+			padding = (line_count == 1 ? -3 : 1),
+			width = this->width();
 	QString lin_str;
 
 	//Draw line numbers
 	for(int lin = first_line; lin < last_line; lin++)
 	{
-		aux_cur = parent_edt->cursorForPosition(QPoint(0, y));
+		aux_cur = parent_edt->cursorForPosition(QPoint(0, y + 1));
+		prev_y = y;
 		block = aux_cur.block();
-
 		blk_num = block.blockNumber();
 
 		if(blk_num != prev_blk_num)
@@ -87,27 +90,31 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 		else
 			lin_str = "↪";
 
-		if(cursor.blockNumber() == aux_cur.blockNumber() ||
-			 (cursor.hasSelection() &&
-				aux_cur.position() >= cursor.selectionStart() &&
-				aux_cur.position() <= cursor.selectionEnd()))
-			font.setBold(true);
-		else
-			font.setBold(false);
-
-		painter.setFont(font);
-
-		if(font.bold())
+		if(prev_y >= 0)
 		{
-			painter.setBrush(bg_color.darker(150));
-			painter.setPen(Qt::transparent);
-			painter.drawRect(QRect(-1, y - 1, this->width() + 1, block_height + padding));
-			painter.setPen(font_color.lighter(180));
-		}
-		else
-			painter.setPen(font_color);
+			if(cursor.blockNumber() == aux_cur.blockNumber() ||
+				 (cursor.hasSelection() &&
+					aux_cur.position() >= cursor.selectionStart() &&
+					aux_cur.position() <= cursor.selectionEnd()))
+				font.setBold(true);
+			else
+				font.setBold(false);
 
-		painter.drawText(0, y, this->width(), block_height, Qt::AlignHCenter, lin_str);
+			painter.setFont(font);
+
+			if(font.bold())
+			{
+				painter.setBrush(bg_color.darker(150));
+				painter.setPen(Qt::transparent);
+				painter.drawRect(QRect(-1, y - 1, width + 1, block_height + padding));
+				painter.setPen(font_color.lighter(180));
+			}
+			else
+				painter.setPen(font_color);
+
+			painter.drawText(0, y, width, block_height, Qt::AlignHCenter, lin_str);
+		}
+
 		y += block_height;
 	}
 }
@@ -119,8 +126,8 @@ void LineNumbersWidget::mousePressEvent(QMouseEvent *event)
 		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y()));
 
 		has_selection = true;
-		evnt_cursor.movePosition(QTextCursor::EndOfLine);
-		evnt_cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+		evnt_cursor.movePosition(QTextCursor::EndOfBlock);
+		evnt_cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
 		parent_edt->setTextCursor(evnt_cursor);
 		start_sel_line = evnt_cursor.blockNumber();
 		start_sel_pos = evnt_cursor.position();
@@ -134,11 +141,17 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		QTextCursor evnt_cursor = parent_edt->cursorForPosition(QPoint(0, event->pos().y())),
 				curr_cursor = parent_edt->textCursor();
 
+		/* If the involved cursors are in the same block
+		 * in case the word wrap is active, we just ignore
+		 * the selection event */
+		if(evnt_cursor.blockNumber() == curr_cursor.blockNumber())
+			return;
+
 		//If the user wants to select the lines below the first
 		if(evnt_cursor.blockNumber() > start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
-			evnt_cursor.movePosition(QTextCursor::EndOfLine);
+			evnt_cursor.movePosition(QTextCursor::EndOfBlock);
 			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
@@ -146,16 +159,20 @@ void LineNumbersWidget::mouseMoveEvent(QMouseEvent *event)
 		else if(evnt_cursor.blockNumber() < start_sel_line)
 		{
 			curr_cursor.setPosition(start_sel_pos);
-			curr_cursor.movePosition(QTextCursor::EndOfLine);
-			evnt_cursor.movePosition(QTextCursor::StartOfLine);
+			curr_cursor.movePosition(QTextCursor::EndOfBlock);
+			evnt_cursor.movePosition(QTextCursor::StartOfBlock);
 			curr_cursor.setPosition(evnt_cursor.position(), QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(curr_cursor);
 		}
 		else
 		{
-			evnt_cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+			evnt_cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
 			parent_edt->setTextCursor(evnt_cursor);
 		}
+
+		/* Moves the horizontal scrollbar to avoid moving
+		 * the viewport to the end of a block if it is too long */
+		parent_edt->horizontalScrollBar()->setValue(0);
 
 		this->update();
 	}

@@ -31,9 +31,9 @@
 #include "codecompletionwidget.h"
 
 class __libgui RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SyntaxHighlighter *cond_expr_hl,
 		*command_hl;
 

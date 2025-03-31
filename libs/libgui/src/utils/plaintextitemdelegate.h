@@ -31,9 +31,9 @@
 #include <QPainter>
 
 class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static int max_display_len;
 
 		static bool txt_editor_enabled;

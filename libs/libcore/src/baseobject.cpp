@@ -123,7 +123,7 @@ BaseObject::BaseObject()
 	attributes[Attributes::Drop]="";
 	attributes[Attributes::Signature]="";
 	attributes[Attributes::EscapeComment]="";
-	this->setName(QApplication::translate("BaseObject","new_object","", -1));
+	this->setName(qApp->translate("BaseObject","new_object","", -1));
 }
 
 BaseObject::~BaseObject()
@@ -153,7 +153,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return QApplication::translate("BaseObject",obj_type_names[enum_t(obj_type)].toStdString().c_str(),"", -1);
+		return qApp->translate("BaseObject", obj_type_names[enum_t(obj_type)].toStdString().c_str(),"", -1);
 
 	return "";
 }
@@ -799,16 +799,16 @@ bool BaseObject::isSystemObject()
 void BaseObject::setBasicAttributes(bool format_name)
 {
 	if(attributes[Attributes::Name].isEmpty())
-		attributes[Attributes::Name]=this->getName(format_name);
+		attributes[Attributes::Name] = obj_name; /* this->getName(format_name); */
 
 	if(attributes[Attributes::Alias].isEmpty())
-		attributes[Attributes::Alias]=this->getAlias();
+		attributes[Attributes::Alias] = alias; /* this->getAlias(); */
 
 	if(attributes[Attributes::Signature].isEmpty())
-		attributes[Attributes::Signature]=this->getSignature(format_name);
+		attributes[Attributes::Signature] = this->getSignature(format_name);
 
 	if(attributes[Attributes::SqlObject].isEmpty())
-		attributes[Attributes::SqlObject]=objs_sql[enum_t(this->obj_type)];
+		attributes[Attributes::SqlObject] = objs_sql[enum_t(this->obj_type)];
 }
 
 QString BaseObject::__getSourceCode(SchemaParser::CodeType def_type)

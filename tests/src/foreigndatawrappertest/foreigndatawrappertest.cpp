@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class ForeignDataWrapperTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		ForeignDataWrapperTest() : PgModelerUnitTest(SCHEMASDIR) {}

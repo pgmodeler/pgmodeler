@@ -32,9 +32,9 @@ of rows on the table.
 #include "guiglobal.h"
 
 class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static QColor item_colors[12];
 
 		/*! \brief Indicates that a confirmation message must be shown when the user try
@@ -206,6 +206,8 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 		 *  The parent of the button is changed to the custom table itself */
 		void addCustomButton(QToolButton *btn);
 
+		void setItemContextMenu(QMenu *menu);
+
 		static void setTableItemColor(TableItemColor color_idx, const QColor color);
 
 		static QColor getTableItemColor(TableItemColor color_idx);
@@ -307,6 +309,11 @@ class __libgui CustomTableWidget: public QWidget, public Ui::CustomTableWidget {
 
 		//! \brief Signal emitted when the table row count changes by adding, deleting, duplicating rows
 		void s_rowCountChanged(int);
+
+		/*! \brief Signal emitted when the user request the context menu (right-click on table)
+		 *  The signal carries the point where the context menu was requested in global coordinate,
+		 *  as well as if an item is selected on the cursor's position */
+		void s_contextMenuRequested(const QPoint &, bool);
 
 	protected:
 		void resizeEvent(QResizeEvent *);

@@ -29,8 +29,7 @@
 #include "baseobjectwidget.h"
 
 class __libgui TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		TextboxWidget(QWidget * parent = nullptr);

@@ -25,14 +25,13 @@
 #ifndef MODEL_OVERVIEW_WIDGET_H
 #define MODEL_OVERVIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
 
 class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 

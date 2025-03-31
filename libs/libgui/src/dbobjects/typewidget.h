@@ -31,9 +31,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Type functions selectors widgets
 		ObjectSelectorWidget *functions_sel[9],
 

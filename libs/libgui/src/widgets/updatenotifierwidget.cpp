@@ -19,6 +19,7 @@
 #include "updatenotifierwidget.h"
 #include "guiutilsns.h"
 #include "messagebox.h"
+#include <QDesktopServices>
 
 UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 {

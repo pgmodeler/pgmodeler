@@ -22,7 +22,6 @@
 #include "schema.h"
 
 class PartRelationhipTest: public QObject, public PgModelerUnitTest {
-private:
 	Q_OBJECT
 
 	public:

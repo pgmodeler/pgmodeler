@@ -18,6 +18,7 @@
 
 #include "pgmodelerapp.h"
 #include "mainwindow.h"
+#include <QSplashScreen>
 
 #ifndef Q_OS_WIN
 #include "execinfo.h"
@@ -80,6 +81,8 @@ void startCrashHandler(int signal)
 
 	exit(1 + system(cmd.toStdString().c_str()));
 }
+
+
 
 int main(int argc, char **argv)
 {

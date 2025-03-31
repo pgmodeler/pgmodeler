@@ -20,8 +20,7 @@
 #include "widgets/fileselectorwidget.h"
 
 class FileSelectorTest: public QObject {
-  private:
-    Q_OBJECT
+	Q_OBJECT
 
   private slots:
 		void testFileSelection();

@@ -29,9 +29,9 @@
 #include "ui_functionwidget.h"
 
 class __libgui FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QWidget *ret_type_parent;
 
 		//! \brief Widget used to configure the function's return type

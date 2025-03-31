@@ -26,15 +26,16 @@ the syntax highlighter installed on it.
 #ifndef CODE_COMPLETION_WIDGET_H
 #define CODE_COMPLETION_WIDGET_H
 
-#include <QWidget>
+#include <QCheckBox>
+#include <QListWidget>
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 #include "catalog.h"
 
 class __libgui CodeCompletionWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This enums is used to determine DML keywords
 		 * positions in the parsed SQL command. This one is used
 		 * together with dml_kwords_pos and dml_keywords, and the

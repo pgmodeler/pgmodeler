@@ -25,7 +25,6 @@
 #ifndef BASE_OBJECT_WIDGET_H
 #define BASE_OBJECT_WIDGET_H
 
-#include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "widgets/objectselectorwidget.h"
@@ -33,9 +32,8 @@
 #include "qtconnectmacros.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	protected:
 		static constexpr int MaxObjectSize=16777215;
 

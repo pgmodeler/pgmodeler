@@ -835,11 +835,22 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
-			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
-			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
-			reg_aux;
+	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)", QRegularExpression::DontCaptureOption),
+
+			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab),
+									QRegularExpression::DontCaptureOption),
+
+			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+",
+							 QRegularExpression::DontCaptureOption),
+
+			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab),
+											 QRegularExpression::DontCaptureOption),
+			reg_aux,
+
+			name_rx("^((\".+\")|(\\w|_|\\d)+)(\\.((\".+\")|(\\w|_|\\d)+))*"),
+
+			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, "\\*"),
+																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
 
 	std::vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
@@ -876,25 +887,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			aux_prog=progress + ((curr_size/static_cast<double>(buf_size)) * factor);
 
 			/* If the simulation mode is off and the drop objects option is checked,
-		 check if the current line matches one of the accepted drop commands
-		 (DROP [OBJECT] or ALTER TABLE...DROP) */
+			 * check if the current line matches one of the accepted drop commands
+			 * (DROP [OBJECT] or ALTER TABLE...DROP) */
 			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
-				comm_cnt=lin.count("--");
-				lin=lin.remove("--").trimmed();
+				comm_cnt = lin.count("--");
+				lin = lin.remove("--").trimmed();
 
 				/* If the count of comment indicators (--) is 1 indicates that the DDL of the
-		   object related to the DROP is enabled, so the DROP is executed otherwise ignored */
-				if(comm_cnt==1)
+				 * object related to the DROP is enabled, so the DROP is executed otherwise ignored */
+				if(comm_cnt == 1)
 				{
-					sql_cmd=lin + "\n";
-					ddl_tk_found=true;
+					sql_cmd = lin + "\n";
+					ddl_tk_found = true;
 				}
 			}
 			else
 			{
-				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegularExpression("^(--)+(.)+$"));
+				ddl_tk_found = lin.contains(Attributes::DdlEndToken);
+				lin.remove(comm_regexp);
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
@@ -909,7 +920,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
-					aux_cmd.remove('"');
 					aux_cmd.remove("IF EXISTS ");
 					obj_type=(aux_cmd.contains("COLUMN") ? ObjectType::Column : ObjectType::Constraint);
 					reg_aux.setPattern("(COLUMN|CONSTRAINT)( )+");
@@ -999,25 +1009,34 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						if(match.hasMatch())
 						{
-							is_create=lin.startsWith("CREATE");
-							is_drop=(!is_create && lin.startsWith("DROP"));
+							is_create = lin.startsWith("CREATE");
+							is_drop = (!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
-							//lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
-							lin.remove('"');
 
 							if(obj_tp != ObjectType::BaseObject)
 							{
-								if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
+								if(obj_tp != ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 								{
-									int spc_idx=lin.indexOf(' ');
-									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+									match = name_rx.match(lin);
+									obj_name = lin.mid(match.capturedStart(), match.capturedLength());
 
-									if(obj_tp!=ObjectType::Function && obj_tp!=ObjectType::Procedure)
+									if(obj_tp != ObjectType::Function && obj_tp != ObjectType::Procedure)
 									{
-										obj_name=obj_name.remove('(').simplified();
-										obj_name=obj_name.remove(')').simplified();
+										obj_name = obj_name.remove('(').simplified();
+										obj_name = obj_name.remove(')').simplified();
+									}
+
+									if(obj_tp == ObjectType::Trigger || obj_tp == ObjectType::Index)
+									{
+										int on_idx = sql_cmd.indexOf("ON ") + 3,
+												lb_idx = sql_cmd.indexOf('\n', on_idx);
+
+										// Extracting the table name from command so it'll be prepended to object name
+										lin = sql_cmd.mid(on_idx, lb_idx - on_idx);
+										match = name_rx.match(lin);
+										obj_name.prepend(lin.mid(match.capturedStart(), match.capturedLength()) + '.');
 									}
 								}
 								else if(obj_tp == ObjectType::UserMapping)
@@ -1030,15 +1049,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								}
 
 								//Stores the object type name
-								obj_tp_name=BaseObject::getTypeName(obj_tp);
+								obj_tp_name = BaseObject::getTypeName(obj_tp);
 								obj_name.remove(';');
 
 								if(is_create)
-									msg=tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else if(is_drop)
-									msg=tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else
-									msg=tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 							}
 							// If the type of the object being create can't be identified
 							else

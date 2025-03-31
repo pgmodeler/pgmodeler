@@ -40,7 +40,6 @@
 #ifndef UPDATE_NOTIFIER_WIDGET_H
 #define UPDATE_NOTIFIER_WIDGET_H
 
-#include <QtWidgets>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -50,9 +49,9 @@
 #include "guiglobal.h"
 
 class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QString check_versions, blogpost;
 
 		//! \brief Object responsible to make request to server

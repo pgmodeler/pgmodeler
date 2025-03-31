@@ -26,16 +26,15 @@
 #define LAYERS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include "ui_layerswidget.h"
 #include "basegraphicobject.h"
 
 class ModelWidget;
 
 class __libgui LayersWidget : public QDialog, Ui::LayersWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief The current object selection in a model widget that the layer widget will operate on.
 		std::vector<BaseGraphicObject *> selected_objs;
 

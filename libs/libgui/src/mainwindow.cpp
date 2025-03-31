@@ -25,6 +25,8 @@
 #include "tools/modelexportform.h"
 #include "tools/databaseimportform.h"
 #include "tools/modeldatabasediffform.h"
+#include <QMimeData>
+#include <QDesktopServices>
 
 int MainWindow::ToolsActionsCount {0};
 bool MainWindow::confirm_validation {true};
@@ -35,7 +37,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	pending_op = NoPendingOp;
 	welcome_wgt = nullptr;
-	window_title = this->windowTitle() + " " + GlobalAttributes::PgModelerVersion;
+	window_title = tr("pgModeler %1 - PostgreSQL Database Modeler %2");
+
+	#ifdef PRIVATE_PLUGINS_SYMBOLS
+		window_title = window_title.arg("Plus", GlobalAttributes::PgModelerVersion);
+	#else
+		window_title = window_title.arg("", GlobalAttributes::PgModelerVersion);
+	#endif
 
 	recent_models_menu = new QMenu(this);
 	recent_models_menu->setObjectName("recent_models_menu");
@@ -1957,6 +1965,13 @@ void MainWindow::importDatabase()
 		updateConnections(true);
 	});
 
+	connect(&db_import_form, &DatabaseImportForm::s_importFinished, this, [this, &db_import_form](){
+		if(db_import_form.getModelWidget())
+			this->addModel(db_import_form.getModelWidget());
+		else if(current_model)
+			updateDockWidgets();
+	}, Qt::DirectConnection);
+
 	db_import_form.setModelWidget(current_model);
 	GuiUtilsNs::resizeDialog(&db_import_form);
 
@@ -1965,11 +1980,6 @@ void MainWindow::importDatabase()
 	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
 
 	stopTimers(false);
-
-	if(db_import_form.result()==QDialog::Accepted && db_import_form.getModelWidget())
-		this->addModel(db_import_form.getModelWidget());
-	else if(current_model)
-		updateDockWidgets();
 }
 
 void MainWindow::diffModelDatabase()

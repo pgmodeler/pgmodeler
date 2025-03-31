@@ -19,10 +19,11 @@
 #include <QtTest/QtTest>
 #include "utils/syntaxhighlighter.h"
 #include "pgmodelerunittest.h"
+#include <QDialog>
+#include <QHBoxLayout>
 
 class SyntaxHighlighterTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		SyntaxHighlighterTest() : PgModelerUnitTest(SCHEMASDIR) {}

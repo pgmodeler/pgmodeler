@@ -23,6 +23,7 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "databasemodel.h"
+#include <QScrollBar>
 
 const QColor ObjectsScene::DefaultGridColor { "#e1e1e1"};
 const QColor ObjectsScene::DefaultCanvasColor {"#fff"};

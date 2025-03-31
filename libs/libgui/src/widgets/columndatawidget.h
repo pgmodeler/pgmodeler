@@ -20,13 +20,12 @@
 #define COLUMN_DATA_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include "numberedtexteditor.h"
 
 class __libgui ColumnDataWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		NumberedTextEditor *value_txt;
 
 		void showEvent(QShowEvent *);

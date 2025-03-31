@@ -32,6 +32,8 @@
 #include <QFile>
 
 class PgModelerApp: public Application {
+	Q_OBJECT
+
 	public:
 		PgModelerApp(int & argc, char ** argv);
 		bool notify(QObject * receiver, QEvent * event);

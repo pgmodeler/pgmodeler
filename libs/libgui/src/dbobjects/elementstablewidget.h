@@ -25,7 +25,6 @@
 #ifndef ELEMENTS_TABLES_WIDGET_H
 #define ELEMENTS_TABLES_WIDGET_H
 
-#include <QtWidgets>
 #include "widgets/customtablewidget.h"
 #include "indexelement.h"
 #include "excludeelement.h"
@@ -34,9 +33,9 @@
 #include "elementwidget.h"
 
 class __libgui ElementsTableWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Store an instance of the element being handled (see setAttributes())
 		 * This one is used to determine the settings of the element widget open when the user
 		 * wants to create new elements on the grid */

@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class SchemaFilesSyntaxTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		SchemaFilesSyntaxTest() : PgModelerUnitTest(SCHEMASDIR) {}

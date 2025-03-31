@@ -28,15 +28,19 @@ PgModelerCliPlugin::~PgModelerCliPlugin()
 
 }
 
-bool PgModelerCliPlugin::isValidOption(const QString &opt)
+bool PgModelerCliPlugin::isOpModeOption(const QString &opt)
 {
-	for(auto &itr : getShortOptions())
-	{
-		if(itr.first == opt)
-			return true;
-	}
+	return getOpModeOptions().contains(opt);
+}
 
-	return false;
+QStringList PgModelerCliPlugin::getValidOptions()
+{
+	QStringList opts;
+
+	for(auto &[opt, _] : getLongOptions())
+		opts.append(opt);
+
+	return opts;
 }
 
 void PgModelerCliPlugin::initPlugin(PgModelerCliApp *app)

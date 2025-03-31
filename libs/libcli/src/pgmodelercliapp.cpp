@@ -27,6 +27,8 @@
 #include "relationshipview.h"
 #include "pgsqlversions.h"
 #include "compat/compatns.h"
+#include <QSettings>
+#include <QPluginLoader>
 
 QTextStream PgModelerCliApp::out {stdout};
 
@@ -105,6 +107,7 @@ const QString PgModelerCliApp::NoSequenceReuse {"--no-sequence-reuse"};
 const QString PgModelerCliApp::NoCascadeDrop {"--no-cascade"};
 const QString PgModelerCliApp::RecreateUnmod {"--recreate-unmod"};
 const QString PgModelerCliApp::ReplaceModified {"--replace-mod"};
+const QString PgModelerCliApp::ForceReCreateObjs { "--force-re-create" };
 const QString PgModelerCliApp::CreateConfigs {"--create-configs"};
 const QString PgModelerCliApp::MissingOnly {"--missing-only"};
 const QString PgModelerCliApp::IgnoreFaultyPlugins {"--ignore-faulty"};
@@ -144,8 +147,8 @@ std::map<QString, bool> PgModelerCliApp::long_opts {
 	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
 	{ NoSequenceReuse, false },	{ NoCascadeDrop, false },
-	{ RecreateUnmod, false }, { ReplaceModified, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
+	{ RecreateUnmod, false }, { ReplaceModified, false },	{ ForceReCreateObjs, true },
+	{ ExportToDict, false }, { NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 	{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
 	{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
@@ -172,8 +175,8 @@ attribs_map PgModelerCliApp::short_opts {
 	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },
-	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" },
-	{ RecreateUnmod, "-ru" }, { ReplaceModified, "-rm" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
+	{ NoSequenceReuse, "-ns" },	{ NoCascadeDrop, "-nd" }, { RecreateUnmod, "-ru" },
+	{ ReplaceModified, "-rm" },	{ ForceReCreateObjs, "-fr" }, { NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { Force, "-ff" },
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
 	{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
@@ -199,7 +202,7 @@ std::map<QString, QStringList> PgModelerCliApp::accepted_opts {
 	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, Force,
 								StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
 								DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDrop,
-								NoSequenceReuse, RecreateUnmod, ReplaceModified, NonTransactional }},
+								NoSequenceReuse, RecreateUnmod, ReplaceModified, ForceReCreateObjs, NonTransactional }},
 
 	{{ DbmMimeType }, { SystemWide, Force }},
 	{{ FixModel },	{ Input, Output, FixTries }},
@@ -580,6 +583,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse));
 	printText(tr("  %1, %2\t\t    Recreates the unmodifiable objects. These objects are the ones that can't be changed via the ALTER command.").arg(short_opts[RecreateUnmod]).arg(RecreateUnmod));
 	printText(tr("  %1, %2\t\t    Replaces modifiable objects. These objects are the ones that supports CREATE OR REPLACE command.").arg(short_opts[ReplaceModified]).arg(ReplaceModified));
+	printText(tr("  %1, %2 [OBJECTS]  Uses a DROP and CREATE commands to do a full modification over changed objects. The OBJECTS is a comma-separated list of types.").arg(short_opts[ForceReCreateObjs]).arg(ForceReCreateObjs));
 	printText();
 
 	printText(tr("Model fix options: ") );
@@ -965,8 +969,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			long_opt.remove(QRegularExpression("[0-9]+$"));
 
 			if(!acc_opts.contains(long_opt))
+			{
 				throw Exception(tr("The option `%1' is not accepted by the operation mode `%2'!").arg(long_opt).arg(curr_op_mode),
 												ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 		}
 
 		parsed_opts = opts;
@@ -1797,22 +1803,34 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.replace(QString("%1=\"true\"").arg(Attributes::HideExtAttribs), QString("%1=\"1\"").arg(Attributes::CollapseMode));
 	}
 
-	//Replacing attribute handles-type in extension by the tag <type name="extension-name"...
+	/* Fixing extension attributes.
+	 * If it contains handles-type="true" then it will be added <object name="extension-name" type="usertype"
+	 * If it contains <type name="foo" then it will be replaced by <object type="usertype" name="foo" */
 	QRegularExpression handle_type_rx = QRegularExpression(AttributeExpr.arg("handles-type"));
+	bool is_handle_type = obj_xml.contains(handle_type_rx),
+			is_multi_types = obj_xml.contains(TagExpr.arg(Attributes::Type));
+
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension))) &&
-			obj_xml.contains(handle_type_rx))
+		 (is_handle_type || is_multi_types))
 	{
-		int end_sch_idx = -1, start_idx = -1, end_idx = -1;
-		QString name_attr="name=\"", ext_name;
+		if(is_handle_type)
+		{
+			int end_sch_idx = -1, start_idx = -1, end_idx = -1;
+			QString name_attr="name=\"", ext_name;
 
-		//Extracting the extension's name
-		start_idx=obj_xml.indexOf(name_attr);
-		end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
-		ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
+			//Extracting the extension's name
+			start_idx=obj_xml.indexOf(name_attr);
+			end_idx=obj_xml.indexOf("\"", start_idx + name_attr.size());
+			ext_name=obj_xml.mid(start_idx, end_idx - start_idx).remove(name_attr);
 
-		obj_xml.remove(handle_type_rx);
-		end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
-		obj_xml.insert(end_sch_idx, QString("\n<type name=\"%1\"/>\n").arg(ext_name));
+			obj_xml.remove(handle_type_rx);
+			end_sch_idx = obj_xml.indexOf(EndTagExpr.arg(BaseObject::getSchemaName(ObjectType::Extension)));
+			obj_xml.insert(end_sch_idx, QString("\n<object type=\"usertype\" name=\"%1\"/>\n").arg(ext_name));
+		}
+		else
+		{
+			obj_xml.replace("<type", "<object type=\"usertype\"");
+		}
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
@@ -1843,6 +1861,11 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		match = regexp.match(obj_xml, sig_idx + len);
 		sig_idx = match.capturedStart();
 	}
+
+	//Renaming the function's behavior-type value STRICT to RETURNS NULL ON NULL INPUT
+	QString btype = QString(Attributes::BehaviorType + "=\"%1\"");
+	if(obj_xml.contains(Attributes::BehaviorType))
+		obj_xml.replace(btype.arg("STRICT"), btype.arg("RETURNS NULL ON NULL INPUT"));
 
 	//Rename the attribute layer to layers
 	QRegularExpression layer_regexp("(layer)( )*(=)");
@@ -2220,6 +2243,8 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
+
+	diff_hlp->setForcedRecreateTypeNames(parsed_opts[ForceReCreateObjs].split(','));
 
 	if(!parsed_opts[PgSqlVer].isEmpty())
 		diff_hlp->setPgSQLVersion(parsed_opts[PgSqlVer]);
@@ -2806,27 +2831,27 @@ bool PgModelerCliApp::isPluginOptsValid(PgModelerCliPlugin *plugin)
 	QStringList op_mode_opts = plugin->getOpModeOptions();
 
 	/* Short options must start with an dash (-) and
-	 * contain no more than alphanumeric characters */
-	for(auto &itr : s_opts)
+	 * contain no more than three alphanumeric characters */
+	for(auto &[_, s_op] : s_opts)
 	{
-		opt = itr.second.trimmed();
+		opt = s_op.trimmed();
 
 		if(!opt.contains(s_opt_rx))
 			return false;
 
 		// Validates if the option conflicts with the original CLI list of short options
-		for(auto &s_itr : short_opts)
+		for(auto &[aux_s_op, _] : short_opts)
 		{
-			if(s_itr.second == opt)
+			if(aux_s_op == opt)
 				return false;
 		}
 	}
 
 	/* Long options must start with two dashes (--) and
 	 * contain a free number of alphanumeric characters */
-	for(auto &itr : l_opts)
+	for(auto &[l_op, _] : l_opts)
 	{
-		opt = itr.first.trimmed();
+		opt = l_op.trimmed();
 
 		if(!opt.contains(l_opt_rx))
 			return false;
@@ -2838,9 +2863,9 @@ bool PgModelerCliApp::isPluginOptsValid(PgModelerCliPlugin *plugin)
 
 	/* Validate if the long options keys are compatible with
 	 * short options keys. */
-	for(auto &itr : l_opts)
+	for(auto &[l_op, _] : l_opts)
 	{
-		if(!s_opts.count(itr.first))
+		if(!s_opts.count(l_op))
 			return false;
 	}
 
@@ -2860,8 +2885,9 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 	int plug_op_modes = 0;
 	PgModelerCliPlugin::OperationId op_id;
 	QString acc_op_key;
+	bool is_op_mode = false;
 
-	QStringList export_opts = {
+	QStringList valid_opts, export_opts = {
 		ExportToFile, ExportToPng, ExportToSvg,
 		ExportToDbms, ExportToDict
 	};
@@ -2878,31 +2904,34 @@ int PgModelerCliApp::definePluginsExecOrder(const attribs_map &opts)
 		{ PgModelerCliPlugin::CreateConfigs, CreateConfigs }
 	};
 
-	for(auto &opt : opts)
+	for(auto &[opt, _] : opts)
 	{
 		for(auto &plugin : plugins)
 		{
-			if(plugin->isValidOption(opt.first) && !plug_exec_order.contains(plugin))
-				plug_exec_order.append(plugin);
+			valid_opts = plugin->getValidOptions();
+			is_op_mode = plugin->isOpModeOption(opt);
 
+			if(!valid_opts.contains(opt) ||
+				 !is_op_mode ||
+				 plug_exec_order.contains(plugin))
+				continue;
+
+			plug_exec_order.append(plugin);
 			op_id = plugin->getOperationId();
 
 			if(op_id == PgModelerCliPlugin::CustomCliOp &&
-					plugin->getOpModeOptions().contains(opt.first) && !accepted_opts.count(opt.first))
+				 is_op_mode && !accepted_opts.count(opt))
 			{
-				acc_op_key = opt.first;
+				acc_op_key = opt;
 				plug_op_modes++;
 			}
-			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt.first))
-				acc_op_key = opt.first;
+			else if(op_id == PgModelerCliPlugin::Export && export_opts.contains(opt))
+				acc_op_key = opt;
 			else if(cli_op.count(op_id))
 				acc_op_key = cli_op[op_id];
 
-			for(auto &l_opt : plugin->getLongOptions())
-			{
-				accepted_opts[acc_op_key].append(l_opt.first);
-				accepted_opts[acc_op_key].append(IgnoreFaultyPlugins);
-			}
+			accepted_opts[acc_op_key].append(valid_opts);
+			accepted_opts[acc_op_key].append(IgnoreFaultyPlugins);
 		}
 	}
 

@@ -19,15 +19,14 @@
 #ifndef SIMPLE_COLUMNS_WIDGET_H
 #define SIMPLE_COLUMNS_WIDGET_H
 
-#include <QWidget>
 #include "ui_simplecolumnswidget.h"
 #include "pgsqltypewidget.h"
 #include "widgets/customtablewidget.h"
 
 class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		PgSQLTypeWidget *pgsqltype_wgt;
 
 		CustomTableWidget *columns_tab;

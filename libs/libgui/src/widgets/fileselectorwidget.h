@@ -26,13 +26,15 @@
 #define FILE_SELECTOR_WIDGET_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
+#include <QFileDialog>
+#include <QLabel>
+#include <QRegularExpression>
 #include "ui_fileselectorwidget.h"
 
 class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QStringList name_filters, mime_filters;
 		QString file_dlg_title, def_suffix;
 		QFileDialog::AcceptMode accept_mode;

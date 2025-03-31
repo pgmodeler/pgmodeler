@@ -241,6 +241,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		bool hasVariableLength();
 		bool acceptsPrecision();
+		bool acceptsTimezone();
 
 		/*! \brief Resets the length, precision, interval and spatial attributes of the type to their default values.
 		 * If the all_attrs is true then the dimension and timezone info is reset too.

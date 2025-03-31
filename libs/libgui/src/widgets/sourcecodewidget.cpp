@@ -32,7 +32,7 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	hl_sqlcode = nullptr;
 	hl_xmlcode = nullptr;
 
-	sqlcode_txt = GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
+	sqlcode_txt = GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt, true);
 	sqlcode_txt->setReadOnly(true);
 
 	xmlcode_txt = GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
@@ -41,7 +41,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	name_edt->setReadOnly(true);
 	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
 	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::generateSourceCode);
 	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
 
@@ -52,26 +51,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	connect(code_options_cmb, &QComboBox::currentIndexChanged, this, [this](int) {
 		generateSourceCode(SchemaParser::SqlCode);
 	});
-
-	search_sql_wgt = new SearchReplaceWidget(sqlcode_txt, search_sql_wgt_parent);
-	search_sql_wgt_parent->setVisible(false);
-
-	QVBoxLayout *vbox = new QVBoxLayout(search_sql_wgt_parent);
-	vbox->addWidget(search_sql_wgt);
-	vbox->setContentsMargins(0,0,0,0);
-
-	search_xml_wgt = new SearchReplaceWidget(xmlcode_txt, search_xml_wgt_parent);
-	search_xml_wgt_parent->setVisible(false);
-
-	vbox = new QVBoxLayout(search_xml_wgt_parent);
-	vbox->addWidget(search_xml_wgt);
-	vbox->setContentsMargins(0,0,0,0);
-
-	connect(search_sql_tb, &QToolButton::toggled, search_sql_wgt_parent, &QWidget::setVisible);
-	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_sql_tb, &QToolButton::toggle);
-
-	connect(search_xml_tb, &QToolButton::toggled, search_xml_wgt_parent, &QWidget::setVisible);
-	connect(search_xml_wgt, &SearchReplaceWidget::s_hideRequested, search_xml_tb, &QToolButton::toggle);
 
 	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
@@ -129,9 +108,7 @@ void SourceCodeWidget::generateSQLCode()
 			sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 	}
 
-#ifndef DEMO_VERSION
-	save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
-#else
+#ifdef DEMO_VERSION
 	if(!sqlcode_txt->toPlainText().isEmpty())
 	{
 		QString code = tr("/*******************************************************/\n\

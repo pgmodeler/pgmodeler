@@ -30,9 +30,9 @@
 #include "textpolygonitem.h"
 
 class __libcanvas TextboxView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
 		bool override_style;
 

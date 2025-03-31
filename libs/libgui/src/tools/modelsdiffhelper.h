@@ -30,9 +30,9 @@
 #include "objectsdiffinfo.h"
 
 class __libgui ModelsDiffHelper: public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief List of attributes ignored when comparing XML code of table children objects
 		static const QStringList
 
@@ -57,7 +57,7 @@ class __libgui ModelsDiffHelper: public QObject {
 		bool diff_canceled,
 
 		//!brief Diff options. See OPT_??? constants
-		diff_opts[9];
+		diff_opts[10];
 
 		//! \brief Stores the count of objects to be dropped, changed or created
 		unsigned diffs_counter[4];
@@ -76,6 +76,10 @@ class __libgui ModelsDiffHelper: public QObject {
 
 		//! \brief Stores all objects filtered by the partial diff filters
 		std::map<unsigned, BaseObject *> filtered_objs;
+
+		/*! \brief Stores all objects types that are forced to be recreated
+		 *  by the option OptForceRecreation */
+		std::vector<ObjectType> forced_recreate_types;
 
 		/*! note The parameter diff_type in any methods below is one of the values in
 		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
@@ -181,6 +185,14 @@ class __libgui ModelsDiffHelper: public QObject {
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
 		void setDiffOption(DiffOptions opt_id, bool value);
+
+		/*! \brief Defines the object types that must be recreated forcebly.
+		 *  These object types are only used when OptForceRecreation option is set */
+		void setForcedRecreateTypes(const std::vector<ObjectType> &forced_rec_types);
+		void setForcedRecreateTypeNames(const QStringList &forced_rec_types);
+
+		//! \brief Returns if the provided type is one of the forced recreation ones
+		bool isForcedRecreateType(ObjectType obj_type);
 
 		//! \brief Configures the PostgreSQL version used in the diff generation
 		void setPgSQLVersion(const QString pgsql_ver);

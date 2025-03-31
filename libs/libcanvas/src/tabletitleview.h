@@ -29,9 +29,9 @@
 #include "roundedrectitem.h"
 
 class __libcanvas TableTitleView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Rounded rectangle object that defines the title border
 		RoundedRectItem *box;
 

@@ -25,14 +25,13 @@
 #ifndef MODEL_NAVIGATION_WIDGET_H
 #define MODEL_NAVIGATION_WIDGET_H
 
-#include <QWidget>
 #include "modelwidget.h"
 #include "ui_modelnavigationwidget.h"
 
 class __libgui ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QList<ModelWidget *> model_wgts;
 
 		void enableNavigationButtons();

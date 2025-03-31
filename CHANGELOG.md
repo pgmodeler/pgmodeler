@@ -1,6 +1,53 @@
 Changelog
 ---------
 
+v1.2.0-beta1
+------
+<em>Release date: March 31, 2025</em><br/>
+
+* [New] Added the method AppearanceConfigWidget::isDarkUiTheme.
+* [New] Added per-instance control of line numbers and action buttons visibility in NumberedTextEditor (previously global-only).
+* [New] Added an integrated search/replace widget in NumberedTextEditor.
+* [New] Added a debug tab in DatabaseImportForm and ModelDatabaseDiffForm to display debug messages during reverse engineering.
+* [New] Added support for force object re-creation in pgmodeler-cli's diff operation.
+* [New] Added a popup menu in ModelDatabaseDiffForm to select object types for forced re-creation.
+* [New] Added a flag in DatabaseModel to control inclusion of disabled SQL code in generated scripts.
+* [New] Added support for toggling disabled objects' code generation in database model properties.
+* [New] Added an attribute in .dbm files to persist system schemas' rectangle visibility.
+* [New] Added the methods Extension::setObjectNames and Extension::getObjectNames.
+* [New] Added struct Extension::ExtObject to manage child objects' metadata.
+* [New] Added support for permission editing for system objects.
+* [Change] Adjusted the UI in SQLExecutionWidget to reorganize action buttons.
+* [Change] Adjusted the NumberedTextEditor internal widgets when the horizontal scrollbar is visible.
+* [Change] Adjusted the class ModelFixForm to use DebugOutputWidget.
+* [Change] Adjusted the object selection in ModelObjectsWidget (ALT + click highlights graphical objects).
+* [Change] Adjusted the query filters in ModelDatabaseDiffForm to exclude only system objects during comparison.
+* [Change] Improved ExtensionWidget to support custom schema names in data types.
+* [Change] Refactored DatabaseImportHelper::createExtension to correctly import extension-owned types/schemas.
+* [Change] Refactored DatabaseModel to use Extension::ExtObject when handling extensions.
+* [Change] Simplified the function behavior types by removing redundant STRICT (merged with RETURNS NULL ON NULL INPUT).
+* [Change] Moved Q_OBJECT macro to the top of class declarations.
+* [Change] Updated catalog queries for indexes to retrieve comments.
+* [Change] Removed redundant search/replace widget from SourceCodeWidget (now integrated in NumberedTextEditor).
+* [Change] Removed unused checkbox from databaseimportform.ui.
+* [Change] Minor adjustments in UtilsNs::saveFile and UtilsNs::loadFile.
+* [Change] Minor adjustments in .pro/.pri files for private plugin assets.
+* [Change] Minor schema adjustments in sql/dbmodel.sch.
+* [Change] Fixed DatabaseImportForm to remain open in debug mode for output inspection.
+* [Fix] Fixed crashes when diffing databases containing extension-created tables.
+* [Fix] Fixed the importing of columns that use arrays of user-defined types.
+* [Fix] Fixed the persistence of time zone state in timestamp types.
+* [Fix] Fixed false-positive diffs for functions with comments or STRICT behavior.
+* [Fix] Fixed reverse engineering of types with uppercase letters in names.
+* [Fix] Fixed a crash in identifier relationships with FK indexes.
+* [Fix] Fixed DatabaseImportHelper::createPermission to skip permissions whose references unavailable system roles.
+* [Fix] Fixed ModelExportHelper::exportBufferToDBMS edge cases.
+* [Fix] Fixed XML code generation for Extension class to include child objects.
+* [Fix] Fixed SQL/XML code exclusion for protected schemas in DatabaseModel::getSourceCode.
+* [Fix] Fixed SQL syntax highlighting files.
+* [Fix] Minor fixes in LineNumbersWidget and NumberedTextEditor.
+* [Fix] Minor fixes in PgModelerCliApp::fixObjectAttributes.
+
 v1.2.0-beta
 ------
 <em>Release date: February 10, 2025</em><br/>

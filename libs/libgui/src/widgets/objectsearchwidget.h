@@ -28,12 +28,13 @@
 #include "ui_objectsearchwidget.h"
 #include "modelwidget.h"
 #include "objecttypeslistwidget.h"
-#include <QWidget>
+#include <QWidgetAction>
+#include <QComboBox>
 
 class __libgui ObjectSearchWidget : public QWidget, public Ui::ObjectSearchWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		std::vector<BaseObject *> found_objs,
 
 		selected_objs;

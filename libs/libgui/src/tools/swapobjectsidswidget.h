@@ -25,14 +25,13 @@
 #ifndef SWAP_OBJECTS_IDS_WIDGET_H
 #define SWAP_OBJECTS_IDS_WIDGET_H
 
-#include <QWidget>
 #include "ui_swapobjectsidswidget.h"
 #include "widgets/objectselectorwidget.h"
 
 class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString IdLabel;
 
 		unsigned selector_idx = 0;

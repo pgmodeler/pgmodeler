@@ -34,9 +34,9 @@
 #include "snippetsconfigwidget.h"
 
 class __libgui ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		GeneralConfigWidget *general_conf;
 		AppearanceConfigWidget *appearance_conf;
 		ConnectionsConfigWidget *connections_conf;

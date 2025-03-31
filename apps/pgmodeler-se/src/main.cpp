@@ -16,7 +16,6 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "application.h"
 #include <QTranslator>
 #include "schemaeditorform.h"
 #include "pgmodelerapp.h"

@@ -39,9 +39,9 @@
 #include "pgmodelercliplugin.h"
 
 class __libcli PgModelerCliApp: public Application {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		XmlParser *xmlparser;
 
 		qint64 buffer_size;
@@ -168,20 +168,13 @@ class __libcli PgModelerCliApp: public Application {
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);
 
-		void fixModel();
-		void exportModel();
-		void importDatabase();
-		void diffModelDatabase();
-		void updateMimeType();
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
 
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide, bool force);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide, bool force);
-		void createConfigurations();
-		void listConnections();
+
 		void loadPlugins();
-		void listPlugins();
 		bool isPluginOptsValid(PgModelerCliPlugin *plugin);
 
 		/*! \brief Determines the execution order of the plugins by reading the
@@ -274,6 +267,7 @@ class __libcli PgModelerCliApp: public Application {
 		NoCascadeDrop,
 		RecreateUnmod,
 		ReplaceModified,
+		ForceReCreateObjs,
 		CreateConfigs,
 		MissingOnly,
 		IgnoreFaultyPlugins,
@@ -313,6 +307,15 @@ class __libcli PgModelerCliApp: public Application {
 
 		//! \brief Replaces the value of a single parsed option
 		void setParsedOptValue(const QString &opt, const QString &value);
+
+		void fixModel();
+		void exportModel();
+		void importDatabase();
+		void diffModelDatabase();
+		void updateMimeType();
+		void createConfigurations();
+		void listConnections();
+		void listPlugins();
 
 	private slots:
 		void handleObjectAddition(BaseObject *);

@@ -19,7 +19,6 @@
 #ifndef POLICY_WIDGET_H
 #define POLICY_WIDGET_H
 
-#include <QWidget>
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"
@@ -29,9 +28,9 @@
 #include "widgets/numberedtexteditor.h"
 
 class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelObjectsWidget *model_objs_wgt;
 
 		CustomTableWidget *roles_tab;

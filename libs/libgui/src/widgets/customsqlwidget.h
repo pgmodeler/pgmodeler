@@ -31,9 +31,9 @@
 #include "widgets/numberedtexteditor.h"
 
 class __libgui CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		NumberedTextEditor *append_sql_txt, *prepend_sql_txt;
 
 		SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;

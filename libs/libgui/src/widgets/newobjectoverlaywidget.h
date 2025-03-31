@@ -27,7 +27,6 @@
 
 #include "guiglobal.h"
 #include <vector>
-#include <QWidget>
 #include "baseobject.h"
 #include "ui_newobjectoverlaywidget.h"
 
@@ -35,9 +34,9 @@
 class ModelWidget;
 
 class __libgui NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Store the actions in the ModelWidget corresponding to each button the in overlay
 		std::map<QToolButton *, QAction *> btn_actions;
 

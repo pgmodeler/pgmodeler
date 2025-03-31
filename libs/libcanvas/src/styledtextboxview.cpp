@@ -17,6 +17,7 @@
 */
 
 #include "styledtextboxview.h"
+#include <QApplication>
 
 StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : TextboxView(txtbox, override_style)
 {

@@ -32,9 +32,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Loaded plugins
 		QList<PgModelerGuiPlugin *> plugins;
 

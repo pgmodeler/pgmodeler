@@ -25,7 +25,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QtWidgets>
+#include <QMainWindow>
 #include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "widgets/modelwidget.h"
@@ -47,9 +47,9 @@
 #include "widgets/changelogwidget.h"
 
 class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static int ToolsActionsCount;
 
 		static bool confirm_validation;

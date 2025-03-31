@@ -3,14 +3,14 @@
  <class>ModelDatabaseDiffForm</class>
  <widget class="QWidget" name="ModelDatabaseDiffForm">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModality::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>804</height>
+    <height>792</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
    <string>Diff tool</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../res/resources.qrc">
+   <iconset resource="../../../../priv-plugins/res/logoicons.qrc">
     <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
@@ -66,10 +66,10 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_10">
       <property name="leftMargin">
@@ -131,7 +131,7 @@
           <item row="0" column="0">
            <widget class="QSplitter" name="splitter">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="handleWidth">
              <number>4</number>
@@ -200,10 +200,10 @@
                       </sizepolicy>
                      </property>
                      <property name="insertPolicy">
-                      <enum>QComboBox::InsertAtBottom</enum>
+                      <enum>QComboBox::InsertPolicy::InsertAtBottom</enum>
                      </property>
                      <property name="sizeAdjustPolicy">
-                      <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                      <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -435,10 +435,10 @@
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::Shape::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
+                 <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_19">
                  <property name="leftMargin">
@@ -474,7 +474,7 @@
                     <string/>
                    </property>
                    <property name="textFormat">
-                    <enum>Qt::AutoText</enum>
+                    <enum>Qt::TextFormat::AutoText</enum>
                    </property>
                    <property name="pixmap">
                     <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
@@ -582,8 +582,34 @@
                      <property name="text">
                       <string>(model)</string>
                      </property>
+                     <property name="indent">
+                      <number>-1</number>
+                     </property>
                      <property name="textInteractionFlags">
-                      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>20</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLineEdit" name="src_model_name_edt">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -641,7 +667,7 @@
                        </sizepolicy>
                       </property>
                       <property name="sizeAdjustPolicy">
-                       <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                       <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -692,7 +718,7 @@
                        </sizepolicy>
                       </property>
                       <property name="sizeAdjustPolicy">
-                       <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                       <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -756,7 +782,7 @@
                     </sizepolicy>
                    </property>
                    <property name="sizeAdjustPolicy">
-                    <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                    <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -801,7 +827,7 @@
                     </sizepolicy>
                    </property>
                    <property name="sizeAdjustPolicy">
-                    <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                    <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -878,7 +904,7 @@
                    <item>
                     <spacer name="horizontalSpacer_4">
                      <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                      <enum>Qt::Orientation::Horizontal</enum>
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
@@ -979,7 +1005,7 @@
               <item>
                <spacer name="verticalSpacer">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1060,16 +1086,19 @@
                  </item>
                  <item>
                   <layout class="QGridLayout" name="gridLayout_12">
+                   <property name="sizeConstraint">
+                    <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+                   </property>
                    <property name="spacing">
                     <number>5</number>
                    </property>
                    <item row="1" column="0">
                     <spacer name="horizontalSpacer_8">
                      <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                      <enum>Qt::Orientation::Horizontal</enum>
                      </property>
                      <property name="sizeType">
-                      <enum>QSizePolicy::Fixed</enum>
+                      <enum>QSizePolicy::Policy::Fixed</enum>
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
@@ -1229,6 +1258,76 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QToolButton" name="forced_objs_types_tb">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Instead of using an ALTER command to modify the selected object kinds, a DROP and CREATE will be used for a full modification. This option does not affects the database object itself.&lt;/p&gt;</string>
+                     </property>
+                     <property name="text">
+                      <string>Force re-creation (0)</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../../res/resources.qrc">
+                       <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>25</width>
+                       <height>25</height>
+                      </size>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
+                     </property>
+                     <property name="toolButtonStyle">
+                      <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+                     </property>
+                     <property name="autoRaise">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1325,7 +1424,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;p&gt;All catalog queries as well the created objects' source code are printed to standard output (stdout).&lt;/p&gt;</string>
+                    <string>&lt;p&gt;All catalog queries and the created objects' source code are printed on the standard output (stdout) and the &lt;strong&gt;Debug&lt;/strong&gt; tab.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
@@ -1451,7 +1550,7 @@
               <item>
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1494,7 +1593,7 @@
           <item row="0" column="0">
            <widget class="QSplitter" name="pd_hsplitter">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="handleWidth">
              <number>4</number>
@@ -1575,7 +1674,7 @@
                      <item row="1" column="3" rowspan="2">
                       <spacer name="horizontalSpacer_11">
                        <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
+                        <enum>Qt::Orientation::Horizontal</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
@@ -1613,7 +1712,7 @@
                         </size>
                        </property>
                        <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonIconOnly</enum>
+                        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
                        </property>
                        <property name="autoRaise">
                         <bool>false</bool>
@@ -1706,7 +1805,7 @@
                         </size>
                        </property>
                        <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonIconOnly</enum>
+                        <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
                        </property>
                        <property name="autoRaise">
                         <bool>false</bool>
@@ -1751,7 +1850,7 @@
                         </size>
                        </property>
                        <property name="toolButtonStyle">
-                        <enum>Qt::ToolButtonTextBesideIcon</enum>
+                        <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                        </property>
                       </widget>
                      </item>
@@ -1841,16 +1940,16 @@
               <item>
                <widget class="QTableView" name="filtered_objs_view">
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                 <property name="alternatingRowColors">
                  <bool>true</bool>
                 </property>
                 <property name="selectionMode">
-                 <enum>QAbstractItemView::NoSelection</enum>
+                 <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
                 </property>
                 <property name="selectionBehavior">
-                 <enum>QAbstractItemView::SelectItems</enum>
+                 <enum>QAbstractItemView::SelectionBehavior::SelectItems</enum>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -1905,19 +2004,19 @@
              </sizepolicy>
             </property>
             <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAsNeeded</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::AdjustToContents</enum>
+             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
             </property>
             <property name="editTriggers">
-             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+             <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
             <property name="selectionMode">
-             <enum>QAbstractItemView::SingleSelection</enum>
+             <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
             </property>
             <property name="iconSize">
              <size>
@@ -2052,7 +2151,7 @@
                 </size>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -2142,10 +2241,10 @@
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
+             <enum>QFrame::Shape::NoFrame</enum>
             </property>
             <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+             <enum>QFrame::Shadow::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
              <property name="leftMargin">
@@ -2181,7 +2280,7 @@
                 <string/>
                </property>
                <property name="textFormat">
-                <enum>Qt::AutoText</enum>
+                <enum>Qt::TextFormat::AutoText</enum>
                </property>
                <property name="pixmap">
                 <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
@@ -2274,7 +2373,7 @@
                 <bool>true</bool>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -2309,7 +2408,7 @@
                 <bool>true</bool>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -2344,7 +2443,7 @@
                 <bool>true</bool>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -2376,17 +2475,17 @@
                 <bool>true</bool>
                </property>
                <property name="checked">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
              <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -2428,7 +2527,7 @@
           <item row="2" column="0">
            <spacer name="horizontalSpacer_10">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -2451,7 +2550,7 @@
           <item row="2" column="4">
            <spacer name="horizontalSpacer_9">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -2577,7 +2676,7 @@
              <bool>true</bool>
             </property>
             <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
+             <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -2592,6 +2691,15 @@
            </widget>
           </item>
          </layout>
+        </widget>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/debug.png</normaloff>:/icons/icons/debug.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Debug</string>
+         </attribute>
         </widget>
        </widget>
       </item>
@@ -2631,7 +2739,7 @@
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -2773,6 +2881,7 @@
   <tabstop>close_btn</tabstop>
  </tabstops>
  <resources>
+  <include location="../../../../priv-plugins/res/logoicons.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

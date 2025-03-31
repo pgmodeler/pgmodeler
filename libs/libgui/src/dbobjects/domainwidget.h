@@ -31,9 +31,9 @@
 #include "widgets/customtablewidget.h"
 
 class __libgui DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		SyntaxHighlighter *check_expr_hl;
 		PgSQLTypeWidget *data_type;
 		CustomTableWidget *constr_tab;

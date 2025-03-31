@@ -2,6 +2,7 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 #include "utilsns.h"
+#include <QTextDocumentFragment>
 
 attribs_map SourceEditorWidget::snippets {
 	{"ifend", "%if {} %then\n\n%end\n"},

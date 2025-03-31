@@ -25,16 +25,15 @@
 #ifndef OBJECT_RENAME_WIDGET_H
 #define OBJECT_RENAME_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_objectrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "guiglobal.h"
 
 class __libgui ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Objects to be renamed
 		std::vector<BaseObject *> objects;
 

@@ -58,7 +58,7 @@ const std::map<ObjectType, QString> Catalog::obj_relnames {
 	{ObjectType::Database, "pg_database"},	{ObjectType::Domain, "pg_type"},
 	{ObjectType::Extension, "pg_extension"},	{ObjectType::EventTrigger, "pg_event_trigger"},
 	{ObjectType::ForeignDataWrapper, "pg_foreign_data_wrapper"},	{ObjectType::ForeignTable, "pg_foreign_table"},
-	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_index"},
+	{ObjectType::Function, "pg_proc"},	{ObjectType::Index, "pg_class"},
 	{ObjectType::Operator, "pg_operator"},	{ObjectType::OpClass, "pg_opclass"},
 	{ObjectType::OpFamily, "pg_opfamily"},	{ObjectType::Policy, "pg_policy"},
 	{ObjectType::Language, "pg_language"},	{ObjectType::Procedure, "pg_proc"},
@@ -982,7 +982,7 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+										qApp->translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
 
@@ -999,21 +999,19 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)
-			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
+			throw Exception(qApp->translate("Catalog","The catalog query returned more than one OID!","", -1),
 											ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		else if(res.isEmpty())
+		if(res.getTupleCount() == 0)
 			return "0";
-		else
-		{
-			res.accessTuple(ResultSet::FirstTuple);
-			return res.getColumnValue(Attributes::Oid);
-		}
+
+		res.accessTuple(ResultSet::FirstTuple);
+		return res.getColumnValue(Attributes::Oid);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+										qApp->translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
 
@@ -1052,7 +1050,7 @@ attribs_map Catalog::getServerAttributes()
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: server","", -1));
+										qApp->translate("Catalog","Object type: server","", -1));
 	}
 
 	return attribs;

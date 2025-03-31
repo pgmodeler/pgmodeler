@@ -20,6 +20,8 @@
 #include "roundedrectitem.h"
 #include "objectsscene.h"
 #include "utilsns.h"
+#include <QApplication>
+#include <QScreen>
 
 unsigned BaseObjectView::global_sel_order {1};
 

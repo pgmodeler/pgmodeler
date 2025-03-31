@@ -100,8 +100,12 @@ class __libcli PgModelerCliPlugin: public PgModelerPlugin {
 		//! \brief Returns the id of the operation that causes the triggering of the plugin
 		virtual OperationId getOperationId() = 0;
 
-		//! \brief Returns if the provided option is accepted by the plugin
-		virtual bool isValidOption(const QString &opt);
+		//! \brief Returns if the provided option is one of those that triggers the plugin operation
+		virtual bool isOpModeOption(const QString &opt);
+
+		/*! \brief Returns the valid options of the plugin. By default this method returns
+		 *  all the options returned by getLongOptions() */
+		virtual QStringList getValidOptions();
 
 		//! \brief This method is used to execute operations before the main plugin operation.
 		virtual void runPreOperation() = 0;

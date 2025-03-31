@@ -1,11 +1,11 @@
-[<?xml version="1.0" encoding="UTF-8"?>] $br
-[<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">] $br
-$tb [<mime-type type="application/dbm">]
+[<?xml version="1.0" encoding="UTF-8"?>] \n
+[<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">] \n
+\t [<mime-type type="application/dbm">]
 
-$tb [<comment>pgModeler Database Model</comment>] $br
-$tb [<icon name=] "&{icon}" [/>] $br
-$tb [<glob-deleteall/>] $br
-$tb [<glob pattern="*.dbm"/>] $br
-$tb [</mime-type>] $br
-</mime-info> $br
+\t [<comment>pgModeler Database Model</comment>] \n
+\t [<icon name=] "&{icon}" [/>] \n
+\t [<glob-deleteall/>] \n
+\t [<glob pattern="*.dbm"/>] \n
+\t [</mime-type>] \n
+</mime-info> \n
 

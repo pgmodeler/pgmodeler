@@ -37,9 +37,12 @@
 		ex.extowner AS owner, ex.extnamespace AS schema, ]
 
 		[ (SELECT array_agg(objid::regtype::text)
-		   FROM pg_depend AS _dp
-		   LEFT JOIN pg_extension AS _ex ON _ex.oid =_dp.objid
-		   WHERE _dp.refobjid = ex.oid AND classid::regclass::text = 'pg_type') AS types, ]
+		   FROM pg_depend AS _dp LEFT JOIN pg_extension AS _ex ON _ex.oid =_dp.objid 
+		   WHERE _dp.refobjid = ex.oid AND classid::regclass::text = 'pg_type') AS types, 
+
+		  (SELECT array_agg(objid::regnamespace::text)
+		   FROM pg_depend AS _dp LEFT JOIN pg_extension AS _ex ON _ex.oid =_dp.objid 
+		   WHERE _dp.refobjid = ex.oid AND classid::regclass::text = 'pg_namespace') AS schemas, ]
 
 		({comment}) [ AS comment ]
 

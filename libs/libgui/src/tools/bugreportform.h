@@ -31,9 +31,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui BugReportForm : public QDialog, public Ui::BugReportForm {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		//! \brief Syntax highlight for model text widget
 		SyntaxHighlighter *hl_model_txt;
 

@@ -29,9 +29,8 @@
 #include "ui_collationwidget.h"
 
 class __libgui CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	public:
 		CollationWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Collation *collation);

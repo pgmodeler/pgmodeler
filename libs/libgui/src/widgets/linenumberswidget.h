@@ -26,13 +26,12 @@
 #define LINE_NUMBERS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include <QPlainTextEdit>
 
 class __libgui LineNumbersWidget : public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QPlainTextEdit *parent_edt;
 
 		qreal custom_fnt_size;

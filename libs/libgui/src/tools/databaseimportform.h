@@ -30,13 +30,14 @@
 #include "widgets/modelwidget.h"
 #include "utils/htmlitemdelegate.h"
 #include "widgets/objectsfilterwidget.h"
+#include "widgets/debugoutputwidget.h"
 #include <QTimer>
 #include <random>
 
 class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Random number generator engine used to generate random position for imported objects
 		std::default_random_engine rand_num_engine;
 
@@ -63,6 +64,8 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		QThread *import_thread;
 
 		ObjectsFilterWidget *objs_filter_wgt;
+
+		DebugOutputWidget *dbg_output_wgt;
 		
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */
@@ -181,6 +184,9 @@ class __libgui DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest();
+
+		//! \brief This signal is emitted whenever the import has successfully finished
+		void s_importFinished();
 };
 
 #endif

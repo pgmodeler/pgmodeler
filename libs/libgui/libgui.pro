@@ -2,7 +2,19 @@ include(../../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = gui
+
+# Including the private assets when building private plugins
+isEqual(PRIVATE_PLUGINS, true) {
+	RESOURCES += $$PRIV_RES_FOLDER/logoicons.qrc
+}
+
+# Including the logo related resources
+isEqual(PRIVATE_PLUGINS, false) {
+  RESOURCES += res/logoicons.qrc
+}
+
 RESOURCES += res/resources.qrc
+
 windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 
@@ -101,6 +113,7 @@ src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
     src/widgets/columndatawidget.cpp \
 	src/widgets/customtablewidget.cpp \
+	src/widgets/debugoutputwidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
@@ -226,6 +239,7 @@ src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
     src/widgets/columndatawidget.h \
 	src/widgets/customtablewidget.h \
+	src/widgets/debugoutputwidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \

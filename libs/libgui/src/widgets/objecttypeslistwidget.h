@@ -25,25 +25,23 @@
 #ifndef OBJECT_TYPES_LIST_WIDGET_H
 #define OBJECT_TYPES_LIST_WIDGET_H
 
-#include <QWidget>
-#include "ui_objecttypeslistwidget.h"
-#include "baseobject.h"
 #include "guiglobal.h"
+#include "baseobject.h"
+#include "ui_objecttypeslistwidget.h"
 
 class __libgui ObjectTypesListWidget : public QWidget, public Ui::ObjectTypesListWidget {
-	private:
-		Q_OBJECT
-
-		void setItemsCheckState(Qt::CheckState state);
+	Q_OBJECT
 
 	public:
-		explicit ObjectTypesListWidget(QWidget *parent = nullptr);
+		explicit ObjectTypesListWidget(QWidget *parent = nullptr, const std::vector<ObjectType> &excl_types = {});
 
 		void setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state);
 		void setTypesCheckState(const std::vector<ObjectType> &obj_types, Qt::CheckState state);
+		void setTypesCheckState(Qt::CheckState state);
 
 		std::vector<ObjectType> getTypesPerCheckState(Qt::CheckState state);
 		QStringList getTypeNamesPerCheckState(Qt::CheckState state);
+		int getTypesCountPerCheckState(Qt::CheckState state);
 
 	signals:
 		void s_typeCheckStateChanged(ObjectType, Qt::CheckState);

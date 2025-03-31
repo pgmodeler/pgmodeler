@@ -25,6 +25,8 @@
 #ifndef SQL_EXECUTION_WIDGET_H
 #define SQL_EXECUTION_WIDGET_H
 
+#include <QThread>
+#include <QMenu>
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
@@ -35,9 +37,9 @@
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static std::map<QString, QString> cmd_history;
 
 		static int cmd_history_max_len;
@@ -63,9 +65,15 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		file_menu,
 
-		export_menu;
+		export_menu,
 
-		QAction *action_save, *action_save_as, *action_load;
+		code_menu,
+
+		result_menu;
+
+		QAction *action_save, *action_save_as, *action_load,
+		*action_wrap, *action_clear_all, *action_search,
+		*action_filter, *action_export;
 
 		SearchReplaceWidget *find_replace_wgt;
 
@@ -167,9 +175,6 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void runSQLCommand(const QString &cmd);
 
 	private slots:
-		//! \brief Enables the command buttons when user fills the sql field
-		void enableCommandButtons();
-
 		//! \brief Save the current typed sql command on a file
 		void saveCommands();
 
@@ -178,6 +183,8 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		//! \brief Clears the input field as well the results grid
 		int clearAll();
+
+		void clearOutput();
 
 		void selectSnippet(QAction *act);
 

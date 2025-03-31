@@ -31,9 +31,9 @@
 #include "utils/htmlitemdelegate.h"
 
 class __libgui ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QMenu output_menu;
 
 		//! \brief Custom delegate used to paint html texts in output tree

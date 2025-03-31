@@ -17,6 +17,7 @@
 */
 
 #include "pgsqltypewidget.h"
+#include <QCompleter>
 
 const QString PgSQLTypeWidget::InvalidType {"invalid_type"};
 
@@ -79,22 +80,22 @@ void PgSQLTypeWidget::updateTypeFormat()
 		QVariant data;
 
 		//Gets the data related to the current selected data type
-		data=type_cmb->itemData(type_cmb->currentIndex());
+		data = type_cmb->itemData(type_cmb->currentIndex());
 
 		//If the data value (index) is 0 indicates that the type is a built-in one
-		if(data.toUInt()==0)
-			type=type_cmb->currentText();
+		if(data.toUInt() == 0)
+			type = type_cmb->currentText();
 		else
 			//Case the index is greated than zero indicates that the type is a user-defined one
-			type=data.toUInt();
+			type = data.toUInt();
 
 		length_sb->setEnabled(allow_qualifiers && type.hasVariableLength());
-		timezone_chk->setVisible(type=="timestamp" || type=="time");
-		timezone_lbl->setVisible(type=="timestamp" || type=="time");
+		timezone_chk->setVisible(type.acceptsTimezone());
+		timezone_lbl->setVisible(type.acceptsTimezone());
 		precision_sb->setEnabled(allow_qualifiers && type.acceptsPrecision());
-		dimension_sb->setEnabled(type!="void");
+		dimension_sb->setEnabled(type != "void");
 
-		interval_cmb->setVisible(type=="interval");
+		interval_cmb->setVisible(type == "interval");
 		interval_lbl->setVisible(interval_cmb->isVisible());
 		interval_cmb->setEnabled(allow_qualifiers);
 
@@ -150,6 +151,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, Use
 		QStringList types;
 		int idx, count;
 
+		combo->blockSignals(true);
 		combo->clear();
 
 		//Getting the user defined type adding them into the combo
@@ -164,11 +166,18 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, Use
 		types = PgSqlType::getTypes(oid_types, pseudo_types);
 		types.sort();
 		combo->addItems(types);
+		combo->blockSignals(false);
 	}
 }
 
 void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool allow_qualifiers,  UserTypeConfig::TypeConf usr_type_conf, bool oid_types, bool pseudo_types)
 {
+	QWidgetList child_wgts {
+			type_cmb, precision_sb, length_sb,
+			dimension_sb, interval_cmb, timezone_chk,
+			spatial_cmb, var_m_chk, var_z_chk, srid_spb
+	};
+
 	try
 	{
 		int idx;
@@ -176,14 +185,17 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 
 		this->allow_qualifiers = allow_qualifiers;
 
-		type_cmb->blockSignals(true);
+		//type_cmb->blockSignals(true);
 		listPgSQLTypes(type_cmb, model, usr_type_conf, oid_types, pseudo_types);
-		type_cmb->blockSignals(false);
+		//type_cmb->blockSignals(false);
 
 		//Get the passed type index
 		type_name=~type;
 		type_name.remove(QRegularExpression("( )(with)(out)?(.)*"));
-		idx=type_cmb->findText(type_name);
+		idx = type_cmb->findText(type_name);
+
+		for(auto &wgt : child_wgts)
+			wgt->blockSignals(true);
 
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);
@@ -192,20 +204,26 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model, bool a
 		precision_sb->setValue(type.getPrecision());
 		dimension_sb->setValue(type.getDimension());
 
-		idx=interval_cmb->findText(~(type.getIntervalType()));
+		idx = interval_cmb->findText(~(type.getIntervalType()));
 		interval_cmb->setCurrentIndex(idx);
 
-		idx=spatial_cmb->findText(~(type.getSpatialType()));
+		idx = spatial_cmb->findText(~(type.getSpatialType()));
 		if(idx < 0) idx = 0;
 		spatial_cmb->setCurrentIndex(idx);
 
 		timezone_chk->setChecked(type.isWithTimezone());
 
-		this->type=type;
+		this->type = type;
 		updateTypeFormat();
+
+		for(auto &wgt : child_wgts)
+			wgt->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
+		for(auto &wgt : child_wgts)
+			wgt->blockSignals(false);
+
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

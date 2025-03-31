@@ -25,14 +25,13 @@
 #ifndef CHANGELOG_WIDGET_H
 #define CHANGELOG_WIDGET_H
 
-#include <QWidget>
 #include "ui_changelogwidget.h"
 #include "modelwidget.h"
 
 class __libgui ChangelogWidget : public QWidget, Ui::ChangelogWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelWidget *model;
 
 	public:

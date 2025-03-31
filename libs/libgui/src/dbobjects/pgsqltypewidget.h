@@ -25,15 +25,14 @@
 #ifndef PGSQL_TYPE_WIDGET_H
 #define PGSQL_TYPE_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_pgsqltypewidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "databasemodel.h"
 
 class __libgui PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Stores the PostgreSQL type configured on the form
 		PgSqlType type;
 

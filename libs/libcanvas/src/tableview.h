@@ -31,9 +31,9 @@
 #include "tableobjectview.h"
 
 class __libcanvas TableView: public BaseTableView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		std::map<TableObject *, std::vector<QPointF>> conn_points;
 
 	public:

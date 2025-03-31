@@ -30,9 +30,9 @@
 #include "csvloadwidget.h"
 
 class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		CsvLoadWidget *csv_load_wgt;
 
 		/*! \brief Stores the remaining column names not used in the grid.

@@ -26,14 +26,12 @@
 #define ABOUT_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include "ui_aboutwidget.h"
 
 class __libgui AboutWidget: public QWidget, public Ui::AboutWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	public:
 		AboutWidget(QWidget *parent = nullptr);
 		

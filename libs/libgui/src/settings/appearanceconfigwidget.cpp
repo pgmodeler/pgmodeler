@@ -879,7 +879,7 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
 	font_preview_txt->setReadOnly(false);
-	font_preview_txt->updateLineNumbersSize();
+	font_preview_txt->resizeWidgets();
 	font_preview_txt->updateLineNumbers();
 	font_preview_txt->highlightCurrentLine();
 	font_preview_txt->setReadOnly(true);	
@@ -966,9 +966,9 @@ QString AppearanceConfigWidget::__getUiThemeId()
 	return getUiLightness(system_pal);
 }
 
-QString AppearanceConfigWidget::getUiThemeId()
+bool AppearanceConfigWidget::isDarkUiTheme()
 {
-	return UiThemeId;
+	return UiThemeId == Attributes::Dark;
 }
 
 QString AppearanceConfigWidget::getUiLightness(const QPalette &pal)

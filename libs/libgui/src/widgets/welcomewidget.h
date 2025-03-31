@@ -28,9 +28,8 @@
 #include "ui_welcomewidget.h"
 
 class __libgui WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	public:
 		WelcomeWidget(QWidget * parent = nullptr);
 		

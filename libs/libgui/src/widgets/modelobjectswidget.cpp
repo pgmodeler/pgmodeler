@@ -21,6 +21,7 @@
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
 #include "customtablewidget.h"
+#include <QScrollBar>
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -153,10 +154,11 @@ void ModelObjectsWidget::show()
 
 void ModelObjectsWidget::showObjectMenu()
 {
-	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
+	if(!selected_objs.empty() &&
+		 QApplication::mouseButtons()==Qt::RightButton &&
+		 model_wgt && !simplified_view)
 	{
 		model_wgt->showObjectMenu();
-		clearSelectedObject();
 	}
 }
 
@@ -181,33 +183,52 @@ void ModelObjectsWidget::selectObject()
 	BaseObject *selected_obj = nullptr;
 	ObjectType obj_type = ObjectType::BaseObject;
 	ModelWidget *model_wgt = nullptr;
-
-	selected_objs.clear();
+	QList<QTreeWidgetItem *> sel_items = objectstree_tw->selectedItems();
+	//static QList<QTreeWidgetItem *> prev_sel_items;
+	bool reconf_menu = true;
 
 	if(!simplified_view && this->model_wgt)
 		model_wgt = this->model_wgt;
 	else if(simplified_view)
 		model_wgt = db_model->getModelWidget();
 
-	QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
-
-	if(tree_item)
+	/* Checking if all currently selected items are in the previous list of selected items
+	 * that is created in a previous interaction with the model object widget.
+	 * In positive case, we avoid reconfigure the entire object menu. If the lists differ in
+	 * their size or at least on currently selected item is not present we reconfigure the menu */
+	if(!simplified_view &&
+		 !prev_sel_items.empty() && prev_sel_items.size() == sel_items.size() &&
+		 std::all_of(prev_sel_items.begin(), prev_sel_items.end(),
+								 [&sel_items](auto &item) { return sel_items.contains(item); }))
 	{
-		obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
-		selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+		reconf_menu = false;
+	}
 
-		for(auto &item : objectstree_tw->selectedItems())
+	prev_sel_items = sel_items;
+
+	if(reconf_menu)
+	{
+		selected_objs.clear();
+
+		QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
+
+		if(tree_item)
 		{
-			selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+			obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
 
-			if(selected_obj)
-				selected_objs.push_back(selected_obj);
+			for(auto &item : sel_items)
+			{
+				selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+
+				if(selected_obj)
+					selected_objs.push_back(selected_obj);
+			}
 		}
 	}
 
 	//If user select a group item popups a "New [OBJECT]" menu
 	if((!simplified_view || (simplified_view && enable_obj_creation)) &&
-			!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
+			selected_objs.empty() && QApplication::mouseButtons() == Qt::RightButton &&
 			obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
 			obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 	{
@@ -236,9 +257,25 @@ void ModelObjectsWidget::selectObject()
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 	}
 
-	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
+	if(reconf_menu && obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
+
+		/* If the user has selected only one graphical object in the tree and is holding
+		 * Alt key then the object will be highlighted in the canvas */
+		if(selected_objs.size() == 1 && qApp->keyboardModifiers() == Qt::AltModifier)
+		{
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(selected_objs.at(0));
+
+			if(!graph_obj)
+				return;
+
+			QGraphicsItem *item = dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject());
+
+			item->setSelected(true);
+			model_wgt->scene->views().at(0)->centerOn(item);
+		}
+
 		model_wgt->configurePopupMenu(selected_objs);
 		model_wgt->emitSceneInteracted();
 	}
@@ -868,6 +905,7 @@ void ModelObjectsWidget::clearSelectedObject()
 	objectstree_tw->clearSelection();
 	objectstree_tw->blockSignals(false);
 	selected_objs.clear();
+	prev_sel_items.clear();
 	model_wgt->configurePopupMenu(nullptr);
 	model_wgt->emitSceneInteracted();
 }

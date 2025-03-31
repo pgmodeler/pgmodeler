@@ -30,9 +30,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/* This simple struct is used to store the widgets geometry and maximized state
 		 * in order to save this info to configuration file being possible to restore
 		 * it when reloading the application */

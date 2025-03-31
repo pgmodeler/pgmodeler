@@ -49,7 +49,15 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
+	dbg_output_wgt = new DebugOutputWidget(this);
+	vbox = new QVBoxLayout(settings_tbw->widget(2));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	vbox->addWidget(dbg_output_wgt);
+
 	settings_tbw->setTabEnabled(1, false);
+	settings_tbw->setTabVisible(2, false);
+
 	objs_parent_wgt->setEnabled(false);
 	buttons_wgt->setEnabled(false);
 	connection_gb->setFocusProxy(connections_cmb);
@@ -126,6 +134,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(rand_obj_pos_chk, &QCheckBox::toggled, this, [this](bool checked){
 		scattering_lvl_lbl->setEnabled(checked);
 		scattering_lvl_cmb->setEnabled(checked);
+	});
+
+	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked){
+		settings_tbw->setTabVisible(2, checked);
+		dbg_output_wgt->setLogMessages(checked);
 	});
 
 #ifdef DEMO_VERSION
@@ -321,6 +334,9 @@ void DatabaseImportForm::importDatabase()
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
+
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
 																					QPixmap(GuiUtilsNs::getIconPath("alert")), nullptr, false);
@@ -342,6 +358,7 @@ void DatabaseImportForm::importDatabase()
 																		comments_as_aliases_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
+
 		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
@@ -473,7 +490,7 @@ void DatabaseImportForm::listObjects()
 
 			import_helper->setObjectFilters(obj_filter,
 																			objs_filter_wgt->isOnlyMatching(),
-																			objs_filter_wgt->isMatchSignature(),
+																			objs_filter_wgt->isMatchBySignature(),
 																			objs_filter_wgt->getForceObjectsFilter());
 			if(obj_filter.isEmpty() &&
 				 import_helper->getCatalog().getObjectsCount({ ObjectType::Table, ObjectType::ForeignTable,
@@ -547,6 +564,9 @@ void DatabaseImportForm::listDatabases()
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 		db_objects_tw->clear();
+
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
@@ -749,7 +769,11 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	import_helper->closeConnection();
 	import_thread->quit();
 	import_thread->wait();
-	this->accept();
+
+	emit s_importFinished();
+
+	if(!debug_mode_chk->isChecked())
+		this->accept();
 }
 
 void DatabaseImportForm::finishImport(const QString &msg)
@@ -763,7 +787,8 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
-	buttons_wgt->setEnabled(false);
+	buttons_wgt->setEnabled(false);	
+	dbg_output_wgt->showActionButtons(true);
 
 	if(model_wgt)
 	{

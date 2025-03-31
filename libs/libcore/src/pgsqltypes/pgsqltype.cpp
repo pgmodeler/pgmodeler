@@ -534,7 +534,7 @@ void PgSqlType::setSpatialType(SpatialType spat_type)
 
 void PgSqlType::setWithTimezone(bool with_tz)
 {
-	this->with_timezone = with_tz && !isTimezoneType();
+	this->with_timezone = with_tz && acceptsTimezone();
 }
 
 unsigned PgSqlType::setUserType(unsigned type_id)
@@ -574,7 +574,6 @@ void PgSqlType::addUserType(const QString &type_name, BaseObject *ptype, UserTyp
 
 		cfg.name = type_name;
 		cfg.ptype = ptype;
-		//cfg.pmodel=pmodel;
 		cfg.pmodel = ptype->getDatabase();
 		cfg.type_conf = type_conf;
 		PgSqlType::user_types.push_back(cfg);
@@ -608,22 +607,16 @@ void PgSqlType::removeUserType(const QString &type_name, BaseObject *ptype)
 
 void PgSqlType::renameUserType(const QString &type_name, BaseObject *ptype, const QString &new_name)
 {
-	if(PgSqlType::user_types.size() > 0 &&
-			!type_name.isEmpty() && ptype && type_name!=new_name)
+	if(PgSqlType::user_types.empty() ||
+		 type_name.isEmpty() || !ptype || type_name == new_name)
+		return;
+
+	for(auto &tp : user_types)
 	{
-		std::vector<UserTypeConfig>::iterator itr, itr_end;
-
-		itr=PgSqlType::user_types.begin();
-		itr_end=PgSqlType::user_types.end();
-
-		while(itr!=itr_end)
+		if(!tp.invalidated && tp.name == type_name && tp.ptype == ptype)
 		{
-			if(!itr->invalidated && itr->name==type_name && itr->ptype==ptype)
-			{
-				itr->name=new_name;
-				break;
-			}
-			itr++;
+			tp.name = new_name;
+			break;
 		}
 	}
 }
@@ -836,8 +829,8 @@ bool PgSqlType::isTimezoneType()
 	QString curr_type = getTypeName(false);
 
 	return (!isUserType() &&
-					(curr_type=="timetz" || curr_type == "timestamptz" ||
-					 curr_type=="time with time zone" || curr_type=="timestamp with time zone"));
+					(curr_type == "timetz" || curr_type == "timestamptz" ||
+					 curr_type == "time with time zone" || curr_type == "timestamp with time zone"));
 }
 
 bool PgSqlType::isNumericType()
@@ -974,6 +967,13 @@ bool PgSqlType::acceptsPrecision()
 {
 	return (isNumericType() ||
 					(!isUserType() && type_names[this->type_idx]!="date" && isDateTimeType()));
+}
+
+bool PgSqlType::acceptsTimezone()
+{
+	return !isUserType() &&
+				 (type_names[this->type_idx] == "time"  ||
+					type_names[this->type_idx] == "timestamp");
 }
 
 void PgSqlType::reset(bool all_attrs)

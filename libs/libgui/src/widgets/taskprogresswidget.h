@@ -26,15 +26,13 @@
 #define TASK_PROGRESS_WIDGET_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
 #include "ui_taskprogresswidget.h"
 #include <map>
 
-class __libgui TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
-{
-	private:
-		Q_OBJECT
+class __libgui TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget {
+	Q_OBJECT
 
+	private:
 		//! \brief Stores the icons that are shown as the icons tokens are send via	updateProgress() slot
 		std::map<unsigned, QIcon> icons;
 

@@ -70,6 +70,8 @@
 #include "styledtextboxview.h"
 #include "tableview.h"
 #include "pgmodelerguiplugin.h"
+#include <QTemporaryFile>
+#include <QScrollBar>
 
 QList<const PgModelerGuiPlugin *> ModelWidget::plugins;
 
@@ -998,11 +1000,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			case ObjectType::Schema:
-				if(!graph_obj->isSystemObject() ||
-						(graph_obj->isSystemObject() && graph_obj->getName()=="public"))
-				{
-					item = new SchemaView(dynamic_cast<Schema *>(graph_obj));
-				}
+				item = new SchemaView(dynamic_cast<Schema *>(graph_obj));
 			break;
 
 			default:
@@ -1835,10 +1833,8 @@ void ModelWidget::loadModel(const QString &filename)
 				unit = "s";
 			}
 
-			QTextStream out(stdout);
-			out << "File: " << filename << Qt::endl;
-			out << "Loaded in " << total << unit << Qt::endl;
-			out << "---" << Qt::endl;
+			qDebug().noquote() << "File: " << filename
+			<< "\nLoaded in " << total << unit << "\n---";
 		#endif
 	}
 	catch(Exception &e)
@@ -2253,13 +2249,16 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
 			obj_pos=dynamic_cast<BaseGraphicObject *>(object)->getPosition();
 
-		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
-		that can be edited only on its fill color an rectangle attributes */
-		if(object && object->isSystemObject() &&
-				(object->getObjectType()!=ObjectType::Schema || object->getName()!="public"))
+		/* Raises an error if the user try to edit a reserverd object.
+		 * The only exception is for "public" schema that can be edited and permissions that can
+		 * be assigned to system objects */
+		if(object && object->isSystemObject() && obj_type != ObjectType::Permission &&
+				(object->getObjectType() != ObjectType::Schema || object->getName() != "public"))
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-											.arg(object->getName()).arg(object->getTypeName()),
+											.arg(object->getName(), object->getTypeName()),
 											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		if(obj_type==ObjectType::Schema)
 			res=openEditingForm<Schema,SchemaWidget>(object);
@@ -4359,6 +4358,8 @@ void ModelWidget::toggleSchemasRectangles()
 			schema->setModified(true);
 		}
 	}
+
+	db_model->setShowSysSchemasRects(visible);
 
 	db_model->setObjectsModified({ ObjectType::Table,
 																 ObjectType::ForeignTable,

@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class UserMappingTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		UserMappingTest() : PgModelerUnitTest(SCHEMASDIR) {}

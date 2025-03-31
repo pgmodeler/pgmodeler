@@ -20,6 +20,7 @@
 #include "baseobject.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include <QMenu>
 
 std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
 

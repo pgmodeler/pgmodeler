@@ -25,7 +25,6 @@
 #ifndef VIEW_WIDGET_H
 #define VIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
 #include "widgets/customtablewidget.h"
@@ -35,9 +34,9 @@
 #include "dbobjects/simplecolumnswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SimpleColumnsWidget *custom_cols_wgt;
 
 		ReferencesWidget *obj_refs_wgt;

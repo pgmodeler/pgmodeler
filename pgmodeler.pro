@@ -32,9 +32,9 @@ exists($$PLUGINS_PRO_FILE) {
 }
 
 # Include the tests subprojects only on debug mode when
-# NO_TESTS is set to true
+# BUILD_TESTS is set to true
 CONFIG(debug, debug|release): {
-	!isEqual(NO_TESTS, true):SUBDIRS += tests
+	isEqual(BUILD_TESTS, true):SUBDIRS += tests
 }
 
 # Deployment settings
@@ -49,8 +49,16 @@ lang.path = $$LANGDIR
 
 # Copies all template configs from assets/conf
 TMPLCONFS = assets/conf
-tmplconf.files = $$TMPLCONFS/*
+tmplconf.files = $$TMPLCONFS/*.conf \
+$$TMPLCONFS/*.dbm \
+$$TMPLCONFS/dtd \
+$$TMPLCONFS/schemas \
+$$TMPLCONFS/themes
 tmplconf.path = $$CONFDIR
+
+# Copies the icons in assest/conf
+conficos.files = $$TMPLCONFS/*.png
+conficos.path = $$CONFDIR
 
 # Copies the highlight configs from dark theme to be the initial one
 iniconf.files = $$TMPLCONFS/themes/dark/*-highlight.conf
@@ -73,6 +81,15 @@ defconf.path = $$CONFDIR/defaults
 doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
 doc.path = $$DOCDIR
 
-INSTALLS += samples schemas lang doc tmplconf iniconf defconf
+INSTALLS += samples schemas lang doc tmplconf iniconf defconf conficos
+
+# Including some private assets to deploy
+isEqual(PRIVATE_PLUGINS, true) {
+	privicons.files = $$PRIV_RES_FOLDER/icons/pgmodeler_logo.png
+	privicons.path = $$CONFDIR
+
+	INSTALLS += privicons
+	INSTALLS -= conficos
+}
 
 CONFIG += qt

@@ -31,9 +31,9 @@
 #include <QTimer>
 
 class __libgui SearchReplaceWidget: public QWidget, public Ui::SearchReplaceWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
-		
 		//! \brief QTextEdit instance that the finder is attached to
 		QPlainTextEdit *text_edt;
 		
