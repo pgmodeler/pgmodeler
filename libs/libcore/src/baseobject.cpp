@@ -799,13 +799,13 @@ bool BaseObject::isSystemObject()
 void BaseObject::setBasicAttributes(bool format_name)
 {
 	if(attributes[Attributes::Name].isEmpty())
-		attributes[Attributes::Name] = obj_name; /* this->getName(format_name); */
+		attributes[Attributes::Name] = getName(format_name);
 
 	if(attributes[Attributes::Alias].isEmpty())
-		attributes[Attributes::Alias] = alias; /* this->getAlias(); */
+		attributes[Attributes::Alias] = getAlias();
 
 	if(attributes[Attributes::Signature].isEmpty())
-		attributes[Attributes::Signature] = this->getSignature(format_name);
+		attributes[Attributes::Signature] = getSignature(format_name);
 
 	if(attributes[Attributes::SqlObject].isEmpty())
 		attributes[Attributes::SqlObject] = objs_sql[enum_t(this->obj_type)];
