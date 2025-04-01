@@ -36,7 +36,7 @@ const QStringList CodeCompletionWidget::dml_keywords {
 	"truncate", "alter", "drop", "from",
 	"join",	"into", "as", "set", "table",
 	"only", "where", "exists", "partition",
-	"like", "inherits", "on",
+	"like", "inherits", "on", "by",
 
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
@@ -470,11 +470,13 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	// If no table name was retrieved from aliases names
 	if(tab_names.isEmpty() && word != completion_trigger)
 	{
-		// Retrieving the table name between FROM ... JOIN/WHERE
+		// Retrieving the table name between FROM ... JOIN/WHERE/BY
 		if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
 				 cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]) ||
-			 (dml_kwords_pos[Select] >= 0 &&
-				dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
+
+				(dml_kwords_pos[Select] >= 0 &&
+				((dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where]) ||
+				 (dml_kwords_pos[By] >= 0 && cur_pos > dml_kwords_pos[By])))))
 		{
 			/* We get the table names until the next SELECT to avoid including table names that is
 			 * out of the context of the current SELECT/FROM */
