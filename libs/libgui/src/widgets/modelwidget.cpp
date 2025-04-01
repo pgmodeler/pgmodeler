@@ -2418,19 +2418,9 @@ void ModelWidget::showDependenciesReferences()
 
 void ModelWidget::showSourceCode()
 {
-	QAction *obj_sender=dynamic_cast<QAction *>(sender());
-
-	if(obj_sender)
-	{
-		BaseObject *object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
-
-		if(object)
-		{
-			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
-			sourcecode_wgt->setAttributes(this->db_model, object);
-			openEditingForm(sourcecode_wgt, Messagebox::CloseButton);
-		}
-	}
+	SourceCodeWidget *sourcecode_wgt = new SourceCodeWidget;
+	sourcecode_wgt->setAttributes(db_model, selected_objects);
+	openEditingForm(sourcecode_wgt, Messagebox::CloseButton);
 }
 
 void ModelWidget::cancelObjectAddition()
@@ -4604,8 +4594,9 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 	}
 
 	action_edit->setData(QVariant::fromValue<void *>(obj));
-	action_source_code->setData(QVariant::fromValue<void *>(obj));
+	//action_source_code->setData(QVariant::fromValue<void *>(obj));
 	action_deps_refs->setData(QVariant::fromValue<void *>(obj));
+
 	TableObject *tab_obj = dynamic_cast<TableObject *>(obj);
 
 	if(tab_obj &&
@@ -4652,7 +4643,7 @@ void ModelWidget::configureDatabaseActions()
 	configureQuickMenu(db_model);
 
 	action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
-	action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
+	//action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 
 	popup_menu.addAction(action_edit);
 
@@ -4698,6 +4689,7 @@ void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 	{
 		configureQuickMenu(nullptr);
 		popup_menu.addSeparator();
+		popup_menu.addAction(action_source_code);
 	}
 
 	if(objects.size() > 1)

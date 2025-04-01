@@ -34,6 +34,8 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 	Q_OBJECT
 
 	private:
+		std::vector<BaseObject *> objects;
+
 		NumberedTextEditor *sqlcode_txt, *xmlcode_txt;
 
 		SyntaxHighlighter *hl_sqlcode, *hl_xmlcode;
@@ -47,12 +49,12 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+		void setAttributes(DatabaseModel *model, const std::vector<BaseObject *> &objects);
 
 		/* Forcing the widget to indicate that the handled object is not protected
-		even if it IS protected. This will avoid the ok button of the parent dialog
-		to be disabled */
-		virtual bool isHandledObjectProtected(void){ return false; }
+		 * even if it IS protected. This will avoid the ok button of the parent dialog
+		 * to be disabled */
+		virtual bool isHandledObjectProtected(){ return false; }
 
 	public slots:
 		void applyConfiguration();

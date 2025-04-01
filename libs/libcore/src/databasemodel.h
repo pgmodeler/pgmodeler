@@ -509,13 +509,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getSourceCode(SchemaParser::CodeType def_type);
 
-		/*! \brief Returns the code definition for the specified object.
+		/*! \brief Returns the code definition for the specified objects.
 		 *  This method receives the code generation mode option which can be:
 		 *  OriginalSql: generates only the original SQL code of the object.
 		 *  DependenciesSql: generates the original code plus all dependencies needed to properly create the object.
 		 *  ChildrenSql: generates the original code plus all object's children SQL code. This option is used only by schemas, tables and views.
 		 */
-		QString getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode = OriginalSql);
+		//QString getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode = OriginalSql);
+		QString getSQLDefinition(const std::vector<BaseObject *> objects, CodeGenMode code_gen_mode);
 
 		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 

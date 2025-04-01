@@ -90,23 +90,16 @@ void SourceCodeWidget::saveSQLCode()
 
 void SourceCodeWidget::generateSQLCode()
 {
-	ObjectType obj_type = object->getObjectType();
-
 	sqlcode_txt->clear();
 	prev_pg_ver = version_cmb->currentIndex();
 	prev_code_opt = code_options_cmb->currentIndex();
 
-	if(obj_type != ObjectType::Textbox ||
-			(obj_type == ObjectType::BaseRelationship &&
-			 dynamic_cast<BaseRelationship *>(object)->getRelationshipType() == BaseRelationship::RelationshipFk))
-	{
-		BaseObject::setPgSQLVersion(version_cmb->currentText());
+	BaseObject::setPgSQLVersion(version_cmb->currentText());
 
-		if(obj_type == ObjectType::Database)
-			sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
-		else
-			sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
-	}
+	if(object && object->getObjectType() == ObjectType::Database)
+		sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
+	else
+		sqlcode_txt->setPlainText(model->getSQLDefinition(objects, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 
 #ifdef DEMO_VERSION
 	if(!sqlcode_txt->toPlainText().isEmpty())
@@ -132,7 +125,12 @@ void SourceCodeWidget::generateXMLCode()
 #warning "DEMO VERSION: XML code preview disabled."
 	xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
-	xmlcode_txt->setPlainText(object->getSourceCode(SchemaParser::XmlCode));
+	QString xml_code;
+
+	for(auto &obj : objects)
+		xml_code.append(obj->getSourceCode(SchemaParser::XmlCode));
+
+	xmlcode_txt->setPlainText(xml_code);
 #endif
 }
 
@@ -144,16 +142,13 @@ void SourceCodeWidget::generateSourceCode(int def_type)
 			 prev_code_opt == code_options_cmb->currentIndex())))
 		return;
 
-	ObjectType obj_type;
 	TaskProgressWidget task_prog_wgt;
 
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
 
-		obj_type = object->getObjectType();
-
-		if(obj_type == ObjectType::Database)
+		if(object && object->getObjectType() == ObjectType::Database)
 		{
 			task_prog_wgt.setWindowTitle(tr("Generating source code..."));
 			task_prog_wgt.show();
@@ -181,42 +176,55 @@ void SourceCodeWidget::generateSourceCode(int def_type)
 	}
 }
 
-void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
+void SourceCodeWidget::setAttributes(DatabaseModel *model, const std::vector<BaseObject *> &objs)
 {
-	if(object)
+	try
 	{
-		try
-		{
-			BaseObjectWidget::setAttributes(model, object, nullptr);
-			ObjectType obj_type=object->getObjectType();
+		objects = objs;
 
-			this->name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
-			this->protected_obj_frm->setVisible(false);
-			this->obj_id_lbl->setVisible(false);
-			this->code_options_cmb->setEnabled(obj_type!=ObjectType::Database &&
-																					obj_type!=ObjectType::Textbox &&
-																					obj_type!=ObjectType::BaseRelationship &&
-																					obj_type!=ObjectType::Relationship);
+		if(objs.size() <= 1)
+		{
+			if(objects.empty())
+				objects.push_back(model);
+
+			BaseObjectWidget::setAttributes(model, objects[0], nullptr);
+			name_edt->setText(QString("%1 (%2)").arg(object->getSignature(), object->getTypeName()));
+			obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
+		}
+		else
+		{
+			BaseObjectWidget::setAttributes(model, static_cast<BaseObject *>(nullptr), nullptr);
+			name_edt->setVisible(false);
+			name_lbl->setVisible(false);
+			obj_icon_lbl->setVisible(false);
+		}
+
+		protected_obj_frm->setVisible(false);
+		obj_id_lbl->setVisible(false);
+
+		code_options_cmb->setEnabled(std::any_of(objs.begin(), objs.end(), [](auto &obj){
+			return obj->getObjectType() != ObjectType::Database &&
+						 obj->getObjectType() != ObjectType::Textbox &&
+						 obj->getObjectType() != ObjectType::BaseRelationship &&
+						 obj->getObjectType() != ObjectType::Relationship;
+		}));
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code display options disabled."
-			code_options_cmb->setEnabled(false);
+		code_options_cmb->setEnabled(false);
 #endif
 
-			obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
+		if(!hl_sqlcode->isConfigurationLoaded())
+			hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-			if(!hl_sqlcode->isConfigurationLoaded())
-				hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		if(!hl_xmlcode->isConfigurationLoaded())
+			hl_xmlcode->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
-			if(!hl_xmlcode->isConfigurationLoaded())
-				hl_xmlcode->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
-
-			generateSourceCode(SchemaParser::SqlCode);
-		}
-		catch(Exception &e)
-		{
-			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		}
+		generateSourceCode(SchemaParser::SqlCode);
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
