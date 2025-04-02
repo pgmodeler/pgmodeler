@@ -96,7 +96,9 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		QTreeWidgetItem *getTreeItem(const QString &item_id);
 
 		//! \brief Generates a QVariant containing the passed object reference as data
-		QVariant generateItemValue(BaseObject *object);
+		QVariant generateTreeItemData(BaseObject *object);
+
+		BaseObject *getTreeItemData(QTreeWidgetItem *item);
 
 		QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 
