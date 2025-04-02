@@ -162,9 +162,9 @@ class __libgui ModelWidget: public QWidget {
 
 		fade_menu,
 
-		fade_in_menu,
+		fade_in_all_menu,
 
-		fade_out_menu,
+		fade_out_all_menu,
 
 		fade_rels_menu,
 
@@ -321,8 +321,6 @@ class __libgui ModelWidget: public QWidget {
 		*action_fade,
 		*action_fade_in,
 		*action_fade_out,
-		*action_fade_objs_in,
-		*action_fade_objs_out,
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,

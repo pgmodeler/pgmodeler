@@ -398,13 +398,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	action_fade_objs_in = fade_in_menu.menuAction();
-	action_fade_objs_in->setIcon(QIcon(GuiUtilsNs::getIconPath("fadein")));
-	action_fade_objs_in->setText(tr("Fade in"));
+	//action_fade_objs_in = fade_in_menu.menuAction();
+	//action_fade_objs_in->setIcon(QIcon(GuiUtilsNs::getIconPath("fadein")));
+	//action_fade_objs_in->setText(tr("Fade in"));
 
-	action_fade_objs_out = fade_out_menu.menuAction();
-	action_fade_objs_out->setIcon(QIcon(GuiUtilsNs::getIconPath("fadeout")));
-	action_fade_objs_out->setText(tr("Fade out"));
+	//action_fade_objs_out = fade_out_menu.menuAction();
+	//action_fade_objs_out->setIcon(QIcon(GuiUtilsNs::getIconPath("fadeout")));
+	//action_fade_objs_out->setText(tr("Fade out"));
 
 	action_fade_rels = fade_rels_menu.menuAction();
 	action_fade_rels->setIcon(QIcon(GuiUtilsNs::getIconPath("relationship")));
@@ -498,7 +498,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		str_ico=BaseObject::getSchemaName(ObjectType::Relationship) + rel_types_cod[i];
 
 		action=new QAction(QIcon(GuiUtilsNs::getIconPath(str_ico)),
-						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
+							 BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(enum_t(ObjectType::Relationship) + rel_types_id[i]));
@@ -550,6 +550,48 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	stacking_menu.addAction(action_send_to_back);
 	stacking_menu.addAction(action_bring_to_front);
 
+	QAction *act = nullptr;
+
+	std::vector<ObjectType> act_types {
+				ObjectType::Schema, ObjectType::Table,
+				ObjectType::ForeignTable, ObjectType::View,
+				ObjectType::Relationship, ObjectType::Textbox };
+
+	QStringList act_labels {
+				tr("Schemas"), tr("Tables"),
+				tr("Foreign tables"), tr("Views"),
+				tr("Relationships"), tr("Textboxes")
+	};
+
+	unsigned id = 0;
+
+	for(auto &act_type : act_types)
+	{
+		act = fade_in_all_menu.addAction(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(act_type))),	act_labels[id]);
+		act->setData(enum_t(act_type));
+		connect(act, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+
+		act = fade_out_all_menu.addAction(QIcon(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(act_type))),	act_labels[id]);
+		act->setData(enum_t(act_type));
+		connect(act, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+
+		id++;
+	}
+
+	act = fade_in_all_menu.addAction(tr("All objects"));
+	act->setData(enum_t(ObjectType::BaseObject));
+	fade_in_all_menu.insertSeparator(act);
+	connect(act, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	fade_in_all_menu.menuAction()->setText("Fade in");
+	fade_in_all_menu.menuAction()->setIcon(QIcon(GuiUtilsNs::getIconPath("fadein")));
+
+	act = fade_out_all_menu.addAction(tr("All objects"));
+	act->setData(enum_t(ObjectType::BaseObject));
+	fade_out_all_menu.insertSeparator(act);
+	connect(act, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	fade_out_all_menu.menuAction()->setText("Fade out");
+	fade_out_all_menu.menuAction()->setIcon(QIcon(GuiUtilsNs::getIconPath("fadeout")));
+
 	connect(action_send_to_back, &QAction::triggered, this, &ModelWidget::sendToBack);
 	connect(action_bring_to_front, &QAction::triggered, this, &ModelWidget::bringToFront);
 	connect(action_edit_data, &QAction::triggered, this, &ModelWidget::editTableData);
@@ -590,8 +632,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(action_fade_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 	connect(action_fade_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
-	connect(action_fade_objs_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
-	connect(action_fade_objs_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
+	//connect(action_fade_objs_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
+	//connect(action_fade_objs_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 	connect(action_fade_rels_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 	connect(action_fade_rels_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 	connect(action_fade_peer_tables_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
@@ -3986,49 +4028,13 @@ void ModelWidget::configureFadeMenu()
 	bool is_db_selected = (selected_objects.empty() ||
 												 (selected_objects.size() == 1 && selected_objects[0]->getObjectType() == ObjectType::Database));
 	fade_menu.clear();
-	fade_in_menu.clear();
-	fade_out_menu.clear();
 
 	if(is_db_selected || (selected_objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()))
 	{
 		if(is_db_selected)
 		{
-			fade_menu.addAction(action_fade_objs_in);
-			fade_menu.addAction(action_fade_objs_out);
-
-			QAction *action = nullptr;
-			std::vector<ObjectType> types = { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
-			QStringList labels = { tr("Schemas"), tr("Tables"), tr("Foreign tables"), tr("Views"), tr("Relationships"), tr("Textboxes") };
-			unsigned id = 0;
-
-			for(ObjectType type : types)
-			{
-				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
-																		 labels[id], &fade_in_menu);
-				action->setData(enum_t(type));
-				fade_in_menu.addAction(action);
-				connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
-
-				action = new QAction(QPixmap(GuiUtilsNs::getIconPath(BaseObject::getSchemaName(type))),
-																		 labels[id], &fade_out_menu);
-				action->setData(enum_t(type));
-				fade_out_menu.addAction(action);
-
-				id++;
-				connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
-			}
-
-			action = new QAction(tr("All objects"), &fade_in_menu);
-			action->setData(enum_t(ObjectType::BaseObject));
-			connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
-			fade_in_menu.addSeparator();
-			fade_in_menu.addAction(action);
-
-			action = new QAction(tr("All objects"), &fade_out_menu);
-			action->setData(enum_t(ObjectType::BaseObject));
-			connect(action, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
-			fade_out_menu.addSeparator();
-			fade_out_menu.addAction(action);
+			fade_menu.addAction(fade_in_all_menu.menuAction());
+			fade_menu.addAction(fade_out_all_menu.menuAction());
 		}
 		else
 		{
@@ -4594,7 +4600,6 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 	}
 
 	action_edit->setData(QVariant::fromValue<void *>(obj));
-	//action_source_code->setData(QVariant::fromValue<void *>(obj));
 	action_deps_refs->setData(QVariant::fromValue<void *>(obj));
 
 	TableObject *tab_obj = dynamic_cast<TableObject *>(obj);
@@ -4643,7 +4648,6 @@ void ModelWidget::configureDatabaseActions()
 	configureQuickMenu(db_model);
 
 	action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
-	//action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 
 	popup_menu.addAction(action_edit);
 
@@ -4661,7 +4665,7 @@ void ModelWidget::configureDatabaseActions()
 
 void ModelWidget::configurePopupMenu(const std::vector<BaseObject *> &objects)
 {
-	unsigned count, i;
+	unsigned count = 0, i = 0;
 	std::vector<QMenu *> submenus;
 	TableObject *tab_obj=nullptr;
 	bool protected_obj=false, model_protected=db_model->isProtected();
