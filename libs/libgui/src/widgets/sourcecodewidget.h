@@ -61,7 +61,6 @@ class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeW
 
 	private slots:
 		void generateSourceCode(int def_type);
-		void setSourceCodeTab(int tab_idx);
 		void saveSQLCode();
 };
 

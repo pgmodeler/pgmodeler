@@ -35,15 +35,13 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	sqlcode_txt = GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt, true);
 	sqlcode_txt->setReadOnly(true);
 
-	xmlcode_txt = GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
+	xmlcode_txt = GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt, true);
 	xmlcode_txt->setReadOnly(true);
 
 	name_edt->setReadOnly(true);
 	version_cmb->addItems(PgSqlVersions::AllVersions);
 
 	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::generateSourceCode);
-	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-
 	connect(version_cmb, &QComboBox::currentIndexChanged, this, [this](int){
 		generateSourceCode(SchemaParser::SqlCode);
 	});
@@ -56,20 +54,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
 	setMinimumSize(800, 600);
-}
-
-void SourceCodeWidget::setSourceCodeTab(int tab_idx)
-{
-	bool enabled = false;
-	ObjectType obj_type = object->getObjectType();
-
-	enabled = (tab_idx == 0 &&
-						 ((obj_type == ObjectType::BaseRelationship &&
-							 dynamic_cast<BaseRelationship *>(object)->getRelationshipType() == BaseRelationship::RelationshipFk)
-							 || (obj_type != ObjectType::BaseRelationship && obj_type != ObjectType::Textbox)));
-
-	version_cmb->setEnabled(enabled);
-	pgsql_lbl->setEnabled(enabled);
 }
 
 void SourceCodeWidget::saveSQLCode()
