@@ -44,6 +44,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	//connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
@@ -52,8 +53,6 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
 	});
-
-	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
@@ -184,7 +183,6 @@ void ModelObjectsWidget::selectObject()
 	ObjectType obj_type = ObjectType::BaseObject;
 	ModelWidget *model_wgt = nullptr;
 	QList<QTreeWidgetItem *> sel_items = objectstree_tw->selectedItems();
-	bool reconf_menu = true;
 
 	if(!simplified_view && this->model_wgt)
 		model_wgt = this->model_wgt;
@@ -238,7 +236,7 @@ void ModelObjectsWidget::selectObject()
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 	}
 
-	if(reconf_menu && obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
+	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
 		model_wgt->scene->blockSignals(true);
 		model_wgt->scene->clearSelection();
@@ -892,7 +890,6 @@ void ModelObjectsWidget::clearSelectedObject()
 	objectstree_tw->clearSelection();
 	objectstree_tw->blockSignals(false);
 	selected_objs.clear();
-	prev_sel_items.clear();
 	model_wgt->configurePopupMenu(nullptr);
 	model_wgt->emitSceneInteracted();
 }
