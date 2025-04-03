@@ -1599,7 +1599,7 @@
   <action name="action_tipofday">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icons/icons/alert.png</normaloff>:/icons/icons/alert.png</iconset>
+     <normaloff>:/icons/icons/tipofday.png</normaloff>:/icons/icons/tipofday.png</iconset>
    </property>
    <property name="text">
     <string>Tip of the day</string>

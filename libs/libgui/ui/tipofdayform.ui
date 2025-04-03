@@ -30,10 +30,64 @@
     <number>5</number>
    </property>
    <item>
-    <widget class="QTextEdit" name="textEdit">
-     <property name="readOnly">
-      <bool>true</bool>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::TabPosition::South</enum>
      </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset resource="../res/resources.qrc">
+        <normaloff>:/icons/icons/tipofday.png</normaloff>:/icons/icons/tipofday.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Tip</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../res/resources.qrc">
+        <normaloff>:/icons/icons/bookmark.png</normaloff>:/icons/icons/bookmark.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Bookmark</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../res/resources.qrc">
+        <normaloff>:/icons/icons/objselect.png</normaloff>:/icons/icons/objselect.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Search</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
    <item>
