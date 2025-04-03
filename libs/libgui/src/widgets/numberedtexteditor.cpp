@@ -807,6 +807,7 @@ void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
 	QPlainTextEdit::resizeEvent(event);
 	resizeWidgets();
+	updateLineNumbers();
 }
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
