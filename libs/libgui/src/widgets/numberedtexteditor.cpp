@@ -198,6 +198,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 			setHorizontalScrollBarPolicy(checked ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 			resizeWidgets();
+			updateLineNumbers();
 		});
 
 		connect(clear_btn, &QToolButton::clicked, this, [this](){
@@ -754,7 +755,7 @@ void NumberedTextEditor::resizeWidgets()
 	{
 		line_numbers_wgt->setGeometry(lt_margin, rect.top() + py,
 																 getLineNumbersWidth(),
-																 rect.height() - py - (bt_margin +  hscroll_h));
+																 rect.height() - py - (bt_margin + hscroll_h));
 	}
 
 	if(top_widget && show_act_btns)
