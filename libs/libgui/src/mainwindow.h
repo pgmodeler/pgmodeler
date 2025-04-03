@@ -45,6 +45,7 @@
 #include "widgets/sceneinfowidget.h"
 #include "widgets/layersconfigwidget.h"
 #include "widgets/changelogwidget.h"
+#include "tipofdayform.h"
 
 class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 	Q_OBJECT
@@ -75,6 +76,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		DonateWidget *donate_wgt;
 
 		SceneInfoWidget *scene_info_wgt;
+
+		TipOfDayForm *tipofday_form;
 
 		//! \brief Layers management widget
 		LayersConfigWidget *layers_cfg_wgt;
@@ -376,7 +379,6 @@ public:
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
 		void toggleChangelogWidget(bool show);
-
 		void expandSceneRect();
 
 		#ifdef	DEMO_VERSION

@@ -156,6 +156,7 @@ MainWindow::~MainWindow()
 	delete restoration_form;
 	delete overview_wgt;
 	delete configuration_form;
+	delete tipofday_form;
 }
 
 bool MainWindow::mimeDataHasModelFiles(const QMimeData *mime_data)
@@ -301,6 +302,7 @@ void MainWindow::configureMenusActionsWidgets()
 
 	model_acts_tb->addAction(action_bug_report);
 	model_acts_tb->addAction(action_donate);
+	model_acts_tb->addAction(action_tipofday);
 	model_acts_tb->addAction(action_support);
 	model_acts_tb->addAction(action_about);
 	model_acts_tb->addAction(action_update_found);
@@ -458,6 +460,9 @@ void MainWindow::createMainWidgets()
 		changelog_wgt  = new ChangelogWidget(this);
 		changelog_wgt->setVisible(false);
 
+		tipofday_form = new TipOfDayForm;
+		tipofday_form->setVisible(false);
+
 		scene_info_wgt = new SceneInfoWidget(this);
 		scene_info_wgt->setObjectName("scene_info_wgt");
 		QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
@@ -579,6 +584,8 @@ void MainWindow::connectSignalsToSlots()
 
 	connect(action_donate, &QAction::toggled, this, &MainWindow::toggleDonateWidget);
 	connect(donate_wgt, &DonateWidget::s_hideRequested, action_donate, &QAction::toggle);
+
+	connect(action_tipofday, &QAction::triggered, tipofday_form, &TipOfDayForm::show);
 
 	connect(action_restore_session, &QAction::triggered, this, &MainWindow::restoreLastSession);
 	connect(action_exit, &QAction::triggered, this, &MainWindow::close);

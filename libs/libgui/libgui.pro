@@ -79,6 +79,7 @@ src/settings/baseconfigwidget.cpp \
 src/settings/connectionsconfigwidget.cpp \
 src/settings/pluginsconfigwidget.cpp \
 src/settings/snippetsconfigwidget.cpp \
+    src/tipofdayform.cpp \
 src/tools/bugreportform.cpp \
 src/tools/databaseimporthelper.cpp \
 	src/tools/datagridwidget.cpp \
@@ -205,6 +206,7 @@ src/settings/baseconfigwidget.h \
 src/settings/connectionsconfigwidget.h \
 src/settings/pluginsconfigwidget.h \
 src/settings/snippetsconfigwidget.h \
+    src/tipofdayform.h \
 src/tools/bugreportform.h \
 src/tools/databaseimporthelper.h \
 	src/tools/datagridwidget.h \
@@ -272,6 +274,7 @@ src/widgets/newobjectoverlaywidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
+    ui/tipofdayform.ui \
 ui/dbobjects/columnpickerwidget.ui \
 	ui/dbobjects/referenceswidget.ui \
 	ui/dbobjects/simplecolumnswidget.ui \
