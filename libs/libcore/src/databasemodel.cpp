@@ -7851,7 +7851,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 		{
 			//Configuring the changelog attributes when generating XML code
 			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
-			attribs[Attributes::Changelog] = getChangelogDefinition();
+			attribs[Attributes::Changelog] = persist_changelog ? getChangelogDefinition() : "";
 			attribs[Attributes::GenDisabledObjsCode]= gen_dis_objs_code ? Attributes::True : Attributes::False;
 			attribs[Attributes::ShowSysSchemasRects]= show_sys_sch_rects ? Attributes::True : Attributes::False;
 		}
@@ -10320,9 +10320,6 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 
 QString DatabaseModel::getChangelogDefinition(bool csv_format)
 {
-	if(!persist_changelog)
-		return "";
-
 	try
 	{
 		QString date, type, signature, action,
