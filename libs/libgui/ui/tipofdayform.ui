@@ -30,7 +30,7 @@
     <number>5</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="navigation_tbw">
      <property name="tabPosition">
       <enum>QTabWidget::TabPosition::South</enum>
      </property>
@@ -44,6 +44,35 @@
       </attribute>
       <attribute name="title">
        <string>Tip</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QTextBrowser" name="textBrowser"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset resource="../res/resources.qrc">
+        <normaloff>:/icons/icons/bookmark.png</normaloff>:/icons/icons/bookmark.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Bookmark</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -61,23 +90,7 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
-       <item>
-        <widget class="QTextEdit" name="textEdit">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="icon">
-       <iconset resource="../res/resources.qrc">
-        <normaloff>:/icons/icons/bookmark.png</normaloff>:/icons/icons/bookmark.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string>Bookmark</string>
-      </attribute>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="icon">
@@ -153,7 +166,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="defaults_btn_2">
+      <widget class="QToolButton" name="rnd_tip_tb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -191,7 +204,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="defaults_btn">
+      <widget class="QToolButton" name="prev_tip_tb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -223,7 +236,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="apply_btn">
+      <widget class="QToolButton" name="next_tip_tb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -255,7 +268,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="cancel_btn">
+      <widget class="QToolButton" name="close_tb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
