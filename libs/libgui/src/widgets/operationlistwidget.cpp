@@ -196,14 +196,9 @@ void OperationListWidget::redoOperation()
 
 void OperationListWidget::removeOperations()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Delete the executed operations history is an irreversible action, do you want to continue?"));
 
-	msg_box.show(tr("Operation history exclusion"),
-							 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
-							 Messagebox::ConfirmIcon,
-							 Messagebox::YesNoButtons);
-
-	if(msg_box.isAccepted())
+	if(Messagebox::isAccepted(res))
 	{
 		model_wgt->op_list->removeOperations();
 		updateOperationList();
@@ -216,4 +211,3 @@ void OperationListWidget::notifyUpdateOnModel()
 	updateOperationList();
 	emit s_operationExecuted();
 }
-
