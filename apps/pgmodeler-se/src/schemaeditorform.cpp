@@ -179,11 +179,9 @@ void SchemaEditorForm::closeEvent(QCloseEvent *event)
 {
 	if(alert_frm->isVisible() || hasModifiedEditors())
 	{
-		Messagebox msgbox;
+		int res = Messagebox::confirm(tr("There are modified files! Do you want to exit without saving them?"));
 
-		msgbox.show(tr("There are modified files! Do you want to exit without saving them?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msgbox.isRejected())
+		if(Messagebox::isRejected(res))
 			event->ignore();
 	}
 }
@@ -401,11 +399,9 @@ void SchemaEditorForm::closeAll()
 {
 	if(hasModifiedEditors())
 	{
-		Messagebox msgbox;
+		int res = Messagebox::confirm(tr("There are modified files! Do you want to close them without save?"));
 
-		msgbox.show(tr("There are modified files! Do you want to close them without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msgbox.isRejected())
+		if(Messagebox::isRejected(res))
 			return;
 	}
 
@@ -533,11 +529,9 @@ void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
 
 	if(editor_wgt->isModified() && confirm_close)
 	{
-		Messagebox msgbox;
+		int res = Messagebox::confirm(tr("The source code was modified! Do you really want to close it without save?"));
 
-		msgbox.show(tr("The source code was modified! Do you really want to close it without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msgbox.isRejected())
+		if(Messagebox::isRejected(res))
 			return;
 	}
 
