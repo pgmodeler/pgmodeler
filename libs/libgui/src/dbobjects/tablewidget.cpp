@@ -844,7 +844,7 @@ void TableWidget::removeObject(int row)
 
 void TableWidget::updatePkColumnsCheckState(bool has_pk)
 {
-	Messagebox msgbox;
+	int res = Messagebox::Rejected;
 	QList<unsigned> pk_col_rows;
 	CustomTableWidget *tab = objects_tab_map[ObjectType::Column];
 
@@ -857,19 +857,16 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 		}
 
 		if(!pk_col_rows.isEmpty())
-		{
-			msgbox.show(tr("Confirmation"),
-									tr("The primary key of the table was removed, do you want to uncheck the columns marked as <strong>PK</strong> in the <strong>Columns</strong> tab in order to avoid the primary key being created again?"),
-									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-		}
+			res = Messagebox::confirm(tr("The primary key of the table was removed, do you want to uncheck the columns marked as <strong>PK</strong> in the <strong>Columns</strong> tab in order to avoid the primary key being created again?"));
 	}
 
 	listObjects(ObjectType::Column);
 
-	if(has_pk && !pk_col_rows.isEmpty() && msgbox.isRejected())
+	if(has_pk && !pk_col_rows.isEmpty())
 	{
 		for(auto &row : pk_col_rows)
-			tab->setCellCheckState(Qt::Checked, row, 0);
+			tab->setCellCheckState(Messagebox::isAccepted(res) ?
+														 Qt::Unchecked : Qt::Checked, row, 0);
 	}
 }
 
