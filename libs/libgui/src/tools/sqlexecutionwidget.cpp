@@ -833,15 +833,9 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw, bool csv_format)
 
 int SQLExecutionWidget::clearAll()
 {
-	Messagebox msg_box;
-	int res = 0;
+	int res = Messagebox::confirm(tr("The SQL input field and the results grid will be cleared! Want to proceed?"));
 
-	msg_box.show(tr("The SQL input field and the results grid will be cleared! Want to proceed?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	res = msg_box.result();
-
-	if(res==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		sql_cmd_txt->setPlainText("");
 		output_tb->setChecked(false);
@@ -1139,12 +1133,9 @@ void SQLExecutionWidget::loadSQLHistory()
 
 void SQLExecutionWidget::destroySQLHistory()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"));
 
-	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.isAccepted())
+	if(Messagebox::isAccepted(res))
 	{
 		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
@@ -1204,12 +1195,9 @@ void SQLExecutionWidget::showHistoryContextMenu()
 
 	if(exec_act == action_clear)
 	{
-		Messagebox msg_box;
+		int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"));
 
-		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
-									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msg_box.isAccepted())
+		if(Messagebox::isAccepted(res))
 		{
 			cmd_history_txt->clear();
 			cmd_history[sql_cmd_conn.getConnectionId(true,true)].clear();
