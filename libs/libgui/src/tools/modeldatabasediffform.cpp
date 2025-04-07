@@ -1246,11 +1246,9 @@ void ModelDatabaseDiffForm::restoreDefaults()
 {
 	try
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Do you really want to restore the default settings?"),
-								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
+		int res = Messagebox::confirm(tr("Do you really want to restore the default settings?"));
 
-		if(msg_box.isAccepted())
+		if(Messagebox::isAccepted(res))
 		{
 			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
 			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
@@ -1376,11 +1374,9 @@ void ModelDatabaseDiffForm::enablePresetButtons()
 
 void ModelDatabaseDiffForm::removePreset()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Are you sure do you want to remove the selected diff preset?"));
 
-	msg_box.show(tr("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.isAccepted())
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.erase(presets_cmb->currentText());
 		applyConfiguration();
