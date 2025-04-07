@@ -1414,9 +1414,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
 					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
-			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-			if(msg_box.isAccepted())
+			if(Messagebox::isAccepted(Messagebox::confirm(msg)))
 			{
 				QTreeWidgetItem *parent=nullptr;
 				attribs_map attribs;
