@@ -439,7 +439,7 @@ void SQLToolWidget::closeDatabaseExplorer(int idx, bool confirm_close)
 					 tr("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() != QDialog::Accepted)
+		if(msg_box.isRejected())
 			return;
 	}
 
