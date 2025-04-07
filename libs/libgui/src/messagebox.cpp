@@ -61,17 +61,32 @@ void Messagebox::handleNoCancelClick()
 
 bool Messagebox::isAccepted()
 {
-	return result() == Accepted;
+	return isAccepted(result());
 }
 
 bool Messagebox::isRejected()
 {
-	return result() == Rejected;
+	return isRejected(result());
 }
 
 bool Messagebox::isCanceled()
 {
-	return result() == Canceled;
+	return isCanceled(result());
+}
+
+bool Messagebox::isAccepted(int res)
+{
+	return res == Accepted;
+}
+
+bool Messagebox::isRejected(int res)
+{
+	return res == Rejected;
+}
+
+bool Messagebox::isCanceled(int res)
+{
+	return res == Canceled;
 }
 
 void Messagebox::setCustomOptionText(const QString &text)

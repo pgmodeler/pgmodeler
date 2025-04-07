@@ -110,6 +110,10 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 											 const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
 											 const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
+		static bool isAccepted(int res);
+		static bool isRejected(int res);
+		static bool isCanceled(int res);
+
 		bool isAccepted();
 		bool isRejected();
 		bool isCanceled();
