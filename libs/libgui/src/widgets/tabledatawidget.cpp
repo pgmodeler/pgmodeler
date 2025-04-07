@@ -192,7 +192,7 @@ void TableDataWidget::deleteColumns()
 	msg_box.show(tr("Delete columns is an irreversible action! Do you really want to proceed?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		QTableWidgetSelectionRange sel_range;
 
@@ -227,7 +227,7 @@ void TableDataWidget::clearRows(bool confirm)
 		msg_box.show(tr("Remove all rows is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(!confirm || msg_box.result()==QDialog::Accepted)
+	if(!confirm || msg_box.isAccepted())
 	{
 		data_tbw->clearContents();
 		data_tbw->setRowCount(0);
@@ -242,7 +242,7 @@ void TableDataWidget::clearColumns()
 		msg_box.show(tr("Remove all columns is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		clearRows(false);
 		data_tbw->setColumnCount(0);
@@ -375,7 +375,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 									Messagebox::AlertIcon,
 									Messagebox::YesNoButtons);
 
-			if(msgbox.result() == QDialog::Accepted)
+			if(msgbox.isAccepted())
 			{
 				try
 				{

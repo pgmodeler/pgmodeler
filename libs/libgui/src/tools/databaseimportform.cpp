@@ -326,7 +326,7 @@ void DatabaseImportForm::importDatabase()
 			msg_box.show(tr("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -505,7 +505,7 @@ Please, consider using the <strong>Filter</strong> tab in order to refine the se
 Do you really want to proceed?"),
 										Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-				if(msgbox.result() == Messagebox::Rejected)
+				if(msgbox.isRejected())
 				{
 					database_cmb->setCurrentIndex(0);
 					return;

@@ -1416,7 +1416,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
 			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Accepted)
+			if(msg_box.isAccepted())
 			{
 				QTreeWidgetItem *parent=nullptr;
 				attribs_map attribs;
@@ -1483,7 +1483,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 		msg_box.setCustomOptionText(tr("Also restart sequences"));
 		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			attribs_map attribs;
 			QString truc_cmd;
@@ -1508,7 +1508,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			conn.executeDDLCommand(truc_cmd);
 		}
 
-		return (msg_box.result()==QDialog::Accepted);
+		return msg_box.isAccepted();
 	}
 	catch(Exception &e)
 	{

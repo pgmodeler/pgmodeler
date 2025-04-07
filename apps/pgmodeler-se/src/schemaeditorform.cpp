@@ -183,7 +183,7 @@ void SchemaEditorForm::closeEvent(QCloseEvent *event)
 
 		msgbox.show(tr("There are modified files! Do you want to exit without saving them?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msgbox.result() == QDialog::Rejected)
+		if(msgbox.isRejected())
 			event->ignore();
 	}
 }
@@ -405,7 +405,7 @@ void SchemaEditorForm::closeAll()
 
 		msgbox.show(tr("There are modified files! Do you want to close them without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msgbox.result() == QDialog::Rejected)
+		if(msgbox.isRejected())
 			return;
 	}
 
@@ -537,7 +537,7 @@ void SchemaEditorForm::closeEditorTab(int idx, bool confirm_close)
 
 		msgbox.show(tr("The source code was modified! Do you really want to close it without save?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msgbox.result() == QDialog::Rejected)
+		if(msgbox.isRejected())
 			return;
 	}
 

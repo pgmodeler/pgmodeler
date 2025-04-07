@@ -1144,7 +1144,7 @@ void SQLExecutionWidget::destroySQLHistory()
 	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
 								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
@@ -1209,7 +1209,7 @@ void SQLExecutionWidget::showHistoryContextMenu()
 		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
 									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			cmd_history_txt->clear();
 			cmd_history[sql_cmd_conn.getConnectionId(true,true)].clear();

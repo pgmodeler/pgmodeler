@@ -203,7 +203,7 @@ void OperationListWidget::removeOperations()
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		model_wgt->op_list->removeOperations();
 		updateOperationList();

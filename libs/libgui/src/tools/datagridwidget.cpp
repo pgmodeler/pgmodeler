@@ -376,7 +376,7 @@ void DataGridWidget::retrieveData()
 			msg_box.show(tr("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result() == QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -1311,7 +1311,7 @@ void DataGridWidget::saveChanges()
 								 Messagebox::AlertIcon,
 								 Messagebox::YesNoButtons);
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			//Forcing the cell editor to be closed by selecting an unexistent cell and clearing the selection
 			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);

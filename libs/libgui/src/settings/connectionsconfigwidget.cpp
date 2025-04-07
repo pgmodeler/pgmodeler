@@ -513,7 +513,7 @@ void ConnectionsConfigWidget::saveConfiguration()
 				msg_box.show(tr("There is a connection being configured! Do you want to save it before applying settings?"),
 										 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-				if(msg_box.result()==QDialog::Accepted)
+				if(msg_box.isAccepted())
 					handleConnection();
 			}
 			else

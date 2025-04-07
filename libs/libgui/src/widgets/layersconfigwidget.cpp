@@ -140,7 +140,7 @@ void LayersConfigWidget::removeLayer(bool clear)
 		msg_box.show(tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		if(clear)
 		{
