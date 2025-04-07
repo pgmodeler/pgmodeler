@@ -178,12 +178,9 @@ void ConfigurationForm::loadConfiguration()
 
 void ConfigurationForm::restoreDefaults()
 {
-	Messagebox msg_box;
-	msg_box.show(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-				 Messagebox::ConfirmIcon,
-				 Messagebox::YesNoButtons);
+	int res = Messagebox::confirm(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"));
 
-	if(msg_box.isAccepted())
+	if(Messagebox::isAccepted(res))
 		qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();
 }
 
