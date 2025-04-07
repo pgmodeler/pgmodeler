@@ -56,8 +56,8 @@ void Messagebox::handleNoCancelClick()
 		reject();
 	else if(sender()==cancel_btn && no_btn->isVisible())
 	{
-		cancelled=true;
-		reject();
+		cancelled = true;
+		done(Canceled);
 	}
 }
 
@@ -82,7 +82,7 @@ bool Messagebox::isCustomOptionChecked()
 	return custom_option_chk->isChecked();
 }
 
-void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+int Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 											const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString fmt_msg, title;
@@ -100,12 +100,12 @@ void Messagebox::show(Exception e, const QString &msg, IconType icon_type, Butto
 	else
 		fmt_msg = UtilsNs::formatMessage(msg);
 
-	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
+	return show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
-void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
+int Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 {
-	this->show("", msg,  icon_type, buttons);
+	return show("", msg,  icon_type, buttons);
 }
 
 void Messagebox::error(const QString &msg)
@@ -152,7 +152,21 @@ void Messagebox::info(const QString &msg)
 	msgbox.show(msg, InfoIcon);
 }
 
-void Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
+int Messagebox::confirm(const QString &msg)
+{
+	Messagebox msgbox;
+	return msgbox.show(msg, ConfirmIcon);
+}
+
+int Messagebox::confirm(const QString &msg, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+{
+	Messagebox msgbox;
+	return msgbox.show("", msg, ConfirmIcon, AllButtons,
+										 yes_lbl, no_lbl, cancel_lbl,
+										 yes_ico, no_ico, cancel_ico);
+}
+
+int Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
 											const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
@@ -273,7 +287,13 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 		resize(minimumSize());
 
 	setBaseSize(size());
-	QDialog::exec();
+
+	return exec();
+}
+
+int Messagebox::exec()
+{
+	return QDialog::exec();
 }
 
 void Messagebox::resizeEvent(QResizeEvent *event)

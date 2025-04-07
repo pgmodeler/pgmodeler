@@ -36,10 +36,19 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		//! \brief Indicates wether the message box was cancelled
 		bool cancelled;
 
+		int exec() override;
+
 	protected:
-		void resizeEvent(QResizeEvent *);
+		void resizeEvent(QResizeEvent *) override;
 
 	public:
+		//! \brief Constants used to define the message box result
+		enum ResultId: int {
+			Rejected = QDialog::Rejected,
+			Accepted = QDialog::Accepted,
+			Canceled = 2
+		};
+
 		//! \brief Constants used to define the message icon
 		enum IconType: unsigned {
 			NoIcon,
@@ -63,17 +72,17 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		/*! \brief Shows the message box defining the icons and available buttons.
 		User can specify custom button labels as well custom icons. The icons can be a path to a local file
 		or a Qt  resource icon ':/path/icon' and will be enabled only specifing custom labels for the respective button. */
-		void show(const QString &title, const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton,
+		int show(const QString &title, const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton,
 							const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
 							const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
 		//! \brief Shows the message box using an excpetion as message
-		void show(Exception e, const QString &msg="", IconType icon_type=ErrorIcon, ButtonsId buttons=OkButton,
+		int show(Exception e, const QString &msg="", IconType icon_type=ErrorIcon, ButtonsId buttons=OkButton,
 							const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
 							const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
 		//! \brief Shows a simple message box with the title automatically defined by the icon type
-		void show(const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton);
+		int show(const QString &msg, IconType icon_type=NoIcon, ButtonsId buttons=OkButton);
 
 		/*! \brief Shows an error message box in which can an error code and exact local of the code is specified.
 		 *  Additionally, a reference to a captured exception can be specified and will be used to fill up the stack trace.
@@ -103,6 +112,14 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 
 		//! \brief Shows an info message box with the provided message, an info icon and only OK button
 		static void info(const QString &msg);
+
+		//! \brief Shows an confirmation message box with the provided message, a confirmation icon and the yes/no buttons
+		static int confirm(const QString &msg);
+
+		//! \brief Shows an confirmation message box with the provided message, a confirmation icon and with all buttons visible
+		static int confirm(const QString &msg,
+											 const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
+											 const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
 		bool isCancelled();
 
