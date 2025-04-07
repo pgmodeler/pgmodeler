@@ -969,8 +969,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			{
 				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
-							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
-							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
+										 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
+										 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				conf_wgt->appendConfigurationSection(Attributes::Configuration,
 																						 {{ Attributes::AlertUnsavedModels,
@@ -1673,8 +1673,9 @@ void MainWindow::closeModel(int model_id)
 		if(model->isModified())
 		{
 			msg_box.show(tr("Save model"),
-						 tr("The model <strong>%1</strong> was modified! Do you really want to close without saving it?").arg(model->getDatabaseModel()->getName()),
-						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+									 tr("The model <strong>%1</strong> was modified! Do you really want to close without saving it?")
+									 .arg(model->getDatabaseModel()->getName()),
+									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 #endif
 
@@ -2571,24 +2572,21 @@ void MainWindow::arrangeObjects()
 	if(!current_model)
 		return;
 
-	Messagebox msgbox;
+	int res =	Messagebox::confirm(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"));
 
-	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"),
-							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	if(!Messagebox::isAccepted(res))
+		return;
 
-	if(msgbox.isAccepted())
-	{
-		qApp->setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
-		if(sender() == arrange_menu.actions().at(0))
-			current_model->rearrangeSchemasInGrid();
-		else if(sender() == arrange_menu.actions().at(1))
-			current_model->rearrangeTablesHierarchically();
-		else
-			current_model->rearrangeTablesInSchemas();
+	if(sender() == arrange_menu.actions().at(0))
+		current_model->rearrangeSchemasInGrid();
+	else if(sender() == arrange_menu.actions().at(1))
+		current_model->rearrangeTablesHierarchically();
+	else
+		current_model->rearrangeTablesInSchemas();
 
-		qApp->restoreOverrideCursor();
-	}
+	qApp->restoreOverrideCursor();
 }
 
 void MainWindow::toggleCompactView()
