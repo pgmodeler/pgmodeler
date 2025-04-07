@@ -199,9 +199,9 @@ void OperationListWidget::removeOperations()
 	Messagebox msg_box;
 
 	msg_box.show(tr("Operation history exclusion"),
-				 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
-				 Messagebox::ConfirmIcon,
-				 Messagebox::YesNoButtons);
+							 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
+							 Messagebox::ConfirmIcon,
+							 Messagebox::YesNoButtons);
 
 	if(msg_box.isAccepted())
 	{
