@@ -2244,7 +2244,7 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
 
-	diff_hlp->setForcedRecreateTypeNames(parsed_opts[ForceReCreateObjs].split(','));
+	diff_hlp->setForcedRecreateTypeNames(parsed_opts[ForceReCreateObjs].split(',', Qt::SkipEmptyParts));
 
 	if(!parsed_opts[PgSqlVer].isEmpty())
 		diff_hlp->setPgSQLVersion(parsed_opts[PgSqlVer]);
