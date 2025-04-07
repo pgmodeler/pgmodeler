@@ -145,9 +145,9 @@ namespace GuiUtilsNs {
 				Messagebox msgbox;
 
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
-							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+										Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-				if(msgbox.result()==QDialog::Accepted)
+				if(msgbox.isAccepted())
 					disableReferencesSQL(object);
 			}
 

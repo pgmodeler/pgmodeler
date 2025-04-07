@@ -24,7 +24,6 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
 	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=false;
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
 
@@ -56,14 +55,23 @@ void Messagebox::handleNoCancelClick()
 		reject();
 	else if(sender()==cancel_btn && no_btn->isVisible())
 	{
-		cancelled = true;
 		done(Canceled);
 	}
 }
 
-bool Messagebox::isCancelled()
+bool Messagebox::isAccepted()
 {
-	return cancelled;
+	return result() == Accepted;
+}
+
+bool Messagebox::isRejected()
+{
+	return result() == Rejected;
+}
+
+bool Messagebox::isCanceled()
+{
+	return result() == Canceled;
 }
 
 void Messagebox::setCustomOptionText(const QString &text)
@@ -152,22 +160,19 @@ void Messagebox::info(const QString &msg)
 	msgbox.show(msg, InfoIcon);
 }
 
-int Messagebox::confirm(const QString &msg)
+int Messagebox::confirm(const QString &msg, ButtonsId btns_id,
+												const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+												const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	Messagebox msgbox;
-	return msgbox.show(msg, ConfirmIcon);
-}
-
-int Messagebox::confirm(const QString &msg, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
-{
-	Messagebox msgbox;
-	return msgbox.show("", msg, ConfirmIcon, AllButtons,
+	return msgbox.show("", msg, ConfirmIcon, btns_id,
 										 yes_lbl, no_lbl, cancel_lbl,
 										 yes_ico, no_ico, cancel_ico);
 }
 
-int Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
-											const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+int Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons,
+										 const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+										 const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
 	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
@@ -256,7 +261,6 @@ int Messagebox::show(const QString &title, const QString &msg, IconType icon_typ
 		break;
 	}
 
-	cancelled=false;
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
 	if(!icon_name.isEmpty())

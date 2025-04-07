@@ -33,21 +33,13 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 	Q_OBJECT
 
 	private:
-		//! \brief Indicates wether the message box was cancelled
-		bool cancelled;
-
 		int exec() override;
 
 	protected:
 		void resizeEvent(QResizeEvent *) override;
 
 	public:
-		//! \brief Constants used to define the message box result
-		enum ResultId: int {
-			Rejected = QDialog::Rejected,
-			Accepted = QDialog::Accepted,
-			Canceled = 2
-		};
+		static constexpr int Canceled = 2;
 
 		//! \brief Constants used to define the message icon
 		enum IconType: unsigned {
@@ -113,15 +105,14 @@ class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 		//! \brief Shows an info message box with the provided message, an info icon and only OK button
 		static void info(const QString &msg);
 
-		//! \brief Shows an confirmation message box with the provided message, a confirmation icon and the yes/no buttons
-		static int confirm(const QString &msg);
-
-		//! \brief Shows an confirmation message box with the provided message, a confirmation icon and with all buttons visible
-		static int confirm(const QString &msg,
+		//! \brief Shows an confirmation message box with the provided message, a confirmation icon and the defined buttons id
+		static int confirm(const QString &msg, ButtonsId btns_id = YesNoButtons,
 											 const QString &yes_lbl="", const QString &no_lbl="", const QString &cancel_lbl="",
 											 const QString &yes_ico="", const QString &no_ico="", const QString &cancel_ico="");
 
-		bool isCancelled();
+		bool isAccepted();
+		bool isRejected();
+		bool isCanceled();
 
 		void setCustomOptionText(const QString &text);
 		void setCustomOptionTooltip(const QString &tooltip);

@@ -692,7 +692,7 @@ void GeneralConfigWidget::resetDialogsSizes()
 	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(msg_box.isAccepted())
 		widgets_geom.clear();
 }
 

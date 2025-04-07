@@ -558,7 +558,7 @@ void CustomTableWidget::removeRow()
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 	}
 
-	if(!conf_exclusion || (conf_exclusion && msg_box.result() == QDialog::Accepted))
+	if(!conf_exclusion || (conf_exclusion && msg_box.isAccepted()))
 	{
 		// Now we iterate reverselly over the row ids list and remove each row
 		for(auto itr = row_idxs.rbegin(); itr != row_idxs.rend(); itr++)
@@ -618,7 +618,7 @@ void CustomTableWidget::removeRows()
 		}
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
-				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
+				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.isAccepted()))
 		{
 			table_tbw->clearContents();
 			table_tbw->setRowCount(0);

@@ -1448,7 +1448,7 @@ void ModelWidget::convertRelationshipNN()
 			msg_box.show(tr("Do you really want to convert the relationship into an intermediate table?"),
 						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Accepted)
+			if(msg_box.isAccepted())
 			{
 				unsigned op_count=0;
 
@@ -1678,7 +1678,7 @@ void ModelWidget::convertRelationship1N()
  relationship can lead to unreversible changes or break other relationships in the linking chain! Do you want to proceed?"),
 							 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result() == QDialog::Rejected)
+	if(msg_box.isRejected())
 		return;
 
 	unsigned op_count = op_list->getCurrentSize();
@@ -2802,7 +2802,7 @@ void ModelWidget::protectObject()
 												Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 					}
 
-					if(msgbox.result()==QDialog::Accepted || msgbox.isCustomOptionChecked())
+					if(msgbox.isAccepted() || msgbox.isCustomOptionChecked())
 					{
 						std::vector<BaseObject *> objects(db_model->getObjects(object));
 
@@ -3510,7 +3510,7 @@ void ModelWidget::removeObjects(bool cascade)
 		}
 
 		//If the user confirmed the removal or its a cut operation
-		if(msg_box.result()==QDialog::Accepted || ModelWidget::cut_operation)
+		if(msg_box.isAccepted() || ModelWidget::cut_operation)
 		{
 			qApp->setOverrideCursor(Qt::WaitCursor);
 

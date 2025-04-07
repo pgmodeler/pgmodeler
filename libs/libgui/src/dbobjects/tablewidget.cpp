@@ -866,7 +866,7 @@ void TableWidget::updatePkColumnsCheckState(bool has_pk)
 
 	listObjects(ObjectType::Column);
 
-	if(has_pk && !pk_col_rows.isEmpty() && msgbox.result() == QDialog::Rejected)
+	if(has_pk && !pk_col_rows.isEmpty() && msgbox.isRejected())
 	{
 		for(auto &row : pk_col_rows)
 			tab->setCellCheckState(Qt::Checked, row, 0);

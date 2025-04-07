@@ -365,7 +365,7 @@ void SnippetsConfigWidget::removeAllSnippets()
 	msg_box.show(tr("Do you really want to remove all snippets?"),
 				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.isAccepted())
 	{
 		config_params.clear();
 		filterSnippets(0);

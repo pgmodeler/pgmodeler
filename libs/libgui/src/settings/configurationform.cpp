@@ -169,7 +169,7 @@ void ConfigurationForm::loadConfiguration()
 				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));
 
-				if(msg_box.result() == QDialog::Accepted)
+				if(msg_box.isAccepted())
 					config_wgt->restoreDefaults();
 			}
 		}
@@ -183,7 +183,7 @@ void ConfigurationForm::restoreDefaults()
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(msg_box.isAccepted())
 		qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();
 }
 
