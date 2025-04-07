@@ -130,24 +130,23 @@ namespace GuiUtilsNs {
 			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(object);
 
 			if(object->isSystemObject())
+			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-								.arg(object->getName(true))
-								.arg(object->getTypeName()),
+								.arg(object->getName(true), object->getTypeName()),
 								ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 
 			object->setSQLDisabled(disable);
 
 			if(tab_obj && tab_obj->getParentTable())
 				tab_obj->getParentTable()->setModified(true);
 
-			if(obj_type!=ObjectType::Database && curr_val!=disable)
+			if(obj_type != ObjectType::Database && curr_val != disable)
 			{
-				Messagebox msgbox;
+				int res = Messagebox::confirm(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model."))
+																			.arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")));
 
-				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
-										Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-				if(msgbox.isAccepted())
+				if(Messagebox::isAccepted(res))
 					disableReferencesSQL(object);
 			}
 
