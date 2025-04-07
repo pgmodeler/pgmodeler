@@ -549,16 +549,13 @@ void CustomTableWidget::removeRow()
 	std::sort(row_idxs.begin(), row_idxs.end());
 	row_idxs.erase(std::unique(row_idxs.begin(), row_idxs.end()), row_idxs.end());
 
-	Messagebox msg_box;
-	unsigned 	row_idx = table_tbw->currentRow();
+	int res = Messagebox::Rejected;
+	unsigned row_idx = table_tbw->currentRow();
 
 	if(conf_exclusion)
-	{
-		msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item(s)?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-	}
+		res = Messagebox::confirm(tr("Do you really want to remove the selected item(s)?"));
 
-	if(!conf_exclusion || (conf_exclusion && msg_box.isAccepted()))
+	if(!conf_exclusion || (conf_exclusion && Messagebox::isAccepted(res)))
 	{
 		// Now we iterate reverselly over the row ids list and remove each row
 		for(auto itr = row_idxs.rbegin(); itr != row_idxs.rend(); itr++)
@@ -607,18 +604,15 @@ void CustomTableWidget::removeRows()
 	if(table_tbw->rowCount() > 0)
 	{
 		QObject *sender_obj=sender();
-		Messagebox msg_box;
+		int res = Messagebox::Rejected;
 
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
-		if(conf_exclusion && sender_obj==remove_all_tb)
-		{
-			msg_box.show(tr("Confirmation"),tr("Do you really want to remove all the items?"),
-						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-		}
+		if(conf_exclusion && sender_obj == remove_all_tb)
+			res = Messagebox::confirm(tr("Do you really want to remove all the items?"));
 
-		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
-				(conf_exclusion &&  sender_obj==remove_all_tb && msg_box.isAccepted()))
+		if(!conf_exclusion || (conf_exclusion && sender_obj != remove_all_tb) ||
+				(conf_exclusion &&  sender_obj == remove_all_tb && Messagebox::isAccepted(res)))
 		{
 			table_tbw->clearContents();
 			table_tbw->setRowCount(0);
