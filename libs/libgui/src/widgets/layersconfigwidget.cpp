@@ -131,16 +131,14 @@ void LayersConfigWidget::updateActiveLayers()
 void LayersConfigWidget::removeLayer(bool clear)
 {
 	QTableWidgetItem *item = nullptr;
-	Messagebox msg_box;
+	QString msg;
 
 	if(clear)
-		msg_box.show(tr("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		msg = tr("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?");
 	else
-		msg_box.show(tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		msg = tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?");
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(Messagebox::confirm(msg)))
 	{
 		if(clear)
 		{

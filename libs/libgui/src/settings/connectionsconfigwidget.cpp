@@ -508,12 +508,9 @@ void ConnectionsConfigWidget::saveConfiguration()
 		{
 			if(!one_time_conn_edit)
 			{
-				Messagebox msg_box;
+				int res = Messagebox::confirm(tr("There is a connection being configured! Do you want to save it before applying settings?"));
 
-				msg_box.show(tr("There is a connection being configured! Do you want to save it before applying settings?"),
-										 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-				if(msg_box.result()==QDialog::Accepted)
+				if(Messagebox::isAccepted(res))
 					handleConnection();
 			}
 			else

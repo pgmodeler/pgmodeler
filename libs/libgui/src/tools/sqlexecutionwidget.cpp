@@ -78,6 +78,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
 	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
+	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
@@ -90,14 +91,11 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	action_search->setCheckable(true);
 	action_wrap = code_menu.addAction(QIcon(GuiUtilsNs::getIconPath("wordwrap")), tr("Word wrap"), QKeySequence("Ctrl+W"));
 	action_wrap->setCheckable(true);
-	action_clear_all = code_menu.addAction(QIcon(GuiUtilsNs::getIconPath("cleartext")), tr("Clear all"), QKeySequence("Ctrl+Backspace"));
 
 	QAction *act = snippets_menu.menuAction();
 	act->setText(tr("Snippets"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("codesnippet")));
 
-	code_menu.insertAction(action_clear_all, act);
-	code_menu.insertSeparator(action_clear_all);
 	code_tb->setMenu(&code_menu);
 
 	action_filter = result_menu.addAction(QIcon(GuiUtilsNs::getIconPath("filter")), tr("Filter"), QKeySequence("Ctrl+T"));
@@ -156,7 +154,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(action_save, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 	connect(action_save_as, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 
-	connect(action_clear_all, &QAction::triggered, this, &SQLExecutionWidget::clearAll);
+	connect(clear_all_tb, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
 
 	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, [this](){
 		run_sql_tb->setEnabled(!sql_cmd_txt->document()->isEmpty());
@@ -833,15 +831,9 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw, bool csv_format)
 
 int SQLExecutionWidget::clearAll()
 {
-	Messagebox msg_box;
-	int res = 0;
+	int res = Messagebox::confirm(tr("The SQL input field and the results grid will be cleared! Want to proceed?"));
 
-	msg_box.show(tr("The SQL input field and the results grid will be cleared! Want to proceed?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	res = msg_box.result();
-
-	if(res==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		sql_cmd_txt->setPlainText("");
 		output_tb->setChecked(false);
@@ -1139,12 +1131,9 @@ void SQLExecutionWidget::loadSQLHistory()
 
 void SQLExecutionWidget::destroySQLHistory()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"));
 
-	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
@@ -1204,12 +1193,9 @@ void SQLExecutionWidget::showHistoryContextMenu()
 
 	if(exec_act == action_clear)
 	{
-		Messagebox msg_box;
+		int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"));
 
-		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
-									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msg_box.result() == QDialog::Accepted)
+		if(Messagebox::isAccepted(res))
 		{
 			cmd_history_txt->clear();
 			cmd_history[sql_cmd_conn.getConnectionId(true,true)].clear();

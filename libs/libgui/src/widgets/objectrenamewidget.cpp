@@ -181,7 +181,7 @@ void ObjectRenameWidget::applyRenaming()
 				msg_box.show(tr("<strong>CAUTION:</strong> You're about to rename multiple objects at once! This operation may cause irreversible changes to other objects not necessarily selected. Do you really want to proceed?"),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-				if(msg_box.result() == QDialog::Rejected)
+				if(msg_box.isRejected())
 					return;
 			}
 

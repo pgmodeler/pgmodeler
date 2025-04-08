@@ -100,7 +100,7 @@ void ChangelogWidget::clearChangelog()
 date of modification in partial diff will be unavailable! Do you want to proceed?"),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-	if(msgbox.result() == QDialog::Accepted)
+	if(msgbox.isAccepted())
 	{
 		model->getDatabaseModel()->clearChangelog();
 		model->setModified(true);

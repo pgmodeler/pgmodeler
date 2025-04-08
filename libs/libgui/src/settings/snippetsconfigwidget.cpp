@@ -360,12 +360,9 @@ void SnippetsConfigWidget::removeSnippet()
 
 void SnippetsConfigWidget::removeAllSnippets()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Do you really want to remove all snippets?"));
 
-	msg_box.show(tr("Do you really want to remove all snippets?"),
-				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.clear();
 		filterSnippets(0);

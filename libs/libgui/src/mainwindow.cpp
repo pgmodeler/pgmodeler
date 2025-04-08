@@ -420,7 +420,7 @@ void MainWindow::handleInitializationFailure(Exception &e)
 							GuiUtilsNs::getIconPath("defaults"), GuiUtilsNs::getIconPath("cancel"), "");
 
 	// Running the CLI in config file restoration mode is the user accepts the message box
-	if(msgbox.result() == QDialog::Accepted)
+	if(msgbox.isAccepted())
 	{
 		QProcess proc;
 		proc.setProgram(GlobalAttributes::getPgModelerCLIPath());
@@ -976,8 +976,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			{
 				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
-							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
-							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
+										 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
+										 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				conf_wgt->appendConfigurationSection(Attributes::Configuration,
 																						 {{ Attributes::AlertUnsavedModels,
@@ -985,7 +985,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
-				if(msg_box.result() == QDialog::Rejected)
+				if(msg_box.isRejected())
 					event->ignore();
 			}
 		}
@@ -1005,7 +1005,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 																					 {{ Attributes::AlertOpenSqlTabs,
 																							msg_box.isCustomOptionChecked() ? Attributes::False : Attributes::True }});
 
-			if(msg_box.result()==QDialog::Rejected)
+			if(msg_box.isRejected())
 				event->ignore();
 		}
 #else
@@ -1680,13 +1680,14 @@ void MainWindow::closeModel(int model_id)
 		if(model->isModified())
 		{
 			msg_box.show(tr("Save model"),
-						 tr("The model <strong>%1</strong> was modified! Do you really want to close without saving it?").arg(model->getDatabaseModel()->getName()),
-						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+									 tr("The model <strong>%1</strong> was modified! Do you really want to close without saving it?")
+									 .arg(model->getDatabaseModel()->getName()),
+									 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 #endif
 
 		if(!model->isModified() ||
-				(model->isModified() && msg_box.result()==QDialog::Accepted))
+				(model->isModified() && msg_box.isAccepted()))
 		{
 			model_nav_wgt->removeModel(model_id);
 			model_tree_states.remove(model);
@@ -1831,20 +1832,20 @@ void MainWindow::saveModel(ModelWidget *model)
 			if(confirm_validation && db_model->isInvalidated())
 			{
 				msg_box.show(tr("Confirmation"),
-							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
-							 Messagebox::AlertIcon, Messagebox::AllButtons,
-							 tr("Validate"), tr("Save anyway"), "",
-								GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("save"));
+										 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> has not been validated since the last modification! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
+										 Messagebox::AlertIcon, Messagebox::AllButtons,
+										 tr("Validate"), tr("Save anyway"), "",
+										 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("save"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
-				if(msg_box.isCancelled())
+				if(msg_box.isCanceled())
 				{
 					model_save_timer.stop();
 
 					//The autosave timer will be reactivated in 5 minutes
 					QTimer::singleShot(300000, &model_save_timer, qOverload<>(&QTimer::start));
 				}
-				else if(msg_box.result()==QDialog::Accepted)
+				else if(msg_box.isAccepted())
 				{
 					validation_btn->setChecked(true);
 					this->pending_op=(sender()==action_save_as ? PendingSaveAsOp : PendingSaveOp);
@@ -1857,7 +1858,7 @@ void MainWindow::saveModel(ModelWidget *model)
 
 			if((!confirm_validation ||
 					(!db_model->isInvalidated() ||
-					 (confirm_validation && db_model->isInvalidated() && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
+					 (confirm_validation && db_model->isInvalidated() && !msg_box.isCanceled() && msg_box.isRejected())))
 				 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
@@ -1894,7 +1895,7 @@ void MainWindow::saveModel(ModelWidget *model)
 													 .arg(model->getDatabaseModel()->getName()).arg(model->getFilename()),
 													 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-							save_model = msg_box.result() == QDialog::Accepted;
+							save_model = msg_box.isAccepted();
 							break;
 						}
 					}
@@ -1936,7 +1937,7 @@ void MainWindow::exportModel()
 					 tr("Validate"), tr("Export anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("export"));
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			validation_btn->setChecked(true);
 			this->pending_op=PendingExportOp;
@@ -1945,7 +1946,7 @@ void MainWindow::exportModel()
 	}
 
 	if(!confirm_validation ||
-			(!db_model->isInvalidated() || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
+			(!db_model->isInvalidated() || (confirm_validation && !msg_box.isCanceled() && msg_box.isRejected())))
 	{
 		stopTimers(true);
 
@@ -2006,7 +2007,7 @@ void MainWindow::diffModelDatabase()
 					 tr("Validate"), tr("Diff anyway"), "",
 					 GuiUtilsNs::getIconPath("validation"), GuiUtilsNs::getIconPath("diff"));
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			validation_btn->setChecked(true);
 			this->pending_op=PendingDiffOp;
@@ -2015,7 +2016,7 @@ void MainWindow::diffModelDatabase()
 	}
 
 	if(!confirm_validation || !db_model ||
-			((db_model && !db_model->isInvalidated()) || (confirm_validation && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
+			((db_model && !db_model->isInvalidated()) || (confirm_validation && !msg_box.isCanceled() && msg_box.isRejected())))
 	{
 		modeldb_diff_frm.setModelWidget(current_model);
 		stopTimers(true);
@@ -2079,9 +2080,9 @@ void MainWindow::printModel()
 										 GuiUtilsNs::getIconPath("defaults"));
 			}
 
-			if(!msg_box.isCancelled())
+			if(!msg_box.isCanceled())
 			{
-				if(msg_box.result()==QDialog::Rejected)
+				if(msg_box.isRejected())
 				{
 					// Retore the page configuration to the scene's default
 					printer->setPageLayout(orig_page_lt);
@@ -2175,7 +2176,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 							 tr("Fix model"), tr("Cancel"), "",
 							 GuiUtilsNs::getIconPath("fixobject"), GuiUtilsNs::getIconPath("cancel"));
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(msg_box.isAccepted())
 		fixModel(filename);
 }
 
@@ -2578,24 +2579,21 @@ void MainWindow::arrangeObjects()
 	if(!current_model)
 		return;
 
-	Messagebox msgbox;
+	int res =	Messagebox::confirm(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"));
 
-	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"),
-							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	if(!Messagebox::isAccepted(res))
+		return;
 
-	if(msgbox.result() == QDialog::Accepted)
-	{
-		qApp->setOverrideCursor(Qt::WaitCursor);
+	qApp->setOverrideCursor(Qt::WaitCursor);
 
-		if(sender() == arrange_menu.actions().at(0))
-			current_model->rearrangeSchemasInGrid();
-		else if(sender() == arrange_menu.actions().at(1))
-			current_model->rearrangeTablesHierarchically();
-		else
-			current_model->rearrangeTablesInSchemas();
+	if(sender() == arrange_menu.actions().at(0))
+		current_model->rearrangeSchemasInGrid();
+	else if(sender() == arrange_menu.actions().at(1))
+		current_model->rearrangeTablesHierarchically();
+	else
+		current_model->rearrangeTablesInSchemas();
 
-		qApp->restoreOverrideCursor();
-	}
+	qApp->restoreOverrideCursor();
 }
 
 void MainWindow::toggleCompactView()

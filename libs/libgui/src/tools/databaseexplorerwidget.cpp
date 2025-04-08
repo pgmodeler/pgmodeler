@@ -1414,9 +1414,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
 					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
-			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-			if(msg_box.result()==QDialog::Accepted)
+			if(Messagebox::isAccepted(Messagebox::confirm(msg)))
 			{
 				QTreeWidgetItem *parent=nullptr;
 				attribs_map attribs;
@@ -1483,7 +1481,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 		msg_box.setCustomOptionText(tr("Also restart sequences"));
 		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			attribs_map attribs;
 			QString truc_cmd;
@@ -1508,7 +1506,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			conn.executeDDLCommand(truc_cmd);
 		}
 
-		return (msg_box.result()==QDialog::Accepted);
+		return msg_box.isAccepted();
 	}
 	catch(Exception &e)
 	{

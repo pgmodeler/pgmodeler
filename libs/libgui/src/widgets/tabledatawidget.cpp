@@ -64,10 +64,14 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(add_row_tb, &QToolButton::clicked, this, &TableDataWidget::addRow);
 	connect(dup_rows_tb, &QToolButton::clicked, this, &TableDataWidget::duplicateRows);
+
 	connect(del_rows_tb, &QToolButton::clicked, this, &TableDataWidget::deleteRows);
 	connect(del_cols_tb, &QToolButton::clicked, this, &TableDataWidget::deleteColumns);
-	connect(clear_rows_tb, &QToolButton::clicked, this, &TableDataWidget::clearRows);
+
 	connect(clear_cols_tb, &QToolButton::clicked, this, &TableDataWidget::clearColumns);
+	connect(clear_rows_tb, &QToolButton::clicked, this, [this](){
+		clearRows();
+	});
 
 	connect(data_tbw, &QTableWidget::currentCellChanged, this, &TableDataWidget::insertRowOnTabPress, Qt::QueuedConnection);
 	connect(&col_names_menu, &QMenu::triggered, this, &TableDataWidget::addColumn);
@@ -187,12 +191,9 @@ void TableDataWidget::deleteRows()
 
 void TableDataWidget::deleteColumns()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Delete columns is an irreversible action! Do you really want to proceed?"));
 
-	msg_box.show(tr("Delete columns is an irreversible action! Do you really want to proceed?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		QTableWidgetSelectionRange sel_range;
 
@@ -221,13 +222,12 @@ void TableDataWidget::deleteColumns()
 
 void TableDataWidget::clearRows(bool confirm)
 {
-	Messagebox msg_box;
+	int res = Messagebox::Rejected;
 
 	if(confirm)
-		msg_box.show(tr("Remove all rows is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		res = Messagebox::confirm(tr("Remove all rows is an irreversible action! Do you really want to proceed?"));
 
-	if(!confirm || msg_box.result()==QDialog::Accepted)
+	if(!confirm || Messagebox::isAccepted(res))
 	{
 		data_tbw->clearContents();
 		data_tbw->setRowCount(0);
@@ -237,12 +237,9 @@ void TableDataWidget::clearRows(bool confirm)
 
 void TableDataWidget::clearColumns()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Remove all columns is an irreversible action! Do you really want to proceed?"));
 
-		msg_box.show(tr("Remove all columns is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		clearRows(false);
 		data_tbw->setColumnCount(0);
@@ -375,7 +372,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 									Messagebox::AlertIcon,
 									Messagebox::YesNoButtons);
 
-			if(msgbox.result() == QDialog::Accepted)
+			if(msgbox.isAccepted())
 			{
 				try
 				{
