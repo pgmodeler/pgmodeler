@@ -2020,8 +2020,10 @@ void MainWindow::diffModelDatabase()
 
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, this, [this](QString conn_id, QString database, QString filename){
 			__trycatch(
+				qApp->setOverrideCursor(Qt::WaitCursor);
 				action_manage->setChecked(true);
 				sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
+				qApp->restoreOverrideCursor();
 			)
 		});
 
