@@ -216,6 +216,22 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		settings_tbw->setTabVisible(4, checked);
 	});
 
+	auto lmb_slot = [this](bool checked){
+		if(checked)
+			run_in_transaction_chk->setChecked(false);
+	};
+
+	connect(ignore_duplic_chk, &QCheckBox::toggled, this, lmb_slot);
+	connect(ignore_error_codes_chk, &QCheckBox::toggled, this, lmb_slot);
+
+	connect(run_in_transaction_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+		{
+			ignore_error_codes_chk->setChecked(false);
+			ignore_duplic_chk->setChecked(false);
+		}
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff."
 	ignore_errors_chk->setChecked(true);
