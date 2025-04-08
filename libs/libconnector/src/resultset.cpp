@@ -284,16 +284,16 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 
 bool ResultSet::accessTuple(TupleId tuple_id)
 {
-	int tuple_count=getTupleCount();
+	int tuple_count = getTupleCount();
 
-	/* Raises an error if the result
-		is derived from a command which affects only rows or
-		The tuple type to be accessed is invalid, out of
-		set defined by the class */
-	if(empty_result || tuple_id > NextTuple)
+	/* Raises an error if trying to access the tuple with
+	 * an invalid tuple id */
+	if(tuple_id > NextTuple)
 		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(tuple_count == 0)
+	/* If we have an empty result (generated from a DDL command for example)
+	 * or we have no tuples in the result set (generated from a DML but without returned rows) */
+	if(empty_result || tuple_count == 0)
 		return false;
 
 	bool accessed = true;
