@@ -842,6 +842,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(export_dbms && opts.count(Simulate) && opts.count(NonTransactional))
 			throw Exception(tr("The options `%1' and `%2' can't be used together when exporting to DBMS!").arg(Simulate).arg(NonTransactional), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		if(export_dbms && (opts.count(IgnoreErrorCodes) || opts.count(IgnoreDuplicates)) && !opts.count(NonTransactional))
+			throw Exception(tr("The options `%1' and `%2' can't be used in transactional export mode. Use `%3' to enable those options!").arg(IgnoreErrorCodes, IgnoreDuplicates, NonTransactional), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
