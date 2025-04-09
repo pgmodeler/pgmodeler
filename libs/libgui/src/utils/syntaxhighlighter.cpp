@@ -417,25 +417,19 @@ const SyntaxHighlighter::GroupConfig *SyntaxHighlighter::getGroupConfig(const QS
 
 bool SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 {
-	QString curr_txt;
+	QString curr_chr;
 	QPlainTextEdit *code_txt = qobject_cast<QPlainTextEdit *>(parent());
 	QTextCursor tc = code_txt->textCursor();
+	int orig_pos = tc.position();
 	bool is_numbered_editor = (qobject_cast<NumberedTextEditor *>(code_txt) != nullptr);
 
 	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-	curr_txt = tc.selectedText();
-	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+	curr_chr = tc.selectedText();
+	tc.setPosition(orig_pos);
 
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
-	{
-		tc = code_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-		curr_txt = tc.selectedText();
-	}
-
-	/* If the previous character from the current cursor position
+	/* If the next character from the current cursor position
 	 * is not an enclosing char, we just stop here. */
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+	if(curr_chr != cfg.open_char && curr_chr != cfg.close_char)
 	{
 		/* If the code_txt is not an instance of NumberedTextEditor
 		 * we need to clear the extra selections to undo the highlighting
@@ -449,18 +443,18 @@ bool SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 	QChar inc_chr, dec_chr;
 	QString code = code_txt->toPlainText();
 	int chr_balance_cnt = 0,
-			pos = tc.position(),
-			ini_pos = pos,
+			pos = 0, ini_pos = 0,
 
 			/* If the current text is an open char we
 			 * search for enclosing char ahead of the
 			 * current position (1) otherwise we search
 			 * for a close char behind of the current
 			 * position (-1) */
-			inc = (curr_txt == cfg.open_char ? 1 : -1);
+			inc = (curr_chr == cfg.open_char ? 1 : -1);
 
-	inc_chr = (curr_txt == cfg.open_char ? cfg.open_char : cfg.close_char);
-	dec_chr = (curr_txt == cfg.open_char ? cfg.close_char : cfg.open_char);
+	pos = ini_pos = tc.position();
+	inc_chr = (curr_chr == cfg.open_char ? cfg.open_char : cfg.close_char);
+	dec_chr = (curr_chr == cfg.open_char ? cfg.close_char : cfg.open_char);
 
 	while(pos >= 0 && pos < code.size())
 	{
