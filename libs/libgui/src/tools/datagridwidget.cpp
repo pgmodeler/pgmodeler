@@ -30,6 +30,8 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 {
 	setupUi(this);
 
+	schema_lbl->setText(sch_name);
+
 	rows_cnt_lbl->setToolTip(rows_cnt_ico_lbl->toolTip());
 	rows_added_lbl->setToolTip(rows_added_ico_lbl->toolTip());
 	rows_changed_lbl->setToolTip(rows_changed_ico_lbl->toolTip());
