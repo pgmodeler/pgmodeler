@@ -554,16 +554,6 @@ void DataGridWidget::enableRowControlButtons()
 													 sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
 
-/* void DataGridWidget::resetFilterControls()
-{
-	ord_column_cmb->clear();
-	ord_columns_lst->clear();
-	add_ord_col_tb->setEnabled(false);
-	filter_txt->clear();
-	asc_rb->setChecked(true);
-	clear_ord_cols_tb->setEnabled(false);
-} */
-
 void DataGridWidget::addSortColumnToList()
 {
 	if(ord_column_cmb->count() > 0)
