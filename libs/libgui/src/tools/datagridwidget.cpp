@@ -30,6 +30,8 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 {
 	setupUi(this);
 
+	schema_lbl->setText(sch_name);
+
 	rows_cnt_lbl->setToolTip(rows_cnt_ico_lbl->toolTip());
 	rows_added_lbl->setToolTip(rows_added_ico_lbl->toolTip());
 	rows_changed_lbl->setToolTip(rows_changed_ico_lbl->toolTip());
@@ -551,16 +553,6 @@ void DataGridWidget::enableRowControlButtons()
 	emit s_browseEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) &&
 													 sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
-
-/* void DataGridWidget::resetFilterControls()
-{
-	ord_column_cmb->clear();
-	ord_columns_lst->clear();
-	add_ord_col_tb->setEnabled(false);
-	filter_txt->clear();
-	asc_rb->setChecked(true);
-	clear_ord_cols_tb->setEnabled(false);
-} */
 
 void DataGridWidget::addSortColumnToList()
 {

@@ -139,8 +139,9 @@ class __libgui SyntaxHighlighter: public QSyntaxHighlighter {
 		 * the first match position in the text, otherwise, it will be invalid */
 		bool matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info);
 
-		//! \brief Applies the enclosing char formats based on the current cursor position on the parent input
-		void highlightEnclosingChars(const EnclosingCharsCfg &cfg);
+		/*! \brief Tries to apply the enclosing char formats based on the current cursor position
+		 *  on the parent input. Returns true when the enclose char config was applied */
+		bool highlightEnclosingChars(const EnclosingCharsCfg &cfg);
 
 		//! \brief Returns a const ref to the named group configuration
 		const GroupConfig *getGroupConfig(const QString &group);
