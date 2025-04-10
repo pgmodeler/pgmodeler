@@ -22,6 +22,7 @@
 #include "utilsns.h"
 #include <QApplication>
 #include <QScreen>
+#include <QTimeLine>
 
 unsigned BaseObjectView::global_sel_order {1};
 
@@ -42,6 +43,24 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	sql_disabled_item=nullptr;
 	placeholder=nullptr;
 	setSourceObject(object);
+
+	blink_tl.setDuration(300);
+	blink_tl.setFrameRange(0, 100);
+	blink_tl.setLoopCount(2);
+	blink_tl.setEasingCurve(QEasingCurve::OutQuad);
+
+	connect(&blink_tl, &QTimeLine::frameChanged, this, [this](int frame){
+		setOpacity(1.0 - (frame / 100.0));
+	});
+
+	connect(&blink_tl, &QTimeLine::finished, this, [this](){
+		setOpacity(1);
+	});
+}
+
+void BaseObjectView::blink()
+{
+	blink_tl.start();
 }
 
 BaseObjectView::~BaseObjectView()

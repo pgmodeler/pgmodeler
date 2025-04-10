@@ -26,6 +26,7 @@
 #define BASE_OBJECT_VIEW_H
 
 #include <QTextCharFormat>
+#include <QTimeLine>
 #include "basegraphicobject.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
@@ -34,6 +35,8 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 	Q_OBJECT
 
 	protected:
+		QTimeLine blink_tl;
+
 		/*! \brief Indicates if the placeholder object must be used when moving objects.
 		Place holder objects when enabled causes a significant performance gain mainly when
 		moving tables linked to relationships because the relationships will be updated only
@@ -213,6 +216,9 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Resizes to the specified dimension the passed polygon
 		static void resizePolygon(QPolygonF &pol, double width, double height);
+
+	public slots:
+		void blink();
 
 	protected slots:
 		//! \brief Make the basic object operations
