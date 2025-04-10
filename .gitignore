@@ -11,14 +11,17 @@
 *.Debug
 *.Release
 *.old
+*.tmp
+*.log
 
 moc_*.cpp
 moc_*.h
-qrc_resources.cpp
+qrc_*.cpp
 ui_*.h
 windeploy.log
 Makefile
 
+.qtc_clangd/*
 build/*
 dist/*
 moc/*
