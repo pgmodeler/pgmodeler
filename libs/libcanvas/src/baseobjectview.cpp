@@ -44,23 +44,46 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	placeholder=nullptr;
 	setSourceObject(object);
 
-	blink_tl.setDuration(300);
-	blink_tl.setFrameRange(0, 100);
-	blink_tl.setLoopCount(2);
-	blink_tl.setEasingCurve(QEasingCurve::OutQuad);
+	fade_tl.setFrameRange(0, 100);
+	fade_tl.setEasingCurve(QEasingCurve::Linear);
 
-	connect(&blink_tl, &QTimeLine::frameChanged, this, [this](int frame){
-		setOpacity(1.0 - (frame / 100.0));
+	connect(&fade_tl, &QTimeLine::frameChanged, this, [this](int frame){
+		setOpacity(frame / 100.0);
 	});
 
-	connect(&blink_tl, &QTimeLine::finished, this, [this](){
-		setOpacity(1);
+	connect(&fade_tl, &QTimeLine::finished, this, [this]() {
+		setOpacity(fade_tl.property(FinalOpacity).toReal());
 	});
 }
 
 void BaseObjectView::blink()
 {
-	blink_tl.start();
+	fade(true, 200, 3);
+}
+
+void BaseObjectView::fade(bool fd_in, int duration, int loop_cnt, qreal final_opacity)
+{
+	fade_tl.setDirection(fd_in ? QTimeLine::Forward : QTimeLine::Backward);
+	fade_tl.setLoopCount(loop_cnt);
+	fade_tl.setDuration(duration);
+	fade_tl.setProperty(FinalOpacity, final_opacity);
+	fade_tl.start();
+}
+
+void BaseObjectView::fadeIn()
+{
+	if(opacity() >= 1)
+		return;
+
+	fade(true, 200);
+}
+
+void BaseObjectView::fadeOut(qreal min_opacity)
+{
+	if(opacity() <= min_opacity)
+		return;
+
+	fade(false, 200, 1, min_opacity);
 }
 
 BaseObjectView::~BaseObjectView()
