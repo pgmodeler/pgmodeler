@@ -26,14 +26,21 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
-	net_manager = new QNetworkAccessManager(this);
+	GuiUtilsNs::configureWidgetFont(tip_title_lbl, GuiUtilsNs::BigFontFactor);
+
+	index_lst->setVisible(false);
+	splitter->setSizes({ 1000, 500 });
+
+	connect(index_tb, &QToolButton::clicked, index_lst, &QListWidget::setVisible);
+
+	/* net_manager = new QNetworkAccessManager(this);
 
 	connect(net_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply){
 		if(reply->error() == QNetworkReply::NoError)
 		{
 			textBrowser->setMarkdown(reply->readAll());
 		}
-	});
+	}); */
 }
 
 TipOfDayForm::~TipOfDayForm()
@@ -53,8 +60,8 @@ QString TipOfDayForm::loadTipOfDay(const QString &url)
 
 void TipOfDayForm::showEvent(QShowEvent *event)
 {
-	if(!event->spontaneous())
+	/* if(!event->spontaneous())
 	{
 		net_manager->get(QNetworkRequest(QUrl("http://localhost:8000/checkupdate?version=1.1.0")));
-	}
+	} */
 }

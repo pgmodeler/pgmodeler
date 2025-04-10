@@ -27,7 +27,7 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 	Q_OBJECT
 
 	private:
-		QNetworkAccessManager *net_manager;
+		//QNetworkAccessManager *net_manager;
 
 		QString loadTipOfDay(const QString &url);
 
