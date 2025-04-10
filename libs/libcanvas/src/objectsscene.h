@@ -320,7 +320,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static QPageLayout getPageLayout();
 
-		void addItem(QGraphicsItem *item);
+		void addItem(QGraphicsItem *item, bool blink_new = false);
 		void removeItem(QGraphicsItem *item);
 
 		/*! \brief Define the geometry of the scene. If the rectangle is invalid or
