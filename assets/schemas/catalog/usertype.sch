@@ -127,8 +127,7 @@
 			SELECT array_agg(
 			attname
 			|| ':'
-			|| CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END
-			|| format_type(atttypid,atttypmod)
+			|| _tp.oid
 			|| ':'
 			|| attcollation
 			) AS typeattrib
