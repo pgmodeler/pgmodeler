@@ -26,6 +26,7 @@
 #define BASE_OBJECT_VIEW_H
 
 #include <QTextCharFormat>
+#include <QTimeLine>
 #include "basegraphicobject.h"
 #include "roundedrectitem.h"
 #include "textpolygonitem.h"
@@ -34,6 +35,12 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 	Q_OBJECT
 
 	protected:
+		//! \brief Fade in/out animations attributes
+		static constexpr char FinalOpacity[] = "final_opacity";
+
+		//! \brief Controls the animation fade in/out animations
+		QTimeLine fade_tl;
+
 		/*! \brief Indicates if the placeholder object must be used when moving objects.
 		Place holder objects when enabled causes a significant performance gain mainly when
 		moving tables linked to relationships because the relationships will be updated only
@@ -120,6 +127,13 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Clear all the ids and moves the object to default layer (0)
 		void resetLayers();
+
+		/*! \brief Fades in/out the object in an animation.
+		 *  If fd_in is true then the object is faded in otherwise faded out.
+		 *  The duration is the duration in ms of the animation
+		 *  The loop_cnt is the number of the loops of the animation.
+		 *  The min_opacity is used in fade out operation to determine a minimum opacity value. */
+		void fade(bool fd_in, int duration, int loop_cnt = 1, qreal final_opacity = 1);
 
 	public:
 		static constexpr double VertSpacing=2.0,
@@ -213,6 +227,11 @@ class __libcanvas BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Resizes to the specified dimension the passed polygon
 		static void resizePolygon(QPolygonF &pol, double width, double height);
+
+	public slots:
+		void blink();
+		void fadeIn();
+		void fadeOut(qreal min_opacity);
 
 	protected slots:
 		//! \brief Make the basic object operations

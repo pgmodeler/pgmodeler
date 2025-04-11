@@ -152,7 +152,9 @@ void OperationListWidget::undoOperation()
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
+		model_wgt->setBlinkAddedObjects(true);
 		model_wgt->op_list->undoOperation();
+		model_wgt->setBlinkAddedObjects(false);
 		notifyUpdateOnModel();
 		qApp->restoreOverrideCursor();
 	}
@@ -176,7 +178,9 @@ void OperationListWidget::redoOperation()
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
+		model_wgt->setBlinkAddedObjects(true);
 		model_wgt->op_list->redoOperation();
+		model_wgt->setBlinkAddedObjects(false);
 		notifyUpdateOnModel();
 		qApp->restoreOverrideCursor();
 	}

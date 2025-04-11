@@ -109,7 +109,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	plugins_actions = PgModelerGuiPlugin::getPluginsActions(PgModelerGuiPlugin::ModelAction);
 	current_zoom = 1;
-	modified = panning_mode = wheel_move = scene_moving = false;
+	modified = panning_mode = wheel_move = false;
+	scene_moving = blink_new_objs = false;
 	curr_show_grid = curr_show_delim = true;
 	new_obj_type = ObjectType::BaseObject;
 
@@ -398,14 +399,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_fade_in = new QAction(QIcon(GuiUtilsNs::getIconPath("fadein")), tr("Fade in"), this);
 	action_fade_out = new QAction(QIcon(GuiUtilsNs::getIconPath("fadeout")), tr("Fade out"), this);
 
-	//action_fade_objs_in = fade_in_menu.menuAction();
-	//action_fade_objs_in->setIcon(QIcon(GuiUtilsNs::getIconPath("fadein")));
-	//action_fade_objs_in->setText(tr("Fade in"));
-
-	//action_fade_objs_out = fade_out_menu.menuAction();
-	//action_fade_objs_out->setIcon(QIcon(GuiUtilsNs::getIconPath("fadeout")));
-	//action_fade_objs_out->setText(tr("Fade out"));
-
 	action_fade_rels = fade_rels_menu.menuAction();
 	action_fade_rels->setIcon(QIcon(GuiUtilsNs::getIconPath("relationship")));
 	action_fade_rels->setText(tr("Relationships"));
@@ -632,8 +625,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	connect(action_fade_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 	connect(action_fade_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
-	//connect(action_fade_objs_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
-	//connect(action_fade_objs_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 	connect(action_fade_rels_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
 	connect(action_fade_rels_out, &QAction::triggered, this, &ModelWidget::fadeObjectsOut);
 	connect(action_fade_peer_tables_in, &QAction::triggered, this, &ModelWidget::fadeObjectsIn);
@@ -696,8 +687,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_childrenSelectionChanged, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 	connect(scene, &ObjectsScene::s_scenePressed, new_obj_overlay_wgt, &NewObjectOverlayWidget::hide);
 
-	//connect(&popup_menu, &QMenu::aboutToHide, this, &ModelWidget::updateObjectsLayers);
-
 	wheel_timer.setInterval(300);
 
 	connect(&wheel_timer, &QTimer::timeout, this, [this](){
@@ -705,8 +694,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		wheel_timer.stop();
 		wheel_move = false;
 	});
-
-	//connect(layers_wgt, &LayersWidget::s_newLayerRequested, this, &ModelWidget::s_newLayerRequested);
 
 	viewport->installEventFilter(this);
 	viewport->horizontalScrollBar()->installEventFilter(this);
@@ -1022,23 +1009,23 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 	if(graph_obj)
 	{
-		ObjectType obj_type=graph_obj->getObjectType();
-		QGraphicsItem *item=nullptr;
+		ObjectType obj_type = graph_obj->getObjectType();
+		QGraphicsItem *item = nullptr;
 
 		switch(obj_type)
 		{
 			case ObjectType::ForeignTable:
 			case ObjectType::Table:
-				item=new TableView(dynamic_cast<PhysicalTable *>(graph_obj));
+				item = new TableView(dynamic_cast<PhysicalTable *>(graph_obj));
 			break;
 
 			case ObjectType::View:
-				item=new GraphicalView(dynamic_cast<View *>(graph_obj));
+				item = new GraphicalView(dynamic_cast<View *>(graph_obj));
 			break;
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
+				item = new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
@@ -1046,15 +1033,18 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
+				item = new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
 		if(item)
 		{
-			scene->addItem(item);
+			scene->addItem(item, blink_new_objs);
 			setModified(true);
 			emit s_objectAdded(graph_obj);
+
+			if(blink_new_objs)
+				viewport->centerOn(item);
 		}
 	}
 }
@@ -1306,6 +1296,11 @@ void ModelWidget::finishSceneMove()
 	viewport->resetCachedContent();
 	scene->setShowSceneLimits(true);
 	scene->invalidate(viewport->sceneRect());
+}
+
+void ModelWidget::setBlinkAddedObjects(bool value)
+{
+	blink_new_objs = value;
 }
 
 void ModelWidget::configureObjectSelection()
@@ -1915,8 +1910,6 @@ void ModelWidget::adjustSceneRect(bool use_model_rect, bool expand_only)
 	else
 		rect = scene->adjustSceneRect(expand_only);
 
-	viewport->centerOn(rect.topLeft());
-
 	setModified(true);
 
 	emit s_sceneInteracted(rect.size());
@@ -2300,6 +2293,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 											ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
+		setBlinkAddedObjects(BaseGraphicObject::isGraphicObject(obj_type));
+
 		if(obj_type==ObjectType::Schema)
 			res=openEditingForm<Schema,SchemaWidget>(object);
 		else if(obj_type==ObjectType::Role)
@@ -2421,6 +2416,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			database_wgt->setAttributes(db_model);
 			res=openEditingForm(database_wgt);
 		}
+
+		setBlinkAddedObjects(false);
 
 		if(res==QDialog::Accepted)
 		{
@@ -2950,6 +2947,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	std::vector<BaseObject *>::iterator itr, itr_end;
 	std::map<BaseObject *, QString> orig_names, orig_fmt_names;
 	BaseObject *object = nullptr, *aux_object = nullptr;
+	BaseGraphicObject *graph_obj = nullptr;
 	TableObject *tab_obj = nullptr;
 	Table *sel_table = nullptr, *aux_table = nullptr;
 	View *sel_view = nullptr;
@@ -2980,6 +2978,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		sel_table = dynamic_cast<Table *>(selected_objects[0]);
 		sel_view = dynamic_cast<View *>(selected_objects[0]);
 	}
+
+	setBlinkAddedObjects(true);
 
 	while(itr != itr_end)
 	{
@@ -3233,6 +3233,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				object = db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
 				tab_obj = dynamic_cast<TableObject *>(object);
 				constr = dynamic_cast<Constraint *>(tab_obj);
+				graph_obj = dynamic_cast<BaseGraphicObject *>(object);
 
 				/* Once created, the object is added on the model, except for relationships and table objects
 				 * because they are inserted automatically */
@@ -3240,6 +3241,13 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				{
 					if(db_model->getObjectIndex(object->getSignature(), object->getObjectType()) >= 0)
 						object->setName(CoreUtilsNs::generateUniqueName(object, *db_model->getObjectList(object->getObjectType()), false, "_cp"));
+
+					if(graph_obj)
+					{
+						QPointF pnt = graph_obj->getPosition();
+						graph_obj->setPosition(QPointF(pnt.x() + 50,
+																					 pnt.y() + 50));
+					}
 
 					db_model->addObject(object);
 				}
@@ -3314,10 +3322,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	ModelWidget::src_model = nullptr;
 	this->configurePopupMenu();
 	setModified(true);
-
-	//Restoring the viewport position after paste objects
-	viewport->verticalScrollBar()->setValue(db_model->getLastPosition().y());
-	viewport->horizontalScrollBar()->setValue(db_model->getLastPosition().x());
+	setBlinkAddedObjects(false);
 }
 
 void ModelWidget::duplicateObject()
@@ -3346,6 +3351,7 @@ void ModelWidget::duplicateObject()
 			ObjectRenameWidget obj_rename_wgt(this);
 			QString new_name;
 
+			setBlinkAddedObjects(true);
 			op_list->startOperationChain();
 
 			for(auto &tab_obj : selected_objects)
@@ -3429,6 +3435,7 @@ void ModelWidget::duplicateObject()
 
 			this->setModified(true);
 			emit s_objectCreated();
+			setBlinkAddedObjects(false);
 		}
 		else if(!selected_objects.empty())
 		{
@@ -3440,6 +3447,8 @@ void ModelWidget::duplicateObject()
 	}
 	catch(Exception &e)
 	{
+		setBlinkAddedObjects(false);
+
 		//If operation was registered
 		if(op_id >= 0)
 			op_list->removeLastOperation();
@@ -4091,10 +4100,14 @@ void ModelWidget::fadeObjects(const std::vector<BaseObject *> &objects, bool fad
 		{
 			dynamic_cast<BaseGraphicObject *>(obj)->setFadedOut(!fade_in);
 
-			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
+			if(fade_in)
+				obj_view->fadeIn();
+			else
+				obj_view->fadeOut(min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
-			obj_view->setVisible(scene->isLayersActive(obj_view->getLayers()) && (fade_in || (!fade_in && min_object_opacity > 0)));
+			obj_view->setVisible(scene->isLayersActive(obj_view->getLayers()) &&
+													 (fade_in || (!fade_in && min_object_opacity > 0)));
 
 			setModified(true);
 		}

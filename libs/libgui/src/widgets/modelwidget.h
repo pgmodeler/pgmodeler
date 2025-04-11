@@ -104,7 +104,10 @@ class __libgui ModelWidget: public QWidget {
 		wheel_move,
 
 		//! \brief Indicates if the scene is being moved by either panning move or via mouse wheel
-		scene_moving;
+		scene_moving,
+
+		//! \brief Indicates if added graphical object must be blinked/highlighted (see handleObjectAddition())
+		blink_new_objs;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
@@ -633,6 +636,11 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Restores the previous grid/delimiter visibility state after finishing a scene move
 		void finishSceneMove();
 
+		/*! \brief Toggles the blinking of new graphical objects added to the model widget
+		 *  This method first call QGraphicsItem::setSelected and then QGraphicsView::centerOn
+		 *  to simulate a highlight in the new object */
+		void setBlinkAddedObjects(bool value);
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
@@ -644,6 +652,7 @@ class __libgui ModelWidget: public QWidget {
 
 	signals:
 		void s_objectAdded(BaseGraphicObject *object);
+		void s_itemAdded(QGraphicsItem *item);
 		void s_objectModified();
 		void s_objectsMoved();
 		void s_objectCreated();
