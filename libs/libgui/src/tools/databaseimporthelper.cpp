@@ -1780,18 +1780,18 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;
 
-			comp_attribs=Catalog::parseArrayValues(attribs[Attributes::TypeAttribute]);
+			comp_attribs = Catalog::parseArrayValues(attribs[Attributes::TypeAttribute]);
 			attribs[Attributes::TypeAttribute]="";
 
-			for(int i=0; i < comp_attribs.size(); i++)
+			for(auto &cmp_attr : comp_attribs)
 			{
-				values=comp_attribs[i].split(':');
+				values = cmp_attr.split(':');
 
 				if(values.size() >= 2)
 				{
 					type_attrib.setName(values[0].remove('"'));
-					type_attrib.setType(PgSqlType::parseString(values[1].remove('\\')));
-					type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove('"')),	ObjectType::Collation));
+					type_attrib.setType(getType(values[1], false));
+					type_attrib.setCollation(dbmodel->getCollation(getDependencyObject(values[2], ObjectType::Collation, true, false)));
 					attribs[Attributes::TypeAttribute]+=type_attrib.getSourceCode(SchemaParser::XmlCode);
 				}
 			}
