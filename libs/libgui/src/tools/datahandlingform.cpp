@@ -288,7 +288,7 @@ void DataHandlingForm::addDataGrid(const QString &schema, const QString &table, 
 	data_grid_wgt->setObjectName(data_grid_name);
 	int tab_idx = data_grids_tbw->addTab(data_grid_wgt,
 																			 QIcon(GuiUtilsNs::getIconPath(obj_type)),
-																			 /* data_grid_name */ table);
+																			 table);
 
 	data_grids_tbw->setCurrentIndex(tab_idx);
 
@@ -434,6 +434,9 @@ std::pair<bool, int> DataHandlingForm::confirmDataGridClose(int idx)
 
 int DataHandlingForm::confirmFormClose()
 {
+	if(data_grids_tbw->count() == 0)
+		return QDialog::Accepted;
+
 	for(int idx = 0; idx < data_grids_tbw->count(); idx++)
 	{
 		auto [ msg_displayed, msg_res ] = confirmDataGridClose(idx);
@@ -445,7 +448,7 @@ int DataHandlingForm::confirmFormClose()
 			return QDialog::Rejected;
 	}
 
-	return QDialog::Accepted;
+	return Messagebox::confirm(tr("Do you really want to close the data handling form?"));
 }
 
 void DataHandlingForm::closeEvent(QCloseEvent *event)
