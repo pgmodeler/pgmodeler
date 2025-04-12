@@ -20,7 +20,6 @@
 #include "defaultlanguages.h"
 #include "utilsns.h"
 #include "coreutilsns.h"
-#include "application.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml {"\t<!--[ unknown object OID=%1 ]-->\n"};
 
@@ -1790,7 +1789,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				if(values.size() >= 2)
 				{
 					type_attrib.setName(values[0].remove('"'));
-					type_attrib.setType(getType(values[1], false));
+					type_attrib.setType(PgSqlType::parseString(getType(values[1], false)));
 					type_attrib.setCollation(dbmodel->getCollation(getDependencyObject(values[2], ObjectType::Collation, true, false)));
 					attribs[Attributes::TypeAttribute]+=type_attrib.getSourceCode(SchemaParser::XmlCode);
 				}
@@ -3332,6 +3331,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		static const QString brackets = "[]";
 		unsigned elem_tp_oid = 0, dimension=0, object_id=0;
 		bool is_derivated_from_obj = false, is_postgis_type = false;
+		int num_brkt = 0;
 
 		if(types.count(type_oid))
 			type_attr = types[type_oid];
@@ -3356,7 +3356,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					 * we have to extract the [], then format the name and then restore the
 					 * brackets. This avoids the brackets to be considered as part of the name and
 					 * thus causing the name to be quoted inconditionaly. */
-				int num_brkt = type_attr[Attributes::Name].count(brackets);
+				num_brkt = type_attr[Attributes::Name].count(brackets);
 				QString aux_name = BaseObject::formatName(type_attr[Attributes::Name].remove(brackets));
 
 				aux_name += brackets.repeated(num_brkt);
@@ -3450,14 +3450,19 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				type_oid > catalog.getLastSysObjectOID()) &&
 			 !obj_name.contains(QRegularExpression(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 		{
+			/* To format an array data type name we need first remove the brackets
+			 * the format the name properly, after that, we include the brackets again
+			 * so the correct name can be returned */
+			obj_name.remove(brackets);
 			obj_name = BaseObject::formatName(obj_name, false);
+			obj_name.append(brackets.repeated(num_brkt));
 			obj_name.prepend(BaseObject::formatName(sch_name, false) + ".");
 		}
 
 		/* In case of auto resolve dependencies, if the type is a user defined one and is
-			 * not derivated from table/view/sequence, is not from the postgis extension  and
-			 * was not created in the database model but its attributes were retrieved, the object
-			 * will be created to avoid reference errors */
+		 * not derivated from table/view/sequence, is not from the postgis extension  and
+		 * was not created in the database model but its attributes were retrieved, the object
+		 * will be created to avoid reference errors */
 		aux_name = obj_name;
 		aux_name.remove(brackets);
 
