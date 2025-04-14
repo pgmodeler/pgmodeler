@@ -2160,7 +2160,13 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 					}
 					else
 					{
-						object = dbmodel.getObject(name, obj_type);
+						// First we try to locate the object by its OID
+						object = dbmodel.getObjectByOid(oid, obj_type);
+
+						// If we can't find it by the OID we try to search by its name
+						if(!object)
+							object = dbmodel.getObject(name, obj_type);
+
 						schema = object ? object->getSchema() : nullptr;
 					}
 

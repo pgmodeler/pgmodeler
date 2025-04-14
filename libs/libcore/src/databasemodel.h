@@ -388,6 +388,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 * If the types list is empty the method will return nullptr. */
 		BaseObject *getObject(const QString &name, const std::vector<ObjectType> &types);
 
+		//! \brief Returns the object by searching it by its pg_oid
+		BaseObject *getObjectByOid(unsigned oid, ObjectType obj_type);
+
 		//! \brief Returns the list of specified object type that belongs to the passed schema
 		std::vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
 

@@ -137,7 +137,12 @@ class __libcore BaseObject {
 		 * to know the chronological order of the creation of each object in the model
 		 * because the generation and reading of the XML code is completely tied to the order
 		 * in which the objects were created */
-		unsigned object_id;
+		unsigned object_id,
+
+		/*! \brief This is a transient field that is filled up during the reverse engineering process.
+		 *  It holds the OID of the object in a PostgreSQL database. It is completely different from
+		 *  object_id attribute. Currently, this attribute is used by DatabaseModel::getObjectByOid. */
+		pg_oid;
 
 		//! \brief Objects type count declared on enum ObjectType
 		static constexpr unsigned ObjectTypeCount=enum_t(ObjectType::BaseTable) + 1;
@@ -575,6 +580,12 @@ class __libcore BaseObject {
 
 		//! \brief Returns if the object accepts comment
 		bool acceptsComment();
+
+		//! \brief Defines the OID of the object in the PostgreSQL database
+		void setPgOid(unsigned oid);
+
+		//! \brief Returns the OID of the object in the PostgreSQL database
+		unsigned getPgOid();
 
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
