@@ -37,7 +37,7 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 
 	//Binding create methods
 	create_methods = {
-		{ ObjectType::Database, std::bind(&DatabaseImportHelper::configureDatabase, this, std::placeholders::_1) },
+		//{ ObjectType::Database, std::bind(&DatabaseImportHelper::configureDatabase, this, std::placeholders::_1) },
 		{ ObjectType::Tablespace, std::bind(&DatabaseImportHelper::createTablespace, this, std::placeholders::_1) },
 		{ ObjectType::Schema, std::bind(&DatabaseImportHelper::createSchema, this, std::placeholders::_1) },
 		{ ObjectType::Role, std::bind(&DatabaseImportHelper::createRole, this, std::placeholders::_1) },
@@ -804,9 +804,17 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				qDebug().noquote() << dumpObjectAttributes(attribs);
 			}
 
-			if(create_methods.count(obj_type))
+			if(obj_type == ObjectType::Database)
 			{
-				create_methods[obj_type](attribs);
+				configureDatabase(attribs);
+				dbmodel->setPgOid(oid);
+			}
+			else if(create_methods.count(obj_type))
+			{
+				BaseObject *obj = create_methods[obj_type](attribs);
+
+				if(obj)
+					obj->setPgOid(oid);
 
 				/* Register that the object was successfully created in order to avoid
 				 * creating it again on the recursive object creation. (see getDependencyObject()) */
@@ -1006,7 +1014,7 @@ void DatabaseImportHelper::removeInheritedCols(PhysicalTable *tab)
 	}
 }
 
-void DatabaseImportHelper::createTablespace(attribs_map &attribs)
+Tablespace *DatabaseImportHelper::createTablespace(attribs_map &attribs)
 {
 	Tablespace *tabspc=nullptr;
 
@@ -1015,6 +1023,8 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 		loadObjectXML(ObjectType::Tablespace, attribs);
 		tabspc=dbmodel->createTablespace();
 		dbmodel->addObject(tabspc);
+
+		return tabspc;
 	}
 	catch(Exception &e)
 	{
@@ -1023,7 +1033,7 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createSchema(attribs_map &attribs)
+Schema *DatabaseImportHelper::createSchema(attribs_map &attribs)
 {
 	Schema *schema = nullptr;
 	std::uniform_int_distribution<unsigned> dist(0,255);
@@ -1033,7 +1043,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	 * due to duplicity error related to these schemas. */
 	if((attribs[Attributes::Name] == "public" || attribs[Attributes::Name] == "pg_catalog") &&
 		 dbmodel->getSchema(attribs[Attributes::Name]))
-		return;
+		return nullptr;
 
 	try
 	{
@@ -1045,6 +1055,8 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 
 		schema=dbmodel->createSchema();
 		dbmodel->addObject(schema);
+
+		return schema;
 	}
 	catch(Exception &e)
 	{
@@ -1054,7 +1066,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createRole(attribs_map &attribs)
+Role *DatabaseImportHelper::createRole(attribs_map &attribs)
 {
 	Role *role=nullptr;
 
@@ -1077,6 +1089,8 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 		loadObjectXML(ObjectType::Role, attribs);
 		role=dbmodel->createRole();
 		dbmodel->addObject(role);
+
+		return role;
 	}
 	catch(Exception &e)
 	{
@@ -1086,7 +1100,7 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createDomain(attribs_map &attribs)
+Domain *DatabaseImportHelper::createDomain(attribs_map &attribs)
 {
 	Domain *dom=nullptr;
 	QStringList constraints, constr_attrs;
@@ -1114,6 +1128,8 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 		loadObjectXML(ObjectType::Domain, attribs);
 		dom=dbmodel->createDomain();
 		dbmodel->addDomain(dom);
+
+		return dom;
 	}
 	catch(Exception &e)
 	{
@@ -1123,7 +1139,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createExtension(attribs_map &attribs)
+Extension *DatabaseImportHelper::createExtension(attribs_map &attribs)
 {
 	Extension *ext = nullptr;
 
@@ -1178,6 +1194,8 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 		loadObjectXML(ObjectType::Extension, attribs);
 		ext = dbmodel->createExtension();
 		dbmodel->addExtension(ext);
+
+		return ext;
 	}
 	catch(Exception &e)
 	{
@@ -1326,7 +1344,7 @@ void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createFunction(attribs_map &attribs)
+Function *DatabaseImportHelper::createFunction(attribs_map &attribs)
 {
 	Function *func=nullptr;
 
@@ -1350,6 +1368,8 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		loadObjectXML(ObjectType::Function, attribs);
 		func = dbmodel->createFunction();
 		dbmodel->addFunction(func);
+
+		return func;
 	}
 	catch(Exception &e)
 	{
@@ -1359,7 +1379,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createProcedure(attribs_map &attribs)
+Procedure *DatabaseImportHelper::createProcedure(attribs_map &attribs)
 {
 	Procedure *proc=nullptr;
 
@@ -1369,6 +1389,8 @@ void DatabaseImportHelper::createProcedure(attribs_map &attribs)
 		loadObjectXML(ObjectType::Procedure, attribs);
 		proc = dbmodel->createProcedure();
 		dbmodel->addProcedure(proc);
+
+		return proc;
 	}
 	catch(Exception &e)
 	{
@@ -1378,7 +1400,7 @@ void DatabaseImportHelper::createProcedure(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createLanguage(attribs_map &attribs)
+Language *DatabaseImportHelper::createLanguage(attribs_map &attribs)
 {
 	Language *lang=nullptr;
 
@@ -1406,6 +1428,8 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 		loadObjectXML(ObjectType::Language, attribs);
 		lang=dbmodel->createLanguage();
 		dbmodel->addLanguage(lang);
+
+		return lang;
 	}
 	catch(Exception &e)
 	{
@@ -1415,7 +1439,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
+OperatorFamily *DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
 {
 	OperatorFamily *opfam=nullptr;
 
@@ -1424,6 +1448,8 @@ void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
 		loadObjectXML(ObjectType::OpFamily, attribs);
 		opfam=dbmodel->createOperatorFamily();
 		dbmodel->addOperatorFamily(opfam);
+
+		return opfam;
 	}
 	catch(Exception &e)
 	{
@@ -1433,7 +1459,7 @@ void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
+OperatorClass *DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 {
 	OperatorClass *opclass=nullptr;
 
@@ -1506,6 +1532,8 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		loadObjectXML(ObjectType::OpClass, attribs);
 		opclass=dbmodel->createOperatorClass();
 		dbmodel->addOperatorClass(opclass);
+
+		return opclass;
 	}
 	catch(Exception &e)
 	{
@@ -1515,7 +1543,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createOperator(attribs_map &attribs)
+Operator *DatabaseImportHelper::createOperator(attribs_map &attribs)
 {
 	Operator *oper=nullptr;
 
@@ -1567,6 +1595,8 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 		loadObjectXML(ObjectType::Operator, attribs);
 		oper=dbmodel->createOperator();
 		dbmodel->addOperator(oper);
+
+		return oper;
 	}
 	catch(Exception &e)
 	{
@@ -1576,7 +1606,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createCollation(attribs_map &attribs)
+Collation *DatabaseImportHelper::createCollation(attribs_map &attribs)
 {
 	Collation *coll=nullptr;
 
@@ -1585,6 +1615,8 @@ void DatabaseImportHelper::createCollation(attribs_map &attribs)
 		loadObjectXML(ObjectType::Collation, attribs);
 		coll=dbmodel->createCollation();
 		dbmodel->addCollation(coll);
+
+		return coll;
 	}
 	catch(Exception &e)
 	{
@@ -1594,7 +1626,7 @@ void DatabaseImportHelper::createCollation(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createCast(attribs_map &attribs)
+Cast *DatabaseImportHelper::createCast(attribs_map &attribs)
 {
 	Cast *cast=nullptr;
 
@@ -1606,6 +1638,8 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 		loadObjectXML(ObjectType::Cast, attribs);
 		cast=dbmodel->createCast();
 		dbmodel->addCast(cast);
+
+		return cast;
 	}
 	catch(Exception &e)
 	{
@@ -1615,7 +1649,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createConversion(attribs_map &attribs)
+Conversion *DatabaseImportHelper::createConversion(attribs_map &attribs)
 {
 	Conversion *conv=nullptr;
 
@@ -1625,6 +1659,8 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 		loadObjectXML(ObjectType::Conversion, attribs);
 		conv=dbmodel->createConversion();
 		dbmodel->addConversion(conv);
+
+		return conv;
 	}
 	catch(Exception &e)
 	{
@@ -1634,7 +1670,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createSequence(attribs_map &attribs)
+Sequence *DatabaseImportHelper::createSequence(attribs_map &attribs)
 {
 	Sequence *seq=nullptr;
 	Column *col = nullptr;
@@ -1696,6 +1732,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 															seq->getStart(), seq->getCache(), seq->isCycle());
 			seq->setSQLDisabled(true);
 		}
+
+		return seq;
 	}
 	catch(Exception &e)
 	{
@@ -1705,7 +1743,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createAggregate(attribs_map &attribs)
+Aggregate *DatabaseImportHelper::createAggregate(attribs_map &attribs)
 {
 	Aggregate *agg=nullptr;
 
@@ -1740,9 +1778,12 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 				The catalog query for certain aggregates (under pg_catalog for instance)
 				will return names in the form "pg_catalog.agg_name" which cause objects
 				to be imported with wrong names so the fix below is needed */
-		sch_name=agg->getSchema()->getName() + QChar('.');
+		sch_name = agg->getSchema()->getName() + QChar('.');
+
 		if(agg->getName().startsWith(sch_name))
 			agg->setName(agg->getName().remove(sch_name));
+
+		return agg;
 	}
 	catch(Exception &e)
 	{
@@ -1752,12 +1793,12 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createType(attribs_map &attribs)
+Type *DatabaseImportHelper::createType(attribs_map &attribs)
 {
 	/* Types that are children of any extension are discarded
 	 * and not created in the database model */
 	if(attribs[Attributes::IsExtType] == Attributes::True)
-		return;
+		return nullptr;
 
 	Type *type = nullptr;
 	attribs_map aux_attribs;
@@ -1837,6 +1878,8 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		loadObjectXML(ObjectType::Type, attribs);
 		type=dbmodel->createType();
 		dbmodel->addType(type);
+
+		return type;
 	}
 	catch(Exception &e)
 	{
@@ -1846,7 +1889,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTable(attribs_map &attribs)
+Table *DatabaseImportHelper::createTable(attribs_map &attribs)
 {
 	Table *table=nullptr;
 
@@ -1952,6 +1995,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 		dbmodel->addTable(table);
 		imported_tables[attribs[Attributes::Oid].toUInt()] = table;
+
+		return table;
 	}
 	catch(Exception &e)
 	{
@@ -1966,7 +2011,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createView(attribs_map &attribs)
+View *DatabaseImportHelper::createView(attribs_map &attribs)
 {
 	View *view = nullptr;
 	unsigned type_oid = 0;
@@ -2076,6 +2121,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		loadObjectXML(ObjectType::View, attribs);
 		view = dbmodel->createView();
 		dbmodel->addView(view);
+
+		return view;
 	}
 	catch(Exception &e)
 	{
@@ -2085,7 +2132,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createRule(attribs_map &attribs)
+Rule *DatabaseImportHelper::createRule(attribs_map &attribs)
 {
 	QString cmds=attribs[Attributes::Commands];
 	int start=-1;
@@ -2114,6 +2161,8 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 		loadObjectXML(ObjectType::Rule, attribs);
 		Rule *rule = dbmodel->createRule();
 		rule->setSQLDisabled(rule->getParentTable()->isSQLDisabled());
+
+		return rule;
 	}
 	catch(Exception &e)
 	{
@@ -2122,7 +2171,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTrigger(attribs_map &attribs)
+Trigger *DatabaseImportHelper::createTrigger(attribs_map &attribs)
 {
 	try
 	{
@@ -2140,6 +2189,8 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 
 		Trigger *trig = dbmodel->createTrigger();
 		trig->setSQLDisabled(trig->getParentTable()->isSQLDisabled());
+
+		return trig;
 	}
 	catch(Exception &e)
 	{
@@ -2148,7 +2199,7 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createIndex(attribs_map &attribs)
+Index *DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
 	{
@@ -2255,6 +2306,8 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		loadObjectXML(ObjectType::Index, attribs);
 		Index *index = dbmodel->createIndex();
 		index->setSQLDisabled(index->getParentTable()->isSQLDisabled());
+
+		return index;
 	}
 	catch(Exception &e)
 	{
@@ -2263,7 +2316,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createConstraint(attribs_map &attribs)
+Constraint *DatabaseImportHelper::createConstraint(attribs_map &attribs)
 {
 	Constraint *constr=nullptr;
 
@@ -2387,6 +2440,8 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 			table->setModified(true);
 		}
+
+		return constr;
 	}
 	catch(Exception &e)
 	{
@@ -2395,7 +2450,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createPolicy(attribs_map &attribs)
+Policy *DatabaseImportHelper::createPolicy(attribs_map &attribs)
 {
 	try
 	{
@@ -2405,6 +2460,8 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 
 		Policy *pol = dbmodel->createPolicy();
 		pol->setSQLDisabled(pol->getParentTable()->isSQLDisabled());
+
+		return pol;
 	}
 	catch(Exception &e)
 	{
@@ -2413,7 +2470,7 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
+EventTrigger *DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 {
 	try
 	{
@@ -2425,7 +2482,10 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 										   .arg(Catalog::parseArrayValues(attribs[Attributes::Values].remove('"')).join(','));
 
 		loadObjectXML(ObjectType::EventTrigger, attribs);
-		dbmodel->addEventTrigger(dbmodel->createEventTrigger());
+		EventTrigger *ev_trig = dbmodel->createEventTrigger();
+		dbmodel->addEventTrigger(ev_trig);
+
+		return ev_trig;
 	}
 	catch(Exception &e)
 	{
@@ -2434,7 +2494,7 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
+ForeignDataWrapper *DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 {
 	ForeignDataWrapper *fdw=nullptr;
 
@@ -2450,6 +2510,8 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 		loadObjectXML(ObjectType::ForeignDataWrapper, attribs);
 		fdw = dbmodel->createForeignDataWrapper();
 		dbmodel->addForeignDataWrapper(fdw);
+
+		return fdw;
 	}
 	catch(Exception &e)
 	{
@@ -2459,7 +2521,7 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createForeignServer(attribs_map &attribs)
+ForeignServer *DatabaseImportHelper::createForeignServer(attribs_map &attribs)
 {
 	ForeignServer *server=nullptr;
 
@@ -2471,6 +2533,8 @@ void DatabaseImportHelper::createForeignServer(attribs_map &attribs)
 		loadObjectXML(ObjectType::ForeignServer, attribs);
 		server = dbmodel->createForeignServer();
 		dbmodel->addForeignServer(server);
+
+		return server;
 	}
 	catch(Exception &e)
 	{
@@ -2480,7 +2544,7 @@ void DatabaseImportHelper::createForeignServer(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
+UserMapping *DatabaseImportHelper::createUserMapping(attribs_map &attribs)
 {
 	UserMapping *usr_map=nullptr;
 
@@ -2492,6 +2556,8 @@ void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
 		loadObjectXML(ObjectType::UserMapping, attribs);
 		usr_map = dbmodel->createUserMapping();
 		dbmodel->addUserMapping(usr_map);
+
+		return usr_map;
 	}
 	catch(Exception &e)
 	{
@@ -2501,7 +2567,7 @@ void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
+ForeignTable *DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 {
 	ForeignTable *ftable=nullptr;
 
@@ -2549,6 +2615,8 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 
 		dbmodel->addForeignTable(ftable);
 		imported_tables[attribs[Attributes::Oid].toUInt()] = ftable;
+
+		return ftable;
 	}
 	catch(Exception &e)
 	{
@@ -2562,7 +2630,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTransform(attribs_map &attribs)
+Transform *DatabaseImportHelper::createTransform(attribs_map &attribs)
 {
 	Transform *transf = nullptr;
 
@@ -2575,6 +2643,8 @@ void DatabaseImportHelper::createTransform(attribs_map &attribs)
 		loadObjectXML(ObjectType::Transform, attribs);
 		transf = dbmodel->createTransform();
 		dbmodel->addTransform(transf);
+
+		return transf;
 	}
 	catch(Exception &e)
 	{

@@ -659,6 +659,22 @@ BaseObject *DatabaseModel::getObject(const QString &name, const std::vector<Obje
 	return object;
 }
 
+BaseObject *DatabaseModel::getObjectByOid(unsigned int oid, ObjectType obj_type)
+{
+	auto list = getObjectList(obj_type);
+
+	if(!list)
+		return nullptr;
+
+	for(auto &obj : *list)
+	{
+		if(obj->getPgOid() == oid)
+			return obj;
+	}
+
+	return nullptr;
+}
+
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	std::vector<BaseObject *> *obj_list=nullptr;
