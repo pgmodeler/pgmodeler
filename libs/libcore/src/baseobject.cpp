@@ -100,6 +100,7 @@ const QStringList BaseObject::search_attribs_names {
 
 BaseObject::BaseObject()
 {
+	pg_oid = 0;
 	object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	code_invalidated=true;
@@ -580,12 +581,21 @@ bool BaseObject::acceptsComment()
 	return BaseObject::acceptsComment(this->obj_type);
 }
 
+void BaseObject::setPgOid(unsigned int oid)
+{
+	pg_oid = oid;
+}
+
+unsigned int BaseObject::getPgOid()
+{
+	return pg_oid;
+}
+
 void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedSchema)
-						.arg(this->obj_name)
-						.arg(this->getTypeName()),
+						.arg(this->obj_name, this->getTypeName()),
 						ErrorCode::AsgNotAllocatedSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(schema && schema->getObjectType()!=ObjectType::Schema)
 		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
