@@ -871,7 +871,7 @@ void MainWindow::restoreLastSession()
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
 	}
@@ -1141,7 +1141,7 @@ void MainWindow::saveTemporaryModels()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		tmpmodel_save_timer.start();
 	}
@@ -1247,7 +1247,7 @@ void MainWindow::loadModelFromAction()
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 
 			if(QFileInfo(filename).exists())
 				showFixMessage(e, filename);
@@ -2155,7 +2155,7 @@ void MainWindow::loadModels(const QStringList &files)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		registerRecentModels(loaded_files);
 
 		if(files[i].endsWith(GlobalAttributes::DbModelExt))

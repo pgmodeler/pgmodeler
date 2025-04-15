@@ -151,7 +151,7 @@ void SourceCodeWidget::generateSourceCode(int def_type)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		task_prog_wgt.close();
 		disconnect(this->model, nullptr, &task_prog_wgt, nullptr);

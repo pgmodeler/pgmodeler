@@ -162,10 +162,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	connect(run_sql_tb, &QToolButton::clicked, this, qOverload<>(&SQLExecutionWidget::runSQLCommand));
 	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
-
-	connect(action_wrap,  &QAction::toggled, this, [this](bool checked) {
-		sql_cmd_txt->setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
-	});
+	connect(action_wrap,  &QAction::toggled, sql_cmd_txt, &NumberedTextEditor::setWordWrap);
 
 	connect(action_search, &QAction::toggled, search_wgt_parent, &QWidget::setVisible);
 	connect(find_replace_wgt, &SearchReplaceWidget::s_hideRequested, action_search, &QAction::toggle);
@@ -824,7 +821,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw, bool csv_format)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

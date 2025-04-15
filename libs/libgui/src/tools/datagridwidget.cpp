@@ -510,7 +510,7 @@ void DataGridWidget::retrieveData()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -697,7 +697,7 @@ void DataGridWidget::loadDataFromCsv(bool load_from_clipboard, bool force_csv_pa
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

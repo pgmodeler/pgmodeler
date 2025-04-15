@@ -185,22 +185,29 @@ namespace GuiUtilsNs {
 
 	/*! \brief Configures the font family/size of the provided QPlainTextEdit instance
 	 *  to use the global settings defined in AppearanceSettingsWidget */
-	template<class Class, std::enable_if_t<std::is_same_v<Class, QPlainTextEdit> ||
+	template<class Class, std::enable_if_t<std::is_base_of_v<QPlainTextEdit, Class> ||
+																				 std::is_same_v<Class, QPlainTextEdit> ||
 																				 std::is_same_v<Class, QTextEdit>, bool> = true>
-	void configureTextEditFont(Class *txt)
+	void configureTextEditFont(Class *txt, double custom_fnt_size = 0)
 	{
 		if(!txt)
 			return;
 
-		if constexpr (std::is_class_v<QPlainTextEdit> ||	std::is_class_v<QTextEdit>)
+		if constexpr (std::is_base_of_v<QPlainTextEdit, Class> ||
+									std::is_class_v<QPlainTextEdit> ||
+									std::is_class_v<QTextEdit>)
 		{
 			std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
 
 			//Configuring font style for output widget
 			if(!confs[Attributes::Code][Attributes::Font].isEmpty())
 			{
-				double size = confs[Attributes::Code][Attributes::FontSize].toDouble();
-				if(size < 5.0) size = 5.0;
+				double size =
+						custom_fnt_size > 0 ? custom_fnt_size :
+						confs[Attributes::Code][Attributes::FontSize].toDouble();
+
+				if(size < 5.0)
+					size = 5.0;
 
 				QFont fnt = txt->font();
 				fnt.setFamily(confs[Attributes::Code][Attributes::Font]);
