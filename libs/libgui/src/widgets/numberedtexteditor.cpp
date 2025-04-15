@@ -133,6 +133,18 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		buttons_lt->addWidget(save_file_btn);
 
+		copy_btn = new QToolButton(top_widget);
+		copy_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
+		copy_btn->setAutoRaise(true);
+		copy_btn->setDisabled(true);
+		copy_btn->setText(tr("Copy"));
+		copy_btn->setShortcut(QKeySequence("Ctrl+C"));
+		copy_btn->setToolTip(tr("Copy the whole text to the clipboard (%1)")
+												 .arg(copy_btn->shortcut().toString()));
+		copy_btn->setFont(font);
+		copy_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		buttons_lt->addWidget(copy_btn);
+
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setAutoRaise(true);
@@ -186,6 +198,10 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
 		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
 
+		connect(copy_btn,  &QToolButton::clicked, this, [this](){
+			qApp->clipboard()->setText(toPlainText());
+		});
+
 		connect(search_btn, &QToolButton::toggled, this, [this](bool checked){
 			search_wgt->setVisible(checked);
 			search_wgt->raise();
@@ -203,6 +219,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
 			search_btn->setEnabled(!this->document()->isEmpty());
+			copy_btn->setEnabled(!this->document()->isEmpty());
 			word_wrap_btn->setEnabled(!document()->isEmpty());
 			save_file_btn->setEnabled(!document()->isEmpty());
 		});

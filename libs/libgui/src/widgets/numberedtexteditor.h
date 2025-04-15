@@ -71,7 +71,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		QLabel *msg_lbl;
 
 		QToolButton *load_file_btn, *edit_src_btn, *clear_btn,
-		*save_file_btn,	*word_wrap_btn, *search_btn;
+		*save_file_btn,	*word_wrap_btn, *search_btn, *copy_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
