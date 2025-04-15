@@ -193,13 +193,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 		});
 
 		connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_btn, &QToolButton::toggle);
-
-		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
-			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
-			setHorizontalScrollBarPolicy(checked ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
-			resizeWidgets();
-			updateLineNumbers();
-		});
+		connect(word_wrap_btn,  &QToolButton::toggled, this, &NumberedTextEditor::setWordWrap);
 
 		connect(clear_btn, &QToolButton::clicked, this, [this](){
 			this->clear();
@@ -803,6 +797,11 @@ int NumberedTextEditor::getLineNumbersWidth()
 	return (15 + chr_width * digits);
 }
 
+void NumberedTextEditor::setWordWrapMode(QTextOption::WrapMode policy)
+{
+	QPlainTextEdit::setWordWrapMode(policy);
+}
+
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
 	QPlainTextEdit::resizeEvent(event);
@@ -865,4 +864,19 @@ void NumberedTextEditor::highlightCurrentLine()
 	}
 
 	setExtraSelections(extraSelections);
+}
+
+void NumberedTextEditor::setWordWrap(bool value)
+{
+	if(word_wrap_btn && sender() != word_wrap_btn)
+	{
+		word_wrap_btn->blockSignals(true);
+		word_wrap_btn->setChecked(value);
+		word_wrap_btn->blockSignals(false);
+	}
+
+	setWordWrapMode(value ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+	setHorizontalScrollBarPolicy(value ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+	resizeWidgets();
+	updateLineNumbers();
 }

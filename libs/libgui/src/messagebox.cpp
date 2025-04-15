@@ -23,9 +23,11 @@
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+	setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
+	raw_stack_txt = nullptr;
 
 	connect(yes_ok_btn, &QPushButton::clicked, this, &Messagebox::handleYesOkClick);
 	connect(no_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
@@ -110,7 +112,18 @@ int Messagebox::show(Exception e, const QString &msg, IconType icon_type, Button
 {
 	QString fmt_msg, title;
 
-	raw_info_txt->setPlainText(e.getExceptionsText());
+	if(!raw_stack_txt)
+	{
+		raw_stack_txt = GuiUtilsNs::createNumberedTextEditor(stacktrace_tbw->widget(2), true);
+		raw_stack_txt->setReadOnly(true);
+		raw_stack_txt->setLineNumbersVisible(false);
+		raw_stack_txt->setWordWrap(true);
+		GuiUtilsNs::configureTextEditFont(raw_stack_txt, font().pointSizeF());
+		stacktrace_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																														GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	}
+
+	raw_stack_txt->setPlainText(e.getExceptionsText());
 	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
 	stacktrace_tbw->setTabVisible(1, !e.getExceptiosExtraInfo().isEmpty());
 
@@ -312,6 +325,12 @@ int Messagebox::show(const QString &title, const QString &msg, IconType icon_typ
 
 int Messagebox::exec()
 {
+	/* Forcing the restoration of the overriden cursor
+	 * when opening the message box, this will avoid
+	 * the wait cursor to be displayed when the messagebox
+	 * is show after a exception is raised */
+	qApp->restoreOverrideCursor();
+
 	return QDialog::exec();
 }
 

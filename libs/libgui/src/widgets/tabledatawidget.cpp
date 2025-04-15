@@ -364,7 +364,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 
 			Messagebox msgbox;
 			msgbox.show(e,

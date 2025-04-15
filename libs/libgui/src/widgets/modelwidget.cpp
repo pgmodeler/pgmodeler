@@ -1812,7 +1812,7 @@ void ModelWidget::convertRelationship1N()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(op_count < op_list->getCurrentSize())
 		{
@@ -2549,7 +2549,7 @@ void ModelWidget::moveToSchema()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();

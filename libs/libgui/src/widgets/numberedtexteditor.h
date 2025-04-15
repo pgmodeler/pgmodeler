@@ -98,6 +98,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
 
+		void setWordWrapMode(QTextOption::WrapMode policy);
+
 	protected:
 		void resizeEvent(QResizeEvent *event) override;
 		void keyPressEvent(QKeyEvent *event)  override;
@@ -127,7 +129,6 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 	private slots:
 		void showContextMenu();
-
 		void pasteCode();
 
 		void changeSelectionToLower();
@@ -169,6 +170,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 		//! \brief Colors the background of the line where the cursor is
 		void highlightCurrentLine();
+
+		void setWordWrap(bool value);
 };
 
 #endif

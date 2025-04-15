@@ -160,7 +160,7 @@ void OperationListWidget::undoOperation()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		this->updateOperationList();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
@@ -186,7 +186,7 @@ void OperationListWidget::redoOperation()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
 		{

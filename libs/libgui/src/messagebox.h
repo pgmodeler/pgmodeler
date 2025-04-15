@@ -28,11 +28,14 @@
 #include "guiglobal.h"
 #include "ui_messagebox.h"
 #include "exception.h"
+#include "widgets/numberedtexteditor.h"
 
 class __libgui Messagebox: public QDialog, public Ui::Messagebox {
 	Q_OBJECT
 
 	private:
+		NumberedTextEditor *raw_stack_txt;
+
 		int exec() override;
 
 	protected:
