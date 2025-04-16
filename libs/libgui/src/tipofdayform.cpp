@@ -78,6 +78,9 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 
 void TipOfDayForm::navigateToItem(bool prev_item)
 {
+	if(index_trw->topLevelItemCount() == 0)
+		return;
+
 	int inc = prev_item ? -1 : 1;
 
 	if(!index_trw->currentItem() && index_trw->topLevelItemCount() > 0)
@@ -171,8 +174,12 @@ void TipOfDayForm::loadIndex(QNetworkReply *reply)
 
 		reply->deleteLater();
 		index_trw->expandAll();
-		qApp->restoreOverrideCursor();
 	}
+
+	next_tb->setEnabled(index_trw->topLevelItemCount() > 0);
+	previous_tb->setEnabled(next_tb->isEnabled());
+	random_tb->setEnabled(next_tb->isEnabled());
+	qApp->restoreOverrideCursor();
 }
 
 void TipOfDayForm::loadTipOfDay(QNetworkReply *reply)
@@ -232,7 +239,7 @@ RetClass TipOfDayForm::getJsonObject(QNetworkReply *reply)
 
 	if(reply->error() != QNetworkReply::NoError || http_status != 200)
 	{
-		Messagebox::error(tr("Failed to load resource `%1'! %2")
+		Messagebox::error(tr("Failed to load resource <strong>%1</strong>! %2")
 											.arg(reply->url().toString(), reply->errorString()));
 		return RetClass();
 	}
