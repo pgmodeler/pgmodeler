@@ -31,6 +31,14 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 
 		bool load_tip;
 
+		QMap<int, QStringList> cached_tips;
+
+		QJsonObject getJsonObject(QNetworkReply *reply);
+
+		void showTipOfDay(const QString &title, const QString &text);
+
+		void navigateToItem(bool prev_item);
+
 	protected:
 		void showEvent(QShowEvent *event) override;
 

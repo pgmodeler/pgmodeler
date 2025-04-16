@@ -113,6 +113,9 @@
       <property name="uniformRowHeights">
        <bool>true</bool>
       </property>
+      <property name="sortingEnabled">
+       <bool>false</bool>
+      </property>
       <property name="animated">
        <bool>true</bool>
       </property>
