@@ -24,6 +24,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRandomGenerator>
 
 TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 {
@@ -38,6 +39,7 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 
 	net_manager = new QNetworkAccessManager(this);
 
+	connect(close_tb, &QToolButton::clicked, this, &TipOfDayForm::close);
 	connect(index_tb, &QToolButton::clicked, index_trw, &QListWidget::setVisible);
 	connect(index_trw, &QTreeWidget::currentItemChanged, this, &TipOfDayForm::handleItemSelected);
 
@@ -49,11 +51,28 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 		navigateToItem(true);
 	});
 
+	connect(random_tb, &QToolButton::clicked, this, [this](){
+		static QRandomGenerator rndgen = QRandomGenerator::securelySeeded();
+		static QList<QTreeWidgetItem *> list = index_trw->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive);
+		QTreeWidgetItem *item = nullptr, *curr_item = index_trw->currentItem();
+
+		do
+		{
+			item = list.at(rndgen.bounded(0, list.size()));
+			index_trw->setCurrentItem(item);
+			navigateToItem(false);
+		}
+		while(curr_item == index_trw->currentItem());
+	});
+
 	connect(net_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply){
 		if(load_tip)
 			loadTipOfDay(reply);
 		else
+		{
 			loadIndex(reply);
+			navigateToItem(false);
+		}
 	});
 }
 
@@ -62,54 +81,92 @@ void TipOfDayForm::navigateToItem(bool prev_item)
 	int inc = prev_item ? -1 : 1;
 
 	if(!index_trw->currentItem() && index_trw->topLevelItemCount() > 0)
-		index_trw->setCurrentItem(index_trw->topLevelItem(prev_item ? index_trw->topLevelItemCount() - 1 : 0));
+		index_trw->setCurrentItem(index_trw->topLevelItem(0));
 
+	/* This iterator jumps to the first selectable item in index_trw
+	 * in which flag Qt::ItemIsSelectable is set */
 	QTreeWidgetItemIterator tree_itr(index_trw->currentItem(), QTreeWidgetItemIterator::Selectable);
-	tree_itr += inc;
 
-	if(*tree_itr)
+	if(*tree_itr && *tree_itr != index_trw->currentItem())
 		index_trw->setCurrentItem(*tree_itr);
 	else
 	{
-		qDebug() << "no item!";
-		index_trw->setCurrentItem(index_trw->topLevelItem(prev_item ? index_trw->topLevelItemCount() - 1 : 0));
+		tree_itr += inc;
+
+		if(*tree_itr)
+			index_trw->setCurrentItem(*tree_itr);
+
+		/* When the iterator reaches the end of the tree,
+		 * it'll contain null value. In this case we need
+		 * to select either to top or bottom item depending
+		 * on the direction of the navigation (prev_item = true|false) */
+		else
+		{
+			QTreeWidgetItem *item = nullptr;
+
+			/* If we're moving foward in the index
+			 * we select the first top item */
+			if(!prev_item)
+				item = index_trw->topLevelItem(0);
+			else
+			{
+				/* Otherwise we select the last item in the hierarchy
+				 * which can be a toplevel item or the last child of it */
+				item = index_trw->topLevelItem(index_trw->topLevelItemCount() - 1);
+
+				if(item->childCount() > 0)
+					item = item->child(item->childCount() - 1);
+			}
+
+			QTreeWidgetItemIterator aux_itr(item, QTreeWidgetItemIterator::Selectable);
+			index_trw->setCurrentItem(*aux_itr);
+		}
 	}
 }
 
 void TipOfDayForm::loadIndex(QNetworkReply *reply)
 {
-	QJsonObject json_obj = getJsonObject(reply);
+	QJsonArray index = getJsonObject<QJsonArray>(reply);
 
-	if(json_obj.isEmpty())
-		Messagebox::error(tr("Failed to load index! %1").arg(reply->errorString()));
-	else
+	if(!index.isEmpty())
 	{
-		QJsonObject tip_obj;
-		QJsonArray tips;
+		QJsonObject obj;
 		QTreeWidgetItem *root = nullptr, *item = nullptr;
+		QMap<QString, QTreeWidgetItem *> root_items;
+		QString category, title;
+		int id = -1, item_idx = 1;
 
 		index_trw->clear();
 		index_trw->setSortingEnabled(false);
 
-		for(auto &key : json_obj.keys())
+		for(const auto &idx_elem : std::as_const(index))
 		{
-			root = new QTreeWidgetItem;
-			root->setText(0, key);
-			root->setData(1, Qt::UserRole, -1);
-			root->setFlags(Qt::ItemIsEnabled);
+			obj = idx_elem.toObject();
+			category = obj.value("category").toString();
+			title = obj.value("title").toString();
+			id = obj.value("id").toInt();
 
-			index_trw->addTopLevelItem(root);
-			tips = json_obj.value(key).toArray();
+			root = root_items.value(category);
 
-			for(const auto &tip : std::as_const(tips))
+			if(!root)
 			{
-				tip_obj = tip.toObject();
-				item = new QTreeWidgetItem(root);
-				item->setText(0, tip_obj.value("title").toString());
-				item->setData(1, Qt::UserRole, tip_obj.value("id").toInt());
-				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				index_trw->addTopLevelItem(item);
+				root = new QTreeWidgetItem;
+				root->setText(0, category);
+				root->setData(1, Qt::UserRole, -1);
+				root->setFlags(Qt::ItemIsEnabled);
+				root->setIcon(0, QIcon(GuiUtilsNs::getIconPath("bookmark")));
+				index_trw->addTopLevelItem(root);
+				root_items[category] = root;
 			}
+
+			item = new QTreeWidgetItem(root);
+			item->setText(0, title);
+			item->setData(1, Qt::UserRole, id);
+			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+			item->setIcon(0, QIcon(GuiUtilsNs::getIconPath("tipofday")));
+			index_trw->addTopLevelItem(item);
+
+			cached_tips[id].append(QString::number(item_idx++));
 		}
 
 		reply->deleteLater();
@@ -121,11 +178,9 @@ void TipOfDayForm::loadIndex(QNetworkReply *reply)
 void TipOfDayForm::loadTipOfDay(QNetworkReply *reply)
 {
 	load_tip = false;
-	QJsonObject json_obj = getJsonObject(reply);
+	QJsonObject json_obj = getJsonObject<QJsonObject>(reply);
 
-	if(json_obj.isEmpty())
-		Messagebox::error(tr("Failed to load tip of the day! %1").arg(reply->errorString()));
-	else
+	if(!json_obj.isEmpty())
 	{
 		int tip_id = json_obj.value("id").toInt();
 		QString text = json_obj.value("text").toString(),
@@ -133,18 +188,19 @@ void TipOfDayForm::loadTipOfDay(QNetworkReply *reply)
 
 		cached_tips[tip_id].append(title);
 		cached_tips[tip_id].append(text);
-		showTipOfDay(title, text);
+		showTipOfDay(tip_id);
 	}
 
 	reply->deleteLater();
 	qApp->restoreOverrideCursor();
 }
 
-void TipOfDayForm::showTipOfDay(const QString &title, const QString &text)
+void TipOfDayForm::showTipOfDay(int tip_id)
 {
-	tip_txt->document()->setDefaultStyleSheet("img { max-width: 70%; }");
-	tip_title_lbl->setText(title);
-	tip_txt->setHtml(text);
+	tip_txt->document()->setDefaultStyleSheet("img { max-width: 80%; }");
+	tip_title_lbl->setText(QString("#%1 ").arg(cached_tips[tip_id].at(0)) +
+												 cached_tips[tip_id].at(1));
+	tip_txt->setHtml(cached_tips[tip_id].at(2));
 }
 
 void TipOfDayForm::handleItemSelected(QTreeWidgetItem *item)
@@ -154,25 +210,47 @@ void TipOfDayForm::handleItemSelected(QTreeWidgetItem *item)
 	if(tip_id < 0)
 		return;
 
-	if(cached_tips.contains(tip_id))
-		showTipOfDay(cached_tips[tip_id].at(0), cached_tips[tip_id].at(1));
+	/* If the tip is fully cached (all needed attributes are present)
+	 * we display the tip info from cache instead of retrieving it
+	 * from the project's site */
+	if(cached_tips.contains(tip_id) &&
+		 cached_tips[tip_id].size() > 1)
+		showTipOfDay(tip_id);
 	else
 	{
+		// If the tip is not cached we retrieve it from the website
 		load_tip = true;
 		qApp->setOverrideCursor(Qt::WaitCursor);
 		net_manager->get(QNetworkRequest(QUrl(QString("http://localhost:8000/tipofday/%1").arg(tip_id))));
 	}
 }
 
-QJsonObject TipOfDayForm::getJsonObject(QNetworkReply *reply)
+template<class RetClass>
+RetClass TipOfDayForm::getJsonObject(QNetworkReply *reply)
 {
 	unsigned http_status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
 	if(reply->error() != QNetworkReply::NoError || http_status != 200)
-		return QJsonObject();
+	{
+		Messagebox::error(tr("Failed to load resource `%1'! %2")
+											.arg(reply->url().toString(), reply->errorString()));
+		return RetClass();
+	}
 
 	QJsonDocument json_doc = QJsonDocument::fromJson(reply->readAll());
-	return json_doc.object();
+
+	if constexpr (std::is_same_v<QJsonArray, RetClass>)
+	{
+		if(json_doc.isArray())
+			return json_doc.array();
+	}
+	else if constexpr (std::is_same_v<QJsonObject, RetClass>)
+	{
+		if(json_doc.isObject())
+			return json_doc.object();
+	}
+
+	return RetClass();
 }
 
 void TipOfDayForm::showEvent(QShowEvent *event)

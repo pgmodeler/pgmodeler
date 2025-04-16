@@ -31,11 +31,20 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 
 		bool load_tip;
 
+		/*! \brief This map stores the tip informations loaded from website.
+		 *  This avoid repetitive http requests when the user displays a tip.
+		 *  The keys of this map are the tips ids and the values are lists
+		 *  containing the following in their indexes:
+		 *
+		 *  0 -> Tip index in the tree widget
+		 *  1 -> Tip title
+		 *  2 -> Tip html code */
 		QMap<int, QStringList> cached_tips;
 
-		QJsonObject getJsonObject(QNetworkReply *reply);
+		template<class RetClass>
+		RetClass getJsonObject(QNetworkReply *reply);
 
-		void showTipOfDay(const QString &title, const QString &text);
+		void showTipOfDay(int tip_id);
 
 		void navigateToItem(bool prev_item);
 
