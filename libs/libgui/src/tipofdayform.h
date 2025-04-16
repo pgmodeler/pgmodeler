@@ -27,19 +27,21 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 	Q_OBJECT
 
 	private:
-		//QNetworkAccessManager *net_manager;
+		QNetworkAccessManager *net_manager;
 
-		QString loadTipOfDay(const QString &url);
+		bool load_tip;
 
 	protected:
 		void showEvent(QShowEvent *event) override;
 
 	public:
 		explicit TipOfDayForm(QWidget *parent = nullptr);
-		~TipOfDayForm();
+		~TipOfDayForm() = default;
 
 	private slots:
-		void showTipOfDay(const QString &tip);
+		void loadIndex(QNetworkReply *reply);
+		void loadTipOfDay(QNetworkReply *reply);
+		void handleItemSelected(QTreeWidgetItem *item);
 };
 
 #endif

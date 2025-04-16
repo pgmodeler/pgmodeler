@@ -100,7 +100,31 @@
        </item>
       </layout>
      </widget>
-     <widget class="QListWidget" name="index_lst"/>
+     <widget class="QTreeWidget" name="index_trw">
+      <property name="editTriggers">
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="indentation">
+       <number>17</number>
+      </property>
+      <property name="uniformRowHeights">
+       <bool>true</bool>
+      </property>
+      <property name="animated">
+       <bool>true</bool>
+      </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Tips of the day</string>
+       </property>
+      </column>
+     </widget>
     </widget>
    </item>
    <item>
