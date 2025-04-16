@@ -7736,6 +7736,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
 		attribs_aux[Attributes::Objects]="";
+		attribs_aux[getSchemaName()] = "";
 
 		if(is_sql_def)
 		{
@@ -7835,6 +7836,15 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 
 		if(is_sql_def)
 			configureShellTypes(true);
+
+		attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
+		def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
+
+		if(prepend_at_bod && is_sql_def)
+			def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
+
+		if(append_at_eod && is_sql_def)
+			def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 	}
 	catch(Exception &e)
 	{
@@ -7844,14 +7854,6 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
-	def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
-
-	if(prepend_at_bod && is_sql_def)
-		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
-
-	if(append_at_eod && is_sql_def)
-		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
