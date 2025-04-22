@@ -52,6 +52,8 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 		void showEvent(QShowEvent *event) override;
 
 	public:
+		static const QString TipOfDayUrl;
+
 		explicit TipOfDayForm(QWidget *parent = nullptr);
 		~TipOfDayForm() = default;
 

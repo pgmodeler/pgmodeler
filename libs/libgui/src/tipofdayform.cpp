@@ -26,6 +26,8 @@
 #include <QJsonArray>
 #include <QRandomGenerator>
 
+const QString TipOfDayForm::TipOfDayUrl { GlobalAttributes::PgModelerSite + "/tipofday" };
+
 TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -225,7 +227,7 @@ void TipOfDayForm::handleItemSelected(QTreeWidgetItem *item)
 		// If the tip is not cached we retrieve it from the website
 		load_tip = true;
 		qApp->setOverrideCursor(Qt::WaitCursor);
-		net_manager->get(QNetworkRequest(QUrl(QString("http://localhost:8000/tipofday/%1").arg(tip_id))));
+		net_manager->get(QNetworkRequest(QUrl(TipOfDayUrl + "/" + QString::number(tip_id))));
 	}
 }
 
@@ -264,6 +266,6 @@ void TipOfDayForm::showEvent(QShowEvent *event)
 	if(!event->spontaneous() && index_trw->topLevelItemCount() == 0)
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
-		net_manager->get(QNetworkRequest(QUrl("http://localhost:8000/tipofday")));
+		net_manager->get(QNetworkRequest(QUrl(TipOfDayUrl)));
 	}
 }
