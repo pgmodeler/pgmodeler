@@ -56,13 +56,10 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 		static QList<QTreeWidgetItem *> list = index_trw->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive);
 		QTreeWidgetItem *item = nullptr, *curr_item = index_trw->currentItem();
 
-		do
-		{
-			item = list.at(rndgen.bounded(0, list.size()));
-			index_trw->setCurrentItem(item);
-			navigateToItem(false);
-		}
-		while(curr_item == index_trw->currentItem());
+		list.removeAll(curr_item);
+		item = list.at(rndgen.bounded(0, list.size()));
+		index_trw->setCurrentItem(item);
+		navigateToItem(false);
 	});
 
 	connect(net_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply){
