@@ -140,25 +140,29 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			QTimer::singleShot(1000, action_donate, &QAction::trigger);
 	#endif
 
-	//Showing the tips of the day form
-	if(confs[Attributes::Configuration][Attributes::ShowTipOfDay] == Attributes::True)
-	{
-		tipofday_form->show_at_startup_chk->setChecked(true);
+	#ifndef DEMO_VERSION
+		GeneralConfigWidget::restoreWidgetGeometry(tipofday_form);
 
-		QTimer::singleShot(3000, this, [this](){
-			// Avoiding showing the tip of day form when the model restoration is visible
-			if(!restoration_form->isVisible())
-				tipofday_form->show();
-			else
-			{
-				/* If the restoration form is visible we open the tip of day form seconds after
-				 * the the latter is closed */
-				connect(restoration_form, &ModelRestorationForm::finished, this, [this](){
-					QTimer::singleShot(3000, tipofday_form, &TipOfDayForm::show);
-				});
-			}
-		});
-	}
+		//Showing the tips of the day form
+		if(confs[Attributes::Configuration][Attributes::ShowTipOfDay] == Attributes::True)
+		{
+			tipofday_form->show_at_startup_chk->setChecked(true);
+
+			QTimer::singleShot(3000, this, [this](){
+				// Avoiding showing the tip of day form when the model restoration is visible
+				if(!restoration_form->isVisible())
+					tipofday_form->show();
+				else
+				{
+					/* If the restoration form is visible we open the tip of day form seconds after
+					 * the the latter is closed */
+					connect(restoration_form, &ModelRestorationForm::finished, this, [this](){
+						QTimer::singleShot(3000, tipofday_form, &TipOfDayForm::show);
+					});
+				}
+			});
+		}
+	#endif
 
 	// Post initilize plug-ins
 	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
@@ -962,6 +966,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	{
 		GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 		GeneralConfigWidget::saveWidgetGeometry(this);
+		GeneralConfigWidget::saveWidgetGeometry(tipofday_form);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
 		model_save_timer.stop();
