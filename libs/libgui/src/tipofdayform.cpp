@@ -55,13 +55,17 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 
 	connect(random_tb, &QToolButton::clicked, this, [this](){
 		static QRandomGenerator rndgen = QRandomGenerator::securelySeeded();
-		static QList<QTreeWidgetItem *> list = index_trw->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive);
-		QTreeWidgetItem *item = nullptr, *curr_item = index_trw->currentItem();
+		static QList<QTreeWidgetItem *> list;
+		QTreeWidgetItem *item = nullptr;
 
-		list.removeAll(curr_item);
+		list = index_trw->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive);
+		list.removeIf([this](auto &item){
+			return item == index_trw->currentItem() ||
+					item->data(1, Qt::UserRole).toInt() < 0;
+		});
+
 		item = list.at(rndgen.bounded(0, list.size()));
 		index_trw->setCurrentItem(item);
-		navigateToItem(false);
 	});
 
 	connect(net_manager, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply){
