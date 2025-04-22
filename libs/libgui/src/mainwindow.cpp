@@ -140,6 +140,26 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			QTimer::singleShot(1000, action_donate, &QAction::trigger);
 	#endif
 
+	//Showing the tips of the day form
+	if(confs[Attributes::Configuration][Attributes::ShowTipOfDay] == Attributes::True)
+	{
+		tipofday_form->show_at_startup_chk->setChecked(true);
+
+		QTimer::singleShot(3000, this, [this](){
+			// Avoiding showing the tip of day form when the model restoration is visible
+			if(!restoration_form->isVisible())
+				tipofday_form->show();
+			else
+			{
+				/* If the restoration form is visible we open the tip of day form seconds after
+				 * the the latter is closed */
+				connect(restoration_form, &ModelRestorationForm::finished, this, [this](){
+					QTimer::singleShot(3000, tipofday_form, &TipOfDayForm::show);
+				});
+			}
+		});
+	}
+
 	// Post initilize plug-ins
 	PluginsConfigWidget *plugins_conf_wgt = dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 	plugins_conf_wgt->postInitPlugins();
@@ -941,7 +961,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	else
 	{
 		GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
-		//std::map<QString, attribs_map > confs = conf_wgt->getConfigurationParams();
 		GeneralConfigWidget::saveWidgetGeometry(this);
 
 		//Stops the saving timers as well the temp. model saving thread before close pgmodeler
@@ -971,8 +990,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			}
 
 			if(!model_names.isEmpty() &&
-					conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertUnsavedModels) != Attributes::False
-					/* confs[Attributes::Configuration][Attributes::AlertUnsavedModels] != Attributes::False */)
+					conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertUnsavedModels) != Attributes::False)
 			{
 				msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
 				msg_box.show(tr("Unsaved model(s)"),
@@ -992,8 +1010,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		// Warning the user about non empty sql execution panels
 		if(event->isAccepted() && sql_tool_wgt->hasSQLExecutionPanels() &&
-				conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertOpenSqlTabs) != Attributes::False
-				/* confs[Attributes::Configuration][Attributes::AlertOpenSqlTabs] != Attributes::False */)
+				conf_wgt->getConfigurationParam(Attributes::Configuration, Attributes::AlertOpenSqlTabs) != Attributes::False)
 		{
 			action_manage->trigger();
 			msg_box.setCustomOptionText(tr("Always close without alerting me next time."));
@@ -1021,11 +1038,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		this->overview_wgt->close();		
 
-		attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
-		attribs[Attributes::FirstRun]=Attributes::False;
+		attribs[Attributes::PgModelerVersion] = GlobalAttributes::PgModelerVersion;
+		attribs[Attributes::FirstRun] = Attributes::False;
 
-		attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
-		attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
+		attribs[Attributes::CompactView] = action_compact_view->isChecked() ? Attributes::True : "";
+		attribs[Attributes::ShowMainMenu] = main_menu_mb->isVisible() ? Attributes::True : "";
+		attribs[Attributes::ShowTipOfDay] = tipofday_form->show_at_startup_chk->isChecked() ? Attributes::True : "";
 
 		conf_wgt->appendConfigurationSection(Attributes::Configuration, attribs);
 		attribs.clear();

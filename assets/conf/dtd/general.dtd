@@ -53,6 +53,7 @@
 <!ATTLIST configuration use-def-disambiguation (false|true) "true">
 <!ATTLIST configuration hide-objects-sel-info (false|true) "false">
 <!ATTLIST configuration hide-cur-pos-zoom-info (false|true) "false">
+<!ATTLIST configuration show-tip-of-day (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
