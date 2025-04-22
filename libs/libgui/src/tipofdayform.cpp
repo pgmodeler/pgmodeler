@@ -28,12 +28,35 @@
 
 const QString TipOfDayForm::TipOfDayUrl { GlobalAttributes::PgModelerSite + "/tipofday" };
 
+const QString TipOfDayForm::TipStyleSheet {
+	"img { \
+		max-width: 90%; \
+	}\
+\
+	code {\
+		padding: 2px 4px;\
+		font-size: 90%; \
+		color: #c7254e; \
+		background-color: #f9f2f4;\
+	}\
+\
+	.btn-icon-xs { \
+			max-width: 100%; \
+			vertical-align: middle;\
+			max-height: 24px; \
+			max-width: 24px; \
+			align: vcenter; \
+	}"
+};
+
 TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	GuiUtilsNs::configureWidgetFont(tip_title_lbl, GuiUtilsNs::BigFontFactor);
+
+	tip_txt->document()->setDefaultStyleSheet(TipStyleSheet);
 
 	load_tip = false;
 	index_trw->setVisible(false);
@@ -207,7 +230,6 @@ void TipOfDayForm::loadTipOfDay(QNetworkReply *reply)
 
 void TipOfDayForm::showTipOfDay(int tip_id)
 {
-	tip_txt->document()->setDefaultStyleSheet("img { max-width: 80%; }");
 	tip_title_lbl->setText(QString("#%1 ").arg(cached_tips[tip_id].at(0)) +
 												 cached_tips[tip_id].at(1));
 	tip_txt->setHtml(cached_tips[tip_id].at(2));
