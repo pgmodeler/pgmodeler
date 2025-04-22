@@ -370,9 +370,11 @@ bool SyntaxHighlighter::matchGroup(const GroupConfig *group_cfg, const QString &
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, QList<MatchInfo> &matches)
 {
-	QRegularExpressionMatchIterator mt_itr = expr.globalMatch(text, txt_pos);
-	QRegularExpressionMatch match;
+	static QRegularExpressionMatchIterator mt_itr;
+	static QRegularExpressionMatch match;
 	MatchInfo m_info;
+
+	mt_itr = expr.globalMatch(text, txt_pos);
 
 	while(mt_itr.isValid() && mt_itr.hasNext())
 	{
@@ -392,9 +394,10 @@ bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const 
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info)
 {
-	QRegularExpressionMatch match = expr.match(text, txt_pos);
+	static QRegularExpressionMatch match;
 	int mt_start = -1, mt_end = -1;
 
+	match = expr.match(text, txt_pos);
 	mt_start = match.capturedStart();
 	mt_end = match.capturedEnd() - 1;
 
@@ -695,7 +698,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 								regexp.setPatternOptions(!case_sensitive ?
 																					QRegularExpression::CaseInsensitiveOption :
-																					QRegularExpression::NoPatternOption);
+																					QRegularExpression::NoPatternOption |
+																					QRegularExpression::DontCaptureOption);
 
 								// We throw an error aborting the loading if the regepx has an invalid pattern
 								if(!regexp.isValid())
