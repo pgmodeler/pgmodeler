@@ -281,6 +281,7 @@
         <file>icons/resultset.png</file>
         <file>icons/bookmark.png</file>
         <file>icons/tipofday.png</file>
+        <file>icons/star.png</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/brazil_flag.png</file>

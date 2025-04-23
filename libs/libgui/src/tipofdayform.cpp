@@ -55,6 +55,7 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 	setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	GuiUtilsNs::configureWidgetFont(tip_title_lbl, GuiUtilsNs::BigFontFactor);
+	GuiUtilsNs::configureWidgetFont(plus_feat_lbl, GuiUtilsNs::SmallFontFactor);
 
 	tip_txt->document()->setDefaultStyleSheet(TipStyleSheet);
 
@@ -86,6 +87,9 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 			return item == index_trw->currentItem() ||
 					item->data(1, Qt::UserRole).toInt() < 0;
 		});
+
+		if(list.isEmpty())
+			return;
 
 		item = list.at(rndgen.bounded(0, list.size()));
 		index_trw->setCurrentItem(item);

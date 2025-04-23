@@ -221,6 +221,9 @@ namespace GuiUtilsNs {
 
 		switch(factor_id)
 		{
+			case XSmallFontFactor:
+				factor=0.60;
+			break;
 			case SmallFontFactor:
 				factor=0.80;
 			break;

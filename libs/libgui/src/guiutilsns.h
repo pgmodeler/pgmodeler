@@ -56,6 +56,7 @@ namespace GuiUtilsNs {
 	LtSpacing = 5;
 
 	enum FontFactorId: unsigned {
+		XSmallFontFactor,
 		SmallFontFactor,
 		MediumFontFactor,
 		BigFontFactor,
