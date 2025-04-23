@@ -55,12 +55,14 @@ TipOfDayForm::TipOfDayForm(QWidget *parent) : QWidget(parent)
 	setWindowIcon(QIcon(GuiUtilsNs::getIconPath("pgmodeler_logo")));
 
 	GuiUtilsNs::configureWidgetFont(tip_title_lbl, GuiUtilsNs::BigFontFactor);
-	GuiUtilsNs::configureWidgetFont(plus_feat_lbl, GuiUtilsNs::SmallFontFactor);
+	GuiUtilsNs::configureWidgetFont(plus_tip_lbl, GuiUtilsNs::SmallFontFactor);
 
 	tip_txt->document()->setDefaultStyleSheet(TipStyleSheet);
 
-	load_tip = false;
+	plus_tip_frm->setVisible(false);
 	index_trw->setVisible(false);
+
+	load_tip = false;
 	splitter->setSizes({ 1000, 500 });
 
 	net_manager = new QNetworkAccessManager(this);
@@ -220,11 +222,15 @@ void TipOfDayForm::loadTipOfDay(QNetworkReply *reply)
 	if(!json_obj.isEmpty())
 	{
 		int tip_id = json_obj.value("id").toInt();
+
 		QString text = json_obj.value("text").toString(),
 				title = json_obj.value("title").toString();
 
+		bool plus_tip = json_obj.value("plus_tip").toBool();
+
 		cached_tips[tip_id].append(title);
 		cached_tips[tip_id].append(text);
+		cached_tips[tip_id].append(plus_tip ? Attributes::True : Attributes::False);
 		showTipOfDay(tip_id);
 	}
 
@@ -236,7 +242,10 @@ void TipOfDayForm::showTipOfDay(int tip_id)
 {
 	tip_title_lbl->setText(QString("#%1 ").arg(cached_tips[tip_id].at(0)) +
 												 cached_tips[tip_id].at(1));
+
 	tip_txt->setHtml(cached_tips[tip_id].at(2));
+
+	plus_tip_frm->setVisible(cached_tips[tip_id].at(3) == Attributes::True);
 }
 
 void TipOfDayForm::handleItemSelected(QTreeWidgetItem *item)

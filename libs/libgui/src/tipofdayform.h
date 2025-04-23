@@ -38,7 +38,8 @@ class TipOfDayForm : public QWidget, public Ui::TipOfDayForm {
 		 *
 		 *  0 -> Tip index in the tree widget
 		 *  1 -> Tip title
-		 *  2 -> Tip html code */
+		 *  2 -> Tip html code
+		 *  3 -> pgModeler Plus tip flag */
 		QMap<int, QStringList> cached_tips;
 
 		template<class RetClass>
