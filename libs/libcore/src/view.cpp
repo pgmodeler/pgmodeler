@@ -884,6 +884,7 @@ QString View::getDataDictionary(bool split, bool md_format, const attribs_map &e
 
 		tab_names.removeDuplicates();
 		attribs[Attributes::References] = tab_names.join(", ");
+		attribs[Attributes::Columns] = "";
 		aux_attrs.clear();
 
 		for(auto &col : gen_columns)
