@@ -157,9 +157,10 @@ void SchemaParser::setSearchPath(const QString &path)
 void SchemaParser::restartParser()
 {
 	/* Clears the buffer and resets the counters for line,
-		column and amount of comments */
+		column and include statement infos */
 	buffer.clear();
 	attributes.clear();
+	include_infos.clear();
 	line = column = 0;
 }
 
