@@ -1,6 +1,43 @@
 Changelog
 ---------
 
+v1.2.0
+------
+<em>Release date: May 9, 2025</em><br/>
+
+* [New] Setup a wait cursor when loading a diff code in the SQL tool.
+* [New] Added the static methods isAccepted, isRejected, and isCanceled to Messagebox.
+* [New] Added the enum Messagebox::ResultId
+* [New] Added support for multiple objects code preview in SourceCodeWidget.
+* [New] Added the methods BaseObject::setPgOid and BaseObject::getPgOid.
+* [New] Added a confirmation message in DataHandlingForm when the user tries to close the dialog even without uncommitted data.
+* [New] Graphical objects added to the ModelWidget will now blink and the viewport will center on them to indicate to the user where they were put.
+* [New] Added a copy action in NumberedTextEditor that copies all the text to the clipboard
+* [Change] Improved the SyntaxHighlighter and the sql-highlight files so the regular expressions for each group don't take too much to process strings
+* [Change] Messagebox::exec now calls qApp->restoreOverrideCursor
+* [Change] Removed unneeded calls to qApp->restoreOverrideCursor
+* [Change] Changed the return type of all create methods in DatabaseImportHelper to their respective object classes.
+* [Change] In DatabaseImportHelper::createObject the OID is automatically assigned to the object created from XML code.
+* [Change] Minor adjustment in ObjectsScene::addItem. Added an optional parameter to blink added objects.
+* [Change] Adjusted pgmodeler-cli to raise errors when the ignore export error options are used in transactional export mode.
+* [Change] Minor adjustment in ModelDatabaseDiffForm by making transactional mode mutually exclusive with ignore export errors options.
+* [Change] Adjusted the use of Messagebox in several portions of the tool.
+* [Change] Replaced the calls to Messagebox::result() == result_code by the respective isAccepted, isRejected or isCanceled methods.
+* [Change] Adjusted the ModelWidget::configureFadeMenu to stop reallocating new actions on each call.
+* [Change] Removed unused class attribute in ModelObjectsWidget.
+* [Change] Removed the method SourceCodeWidget::setSourceCodeTab.
+* [Fix] Fixed a bug in the SQL generation of database model SQL related to an unknown database attribute.
+* [Fix] Fixed the text stack trace in the message box class.
+* [Fix] Fixed the code display for functions in DatabaseExplorerWidget.
+* [Fix] Fixed a bug when importing composite types having attributes using arrays of other user-defined types.
+* [Fix] Fixed a bug when displaying the source, in Database Explorer, of a composite type that has one or more attributes referencing used-defined types.
+* [Fix] Fixed a bug in SyntaxHighlighter::highlightEnclosingChars.
+* [Fix] Fixed a bug in ResultSet::accessTuple that was generating errors when running catalog queries of some objects in older versions of PostgreSQL.
+* [Fix] Fixed a bug in PgModelerCliApp::diffModelDatabase that was informing invalid forced filtered types.
+* [Fix] Minor fix in DatabaseModel::getChangelogDefinition to avoid returning an empty string when the changelog is not persisted to the dbm file.
+* [Fix] Fixed a bug in ModelObjectsWidget::selectObject.
+* [Fix] Minor fix in CodeCompletionWidget to list columns on "Order By".
+
 v1.2.0-beta1
 ------
 <em>Release date: March 31, 2025</em><br/>

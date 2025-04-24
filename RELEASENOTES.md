@@ -1,9 +1,9 @@
-v1.2.0-beta1
+v1.2.0
 ------
-<em>Release date: March 31, 2025</em><br/>
-<em>Changes since: <strong>v1.2.0-beta</strong></em><br/>
+<em>Release date: May 9, 2025</em><br/>
+<em>Changes since: <strong>v1.1.0</strong></em><br/>
 
-<em><strong>Attention:</strong> pgModeler 1.2.0-beta1 introduces configuration changes that may affect compatibility with 1.1.x settings. On the first launch, pgModeler will automatically attempt to migrate your existing settings. Please note that this is an early development release where stability issues may occur. It's recommended to back up all models and databases before use. Please report any found bugs for prompt resolution. The mentioned migration process helps transition to improved configurations while minimizing disruption to your workflow.</em><br/><br/>
+<em><strong>Attention:</strong> pgModeler 1.2.0 introduces configuration changes that may affect compatibility with 1.1.x settings. On the first launch, pgModeler will automatically attempt to migrate your existing settings. Please note that this is an early development release where stability issues may occur. It's recommended to back up all models and databases before use. Please report any found bugs for prompt resolution. The mentioned migration process helps transition to improved configurations while minimizing disruption to your workflow.</em><br/><br/>
 
 **New features** <br/>
 
