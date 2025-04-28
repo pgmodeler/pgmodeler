@@ -57,7 +57,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
-	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
+	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt, true);
 
 	snippet_hl=new SyntaxHighlighter(snippet_txt);
 	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
