@@ -1040,9 +1040,9 @@ void DatabaseModel::removeExtensionObjects(Extension *ext)
 			if(!ref_obj->isDependingOn(ext))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
-														 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
-																	ref_obj->getSignature(), ref_obj->getTypeName()),
-												 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												.arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+														 ref_obj->getSignature(), ref_obj->getTypeName()),
+												 ErrorCode::RemExtRefChildObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 		}
 
@@ -1105,8 +1105,11 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				if(obj)
 				{
 					/* If the object exists and is not one that is linked to the current extension it means
-					 * that if we try to create the object it'll be duplicated in the model, which is prohibited */
-					if(!obj->isDependingOn(ext))
+					 * that if we try to create the object it'll be duplicated in the model, which is prohibited.
+					 * The exception here is for duplicated schemas. The schema that is a child of the extension
+					 * will not be created and the one in the model will be used by the other child objects of the
+					 * extesion if needed */
+					if(ext_obj_type != ObjectType::Schema && !obj->isDependingOn(ext))
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
 														.arg(ext->getSignature(), obj->getSignature(), obj->getTypeName()),
