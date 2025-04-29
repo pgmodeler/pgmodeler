@@ -95,7 +95,8 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	QAction *act = snippets_menu.menuAction();
 	act->setText(tr("Snippets"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("codesnippet")));
-
+	code_menu.addSeparator();
+	code_menu.addAction(act);
 	code_tb->setMenu(&code_menu);
 
 	action_filter = result_menu.addAction(QIcon(GuiUtilsNs::getIconPath("filter")), tr("Filter"), QKeySequence("Ctrl+T"));
