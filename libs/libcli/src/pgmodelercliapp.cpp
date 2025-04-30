@@ -532,7 +532,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr(" %1, %2\t\t  Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters], ShowDelimiters));
 	printText(tr(" %1, %2\t\t  Each page will be exported in a separate image. (Only for PNG images)").arg(short_opts[PageByPage], PageByPage));
 	printText(tr(" %1, %2\t  Don't use the original canvas color in the exported image; instead, a white background is used. (Only for PNG images)").arg(short_opts[OverrideBgColor], OverrideBgColor));
-	printText(tr(" %1, %2 [FACTOR]\t\t  Applies a zoom (in percent) before export to an image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor], ZoomFactor).arg(ModelWidget::MinimumZoom, ModelWidget::MaximumZoom));
+	printText(tr(" %1, %2 [FACTOR]\t\t  Applies a zoom (in percent) before export to an image. Accepted zoom interval: %3 to %4 (Only for PNG images)").arg(short_opts[ZoomFactor], ZoomFactor).arg(ModelWidget::MinimumZoom).arg(ModelWidget::MaximumZoom));
 	printText();
 
 	printText(tr("Data dictionary export options: "));
