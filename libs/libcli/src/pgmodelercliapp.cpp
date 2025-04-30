@@ -960,6 +960,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		 * in check if all provided options are compatible with the operation mode selected */
 		QStringList acc_opts = accepted_opts[curr_op_mode];
 		QString long_opt;
+		static QRegularExpression num_rx { "[0-9]+$" };
 
 		// Diff, import and export (to DBMS) share the same connection options
 		if(diff || import_db || export_dbms)
@@ -978,7 +979,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 			/* Before validate the option we need to remove any appended number to the option name
 			 * This happens for options related to objects filters and connections */
-			long_opt.remove(QRegularExpression("[0-9]+$"));
+			long_opt.remove(num_rx);
 
 			if(!acc_opts.contains(long_opt))
 			{
@@ -1122,6 +1123,8 @@ void PgModelerCliApp::extractObjectXML()
 	// Extracting pgModeler version from input model
 	QRegularExpression ver_expr(AttributeExpr.arg(Attributes::PgModelerVersion));
 	QRegularExpressionMatch match;
+	static QRegularExpression val_delim_rx {"(\\\"|\\=| )+" },
+	version_num_rx {"(\\d\\.\\d\\.\\d)((\\-)(alpha|beta)(\\d))?" };
 
 	QStringList capt_txts;
 	match = ver_expr.match(buf);
@@ -1129,9 +1132,9 @@ void PgModelerCliApp::extractObjectXML()
 	capt_txts = match.capturedTexts();
 	model_version = !capt_txts.isEmpty() ? capt_txts.at(0) : "";
 	model_version.remove(Attributes::PgModelerVersion);
-	model_version.remove(QRegularExpression("(\\\"|\\=| )+"));
+	model_version.remove(val_delim_rx);
 
-	if(!model_version.contains(QRegularExpression("(\\d\\.\\d\\.\\d)((\\-)(alpha|beta)(\\d))?")))
+	if(!model_version.contains(version_num_rx))
 	{
 		printMessage(tr("** WARNING: Couldn't determine the pgModeler version in which the input model was created!"));
 		printMessage(tr("            Some fix actions that depend on the model version will not be applied!"));
@@ -1158,15 +1161,17 @@ void PgModelerCliApp::extractObjectXML()
 		throw Exception(tr("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Extracting layers informations from the tag <dbmodel>
-	QRegularExpression dbm_regexp = QRegularExpression(TagExpr.arg(Attributes::DbModel)),
+	static QRegularExpression dbm_regexp { TagExpr.arg(Attributes::DbModel) },
 
-			db_end_regexp =  QRegularExpression(EndTagExpr.arg(Attributes::Database)),
+			db_end_regexp { EndTagExpr.arg(Attributes::Database) },
 
 			//[schema].[func_name](...OUT [type]...)
-			func_signature=QRegularExpression("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")"),
+			func_signature{ "(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")" },
 
 			//[,]OUT [schema].[type]
-			out_param=QRegularExpression("(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?");
+			out_param { "(,)?(OUT )([a-z]|[0-9]|(\\.)|(\\_)|(\\-)|( )|(\\[)|(\\])|(&quot;))+((\\()([0-9])+(\\)))?" },
+
+			open_tag_rx { "^(((\n)|(\t))*(<))" };
 
 	int attr_start =-1, attr_end = -1, dbm_start = -1;
 	QString aux_buf,
@@ -1269,7 +1274,7 @@ void PgModelerCliApp::extractObjectXML()
 		else
 		{
 			//If the line contains an objects open tag
-			if(lin.contains(QRegularExpression("^(((\n)|(\t))*(<))")) && !open_tag)
+			if(lin.contains(open_tag_rx) && !open_tag)
 			{
 				//Check the flag indicating an open tag
 				open_tag=true;
@@ -1342,7 +1347,7 @@ void PgModelerCliApp::extractObjectXML()
 void PgModelerCliApp::recreateObjects()
 {
 	QStringList fail_objs, constr, list;
-	QString xml_def, aux_def, start_tag = "<%1", end_tag = "</%1>", aux_tag, type_tag = "<type name=\"%1\"";
+	QString xml_def, aux_def, start_tag = "<%1", end_tag = "</%1>", aux_tag;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 	std::vector<ObjectType> types={ ObjectType::Index, ObjectType::Trigger, ObjectType::Rule };
@@ -1424,9 +1429,7 @@ void PgModelerCliApp::recreateObjects()
 						curr_size += xml_def.size();
 						printMessage(QString("[%1%] %2")
 												 .arg(static_cast<int>((curr_size/static_cast<double>(buffer_size)) * 100))
-												 .arg(tr("Object recreated: `%1' (%2)"))
-												 .arg(object->getName(true))
-												 .arg(object->getTypeName()));
+												 .arg(tr("Object recreated: `%1' (%2)").arg(object->getName(true), object->getTypeName())));
 					}
 
 					//For each sucessful created object the method will try to create a failed one
@@ -1438,7 +1441,9 @@ void PgModelerCliApp::recreateObjects()
 
 				/* Additional step to extract indexes/triggers/rules from within tables/views
 				 * and putting their xml on the list of object to be created */
-				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(QRegularExpression("(<)(index|trigger|rule)")))
+				static QRegularExpression idx_trg_rl_rx { "(<)(index|trigger|rule)" };
+
+				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(idx_trg_rl_rx))
 				{
 					for(auto &type : types)
 					{
@@ -1670,7 +1675,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove(QRegularExpression(AttributeExpr.arg("sysid")));
 		obj_xml.remove(QRegularExpression(AttributeExpr.arg("encrypted")));
 
-		QRegularExpression ref_roles_expr = QRegularExpression(QString("(<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer));
+		static QRegularExpression ref_roles_expr { QString("(<%1)(.)+(%2)( )*(=)(\")(%3)(\")(.)+(>)").arg(Attributes::Roles, Attributes::RoleType, Attributes::Refer) };
 		QRegularExpressionMatch match;
 		int pos = -1;
 
@@ -1679,6 +1684,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 
 		if(pos >= 0)
 		{
+			static QRegularExpression ref_role_rx { "^(.)+(names=\")" };
 			QString buf = obj_xml.mid(pos, match.capturedLength()),
 					name_attr = "name=\"", role_name;
 			int start_idx = 0, end_idx = 0;
@@ -1692,7 +1698,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 			obj_xml.remove(pos, match.capturedLength());
 
 			// Retrieve the name of the ref-roles
-			buf.remove(QRegularExpression("^(.)+(names=\")"));
+			buf.remove(ref_role_rx);
 			buf.remove(buf.indexOf("\""), buf.size());
 
 			/* Storing the association between the current role and the ref-roles
