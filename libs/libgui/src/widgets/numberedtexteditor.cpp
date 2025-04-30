@@ -47,6 +47,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, 
 	action_btns_enabled = act_btns_enabled;
 	show_act_btns =	false;
 	show_line_nums = line_nums_visible;
+	this->setFont(default_font);
 
 	line_numbers_wgt = new LineNumbersWidget(this);
 	line_numbers_wgt->setObjectName("line_numbers_wgt");
