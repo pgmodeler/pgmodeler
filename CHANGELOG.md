@@ -26,6 +26,10 @@ v1.2.0
 * [Change] Adjusted the ModelWidget::configureFadeMenu to stop reallocating new actions on each call.
 * [Change] Removed unused class attribute in ModelObjectsWidget.
 * [Change] Removed the method SourceCodeWidget::setSourceCodeTab.
+* [Fix] Minor fix in FileSelectorWidget that was not applying correctly the palette colors in the line edit field.
+* [Fix] Minor fix in DatabaseModel::updateExtensionObjects to ignore duplicated schemas and use the ones already available in the model.
+* [Fix] Minor fix in SchemaParser::resetParser to clear include info so the error location in schema code can be correctly informed.
+* [Fix] Fixed a bug in the data dictionary generation for views.
 * [Fix] Fixed a bug in the SQL generation of database model SQL related to an unknown database attribute.
 * [Fix] Fixed the text stack trace in the message box class.
 * [Fix] Fixed the code display for functions in DatabaseExplorerWidget.
