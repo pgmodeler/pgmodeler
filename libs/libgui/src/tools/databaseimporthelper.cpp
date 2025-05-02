@@ -29,7 +29,7 @@ DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 	rand_num_engine.seed(rand_seed());
 
 	import_canceled=ignore_errors=import_sys_objs=import_ext_objs=false;
-	comments_as_aliases=rand_rel_colors=update_fk_rels=false;
+	comments_as_aliases=rand_rel_colors=update_fk_rels=is_working_model=false;
 	auto_resolve_deps=true;
 	import_filter=Catalog::ListAllObjects | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 	xmlparser=nullptr;
@@ -126,17 +126,19 @@ void DatabaseImportHelper::setSelectedOIDs(DatabaseModel *db_model, const std::m
 	system_objs.clear();
 }
 
-void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors,
-																						bool debug_mode, bool rand_rel_colors, bool update_rels, bool comments_as_aliases)
+void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps,
+																						bool ignore_errors,	bool debug_mode, bool rand_rel_colors,
+																						bool update_rels, bool comments_as_aliases, bool is_working_model)
 {
 	this->import_sys_objs = import_sys_objs;
 	this->import_ext_objs = import_ext_objs;
 	this->auto_resolve_deps = auto_resolve_deps;
-	this->ignore_errors = ignore_errors;
 	this->debug_mode = debug_mode;
 	this->rand_rel_colors = rand_rel_colors;
 	this->update_fk_rels = update_rels;
 	this->comments_as_aliases = comments_as_aliases;
+	this->is_working_model = is_working_model;
+	this->ignore_errors = ignore_errors;
 
 	Connection::setPrintSQL(debug_mode);
 
@@ -486,10 +488,10 @@ void DatabaseImportHelper::createConstraints()
 					 attribs[Attributes::Inherited]!=Attributes::True))
 			{
 				emit s_progressUpdated(progress,
-										tr("Creating `%1' (%2)...")
-										.arg(/* attribs[Attributes::Name] */ getObjectName(attribs[Attributes::Oid], true))
-										.arg(BaseObject::getTypeName(ObjectType::Constraint)),
-						ObjectType::Constraint);
+															 tr("Creating `%1' (%2)...")
+															 .arg(getObjectName(attribs[Attributes::Oid], true),
+																		BaseObject::getTypeName(ObjectType::Constraint)),
+															 ObjectType::Constraint);
 
 				createObject(attribs);
 			}
@@ -621,6 +623,12 @@ void DatabaseImportHelper::importDatabase()
 		createObjects();
 		createTableInheritances();
 		createTablePartitionings();
+
+		/* Forcing the creation of the columns
+		 * when importing to the working model. */
+		if(is_working_model)
+			createColumns();
+
 		createConstraints();
 		destroyDetachedColumns();
 		createPermissions();
@@ -761,6 +769,39 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 	{
 		created_objs.push_back(oid);
 		return;
+	}
+	/* If we are importing to the working model and the object already exists
+	 * we just mark it as created */
+	else if(is_working_model && obj_type != ObjectType::Database)
+	{
+		bool obj_exists = false;
+
+		/* If the object is a table-child one, we retrieve the parent table from the model
+		 * and then check if the object exists in it */
+		if(TableObject::isTableObject(obj_type))
+		{
+			BaseTable *tab = dynamic_cast<BaseTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]),
+																																		{ ObjectType::Table,
+																																			ObjectType::ForeignTable,
+																																			ObjectType::View }));
+			obj_exists = (tab && tab->getObjectIndex(attribs[Attributes::Name], obj_type) >= 0);
+		}
+		else
+		{
+			// Checking if the object exists in the database model
+			obj_exists = dbmodel->getObjectIndex(getObjectName(attribs[Attributes::Oid], true), obj_type) >= 0;
+
+			/* If the object is a table/view/foreign table, we need to retrieve the column attributes
+			 * from the database so constraints and other objects to be created can find them */
+			if(BaseTable::isBaseTable(obj_type) && !columns.count(oid))
+				retrieveTableColumns(getObjectName(attribs[Attributes::Schema]), attribs[Attributes::Name]);
+		}
+
+		if(obj_exists)
+		{
+			created_objs.push_back(oid);
+			return;
+		}
 	}
 
 	try
@@ -947,9 +988,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 
 		if(debug_mode)
 		{
-			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->")
-														.arg(attribs[Attributes::Name])
-														.arg(attribs[Attributes::Oid]) << xml_buf;
+			qDebug().noquote() << QString("<!-- XML code: %1 (OID: %2) -->\n")
+														.arg(attribs[Attributes::Name], attribs[Attributes::Oid]) << xml_buf;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -1900,10 +1940,8 @@ Table *DatabaseImportHelper::createTable(attribs_map &attribs)
 			{ Attributes::XPos, "0" },
 			{ Attributes::YPos, "0" }};
 
-		attribs[Attributes::Columns]="";
-		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
-
-		createColumns(attribs, inh_cols);
+		attribs[Attributes::Position] = schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
+		attribs[Attributes::Columns] = createColumns(attribs, inh_cols).join(QChar::LineFeed);
 		loadObjectXML(ObjectType::Table, attribs);
 		table=dbmodel->createTable();
 
@@ -2365,7 +2403,7 @@ Constraint *DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * which we work to separate column only references from complex expression. Only complex expression will be used
 				 * and assigned to their exclude constraint elements. Column references are used in exclude elements but relying in
 				 * the cols list above */
-				exprs=attribs[Attributes::Expressions]
+				exprs = attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), "")
 							.split(QRegularExpression("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
 										 Qt::SkipEmptyParts);
@@ -2424,15 +2462,15 @@ Constraint *DatabaseImportHelper::createConstraint(attribs_map &attribs)
 					attribs[Attributes::Expression] = expr;
 				}
 
-				attribs[Attributes::SrcColumns]=getColumnNames(attribs[Attributes::Table], attribs[Attributes::SrcColumns]).join(',');
+				attribs[Attributes::SrcColumns] = getColumnNames(attribs[Attributes::Table], attribs[Attributes::SrcColumns]).join(',');
 			}
 
-			attribs[Attributes::RefTable]=getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
-			attribs[Attributes::DstColumns]=getColumnNames(ref_tab_oid, attribs[Attributes::DstColumns]).join(',');
-			attribs[Attributes::Table]=tab_name;
+			attribs[Attributes::RefTable] = getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
+			attribs[Attributes::DstColumns] = getColumnNames(ref_tab_oid, attribs[Attributes::DstColumns]).join(',');
+			attribs[Attributes::Table] = tab_name;
 
 			loadObjectXML(ObjectType::Constraint, attribs);
-			constr=dbmodel->createConstraint(nullptr);
+			constr = dbmodel->createConstraint(nullptr);
 			constr->setSQLDisabled(table->isSQLDisabled());
 
 			if(table &&  constr->getConstraintType()==ConstraintType::PrimaryKey)
@@ -2580,10 +2618,9 @@ ForeignTable *DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 
 		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
 		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
-		attribs[Attributes::Columns]="";
 		attribs[Attributes::Position]=schparser.getSourceCode(Attributes::Position, pos_attrib, SchemaParser::XmlCode);
 
-		createColumns(attribs, inh_cols);
+		attribs[Attributes::Columns] = createColumns(attribs, inh_cols).join(QChar::LineFeed);
 		loadObjectXML(ObjectType::ForeignTable, attribs);
 		ftable=dbmodel->createForeignTable();
 
@@ -2894,28 +2931,104 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	dbmodel->validateRelationships();
 }
 
-void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols)
+void DatabaseImportHelper::createColumns()
+{
+	try
+	{
+		std::vector<unsigned> inh_cols;
+		QString tab_signature;
+		attribs_map tab_attr, col_attr;
+		PhysicalTable *tab = nullptr;
+		Column *col = nullptr;
+		QStringList col_xmls;
+		ObjectType obj_type;
+
+		for(auto &[tab_oid, _] : columns)
+		{
+			tab_attr = user_objs[tab_oid];
+			obj_type = static_cast<ObjectType>(tab_attr[Attributes::ObjectType].toUInt());
+
+			// View columns are ignored
+			if(obj_type == ObjectType::View)
+				continue;
+
+			/* Configuring the XML of the columns to be created in the table,
+			 * after calling this method, the code is stored in the attribute
+			 * Attributes::Columns of the tab_attr */
+			col_xmls = createColumns(tab_attr, inh_cols);
+
+			/* Retrieving the instance of table in the database model
+			 * that will receive the columns */
+			tab_signature = getObjectName(QString::number(tab_oid), true);
+			tab = dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_signature, obj_type));
+
+			if(!tab)
+			{
+				throw Exception(tr("Trying to create column(s) in the table `%1' that doesn't exist in the model!").arg(tab_signature),
+												ErrorCode::Custom, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
+
+			for(auto &col_xml : col_xmls)
+			{
+				if(debug_mode)
+				{
+					qDebug().noquote() << QString("<!-- XML code of column(s) in: %1 (OID: %2) -->\n")
+																.arg(tab_signature).arg(tab_oid) << col_xml;
+				}
+
+				try
+				{
+					col = nullptr;
+					xmlparser->restartParser();
+					xmlparser->loadXMLBuffer(col_xml);
+					xmlparser->getElementAttributes(col_attr);
+
+					// If the column already exists we just ignore it
+					if(tab->getColumn(col_attr[Attributes::Name]))
+						continue;
+
+					// Creating the columns on the table
+					col = dbmodel->createColumn();
+					tab->addColumn(col);
+				}
+				catch(Exception &e)
+				{
+					if(col)
+						delete col;
+
+					throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+				}
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+QStringList DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols)
 {
 	unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
 	bool is_type_registered=false;
 	Column col;
-	QString type_def, unknown_obj_xml, type_name, def_val;
+	QString type_name, def_val;
 	std::map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
-	static QStringList sp_types = SpatialType::getTypes();
+	QStringList col_xmls;
 
 	if(tab_oid == 0)
-		return;
+		return {};
 
 	//Retrieving columns if they were not retrieved yet
-	if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
+	if(!columns.count(attribs[Attributes::Oid].toUInt()) && auto_resolve_deps)
 	{
 		QString sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
 	}
 
-	itr=itr1=columns[attribs[Attributes::Oid].toUInt()].begin();
-	itr_end=columns[attribs[Attributes::Oid].toUInt()].end();
-	attribs[Attributes::MaxObjCount]=QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
+	itr = itr1 = columns[attribs[Attributes::Oid].toUInt()].begin();
+	itr_end = columns[attribs[Attributes::Oid].toUInt()].end();
+	attribs[Attributes::MaxObjCount] = QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
 
 	//Creating columns
 	while(itr!=itr_end)
@@ -3044,10 +3157,13 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, std::vector<unsig
 			getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
 
 		col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
-		attribs[Attributes::Columns]+=col.getSourceCode(SchemaParser::XmlCode);
+		//attribs[Attributes::Columns]+=col.getSourceCode(SchemaParser::XmlCode);
+		col_xmls.append(col.getSourceCode(SchemaParser::XmlCode));
 		itr++;
 		col_idx++;
 	}
+
+	return col_xmls;
 }
 
 void DatabaseImportHelper::assignSequencesToColumns()
@@ -3148,21 +3264,21 @@ void DatabaseImportHelper::__createTableInheritances()
 
 	for(auto &oid : table_oids)
 	{
-		tab_attribs=(user_objs.count(oid) ? user_objs[oid] : system_objs[oid]);
+		tab_attribs = (user_objs.count(oid) ? user_objs[oid] : system_objs[oid]);
 		tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
 
 		//Get the list of parent table's oids
-		inh_list=Catalog::parseArrayValues(user_objs[oid][Attributes::Parents]);
+		inh_list = Catalog::parseArrayValues(user_objs[oid][Attributes::Parents]);
 
 		if(!inh_list.isEmpty())
 		{
 			//Get the child table resolving it's name from the oid
 			QString tab_name = getObjectName(user_objs[oid][Attributes::Oid]);
-			child_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_name, tab_type));
+			child_tab = dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_name, tab_type));
 
-			while(!inh_list.isEmpty())
+			for(auto &oid : inh_list)
 			{
-				inh_oid = inh_list.front().toUInt();
+				inh_oid = oid.toUInt();
 				tab_attribs=(user_objs.count(inh_oid) ? user_objs[inh_oid] : system_objs[inh_oid]);
 
 				// The parent tis is not created and auto_resolve_deps is enabled we try to create it
@@ -3179,17 +3295,15 @@ void DatabaseImportHelper::__createTableInheritances()
 				{
 					if(!parent_tab)
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvInheritParentTableNotFound)
-														.arg(child_tab->getSignature()).arg(inh_list.front()),
+														.arg(child_tab->getSignature()).arg(inh_oid),
 														ErrorCode::InvInheritParentTableNotFound,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-					inh_list.pop_front();
-
 					//Create the inheritance relationship
-					rel=new Relationship(Relationship::RelationshipGen, child_tab, parent_tab);
+					rel = new Relationship(Relationship::RelationshipGen, child_tab, parent_tab);
 					rel->setName(CoreUtilsNs::generateUniqueName(rel, (*dbmodel->getObjectList(ObjectType::Relationship))));
 
 					dbmodel->addRelationship(rel);
-					rel=nullptr;
+					rel = nullptr;
 				}
 				catch(Exception &e)
 				{
@@ -3364,25 +3478,24 @@ QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QS
 
 QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, const QString &col_id_vect, bool prepend_tab_name)
 {
-	QStringList col_names, col_ids;
+	QStringList col_names;
 	QString tab_name;
-	unsigned tab_oid=tab_oid_str.toUInt(), col_id=0;
+	unsigned tab_oid = tab_oid_str.toUInt(), col_id = 0;
 
 	if(columns.count(tab_oid))
 	{
 		if(prepend_tab_name)
-			tab_name=getObjectName(tab_oid_str) + ".";
+			tab_name = getObjectName(tab_oid_str) + ".";
 
-		col_ids=Catalog::parseArrayValues(col_id_vect);
-
-		for(int i=0; i < col_ids.size(); i++)
+		for(auto &c_id : Catalog::parseArrayValues(col_id_vect))
 		{
-			col_id=col_ids[i].toUInt();
+			col_id = c_id.toUInt();
 
 			if(columns[tab_oid].count(col_id))
 				col_names.push_back(tab_name + columns[tab_oid][col_id].at(Attributes::Name));
 		}
 	}
+
 
 	return col_names;
 }

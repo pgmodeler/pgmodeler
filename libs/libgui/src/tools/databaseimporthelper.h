@@ -83,7 +83,12 @@ class __libgui DatabaseImportHelper: public QObject {
 		update_fk_rels,
 
 		//! \brief Indicates to the importer that object comments must be used as object aliases
-		comments_as_aliases;
+		comments_as_aliases,
+
+		/*! \brief Indicates to the importer that the database model in which the objects must be created
+		 * is the working one. This flag changes the behavior of the importer, causing duplicated objects
+		 * to be ignored. See createObjects() */
+		is_working_model;
 		
 		//! \brief Stores the selected objects oids to be imported
 		std::map<ObjectType, std::vector<unsigned>> object_oids;
@@ -192,9 +197,16 @@ class __libgui DatabaseImportHelper: public QObject {
 
 		void setObjectPgOid(BaseObject *obj, attribs_map &attribs);
 
-		/*! \brief Create the columns of the table represented by the passed attributes.
+		/*! \brief Create the list of columns of the table represented by the passed attributes.
+		 * The returned list contains the XML code of each column.
 		 * The inh_cols is used to hold the id of inherited columns to be managed later */
-		void createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols);
+		QStringList createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols);
+
+		/*! \brief Creates the columns in the map of columns in their respective tables.
+		 * This version of the method is used when importing objects to an working model
+		 * which means, that the tables must exist in the model so the columns are created
+		 * correctly */
+		void createColumns();
 
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns();
@@ -268,7 +280,7 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		//! \brief Configures the import parameters
 		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode,
-													bool rand_rel_colors, bool update_fk_rels, bool comments_as_aliases);
+													bool rand_rel_colors, bool update_fk_rels, bool comments_as_aliases, bool is_working_model = false);
 		
 		//! \brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID();
