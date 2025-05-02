@@ -141,6 +141,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		dbg_output_wgt->setLogMessages(checked);
 	});
 
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
+		ignore_errors_chk->setChecked(checked);
+		ignore_errors_chk->setDisabled(checked);
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in reverse engineering."
 	ignore_errors_chk->setChecked(true);

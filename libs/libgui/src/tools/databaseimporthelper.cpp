@@ -138,7 +138,7 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 	this->update_fk_rels = update_rels;
 	this->comments_as_aliases = comments_as_aliases;
 	this->is_working_model = is_working_model;
-	this->ignore_errors = ignore_errors;
+	this->ignore_errors = is_working_model ? true : ignore_errors;
 
 	Connection::setPrintSQL(debug_mode);
 
