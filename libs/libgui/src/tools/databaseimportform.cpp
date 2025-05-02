@@ -346,7 +346,7 @@ void DatabaseImportForm::importDatabase()
 
 		if(create_model)
 		{
-			model_wgt=new ModelWidget;
+			model_wgt = new ModelWidget;
 			model_wgt->getDatabaseModel()->createSystemObjects(true);
 			model_wgt->updateSceneLayers();
 		}
@@ -355,7 +355,7 @@ void DatabaseImportForm::importDatabase()
 		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																		debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true,
-																		comments_as_aliases_chk->isChecked());
+																		comments_as_aliases_chk->isChecked(), import_to_model_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 
