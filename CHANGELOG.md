@@ -26,6 +26,8 @@ v1.2.0
 * [Change] Adjusted the ModelWidget::configureFadeMenu to stop reallocating new actions on each call.
 * [Change] Removed unused class attribute in ModelObjectsWidget.
 * [Change] Removed the method SourceCodeWidget::setSourceCodeTab.
+* [Change] Forcing the option "Ignore import errors" when the import to working model option is set on DatabaseImportHelper and DatabaseImportForm.
+* [Change] Improved the reverse engineering so columns can also be imported using the option "Import to the working model" in DatabaseImportForm.
 * [Fix] Minor fix in FileSelectorWidget that was not applying correctly the palette colors in the line edit field.
 * [Fix] Minor fix in DatabaseModel::updateExtensionObjects to ignore duplicated schemas and use the ones already available in the model.
 * [Fix] Minor fix in SchemaParser::resetParser to clear include info so the error location in schema code can be correctly informed.
