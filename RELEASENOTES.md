@@ -85,4 +85,4 @@ v1.2.0
 * Added support for the options check_option, security_invoker, and security_barrier in views.
 * The syntax highlighting feature was completely refactored, being now more precise and the configuration files simpler.
 * Minor fix in pgmodeler-cli in such a way as to warn about invalid changelog entries, avoiding aborting the entire model fix process.
-* Fixed a bug in the reverse engineering feature that was not retrieving comments of sequence,s causing false positives to be generated in the diff process.
+* Fixed a bug in the reverse engineering feature that was not retrieving comments of sequences causing false positives to be generated in the diff process.
