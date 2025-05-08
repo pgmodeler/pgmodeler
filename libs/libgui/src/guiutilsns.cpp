@@ -28,6 +28,7 @@
 #include "generalconfigwidget.h"
 #include "objectslistmodel.h"
 #include "customsortproxymodel.h"
+#include <unordered_map>
 
 namespace GuiUtilsNs {
 
