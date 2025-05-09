@@ -101,39 +101,39 @@ void UpdateNotifierWidget::checkForUpdate()
 void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 {
 	Messagebox msg_box;
-	unsigned http_status=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
+	unsigned http_status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 
-	if(reply->error()!=QNetworkReply::NoError)
+	if(reply->error() != QNetworkReply::NoError)
 	{
 		msg_box.show(tr("Failed to check updates"),
-					 tr("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <em>%1</em> - <strong>%2</strong>.").arg(http_status).arg(reply->errorString()),
-					 Messagebox::ErrorIcon, Messagebox::OkButton);
+								 tr("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <em>%1</em> - <strong>%2</strong>.").arg(http_status).arg(reply->errorString()),
+								 Messagebox::ErrorIcon, Messagebox::OkButton);
 	}
 	else
 	{
 		/* In case of [301 - Move permanently] there is the need to make a new request to
 			 reach the final destination */
-		if(http_status==301 || http_status==302)
+		if(http_status == 301 || http_status == 302)
 		{
-			QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+			QString url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 
-			if(http_status==302 && !url.startsWith(GlobalAttributes::PgModelerSite))
+			if(http_status == 302 && !url.startsWith(GlobalAttributes::PgModelerSite))
 				url.prepend(GlobalAttributes::PgModelerSite);
 
 			QNetworkRequest req(url);
-			update_chk_reply=update_chk_manager.get(req);
+			update_chk_reply = update_chk_manager.get(req);
 		}
 		else
 		{
 			//In case of [200 - OK] updates the contents with the retrieved json
-			if(http_status==200)
+			if(http_status == 200)
 			{
-				QJsonDocument json_doc=QJsonDocument::fromJson(reply->readAll());
-				QJsonObject json_obj=json_doc.object();
-				QString version=json_obj.value(Attributes::NewVersion).toString(),
-						changelog=json_obj.value(Attributes::Changelog).toString(),
-						date=json_obj.value(Attributes::Date).toString();
-				bool upd_found=(!version.isEmpty() && version!=Attributes::False);
+				QJsonDocument json_doc = QJsonDocument::fromJson(reply->readAll());
+				QJsonObject json_obj = json_doc.object();
+				QString version = json_obj.value(Attributes::NewVersion).toString(),
+						changelog = json_obj.value(Attributes::Changelog).toString(),
+						date = json_obj.value(Attributes::Date).toString();
+				bool upd_found = (!version.isEmpty() && version!=Attributes::False);
 
 				blogpost.clear();
 
@@ -148,8 +148,8 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 				else if(show_no_upd_msg)
 				{
 					msg_box.show(tr("No updates found"),
-								 tr("You are running the most recent pgModeler version! No update needed."),
-								 Messagebox::InfoIcon, Messagebox::OkButton);
+											 tr("You are running the most recent pgModeler version! No update needed."),
+											 Messagebox::InfoIcon, Messagebox::OkButton);
 				}
 
 				emit s_updateAvailable(upd_found);
@@ -157,8 +157,8 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 			else
 			{
 				msg_box.show(tr("Failed to check updates"),
-							 tr("The update notifier failed to check for new versions! A HTTP status code was returned: <strong>%1</strong>").arg(http_status),
-							 Messagebox::ErrorIcon, Messagebox::OkButton);
+										 tr("The update notifier failed to check for new versions! A HTTP status code was returned: <strong>%1</strong>").arg(http_status),
+										 Messagebox::ErrorIcon, Messagebox::OkButton);
 			}
 
 			update_chk_reply->deleteLater();

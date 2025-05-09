@@ -69,7 +69,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		});
 	}
 
-	highlight_timer.setInterval(300);
+	highlight_timer.setInterval(200);
 	connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
 
 	connect(&highlight_timer, &QTimer::timeout, this, [this](){
@@ -79,7 +79,10 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 			return;
 
 		for(auto &cfg : enclosing_chrs)
-			highlightEnclosingChars(cfg);
+		{
+			if(highlightEnclosingChars(cfg))
+				break;
+		}
 	});
 }
 
@@ -367,9 +370,11 @@ bool SyntaxHighlighter::matchGroup(const GroupConfig *group_cfg, const QString &
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, QList<MatchInfo> &matches)
 {
-	QRegularExpressionMatchIterator mt_itr = expr.globalMatch(text, txt_pos);
-	QRegularExpressionMatch match;
+	static QRegularExpressionMatchIterator mt_itr;
+	static QRegularExpressionMatch match;
 	MatchInfo m_info;
+
+	mt_itr = expr.globalMatch(text, txt_pos);
 
 	while(mt_itr.isValid() && mt_itr.hasNext())
 	{
@@ -389,9 +394,10 @@ bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const 
 
 bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info)
 {
-	QRegularExpressionMatch match = expr.match(text, txt_pos);
+	static QRegularExpressionMatch match;
 	int mt_start = -1, mt_end = -1;
 
+	match = expr.match(text, txt_pos);
 	mt_start = match.capturedStart();
 	mt_end = match.capturedEnd() - 1;
 
@@ -412,45 +418,55 @@ const SyntaxHighlighter::GroupConfig *SyntaxHighlighter::getGroupConfig(const QS
 	return &group_confs[group];
 }
 
-void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
+bool SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 {
-	QTextCursor tc;
-	QString curr_txt;
+	QString curr_chr;
 	QPlainTextEdit *code_txt = qobject_cast<QPlainTextEdit *>(parent());
+	QTextCursor tc = code_txt->textCursor();
+	int orig_pos = tc.position();
+	bool is_numbered_editor = (qobject_cast<NumberedTextEditor *>(code_txt) != nullptr);
 
-	tc = code_txt->textCursor();
 	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-	curr_txt = tc.selectedText();
-	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+	curr_chr = tc.selectedText();
+	tc.setPosition(orig_pos);
 
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+	/* If the next character from the current cursor position
+	 * is not an enclosing char, we just stop here. */
+	if(curr_chr != cfg.open_char && curr_chr != cfg.close_char)
 	{
-		tc = code_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-		curr_txt = tc.selectedText();
-	}
+		/* If the code_txt is not an instance of NumberedTextEditor
+		 * we need to clear the extra selections to undo the highlighting
+		 * of a previously highlighted enclosing chars. */
+		if(!is_numbered_editor)
+			code_txt->setExtraSelections({});
 
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
-		return;
+		return false;
+	}
 
 	QChar inc_chr, dec_chr;
 	QString code = code_txt->toPlainText();
-	int chr_cnt = 0,
-			pos = tc.position(),
-			ini_pos = pos,
-			inc = curr_txt == cfg.open_char ? 1 : -1;
+	int chr_balance_cnt = 0,
+			pos = 0, ini_pos = 0,
 
-	inc_chr = curr_txt == cfg.open_char ? cfg.open_char : cfg.close_char;
-	dec_chr = curr_txt == cfg.open_char ? cfg.close_char : cfg.open_char;
+			/* If the current text is an open char we
+			 * search for enclosing char ahead of the
+			 * current position (1) otherwise we search
+			 * for a close char behind of the current
+			 * position (-1) */
+			inc = (curr_chr == cfg.open_char ? 1 : -1);
+
+	pos = ini_pos = tc.position();
+	inc_chr = (curr_chr == cfg.open_char ? cfg.open_char : cfg.close_char);
+	dec_chr = (curr_chr == cfg.open_char ? cfg.close_char : cfg.open_char);
 
 	while(pos >= 0 && pos < code.size())
 	{
 		if(code[pos] == inc_chr)
-			chr_cnt++;
+			chr_balance_cnt++;
 		else if(code[pos] == dec_chr)
-			chr_cnt--;
+			chr_balance_cnt--;
 
-		if(chr_cnt == 0)
+		if(chr_balance_cnt == 0)
 			break;
 
 		pos += inc;
@@ -462,7 +478,10 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		QList<QTextEdit::ExtraSelection> selections;
 		QTextEdit::ExtraSelection sel;
 
-		if(NumberedTextEditor::isHighlightLines() && !single_line_mode)
+		/* If the current code_txt instance is a NumberedTextEditor
+		 * we need to keep the line highlighted prior to any enclosing
+		 * char highlighting if the line highlight option is set */
+		if(is_numbered_editor && NumberedTextEditor::isHighlightLines() && !single_line_mode)
 		{
 			sel.format.setBackground(NumberedTextEditor::getLineHighlightColor());
 			sel.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -486,12 +505,14 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 			fmt.setForeground(Qt::white);
 		}
 
-		sel.format = fmt;
+		// Highlighting the found enclosing char
 		tc.setPosition(ini_pos);
 		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
 		sel.cursor = tc;
+		sel.format = fmt;
 		selections.append(sel);
 
+		// Highlighting the matching closing/opening char if found
 		if(pos >= 0 && pos < code.size())
 		{
 			tc.setPosition(pos);
@@ -501,7 +522,10 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		}
 
 		code_txt->setExtraSelections(selections);
+		return true;
 	}
+
+	return false;
 }
 
 qreal SyntaxHighlighter::getCurrentFontSize()
@@ -674,7 +698,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 								regexp.setPatternOptions(!case_sensitive ?
 																					QRegularExpression::CaseInsensitiveOption :
-																					QRegularExpression::NoPatternOption);
+																					QRegularExpression::NoPatternOption |
+																					QRegularExpression::DontCaptureOption);
 
 								// We throw an error aborting the loading if the regepx has an invalid pattern
 								if(!regexp.isValid())

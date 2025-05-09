@@ -141,6 +141,11 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		dbg_output_wgt->setLogMessages(checked);
 	});
 
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
+		ignore_errors_chk->setChecked(checked);
+		ignore_errors_chk->setDisabled(checked);
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in reverse engineering."
 	ignore_errors_chk->setChecked(true);
@@ -225,7 +230,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -326,7 +331,7 @@ void DatabaseImportForm::importDatabase()
 			msg_box.show(tr("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -346,7 +351,7 @@ void DatabaseImportForm::importDatabase()
 
 		if(create_model)
 		{
-			model_wgt=new ModelWidget;
+			model_wgt = new ModelWidget;
 			model_wgt->getDatabaseModel()->createSystemObjects(true);
 			model_wgt->updateSceneLayers();
 		}
@@ -355,7 +360,7 @@ void DatabaseImportForm::importDatabase()
 		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																		debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true,
-																		comments_as_aliases_chk->isChecked());
+																		comments_as_aliases_chk->isChecked(), import_to_model_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
 
@@ -505,7 +510,7 @@ Please, consider using the <strong>Filter</strong> tab in order to refine the se
 Do you really want to proceed?"),
 										Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-				if(msgbox.result() == Messagebox::Rejected)
+				if(msgbox.isRejected())
 				{
 					database_cmb->setCurrentIndex(0);
 					return;

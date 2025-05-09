@@ -57,7 +57,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
-	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
+	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt, true);
 
 	snippet_hl=new SyntaxHighlighter(snippet_txt);
 	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
@@ -360,12 +360,9 @@ void SnippetsConfigWidget::removeSnippet()
 
 void SnippetsConfigWidget::removeAllSnippets()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Do you really want to remove all snippets?"));
 
-	msg_box.show(tr("Do you really want to remove all snippets?"),
-				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.clear();
 		filterSnippets(0);

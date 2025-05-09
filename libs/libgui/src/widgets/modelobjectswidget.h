@@ -54,11 +54,6 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		//! \brief Stores the objects currently selected on the tree/list
 		std::vector<BaseObject *> selected_objs;
 
-		/*! \brief Stores the objects previously selected on the tree/list
-		 *  This list is compared against the currently selected object
-		 *  to determine if the popup menu should be reconfigured */
-		QList<QTreeWidgetItem *> prev_sel_items;
-
 		//! \brief Reference model widget. This is the object used to populate the tree and list
 		ModelWidget *model_wgt;
 
@@ -96,7 +91,9 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		QTreeWidgetItem *getTreeItem(const QString &item_id);
 
 		//! \brief Generates a QVariant containing the passed object reference as data
-		QVariant generateItemValue(BaseObject *object);
+		QVariant generateItemData(BaseObject *object);
+
+		BaseObject *getTreeItemData(QTreeWidgetItem *item);
 
 		QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 

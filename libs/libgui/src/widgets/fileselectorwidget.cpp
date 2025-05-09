@@ -81,6 +81,11 @@ void FileSelectorWidget::resizeEvent(QResizeEvent *)
 	);
 }
 
+void FileSelectorWidget::showEvent(QShowEvent *)
+{
+	showWarning();
+}
+
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
 {
 	allow_filename_input = allow_fl_input && !read_only;

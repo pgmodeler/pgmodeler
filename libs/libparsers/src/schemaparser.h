@@ -213,8 +213,10 @@ class __libparsers SchemaParser {
 			}
 
 			if(is_incl_error)
+			{
 				msg = QString(QT_TR_NOOP("Failed to parse the file `%1' due to an error in the included file at line `%2'. Error detected:\n\n"))
 									.arg(filename).arg(incl_line + 1);
+			}
 
 			/* Compile-time if: if the folded expression is not empty
 			 * we use it as part of the error message arguments */

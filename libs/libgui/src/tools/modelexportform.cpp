@@ -256,7 +256,7 @@ void ModelExportForm::exportModel()
 
 			msg_box.show(tr("Warning"), msg, Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result() == QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 

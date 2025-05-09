@@ -71,7 +71,7 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		QLabel *msg_lbl;
 
 		QToolButton *load_file_btn, *edit_src_btn, *clear_btn,
-		*save_file_btn,	*word_wrap_btn, *search_btn;
+		*save_file_btn,	*word_wrap_btn, *search_btn, *copy_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
@@ -97,6 +97,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
+
+		void setWordWrapMode(QTextOption::WrapMode policy);
 
 	protected:
 		void resizeEvent(QResizeEvent *event) override;
@@ -127,7 +129,6 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 	private slots:
 		void showContextMenu();
-
 		void pasteCode();
 
 		void changeSelectionToLower();
@@ -169,6 +170,8 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 
 		//! \brief Colors the background of the line where the cursor is
 		void highlightCurrentLine();
+
+		void setWordWrap(bool value);
 };
 
 #endif

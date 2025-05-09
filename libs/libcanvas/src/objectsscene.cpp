@@ -990,7 +990,7 @@ void ObjectsScene::handleChildrenSelectionChanged()
 	emit s_childrenSelectionChanged();
 }
 
-void ObjectsScene::addItem(QGraphicsItem *item)
+void ObjectsScene::addItem(QGraphicsItem *item, bool blink_new)
 {
 	if(!item)	return;
 
@@ -1026,7 +1026,13 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
 	}
 
+	if(blink_new)
+		item->setOpacity(0);
+
 	QGraphicsScene::addItem(item);
+
+	if(blink_new && obj)
+		obj->blink();
 
 	if(tab || txtbox)
 		updateLayerRects();

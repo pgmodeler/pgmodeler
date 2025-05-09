@@ -1150,7 +1150,7 @@ void DatabaseExplorerWidget::listObjects()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1414,9 +1414,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
 					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
-			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-			if(msg_box.result()==QDialog::Accepted)
+			if(Messagebox::isAccepted(Messagebox::confirm(msg)))
 			{
 				QTreeWidgetItem *parent=nullptr;
 				attribs_map attribs;
@@ -1483,7 +1481,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 		msg_box.setCustomOptionText(tr("Also restart sequences"));
 		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			attribs_map attribs;
 			QString truc_cmd;
@@ -1508,7 +1506,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			conn.executeDDLCommand(truc_cmd);
 		}
 
-		return (msg_box.result()==QDialog::Accepted);
+		return msg_box.isAccepted();
 	}
 	catch(Exception &e)
 	{
@@ -1737,7 +1735,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 	{
 		objects_trw->blockSignals(false);
 		objects_trw->setUpdatesEnabled(true);
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		throw Exception(tr("Failed to load the subitems of the object <strong>%1</strong> <em>(%2)</em>! Try to reload them manually by hitting <strong>F6</strong> on each one.")
 										.arg(signature, BaseObject::getTypeName(obj_type)),
@@ -1823,7 +1821,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1980,7 +1978,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -2162,7 +2160,13 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 					}
 					else
 					{
-						object = dbmodel.getObject(name, obj_type);
+						// First we try to locate the object by its OID
+						object = dbmodel.getObjectByOid(oid, obj_type);
+
+						// If we can't find it by the OID we try to search by its name
+						if(!object)
+							object = dbmodel.getObject(name, obj_type);
+
 						schema = object ? object->getSchema() : nullptr;
 					}
 
@@ -2202,7 +2206,7 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 	}
 	catch (Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()), show_code);
 	}
 }

@@ -152,13 +152,15 @@ void OperationListWidget::undoOperation()
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
+		model_wgt->setBlinkAddedObjects(true);
 		model_wgt->op_list->undoOperation();
+		model_wgt->setBlinkAddedObjects(false);
 		notifyUpdateOnModel();
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		this->updateOperationList();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
@@ -176,13 +178,15 @@ void OperationListWidget::redoOperation()
 	try
 	{
 		qApp->setOverrideCursor(Qt::WaitCursor);
+		model_wgt->setBlinkAddedObjects(true);
 		model_wgt->op_list->redoOperation();
+		model_wgt->setBlinkAddedObjects(false);
 		notifyUpdateOnModel();
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
@@ -196,14 +200,9 @@ void OperationListWidget::redoOperation()
 
 void OperationListWidget::removeOperations()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Delete the executed operations history is an irreversible action, do you want to continue?"));
 
-	msg_box.show(tr("Operation history exclusion"),
-				 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
-				 Messagebox::ConfirmIcon,
-				 Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		model_wgt->op_list->removeOperations();
 		updateOperationList();
@@ -216,4 +215,3 @@ void OperationListWidget::notifyUpdateOnModel()
 	updateOperationList();
 	emit s_operationExecuted();
 }
-

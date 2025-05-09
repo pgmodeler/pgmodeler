@@ -447,14 +447,14 @@ QString Exception::getExceptionsText()
 {
 	std::vector<Exception> exceptions;
 	std::vector<Exception>::reverse_iterator itr, itr_end;
-	unsigned idx=0, hidden_errors_cnt = 0;
+	unsigned idx = 0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
 	bool stack_truncated = false;
 
 	//Get the generated exceptions list
 	this->getExceptionsList(exceptions);
-	itr=exceptions.rbegin();
-	itr_end=exceptions.rend();
+	itr = exceptions.rbegin();
+	itr_end = exceptions.rend();
 	idx = 0;
 
 	if(exceptions.size() > MaximumStackSize)
@@ -464,11 +464,11 @@ QString Exception::getExceptionsText()
 	}
 
 	//Append all usefull information about the exceptions on the string
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
-		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
+		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile(), itr->getLine());
 		exceptions_txt+=QString("  %1\n").arg(itr->getMethod());
-		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorCode())).arg(itr->getErrorMessage());
+		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorCode()), itr->getErrorMessage().replace('`', '\''));
 
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());

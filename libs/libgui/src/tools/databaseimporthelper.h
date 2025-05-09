@@ -83,7 +83,12 @@ class __libgui DatabaseImportHelper: public QObject {
 		update_fk_rels,
 
 		//! \brief Indicates to the importer that object comments must be used as object aliases
-		comments_as_aliases;
+		comments_as_aliases,
+
+		/*! \brief Indicates to the importer that the database model in which the objects must be created
+		 * is the working one. This flag changes the behavior of the importer, causing duplicated objects
+		 * to be ignored. See createObjects() */
+		is_working_model;
 		
 		//! \brief Stores the selected objects oids to be imported
 		std::map<ObjectType, std::vector<unsigned>> object_oids;
@@ -137,7 +142,7 @@ class __libgui DatabaseImportHelper: public QObject {
 		std::vector<Column *> inherited_cols;
 
 		//! \brief Stores the references to the methods that create objects from database catalogs.
-		std::map<ObjectType, std::function<void(attribs_map&)>> create_methods;
+		std::map<ObjectType, std::function<BaseObject *(attribs_map&)>> create_methods;
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
@@ -151,46 +156,57 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		void configureBaseFunctionAttribs(attribs_map &attribs);
 		void configureDatabase(attribs_map &attribs);
+
 		void createObject(attribs_map &attribs);
-		void createTablespace(attribs_map &attribs);
-		void createSchema(attribs_map &attribs);
-		void createRole(attribs_map &attribs);
-		void createDomain(attribs_map &attribs);
-		void createExtension(attribs_map &attribs);
-		void createFunction(attribs_map &attribs);
-		void createLanguage(attribs_map &attribs);
-		void createOperatorFamily(attribs_map &attribs);
-		void createOperatorClass(attribs_map &attribs);
-		void createOperator(attribs_map &attribs);
-		void createCollation(attribs_map &attribs);
-		void createCast(attribs_map &attribs);
-		void createConversion(attribs_map &attribs);
-		void createSequence(attribs_map &attribs);
-		void createAggregate(attribs_map &attribs);
-		void createType(attribs_map &attribs);
-		void createTable(attribs_map &attribs);
-		void createView(attribs_map &attribs);
-		void createRule(attribs_map &attribs);
-		void createTrigger(attribs_map &attribs);
-		void createIndex(attribs_map &attribs);
-		void createConstraint(attribs_map &attribs);
-		void createPolicy(attribs_map &attribs);
+		Tablespace *createTablespace(attribs_map &attribs);
+		Schema *createSchema(attribs_map &attribs);
+		Role *createRole(attribs_map &attribs);
+		Domain *createDomain(attribs_map &attribs);
+		Extension *createExtension(attribs_map &attribs);
+		Function *createFunction(attribs_map &attribs);
+		Language *createLanguage(attribs_map &attribs);
+		OperatorFamily *createOperatorFamily(attribs_map &attribs);
+		OperatorClass *createOperatorClass(attribs_map &attribs);
+		Operator *createOperator(attribs_map &attribs);
+		Collation *createCollation(attribs_map &attribs);
+		Cast *createCast(attribs_map &attribs);
+		Conversion *createConversion(attribs_map &attribs);
+		Sequence *createSequence(attribs_map &attribs);
+		Aggregate *createAggregate(attribs_map &attribs);
+		Type *createType(attribs_map &attribs);
+		Table *createTable(attribs_map &attribs);
+		View *createView(attribs_map &attribs);
+		Rule *createRule(attribs_map &attribs);
+		Trigger *createTrigger(attribs_map &attribs);
+		Index *createIndex(attribs_map &attribs);
+		Constraint *createConstraint(attribs_map &attribs);
+		Policy *createPolicy(attribs_map &attribs);
+		EventTrigger *createEventTrigger(attribs_map &attribs);
+		ForeignDataWrapper *createForeignDataWrapper(attribs_map &attribs);
+		ForeignServer *createForeignServer(attribs_map &attribs);
+		UserMapping *createUserMapping(attribs_map &attribs);
+		ForeignTable *createForeignTable(attribs_map &attribs);
+		Transform *createTransform(attribs_map &attribs);
+		Procedure *createProcedure(attribs_map &attribs);
+
 		void createPermission(attribs_map &attribs);
-		void createEventTrigger(attribs_map &attribs);
-		void createForeignDataWrapper(attribs_map &attribs);
-		void createForeignServer(attribs_map &attribs);
-		void createUserMapping(attribs_map &attribs);
-		void createForeignTable(attribs_map &attribs);
-		void createTransform(attribs_map &attribs);
-		void createProcedure(attribs_map &attribs);
 		void __createTableInheritances();
 		void createTableInheritances();
 		void createTablePartitionings();
 		void destroyDetachedColumns();
 
-		/*! \brief Create the columns of the table represented by the passed attributes.
+		void setObjectPgOid(BaseObject *obj, attribs_map &attribs);
+
+		/*! \brief Create the list of columns of the table represented by the passed attributes.
+		 * The returned list contains the XML code of each column.
 		 * The inh_cols is used to hold the id of inherited columns to be managed later */
-		void createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols);
+		QStringList createColumns(attribs_map &attribs, std::vector<unsigned> &inh_cols);
+
+		/*! \brief Creates the columns in the map of columns in their respective tables.
+		 * This version of the method is used when importing objects to an working model
+		 * which means, that the tables must exist in the model so the columns are created
+		 * correctly */
+		void createColumns();
 
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns();
@@ -264,7 +280,7 @@ class __libgui DatabaseImportHelper: public QObject {
 		
 		//! \brief Configures the import parameters
 		void setImportOptions(bool import_sys_objs, bool import_ext_objs, bool auto_resolve_deps, bool ignore_errors, bool debug_mode,
-													bool rand_rel_colors, bool update_fk_rels, bool comments_as_aliases);
+													bool rand_rel_colors, bool update_fk_rels, bool comments_as_aliases, bool is_working_model = false);
 		
 		//! \brief Returns the last system OID value for the current database
 		unsigned getLastSystemOID();

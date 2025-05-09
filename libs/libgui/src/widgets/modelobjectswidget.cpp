@@ -44,6 +44,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	//connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
@@ -52,8 +53,6 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
 	});
-
-	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
@@ -169,7 +168,7 @@ void ModelObjectsWidget::editObject()
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
 			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_t(ObjectType::Permission))
-			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
+			model_wgt->showObjectForm(ObjectType::Permission, getTreeItemData(objectstree_tw->currentItem()));
 		//If the user double-clicked a permission on  list view
 		else
 			model_wgt->editObject();
@@ -184,45 +183,25 @@ void ModelObjectsWidget::selectObject()
 	ObjectType obj_type = ObjectType::BaseObject;
 	ModelWidget *model_wgt = nullptr;
 	QList<QTreeWidgetItem *> sel_items = objectstree_tw->selectedItems();
-	//static QList<QTreeWidgetItem *> prev_sel_items;
-	bool reconf_menu = true;
 
 	if(!simplified_view && this->model_wgt)
 		model_wgt = this->model_wgt;
 	else if(simplified_view)
 		model_wgt = db_model->getModelWidget();
 
-	/* Checking if all currently selected items are in the previous list of selected items
-	 * that is created in a previous interaction with the model object widget.
-	 * In positive case, we avoid reconfigure the entire object menu. If the lists differ in
-	 * their size or at least on currently selected item is not present we reconfigure the menu */
-	if(!simplified_view &&
-		 !prev_sel_items.empty() && prev_sel_items.size() == sel_items.size() &&
-		 std::all_of(prev_sel_items.begin(), prev_sel_items.end(),
-								 [&sel_items](auto &item) { return sel_items.contains(item); }))
+	selected_objs.clear();
+	QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
+
+	if(tree_item)
 	{
-		reconf_menu = false;
-	}
+		obj_type = static_cast<ObjectType>(tree_item->data(1, Qt::UserRole).toUInt());
 
-	prev_sel_items = sel_items;
-
-	if(reconf_menu)
-	{
-		selected_objs.clear();
-
-		QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
-
-		if(tree_item)
+		for(auto &item : sel_items)
 		{
-			obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+			selected_obj = getTreeItemData(item);
 
-			for(auto &item : sel_items)
-			{
-				selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
-
-				if(selected_obj)
-					selected_objs.push_back(selected_obj);
-			}
+			if(selected_obj)
+				selected_objs.push_back(selected_obj);
 		}
 	}
 
@@ -257,9 +236,11 @@ void ModelObjectsWidget::selectObject()
 		disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 	}
 
-	if(reconf_menu && obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
+	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
+		model_wgt->scene->blockSignals(true);
 		model_wgt->scene->clearSelection();
+		model_wgt->scene->blockSignals(false);
 
 		/* If the user has selected only one graphical object in the tree and is holding
 		 * Alt key then the object will be highlighted in the canvas */
@@ -270,10 +251,10 @@ void ModelObjectsWidget::selectObject()
 			if(!graph_obj)
 				return;
 
-			QGraphicsItem *item = dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject());
+			QGraphicsItem *scn_item = dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject());
 
-			item->setSelected(true);
-			model_wgt->scene->views().at(0)->centerOn(item);
+			scn_item->setSelected(true);
+			model_wgt->scene->views().at(0)->centerOn(scn_item);
 		}
 
 		model_wgt->configurePopupMenu(selected_objs);
@@ -281,7 +262,15 @@ void ModelObjectsWidget::selectObject()
 	}
 }
 
-QVariant ModelObjectsWidget::generateItemValue(BaseObject *object)
+BaseObject *ModelObjectsWidget::getTreeItemData(QTreeWidgetItem *item)
+{
+ if(!item)
+	 return nullptr;
+
+ return reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+}
+
+QVariant ModelObjectsWidget::generateItemData(BaseObject *object)
 {
 	return QVariant::fromValue(reinterpret_cast<void *>(object));
 }
@@ -329,7 +318,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	}
 
 	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
-	item->setData(0, Qt::UserRole, generateItemValue(object));
+	item->setData(0, Qt::UserRole, generateItemData(object));
 	item->setData(2, Qt::UserRole, QString("%1_%2").arg(object->getObjectId()).arg(object->getSchemaName()));
 
 	if(update_perms)
@@ -648,7 +637,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 											.arg(BaseObject::getTypeName(ObjectType::Permission))
 											.arg(perms.size()));
 
-			item->setData(0, Qt::UserRole, generateItemValue(object));
+			item->setData(0, Qt::UserRole, generateItemData(object));
 			item->setData(1, Qt::UserRole, static_cast<unsigned>(ObjectType::Permission));
 		}
 	}
@@ -771,13 +760,9 @@ void ModelObjectsWidget::close()
 		selected_objs.clear();
 	else
 	{
-		QVariant data;
 		BaseObject *selected_obj = nullptr;
 
-		if(objectstree_tw->currentItem())
-			data = objectstree_tw->currentItem()->data(0,Qt::UserRole);
-
-		selected_obj = reinterpret_cast<BaseObject *>(data.value<void *>());
+		selected_obj = getTreeItemData(objectstree_tw->currentItem());
 
 		if(selected_obj && std::find(selected_objs.begin(), selected_objs.end(), selected_obj) == selected_objs.end())
 			selected_objs.push_back(selected_obj);
@@ -905,7 +890,6 @@ void ModelObjectsWidget::clearSelectedObject()
 	objectstree_tw->clearSelection();
 	objectstree_tw->blockSignals(false);
 	selected_objs.clear();
-	prev_sel_items.clear();
 	model_wgt->configurePopupMenu(nullptr);
 	model_wgt->emitSceneInteracted();
 }
@@ -951,23 +935,16 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 		return nullptr;
 
 	QTreeWidgetItemIterator itr(objectstree_tw);
-	BaseObject *aux_obj = nullptr;
-	QTreeWidgetItem *item = nullptr;
 
 	while(*itr)
 	{
-		aux_obj = reinterpret_cast<BaseObject *>((*itr)->data(0, Qt::UserRole).value<void *>());
-
-		if(aux_obj == object)
-		{
-			item=*itr;
-			break;
-		}
+		if(getTreeItemData(*itr) == object)
+			return *itr;
 
 		++itr;
 	}
 
-	return item;
+	return nullptr;
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(const QString &item_id)

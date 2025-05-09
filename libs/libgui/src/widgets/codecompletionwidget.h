@@ -46,7 +46,7 @@ class __libgui CodeCompletionWidget: public QWidget {
 			Truncate, Alter, Drop,	From,
 			Join, Into,	As, Set, Table,
 			Only,	Where, Exists, Partition,
-			Like, Inherits, On,
+			Like, Inherits, On, By,
 
 			Inner, Outer, Left,	Right,
 			Full, Union, Intersect,

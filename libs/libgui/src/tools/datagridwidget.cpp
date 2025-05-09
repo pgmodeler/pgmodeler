@@ -30,6 +30,8 @@ DataGridWidget::DataGridWidget(const QString &sch_name, const QString &tab_name,
 {
 	setupUi(this);
 
+	schema_lbl->setText(sch_name);
+
 	rows_cnt_lbl->setToolTip(rows_cnt_ico_lbl->toolTip());
 	rows_added_lbl->setToolTip(rows_added_ico_lbl->toolTip());
 	rows_changed_lbl->setToolTip(rows_changed_ico_lbl->toolTip());
@@ -376,7 +378,7 @@ void DataGridWidget::retrieveData()
 			msg_box.show(tr("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result() == QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -508,7 +510,7 @@ void DataGridWidget::retrieveData()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -551,16 +553,6 @@ void DataGridWidget::enableRowControlButtons()
 	emit s_browseEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) &&
 													 sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 }
-
-/* void DataGridWidget::resetFilterControls()
-{
-	ord_column_cmb->clear();
-	ord_columns_lst->clear();
-	add_ord_col_tb->setEnabled(false);
-	filter_txt->clear();
-	asc_rb->setChecked(true);
-	clear_ord_cols_tb->setEnabled(false);
-} */
 
 void DataGridWidget::addSortColumnToList()
 {
@@ -705,7 +697,7 @@ void DataGridWidget::loadDataFromCsv(bool load_from_clipboard, bool force_csv_pa
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -1311,7 +1303,7 @@ void DataGridWidget::saveChanges()
 								 Messagebox::AlertIcon,
 								 Messagebox::YesNoButtons);
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			//Forcing the cell editor to be closed by selecting an unexistent cell and clearing the selection
 			results_tbw->setCurrentCell(-1,-1, QItemSelectionModel::Clear);

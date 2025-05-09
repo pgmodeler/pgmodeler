@@ -1224,7 +1224,7 @@ void RelationshipWidget::applyConfiguration()
 	catch(Exception &e)
 	{
 		model->validateRelationships();
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

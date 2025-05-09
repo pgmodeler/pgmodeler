@@ -216,6 +216,22 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		settings_tbw->setTabVisible(4, checked);
 	});
 
+	auto lmb_slot = [this](bool checked){
+		if(checked)
+			run_in_transaction_chk->setChecked(false);
+	};
+
+	connect(ignore_duplic_chk, &QCheckBox::toggled, this, lmb_slot);
+	connect(ignore_error_codes_chk, &QCheckBox::toggled, this, lmb_slot);
+
+	connect(run_in_transaction_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+		{
+			ignore_error_codes_chk->setChecked(false);
+			ignore_duplic_chk->setChecked(false);
+		}
+	});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff."
 	ignore_errors_chk->setChecked(true);
@@ -565,12 +581,12 @@ void ModelDatabaseDiffForm::generateDiff()
 										 GuiUtilsNs::getIconPath("config"),
 										 GuiUtilsNs::getIconPath("diff"));
 
-			if(msgbox.result() == QDialog::Accepted)
+			if(msgbox.isAccepted())
 			{
 				dont_drop_missing_objs_chk->setChecked(true);
 				drop_missing_cols_constr_chk->setChecked(true);
 			}
-			else if(msgbox.isCancelled())
+			else if(msgbox.isCanceled())
 				return;
 		}
 	}
@@ -775,7 +791,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 					 GuiUtilsNs::getIconPath("diff"), GuiUtilsNs::getIconPath("sqlcode"));
 	}
 
-	if(!confirm || msg_box.result()==QDialog::Accepted)
+	if(!confirm || msg_box.isAccepted())
 	{
 		export_conn=new Connection;
 		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
@@ -804,7 +820,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_thread->start();
 		close_btn->setEnabled(false);
 	}
-	else if(msg_box.isCancelled())
+	else if(msg_box.isCanceled())
 		cancelOperation(true);
 	else
 	{
@@ -1194,7 +1210,7 @@ void ModelDatabaseDiffForm::loadConfiguration()
 		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 			restoreDefaults();
 	}
 }
@@ -1246,11 +1262,9 @@ void ModelDatabaseDiffForm::restoreDefaults()
 {
 	try
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Do you really want to restore the default settings?"),
-								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
+		int res = Messagebox::confirm(tr("Do you really want to restore the default settings?"));
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(Messagebox::isAccepted(res))
 		{
 			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
 			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
@@ -1376,11 +1390,9 @@ void ModelDatabaseDiffForm::enablePresetButtons()
 
 void ModelDatabaseDiffForm::removePreset()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Are you sure do you want to remove the selected diff preset?"));
 
-	msg_box.show(tr("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.erase(presets_cmb->currentText());
 		applyConfiguration();

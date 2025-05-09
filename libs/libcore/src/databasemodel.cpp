@@ -659,6 +659,22 @@ BaseObject *DatabaseModel::getObject(const QString &name, const std::vector<Obje
 	return object;
 }
 
+BaseObject *DatabaseModel::getObjectByOid(unsigned int oid, ObjectType obj_type)
+{
+	auto list = getObjectList(obj_type);
+
+	if(!list)
+		return nullptr;
+
+	for(auto &obj : *list)
+	{
+		if(obj->getPgOid() == oid)
+			return obj;
+	}
+
+	return nullptr;
+}
+
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	std::vector<BaseObject *> *obj_list=nullptr;
@@ -1024,9 +1040,9 @@ void DatabaseModel::removeExtensionObjects(Extension *ext)
 			if(!ref_obj->isDependingOn(ext))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
-														 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
-																	ref_obj->getSignature(), ref_obj->getTypeName()),
-												 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												.arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+														 ref_obj->getSignature(), ref_obj->getTypeName()),
+												 ErrorCode::RemExtRefChildObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 			}
 		}
 
@@ -1089,8 +1105,11 @@ bool DatabaseModel::updateExtensionObjects(Extension *ext)
 				if(obj)
 				{
 					/* If the object exists and is not one that is linked to the current extension it means
-					 * that if we try to create the object it'll be duplicated in the model, which is prohibited */
-					if(!obj->isDependingOn(ext))
+					 * that if we try to create the object it'll be duplicated in the model, which is prohibited.
+					 * The exception here is for duplicated schemas. The schema that is a child of the extension
+					 * will not be created and the one in the model will be used by the other child objects of the
+					 * extesion if needed */
+					if(ext_obj_type != ObjectType::Schema && !obj->isDependingOn(ext))
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
 														.arg(ext->getSignature(), obj->getSignature(), obj->getTypeName()),
@@ -7597,34 +7616,54 @@ QString DatabaseModel::__getSourceCode(SchemaParser::CodeType def_type)
 	}
 }
 
-QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode)
+QString DatabaseModel::getSQLDefinition(const std::vector<BaseObject *> objects, CodeGenMode code_gen_mode)
 {
-	if(!object)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(objects.empty())
+		return "";
 
-	if(code_gen_mode == OriginalSql || code_gen_mode == GroupByType)
+	try
 	{
-		if(object->getObjectType() == ObjectType::Database)
-			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
+		std::map<unsigned, BaseObject *> objs_map;
 
-		return object->getSourceCode(SchemaParser::SqlCode);
-	}
-	else
-	{
-		std::vector<BaseObject *> objs = getCreationOrder(object, code_gen_mode == ChildrenSql);
-		QString aux_def;
+		// Putting the object in the proper cration order
+		std::for_each(objects.begin(), objects.end(), [&objs_map](auto obj){
+			objs_map[obj->getObjectId()] = obj;
+		});
 
-		for(auto &obj : objs)
+		/* If we are getting dependencies or children SQL we also need to
+		 * put them object in the proper cration order */
+		if(code_gen_mode == DependenciesSql || code_gen_mode == ChildrenSql)
 		{
-			if(obj->getObjectType() == ObjectType::Database)
-				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
-			else
-				aux_def += obj->getSourceCode(SchemaParser::SqlCode);
+			std::for_each(objects.begin(), objects.end(), [&objs_map, this, code_gen_mode](auto obj){
+				 for(auto &dep_obj : getCreationOrder(obj, code_gen_mode == ChildrenSql))
+					 objs_map[dep_obj->getObjectId()] = dep_obj;
+			});
 		}
 
-		if(!aux_def.isEmpty())
+		QString code;
+		ObjectType obj_type;
+
+		for(auto &[_, obj] : objs_map)
 		{
-			aux_def.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
+			obj_type = obj->getObjectType();
+
+			if((obj->isSQLDisabled() && !gen_dis_objs_code) ||
+				 obj_type == ObjectType::Textbox || obj_type == ObjectType::Tag ||
+				 (obj_type == ObjectType::BaseRelationship &&
+					dynamic_cast<BaseRelationship *>(obj)->getRelationshipType() !=
+					BaseRelationship::RelationshipFk))
+				continue;
+
+			if(obj->getObjectType() == ObjectType::Database)
+				code += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
+			else
+				code += obj->getSourceCode(SchemaParser::SqlCode);
+		}
+
+		if(!code.isEmpty() &&
+			 (code_gen_mode == DependenciesSql || code_gen_mode == ChildrenSql))
+		{
+			code.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
 -- as well as for its dependencies or children (if applicable).\n\
 -- \n\
 -- This feature is only a convenience in order to allow you to test\n\
@@ -7634,7 +7673,11 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 -- all objects will be placed at their original positions.\n\n\n"));
 		}
 
-		return aux_def;
+		return code;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -7696,6 +7739,7 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
 		attribs_aux[Attributes::Objects]="";
+		attribs_aux[getSchemaName()] = "";
 
 		if(is_sql_def)
 		{
@@ -7795,6 +7839,15 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 
 		if(is_sql_def)
 			configureShellTypes(true);
+
+		attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
+		def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
+
+		if(prepend_at_bod && is_sql_def)
+			def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
+
+		if(append_at_eod && is_sql_def)
+			def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 	}
 	catch(Exception &e)
 	{
@@ -7804,14 +7857,6 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
-	def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
-
-	if(prepend_at_bod && is_sql_def)
-		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
-
-	if(append_at_eod && is_sql_def)
-		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
@@ -7827,7 +7872,7 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 		{
 			//Configuring the changelog attributes when generating XML code
 			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
-			attribs[Attributes::Changelog] = getChangelogDefinition();
+			attribs[Attributes::Changelog] = persist_changelog ? getChangelogDefinition() : "";
 			attribs[Attributes::GenDisabledObjsCode]= gen_dis_objs_code ? Attributes::True : Attributes::False;
 			attribs[Attributes::ShowSysSchemasRects]= show_sys_sch_rects ? Attributes::True : Attributes::False;
 		}
@@ -8414,7 +8459,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 					buffer.append(ftab->__getSourceCode(SchemaParser::SqlCode, true, false).toUtf8());
 			}
 			else
-				buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
+				buffer.append(getSQLDefinition({ obj }, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;
@@ -8424,8 +8469,7 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 			{
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 														tr("Generating SQL of `%1' (%2).")
-														.arg(obj->getSignature())
-														.arg(obj->getTypeName()),
+														.arg(obj->getSignature(), obj->getTypeName()),
 														enum_t(obj_type));
 
 				obj_type_name = obj->getSchemaName();
@@ -10297,9 +10341,6 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 
 QString DatabaseModel::getChangelogDefinition(bool csv_format)
 {
-	if(!persist_changelog)
-		return "";
-
 	try
 	{
 		QString date, type, signature, action,

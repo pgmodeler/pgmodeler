@@ -273,7 +273,7 @@ void SQLToolWidget::disconnectFromDatabases()
 					 tr("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			database_cmb->clear();
 			connections_cmb->setEnabled(true);
@@ -439,7 +439,7 @@ void SQLToolWidget::closeDatabaseExplorer(int idx, bool confirm_close)
 					 tr("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() != QDialog::Accepted)
+		if(msg_box.isRejected())
 			return;
 	}
 
@@ -482,7 +482,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)
 									 tr("The SQL execution panel contains a typed command! Do you really want to close it?"),
 									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result() == QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -593,7 +593,7 @@ void SQLToolWidget::dropDatabase(int database_idx)
 								.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			QString extra_opt;
 

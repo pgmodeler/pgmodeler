@@ -770,7 +770,7 @@ void BaseObjectWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -864,7 +864,7 @@ void BaseObjectWidget::finishConfiguration()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)
