@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,8 +33,9 @@
 #include "baseobject.h"
 
 class __libgui ObjectsListModel: public QAbstractTableModel {
- private:
 	Q_OBJECT
+
+	private:
 
 	struct ItemData {
 		QString text, fg_color, bg_color, icon;
@@ -42,12 +43,14 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 		QSize sz_hint;
 		BaseObject *object;
 		ObjectType obj_type;
+		unsigned id;
 
 		ItemData() {
 			clear();
 		}
 
 		inline void clear() {
+			id = 0;
 			text = icon = "";
 			fg_color = bg_color = "";
 			italic = strikeout = false;
@@ -66,7 +69,7 @@ class __libgui ObjectsListModel: public QAbstractTableModel {
 
 	static const QStringList HeaderTexts,
 
-			HeaderIcons;
+	HeaderIcons;
 
 	inline QVariant getItemData(const ItemData &item_dt, int role) const;
 	static std::tuple<int, int, int> getIndexMargins();

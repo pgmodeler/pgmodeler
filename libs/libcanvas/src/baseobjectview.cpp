@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,18 @@
 #include "roundedrectitem.h"
 #include "objectsscene.h"
 #include "utilsns.h"
+#include <QApplication>
+#include <QScreen>
+#include <QTimeLine>
+
+unsigned BaseObjectView::global_sel_order {1};
+
+bool BaseObjectView::use_placeholder {true};
+bool BaseObjectView::compact_view {false};
+bool BaseObjectView::hide_shadow {false};
 
 std::map<QString, QTextCharFormat> BaseObjectView::font_config;
 std::map<QString, std::vector<QColor>> BaseObjectView::color_config;
-unsigned BaseObjectView::global_sel_order=1;
-bool BaseObjectView::use_placeholder=true;
-bool BaseObjectView::compact_view=false;
-bool BaseObjectView::hide_shadow=false;
 
 BaseObjectView::BaseObjectView(BaseObject *object)
 {
@@ -38,6 +43,47 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	sql_disabled_item=nullptr;
 	placeholder=nullptr;
 	setSourceObject(object);
+
+	fade_tl.setFrameRange(0, 100);
+	fade_tl.setEasingCurve(QEasingCurve::Linear);
+
+	connect(&fade_tl, &QTimeLine::frameChanged, this, [this](int frame){
+		setOpacity(frame / 100.0);
+	});
+
+	connect(&fade_tl, &QTimeLine::finished, this, [this]() {
+		setOpacity(fade_tl.property(FinalOpacity).toReal());
+	});
+}
+
+void BaseObjectView::blink()
+{
+	fade(true, 200, 3);
+}
+
+void BaseObjectView::fade(bool fd_in, int duration, int loop_cnt, qreal final_opacity)
+{
+	fade_tl.setDirection(fd_in ? QTimeLine::Forward : QTimeLine::Backward);
+	fade_tl.setLoopCount(loop_cnt);
+	fade_tl.setDuration(duration);
+	fade_tl.setProperty(FinalOpacity, final_opacity);
+	fade_tl.start();
+}
+
+void BaseObjectView::fadeIn()
+{
+	if(opacity() >= 1)
+		return;
+
+	fade(true, 200);
+}
+
+void BaseObjectView::fadeOut(qreal min_opacity)
+{
+	if(opacity() <= min_opacity)
+		return;
+
+	fade(false, 200, 1, min_opacity);
 }
 
 BaseObjectView::~BaseObjectView()

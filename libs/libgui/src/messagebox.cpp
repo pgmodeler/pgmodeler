@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@
 Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-	this->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-	cancelled=false;
+
+	setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 	show_errors_tb->setVisible(false);
 	custom_option_chk->setVisible(false);
+	raw_stack_txt = nullptr;
 
 	connect(yes_ok_btn, &QPushButton::clicked, this, &Messagebox::handleYesOkClick);
 	connect(no_btn, &QPushButton::clicked, this, &Messagebox::handleNoCancelClick);
@@ -56,14 +57,38 @@ void Messagebox::handleNoCancelClick()
 		reject();
 	else if(sender()==cancel_btn && no_btn->isVisible())
 	{
-		cancelled=true;
-		reject();
+		done(Canceled);
 	}
 }
 
-bool Messagebox::isCancelled()
+bool Messagebox::isAccepted()
 {
-	return cancelled;
+	return isAccepted(result());
+}
+
+bool Messagebox::isRejected()
+{
+	return isRejected(result());
+}
+
+bool Messagebox::isCanceled()
+{
+	return isCanceled(result());
+}
+
+bool Messagebox::isAccepted(int res)
+{
+	return res == Accepted;
+}
+
+bool Messagebox::isRejected(int res)
+{
+	return res == Rejected;
+}
+
+bool Messagebox::isCanceled(int res)
+{
+	return res == Canceled;
 }
 
 void Messagebox::setCustomOptionText(const QString &text)
@@ -82,12 +107,23 @@ bool Messagebox::isCustomOptionChecked()
 	return custom_option_chk->isChecked();
 }
 
-void Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+int Messagebox::show(Exception e, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
 											const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString fmt_msg, title;
 
-	raw_info_txt->setPlainText(e.getExceptionsText());
+	if(!raw_stack_txt)
+	{
+		raw_stack_txt = GuiUtilsNs::createNumberedTextEditor(stacktrace_tbw->widget(2), true);
+		raw_stack_txt->setReadOnly(true);
+		raw_stack_txt->setLineNumbersVisible(false);
+		raw_stack_txt->setWordWrap(true);
+		GuiUtilsNs::configureTextEditFont(raw_stack_txt, font().pointSizeF());
+		stacktrace_tbw->widget(2)->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																														GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	}
+
+	raw_stack_txt->setPlainText(e.getExceptionsText());
 	extra_info_txt->setPlainText(e.getExceptiosExtraInfo());
 	stacktrace_tbw->setTabVisible(1, !e.getExceptiosExtraInfo().isEmpty());
 
@@ -100,12 +136,12 @@ void Messagebox::show(Exception e, const QString &msg, IconType icon_type, Butto
 	else
 		fmt_msg = UtilsNs::formatMessage(msg);
 
-	this->show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
+	return show(title, fmt_msg, icon_type, buttons, yes_lbl, no_lbl, cancel_lbl, yes_ico, no_ico, cancel_ico);
 }
 
-void Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
+int Messagebox::show(const QString &msg, IconType icon_type, ButtonsId buttons)
 {
-	this->show("", msg,  icon_type, buttons);
+	return show("", msg,  icon_type, buttons);
 }
 
 void Messagebox::error(const QString &msg)
@@ -118,6 +154,17 @@ void Messagebox::error(const QString &msg, ErrorCode error_code, const QString &
 {
 	Messagebox msgbox;
 	msgbox.show(Exception(msg, error_code, method, file, line, e));
+}
+
+void Messagebox::error(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, std::vector<Exception> &exceptions)
+{
+	Messagebox msgbox;
+	msgbox.show(Exception(msg, error_code, method, file, line, exceptions));
+}
+
+void Messagebox::error(ErrorCode error_code, const QString &method, const QString &file, int line, Exception *e)
+{
+	error(Exception::getErrorMessage(error_code), error_code, method, file, line, e);
 }
 
 void Messagebox::error(Exception &e, const QString &method, const QString &file, int line)
@@ -141,8 +188,19 @@ void Messagebox::info(const QString &msg)
 	msgbox.show(msg, InfoIcon);
 }
 
-void Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons, const QString &yes_lbl, const QString &no_lbl,
-											const QString &cancel_lbl, const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+int Messagebox::confirm(const QString &msg, ButtonsId btns_id,
+												const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+												const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
+{
+	Messagebox msgbox;
+	return msgbox.show("", msg, ConfirmIcon, btns_id,
+										 yes_lbl, no_lbl, cancel_lbl,
+										 yes_ico, no_ico, cancel_ico);
+}
+
+int Messagebox::show(const QString &title, const QString &msg, IconType icon_type, ButtonsId buttons,
+										 const QString &yes_lbl, const QString &no_lbl, const QString &cancel_lbl,
+										 const QString &yes_ico, const QString &no_ico, const QString &cancel_ico)
 {
 	QString icon_name, aux_title=title;
 	QWidgetList btns = { yes_ok_btn, no_btn, cancel_btn, show_errors_tb };
@@ -231,7 +289,6 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 		break;
 	}
 
-	cancelled=false;
 	icon_lbl->setVisible(!icon_name.isEmpty());
 
 	if(!icon_name.isEmpty())
@@ -253,7 +310,7 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 	setMinimumHeight(sz.height() * h_factor);
 
 	int ln_cnt = QString(msg).replace(QRegularExpression("(<)(br)(/)?(>)",
-																											 QRegularExpression::CaseInsensitiveOption),
+																		QRegularExpression::CaseInsensitiveOption),
 																		"\n").count('\n');
 
 	if(ln_cnt > 0)
@@ -262,7 +319,19 @@ void Messagebox::show(const QString &title, const QString &msg, IconType icon_ty
 		resize(minimumSize());
 
 	setBaseSize(size());
-	QDialog::exec();
+
+	return exec();
+}
+
+int Messagebox::exec()
+{
+	/* Forcing the restoration of the overriden cursor
+	 * when opening the message box, this will avoid
+	 * the wait cursor to be displayed when the messagebox
+	 * is show after a exception is raised */
+	qApp->restoreOverrideCursor();
+
+	return QDialog::exec();
 }
 
 void Messagebox::resizeEvent(QResizeEvent *event)

@@ -14,10 +14,15 @@ jobs:
 
     strategy:
       matrix:
-        qt: ['6.2.4', '6.3.2', '6.4.3', '6.5.3', '6.6.1']
+        qt: ['6.4.3', '6.5.3', '6.6.3', '6.7.3', '6.8.0']
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Installing PostgreSQL
+      uses: tj-actions/install-postgresql@v3
+      with:
+        postgresql-version: 16
       
     - name: Installing Qt framework
       uses: jurplel/install-qt-action@v3

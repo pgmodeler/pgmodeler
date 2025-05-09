@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,8 +31,11 @@ namespace UtilsNs {
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
-											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__,
+											nullptr, output.errorString());
+		}
 
 		output.write(buffer);
 		output.close();
@@ -46,8 +49,11 @@ namespace UtilsNs {
 		input.open(QFile::ReadOnly);
 
 		if(!input.isOpen())
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),
-											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__,
+											nullptr, input.errorString());
+		}
 
 		/* In order to avoid storing the contents of the file in a local variable
 		 * and returning it making two copies we just return the result of readAll().

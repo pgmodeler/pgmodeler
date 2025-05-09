@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Role)
 {
-	ObjectsTableWidget *obj_tab=nullptr;
+	CustomTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
 	std::map<QString, std::vector<QWidget *> > fields_map;
@@ -45,8 +45,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																	(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
+		obj_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^
+																	(CustomTableWidget::UpdateButton | CustomTableWidget::DuplicateButton), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(4);
@@ -86,8 +86,8 @@ void RoleWidget::configureRoleSelection()
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
-	connect(members_tab[members_twg->currentIndex()], &ObjectsTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
+	connect(members_tab[members_twg->currentIndex()], &CustomTableWidget::s_rowAdded, this, &RoleWidget::selectMemberRole);
+	connect(members_tab[members_twg->currentIndex()], &CustomTableWidget::s_rowEdited, this, &RoleWidget::selectMemberRole);
 }
 
 void RoleWidget::selectMemberRole()

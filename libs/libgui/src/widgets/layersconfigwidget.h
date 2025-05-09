@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,18 +25,14 @@
 #ifndef LAYERS_CONFIG_WIDGET_H
 #define LAYERS_CONFIG_WIDGET_H
 
-#include <QWidget>
 #include "ui_layersconfigwidget.h"
 #include "modelwidget.h"
 #include "colorpickerwidget.h"
 
 class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
-
-		//! \brief Holds the last mouse position while moving the cursor over the widget (used during resize event filter)
-		QPoint old_pos;
-
 		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 
@@ -69,10 +65,6 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setModel(ModelWidget *model);
 
 	private slots:
-		/*! \brief This slot adds an item to the layers grid and performs the need operations
-		 * to make the new layer available to the scene and model widget */
-		void addLayer(const QString &name = "");
-
 		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming();
 
@@ -95,6 +87,10 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		void setLayersActive();
 
 	public slots:
+		/*! \brief This slot adds an item to the layers grid and performs the need operations
+		 * to make the new layer available to the scene and model widget */
+		QString addLayer(const QString &name = "", bool config_obj_sel = true);
+
 		void setVisible(bool value) override;
 
 		void toggleLayersRects();
@@ -106,12 +102,16 @@ class __libgui LayersConfigWidget : public QWidget, Ui::LayersConfigWidget {
 		 * scene layers without force the update of other graphical objects. */
 		void updateLayersRects();
 
+		void updateRelsVisibility();
+
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility
 		void s_visibilityChanged(bool);
 
 		//! \brief Signal emitted whenever the current active layers change
 		void s_activeLayersChanged();
+
+		friend class MainWindow;
 };
 
 #endif

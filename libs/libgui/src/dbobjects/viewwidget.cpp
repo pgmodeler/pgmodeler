@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,13 +26,17 @@
 
 ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {
-	ObjectsTableWidget *tab = nullptr;
+	CustomTableWidget *tab = nullptr;
 	ObjectType types[] = { ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 	QGridLayout *grid = nullptr;
 	QVBoxLayout *vbox = nullptr;
 
 	Ui_ViewWidget::setupUi(this);
 	alert_frm->setVisible(false);
+
+	check_option_cmb->addItem(tr("No check"));
+	check_option_cmb->addItems(CheckOptionType::getTypes());
+	check_option_cmb->setCurrentIndex(0);
 
 	sql_definition_txt = new NumberedTextEditor(this, true);
 	sql_definition_hl = new SyntaxHighlighter(sql_definition_txt);
@@ -63,7 +67,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	vbox->addWidget(sql_preview_txt);
 
 	tag_sel=new ObjectSelectorWidget(ObjectType::Tag, this);
-	dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
+	dynamic_cast<QGridLayout *>(basics_gb->layout())->addWidget(tag_sel, 0, 1, 1, 6);
 
 	custom_cols_wgt = new SimpleColumnsWidget(this);
 	vbox = new QVBoxLayout(columns_tab);
@@ -75,8 +79,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 	for(auto &type : types)
 	{
-		tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																(ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
+		tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																(CustomTableWidget::UpdateButton  | CustomTableWidget::MoveButtons), true, this);
 
 		objects_tab_map[type] = tab;
 
@@ -86,11 +90,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		attributes_tbw->widget(tab_id)->setLayout(grid);
 		tab_id++;
 
-		connect(tab, &ObjectsTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
-		connect(tab, &ObjectsTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
-		connect(tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
-		connect(tab, &ObjectsTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
+		connect(tab, &CustomTableWidget::s_rowsRemoved, this, __slot(this, ViewWidget::removeObjects));
+		connect(tab, &CustomTableWidget::s_rowRemoved, this, __slot_n(this, ViewWidget::removeObject));
+		connect(tab, &CustomTableWidget::s_rowAdded, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowEdited, this, __slot(this, ViewWidget::handleObject));
+		connect(tab, &CustomTableWidget::s_rowDuplicated, this, __slot_n(this, ViewWidget::duplicateObject));
 	}
 
 	objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
@@ -127,6 +131,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	connect(materialized_rb, &QRadioButton::toggled, with_no_data_chk, &QCheckBox::setEnabled);
 	connect(materialized_rb, &QRadioButton::toggled, tablespace_sel, &ObjectSelectorWidget::setEnabled);
 	connect(materialized_rb, &QRadioButton::toggled, tablespace_lbl, &QLabel::setEnabled);
+	connect(materialized_rb, &QRadioButton::toggled, check_option_cmb, &QComboBox::setDisabled);
+	connect(recursive_rb, &QRadioButton::toggled, check_option_cmb, &QComboBox::setDisabled);
 
 	connect(materialized_rb, &QRadioButton::toggled, this, &ViewWidget::updateCodePreview);
 	connect(recursive_rb,  &QRadioButton::toggled,  this, &ViewWidget::updateCodePreview);
@@ -148,7 +154,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	setMinimumSize(700, 650);
 }
 
-ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
+CustomTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return objects_tab_map[obj_type];
@@ -173,7 +179,7 @@ void ViewWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 
 	try
 	{
@@ -203,7 +209,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
-	ObjectsTableWidget *obj_table=nullptr;
+	CustomTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
 	int op_id = -1;
 
@@ -308,7 +314,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 	if(sender)
 	{
-		std::map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
+		std::map<ObjectType, CustomTableWidget *>::iterator itr, itr_end;
 
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
@@ -327,7 +333,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 
 void ViewWidget::showObjectData(TableObject *object, int row)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	Trigger *trigger=nullptr;
 	Rule *rule=nullptr;
 	Index *index=nullptr;
@@ -393,7 +399,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 void ViewWidget::listObjects(ObjectType obj_type)
 {
-	ObjectsTableWidget *tab=nullptr;
+	CustomTableWidget *tab=nullptr;
 	unsigned count, i;
 	View *view=nullptr;
 
@@ -475,12 +481,15 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	with_no_data_chk->setChecked(view->isWithNoData());
 
 	op_list->startOperationChain();
-	operation_count=op_list->getCurrentSize();
+	operation_count = op_list->getCurrentSize();
 
 	tag_sel->setModel(this->model);
 	tag_sel->setSelectedObject(view->getTag());
 
 	custom_cols_wgt->setAttributes(this->model, view->getCustomColumns());
+	check_option_cmb->setCurrentText(~view->getCheckOption());
+	security_barrier_chk->setChecked(view->isSecurityBarrier());
+	security_invoker_chk->setChecked(view->isSecurityInvoker());
 
 	listObjects(ObjectType::Trigger);
 	listObjects(ObjectType::Rule);
@@ -503,6 +512,9 @@ void ViewWidget::applyConfiguration()
 
 		view=dynamic_cast<View *>(this->object);
 		view->removeObjects();
+		view->setSecurityBarrier(security_barrier_chk->isChecked());
+		view->setSecurityInvoker(security_invoker_chk->isChecked());
+		view->setCheckOption(check_option_cmb->currentIndex() > 0 ? check_option_cmb->currentText() : "");
 		view->setMaterialized(materialized_rb->isChecked());
 		view->setRecursive(recursive_rb->isChecked());
 		view->setWithNoData(with_no_data_chk->isChecked());

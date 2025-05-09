@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,14 +25,17 @@
 #ifndef MODEL_OBJECTS_WIDGET_H
 #define MODEL_OBJECTS_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modelobjectswidget.h"
 #include "modelwidget.h"
 #include "objecttypeslistwidget.h"
 
 class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
+		/*! \brief This event loop is used to make the widget enter in a loop (like QDialogs) when
+		 *  the show() is called and the widget is configured as a simplified view */
+		QEventLoop event_loop;
 
 		/*! \brief Indicates if the widget must be used as a simplified view (without the most interactions).
 		The purpose to use it as simplified view is to be serve as a object pick commonly used on the
@@ -88,7 +91,9 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		QTreeWidgetItem *getTreeItem(const QString &item_id);
 
 		//! \brief Generates a QVariant containing the passed object reference as data
-		QVariant generateItemValue(BaseObject *object);
+		QVariant generateItemData(BaseObject *object);
+
+		BaseObject *getTreeItemData(QTreeWidgetItem *item);
 
 		QTreeWidgetItem *createItemForObject(BaseObject *object, QTreeWidgetItem *root=nullptr, bool update_perms=true);
 
@@ -128,6 +133,7 @@ class __libgui ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget
 		void setObjectVisible(ObjectType obj_type, bool visible);
 		void close();
 		void hide();
+		void show();
 
 	private slots:
 		void setAllObjectsVisible(bool value);

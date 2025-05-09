@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,14 +21,6 @@
 Procedure::Procedure() : BaseFunction()
 {
 	obj_type = ObjectType::Procedure;
-}
-
-void Procedure::addParameter(Parameter param)
-{
-	if(param.isOut() && !param.isIn())
-		throw Exception(ErrorCode::InvProcedureParamOutMode, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
-	BaseFunction::addParameter(param);
 }
 
 QString Procedure::getSourceCode(SchemaParser::CodeType def_type, bool)
@@ -57,13 +49,6 @@ QString Procedure::getAlterCode(BaseObject *object)
 	{
 		attribs_map attribs;
 		attribs = BaseFunction::getAlterCodeAttributes(proc);
-
-		if(this->func_source.simplified() != proc->func_source.simplified() ||
-			 this->library != proc->library || this->symbol != proc->symbol)
-		{
-			attribs[Attributes::Definition] = proc->getSourceCode(SchemaParser::SqlCode);
-			attribs[Attributes::Definition].replace("CREATE PROCEDURE", "CREATE OR REPLACE PROCEDURE");
-		}
 
 		copyAttributes(attribs);
 		return BaseObject::getAlterCode(this->getSchemaName(), attributes, false, true);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,15 @@
 #include "objecttypeslistwidget.h"
 #include "guiutilsns.h"
 
-ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
+ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent, const std::vector<ObjectType> &excl_types)	: QWidget(parent)
 {
 	setupUi(this);
 
 	QListWidgetItem *item = nullptr;
+	std::vector<ObjectType> excluded_types { ObjectType::BaseRelationship };
+	excluded_types.insert(excluded_types.end(), excl_types.begin(), excl_types.end());
 
-	for(auto &type : BaseObject::getObjectTypes(true, { ObjectType::BaseRelationship }))
+	for(auto &type : BaseObject::getObjectTypes(true, excluded_types))
 	{
 		item = new QListWidgetItem(BaseObject::getTypeName(type));
 		item->setIcon(QIcon(GuiUtilsNs::getIconPath(type)));
@@ -38,29 +40,16 @@ ObjectTypesListWidget::ObjectTypesListWidget(QWidget *parent)	: QWidget(parent)
 	obj_types_lst->adjustSize();
 
 	connect(check_all_tb, &QToolButton::clicked, this, [this](){
-		setItemsCheckState(Qt::Checked);
+		setTypesCheckState(Qt::Checked);
 	});
 
 	connect(uncheck_all_tb, &QToolButton::clicked, this, [this](){
-		setItemsCheckState(Qt::Unchecked);
+		setTypesCheckState(Qt::Unchecked);
 	});
 
 	connect(obj_types_lst, &QListWidget::itemChanged, this, [this](QListWidgetItem *item){
 		emit s_typeCheckStateChanged(item->data(Qt::UserRole).value<ObjectType>(), item->checkState());
 	});
-}
-
-void ObjectTypesListWidget::setItemsCheckState(Qt::CheckState state)
-{
-	QListWidgetItem *item = nullptr;
-
-	for(int idx = 0; idx < obj_types_lst->count(); idx++)
-	{
-		item = obj_types_lst->item(idx);
-		item->setCheckState(state);
-	}
-
-	emit s_typesCheckStateChanged(state);
 }
 
 void ObjectTypesListWidget::setTypeNamesCheckState(const QStringList &obj_types, Qt::CheckState state)
@@ -76,27 +65,32 @@ void ObjectTypesListWidget::setTypeNamesCheckState(const QStringList &obj_types,
 void ObjectTypesListWidget::setTypesCheckState(const std::vector<ObjectType> &obj_types, Qt::CheckState state)
 {
 	ObjectType obj_type;
-	QListWidgetItem *item = nullptr;
 
-	for(int idx = 0; idx < obj_types_lst->count(); idx++)
+	for(auto &item : obj_types_lst->findItems("*", Qt::MatchWildcard))
 	{
-		item = obj_types_lst->item(idx);
 		obj_type = item->data(Qt::UserRole).value<ObjectType>();
 
 		if(std::find(obj_types.cbegin(), obj_types.cend(), obj_type) != obj_types.cend())
 			item->setCheckState(state);
 	}
+
+	emit s_typesCheckStateChanged(state);
+}
+
+void ObjectTypesListWidget::setTypesCheckState(Qt::CheckState state)
+{
+	for(auto &item : obj_types_lst->findItems("*", Qt::MatchWildcard))
+		item->setCheckState(state);
+
+	emit s_typesCheckStateChanged(state);
 }
 
 std::vector<ObjectType> ObjectTypesListWidget::getTypesPerCheckState(Qt::CheckState state)
 {
 	std::vector<ObjectType> types;
-	QListWidgetItem *item = nullptr;
 
-	for(int idx = 0; idx < obj_types_lst->count(); idx++)
+	for(auto &item : obj_types_lst->findItems("*", Qt::MatchWildcard))
 	{
-		item = obj_types_lst->item(idx);
-
 		if(item->checkState() == state)
 			types.push_back(item->data(Qt::UserRole).value<ObjectType>());
 	}
@@ -107,15 +101,25 @@ std::vector<ObjectType> ObjectTypesListWidget::getTypesPerCheckState(Qt::CheckSt
 QStringList ObjectTypesListWidget::getTypeNamesPerCheckState(Qt::CheckState state)
 {
 	QStringList types;
-	QListWidgetItem *item = nullptr;
 
-	for(int idx = 0; idx < obj_types_lst->count(); idx++)
+	for(auto &item : obj_types_lst->findItems("*", Qt::MatchWildcard))
 	{
-		item = obj_types_lst->item(idx);
-
 		if(item->checkState() == state)
 			types.append(BaseObject::getSchemaName(item->data(Qt::UserRole).value<ObjectType>()));
 	}
 
 	return types;
+}
+
+int ObjectTypesListWidget::getTypesCountPerCheckState(Qt::CheckState state)
+{
+	int count = 0;
+
+	for(auto &item : obj_types_lst->findItems("*", Qt::MatchWildcard))
+	{
+		if(item->checkState() == state)
+			count++;
+	}
+
+	return count;
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ BaseRelationship::BaseRelationship(RelType rel_type, BaseTable *src_tab, BaseTab
 
 		configureRelationship();
 
-		str_aux=QApplication::translate("BaseRelationship","rel_%1_%2","")
+		str_aux = qApp->translate("BaseRelationship","rel_%1_%2","")
 				.arg(src_tab->getName()).arg(dst_tab->getName());
 
 		if(str_aux.size() > BaseObject::ObjectNameMaxLength)
@@ -120,6 +120,9 @@ void BaseRelationship::configureRelationship()
 	attributes[Attributes::ReferenceFk]="";
 	attributes[Attributes::PartitionBoundExpr]="";
 	attributes[Attributes::OriginalPk]="";
+	attributes[Attributes::FkIdxType]="";
+	attributes[Attributes::FkIdxPattern]="";
+	attributes[Attributes::Index]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RelationshipFk)

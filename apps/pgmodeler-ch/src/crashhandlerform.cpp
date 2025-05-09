@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "guiutilsns.h"
 #include "qtconnectmacros.h"
 
-const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
+const QString CrashHandlerForm::AnalysisMode {"-analysis-mode"};
 
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {
@@ -43,7 +43,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	wgt->setLayout(layout);
 
 	logo_lbl->setPixmap(QPixmap(":/images/images/crashhandler.png"));
-	report_twg->addTab(wgt, tr("Stack trace"));
+	report_twg->addTab(wgt, QIcon(GuiUtilsNs::getIconPath("alert")), tr("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
 	input.setFileName(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::StacktraceFile));
@@ -117,8 +117,7 @@ void CrashHandlerForm::loadReport(QString filename)
 {
 	QFile input;
 	QFileInfo fi;
-	char *buf=nullptr;
-	Messagebox msgbox;
+	char *buf = nullptr;
 
 	fi.setFile(filename);
 	input.setFileName(filename);
@@ -126,7 +125,10 @@ void CrashHandlerForm::loadReport(QString filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
+	{
+		Messagebox::error(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
+											ErrorCode::FileDirectoryNotAccessed, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	}
 	else
 	{
 		QByteArray uncomp_buf;
@@ -178,8 +180,6 @@ void CrashHandlerForm::saveModel()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

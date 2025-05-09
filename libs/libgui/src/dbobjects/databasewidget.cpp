@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,41 +72,43 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 void DatabaseWidget::setAttributes(DatabaseModel *model)
 {
-	if(model)
-	{
-		int idx;
+	if(!model)
+		return;
 
-		connlim_sb->setValue(model->getConnectionLimit());
-		templatedb_edt->setText(model->getTemplateDB());
-		author_edt->setText(model->getAuthor());
+	int idx = 0;
 
-		idx=encoding_cmb->findText(~model->getEncoding());
-		if(idx < 0) idx=0;
-		encoding_cmb->setCurrentIndex(idx);
+	connlim_sb->setValue(model->getConnectionLimit());
+	templatedb_edt->setText(model->getTemplateDB());
+	author_edt->setText(model->getAuthor());
 
-		if(!model->getLocalization(Collation::LcCollate).isEmpty())
-			lccollate_cmb->setCurrentText(model->getLocalization(Collation::LcCollate));
+	idx=encoding_cmb->findText(~model->getEncoding());
+	if(idx < 0) idx=0;
+	encoding_cmb->setCurrentIndex(idx);
 
-		if(!model->getLocalization(Collation::LcCtype).isEmpty())
-			lcctype_cmb->setCurrentText(model->getLocalization(Collation::LcCtype));
+	if(!model->getLocalization(Collation::LcCollate).isEmpty())
+		lccollate_cmb->setCurrentText(model->getLocalization(Collation::LcCollate));
 
-		def_schema_sel->setModel(model);
-		def_schema_sel->setSelectedObject(model->getDefaultObject(ObjectType::Schema));
+	if(!model->getLocalization(Collation::LcCtype).isEmpty())
+		lcctype_cmb->setCurrentText(model->getLocalization(Collation::LcCtype));
 
-		def_collation_sel->setModel(model);
-		def_collation_sel->setSelectedObject(model->getDefaultObject(ObjectType::Collation));
+	def_schema_sel->setModel(model);
+	def_schema_sel->setSelectedObject(model->getDefaultObject(ObjectType::Schema));
 
-		def_owner_sel->setModel(model);
-		def_owner_sel->setSelectedObject(model->getDefaultObject(ObjectType::Role));
+	def_collation_sel->setModel(model);
+	def_collation_sel->setSelectedObject(model->getDefaultObject(ObjectType::Collation));
 
-		def_tablespace_sel->setModel(model);
-		def_tablespace_sel->setSelectedObject(model->getDefaultObject(ObjectType::Tablespace));
+	def_owner_sel->setModel(model);
+	def_owner_sel->setSelectedObject(model->getDefaultObject(ObjectType::Role));
 
-		allow_conn_chk->setChecked(model->isAllowConnections());
-		is_template_chk->setChecked(model->isTemplate());
+	def_tablespace_sel->setModel(model);
+	def_tablespace_sel->setSelectedObject(model->getDefaultObject(ObjectType::Tablespace));
 
-		BaseObjectWidget::setAttributes(model, model, nullptr);
-	}
+	allow_conn_chk->setChecked(model->isAllowConnections());
+	is_template_chk->setChecked(model->isTemplate());
+
+	gen_sql_dis_objs_chk->setChecked(model->isGenDisabledObjsCode());
+
+	BaseObjectWidget::setAttributes(model, model, nullptr);
 }
 
 void DatabaseWidget::applyConfiguration()
@@ -141,6 +143,7 @@ void DatabaseWidget::applyConfiguration()
 		model->setDefaultObject(def_tablespace_sel->getSelectedObject(), ObjectType::Tablespace);
 		model->setIsTemplate(is_template_chk->isChecked());
 		model->setAllowConnections(allow_conn_chk->isChecked());
+		model->setGenDisabledObjsCode(gen_sql_dis_objs_chk->isChecked());
 
 		finishConfiguration();
 	}

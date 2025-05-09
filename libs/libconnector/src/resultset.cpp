@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,20 +45,18 @@ ResultSet::ResultSet(PGresult *sql_result)
 		case PGRES_BAD_RESPONSE:
 			throw Exception(ErrorCode::IncomprehensibleDBMSResponse, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-			//Generating an error in case the server returns a fatal error
+		//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
 			str_aux=Exception::getErrorMessage(ErrorCode::DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
 			throw Exception(str_aux,ErrorCode::DBMSFatalError, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-			//In case of sucess states the result will be created
-		case PGRES_COMMAND_OK:
-		case PGRES_TUPLES_OK:
-		case PGRES_SINGLE_TUPLE:
-		case PGRES_COPY_OUT:
-		case PGRES_COPY_IN:
+		//In case of sucess states the result will be created
 		default:
-			empty_result = (res_state!=PGRES_TUPLES_OK && res_state!=PGRES_SINGLE_TUPLE && res_state!=PGRES_EMPTY_QUERY);
+			/* For any other result set status different from PGRES_TUPLES_OK
+			 * we flag the result set as empty since they either return no tuples
+			 * or aren't support at the moment by this class */
+			empty_result = res_state != PGRES_TUPLES_OK;
 			current_tuple = -1;
 			is_res_copied = false;
 		break;
@@ -286,16 +284,16 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 
 bool ResultSet::accessTuple(TupleId tuple_id)
 {
-	int tuple_count=getTupleCount();
+	int tuple_count = getTupleCount();
 
-	/* Raises an error if the result
-		is derived from a command which affects only rows or
-		The tuple type to be accessed is invalid, out of
-		set defined by the class */
-	if(empty_result || tuple_id > NextTuple)
+	/* Raises an error if trying to access the tuple with
+	 * an invalid tuple id */
+	if(tuple_id > NextTuple)
 		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(tuple_count == 0)
+	/* If we have an empty result (generated from a DDL command for example)
+	 * or we have no tuples in the result set (generated from a DML but without returned rows) */
+	if(empty_result || tuple_count == 0)
 		return false;
 
 	bool accessed = true;

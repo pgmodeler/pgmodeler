@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,15 +27,15 @@
 
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/colorpickerwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
 
 class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		enum TabId: unsigned {
 			GeneralTab,
 			SettingsTab,
@@ -60,11 +60,11 @@ class __libgui RelationshipWidget: public BaseObjectWidget, public Ui::Relations
 
 		SyntaxHighlighter *table1_hl,
 		*table2_hl,
-		*patterns_hl[7],
+		*patterns_hl[8],
 		*part_bound_expr_hl;
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
-		ObjectsTableWidget *attributes_tab,
+		CustomTableWidget *attributes_tab,
 		*constraints_tab,
 		*advanced_objs_tab;
 

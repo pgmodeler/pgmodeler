@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
 
 #include "indexingtype.h"
 
-QStringList IndexingType::type_names =
-{
+const QStringList IndexingType::type_names {
 	"", // Reserved for Class::Null
-
 	"btree",
+	"brin",
 	"gist",
-	"hash",
 	"gin",
+	"hash",
 	"spgist",
-	"brin"
 };
 
 IndexingType::IndexingType(unsigned type_id)

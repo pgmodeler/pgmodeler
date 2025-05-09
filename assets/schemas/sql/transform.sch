@@ -2,19 +2,11 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-[-- ] {drop}
+@include "ddlend"
+@include "objlabel"
+@include "prependedsql"
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-%set {ddl-end} $br [-- ddl-end --] $br
-
-%if {prepended-sql} %then
-	{prepended-sql}
-	{ddl-end} $br
-%end
-
-[CREATE TRANSFORM FOR ] {type} [ LANGUAGE ] {language} [ (]
+[CREATE OR REPLACE TRANSFORM FOR ] {type} [ LANGUAGE ] {language} [ (]
 
 # One of the two function should be defined otherwise the code generation will fail
 
@@ -32,15 +24,4 @@
 
 $br [);]
 
-{ddl-end}
-
-%if {comment} %then
-	{comment}
-%end
-
-%if {appended-sql} %then
-	{appended-sql}
-	{ddl-end}
-%end
-
-$br
+@include "footer"

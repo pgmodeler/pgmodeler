@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 #include "ui_languagewidget.h"
 
 class __libgui LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel,
 		*func_inline_sel;

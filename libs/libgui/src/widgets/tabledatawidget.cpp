@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@
 #include "guiutilsns.h"
 #include "csvparser.h"
 #include "utils/plaintextitemdelegate.h"
+#include <QClipboard>
 
-const QString TableDataWidget::PlaceholderColumn("$placeholder$");
+const QString TableDataWidget::PlaceholderColumn {"$placeholder$"};
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {
@@ -63,10 +64,14 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 	connect(add_row_tb, &QToolButton::clicked, this, &TableDataWidget::addRow);
 	connect(dup_rows_tb, &QToolButton::clicked, this, &TableDataWidget::duplicateRows);
+
 	connect(del_rows_tb, &QToolButton::clicked, this, &TableDataWidget::deleteRows);
 	connect(del_cols_tb, &QToolButton::clicked, this, &TableDataWidget::deleteColumns);
-	connect(clear_rows_tb, &QToolButton::clicked, this, &TableDataWidget::clearRows);
+
 	connect(clear_cols_tb, &QToolButton::clicked, this, &TableDataWidget::clearColumns);
+	connect(clear_rows_tb, &QToolButton::clicked, this, [this](){
+		clearRows();
+	});
 
 	connect(data_tbw, &QTableWidget::currentCellChanged, this, &TableDataWidget::insertRowOnTabPress, Qt::QueuedConnection);
 	connect(&col_names_menu, &QMenu::triggered, this, &TableDataWidget::addColumn);
@@ -100,14 +105,11 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		paste_tb->setEnabled(qApp->clipboard()->ownsClipboard());
 	});
 
-	connect(data_tbw, &QTableWidget::itemPressed, this, &TableDataWidget::handleItemPressed);
+	connect(data_tbw, &QTableWidget::customContextMenuRequested, this, &TableDataWidget::showItemContextMenu);
 }
 
-void TableDataWidget::handleItemPressed()
+void TableDataWidget::showItemContextMenu(const QPoint &pos)
 {
-	if(QApplication::mouseButtons() != Qt::RightButton)
-		return;
-
 	QMenu item_menu;
 	QAction *act = nullptr;
 	QList<QToolButton *> btns = { add_row_tb, add_col_tb, dup_rows_tb, bulkedit_tb, nullptr,
@@ -132,12 +134,12 @@ void TableDataWidget::handleItemPressed()
 			item_menu.addAction(act);
 		}
 		else
-			act = item_menu.addAction(btn->icon(), btn->text(), btn, &QToolButton::click, btn->shortcut());
+			act = item_menu.addAction(btn->icon(), btn->text(), btn->shortcut(), btn, &QToolButton::click);
 
 		act->setEnabled(btn->isEnabled());
 	}
 
-	item_menu.exec(QCursor::pos());
+	item_menu.exec(data_tbw->viewport()->mapToGlobal(pos));
 }
 
 void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col)
@@ -189,12 +191,9 @@ void TableDataWidget::deleteRows()
 
 void TableDataWidget::deleteColumns()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Delete columns is an irreversible action! Do you really want to proceed?"));
 
-	msg_box.show(tr("Delete columns is an irreversible action! Do you really want to proceed?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		QTableWidgetSelectionRange sel_range;
 
@@ -223,13 +222,12 @@ void TableDataWidget::deleteColumns()
 
 void TableDataWidget::clearRows(bool confirm)
 {
-	Messagebox msg_box;
+	int res = Messagebox::Rejected;
 
 	if(confirm)
-		msg_box.show(tr("Remove all rows is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+		res = Messagebox::confirm(tr("Remove all rows is an irreversible action! Do you really want to proceed?"));
 
-	if(!confirm || msg_box.result()==QDialog::Accepted)
+	if(!confirm || Messagebox::isAccepted(res))
 	{
 		data_tbw->clearContents();
 		data_tbw->setRowCount(0);
@@ -239,12 +237,9 @@ void TableDataWidget::clearRows(bool confirm)
 
 void TableDataWidget::clearColumns()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Remove all columns is an irreversible action! Do you really want to proceed?"));
 
-		msg_box.show(tr("Remove all columns is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		clearRows(false);
 		data_tbw->setColumnCount(0);
@@ -369,7 +364,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 
 			Messagebox msgbox;
 			msgbox.show(e,
@@ -377,7 +372,7 @@ void TableDataWidget::populateDataGrid(const CsvDocument &csv_doc)
 									Messagebox::AlertIcon,
 									Messagebox::YesNoButtons);
 
-			if(msgbox.result() == QDialog::Accepted)
+			if(msgbox.isAccepted())
 			{
 				try
 				{

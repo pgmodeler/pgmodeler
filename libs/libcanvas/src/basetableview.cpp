@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 #include "schema.h"
 #include "utilsns.h"
 
-bool BaseTableView::hide_ext_attribs = false;
-bool BaseTableView::hide_tags = false;
-unsigned BaseTableView::attribs_per_page[2] = { 10, 5 };
+bool BaseTableView::hide_ext_attribs {false};
+bool BaseTableView::hide_tags {false};
+unsigned BaseTableView::attribs_per_page[2] { 10, 5};
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {

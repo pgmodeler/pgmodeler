@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "utilsns.h"
 #include "doublenan.h"
 
-unsigned DatabaseModel::dbmodel_id=2000;
+unsigned DatabaseModel::dbmodel_id {2000};
 
 DatabaseModel::DatabaseModel()
 {
@@ -42,6 +42,8 @@ DatabaseModel::DatabaseModel()
 	is_template = false;
 	allow_conns = true;
 	cancel_saving = false;
+	gen_dis_objs_code = false;
+	show_sys_sch_rects = true;
 
 	encoding=EncodingType::Null;
 	BaseObject::setName(QObject::tr("new_database"));
@@ -65,6 +67,7 @@ DatabaseModel::DatabaseModel()
 	attributes[Attributes::IsTemplate]="";
 	attributes[Attributes::UseChangelog]="";
 	attributes[Attributes::Changelog]="";
+	attributes[Attributes::GenDisabledObjsCode]="";
 
 	obj_lists = {
 		{ ObjectType::Textbox, &textboxes },
@@ -372,17 +375,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
 	obj_type=object->getObjectType();
 
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: database model object creation limit."
-	obj_list=getObjectList(obj_type);
-	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
-		throw Exception(tr("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
-						.arg(GlobalAttributes::MaxObjectCount)
-						.arg(BaseObject::getTypeName(obj_type)),
-						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-#endif
-
 	if(obj_type==ObjectType::Tablespace)
 	{
 		Tablespace *tabspc=nullptr, *aux_tabspc=nullptr;
@@ -667,6 +659,22 @@ BaseObject *DatabaseModel::getObject(const QString &name, const std::vector<Obje
 	return object;
 }
 
+BaseObject *DatabaseModel::getObjectByOid(unsigned int oid, ObjectType obj_type)
+{
+	auto list = getObjectList(obj_type);
+
+	if(!list)
+		return nullptr;
+
+	for(auto &obj : *list)
+	{
+		if(obj->getPgOid() == oid)
+			return obj;
+	}
+
+	return nullptr;
+}
+
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	std::vector<BaseObject *> *obj_list=nullptr;
@@ -677,20 +685,37 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj_idx >= obj_list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		return obj_list->at(obj_idx);
+
+	return obj_list->at(obj_idx);
 }
 
 unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 {
-	std::vector<BaseObject *> *obj_list=nullptr;
+	std::vector<BaseObject *> *obj_list = nullptr;
 
-	obj_list=getObjectList(obj_type);
+	obj_list = getObjectList(obj_type);
 
 	if(!obj_list)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		return obj_list->size();
+
+	return obj_list->size();
+}
+
+unsigned DatabaseModel::getObjectsCount(const std::vector<ObjectType> &obj_types)
+{
+	try
+	{
+		unsigned count = 0;
+
+		for(auto &obj_typ : obj_types)
+			count += getObjectCount(obj_typ);
+
+		return count;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
 }
 
 unsigned DatabaseModel::getMaxObjectCount()
@@ -805,8 +830,8 @@ void DatabaseModel::destroyObjects()
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << Qt::endl;
-		qDebug() << e.getExceptionsText().toStdString().c_str() << Qt::endl;
+		qInfo() << "** FAIL TO DESTROY ALL OBJECTS **" << Qt::endl;
+		qInfo() << e.getExceptionsText().toStdString().c_str() << Qt::endl;
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlCode, true);
@@ -986,34 +1011,42 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 	try
 	{
 		__addObject(extension, obj_idx);
-		updateExtensionTypes(extension);
+		updateExtensionObjects(extension);
 	}
 	catch(Exception &e)
 	{
-		removeExtensionTypes(extension);
+		removeExtensionObjects(extension);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
-void DatabaseModel::removeExtensionTypes(Extension *ext)
+void DatabaseModel::removeExtensionObjects(Extension *ext)
 {
 	if(!ext)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	/* We raise an error if the user tries to remove an extension that
+	/* Checking if the user tries to remove an extension that
 	 * has one or more children being referenced in the model */
 	for(auto &obj : ext->getReferences())
 	{
-		if(obj->isReferenced())
+		/* We iterate over the references of each extension referenced object (child)
+		 * to check if there are user-defined objects that is somehow linked to them */
+		for(auto &ref_obj : obj->getReferences())
 		{
-			BaseObject *ref_obj = obj->getReferences().at(0);
-			throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
-													 .arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
-																ref_obj->getSignature(), ref_obj->getTypeName()),
-											 ErrorCode::RemExtRefChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			/* If the referenced object is not a child object of the
+			 * extension being removed we raise an error indicating
+			 * that there is an object created by the user which
+			 * references the extension child object */
+			if(!ref_obj->isDependingOn(ext))
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::RemExtRefChildObject)
+												.arg(ext->getSignature(), obj->getName(), obj->getTypeName(),
+														 ref_obj->getSignature(), ref_obj->getTypeName()),
+												 ErrorCode::RemExtRefChildObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			}
 		}
 
-		removeObject(obj);
+		__removeObject(obj, -1, false);
 	}
 }
 
@@ -1040,81 +1073,116 @@ void DatabaseModel::setRelTablesModified(BaseRelationship *rel)
 		dynamic_cast<BaseGraphicObject *>(dst_sch)->setModified(true);
 }
 
-bool DatabaseModel::updateExtensionTypes(Extension *ext)
+bool DatabaseModel::updateExtensionObjects(Extension *ext)
 {
 	if(!ext)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	std::vector<Type *> new_types;
+	std::vector<BaseObject *> new_objs;
 
 	try
 	{
 		/* Before inserting the extension, if it has child objects, we
 		 * need to check if there are object with the same name in the model */
-		QString tp_signature;
-		Type *type = nullptr;
-		QStringList type_names = ext->getTypeNames();
-		bool types_removed = true;
+		BaseObject *obj = nullptr, *obj_sch = nullptr;
+		QString obj_signature;
+		bool objs_removed = true;
 
-		for(auto &tp_name : type_names)
+		for(auto ext_obj_type : { ObjectType::Schema, ObjectType::Type })
 		{
-			/* Checking if the extension child type has a conflicting name with another type in the model
-			 * For that purpose, we get the first type that contains the extension type signature */
-			tp_signature = ext->getSchema()->getName(true) + "." + tp_name;
-			type = dynamic_cast<Type *>(getObject(tp_signature, ObjectType::Type));
-
-			if(type)
+			for(auto &ext_obj : ext->getObjects(ext_obj_type))
 			{
-				/* If the type exist and is not one that is linked to the current extension it means
-				 * that if we try to create the type it'll be duplicated in the model, which is prohibited */
-				if(!type->isDependingOn(ext))
+				/* Checking if the extension child object has a conflicting name with another object
+				 * of the same type in the model. For that, we get the first object that
+				 * contains the extension's child object signature */
+				if(ext_obj.getParent().isEmpty() && BaseObject::isChildObjectType(ObjectType::Schema, ext_obj_type))
+					obj_signature = ext->getSchema()->getSignature() + "." + BaseObject::formatName(ext_obj.getName());
+				else
+					obj_signature = ext_obj.getSignature();
+
+				obj = getObject(obj_signature, ext_obj_type);
+
+				if(obj)
 				{
-					throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
-															 .arg(ext->getSignature(), tp_name, type->getTypeName()),
-													 ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					/* If the object exists and is not one that is linked to the current extension it means
+					 * that if we try to create the object it'll be duplicated in the model, which is prohibited.
+					 * The exception here is for duplicated schemas. The schema that is a child of the extension
+					 * will not be created and the one in the model will be used by the other child objects of the
+					 * extesion if needed */
+					if(ext_obj_type != ObjectType::Schema && !obj->isDependingOn(ext))
+					{
+						throw Exception(Exception::getErrorMessage(ErrorCode::AddExtDupChildObject)
+														.arg(ext->getSignature(), obj->getSignature(), obj->getTypeName()),
+														ErrorCode::AddExtDupChildObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					// If the retrieved type is one of the extension's child types we just skip it
+					continue;
 				}
 
-				// If the retrieved type is one of the extension's child types we just skip it
-				continue;
-			}
-
-			// Creating a new extension child type
-			type = new Type;
-			type->setName(tp_name);
-			type->setSchema(ext->getSchema());
-			type->setSystemObject(true);
-			type->setSQLDisabled(true);
-			type->setConfiguration(Type::EnumerationType);
-			type->getSourceCode(SchemaParser::SqlCode);
-			type->setDependency(ext);
-
-			new_types.push_back(type);
-			addType(type);
-		}
-
-		for(auto &type : ext->getReferences())
-		{
-			if(!type_names.contains(type->getName()))
-			{
-				if(!type->isReferenced())
-					removeObject(type);
+				if(ext_obj_type == ObjectType::Schema)
+				{
+					obj = new Schema;
+					dynamic_cast<Schema *>(obj)->setRectVisible(true);
+				}
 				else
 				{
-					type_names.append(type->getName());
-					ext->setTypeNames(type_names);
-					types_removed = false;
+					obj = new Type;
+					obj_sch = getSchema(ext_obj.getParent());
+					obj->setSchema(!obj_sch ? ext->getSchema() : obj_sch);
+					dynamic_cast<Type *>(obj)->setConfiguration(Type::EnumerationType);
+				}
+
+				/* Creating a new extension child object. Here, we force it to be a
+				 * protected object that can't be handled by the user directly, and
+				 * tie it to the extension itself, so when the extension is destroyed
+				 * the child objects are destroyed as well */
+				obj->setName(ext_obj.getName());
+				obj->setSystemObject(true);
+				obj->setSQLDisabled(true);
+				obj->setDependency(ext);
+
+				addObject(obj);
+
+				/* Store the object in a temporary list so, in case of error,
+				 * it will be removed in the catch section */
+				new_objs.push_back(obj);
+			}
+		}
+
+		/* In this step we remove potentially unused child object of the extesion that
+		 * is in the model and add other ones that are still being referenced. This
+		 * situation occurs when the extension is edited by the user by removing/adding
+		 * other objects leaving behind the other ones previously created.*/
+		for(auto &ref_obj : ext->getReferences())
+		{
+			Extension::ExtObject ext_obj { ref_obj->getName(),
+																		 ref_obj->getObjectType(),
+																		 ref_obj->getSchema() ? ref_obj->getSchema()->getName() : "" };
+
+			if(!ext->containsObject(ext_obj))
+			{
+				// If the object is not being reference we can safely remove it
+				if(!ref_obj->isReferenced())
+					removeObject(ref_obj);
+				else
+				{
+					// If it is still referenced we add it to the extension again
+					ext->addObject(ext_obj);
+					objs_removed = false;
 				}
 			}
 		}
 
-		return types_removed;
+		return objs_removed;
 	}
 	catch(Exception &e)
 	{
-		for(auto &tp : new_types)
+		for(auto itr = new_objs.rbegin();
+						 itr != new_objs.rend(); itr++)
 		{
-			removeType(tp);
-			delete tp;
+			removeObject(*itr);
+			delete *itr;
 		}
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
@@ -1449,7 +1517,7 @@ void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 
 	try
 	{
-		removeExtensionTypes(extension);
+		removeExtensionObjects(extension);
 		__removeObject(extension, obj_idx);
 	}
 	catch(Exception &e)
@@ -2113,8 +2181,9 @@ void DatabaseModel::storeSpecialObjectsXML()
 					}
 					else
 					{
-						index=dynamic_cast<Index *>(tab_obj);
-						found=index->isReferRelationshipAddedColumn();
+						index = dynamic_cast<Index *>(tab_obj);
+						found = !index->isAddedByRelationship() &&
+										index->isReferRelationshipAddedColumn();
 
 						if(found)
 							xml_special_objs[index->getObjectId()]=index->getSourceCode(SchemaParser::XmlCode);
@@ -2528,6 +2597,9 @@ void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 {
 	try
 	{
+		if(schema && schema->isSystemObject() && schema->getName() != "public")
+			schema->setRectVisible(show_sys_sch_rects);
+
 		__addObject(schema, obj_idx);
 	}
 	catch(Exception &e)
@@ -2997,7 +3069,6 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 			__addObject(type, obj_idx);
 
 			//When added to the model the user type is inserted on the pgsql base type list to be used as a column type
-			//PgSqlType::addUserType(type->getName(true), type, this, UserTypeConfig::BaseType);
 			PgSqlType::addUserType(type->getName(true), type, UserTypeConfig::BaseType);
 		}
 		catch(Exception &e)
@@ -3383,6 +3454,8 @@ void DatabaseModel::loadModel(const QString &filename)
 												 attribs[Attributes::AllowConns] == Attributes::True);
 
 		persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
+		gen_dis_objs_code = attribs[Attributes::GenDisabledObjsCode] == Attributes::True;
+		show_sys_sch_rects = attribs[Attributes::ShowSysSchemasRects] == Attributes::True;
 
 		/* Compatibility with models created prior the multiple layers features:
 		 * We need to replace semi-colon by comma in the attribute Layers in order to split the
@@ -6652,6 +6725,9 @@ View *DatabaseModel::createView()
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
+		view->setCheckOption(attribs[Attributes::CheckOption]);
+		view->setSecurityBarrier(attribs[Attributes::SecurityBarrier] == Attributes::True);
+		view->setSecurityInvoker(attribs[Attributes::SecurityInvoker] == Attributes::True);
 		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? BaseTable::NotCollapsed : static_cast<BaseTable::CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
@@ -6821,7 +6897,6 @@ Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
-	QStringList types;
 
 	try
 	{
@@ -6840,21 +6915,23 @@ Extension *DatabaseModel::createExtension()
 			{
 				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
 				{
-					if(xmlparser.getElementName() == Attributes::Type)
+					if(xmlparser.getElementName() == Attributes::Object)
 					{
 						xmlparser.getElementAttributes(attribs);
-						types.append(attribs[Attributes::Name]);
+						extension->addObject(Extension::ExtObject { attribs[Attributes::Name],
+																												BaseObject::getObjectType(attribs[Attributes::Type]),
+																												attribs[Attributes::Parent] });
 					}
 				}
 			}
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
-
-		extension->setTypeNames(types);
 	}
 	catch(Exception &e)
 	{
-		if(extension) delete extension;
+		if(extension)
+			delete extension;
+
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6952,8 +7029,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
 	std::map<QString, BaseRelationship::LabelId> 	labels_id= {{ Attributes::NameLabel, BaseRelationship::RelNameLabel },
-																																			{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
-																																			{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
+																														{ Attributes::SrcLabel, BaseRelationship::SrcCardLabel },
+																														{ Attributes::DstLabel, BaseRelationship::DstCardLabel }};
 
 	try
 	{
@@ -7079,16 +7156,18 @@ BaseRelationship *DatabaseModel::createRelationship()
 		}
 		else
 		{
-			QString pat_attrib[]= { Attributes::SrcColPattern, Attributes::DstColPattern,
-									Attributes::SrcFkPattern, Attributes::DstFkPattern,
-									Attributes::PkPattern, Attributes::UqPattern,
-									Attributes::PkColPattern };
+			QString pat_attrib[]= {
+				Attributes::SrcColPattern, Attributes::DstColPattern,
+				Attributes::SrcFkPattern, Attributes::DstFkPattern,
+				Attributes::PkPattern, Attributes::UqPattern,
+				Attributes::PkColPattern, Attributes::FkIdxPattern
+			};
 
 			std::vector<Relationship::PatternId>	pattern_ids= {
 				Relationship::SrcColPattern, Relationship::DstColPattern,
 				Relationship::SrcFkPattern, Relationship::DstFkPattern,
 				Relationship::PkPattern, Relationship::UqPattern,
-				Relationship::PkColPattern
+				Relationship::PkColPattern, Relationship::FkIdxPattern
 			};
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
@@ -7109,26 +7188,30 @@ BaseRelationship *DatabaseModel::createRelationship()
 				rel_type=BaseRelationship::RelationshipGen;
 			else if(attribs[Attributes::Type]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else /* if(attribs[Attributes::Type]==Attributes::RelationshipPart) */
+			else
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
-					dynamic_cast<PhysicalTable *>(tables[0]),
-					dynamic_cast<PhysicalTable *>(tables[1]),
-					src_mand, dst_mand,
-					identifier, deferrable, defer_type, del_action, upd_action,
-					CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
-											static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
+													 dynamic_cast<PhysicalTable *>(tables[0]),
+													 dynamic_cast<PhysicalTable *>(tables[1]),
+													 src_mand, dst_mand, identifier);
 
+			rel->setActionType(upd_action, Constraint::UpdateAction);
+			rel->setActionType(del_action, Constraint::DeleteAction);
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);
+			rel->setDeferrable(deferrable);
+			rel->setDeferralType(defer_type);
+			rel->setCopyOptions(CopyOptions(static_cast<CopyOptions::CopyMode>(attribs[Attributes::CopyMode].toUInt()),
+																			static_cast<CopyOptions::CopyOpts>(attribs[Attributes::CopyOptions].toUInt())));
+			rel->setFKIndexType(IndexingType(attribs[Attributes::FkIdxType]));
 
 			if(!attribs[Attributes::TableName].isEmpty())
 				rel->setTableNameRelNN(attribs[Attributes::TableName]);
 
 			rel->setName(attribs[Attributes::Name]);
 			rel->setAlias(attribs[Attributes::Alias]);
-			base_rel=rel;
+			base_rel = rel;
 
 			//Configuring the name patterns
 			for(auto &pat_id : pattern_ids)
@@ -7533,34 +7616,54 @@ QString DatabaseModel::__getSourceCode(SchemaParser::CodeType def_type)
 	}
 }
 
-QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode)
+QString DatabaseModel::getSQLDefinition(const std::vector<BaseObject *> objects, CodeGenMode code_gen_mode)
 {
-	if(!object)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(objects.empty())
+		return "";
 
-	if(code_gen_mode == OriginalSql)
+	try
 	{
-		if(object->getObjectType() == ObjectType::Database)
-			return dynamic_cast<DatabaseModel *>(object)->__getSourceCode(SchemaParser::SqlCode);
+		std::map<unsigned, BaseObject *> objs_map;
 
-		return object->getSourceCode(SchemaParser::SqlCode);
-	}
-	else
-	{
-		std::vector<BaseObject *> objs = getCreationOrder(object, code_gen_mode == ChildrenSql);
-		QString aux_def;
+		// Putting the object in the proper cration order
+		std::for_each(objects.begin(), objects.end(), [&objs_map](auto obj){
+			objs_map[obj->getObjectId()] = obj;
+		});
 
-		for(auto &obj : objs)
+		/* If we are getting dependencies or children SQL we also need to
+		 * put them object in the proper cration order */
+		if(code_gen_mode == DependenciesSql || code_gen_mode == ChildrenSql)
 		{
-			if(obj->getObjectType() == ObjectType::Database)
-				aux_def += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
-			else
-				aux_def += obj->getSourceCode(SchemaParser::SqlCode);
+			std::for_each(objects.begin(), objects.end(), [&objs_map, this, code_gen_mode](auto obj){
+				 for(auto &dep_obj : getCreationOrder(obj, code_gen_mode == ChildrenSql))
+					 objs_map[dep_obj->getObjectId()] = dep_obj;
+			});
 		}
 
-		if(!aux_def.isEmpty())
+		QString code;
+		ObjectType obj_type;
+
+		for(auto &[_, obj] : objs_map)
 		{
-			aux_def.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
+			obj_type = obj->getObjectType();
+
+			if((obj->isSQLDisabled() && !gen_dis_objs_code) ||
+				 obj_type == ObjectType::Textbox || obj_type == ObjectType::Tag ||
+				 (obj_type == ObjectType::BaseRelationship &&
+					dynamic_cast<BaseRelationship *>(obj)->getRelationshipType() !=
+					BaseRelationship::RelationshipFk))
+				continue;
+
+			if(obj->getObjectType() == ObjectType::Database)
+				code += dynamic_cast<DatabaseModel *>(obj)->__getSourceCode(SchemaParser::SqlCode);
+			else
+				code += obj->getSourceCode(SchemaParser::SqlCode);
+		}
+
+		if(!code.isEmpty() &&
+			 (code_gen_mode == DependenciesSql || code_gen_mode == ChildrenSql))
+		{
+			code.prepend(tr("-- NOTE: the code below contains the SQL for the object itself\n\
 -- as well as for its dependencies or children (if applicable).\n\
 -- \n\
 -- This feature is only a convenience in order to allow you to test\n\
@@ -7570,7 +7673,11 @@ QString DatabaseModel::getSQLDefinition(BaseObject *object, CodeGenMode code_gen
 -- all objects will be placed at their original positions.\n\n\n"));
 		}
 
-		return aux_def;
+		return code;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -7607,13 +7714,14 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type)
 
 QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool export_file)
 {
+	bool is_sql_def = (def_type == SchemaParser::SqlCode);
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
 	BaseObject *object=nullptr;
 	QString def, search_path="pg_catalog,public",
 			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
-			def_type_str=(def_type==SchemaParser::SqlCode ? "SQL" : "XML");
+			def_type_str =(is_sql_def ? "SQL" : "XML");
 	Type *usr_type=nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
 	ObjectType obj_type;
@@ -7621,8 +7729,8 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 	try
 	{
 		cancel_saving = false;
-		objects_map=getCreationOrder(def_type);
-		general_obj_cnt=objects_map.size();
+		objects_map = getCreationOrder(def_type);
+		general_obj_cnt = objects_map.size();
 		gen_defs_count=0;
 
 		attribs_aux[Attributes::ShellTypes]="";
@@ -7630,10 +7738,12 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 		attribs_aux[Attributes::Schema]="";
 		attribs_aux[Attributes::Tablespace]="";
 		attribs_aux[Attributes::Role]="";
+		attribs_aux[Attributes::Objects]="";
+		attribs_aux[getSchemaName()] = "";
 
-		if(def_type==SchemaParser::SqlCode)
+		if(is_sql_def)
 		{
-			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
+			attribs_aux[Attributes::Function] = (!functions.empty() ? Attributes::True : "");
 			attribs_aux[Attributes::ShellTypes] = configureShellTypes(false);
 		}
 
@@ -7644,66 +7754,78 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 			if(cancel_saving)
 				return "";
 
-			object=obj_itr.second;
-			obj_type=object->getObjectType();
+			object = obj_itr.second;
+			obj_type = object->getObjectType();
 
-			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlCode)
+			/* Ignoring disabled SQL code if the flag to include this kind
+			 * of code is off. This will diminish the size of the resulting
+			 * script */
+			if(is_sql_def && object->isSQLDisabled() && !gen_dis_objs_code)
+				continue;
+
+			if(obj_type == ObjectType::Type && is_sql_def)
 			{
-				usr_type=dynamic_cast<Type *>(object);
-				attribs_aux[attrib]+=usr_type->getSourceCode(def_type);
+				usr_type = dynamic_cast<Type *>(object);
+				attribs_aux[attrib] += usr_type->getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Database)
+			else if(obj_type == ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SqlCode)
+				if(is_sql_def)
 					attribs_aux[this->getSchemaName()] += this->__getSourceCode(def_type);
 				else
-					attribs_aux[attrib]+=this->__getSourceCode(def_type);
+					attribs_aux[attrib] += this->__getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Permission)
+			else if(obj_type == ObjectType::Permission)
 			{
-				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getSourceCode(def_type);
+				attribs_aux[Attributes::Permission] += dynamic_cast<Permission *>(object)->getSourceCode(def_type);
 			}
-			else if(obj_type==ObjectType::Constraint)
+			else if(obj_type == ObjectType::Constraint)
 			{
-				attribs_aux[attrib]+=dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
+				attribs_aux[attrib] += dynamic_cast<Constraint *>(object)->getSourceCode(def_type, true);
 			}
-			else if(obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace ||  obj_type==ObjectType::Schema)
+			else if(obj_type == ObjectType::Role || obj_type == ObjectType::Tablespace || obj_type == ObjectType::Schema)
 			{
 				//The "public" schema does not have the SQL code definition generated
-				if(def_type==SchemaParser::SqlCode)
-					attrib_aux=BaseObject::getSchemaName(obj_type);
+				if(is_sql_def)
+					attrib_aux = BaseObject::getSchemaName(obj_type);
 				else
-					attrib_aux=attrib;
+					attrib_aux = attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
 				 * code of the entire model because this object cannot be created from a multiline sql command */
-				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlCode)
-					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
-				//System object doesn't has the XML generated (the only exception is for public schema)
-				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
-								(obj_type==ObjectType::Schema &&
-								 ((object->getName()=="public" && def_type==SchemaParser::XmlCode) ||
-									(object->getName()!="public" && object->getName()!="pg_catalog"))))
-				{
-					if(object->getObjectType()==ObjectType::Schema)
-						search_path+="," + object->getName(true);
+				if(obj_type == ObjectType::Tablespace && !object->isSystemObject() && is_sql_def)
+					attribs_aux[attrib_aux] += object->getSourceCode(def_type);
 
-					//Generates the code definition and concatenates to the others
-					attribs_aux[attrib_aux]+=object->getSourceCode(def_type);
+				//System object doesn't has the XML generated (the only exception is for public schema)
+				else if((obj_type != ObjectType::Schema && !object->isSystemObject()) ||
+								(obj_type == ObjectType::Schema &&
+								 ((object->getName() == "public" && !is_sql_def) ||
+									 (object->getName() != "public" && object->getName() != "pg_catalog"))))
+				{
+					if(object->getObjectType() == ObjectType::Schema)
+						search_path += "," + object->getName(true);
+
+					// Avoiding writting the code definition for system objects when generating SQL code
+					if((is_sql_def && !object->isSystemObject()) ||
+						 (!is_sql_def && (!object->isSystemObject() || object->getName() == "public")))
+					{
+						//Generates the code definition and concatenates to the others
+						attribs_aux[attrib_aux] += object->getSourceCode(def_type);
+					}
 				}
 			}
 			else
 			{
 				if(object->isSystemObject())
-					attribs_aux[attrib]+="";
+					attribs_aux[attrib] += "";
 				else
-					attribs_aux[attrib]+=object->getSourceCode(def_type);
+					attribs_aux[attrib] += object->getSourceCode(def_type);
 			}
 
 			gen_defs_count++;
 
-			if((def_type==SchemaParser::SqlCode && !object->isSQLDisabled()) ||
-					(def_type==SchemaParser::XmlCode && !object->isSystemObject()))
+			if((is_sql_def && !object->isSQLDisabled()) ||
+					(!is_sql_def && !object->isSystemObject()))
 			{
 				emit s_objectLoaded((gen_defs_count/static_cast<double>(general_obj_cnt)) * 100,
 									msg.arg(def_type_str)
@@ -7715,25 +7837,26 @@ QString DatabaseModel::getSourceCode(SchemaParser::CodeType def_type, bool expor
 
 		attribs_aux[Attributes::SearchPath]=search_path;
 
-		if(def_type == SchemaParser::SqlCode)
+		if(is_sql_def)
 			configureShellTypes(true);
+
+		attribs_aux[Attributes::ExportToFile] = (export_file ? Attributes::True : "");
+		def = schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
+
+		if(prepend_at_bod && is_sql_def)
+			def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
+
+		if(append_at_eod && is_sql_def)
+			def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 	}
 	catch(Exception &e)
 	{
-		if(def_type==SchemaParser::SqlCode)
+		if(is_sql_def)
 			configureShellTypes(true);
 
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : "");
-	def=schparser.getSourceCode(Attributes::DbModel, attribs_aux, def_type);
-
-	if(prepend_at_bod && def_type==SchemaParser::SqlCode)
-		def="-- Prepended SQL commands --\n" + this->prepended_sql + Attributes::DdlEndToken + def;
-
-	if(append_at_eod && def_type==SchemaParser::SqlCode)
-		def+="-- Appended SQL commands --\n" + this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return def;
 }
@@ -7749,7 +7872,9 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 		{
 			//Configuring the changelog attributes when generating XML code
 			attribs[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
-			attribs[Attributes::Changelog] = getChangelogDefinition();
+			attribs[Attributes::Changelog] = persist_changelog ? getChangelogDefinition() : "";
+			attribs[Attributes::GenDisabledObjsCode]= gen_dis_objs_code ? Attributes::True : Attributes::False;
+			attribs[Attributes::ShowSysSchemasRects]= show_sys_sch_rects ? Attributes::True : Attributes::False;
 		}
 		catch (Exception &e)
 		{
@@ -7789,72 +7914,68 @@ void DatabaseModel::setDatabaseModelAttributes(attribs_map &attribs, SchemaParse
 	}
 }
 
-std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
+std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs, bool incl_rel1n_constrs, bool realloc_fk_perms)
 {
-	BaseObject *object=nullptr;
 	std::vector<BaseObject *> fkeys, fk_rels, aux_tables;
-	std::vector<BaseObject *> *obj_list=nullptr;
-	std::vector<BaseObject *>::iterator itr, itr_end;
+	std::vector<BaseObject *> *obj_list = nullptr;
 	std::map<unsigned, BaseObject *> objects_map;
-	PhysicalTable *table=nullptr;
-	Constraint *constr=nullptr;
-	View *view=nullptr;
-	Relationship *rel=nullptr;
+	PhysicalTable *table = nullptr;
+	Constraint *constr = nullptr;
+	View *view = nullptr;
+	Relationship *rel = nullptr;
 	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag };
 
 	std::vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
-																															ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
-
-	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
+																																	 ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
-	for(i=0; i < aux_obj_cnt; i++)
+	for(auto &obj_tp : aux_obj_types)
 	{
-		if(aux_obj_types[i]!=ObjectType::Tag || def_type==SchemaParser::XmlCode)
+		if(obj_tp != ObjectType::Tag || def_type == SchemaParser::XmlCode)
 		{
-			obj_list=getObjectList(aux_obj_types[i]);
+			obj_list = getObjectList(obj_tp);
 
 			for(auto &object : (*obj_list))
-				objects_map[object->getObjectId()]=object;
+				objects_map[object->getObjectId()] = object;
 		}
 	}
 
 	//Includes the database model on the objects map permitting to create the code in a correct order
-	objects_map[this->getObjectId()]=this;
+	objects_map[this->getObjectId()] = this;
 
 	for(auto &obj_type : obj_types_vect)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
-		if(def_type==SchemaParser::SqlCode &&
-			 (obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
-			obj_list=nullptr;
+		if(def_type == SchemaParser::SqlCode &&
+			 (obj_type == ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
+			obj_list = nullptr;
 		else
-			obj_list=getObjectList(obj_type);
+			obj_list = getObjectList(obj_type);
 
 		if(obj_list)
 		{
 			for(auto &object : (*obj_list))
 			{
 				/* If the object is a FK relationship it's stored in a separeted list in order to have the
-			 code generated at end of whole definition (after foreign keys definition) */
-				if(object->getObjectType()==ObjectType::BaseRelationship &&
-						dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
+				 * code generated at end of whole definition (after foreign keys definition) */
+				if(object->getObjectType() == ObjectType::BaseRelationship &&
+						dynamic_cast<BaseRelationship *>(object)->getRelationshipType() == BaseRelationship::RelationshipFk)
 				{
 					fk_rels.push_back(object);
 				}
 				else
 				{
-					if(def_type==SchemaParser::XmlCode || !incl_relnn_objs)
-						objects_map[object->getObjectId()]=object;
+					if(def_type == SchemaParser::XmlCode || !incl_relnn_objs)
+						objects_map[object->getObjectId()] = object;
 					else
 					{
-						rel=dynamic_cast<Relationship *>(object);
+						rel = dynamic_cast<Relationship *>(object);
 
 						/* Avoiding many-to-many relationships to be included in the map.
-			 They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
-			 need to be compared to other tables not the relationship itself */
-						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RelationshipNn))
-							objects_map[object->getObjectId()]=object;
+						 * They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
+						 * need to be compared to other tables not the relationship itself */
+						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType() != BaseRelationship::RelationshipNn))
+							objects_map[object->getObjectId()] = object;
 					}
 				}
 			}
@@ -7872,21 +7993,27 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 
 		for(auto &obj : *table->getObjectList(ObjectType::Constraint))
 		{
-			//table->getConstraint(i);
 			constr = dynamic_cast<Constraint *>(obj);
 
 			/* Case the constraint is a special object stores it on the objects map. Independently to the
-		configuration, foreign keys are discarded in this iteration because on the end of the method
-		they have the definition generated */
-			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
-					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
-				objects_map[constr->getObjectId()]=constr;
-			else if(constr->getConstraintType()==ConstraintType::ForeignKey && !constr->isAddedByLinking())
+			 * configuration, foreign keys are discarded in this iteration because on the end of the method
+			 * they have the definition generated */
+			if(constr->getConstraintType() != ConstraintType::ForeignKey && !constr->isAddedByLinking() &&
+					((constr->getConstraintType() != ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumns())))
+				objects_map[constr->getObjectId()] = constr;
+			else if(constr->getConstraintType() == ConstraintType::ForeignKey && !constr->isAddedByLinking())
 				fkeys.push_back(constr);
 		}
 
-		for(auto obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
-			objects_map[obj->getObjectId()]=obj;
+		for(auto &obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
+		{
+			// Ignoring generated FK column indexes created by a relationship
+			if(obj->getObjectType() == ObjectType::Index &&
+				 dynamic_cast<TableObject *>(obj)->isAddedByRelationship())
+				continue;
+
+			objects_map[obj->getObjectId()] = obj;
+		}
 	}
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
@@ -7896,7 +8023,7 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 		view=dynamic_cast<View *>(obj);
 
 		for(auto obj : view->getObjects())
-			objects_map[obj->getObjectId()]=obj;
+			objects_map[obj->getObjectId()] = obj;
 	}
 
 	/* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
@@ -7906,181 +8033,106 @@ std::map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(SchemaParser::C
 	 2) Other tables came after the objects on the step 1.
 	 3) The sequences must have their code generated after the tables
 	 4) View are the last objects in the list avoiding table/column reference breaking */
-	if(def_type==SchemaParser::SqlCode)
+	if(def_type == SchemaParser::SqlCode)
 	{
-		BaseObject *objs[3]={nullptr, nullptr, nullptr};
+		BaseObject *objs[3] = { nullptr, nullptr, nullptr };
 		std::vector<BaseObject *> vet_aux, rel_constrs;
 
-		vet_aux=relationships;
-		vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());
-		vet_aux.insert(vet_aux.end(), foreign_tables.begin(),foreign_tables.end());
-		vet_aux.insert(vet_aux.end(), sequences.begin(),sequences.end());
-		vet_aux.insert(vet_aux.end(), views.begin(),views.end());
-		itr=vet_aux.begin();
-		itr_end=vet_aux.end();
+		vet_aux = relationships;
+		vet_aux.insert(vet_aux.end(), tables.begin(), tables.end());
+		vet_aux.insert(vet_aux.end(), foreign_tables.begin(), foreign_tables.end());
+		vet_aux.insert(vet_aux.end(), sequences.begin(), sequences.end());
+		vet_aux.insert(vet_aux.end(), views.begin(), views.end());
 
-		while(itr!=itr_end)
+		for(auto &object : vet_aux)
 		{
-			object=(*itr);
-			itr++;
-
-			if(object->getObjectType()==ObjectType::Relationship)
+			if(object->getObjectType() == ObjectType::Relationship)
 			{
-				rel=dynamic_cast<Relationship *>(object);
-				objs[0]=rel->getTable(Relationship::SrcTable);
-				objs[1]=rel->getTable(Relationship::DstTable);
+				rel = dynamic_cast<Relationship *>(object);
+				objs[0] = rel->getTable(Relationship::SrcTable);
+				objs[1] = rel->getTable(Relationship::DstTable);
 
 				/* For many-to-many relationship, the generated table and the foreign keys that represents
-		   the link are included on the creation order map instead of the relationship itself. This is
-		   done to permit the table to be accessed and compared on the diff process */
+				 * the link are included on the creation order map instead of the relationship itself. This is
+				 * done to permit the table to be accessed and compared on the diff process */
 				if(incl_relnn_objs &&
-						rel->getRelationshipType()==BaseRelationship::RelationshipNn &&
+						rel->getRelationshipType() == BaseRelationship::RelationshipNn &&
 						rel->getGeneratedTable())
 				{
-					table=rel->getGeneratedTable();
-					objs[2]=table;
+					table = rel->getGeneratedTable();
+					objs[2] = table;
 
-					for(BaseObject *tab_obj : *table->getObjectList(ObjectType::Constraint))
+					for(auto &tab_obj : *table->getObjectList(ObjectType::Constraint))
 					{
-						constr=dynamic_cast<Constraint *>(tab_obj);
+						constr = dynamic_cast<Constraint *>(tab_obj);
 
-						if(constr->getConstraintType()==ConstraintType::ForeignKey)
+						if(constr->getConstraintType() == ConstraintType::ForeignKey)
 							fkeys.push_back(constr);
 					}
 				}
 				else if(incl_rel1n_constrs)
 				{
-					std::vector<Constraint *> constrs=rel->getGeneratedConstraints();
-
-					for(auto &constr : constrs)
+					for(auto &constr : rel->getGeneratedConstraints())
 					{
 						if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 							rel_constrs.push_back(constr);
-					}
+					}					
 				}
 				else
-					objs[2]=rel;
+					objs[2] = rel;
 
-				for(i=0; i < 3; i++)
+				for(auto &obj : objs)
 				{
-					if(objs[i] && objects_map.count(objs[i]->getObjectId())==0)
-						objects_map[objs[i]->getObjectId()]=objs[i];
+					if(obj && objects_map.count(obj->getObjectId()) == 0)
+						objects_map[obj->getObjectId()] = obj;
 				}
+
+				if(rel->getGeneratedIndex() && (incl_rel1n_constrs || incl_relnn_objs))
+					objects_map[rel->getGeneratedIndex()->getObjectId()] = rel->getGeneratedIndex();
 			}
 			else
 			{
-				if(objects_map.count(object->getObjectId())==0)
-					objects_map[object->getObjectId()]=object;
+				if(objects_map.count(object->getObjectId()) == 0)
+					objects_map[object->getObjectId()] = object;
 			}
 		}
 
 		fkeys.insert(fkeys.end(), rel_constrs.begin(), rel_constrs.end());
 	}
 
-	//Adding fk relationships and foreign keys at end of objects map
-	i=BaseObject::getGlobalId() + 1;
 	fkeys.insert(fkeys.end(), fk_rels.begin(), fk_rels.end());
 
-	for(auto &obj : fkeys)
+	if(realloc_fk_perms)
 	{
-		objects_map[i]=obj;
-		i++;
+		//Adding fk relationships and foreign keys at end of objects map
+		unsigned i = BaseObject::getGlobalId() + 1;
+
+		for(auto &obj : fkeys)
+		{
+			objects_map[i] = obj;
+			i++;
+		}
+
+		//Adding permissions at the very end of object map
+		i = BaseObject::getGlobalId() + fkeys.size() + 1;
+
+		for(auto &obj : permissions)
+		{
+			objects_map[i] = obj;
+			i++;
+		}
 	}
-
-	//Adding permissions at the very end of object map
-	i=BaseObject::getGlobalId() + fkeys.size() + 1;
-
-	for(auto &obj : permissions)
+	else
 	{
-		objects_map[i]=obj;
-		i++;
+		for(auto &obj : fkeys)
+			objects_map[obj->getObjectId()] = obj;
+
+		for(auto &obj : permissions)
+			objects_map[obj->getObjectId()] = obj;
 	}
 
 	return objects_map;
 }
-
-
-/* void DatabaseModel::__getObjectDependencies(BaseObject *object, std::vector<BaseObject *> &objs)
-{
-	std::vector<BaseObject *> dep_objs, chld_objs;
-	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
-	ObjectType obj_type=ObjectType::BaseObject;
-
-	if(!object) return;
-
-	getObjectDependecies(object, objs, true);
-	obj_type=object->getObjectType();
-
-	//If the object is a table include as dependency the copy table as well any ancestor table
-	if(table)
-	{
-		//Including copy table and its dependencies
-		if(table->getCopyTable())
-		{
-			__getObjectDependencies(table->getCopyTable(), dep_objs);
-			objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-		}
-
-		//Including ancestor tables and their dependencies
-		dep_objs.clear();
-		for(unsigned i=0; i < table->getAncestorTableCount(); i++)
-		{
-			__getObjectDependencies(table->getAncestorTable(i), dep_objs);
-			objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-		}
-	}
-
-	//If there is the need to include the children objects
-	if(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Schema)
-	{
-		std::vector<BaseObject *>::iterator end;
-
-		if(obj_type==ObjectType::Schema)
-		{
-			//Retrieve all objects that belongs to the schema
-			chld_objs=getObjects(object);
-			objs.insert(objs.end(), chld_objs.begin(), chld_objs.end());
-
-			for(BaseObject *aux_obj : chld_objs)
-			{
-				__getObjectDependencies(aux_obj, dep_objs);
-				objs.insert(objs.end(), dep_objs.begin(), dep_objs.end());
-			}
-		}
-		else
-		{
-			BaseTable *tab=dynamic_cast<BaseTable *>(object);
-			Constraint *constr=nullptr;
-
-			chld_objs=tab->getObjects();
-
-			for(BaseObject *child : chld_objs)
-			{
-				constr=dynamic_cast<Constraint *>(child);
-
-				/// Columns are discarded but constraint included only if they are included by relationship
-			 //or foreign keys in which referenced table resides in the same schema as their parent tables
-				if((!constr && child->getObjectType()!=ObjectType::Column) ||
-						(constr &&
-						 ((constr->getConstraintType()==ConstraintType::ForeignKey) ||
-							(constr->getConstraintType()!=ConstraintType::ForeignKey &&
-							 constr->getConstraintType()!=ConstraintType::PrimaryKey &&
-						   constr->isReferRelationshipAddedColumns()))))
-				{
-					__getObjectDependencies(child, objs);
-
-					if(constr && constr->getReferencedTable() && std::find(objs.begin(), objs.end(), constr->getReferencedTable())==objs.end())
-						__getObjectDependencies(constr->getReferencedTable(), objs);
-				}
-			}
-		}
-
-		//Cleaning up the resulting list removing duplicate elements
-		std::sort(objs.begin(), objs.end());
-		end=std::unique(objs.begin(), objs.end());
-		objs.erase(end, objs.end());
-	}
-} */
 
 std::vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
 {
@@ -8260,7 +8312,7 @@ bool DatabaseModel::saveSplitCustomSQL(bool save_appended, const QString &path, 
 	return false;
 }
 
-void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode)
+void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode, bool gen_drop_file)
 {
 	QFileInfo fi(path);
 	QDir dir;
@@ -8269,24 +8321,76 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvOutputDirectory).arg(path),
 										ErrorCode::InvOutputDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(code_gen_mode > ChildrenSql)
+	if(code_gen_mode > GroupByType)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvCodeGenerationMode).arg(code_gen_mode),
 										ErrorCode::InvCodeGenerationMode,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!fi.exists())
 		dir.mkdir(path);
 
-	QFile output;
+	bool group_by_type = code_gen_mode == GroupByType;
 	QByteArray buffer;
-	std::map<unsigned, BaseObject *> objects = getCreationOrder(SchemaParser::SqlCode);
+	std::map<unsigned, BaseObject *>  aux_objs,
+			objects = getCreationOrder(SchemaParser::SqlCode, true, true, !group_by_type);
 	int pad_size = QString::number(objects.size()).size(), idx = 1;
 	QString filename, name, shell_types;
 	BaseObject *obj = nullptr;
-	Relationship *rel = nullptr;
 	QStringList sch_names;
 	QRegularExpression name_fmt_regexp("(?!\\-)(\\W)");
 	unsigned 	gen_defs_idx = 0, general_obj_cnt = 0;
 	attribs_map attribs;
+	std::map<QString, QByteArray> grouped_defs,
+			grouped_drops;
+	ObjectType obj_type;
+	Table *tab = nullptr;
+	ForeignTable *ftab = nullptr;
+	Constraint *constr = nullptr;
+	std::vector<Constraint *> contraints;
+	QString obj_type_name;
+	std::map<unsigned, QString> constr_filename = {
+		{ ConstraintType::PrimaryKey, "constraint_pk" },
+		{ ConstraintType::ForeignKey, "constraint_fk" },
+		{ ConstraintType::Unique, "constraint_uq" },
+		{ ConstraintType::Exclude, "constraint_ex" },
+		{ ConstraintType::Check, "constraint_ck" },
+	};
+
+	/* When generating a split model in GroupByType mode
+	 * we need to get primary key and unique keys that aren't
+	 * included by getCreationOrder() so we can separate their
+	 * SQL code from the parent tables and save it in the
+	 * file reserved for constraints definition */
+	if(code_gen_mode == GroupByType)
+	{
+		PhysicalTable *tab = nullptr;
+
+		for(auto &itr : objects)
+		{
+			tab = dynamic_cast<PhysicalTable *>(itr.second);
+
+			if(!tab)
+				continue;
+
+			for(auto &tab_obj : *tab->getObjectList(ObjectType::Constraint))
+			{
+				aux_objs[tab_obj->getObjectId()] = tab_obj;
+				constr = dynamic_cast<Constraint *>(tab_obj);
+
+				/* Forcing the flag decl_in_table of the contraint to false
+				 * so the SQL code is generated in full form */
+				if(constr->isDeclaredInTable())
+				{
+					constr->setDeclaredInTable(false);
+
+					/* Store the constraint in a temporary list so the
+					 * flag can be restored at the end of the export */
+					contraints.push_back(constr);
+				}
+			}
+		}
+
+		objects.insert(aux_objs.begin(), aux_objs.end());
+	}
 
 	try
 	{
@@ -8305,23 +8409,31 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				break;
 
 			obj = itr.second;
+			obj_type = obj->getObjectType();
 
-			if(obj->getObjectType() == ObjectType::Schema)
+			if(obj_type == ObjectType::Schema)
 				sch_names.append(obj->getName(true));
 
 			gen_defs_idx++;
 
-			if(obj->isSystemObject())
+			if(obj->isSystemObject() ||
+				 obj_type == ObjectType::BaseRelationship ||
+				 obj_type == ObjectType::Relationship ||
+
+				 /* Ignoring disabled SQL code if the flag to include this kind
+					* of code is off. This will diminish the size of the resulting
+					* scripts */
+				 (obj->isSQLDisabled() && !gen_dis_objs_code))
 				continue;
 
 			// Saving the shell types before we start generating the files of other objects
 			if(!shell_types.isEmpty() &&
-				 obj->getObjectType() != ObjectType::Role && obj->getObjectType() != ObjectType::Tablespace &&
-				 obj->getObjectType() != ObjectType::Database  && obj->getObjectType() != ObjectType::Schema)
+				 obj_type != ObjectType::Role && obj_type != ObjectType::Tablespace &&
+				 obj_type != ObjectType::Database && obj_type != ObjectType::Schema)
 			{
 				filename = QString("%1_%2.sql")
-									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
-									 .arg(Attributes::ShellTypes.toLower().replace('-', '_'));
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'),
+												Attributes::ShellTypes.toLower().replace('-', '_'));
 
 				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
 									tr("Saving SQL of shell types to file `%1'.").arg(filename),
@@ -8333,62 +8445,74 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				shell_types.clear();
 			}
 
-			buffer.append(getSQLDefinition(obj, code_gen_mode).toUtf8());
+			/* In GroupByType split mode we force the generation of table/foreign table
+			 * DDL command without the constraint codes since they will be saved in
+			 * a separated file */
+			if(group_by_type && PhysicalTable::isPhysicalTable(obj_type))
+			{
+				tab = dynamic_cast<Table *>(obj);
+				ftab = dynamic_cast<ForeignTable *>(obj);
+
+				if(tab)
+					buffer.append(tab->__getSourceCode(SchemaParser::SqlCode, true, false).toUtf8());
+				else
+					buffer.append(ftab->__getSourceCode(SchemaParser::SqlCode, true, false).toUtf8());
+			}
+			else
+				buffer.append(getSQLDefinition({ obj }, code_gen_mode).toUtf8());
 
 			if(buffer.isEmpty())
 				continue;
 
-			rel = dynamic_cast<Relationship *>(obj);
-			/* If the object is a 1-1, 1-n or n-n relationship we name the output file
-			 * after the generated table or foreign key in order to avoid to generate
-			 * a file with the relationship's name. */
-			if(rel &&
-				 (rel->getRelationshipType() == BaseRelationship::Relationship11 ||
-					rel->getRelationshipType() == BaseRelationship::Relationship1n ||
-					rel->getRelationshipType() == BaseRelationship::RelationshipNn))
+			// Grouping the SQL definitions before saving to file
+			if(group_by_type)
 			{
-				if(rel->getGeneratedTable())
-					obj = rel->getGeneratedTable();
-				else
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
+														tr("Generating SQL of `%1' (%2).")
+														.arg(obj->getSignature(), obj->getTypeName()),
+														enum_t(obj_type));
+
+				obj_type_name = obj->getSchemaName();
+
+				if(obj_type == ObjectType::Constraint)
 				{
-					for(auto &constr : rel->getGeneratedConstraints())
-					{
-						if(constr->getConstraintType() == ConstraintType::ForeignKey)
-						{
-							obj = constr;
-							break;
-						}
-					}
+					constr = dynamic_cast<Constraint *>(obj);
+					obj_type_name = constr_filename[constr->getConstraintType().getTypeId()];
 				}
+
+				grouped_defs[obj_type_name] += buffer;
+			}
+			else
+			{
+				/* The name of the generated file will be:
+				 * [creation order id]_[name]_[type]_[internal id].sql
+				 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
+				 * the filename in some filesystems. The internal id is used for desambiguation purposes. */
+
+				// If the object is a table child object we use its signature instead of name
+				if(TableObject::isTableObject(obj_type))
+					name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(true);
+				else
+					name = obj->getName(true);
+
+				name.replace('"', "").replace(name_fmt_regexp, "_");
+
+				filename = QString("%1_%2_%3_%4.sql")
+									 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
+									 .arg(name)
+									 .arg(obj->getSchemaName())
+									 .arg(obj->getObjectId());
+
+				emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
+									tr("Saving SQL of `%1' (%2) to file `%3'.")
+									.arg(obj->getSignature())
+									.arg(obj->getTypeName())
+									.arg(filename),
+									enum_t(obj_type));
+
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			}
 
-			/* The name of the generated file will be:
-			 * [creation order id]_[name]_[type]_[internal id].sql
-			 * Note: the name portion of the file is treated to remove special char (non word chars) that may break
-			 * the filename in some filesystems. The internal id is used for desambiguation purposes. */
-
-			// If the object is a table child object we use its signature instead of name
-			if(TableObject::isTableObject(obj->getObjectType()))
-				name = dynamic_cast<TableObject *>(obj)->TableObject::getSignature(true);
-			else
-				name = obj->getName(true);
-
-			name.replace('"', "").replace(name_fmt_regexp, "_");
-
-			filename = QString("%1_%2_%3_%4.sql")
-								 .arg(QString::number(idx++).rightJustified(pad_size, '0'))
-								 .arg(name)
-								 .arg(obj->getSchemaName())
-								 .arg(obj->getObjectId());
-
-			emit s_objectLoaded((gen_defs_idx/static_cast<double>(general_obj_cnt)) * 100,
-								tr("Saving SQL of `%1' (%2) to file `%3'.")
-								.arg(obj->getName())
-								.arg(obj->getTypeName())
-								.arg(filename),
-								enum_t(obj->getObjectType()));
-
-			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, buffer);
 			buffer.clear();
 
 			/* If the current object is the database itself, we need to save the sessionopts
@@ -8409,6 +8533,98 @@ void DatabaseModel::saveSplitSQLDefinition(const QString &path, CodeGenMode code
 				buffer.append(schparser.getSourceCode(Attributes::SessionOpts, attribs, SchemaParser::SqlCode).toUtf8());
 				UtilsNs::saveFile( path + GlobalAttributes::DirSeparator + filename, buffer);
 				buffer.clear();
+			}
+		}
+
+		/* Saving the grouped SQL definition files if the map of grouped
+		 * defintions is filled. */
+		for(auto &itr : grouped_defs)
+		{
+			filename = QString("%1_%2.sql")
+								.arg(itr.first,
+										 itr.first == BaseObject::getSchemaName(ObjectType::Permission) ?
+										 Attributes::Grant : Attributes::Create);
+
+			emit s_objectLoaded(100, tr("Saving SQL file `%1' .").arg(filename), enum_t(ObjectType::Database));
+
+			UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
+		}
+
+		// Generating the file containing all DROP commands
+		if(gen_drop_file)
+		{
+			std::map<unsigned, BaseObject *>::reverse_iterator ritr = objects.rbegin();
+			QString drop_cmd;
+
+			/* We iterate over the object in reverse order because they need to be destroyed
+			 * from the last to the first */
+			while(ritr != objects.rend())
+			{
+				obj = ritr->second;
+				ritr++;
+
+				if(obj->isSystemObject())
+					continue;
+
+				drop_cmd = obj->getDropCode(true);
+
+				// Disabling the drop command if the object is also with SQL disabled
+				if(obj->isSQLDisabled())
+					drop_cmd.prepend("-- ");
+
+				if(group_by_type)
+				{
+					obj_type_name = obj->getSchemaName();
+
+					if(obj->getObjectType() == ObjectType::Constraint)
+					{
+						constr = dynamic_cast<Constraint *>(obj);
+						obj_type_name = constr_filename[constr->getConstraintType().getTypeId()];
+					}
+
+					grouped_drops[obj_type_name] += drop_cmd.toUtf8();
+				}
+				else
+					buffer.append(drop_cmd.toUtf8());
+			}
+
+			// Restoring the decl_in_table flag in constraints
+			for(auto &constr : contraints)
+				constr->setDeclaredInTable(true);
+
+			/* If we are not generating grouped definitions
+			 * we reuse the groped_drops having a key = Attributes::DropCmds
+			 * and value = buffer with the whole drop commands just to
+			 * make a single iteration in the for below to
+			 * simplify the logic */
+			if(!group_by_type)
+				grouped_drops[Attributes::DropCmds] = buffer;
+
+			// Generating the file(s) containing the drop commands
+			for(auto &itr : grouped_drops)
+			{
+				if(itr.first == BaseObject::getSchemaName(ObjectType::BaseRelationship) ||
+					 itr.first == BaseObject::getSchemaName(ObjectType::Relationship))
+					continue;
+
+				// If we are generating a single file with all DROP commands
+				if(itr.first == Attributes::DropCmds)
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(QString::number(0).rightJustified(pad_size, '0'), Attributes::Drop);
+				}
+				// If we are generating a DROP file per object type
+				else
+				{
+					filename = QString("%1_%2.sql")
+										 .arg(itr.first,
+													itr.first == BaseObject::getSchemaName(ObjectType::Permission) ?
+													Attributes::Revoke : Attributes::Drop);
+				}
+
+				emit s_objectLoaded(100, tr("Saving drop commands file `%1'.").arg(filename),	enum_t(ObjectType::Database));
+
+				UtilsNs::saveFile(path + GlobalAttributes::DirSeparator + filename, itr.second);
 			}
 		}
 
@@ -8782,7 +8998,24 @@ std::vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, std
 		obj->configureSearchAttributes();
 		srch_attribs = obj->getSearchAttributes();
 
-		if(regexp.match(srch_attribs[search_attr]).hasMatch())
+		/* If we are searching in the constraints' source and referenced columns
+		 * we have to split the list of names so the regexp can be correctly matched */
+		if(search_attr == Attributes::SrcColumns || search_attr == Attributes::RefColumns)
+		{
+			QStringList aux_names, ref_names = srch_attribs[search_attr].split(UtilsNs::DataSeparator, Qt::SkipEmptyParts);
+
+			for(auto &ref_name : ref_names)
+			{
+				// Splitting the column names since they are schema qualified
+				aux_names = ref_name.split('.');
+
+				/* We always use the last name in the generated list above in the matching
+				 * since it probably contains the name of the column */
+				if(regexp.match(aux_names.constLast()).hasMatch())
+					list.push_back(obj);
+			}
+		}
+		else if(regexp.match(srch_attribs[search_attr]).hasMatch())
 			list.push_back(obj);
 	}
 
@@ -9918,19 +10151,19 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format)
 {
 	int idx = 0;
 	BaseTable *base_tab = nullptr;
 	std::vector<BaseObject *> objects;
 	std::map<QString, BaseObject *> objs_map;
-	QString styles, id, dict_index, items, buffer;
+	QString styles, id, dict_index;
 	attribs_map attribs, aux_attribs;
 	QStringList dict_index_list;
-	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
-			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
-			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
-			dict_idx_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::DataDictIndex);
+	QString dict_ext = md_format ? ".md" : ".html",
+			dict_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, GlobalAttributes::DataDictSchemaDir),
+			item_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Item),
+			dict_idx_sch_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::DataDictIndex);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
@@ -9959,8 +10192,6 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	dict_index_list.sort();
 	datadict.clear();
 
-	// Generates the the stylesheet
-	styles = schparser.getSourceCode(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::DataDictIndex] = "";
 	attribs[Attributes::Split] = split ? Attributes::True : "";
@@ -9968,12 +10199,18 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Date] = QDateTime::currentDateTime().toString(Qt::ISODate);
 	attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
-	// If the generation is a standalone HTML the css is embedded
-	if(!split)
-		attribs[Attributes::Styles] = styles;
-	else
-		// Otherwise we create a separated stylesheet file
-		datadict[Attributes::Styles + ".css"] = styles;
+	// Generates the the stylesheet (only for HTML data dicts)
+	if(!md_format)
+	{
+		styles = schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Styles), attribs);
+
+		// If the generation is a standalone HTML the css is embedded
+		if(!split)
+			attribs[Attributes::Styles] = styles;
+		else
+			// Otherwise we create a separated stylesheet file
+			datadict[Attributes::Styles + ".css"] = styles;
+	}
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
@@ -10004,7 +10241,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 			for(auto &itr : col_seqs)
 			{
 				aux_attribs[Attributes::Sequences] +=
-						itr.first->getDataDictionary({{ Attributes::Columns, itr.second.join(", ") }});
+						itr.first->getDataDictionary(md_format, {{ Attributes::Columns, itr.second.join(", ") }});
 			}
 
 			col_seqs.clear();
@@ -10012,12 +10249,12 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		else
 			aux_attribs[Attributes::Sequences] = "";
 
-		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, aux_attribs);
+		attribs[Attributes::Objects] += base_tab->getDataDictionary(split, md_format, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = itr.first + ".html";
+			id = itr.first + dict_ext;
 			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getSourceCode(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
@@ -10032,7 +10269,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
-		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
+		idx_attribs[Attributes::Year] = attribs[Attributes::Year];
+		idx_attribs[Attributes::Date] = attribs[Attributes::Date];
+		idx_attribs[Attributes::Styles] = "";
+		idx_attribs[Attributes::Version] = GlobalAttributes::PgModelerVersion;
 
 		// Generating the index items
 		for(auto &item : dict_index_list)
@@ -10051,7 +10291,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(split && browsable)
-		datadict[Attributes::Index + ".html"] = dict_index;
+		datadict[Attributes::Index + dict_ext] = dict_index;
 	else if(!split)
 	{
 		attribs[Attributes::DataDictIndex] = dict_index;
@@ -10060,7 +10300,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format)
 {
 	try
 	{
@@ -10080,7 +10320,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, split);
+		getDataDictionary(datadict, browsable, split, md_format);
 		filename = path;
 
 		for(auto &itr : datadict)
@@ -10101,9 +10341,6 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 
 QString DatabaseModel::getChangelogDefinition(bool csv_format)
 {
-	if(!persist_changelog)
-		return "";
-
 	try
 	{
 		QString date, type, signature, action,
@@ -10157,4 +10394,21 @@ void DatabaseModel::setSceneRect(const QRectF &rect)
 QRectF DatabaseModel::getSceneRect()
 {
 	return scene_rect;
+}
+
+void DatabaseModel::setGenDisabledObjsCode(bool value)
+{
+	setCodeInvalidated(gen_dis_objs_code != value);
+	gen_dis_objs_code = value;
+}
+
+bool DatabaseModel::isGenDisabledObjsCode()
+{
+	return gen_dis_objs_code;
+}
+
+void DatabaseModel::setShowSysSchemasRects(bool value)
+{
+	setCodeInvalidated(show_sys_sch_rects != value);
+	show_sys_sch_rects = value;
 }

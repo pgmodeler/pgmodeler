@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,15 +28,15 @@
 #include "baseobjectwidget.h"
 #include "ui_domainwidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		SyntaxHighlighter *check_expr_hl;
 		PgSQLTypeWidget *data_type;
-		ObjectsTableWidget *constr_tab;
+		CustomTableWidget *constr_tab;
 		
 	public:
 		DomainWidget(QWidget * parent = nullptr);

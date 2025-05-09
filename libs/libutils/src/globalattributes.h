@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,7 +68,8 @@ class __libutils GlobalAttributes {
 		PgModelerCHandlerPath,
 		PgModelerCLIPath,
 		PgModelerAppPath,
-		PgModelerSchemaEditorPath;
+		PgModelerSchemaEditorPath,
+		PgModelerBaseVersion;
 
 		//! \brief Stores the custom paths retrieved either from pgmpaths.conf or from environment variables
 		static attribs_map CustomPaths;
@@ -94,11 +95,54 @@ class __libutils GlobalAttributes {
 		 //! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
 		static void setSearchPath(const QString &search_path);
 
+		/*! \brief Returns the path to a file that is under a root path. Generally the root path is the full path to a folder that
+		 * stores assets related to pgModeler (config files, schema files, etc) in its installation root.
+		 *
+		 * The parameter file_ext is the file extension that is appended to the requested file.
+		 * The parameter root_path is the base path where the file name (and eventually subfolders) will be appended
+		 * The parameter subfolder is a base subfolder where the file is located
+		 * The paramter pack ...pth_elems is the last part of the complete file path. By using this, one can form a path with a
+		 * variable number of subfolders. The last element of the parameter pack will be ALWAYS the file that is needed to be retrieved.
+		 *
+		 * Example:
+		 *
+		 * > Input: file_ext = .sch, root_path = /usr/local/pgmodeler/conf, subfolder = schemas, pth_elems = [ sql, table ]
+		 * > Ouput: /usr/local/pgmodeler/conf/schemas/table.sch
+		 *
+		 * > Input: file_ext = [empty], root_path = ~/.config/pgmodeler, subfolder = tmp, pth_elems = [ tmpModel.dbm ]
+		 * > Ouput: ~/.config/pgmodeler/tmp/tmpModel.dbm
+		 *
+		 * > Input: file_ext = [empty], root_path = ~/.config/pgmodeler, subfolder = [empty], pth_elems = [ empty ]
+		 * > Ouput: ~/.config/pgmodeler
+		 * */
+		template<typename ...args>
+		static QString getFilePath(const QString &file_ext, const QString &root_path, args... pth_elems)
+		{
+			QStringList path_elems = { pth_elems... };
+			QString file, path = root_path;
+
+			path_elems.removeAll("");
+
+			if(path_elems.isEmpty())
+				return path;
+
+			// The last element of the parameter pack is the file to be retrieved
+			file = path_elems.last();
+			path_elems.removeLast();
+
+			for(auto &folder : path_elems)
+				path += DirSeparator + folder;
+
+			return path + DirSeparator + file + (file_ext.isEmpty() ? "" : file_ext);
+		}
+
 	public:
 		static const QString
-		PgModelerAppName,
-		PgModelerURI,
 		PgModelerVersion,
+		PgModelerAppName,
+		PgModelerOldAppName,
+
+		PgModelerURI,
 		PgModelerBuildNumber,
 		PgModelerSite,
 		PgModelerSupport,
@@ -129,59 +173,56 @@ class __libutils GlobalAttributes {
 		DbModelBkpExt,
 		ObjMetadataExt,
 		DirSeparator,
-		ResourcesDir, //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
-		ConfigurationsDir,//! \brief Default name for the configurations directory
-		DefaultConfsDir,  //! \brief Default name for the default configurations directory
-		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
-		SchemasDir,       //! \brief Default name for the schemas directory
-		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
-		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
-		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
-		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
-		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
-		LanguagesDir,     //! \brief Default name for the translation files directory
-		SamplesDir,       //! \brief Default name for the samples database models directory
-		PluginsDir,       //! \brief Default name for the plug-ins directory
-		SchemaExt,        //! \brief Default extension for schema files
-		ObjectDTDDir,     //! \brief Default directory for dtd files
-		ObjectDTDExt,     //! \brief Default extension for dtd files
-		RootDTD,          //! \brief Root DTD of model xml files
-		MetadataDTD,			//! \brief Root DTD of objects metadata xml files
-		ConfigurationExt, //! \brief Default extension for configuration files
+		ResourcesDir,				 //! \brief Directory name which holds the pgModeler's plug-ins resources directory (res)
+		ConfigurationsDir,	 //! \brief Default name for the configurations directory
+		DefaultConfsDir,		 //! \brief Default name for the default configurations directory
+		ConfsBackupsDir,		 //! \brief Directory name which holds the pgModeler configuration backups
+		SchemasDir,					 //! \brief Default name for the schemas directory
+		SQLSchemaDir,				 //! \brief Default name for the sql schemas directory
+		XMLSchemaDir,				 //! \brief Default name for the xml schemas directory
+		CatalogSchemasDir,	 //! \brief Default name for the catalog schemas directory
+		DataDictSchemaDir,	 //! \brief Default name for the data dictionary schemas root directory
+		DataDictHtmlDir,		 //! \brief Default name for the data dictionary schemas directory (HTML format)
+		DataDictMdDir,			 //! \brief Default name for the dictionary schemas directory (Markdown format)
+		AlterSchemaDir,			 //! \brief Default name for the alter schemas directory
+		LanguagesDir,				 //! \brief Default name for the translation files directory
+		SamplesDir,					 //! \brief Default name for the samples database models directory
+		PluginsDir,					 //! \brief Default name for the plug-ins directory
+		SchemaExt,					 //! \brief Default extension for schema files
+		ObjectDTDDir,				 //! \brief Default directory for dtd files
+		ObjectDTDExt,				 //! \brief Default extension for dtd files
+		RootDTD,						 //! \brief Root DTD of model xml files
+		MetadataDTD,				 //! \brief Root DTD of objects metadata xml files
+		ConfigurationExt,		 //! \brief Default extension for configuration files
 		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
 		ThemesDir,					 //! \brief Default name for the ui style directory
 
-		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
-		AppearanceConf,   //! \brief Default name for the appearance configuration file
-		GeneralConf,         //! \brief Default name for the general pgModeler configuration
-		ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
-		RelationshipsConf,   //! \brief Default name for the relationships configuration file
-		SnippetsConf,        //! \brief Default name for the code snippets configuration file
-		DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
+		CodeHighlightConf,		 //! \brief Default name for the language highlight dtd
+		AppearanceConf,				 //! \brief Default name for the appearance configuration file
+		GeneralConf,					 //! \brief Default name for the general pgModeler configuration
+		ConnectionsConf,			 //! \brief Default name for the DBMS connection configuration file
+		RelationshipsConf,		 //! \brief Default name for the relationships configuration file
+		SnippetsConf,					 //! \brief Default name for the code snippets configuration file
+		DiffPresetsConf,			 //! \brief Default name for the diff presets configuration file
 
-		SQLHighlightConf, //! \brief Configuration file for SQL language highlight
-		XMLHighlightConf, //! \brief Configuration file for XML language highlight
-		SchHighlightConf, //! \brief Configuration file for Schema micro-language highlight
-		PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
-		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
+		SQLHighlightConf,			 //! \brief Configuration file for SQL language highlight
+		XMLHighlightConf,			 //! \brief Configuration file for XML language highlight
+		SchHighlightConf,			 //! \brief Configuration file for Schema micro-language highlight
+		PatternHighlightConf,	 //! \brief Configuration file for name patterns highlight (relationship editing form)
+		SQLHistoryConf,				 //! \brief Default name for the SQL commands history configuration file
 
-		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-		UiStyleConf, //! \brief Configuration file ui style
+		ExampleModel,		 //! \brief Default name for the sample model loaded on appearence configuration form
+		UiStyleConf,		 //! \brief Configuration file ui style
 		IconsMediumConf, //! \brief Extra configuration file that defines medium icons size
-		IconsSmallConf, //! \brief Extra configuration file that defines small icons size
-		IconsBigConf, //! \brief Extra configuration file that defines big icons size
+		IconsSmallConf,	 //! \brief Extra configuration file that defines small icons size
+		IconsBigConf,		 //! \brief Extra configuration file that defines big icons size
 
-		FileDialogConf,		//! \brief Default name for the file used to save/restore QFileDialog last geometry
+		FileDialogConf, //! \brief Default name for the file used to save/restore QFileDialog last geometry
 
 		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
 		the executable using -style option. This same style is applied to crash handler. */
 		DefaultQtStyle,
 		UiStyleOption;
-
-		#ifdef DEMO_VERSION
-			//Maximum object creation counter for demo version
-			static constexpr unsigned MaxObjectCount = 15;
-		#endif
 
 		/*! \brief Performs the initialization of the global attributes by setting the
 		 * application's search path (and all assets/executable paths based upon search_path).
@@ -197,10 +238,27 @@ class __libutils GlobalAttributes {
 		static QString getSchemasRootPath();
 
 		/*! \brief Returns the path to a schema file under "schemas" folder.
-		 * Since this method only operates over schemas folder there's no need to
-		 * provide a file with extension because the method already appends the extension .sch
-		 * automatically. */
-		static QString getSchemaFilePath(const QString &subfolder, const QString &file);
+		 * Since this method only operates over schemas folder there's no need to provide a file with
+		 * extension because the method already appends the extension .sch automatically. */
+		template<typename ...args>
+		static QString getSchemaFilePath(args... pth_elems)
+		{
+			return getFilePath(SchemaExt, SchemasRootPath, pth_elems...);
+		}
+
+		/*! \brief Returns the path to a data dictionary schema file under "schemas/datadict/(html|md)" folder(s).
+		 * Since this method only operates over the mentioned path there's no need to provide a file with
+		 * extension because the method already appends the extension .sch automatically.
+		 * The parameter md_format, when true, returns a path to the markdown format data dictionary schemas
+		 * otherwise a path to html data dictionary schemas is returned. */
+		template<typename ...args>
+		static QString getDictSchemaFilePath(bool md_format, args... pth_elems)
+		{
+			return getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
+															 md_format ? GlobalAttributes::DataDictMdDir :
+																					 GlobalAttributes::DataDictHtmlDir,
+															 pth_elems...);
+		}
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage
 		static QString getTemporaryPath();
@@ -214,7 +272,11 @@ class __libutils GlobalAttributes {
 		/*! \brief Returns the path to the template file at template "conf" folder in pgModeler's installation
 		 * This method will not append any extension to the file since this folder has several kinds of
 		 * files inside it, so, the user must inform the file with its extension */
-		static QString getTmplConfigurationFilePath(const QString &subfolder, const QString &file);
+		template<typename ...args>
+		static QString getTmplConfigurationFilePath(args... pth_elems)
+		{
+			return getFilePath("", TmplConfigurationPath, pth_elems...);
+		}
 
 		//! \brief Returns the path to the "conf" folder in user's local storage
 		static QString getConfigurationsPath();
@@ -256,9 +318,16 @@ class __libutils GlobalAttributes {
 		//! \brief Returns the path to the "pgmodeler-se" executable
 		static QString getPgModelerSchemaEditorPath();
 
+		/*! \brief Returns the version of the tool excluding any suffix
+		 * appended to the version number (e.g., alpha, beta, snapshot, etc) */
+		static QString getPgModelerBaseVersion();
+
 		/*! \brief Returns the param_name value in the specified configuration file.
 		 *  Returns empty string when the config parameter or the file does not exist. */
 		static QString getConfigParamFromFile(const QString &param_name, const QString &conf_file);
+
+		friend class PgModelerPlugin;
+		friend class PgModelerCliPlugin;
 };
 
 #endif

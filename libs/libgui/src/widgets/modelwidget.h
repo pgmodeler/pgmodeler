@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #ifndef MODEL_WIDGET_H
 #define MODEL_WIDGET_H
 
-#include <QtWidgets>
+#include <QMenu>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
@@ -33,9 +33,32 @@
 #include "newobjectoverlaywidget.h"
 #include "layerswidget.h"
 
+class PgModelerGuiPlugin;
+
 class __libgui ModelWidget: public QWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
+		#ifdef DEMO_VERSION
+			//Maximum number of objects' operations (create, move, delete, etc)
+			static constexpr unsigned MaxObjActions = 200;
+			unsigned obj_actions_cnt;
+
+			bool updateObjActionCounter() {
+				obj_actions_cnt++;
+
+				// If maximum actions is reached
+				if(obj_actions_cnt > MaxObjActions)
+				{
+					Messagebox::alert("You have reached the maximum number of actions that can be taken over the database object in the demo version!");
+					return true;
+				}
+
+				return false;
+			}
+		#endif
+
+		static QList<const PgModelerGuiPlugin *> plugins;
 
 		enum RelBreakMode {
 			//Break vertically the line in one 90° angle
@@ -81,14 +104,17 @@ class __libgui ModelWidget: public QWidget {
 		wheel_move,
 
 		//! \brief Indicates if the scene is being moved by either panning move or via mouse wheel
-		scene_moving;
+		scene_moving,
+
+		//! \brief Indicates if added graphical object must be blinked/highlighted (see handleObjectAddition())
+		blink_new_objs;
 
 		/*! \brief Indicates if the cut operation is currently activated. This flag modifies
 		the way the methods copyObjects() and removeObject() works. */
-		static bool cut_operation;
+		static bool cut_operation,
 
 		//! \brief Indicates if the last position and zoom must be saved/restored
-		static bool save_restore_pos,
+		save_restore_pos,
 
 		//! \brief Indicates that graphical objects like table, view and textboxes can be created without click canvas (direclty from their editing form)
 		simple_obj_creation,
@@ -103,10 +129,10 @@ class __libgui ModelWidget: public QWidget {
 		static ModelWidget *src_model;
 
 		//! \brief Copied object on the source model
-		static std::vector<BaseObject *> copied_objects;
+		static std::vector<BaseObject *> copied_objects,
 
 		//! \brief Stores the cutted object on source model (only when executing cut command)
-		static std::vector<BaseObject *> cut_objects;
+		cut_objects;
 
 		//! \brief Frame that indicates if the model is protected
 		QFrame *protected_model_frm;
@@ -135,16 +161,13 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
-		//! \brief Stores the layers used by the "move to layer" operation
-		layers_menu,
-
 		break_rel_menu,
 
 		fade_menu,
 
-		fade_in_menu,
+		fade_in_all_menu,
 
-		fade_out_menu,
+		fade_out_all_menu,
 
 		fade_rels_menu,
 
@@ -222,7 +245,7 @@ class __libgui ModelWidget: public QWidget {
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the submenu related to the installed plugins actions
-		void configurePluginsActionsMenu();
+		void configurePluginsActions();
 
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
@@ -263,10 +286,6 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Applies the layer settings from the internal database model to the scene object
 		void updateSceneLayers();
 
-		/*! \brief Define the list of actions executed by installed plugins that is exposed in
-		 *  the ModelWidget context menu */
-		void setPluginActions(const QList<QAction *> &plugin_acts);
-
 	protected:
 		QAction *action_source_code,
 		*action_edit,
@@ -305,8 +324,6 @@ class __libgui ModelWidget: public QWidget {
 		*action_fade,
 		*action_fade_in,
 		*action_fade_out,
-		*action_fade_objs_in,
-		*action_fade_objs_out,
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
@@ -332,8 +349,6 @@ class __libgui ModelWidget: public QWidget {
 		*action_bring_to_front,
 		*action_send_to_back,
 		*action_stacking;
-
-		QWidgetAction *wgt_action_layers;
 
 		//! \brief Actions used to create new objects on the model
 		std::map<ObjectType, QAction *> actions_new_objects;
@@ -424,6 +439,12 @@ class __libgui ModelWidget: public QWidget {
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList();
+
+		//! \brief Returns the currently selected list of objects
+		std::vector<BaseObject *> getSelectedObjects();
+
+		//! \brief Returns the whether there are at least one object selected in the model
+		bool hasSelectedObjects();
 
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
@@ -615,6 +636,11 @@ class __libgui ModelWidget: public QWidget {
 		//! \brief Restores the previous grid/delimiter visibility state after finishing a scene move
 		void finishSceneMove();
 
+		/*! \brief Toggles the blinking of new graphical objects added to the model widget
+		 *  This method first call QGraphicsItem::setSelected and then QGraphicsView::centerOn
+		 *  to simulate a highlight in the new object */
+		void setBlinkAddedObjects(bool value);
+
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
@@ -626,6 +652,7 @@ class __libgui ModelWidget: public QWidget {
 
 	signals:
 		void s_objectAdded(BaseGraphicObject *object);
+		void s_itemAdded(QGraphicsItem *item);
 		void s_objectModified();
 		void s_objectsMoved();
 		void s_objectCreated();
@@ -663,6 +690,14 @@ class __libgui ModelWidget: public QWidget {
 		/*! \brief Signal emitted whenever the scene suffered a successful drag & drop event.
 		 * It passes the mime data when the event occurred */
 		void s_sceneDragDropped(const QMimeData *mime_data);
+
+		/*! \brief This signal is emitted whenever the user requests via context menu Quick > Set layer > New layer button
+		 *  the creation of a new layer. This signal just redirects the new layer name to the outside world do be
+		 *  handled properly (currently, in MainWindow) */
+		void s_newLayerRequested(const QString &layer_name);
+
+		//! \brief Signal emitted whenever the layers of the selected object is changed via "Set layers" menu item
+		void s_objectsLayerChanged();
 
 		friend class MainWindow;
 		friend class ModelExportForm;

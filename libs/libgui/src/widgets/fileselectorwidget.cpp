@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "fileselectorwidget.h"
 #include "guiutilsns.h"
+#include <QDesktopServices>
 
 FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {
@@ -33,12 +34,8 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	warn_ico_lbl = new QLabel(this);
 	warn_ico_lbl->setVisible(false);
 
-	#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
-		int sz = filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
-				(filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin)/2);
-	#else
-		int sz = filename_edt->height() * 0.75;
-	#endif
+	int sz = filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconSize) +
+					(filename_edt->style()->pixelMetric(QStyle::PM_LineEditIconMargin)/2);
 
 	warn_ico_lbl->setMinimumSize(sz, sz);
 	warn_ico_lbl->setMaximumSize(warn_ico_lbl->minimumSize());
@@ -82,6 +79,11 @@ void FileSelectorWidget::resizeEvent(QResizeEvent *)
 	#endif
 
 	);
+}
+
+void FileSelectorWidget::showEvent(QShowEvent *)
+{
+	showWarning();
 }
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)

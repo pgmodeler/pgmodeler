@@ -10,6 +10,9 @@
 <!ATTLIST view materialized (false|true) "false">
 <!ATTLIST view recursive (false|true) "false">
 <!ATTLIST view with-no-data (false|true) "true">
+<!ATTLIST view check-option CDATA #IMPLIED>
+<!ATTLIST view security-barrier (false|true) "false">
+<!ATTLIST view security-invoker (false|true) "false">
 <!ATTLIST view sql-disabled (false|true) "false">
 <!ATTLIST view collapse-mode CDATA #IMPLIED>
 <!ATTLIST view faded-out (false|true) "false">

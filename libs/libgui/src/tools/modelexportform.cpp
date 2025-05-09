@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@
 #include "utilsns.h"
 #include "connectionsconfigwidget.h"
 #include "pgsqlversions.h"
+#include <QThread>
 
-bool ModelExportForm::low_verbosity = false;
+bool ModelExportForm::low_verbosity {false};
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -44,7 +45,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	img_file_sel->setAllowFilenameInput(true);
 	img_file_sel->setFileIsMandatory(false);
 	img_file_sel->setAppendSuffix(true);
-	export_to_img_grid->addWidget(img_file_sel, 1, 1, 1, 3);
+	export_to_img_grid->addWidget(img_file_sel, 2, 1, 1, 3);
 
 	dict_file_sel = new FileSelectorWidget(this);
 	dict_file_sel->setFileDialogTitle(tr("Export model to data dictionary"));
@@ -104,7 +105,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			export_hlp.exportToDBMS();
 		else if(export_to_img_rb->isChecked())
 		{
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.exportToPNG();
 			else
 				export_hlp.exportToSVG();
@@ -128,15 +129,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(cancel_btn, &QToolButton::clicked, this, &ModelExportForm::cancelExport);
 	connect(connections_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::editConnections);
 
-	connect(svg_rb, &QRadioButton::toggled, zoom_cmb, &QComboBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, zoom_lbl, &QLabel::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, page_by_page_chk, &QCheckBox::setDisabled);
-	connect(svg_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
-	connect(png_rb, &QRadioButton::toggled, this, &ModelExportForm::selectImageFormat);
+	connect(img_fmt_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectImageFormat);
 
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
-	connect(dict_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
-	connect(dict_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_mode_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
+	connect(dict_format_cmb, &QComboBox::currentIndexChanged, this, &ModelExportForm::selectDataDictMode);
 	connect(sql_standalone_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, this, &ModelExportForm::selectSQLExportMode);
 	connect(sql_split_rb, &QRadioButton::toggled, code_options_cmb, &QComboBox::setEnabled);
@@ -171,7 +168,33 @@ void ModelExportForm::exec(ModelWidget *model)
 
 	this->model = model;
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
+
 	selectExportMode();
+
+#ifdef DEMO_VERSION
+	#warning "DEMO VERSION: export to DBMS is disabled in demo version."
+	export_to_dbms_rb->blockSignals(true);
+	export_to_dbms_rb->setEnabled(false);
+	export_to_dbms_gb->setEnabled(false);
+	export_to_dbms_rb->setChecked(false);
+	export_to_dbms_rb->blockSignals(false);
+
+	#warning "DEMO VERSION: export to data dictionary is disabled in demo version."
+	export_to_dict_rb->blockSignals(true);
+	export_to_dict_rb->setEnabled(false);
+	export_to_dict_gb->setEnabled(false);
+	export_to_dict_rb->blockSignals(false);
+
+	#warning "DEMO VERSION: export to data PNG limited to zoom factor of 50%."
+	zoom_cmb->setCurrentText("30%");
+	zoom_cmb->setEnabled(false);
+
+	#warning "DEMO VERSION: export to data SVG is disabled in demo version."
+	img_fmt_cmb->setEnabled(false);
+
+	export_to_file_rb->setChecked(true);
+#endif
+
 	QDialog::exec();
 }
 
@@ -197,12 +220,12 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	progress_lbl->setText(text);
 	progress_pb->setValue(progress);
 
-	if(obj_type!=ObjectType::BaseObject)
-		ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
+	if(obj_type != ObjectType::BaseObject)
+		ico = QPixmap(GuiUtilsNs::getIconPath(obj_type));
 	else if(!cmd.isEmpty())
-		ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+		ico = QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
 	else
-		ico=QPixmap(GuiUtilsNs::getIconPath("info"));
+		ico = QPixmap(GuiUtilsNs::getIconPath("info"));
 
 	ico_lbl->setPixmap(ico);
 
@@ -220,6 +243,23 @@ void ModelExportForm::exportModel()
 {
 	try
 	{
+		// Alerting the user about dropping objects/database
+		if(export_to_dbms_rb->isChecked() && drop_chk->isChecked())
+		{
+			Messagebox msg_box;
+			QString msg;
+
+			if(drop_db_rb->isChecked())
+				msg = tr("<strong>CAUTION:</strong> You are about to drop an entire database from the chosen server! All data will be completely wiped out. Do you really want to proceed?");
+			else
+				msg = tr("<strong>CAUTION:</strong> You are about to drop objects in a database of the chosen server! Data can be lost in the process. Do you really want to proceed?");
+
+			msg_box.show(tr("Warning"), msg, Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+			if(msg_box.isRejected())
+				return;
+		}
+
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
@@ -231,7 +271,7 @@ void ModelExportForm::exportModel()
 		{
 			viewp=new QGraphicsView(model->scene);
 
-			if(png_rb->isChecked())
+			if(img_fmt_cmb->currentIndex() == 0)
 				export_hlp.setExportToPNGParams(model->scene, viewp, img_file_sel->getSelectedFile(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
 																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
@@ -257,19 +297,23 @@ void ModelExportForm::exportModel()
 				progress_lbl->setText(tr("Saving file '%1'").arg(sql_file_sel->getSelectedFile()));
 				export_hlp.setExportToSQLParams(model->db_model, sql_file_sel->getSelectedFile(),
 																				pgsqlvers_cmb->currentText(), sql_split_rb->isChecked(),
-																				static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex()));
+																				static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex()),
+																				gen_drop_file_chk->isChecked());
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(), incl_index_chk->isChecked(), dict_split_rb->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model, dict_file_sel->getSelectedFile(),
+																						 incl_index_chk->isChecked(),
+																						 dict_mode_cmb->currentIndex() == 1,
+																						 dict_format_cmb->currentIndex() == 1);
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
 			else
 			{
+				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 				QString version;
-				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());			
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())
@@ -280,7 +324,8 @@ void ModelExportForm::exportModel()
 																				 drop_chk->isChecked() && drop_db_rb->isChecked(),
 																				 drop_chk->isChecked() && drop_objs_rb->isChecked(),
 																				 false, false,
-																				 drop_chk->isChecked() && force_db_drop_chk->isChecked());
+																				 drop_chk->isChecked() && force_db_drop_chk->isChecked(),
+																				 run_in_transaction_chk->isChecked());
 
 				if(ignore_error_codes_chk->isChecked())
 					export_hlp.setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
@@ -355,6 +400,8 @@ void ModelExportForm::handleExportFinished()
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
 	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
+
+	qApp->alert(this);
 }
 
 void ModelExportForm::finishExport(const QString &msg)
@@ -417,7 +464,9 @@ void ModelExportForm::enableExport()
 
 void ModelExportForm::selectImageFormat()
 {
-	if(png_rb->isChecked())
+	bool is_png = img_fmt_cmb->currentIndex() == 0;
+
+	if(is_png)
 	{
 		img_file_sel->setMimeTypeFilters({"image/png", "application/octet-stream"});
 		img_file_sel->setDefaultSuffix("png");
@@ -429,14 +478,27 @@ void ModelExportForm::selectImageFormat()
 		img_file_sel->setDefaultSuffix("svg");
 		override_bg_color_chk->setEnabled(false);
 	}
+
+	zoom_cmb->setEnabled(is_png);
+	zoom_lbl->setEnabled(is_png);
+	page_by_page_chk->setEnabled(is_png);
 }
 
 void ModelExportForm::selectDataDictMode()
 {
-	if(dict_standalone_rb->isChecked())
+	if(dict_mode_cmb->currentIndex() == 0)
 	{
-		dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
-		dict_file_sel->setDefaultSuffix("html");
+		if(dict_format_cmb->currentIndex() == 0)
+		{
+			dict_file_sel->setMimeTypeFilters({"text/html", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("html");
+		}
+		else
+		{
+			dict_file_sel->setMimeTypeFilters({"text/markdown", "application/octet-stream"});
+			dict_file_sel->setDefaultSuffix("md");
+		}
+
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptSave);
 		dict_file_sel->setDirectoryMode(false);
 		dict_file_sel->setFileMustExist(false);
@@ -444,6 +506,7 @@ void ModelExportForm::selectDataDictMode()
 	else
 	{
 		dict_file_sel->setDefaultSuffix("");
+		dict_file_sel->setMimeTypeFilters({});
 		dict_file_sel->setDirectoryMode(true);
 		dict_file_sel->setFileMustExist(false);
 		dict_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
@@ -462,6 +525,7 @@ void ModelExportForm::selectSQLExportMode()
 	}
 	else
 	{
+		sql_file_sel->setMimeTypeFilters({});
 		sql_file_sel->setDefaultSuffix("");
 		sql_file_sel->setAcceptMode(QFileDialog::AcceptOpen);
 		sql_file_sel->setFileMustExist(false);

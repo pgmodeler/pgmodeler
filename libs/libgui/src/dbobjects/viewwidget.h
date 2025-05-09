@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,19 +25,18 @@
 #ifndef VIEW_WIDGET_H
 #define VIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "baseobjectwidget.h"
 #include "ui_viewwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
 #include "dbobjects/referenceswidget.h"
 #include "dbobjects/simplecolumnswidget.h"
 
 class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SimpleColumnsWidget *custom_cols_wgt;
 
 		ReferencesWidget *obj_refs_wgt;
@@ -46,12 +45,12 @@ class __libgui ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		NumberedTextEditor *sql_preview_txt, *sql_definition_txt;
 
-		std::map<ObjectType, ObjectsTableWidget *> objects_tab_map;
+		std::map<ObjectType, CustomTableWidget *> objects_tab_map;
 
 		SyntaxHighlighter *sql_preview_hl, *sql_definition_hl;
 
 		//! \brief Returns the object table according with the child type
-		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
+		CustomTableWidget *getObjectTable(ObjectType obj_type);
 
 		ObjectType getObjectType(QObject *sender);
 

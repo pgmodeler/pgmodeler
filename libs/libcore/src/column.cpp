@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "column.h"
 #include "coreutilsns.h"
 
-const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
+const QString Column::NextValFuncTmpl {"nextval('%1'::regclass)"};
 
 Column::Column()
 {
@@ -246,13 +246,13 @@ QString Column::getSourceCode(SchemaParser::CodeType def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::Type]=type.getSourceCode(def_type);	
+	attributes[Attributes::Type]=type.getSourceCode(def_type);
 	attributes[Attributes::DefaultValue]="";
 	attributes[Attributes::IdentityType]="";
 
 	if(identity_type != IdentityType::Null)
 	{
-		attributes[Attributes::IdentityType] = ~identity_type;	
+		attributes[Attributes::IdentityType] = ~identity_type;
 		attributes[Attributes::Increment]=seq_increment;
 		attributes[Attributes::MinValue]=seq_min_value;
 		attributes[Attributes::MaxValue]=seq_max_value;
@@ -429,7 +429,7 @@ void Column::operator = (Column &col)
 	this->setParentRelationship(col.getParentRelationship());
 }
 
-QString Column::getDataDictionary(const attribs_map &extra_attribs)
+QString Column::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -444,8 +444,7 @@ QString Column::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::NotNull] = not_null ? CoreUtilsNs::DataDictCheckMark : "";
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

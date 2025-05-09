@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,12 +24,15 @@
 #include "utilsns.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "tools/datamanipulationform.h"
-#include "pgsqlversions.h"
+#include "tools/datahandlingform.h"
+#include "pgmodelerguiplugin.h"
+#include <QScrollBar>
 
 const QString DatabaseExplorerWidget::DepNotDefined;
-const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
-const QString DatabaseExplorerWidget::DefaultSourceCode=QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."));
+const QString DatabaseExplorerWidget::DepNotFound { QT_TR_NOOP("(not found, OID: %1)") };
+const QString DatabaseExplorerWidget::DefaultSourceCode {
+	QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."))
+};
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::AdminRoles, QT_TR_NOOP("Admin. roles")},	{Attributes::Alignment, QT_TR_NOOP("Alignment")},
@@ -137,15 +140,20 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")} , {Attributes::TransformTypes, QT_TR_NOOP("Transform types")},
 	{Attributes::ConfigParams, QT_TR_NOOP("Config. parameters") }, {Attributes::IsTemplate, QT_TR_NOOP("Is template")},
 	{Attributes::TemplateDb, QT_TR_NOOP("Template DB") }, {Attributes::AllowConns, QT_TR_NOOP("Allows connection")},
-	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE Modifier")},
-	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE Modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
+	{Attributes::Version, QT_TR_NOOP("Version")},	{Attributes::LcCollateMod, QT_TR_NOOP("LC COLLATE modifier")},
+	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE modifier")}, {Attributes::Provider, QT_TR_NOOP("Provider")},
 	{Attributes::IsExtType, QT_TR_NOOP("Is extension type")}, {Attributes::RefTables, QT_TR_NOOP("Referenced tables")},
-	{Attributes::NullsNotDistinct, QT_TR_NOOP("Nulls not distinct")}
+	{Attributes::NullsNotDistinct, QT_TR_NOOP("Nulls not distinct")}, {Attributes::Constraints, QT_TR_NOOP("Constraints")},
+	{Attributes::Deterministic, QT_TR_NOOP("Deterministic")}, {Attributes::LcCtypeMod, QT_TR_NOOP("LC CTYPE modifier")},
+	{Attributes::TypeClass, QT_TR_NOOP("Type class")}, {Attributes::Locale, QT_TR_NOOP("Locale")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
+
+	for(auto &btn : PgModelerGuiPlugin::getPluginsToolButtons())
+		installPluginButton(btn);
 
 	pg_version_alert_frm->setVisible(false);
 	curr_scroll_value = 0;
@@ -224,7 +232,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	});
 
 	connect(data_grid_tb, &QToolButton::clicked, this, [this](){
-		__trycatch( openDataGrid(); )
+		DataHandlingForm::openNewWindow(connection.getConnectionParams());
 	});
 
 	connect(collapse_all_tb, &QToolButton::clicked, objects_trw, &QTreeWidget::collapseAll);
@@ -268,10 +276,10 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QMenu *refresh_menu=new QMenu(refresh_tb);
 
-	act=refresh_menu->addAction(tr("Quick refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Alt+F5"));
+	act=refresh_menu->addAction(tr("Quick refresh"), QKeySequence("Alt+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(true));
 
-	act=refresh_menu->addAction(tr("Full refresh"), this, &DatabaseExplorerWidget::listObjects, QKeySequence("Ctrl+F5"));
+	act=refresh_menu->addAction(tr("Full refresh"), QKeySequence("Ctrl+F5"), this, &DatabaseExplorerWidget::listObjects);
 	act->setData(QVariant::fromValue<bool>(false));
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
@@ -301,8 +309,9 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 
 					if(oid!=0 && BaseTable::isBaseTable(obj_type))
 					{
-						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-												 item->text(0), obj_type!=ObjectType::View);
+						DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																						item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																						item->text(0), obj_type);
 					}
 				}
 			}
@@ -378,8 +387,6 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msg_box;
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
@@ -1143,7 +1150,7 @@ void DatabaseExplorerWidget::listObjects()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1229,9 +1236,9 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 			loadObjectSource(true);
 		else if(exec_action==handle_data_action)
 		{
-			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
-									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_t(ObjectType::View));
+			DataHandlingForm::openNewWindow(connection.getConnectionParams(),
+																			item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
+																			item->text(0), obj_type);
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -1407,9 +1414,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em> in the %3? This action will drop all the other objects that depends on it.")
 					.arg(obj_name, BaseObject::getTypeName(obj_type), parent_name);
 
-			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-			if(msg_box.result()==QDialog::Accepted)
+			if(Messagebox::isAccepted(Messagebox::confirm(msg)))
 			{
 				QTreeWidgetItem *parent=nullptr;
 				attribs_map attribs;
@@ -1457,7 +1462,6 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 	catch(Exception &e)
 	{
-		//msg_box.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -1477,7 +1481,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 		msg_box.setCustomOptionText(tr("Also restart sequences"));
 		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			attribs_map attribs;
 			QString truc_cmd;
@@ -1502,7 +1506,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			conn.executeDDLCommand(truc_cmd);
 		}
 
-		return (msg_box.result()==QDialog::Accepted);
+		return msg_box.isAccepted();
 	}
 	catch(Exception &e)
 	{
@@ -1565,7 +1569,7 @@ void DatabaseExplorerWidget::restoreTreeState()
 	objects_trw->verticalScrollBar()->setValue(curr_scroll_value);
 }
 
-void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
+void DatabaseExplorerWidget::installPluginButton(QToolButton *btn)
 {
 	if(!btn)
 		return;
@@ -1580,13 +1584,19 @@ void DatabaseExplorerWidget::addPluginButton(QToolButton *btn)
 	plugin_btn->setAutoRaise(true);
 	toolbuttons_lt->insertWidget(toolbuttons_lt->count() - 2, plugin_btn);
 
+	/* Since plugins are singletons in pgModeler, we use the same tool button associated to
+	 * a certain plugin to execute its action in different DatabaseExplorerWidget instances.
+	 * Thus the action executed is the one connected to the clicked() event of the plugin's button. */
 	connect(plugin_btn, &QToolButton::clicked, this, [this, btn](bool checked){
+		/* We set general purpose button's properties (connection id and current database name)
+		 * so this information can be processed by the plugin execution slot. */
 		btn->setProperty(Attributes::Connection.toStdString().c_str(),
 										 connection.getConnectionId());
 
 		btn->setProperty(Attributes::Database.toStdString().c_str(),
 										 connection.getConnectionParam(Connection::ParamDbName));
 
+		// Emitting the signal btn->clicked() so the connected slot can be executed.
 		emit btn->clicked(checked);
 	});
 
@@ -1725,7 +1735,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item, bool restore_tree
 	{
 		objects_trw->blockSignals(false);
 		objects_trw->setUpdatesEnabled(true);
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		throw Exception(tr("Failed to load the subitems of the object <strong>%1</strong> <em>(%2)</em>! Try to reload them manually by hitting <strong>F6</strong> on each one.")
 										.arg(signature, BaseObject::getTypeName(obj_type)),
@@ -1811,7 +1821,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1968,7 +1978,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -2150,7 +2160,13 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 					}
 					else
 					{
-						object = dbmodel.getObject(name, obj_type);
+						// First we try to locate the object by its OID
+						object = dbmodel.getObjectByOid(oid, obj_type);
+
+						// If we can't find it by the OID we try to search by its name
+						if(!object)
+							object = dbmodel.getObject(name, obj_type);
+
 						schema = object ? object->getSchema() : nullptr;
 					}
 
@@ -2190,7 +2206,7 @@ void DatabaseExplorerWidget::loadObjectSource(bool show_code)
 	}
 	catch (Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		emit s_sourceCodeShowRequested(QString("/* Could not generate source code due to one or more errors! \n \n %1 */").arg(e.getExceptionsText()), show_code);
 	}
 }
@@ -2223,19 +2239,4 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 		source+=perm->getSourceCode(SchemaParser::SqlCode);
 
 	return source;
-}
-
-void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
-{
-	DataManipulationForm *data_manip=new DataManipulationForm;
-	Connection conn=Connection(this->connection.getConnectionParams());
-
-	data_manip->setWindowModality(Qt::NonModal);
-	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
-	data_manip->hide_views_chk->setChecked(hide_views);
-
-	data_manip->setAttributes(conn, schema, table);
-	GuiUtilsNs::resizeDialog(data_manip);
-	GeneralConfigWidget::restoreWidgetGeometry(data_manip);
-	data_manip->show();
 }

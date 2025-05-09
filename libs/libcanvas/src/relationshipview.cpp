@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,10 +21,11 @@
 #include "tableview.h"
 #include "utilsns.h"
 
-bool RelationshipView::hide_name_label=false;
-bool RelationshipView::use_curved_lines=true;
-bool RelationshipView::use_crows_foot=false;
-RelationshipView::LineConnectionMode RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
+bool RelationshipView::hide_name_label {false};
+bool RelationshipView::use_curved_lines {true};
+bool RelationshipView::use_crows_foot {true};
+
+RelationshipView::LineConnectionMode RelationshipView::line_conn_mode { RelationshipView::ConnectFkToPk };
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
@@ -216,6 +217,14 @@ TextboxView *RelationshipView::getLabel(BaseRelationship::LabelId lab_idx)
 		return nullptr;
 
 	return labels[lab_idx];
+}
+
+bool RelationshipView::isTableVisible(BaseRelationship::TableId table_idx)
+{
+	if(table_idx > 2)
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return tables[table_idx]->isVisible();
 }
 
 QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)

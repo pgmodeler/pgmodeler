@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@
 #include "widgets/numberedtexteditor.h"
 
 class __libgui CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		NumberedTextEditor *append_sql_txt, *prepend_sql_txt;
 
 		SyntaxHighlighter *append_sql_hl, *prepend_sql_hl;

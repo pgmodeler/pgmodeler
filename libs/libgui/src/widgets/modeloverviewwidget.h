@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@
 #ifndef MODEL_OVERVIEW_WIDGET_H
 #define MODEL_OVERVIEW_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_modeloverviewwidget.h"
 #include "modelwidget.h"
 
 class __libgui ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 

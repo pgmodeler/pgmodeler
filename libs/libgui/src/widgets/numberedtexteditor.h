@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,12 +31,15 @@ based upon the code editor example provided by Qt
 #include <QProcess>
 #include <QLabel>
 #include "linenumberswidget.h"
+#include "searchreplacewidget.h"
 
 class __libgui NumberedTextEditor : public QPlainTextEdit {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
-		//! \brief Controls if line numbers must be visible or not
+	private:
+		/*! \brief Controls globally line numbers visibility.
+		 *  If this flag is set to false then toggleLineNumbers will
+		 *  have no effect */
 		static bool line_nums_visible,
 
 		//! \brief Controls if current line must be highlighted
@@ -56,18 +59,19 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		static QString src_editor_app_args;
 
 		//! \brief Widget used to expose document line numbers
-		LineNumbersWidget *line_number_wgt;
+		LineNumbersWidget *line_numbers_wgt;
 
-		//! \brief Indicates if the text editor can handle external files
-		bool handle_ext_files;
+		//! \brief Indicates if the text editor has the advanced text action buttons enabled.
+		bool action_btns_enabled;
 
-		QWidget *top_widget,
+		SearchReplaceWidget *search_wgt;
 
-		*editor_alert_wgt;
+		QWidget *top_widget, *editor_alert_wgt;
 
 		QLabel *msg_lbl;
 
-		QToolButton *load_file_btn, *edit_src_btn, *clear_btn, *save_file_btn, *word_wrap_btn;
+		QToolButton *load_file_btn, *edit_src_btn, *clear_btn,
+		*save_file_btn,	*word_wrap_btn, *search_btn, *copy_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
 		QString tmp_src_file;
@@ -79,15 +83,29 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		 * The default is to use the font size of the default font (see setDefaultFont) */
 		qreal custom_fnt_size;
 
+		//! \brief The filename filters used by the save action
+		QStringList file_filters;
+
+		//! \brief The default extension for file saved by the save action
+		QString default_ext;
+
+		//! \brief Indicates the current visiblity of the line numbers in the current object
+		bool show_line_nums,
+
+		//! \brief Indicates the current visiblity of the action buttons in the current object
+		show_act_btns;
+
 		//! \brief Determines and returns the line numbers widget width
 		int getLineNumbersWidth();
 
+		void setWordWrapMode(QTextOption::WrapMode policy);
+
 	protected:
-		void resizeEvent(QResizeEvent *event);
-		void keyPressEvent(QKeyEvent *event);
+		void resizeEvent(QResizeEvent *event) override;
+		void keyPressEvent(QKeyEvent *event)  override;
 
 	public:
-		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false, qreal custom_fnt_size = 0);
+		NumberedTextEditor(QWidget * parent = nullptr, bool edit_btns_enabled = false, qreal custom_fnt_size = 0);
 		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
@@ -101,14 +119,16 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 		static void setSourceEditorApp(const QString &app);
 		static void setSourceEditorAppArgs(const QString &args);
 
-		/*! brief Disable the custom context menu designed specifically for this class.
+		/*! \brief Disable the custom context menu designed specifically for this class.
 		This method is useful when the user needs to create another context menu that executes actions
 		differents from the original ones */
 		void setCustomContextMenuEnabled(bool enabled);
 
+		//! \brief Configure the filename filters for the save action
+		void setFilenameFilters(const QStringList &list, const QString &default_ext);
+
 	private slots:
 		void showContextMenu();
-
 		void pasteCode();
 
 		void changeSelectionToLower();
@@ -130,18 +150,28 @@ class __libgui NumberedTextEditor : public QPlainTextEdit {
 	public slots:
 		void setReadOnly(bool ro);
 
+		/*! \brief Toggles the line numbers widget visibility for this widget.
+		 *  This method will have no effect if the global flag for line numbers
+		 *  visiblity is set to false */
+		void showLineNumbers(bool show);
+
+		//! \brief Toggles the display of the action buttons top widget for this widget.
+		void showActionButtons(bool show);
+
 		//! \brief Grabs the keyboard input and also highlight the current line
 		void setFocus();
 
 		//! \brief Draw the line numbers according to the current visible lines
 		void updateLineNumbers();
 
-		/*! \brief Configures the line numbers widget sizes (w,h) depending on the current
-		visible lines and the text editor height */
-		void updateLineNumbersSize();
+		/*! \brief Configures the size of the internal widgets (top widget, line numbers and search widget)
+		 * depending on the current visible lines and the text editor height */
+		void resizeWidgets();
 
 		//! \brief Colors the background of the line where the cursor is
 		void highlightCurrentLine();
+
+		void setWordWrap(bool value);
 };
 
 #endif

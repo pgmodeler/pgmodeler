@@ -10,17 +10,19 @@ ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 
 void ModelExportHelper::resetExportParams()
 {
-	sql_gen_progress=progress=0;
-	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
-	simulate=use_tmp_names=db_sql_reenabled=override_bg_color=force_db_drop=false;
-	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
-	db_model=nullptr;
-	connection=nullptr;
-	scene=nullptr;
-	zoom=100;
-	show_grid=show_delim=page_by_page=split=browsable=false;
-	viewp=nullptr;
-	code_gen_mode=DatabaseModel::OriginalSql;
+	sql_gen_progress = progress = 0;
+	db_created = ignore_dup = drop_db = drop_objs = export_canceled = false;
+	simulate = use_tmp_names = db_sql_reenabled = override_bg_color = false;
+	force_db_drop = gen_drop_file = md_format = false;
+	show_grid = show_delim = page_by_page = split = browsable = false;
+	transactional = false;
+	created_objs[ObjectType::Role] = created_objs[ObjectType::Tablespace] = -1;
+	db_model = nullptr;
+	connection = nullptr;
+	scene = nullptr;
+	zoom = 100;
+	viewp = nullptr;
+	code_gen_mode = DatabaseModel::OriginalSql;
 }
 
 void ModelExportHelper::abortExport(Exception &e)
@@ -62,7 +64,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 	ignored_errors.removeDuplicates();
 }
 
-void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
+void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -85,7 +87,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		}
 		else
 		{
-			db_model->saveSplitSQLDefinition(filename, code_gen_mode);
+			db_model->saveSplitSQLDefinition(filename, code_gen_mode, gen_drop_file);
 			emit s_progressUpdated(100, tr("SQL files successfully written in `%1'.").arg(filename), ObjectType::BaseObject);
 		}
 
@@ -339,7 +341,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	emit s_exportFinished();
 }
 
-void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_tmp_names, bool forced_db_drop)
+void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate,
+																		 bool use_tmp_names, bool forced_db_drop, bool transactional)
 {
 	int type_id = 0, pos = -1;
 	QString  version, sql_cmd, buf, sql_cmd_comment;
@@ -359,7 +362,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
-		if(simulate && (ignore_dup || drop_db || drop_objs))
+		if(simulate && (ignore_dup || drop_db || drop_objs || transactional))
 			throw Exception(ErrorCode::MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(drop_db && drop_objs)
 			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -552,7 +555,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Exporting the database model definition using the opened connection
 			buf=db_model->getSourceCode(SchemaParser::SqlCode, false);
 			progress=40;
-			exportBufferToDBMS(buf, new_db_conn, drop_objs);
+			exportBufferToDBMS(buf, new_db_conn, drop_objs, transactional);
 		}
 
 		disconnect(db_model, nullptr, this, nullptr);
@@ -615,7 +618,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	}
 }
 
-void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
+void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format)
 {
 	if(!db_model)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -629,7 +632,7 @@ void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString 
 													 tr("Starting data dictionary generation..."),
 													 ObjectType::BaseObject);
 		progress=1;
-		db_model->saveDataDictionary(path, browsable, split);
+		db_model->saveDataDictionary(path, browsable, split, md_format);
 
 		emit s_progressUpdated(100, tr("Data dictionary successfully saved into `%1'.").arg(path), ObjectType::BaseObject);
 		emit s_exportFinished();
@@ -817,7 +820,7 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
 	return err_codes.contains(error_code);
 }
 
-void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)
+void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs, bool transactional)
 {
 	Connection aux_conn;
 	QString sql_buf=buffer, sql_cmd, aux_cmd, lin, msg,
@@ -826,17 +829,28 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 	std::vector<QString> db_sql_cmds;
 	QTextStream ts;
 	ObjectType obj_type=ObjectType::BaseObject;
-	bool ddl_tk_found=false, is_create=false, is_drop=false;
+	bool ddl_tk_found=false, is_create=false, is_drop=false, in_transaction = false;
 	unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
 			factor=(db_name.isEmpty() ? 70 : 90);
 	int pos=0, pos1=0, comm_cnt=0;
 
 	//Regexp used to extract the object being created
-	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)"),
-			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab)),
-			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+"),
-			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
-			reg_aux;
+	QRegularExpression obj_reg("(CREATE|DROP|ALTER)(.)+(\n)", QRegularExpression::DontCaptureOption),
+
+			tab_obj_reg(QString("^(%1)(.)+(ADD|DROP)( )(COLUMN|CONSTRAINT)( )*").arg(alter_tab),
+									QRegularExpression::DontCaptureOption),
+
+			drop_reg("^((\\-\\-)+( )*)+(DROP)(.)+",
+							 QRegularExpression::DontCaptureOption),
+
+			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab),
+											 QRegularExpression::DontCaptureOption),
+			reg_aux,
+
+			name_rx("^((\".+\")|(\\w|_|\\d)+)(\\.((\".+\")|(\\w|_|\\d)+))*"),
+
+			comm_regexp = QRegularExpression(QString("^(%1)|((--\\s)(%2|object|ALTER|DROP)(.)+)$").arg(Attributes::DdlEndToken, "\\*"),
+																			 QRegularExpression::DontCaptureOption);
 	QRegularExpressionMatch match;
 
 	std::vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
@@ -873,25 +887,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			aux_prog=progress + ((curr_size/static_cast<double>(buf_size)) * factor);
 
 			/* If the simulation mode is off and the drop objects option is checked,
-		 check if the current line matches one of the accepted drop commands
-		 (DROP [OBJECT] or ALTER TABLE...DROP) */
+			 * check if the current line matches one of the accepted drop commands
+			 * (DROP [OBJECT] or ALTER TABLE...DROP) */
 			if(drop_objs && (drop_reg.match(lin).hasMatch() || drop_tab_obj_reg.match(lin).hasMatch()))
 			{
-				comm_cnt=lin.count("--");
-				lin=lin.remove("--").trimmed();
+				comm_cnt = lin.count("--");
+				lin = lin.remove("--").trimmed();
 
 				/* If the count of comment indicators (--) is 1 indicates that the DDL of the
-		   object related to the DROP is enabled, so the DROP is executed otherwise ignored */
-				if(comm_cnt==1)
+				 * object related to the DROP is enabled, so the DROP is executed otherwise ignored */
+				if(comm_cnt == 1)
 				{
-					sql_cmd=lin + "\n";
-					ddl_tk_found=true;
+					sql_cmd = lin + "\n";
+					ddl_tk_found = true;
 				}
 			}
 			else
 			{
-				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
-				lin.remove(QRegularExpression("^(--)+(.)+$"));
+				ddl_tk_found = lin.contains(Attributes::DdlEndToken);
+				lin.remove(comm_regexp);
 
 				//If the line isn't empty after cleanup it will be included on sql command
 				if(!lin.isEmpty())
@@ -906,7 +920,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				if(tab_obj_reg.match(aux_cmd).hasMatch())
 				{
-					aux_cmd.remove('"');
 					aux_cmd.remove("IF EXISTS ");
 					obj_type=(aux_cmd.contains("COLUMN") ? ObjectType::Column : ObjectType::Constraint);
 					reg_aux.setPattern("(COLUMN|CONSTRAINT)( )+");
@@ -957,25 +970,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 						//Removing/replacing noisy keywords in order to extract more easily the object's name
 						if(lin.startsWith("CREATE") || lin.startsWith("ALTER"))
 						{
-							if(obj_tp==ObjectType::Index)
+							if(lin.contains("OR REPLACE"))
+							{
+								lin.remove("OR REPLACE");
+							}
+							else if(obj_tp == ObjectType::Index)
 							{
 								lin.remove("UNIQUE");
 								lin.remove("CONCURRENTLY");
 							}
-							else if(obj_tp==ObjectType::View)
+							else if(obj_tp == ObjectType::View)
 							{
 								lin.remove("MATERIALIZED");
 								lin.remove("RECURSIVE");
 							}
-							else if(obj_tp==ObjectType::Table)
+							else if(obj_tp == ObjectType::Table)
 							{
 								lin.remove("UNLOGGED");
 							}
-							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
-							{
-								lin.remove("OR REPLACE");
-							}
-							else if(obj_tp==ObjectType::Transform)
+							else if(obj_tp == ObjectType::Transform)
 							{
 								lin.remove(" FOR");
 								lin.replace(" LANGUAGE ", "_");
@@ -988,7 +1001,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin.remove("MATERIALIZED");
 						}
 
-						lin=lin.simplified();
+						lin = lin.simplified();
 
 						//Check if the keyword for the current object exists on string
 						reg_aux.setPattern(QString("(CREATE|DROP|ALTER)( )(%1)").arg(BaseObject::getSQLName(obj_tp)));
@@ -996,25 +1009,34 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						if(match.hasMatch())
 						{
-							is_create=lin.startsWith("CREATE");
-							is_drop=(!is_create && lin.startsWith("DROP"));
+							is_create = lin.startsWith("CREATE");
+							is_drop = (!is_create && lin.startsWith("DROP"));
 
 							//Extracts from the line the string starting with the object's name
-							//lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin = lin.mid(match.capturedLength(), sql_cmd.indexOf('\n')).simplified();
-							lin.remove('"');
 
 							if(obj_tp != ObjectType::BaseObject)
 							{
-								if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
+								if(obj_tp != ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 								{
-									int spc_idx=lin.indexOf(' ');
-									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+									match = name_rx.match(lin);
+									obj_name = lin.mid(match.capturedStart(), match.capturedLength());
 
-									if(obj_tp!=ObjectType::Function && obj_tp!=ObjectType::Procedure)
+									if(obj_tp != ObjectType::Function && obj_tp != ObjectType::Procedure)
 									{
-										obj_name=obj_name.remove('(').simplified();
-										obj_name=obj_name.remove(')').simplified();
+										obj_name = obj_name.remove('(').simplified();
+										obj_name = obj_name.remove(')').simplified();
+									}
+
+									if(obj_tp == ObjectType::Trigger || obj_tp == ObjectType::Index)
+									{
+										int on_idx = sql_cmd.indexOf("ON ") + 3,
+												lb_idx = sql_cmd.indexOf('\n', on_idx);
+
+										// Extracting the table name from command so it'll be prepended to object name
+										lin = sql_cmd.mid(on_idx, lb_idx - on_idx);
+										match = name_rx.match(lin);
+										obj_name.prepend(lin.mid(match.capturedStart(), match.capturedLength()) + '.');
 									}
 								}
 								else if(obj_tp == ObjectType::UserMapping)
@@ -1027,15 +1049,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 								}
 
 								//Stores the object type name
-								obj_tp_name=BaseObject::getTypeName(obj_tp);
+								obj_tp_name = BaseObject::getTypeName(obj_tp);
 								obj_name.remove(';');
 
 								if(is_create)
-									msg=tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else if(is_drop)
-									msg=tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 								else
-									msg=tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+									msg = tr("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 							}
 							// If the type of the object being create can't be identified
 							else
@@ -1070,7 +1092,16 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				if(!sql_cmd.isEmpty() && !export_canceled)
 				{
 					if(obj_type != ObjectType::Database)
+					{
+						if(transactional && !in_transaction)
+						{
+							emit s_progressUpdated(aux_prog, tr("Starting transaction."), ObjectType::BaseObject, "");
+							conn.executeDDLCommand("BEGIN");
+							in_transaction = true;
+						}
+
 						conn.executeDDLCommand(sql_cmd);
+					}
 					else
 						//If it's a database level command (e.g. ALTER DATABASE ... RENAME TO ...)
 						db_sql_cmds.push_back(sql_cmd);
@@ -1078,6 +1109,20 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				sql_cmd.clear();
 				ddl_tk_found=false;
+			}
+
+			if(ts.atEnd() && in_transaction)
+			{
+				if(export_canceled)
+				{
+					emit s_progressUpdated(aux_prog, tr("Rolling back changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("ROLLBACK");
+				}
+				else
+				{
+					emit s_progressUpdated(aux_prog, tr("Committing changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("COMMIT");
+				}
 			}
 
 			//Executing the pending database level commands
@@ -1096,6 +1141,19 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 		}
 		catch(Exception &e)
 		{
+			if(conn.isStablished() && in_transaction)
+			{
+				try
+				{
+					emit s_progressUpdated(aux_prog, tr("Rolling back changes."), ObjectType::BaseObject, "");
+					conn.executeDDLCommand("ROLLBACK");
+				}
+				catch(Exception &)
+				{
+					emit s_progressUpdated(aux_prog, tr("Failed to roll back changes!"), ObjectType::BaseObject, "");
+				}
+			}
+
 			if(ddl_tk_found) ddl_tk_found=false;
 			handleSQLError(e, sql_cmd, ignore_dup);
 			sql_cmd.clear();
@@ -1115,7 +1173,7 @@ void ModelExportHelper::updateProgress(int prog, QString object_id, unsigned obj
 	emit s_progressUpdated(aux_prog, object_id, static_cast<ObjectType>(obj_type), "", sender() == db_model);
 }
 
-void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop)
+void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connection *conn, const QString &pgsql_ver, bool ignore_dup, bool drop_db, bool drop_objs, bool simulate, bool use_rand_names, bool force_db_drop, bool transactional)
 {
 	this->db_model = db_model;
 	this->connection = conn;
@@ -1126,12 +1184,13 @@ void ModelExportHelper::setExportToDBMSParams(DatabaseModel *db_model, Connectio
 	this->drop_objs = drop_objs && !drop_db;
 	this->use_tmp_names = use_rand_names;
 	this->force_db_drop = drop_db && force_db_drop;
+	this->transactional = transactional;
 	this->sql_buffer.clear();
 	this->db_name.clear();
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup)
+void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connection *conn, const QString &db_name, bool ignore_dup, bool transactional)
 {
 	this->sql_buffer = sql_buffer;
 	this->connection = conn;
@@ -1139,45 +1198,48 @@ void ModelExportHelper::setExportToDBMSParams(const QString &sql_buffer, Connect
 	this->ignore_dup = ignore_dup;
 	this->simulate = false;
 	this->drop_db = false;
+	this->transactional = transactional;
 	this->use_tmp_names = false;
 	this->errors.clear();
 }
 
-void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode)
+void ModelExportHelper::setExportToSQLParams(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver, bool split, DatabaseModel::CodeGenMode code_gen_mode, bool gen_drop_file)
 {
-	this->db_model=db_model;
-	this->filename=filename;
-	this->pgsql_ver=pgsql_ver;
-	this->split=split;
-	this->code_gen_mode=code_gen_mode;
+	this->db_model = db_model;
+	this->filename = filename;
+	this->pgsql_ver = pgsql_ver;
+	this->split = split;
+	this->code_gen_mode = code_gen_mode;
+	this->gen_drop_file = gen_drop_file;
 }
 
 void ModelExportHelper::setExportToPNGParams(ObjectsScene *scene, QGraphicsView *viewp, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, bool override_bg_color)
 {
-	this->scene=scene;
-	this->viewp=viewp;
-	this->filename=filename;
-	this->zoom=zoom;
-	this->show_grid=show_grid;
-	this->show_delim=show_delim;
-	this->page_by_page=page_by_page;
-	this->override_bg_color=override_bg_color;
+	this->scene = scene;
+	this->viewp = viewp;
+	this->filename = filename;
+	this->zoom = zoom;
+	this->show_grid = show_grid;
+	this->show_delim = show_delim;
+	this->page_by_page = page_by_page;
+	this->override_bg_color = override_bg_color;
 }
 
 void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
-	this->scene=scene;
-	this->filename=filename;
-	this->show_grid=show_grid;
-	this->show_delim=show_delim;
+	this->scene = scene;
+	this->filename = filename;
+	this->show_grid = show_grid;
+	this->show_delim = show_delim;
 }
 
-void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split)
+void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool split, bool md_format)
 {
-	this->db_model=db_model;
-	this->filename=path;
-	this->browsable=browsable;
-	this->split=split;
+	this->db_model = db_model;
+	this->filename = path;
+	this->browsable = browsable;
+	this->split = split;
+	this->md_format = md_format;
 }
 
 void ModelExportHelper::exportToDBMS()
@@ -1187,13 +1249,13 @@ void ModelExportHelper::exportToDBMS()
 		if(sql_buffer.isEmpty())
 		{
 			exportToDBMS(db_model, *connection, pgsql_ver, ignore_dup, drop_db,
-									 drop_objs, simulate, use_tmp_names, force_db_drop);
+									 drop_objs, simulate, use_tmp_names, force_db_drop, transactional);
 		}
 		else
 		{
 			try
 			{
-				exportBufferToDBMS(sql_buffer, *connection);
+				exportBufferToDBMS(sql_buffer, *connection, false, transactional);
 
 				if(export_canceled)
 					emit s_exportCanceled();
@@ -1239,7 +1301,7 @@ void ModelExportHelper::exportToSQL()
 {
 	try
 	{
-		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode);
+		exportToSQL(db_model, filename, pgsql_ver, split, code_gen_mode, gen_drop_file);
 		resetExportParams();
 	}
 	catch(Exception &e)
@@ -1252,7 +1314,7 @@ void ModelExportHelper::exportToDataDict()
 {
 	try
 	{
-		exportToDataDict(db_model, filename, browsable, split);
+		exportToDataDict(db_model, filename, browsable, split, md_format);
 		resetExportParams();
 	}
 	catch(Exception &e)

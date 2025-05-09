@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreigndatawrapperwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel;
 
-		ObjectsTableWidget *options_tab;
+		CustomTableWidget *options_tab;
 
 	public:
 		ForeignDataWrapperWidget(QWidget * parent = nullptr);

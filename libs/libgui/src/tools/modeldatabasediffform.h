@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,12 +36,14 @@
 #include "widgets/fileselectorwidget.h"
 #include "widgets/objectsfilterwidget.h"
 #include "widgets/searchreplacewidget.h"
+#include "widgets/objecttypeslistwidget.h"
+#include "widgets/debugoutputwidget.h"
 #include <QThread>
 
 class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
 		enum ThreadId {
 			SrcImportThread,
@@ -56,11 +58,17 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 
 		static std::map<QString, attribs_map> config_params;
 
+		static const QString ForceObjsBtnLabel;
+
+		DebugOutputWidget *dbg_output_wgt;
+
 		QEventLoop event_loop;
 
 		bool is_adding_new_preset;
 
 		NumberedTextEditor *sqlcode_txt;
+
+		ObjectTypesListWidget *forced_obj_types_wgt;
 
 		FileSelectorWidget *file_sel;
 
@@ -149,10 +157,6 @@ class __libgui ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelD
 		/*! \brief When performing a partial diff between a model and database this method fills a vector with the
 		 * filtered objects in the source database model */
 		void getFilteredObjects(std::vector<BaseObject *> &objects);
-
-		/*! \brief When performing a partial diff between two databases this method fills a map with the
-		 * filtered objects (type -> oids) in the database */
-		//void getFilteredObjects(std::map<ObjectType, std::vector<unsigned> > &obj_oids);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);

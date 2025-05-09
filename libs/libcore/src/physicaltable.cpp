@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 	}
 }
 
-void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols)
+void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool incl_rel_added_cols, bool incl_constraints)
 {
 	QStringList cols, inh_cols;
 
@@ -251,7 +251,7 @@ void PhysicalTable::setColumnsAttribute(SchemaParser::CodeType def_type, bool in
 			{
 				constr = dynamic_cast<Constraint *>(obj);
 
-				if(!constr->isSQLDisabled() &&
+				if(incl_constraints && !constr->isSQLDisabled() &&
 					 constr->getConstraintType() != ConstraintType::ForeignKey)
 				{
 					has_constr_enabled = true;
@@ -377,19 +377,6 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 	{
 		int idx;
 		obj_type=obj->getObjectType();
-
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: table children objects creation limit."
-		std::vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
-
-		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
-			throw Exception(tr("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
-							.arg(GlobalAttributes::MaxObjectCount)
-							.arg(BaseObject::getTypeName(obj_type)),
-							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-#endif
 
 		try
 		{
@@ -1013,17 +1000,17 @@ PhysicalTable *PhysicalTable::getAncestorTable(unsigned idx)
 
 Constraint *PhysicalTable::getPrimaryKey()
 {
-	unsigned count,i;
-	Constraint *pk=nullptr, *constr=nullptr;
+	Constraint *constr = nullptr;
 
-	count=constraints.size();
-	for(i=0; i < count && !pk; i++)
+	for(auto &tab_obj : constraints)
 	{
-		constr=dynamic_cast<Constraint *>(constraints[i]);
-		pk=(constr->getConstraintType()==ConstraintType::PrimaryKey ? constr : nullptr);
+		constr = dynamic_cast<Constraint *>(tab_obj);
+
+		if(constr->getConstraintType() == ConstraintType::PrimaryKey)
+			return constr;
 	}
 
-	return pk;
+	return nullptr;
 }
 
 Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
@@ -1378,7 +1365,7 @@ void PhysicalTable::updateAlterCmdsStatus()
 																			 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
-void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs)
+void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool incl_rel_added_objs, bool incl_contraints)
 {
 	QStringList part_keys_code;
 
@@ -1408,8 +1395,11 @@ void PhysicalTable::setTableAttributes(SchemaParser::CodeType def_type, bool inc
 	if(tag && def_type==SchemaParser::XmlCode)
 		attributes[Attributes::Tag]=tag->getSourceCode(def_type, true);
 
-	setColumnsAttribute(def_type, incl_rel_added_objs);
-	setConstraintsAttribute(def_type);
+	setColumnsAttribute(def_type, incl_rel_added_objs, incl_contraints);
+
+	if(incl_contraints)
+		setConstraintsAttribute(def_type);
+
 	setAncestorTableAttribute();
 
 	if(def_type==SchemaParser::XmlCode)
@@ -1726,16 +1716,13 @@ unsigned PhysicalTable::getMaxObjectCount()
 	return max;
 }
 
-QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_attribs)
+QString PhysicalTable::getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs)
 {
 	Column *column = nullptr;
 	attribs_map attribs, aux_attrs;
-	QStringList tab_names, aux_list, attr_names = { Attributes::Columns, Attributes::Constraints,
+	QStringList tab_names, attr_names = { Attributes::Columns, Attributes::Constraints,
 																									Attributes::Triggers, Attributes::Indexes };
-
-	QString tab_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, BaseObject::getSchemaName(ObjectType::Table)),
-			link_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Link),
-			objs_dict_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Objects);
+	QString	link_dict_file = GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Link);
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
@@ -1787,25 +1774,24 @@ QString PhysicalTable::getDataDictionary(bool split, const attribs_map &extra_at
 			aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? CoreUtilsNs::DataDictCheckMark : "";
 			aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? CoreUtilsNs::DataDictCheckMark : "";
 			aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? CoreUtilsNs::DataDictCheckMark : "";
-			attribs[Attributes::Columns] += column->getDataDictionary(aux_attrs);
+			attribs[Attributes::Columns] += column->getDataDictionary(md_format, aux_attrs);
 		}
 
 		for(auto &obj : constraints)
 		{
 			attribs[Attributes::Constraints] +=
-					dynamic_cast<Constraint *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+					dynamic_cast<Constraint *>(obj)->getDataDictionary(md_format, {{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
 		for(auto &obj : triggers)
 		{
 			attribs[Attributes::Triggers] +=
-					dynamic_cast<Trigger *>(obj)->getDataDictionary({{ Attributes::Split, attribs[Attributes::Split] }});
+					dynamic_cast<Trigger *>(obj)->getDataDictionary(md_format, {{ Attributes::Split, attribs[Attributes::Split] }});
 		}
 
-		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																																		Attributes::Objects), attribs);
+		attribs[Attributes::Objects] += schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, Attributes::Objects), attribs);
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(tab_dict_file, attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, BaseObject::getSchemaName(ObjectType::Table)), attribs);
 	}
 	catch(Exception &e)
 	{

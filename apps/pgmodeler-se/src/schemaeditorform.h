@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,17 +25,16 @@
 #ifndef SCHEMA_EDITOR_FORM_H
 #define SCHEMA_EDITOR_FORM_H
 
-#include <QObject>
-#include <QWidget>
+#include <QMenu>
 #include "ui_schemaeditorform.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/fileselectorwidget.h"
 
 class SchemaEditorForm: public QWidget, public Ui::SchemaEditorForm {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString UntitledFile;
 
 		NumberedTextEditor *syntax_txt, *dtd_txt;

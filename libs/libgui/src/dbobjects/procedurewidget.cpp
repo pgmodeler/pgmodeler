@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@ ProcedureWidget::ProcedureWidget(QWidget *parent): BaseFunctionWidget(parent, Ob
 	func_config_twg->widget(0)->layout()->addItem(new QSpacerItem(20, 20, QSizePolicy::Preferred, QSizePolicy::Expanding));
 	configureFormLayout(base_function_grid, ObjectType::Procedure);
 
-	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, __slot(this, ProcedureWidget::showParameterForm));
-	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, __slot(this, ProcedureWidget::showParameterForm));
-	connect(parameters_tab, &ObjectsTableWidget::s_rowDuplicated, this, &ProcedureWidget::duplicateParameter);
+	connect(parameters_tab, &CustomTableWidget::s_rowAdded, this, __slot(this, ProcedureWidget::showParameterForm));
+	connect(parameters_tab, &CustomTableWidget::s_rowEdited, this, __slot(this, ProcedureWidget::showParameterForm));
+	connect(parameters_tab, &CustomTableWidget::s_rowDuplicated, this, &ProcedureWidget::duplicateParameter);
 
 	configureTabOrder();
 	setMinimumSize(650, 700);

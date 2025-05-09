@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,20 +25,19 @@
 #ifndef COLUMN_PICKER_WIDGET_H
 #define COLUMN_PICKER_WIDGET_H
 
-#include <QWidget>
 #include "ui_columnpickerwidget.h"
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
 #include "simplecolumn.h"
 #include "column.h"
 
 class __libgui ColumnPickerWidget: public QWidget, public Ui::ColumnPickerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Stores the object in which the columns to be listed will be retrieved (must be a table or relationship)
 		BaseObject *parent_obj;
 
-		ObjectsTableWidget *columns_tab;
+		CustomTableWidget *columns_tab;
 
 		//! \brief Adds the column to the specified row in the columns grid
 		void addColumn(Column *column, int row);

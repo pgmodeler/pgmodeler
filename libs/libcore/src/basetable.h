@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ class __libcore BaseTable: public BaseGraphicObject {
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).
 		 * The split parameter is used to inform the generation process that the dicts are being
 		 * saved in separated files. This changes the way links are generated inside the data dictionaries */
-		virtual QString getDataDictionary(bool split, const attribs_map &extra_attribs = {}) = 0;
+		virtual QString getDataDictionary(bool split, bool md_format, const attribs_map &extra_attribs = {}) = 0;
 
 		virtual void setCodeInvalidated(bool value) override;
 

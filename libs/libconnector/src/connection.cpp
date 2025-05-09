@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,47 +18,44 @@
 
 #include "connection.h"
 #include <QTextStream>
-#include <iostream>
 #include "globalattributes.h"
 #include "pgsqlversions.h"
 #include "exception.h"
 
-const QString Connection::SslDisable("disable");
-const QString Connection::SslAllow("allow");
-const QString Connection::SslPrefer("prefer");
-const QString Connection::SslRequire("require");
-const QString Connection::SslCaVerify("verify-ca");
-const QString Connection::SslFullVerify("verify-full");
-
-const QString Connection::ParamAlias("alias");
-const QString Connection::ParamApplicationName("application_name");
-const QString Connection::ParamServerFqdn("host");
-const QString Connection::ParamServerIp("hostaddr");
-const QString Connection::ParamPort("port");
-const QString Connection::ParamDbName("dbname");
-const QString Connection::ParamUser("user");
-const QString Connection::ParamPassword("password");
-const QString Connection::ParamConnTimeout("connect_timeout");
-const QString Connection::ParamOthers("options");
-const QString Connection::ParamSslMode("sslmode");
-const QString Connection::ParamSslCert("sslcert");
-const QString Connection::ParamSslKey("sslkey");
-const QString Connection::ParamSslRootCert("sslrootcert");
-const QString Connection::ParamSslCrl("sslcrl");
-const QString Connection::ParamKerberosServer("krbsrvname");
-const QString Connection::ParamLibGssapi("gsslib");
-const QString Connection::ParamSetRole("setrole");
-
-const QString Connection::ServerPid("server-pid");
-const QString Connection::ServerProtocol("server-protocol");
-const QString Connection::ServerVersion("server-version");
-
-bool Connection::notice_enabled=false;
-bool Connection::print_sql=false;
-bool Connection::silence_conn_err=true;
-bool Connection::ignore_db_version=false;
-
 QStringList Connection::notices;
+
+bool Connection::notice_enabled {false};
+bool Connection::print_sql {false};
+bool Connection::silence_conn_err {true};
+bool Connection::ignore_db_version {false};
+
+const QString	Connection::ParamAlias {"alias"};
+const QString	Connection::ParamApplicationName {"application_name"};
+const QString	Connection::ParamServerFqdn {"host"};
+const QString	Connection::ParamServerIp {"hostaddr"};
+const QString	Connection::ParamPort {"port"};
+const QString	Connection::ParamDbName {"dbname"};
+const QString	Connection::ParamUser {"user"};
+const QString	Connection::ParamPassword {"password"};
+const QString	Connection::ParamConnTimeout {"connect_timeout"};
+const QString	Connection::ParamOthers {"options"};
+const QString	Connection::ParamSslMode {"sslmode"};
+const QString	Connection::ParamSslCert {"sslcert"};
+const QString	Connection::ParamSslKey {"sslkey"};
+const QString	Connection::ParamSslRootCert {"sslrootcert"};
+const QString	Connection::ParamSslCrl {"sslcrl"};
+const QString	Connection::ParamKerberosServer {"krbsrvname"};
+const QString	Connection::ParamLibGssapi {"gsslib"};
+const QString	Connection::ParamSetRole {"setrole"};
+const QString	Connection::SslDisable {"disable"};
+const QString	Connection::SslAllow {"allow"};
+const QString	Connection::SslPrefer {"prefer"};
+const QString	Connection::SslRequire {"require"};
+const QString	Connection::SslCaVerify {"verify-ca"};
+const QString	Connection::SslFullVerify {"verify-full"};
+const QString	Connection::ServerVersion {"server-version"};
+const QString	Connection::ServerProtocol {"server-protocol"};
+const QString	Connection::ServerPid {"server-pid"};
 
 Connection::Connection()
 {
@@ -450,8 +447,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
 	{
-		QTextStream out(stdout);
-		out << "\n---\n" << sql << Qt::endl;
+		qDebug().noquote() << "\n---\n" << sql;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -489,8 +485,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
 	{
-		QTextStream out(stdout);
-		out << "\n---\n" << sql << Qt::endl;
+		qDebug().noquote() << "\n---\n" << sql;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful

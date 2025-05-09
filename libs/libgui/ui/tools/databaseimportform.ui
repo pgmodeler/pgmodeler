@@ -3,7 +3,7 @@
  <class>DatabaseImportForm</class>
  <widget class="QDialog" name="DatabaseImportForm">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModality::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -35,7 +35,7 @@
    <string>Import database</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../res/resources.qrc">
+   <iconset resource="../../res/logoicons.qrc">
     <normaloff>:/icons/icons/pgmodeler_logo.png</normaloff>:/icons/icons/pgmodeler_logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_24">
@@ -66,10 +66,10 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
@@ -134,7 +134,7 @@
           <item row="0" column="0">
            <widget class="QSplitter" name="splitter">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="handleWidth">
              <number>4</number>
@@ -150,7 +150,7 @@
               <item>
                <widget class="QGroupBox" name="connection_gb">
                 <property name="focusPolicy">
-                 <enum>Qt::TabFocus</enum>
+                 <enum>Qt::FocusPolicy::TabFocus</enum>
                 </property>
                 <property name="title">
                  <string>Co&amp;nnection</string>
@@ -180,7 +180,7 @@
                     </sizepolicy>
                    </property>
                    <property name="sizeAdjustPolicy">
-                    <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                    <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -202,10 +202,10 @@
                  </sizepolicy>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="tabPosition">
-                 <enum>QTabWidget::South</enum>
+                 <enum>QTabWidget::TabPosition::South</enum>
                 </property>
                 <property name="currentIndex">
                  <number>0</number>
@@ -236,28 +236,6 @@
                   <property name="spacing">
                    <number>5</number>
                   </property>
-                  <item row="11" column="0" colspan="5">
-                   <widget class="QCheckBox" name="debug_mode_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt;All catalog queries as well the created objects' source code are printed to standard output (stdout).&lt;/p&gt;</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Debug mode</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="5" column="0" colspan="5">
                    <widget class="QCheckBox" name="rand_rel_color_chk">
                     <property name="sizePolicy">
@@ -280,8 +258,8 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="9" column="0" colspan="5">
-                   <widget class="QCheckBox" name="import_ext_objs_chk">
+                  <item row="11" column="0" colspan="5">
+                   <widget class="QCheckBox" name="debug_mode_chk">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -289,7 +267,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;p&gt;Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.&lt;/p&gt;</string>
+                     <string>&lt;p&gt;All catalog queries and the created objects' source code are printed on the standard output (stdout) and the &lt;strong&gt;Debug&lt;/strong&gt; tab. This option prevents the automatic closing of the import dialog when the reverse engineering process finishes.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -298,56 +276,22 @@
                      <string/>
                     </property>
                     <property name="text">
-                     <string>Import extension objects</string>
+                     <string>Debug mode</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="10" column="0" colspan="5">
-                   <widget class="QCheckBox" name="ignore_errors_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
+                  <item row="14" column="0" colspan="6">
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Vertical</enum>
                     </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt; pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.&lt;/p&gt;</string>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>302</width>
+                      <height>168</height>
+                     </size>
                     </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Ignore import errors</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="0" colspan="5">
-                   <widget class="QCheckBox" name="resolve_deps_chk">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;p&gt;Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.&lt;/p&gt;</string>
-                    </property>
-                    <property name="statusTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string/>
-                    </property>
-                    <property name="text">
-                     <string>Automatically resolve dependencies</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
+                   </spacer>
                   </item>
                   <item row="12" column="0">
                    <widget class="QCheckBox" name="import_to_model_chk">
@@ -358,7 +302,7 @@
                      </sizepolicy>
                     </property>
                     <property name="toolTip">
-                     <string>&lt;p&gt;Create all imported objects in the current working model instead of create a new one.&lt;/p&gt;</string>
+                     <string>&lt;p&gt;Create all imported objects in the current working model instead of creating a new one. This option implies in ignoring any import error.&lt;/p&gt;</string>
                     </property>
                     <property name="statusTip">
                      <string/>
@@ -370,19 +314,6 @@
                      <bool>false</bool>
                     </property>
                    </widget>
-                  </item>
-                  <item row="14" column="0" colspan="6">
-                   <spacer name="verticalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>302</width>
-                      <height>168</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                   <item row="8" column="0" colspan="5">
                    <widget class="QCheckBox" name="import_sys_objs_chk">
@@ -403,13 +334,6 @@
                     </property>
                     <property name="text">
                      <string>Import system objects</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="0">
-                   <widget class="QCheckBox" name="comments_as_aliases_chk">
-                    <property name="text">
-                     <string>Use objects' comments as aliases</string>
                     </property>
                    </widget>
                   </item>
@@ -489,7 +413,7 @@
                       <item>
                        <spacer name="horizontalSpacer_2">
                         <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
+                         <enum>Qt::Orientation::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
@@ -502,6 +426,82 @@
                      </layout>
                     </item>
                    </layout>
+                  </item>
+                  <item row="6" column="0" colspan="5">
+                   <widget class="QCheckBox" name="resolve_deps_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Automatically resolve dependencies</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="7" column="0">
+                   <widget class="QCheckBox" name="comments_as_aliases_chk">
+                    <property name="text">
+                     <string>Use objects' comments as aliases</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="10" column="0" colspan="5">
+                   <widget class="QCheckBox" name="ignore_errors_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt; pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Ignore import errors</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="9" column="0" colspan="5">
+                   <widget class="QCheckBox" name="import_ext_objs_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import extension objects</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -525,7 +525,7 @@
               </sizepolicy>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::TabFocus</enum>
+              <enum>Qt::FocusPolicy::TabFocus</enum>
              </property>
              <property name="title">
               <string>&amp;Database</string>
@@ -561,10 +561,10 @@
                  </size>
                 </property>
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::Shape::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
+                 <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_5">
                  <property name="leftMargin">
@@ -600,7 +600,7 @@
                     <string/>
                    </property>
                    <property name="textFormat">
-                    <enum>Qt::AutoText</enum>
+                    <enum>Qt::TextFormat::AutoText</enum>
                    </property>
                    <property name="pixmap">
                     <pixmap resource="../../res/resources.qrc">:/icons/icons/alert.png</pixmap>
@@ -645,10 +645,10 @@
                    </sizepolicy>
                   </property>
                   <property name="insertPolicy">
-                   <enum>QComboBox::InsertAlphabetically</enum>
+                   <enum>QComboBox::InsertPolicy::InsertAlphabetically</enum>
                   </property>
                   <property name="sizeAdjustPolicy">
-                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                   <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -792,7 +792,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../../res/resources.qrc">
-                       <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
+                       <normaloff>:/icons/icons/expandtree.png</normaloff>:/icons/icons/expandtree.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -830,7 +830,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../../res/resources.qrc">
-                       <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
+                       <normaloff>:/icons/icons/collapsetree.png</normaloff>:/icons/icons/collapsetree.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -952,19 +952,19 @@
                         </size>
                        </property>
                        <property name="frameShadow">
-                        <enum>QFrame::Sunken</enum>
+                        <enum>QFrame::Shadow::Sunken</enum>
                        </property>
                        <property name="editTriggers">
-                        <set>QAbstractItemView::NoEditTriggers</set>
+                        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                        </property>
                        <property name="alternatingRowColors">
                         <bool>true</bool>
                        </property>
                        <property name="selectionMode">
-                        <enum>QAbstractItemView::NoSelection</enum>
+                        <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
                        </property>
                        <property name="selectionBehavior">
-                        <enum>QAbstractItemView::SelectRows</enum>
+                        <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
                        </property>
                        <property name="iconSize">
                         <size>
@@ -973,7 +973,7 @@
                         </size>
                        </property>
                        <property name="textElideMode">
-                        <enum>Qt::ElideRight</enum>
+                        <enum>Qt::TextElideMode::ElideRight</enum>
                        </property>
                        <property name="rootIsDecorated">
                         <bool>true</bool>
@@ -1040,16 +1040,16 @@
                      <bool>true</bool>
                     </property>
                     <property name="editTriggers">
-                     <set>QAbstractItemView::NoEditTriggers</set>
+                     <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
                     <property name="selectionMode">
-                     <enum>QAbstractItemView::NoSelection</enum>
+                     <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
                     </property>
                     <property name="selectionBehavior">
-                     <enum>QAbstractItemView::SelectRows</enum>
+                     <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
                     </property>
                     <property name="iconSize">
                      <size>
@@ -1058,7 +1058,7 @@
                      </size>
                     </property>
                     <property name="gridStyle">
-                     <enum>Qt::SolidLine</enum>
+                     <enum>Qt::PenStyle::SolidLine</enum>
                     </property>
                     <property name="sortingEnabled">
                      <bool>true</bool>
@@ -1108,7 +1108,7 @@
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="1" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
              <number>5</number>
@@ -1152,7 +1152,7 @@
                <bool>true</bool>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -1194,7 +1194,7 @@
                </size>
               </property>
               <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
+               <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
               </property>
              </widget>
             </item>
@@ -1213,7 +1213,7 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="0" colspan="2">
+          <item row="1" column="0" colspan="2">
            <widget class="QTreeWidget" name="output_trw">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1222,19 +1222,19 @@
              </sizepolicy>
             </property>
             <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAsNeeded</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::AdjustToContents</enum>
+             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
             </property>
             <property name="editTriggers">
-             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+             <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
             <property name="selectionMode">
-             <enum>QAbstractItemView::SingleSelection</enum>
+             <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
             </property>
             <property name="iconSize">
              <size>
@@ -1262,6 +1262,31 @@
            </widget>
           </item>
          </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="icon">
+          <iconset resource="../../res/resources.qrc">
+           <normaloff>:/icons/icons/debug.png</normaloff>:/icons/icons/debug.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Debug</string>
+         </attribute>
+         <widget class="QWidget" name="search_wgt_parent" native="true">
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>596</y>
+            <width>900</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -1301,7 +1326,7 @@
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -1405,6 +1430,7 @@
   <tabstop>filtered_objs_view</tabstop>
  </tabstops>
  <resources>
+  <include location="../../res/logoicons.qrc"/>
   <include location="../../res/resources.qrc"/>
   <include location="../../res/resources.qrc"/>
  </resources>

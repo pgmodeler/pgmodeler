@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@
 
 #include "coreglobal.h"
 #include "attributes.h"
+#include "globalattributes.h"
 #include "schemaparser.h"
-#include <map>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
-#include <type_traits>
 #include "enumtype.h"
 #include "exception.h"
+#include "pgsqlversions.h"
 
 enum class ObjectType: unsigned {
 	Column,
@@ -91,10 +91,10 @@ class __libcore BaseObject {
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		static bool escape_comments;
+		static bool escape_comments,
 
 		//! \brief Indicates if the dependences/references of the object must be erased on the destructor
-		static bool clear_deps_in_dtor;
+		clear_deps_in_dtor;
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
@@ -105,8 +105,8 @@ class __libcore BaseObject {
 		//! \brief Stores the objects that references the "this" object
 		std::vector<BaseObject *> object_refs,
 
-				//! \brief Stores the objects that "this" object depends on to create a valid SQL code
-				object_deps;
+		//! \brief Stores the objects that "this" object depends on to create a valid SQL code
+		object_deps;
 
 		/*! \brief Indicates if the dependences/references of the object must be erased on the destructor
 		 *  This is useful to avoid calling the method clearAllDepsRefs() when destroying the entire
@@ -121,17 +121,28 @@ class __libcore BaseObject {
 		static bool ignore_db_version;
 
 		/*! \brief This static attribute is used to generate the unique identifier for objects.
-		 As object instances are created this value ​​are incremented. In some classes
-		 like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
-		 used each with a custom different numbering range (see cited classes declaration). */
+		 * As object instances are created this value is incremented. In some classes
+		 * like Schema, DatabaseModel, Tablespace, Role, Type and Function id generators are
+		 * used each with a custom different numbering range.
+		 *
+		 * Initializes the global id which is shared between instances
+		 * of classes derived from the this class. The value of global_id
+		 * starts at 5k because the id ranges 0, 1k, 2k, 3k, 4k
+		 * are respectively assigned to objects of classes Role, Tablespace
+		 * DatabaseModel, Schema, Tag */
 		static unsigned global_id;
 
 		/*! \brief Stores the unique identifier for the object. This id is nothing else
-		 than the current value of global_id. This identifier is used
-		 to know the chronological order of the creation of each object in the model
-		 because the generation and reading of the XML code is completely tied to the order
-		 in which the objects were created */
-		unsigned object_id;
+		 * than the current value of global_id. This identifier is used
+		 * to know the chronological order of the creation of each object in the model
+		 * because the generation and reading of the XML code is completely tied to the order
+		 * in which the objects were created */
+		unsigned object_id,
+
+		/*! \brief This is a transient field that is filled up during the reverse engineering process.
+		 *  It holds the OID of the object in a PostgreSQL database. It is completely different from
+		 *  object_id attribute. Currently, this attribute is used by DatabaseModel::getObjectByOid. */
+		pg_oid;
 
 		//! \brief Objects type count declared on enum ObjectType
 		static constexpr unsigned ObjectTypeCount=enum_t(ObjectType::BaseTable) + 1;
@@ -176,17 +187,20 @@ class __libcore BaseObject {
 			Signature // Original name prefixed by the schema's name (both formatted)
 		};
 
-		/*! \brief This map stores the name of each object type associated to a schema file
-		 that generates the object's code definition */
-		static const QString objs_schemas[ObjectTypeCount];
+		/*! \brief This list stores the name of each object type associated to a schema file
+		 * that generates the object's code definition.
+		 *
+		 * CAUTION: If both amount and order of the object type enumerations are modified
+		 * then the order and amount of the elements of this vector must also be modified */
+		static const QString objs_schemas[ObjectTypeCount],
 
 		/*! \brief This map associates the object type to a keyword on
 		 SQL language that represents the object */
-		static const QString objs_sql[ObjectTypeCount];
+		objs_sql[ObjectTypeCount],
 
 		/*! \brief Stores the name of the type of objects to be used in error messages formatting
 		 and others operations that envolves object type name */
-		static const QString obj_type_names[ObjectTypeCount];
+		obj_type_names[ObjectTypeCount];
 
 		//! \brief This map stores the translate human readable names of each search attribute use by the object
 		static const attribs_map search_attribs_i18n;
@@ -360,8 +374,11 @@ class __libcore BaseObject {
 		The string parameter is the value returned by getSchemaName() */
 		static QString getTypeName(const QString &type_str);
 
-		//! \brief Returns the object's type related to the passed type name
-		static ObjectType getObjectType(const QString &type_name);
+		/*! \brief Returns the object's type related to the passed type name.
+		 *  If the flag is_sql_name is true then the method tries to identify the type
+		 *  from the SQL name of the object otherwise it tries to identify by comparing
+		 *  with objects' schema names */
+		static ObjectType getObjectType(const QString &type_name, bool is_sql_name = false);
 
 		/*! \brief Returns the schema identifier used to generate the code definition related to the
 		 passed object type */
@@ -525,6 +542,9 @@ class __libcore BaseObject {
 		//! \brief Returns if the specified type accepts the use of DROP commands
 		static bool acceptsDropCommand(ObjectType obj_type);
 
+		//! \brief Returns if the object accepts the use of CREATE OR REPLACE commands
+		static bool acceptsReplaceCommand(ObjectType obj_type);
+
 		//! \brief Returns if the specified type accepts an alias (friendly name)
 		static bool acceptsAlias(ObjectType obj_type);
 
@@ -552,11 +572,20 @@ class __libcore BaseObject {
 		//! \brief Returns if the object accepts the use of DROP commands
 		bool acceptsDropCommand();
 
+		//! \brief Returns if the object accepts the use of CREATE OR REPLACE commands
+		virtual bool acceptsReplaceCommand();
+
 		//! \brief Returns if the object accepts the use of alias
 		bool acceptsAlias();
 
 		//! \brief Returns if the object accepts comment
 		bool acceptsComment();
+
+		//! \brief Defines the OID of the object in the PostgreSQL database
+		void setPgOid(unsigned oid);
+
+		//! \brief Returns the OID of the object in the PostgreSQL database
+		unsigned getPgOid();
 
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@
 #include "ui_functionwidget.h"
 
 class __libgui FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QWidget *ret_type_parent;
 
 		//! \brief Widget used to configure the function's return type
 		PgSQLTypeWidget *ret_type;
 
 		//! \brief Table that represents the table returned by the function
-		ObjectsTableWidget *return_tab;
+		CustomTableWidget *return_tab;
 
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction();

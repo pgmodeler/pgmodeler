@@ -20,6 +20,12 @@
 	[ max-obj-count=] "{max-obj-count}"
 %end
 
+$br $tb 
+
+[ gen-disabled-objs-code=] "{gen-disabled-objs-code}"
+
+[ show-sys-schemas-rects=] "{show-sys-schemas-rects}"
+
 %if {last-position} %or {last-position} %or {scene-rect} %then
 	$br $tb
 

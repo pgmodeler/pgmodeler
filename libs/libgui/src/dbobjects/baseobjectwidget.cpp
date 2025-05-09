@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
 		QString str_aux = " <span style='color: #ff0000;'>*</span> ";
-		QColor border_color = ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RemovedItemBgColor);
+		QColor border_color = CustomTableWidget::getTableItemColor(CustomTableWidget::RemovedItemBgColor);
 
 		if(lbl || pgtype || grp)
 		{
@@ -369,7 +369,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		obj_type=object->getObjectType();
 		object_protected=(parent_type!=ObjectType::Relationship &&
 																	 (object->isProtected() ||
-																		((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
+																		(TableObject::isTableObject(obj_type) &&
 																		 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
@@ -770,7 +770,7 @@ void BaseObjectWidget::applyConfiguration()
 		}
 		catch(Exception &e)
 		{
-			qApp->restoreOverrideCursor();
+			//qApp->restoreOverrideCursor();
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
@@ -864,7 +864,7 @@ void BaseObjectWidget::finishConfiguration()
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
 		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)

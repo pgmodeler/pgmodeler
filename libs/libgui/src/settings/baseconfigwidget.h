@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@
 #include <QWidget>
 
 class __libgui BaseConfigWidget: public QWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		bool config_changed;
 		
 	protected:
@@ -67,11 +67,13 @@ class __libgui BaseConfigWidget: public QWidget {
 		 * If incl_elem_name = false then the resulting attribs map would contain only 2 elements for font and objects,
 		 * because we have two elements identified by "obj1" and "obj2". Now, when incl_elem_name=true the resulting attribs map
 		 * would contain four elements which keys are font-obj1, font-obj2, object-obj1, object-obj2. */
-		void loadConfiguration(const QString &filename, const QString &dtd, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);
+		void loadConfiguration(const QString &filename, const QString &dtd, std::map<QString, attribs_map> &config_params,
+													 const QStringList &key_attribs = {}, bool incl_elem_name = false);
 
 		/*! \brief This is a convinience method that takes only the configuration file id instead of the filename and the DTD root element name.
 		 *  The conf_id is used to identify both the config file and its related DTD file. */
-		void loadConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params, const QStringList &key_attribs={}, bool incl_elem_name = false);
+		void loadConfiguration(const QString &conf_id, std::map<QString, attribs_map> &config_params,
+													 const QStringList &key_attribs={}, bool incl_elem_name = false);
 		
 		//! \brief Get a configuratoin key from the xml parser
 		void getConfigurationParams(std::map<QString, attribs_map> &config_params, const QStringList &key_attribs = {}, bool incl_elem_name = false);

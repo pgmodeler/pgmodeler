@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@
 #include "csvloadwidget.h"
 
 class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		CsvLoadWidget *csv_load_wgt;
 
 		/*! \brief Stores the remaining column names not used in the grid.
@@ -79,7 +79,7 @@ class __libgui TableDataWidget: public BaseObjectWidget, public Ui::TableDataWid
 		void clearColumns();
 		void changeColumnName(int col_idx);
 		void enableButtons();
-		void handleItemPressed();
+		void showItemContextMenu(const QPoint &pos);
 };
 
 #endif

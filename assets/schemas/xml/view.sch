@@ -9,6 +9,9 @@
 %if {materialized} %then [ materialized=] "true" %end
 %if {recursive} %then [ recursive=] "true" %end
 %if {with-no-data} %then [ with-no-data=] "true" %end
+%if {check-option} %then [ check-option=] "{check-option}" %end
+%if {security-invoker} %then [ security-invoker=] "{security-invoker}" %end
+%if {security-barrier} %then [ security-barrier=] "{security-barrier}" %end
 %if {sql-disabled} %then [ sql-disabled=] "true" %end
 %if {collapse-mode} %then [ collapse-mode=] "{collapse-mode}" %end
 %if {pagination} %then [ pagination=] "true" %end

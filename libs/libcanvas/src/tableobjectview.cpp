@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,17 +25,18 @@
 #include "physicaltable.h"
 #include "utilsns.h"
 
-bool TableObjectView::hide_sch_name_usr_type = false;
-const QString TableObjectView::TypeSeparator(" ");
-const QString TableObjectView::ConstrSeparator(" ");
-const QString TableObjectView::TextUnique("uq");
-const QString TableObjectView::TextExclude("ex");
-const QString TableObjectView::TextCheck("ck");
-const QString TableObjectView::TextPrimaryKey("pk");
-const QString TableObjectView::TextForeignKey("fk");
-const QString TableObjectView::TextNotNull("nn");
-const QString TableObjectView::ConstrDelimStart("«");
-const QString TableObjectView::ConstrDelimEnd("»");
+bool TableObjectView::hide_sch_name_usr_type {false};
+
+const QString	TableObjectView::TypeSeparator {" "};
+const QString	TableObjectView::ConstrSeparator {" "};
+const QString	TableObjectView::TextUnique {"uq"};
+const QString	TableObjectView::TextExclude {"ex"};
+const QString	TableObjectView::TextCheck {"ck"};
+const QString	TableObjectView::TextPrimaryKey {"pk"};
+const QString	TableObjectView::TextForeignKey {"fk"};
+const QString	TableObjectView::TextNotNull {"nn"};
+const QString	TableObjectView::ConstrDelimStart {"«"};
+const QString	TableObjectView::ConstrDelimEnd {"»"};
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {

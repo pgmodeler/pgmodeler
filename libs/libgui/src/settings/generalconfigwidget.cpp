@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 #include "tools/databaseimportform.h"
 #include "tools/modelexportform.h"
 
-std::map<QString, attribs_map> GeneralConfigWidget::config_params;
 std::map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
+std::map<QString, attribs_map> GeneralConfigWidget::config_params;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -515,7 +515,8 @@ void GeneralConfigWidget::saveConfiguration()
 			}
 			else if(itr->first==Attributes::Validator ||
 							itr->first==Attributes::ObjectFinder ||
-							itr->first==Attributes::SqlTool)
+							itr->first==Attributes::SqlTool ||
+							itr->first==Attributes::LayersConfig)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
@@ -686,11 +687,9 @@ void GeneralConfigWidget::setConfigurationChanged(bool changed)
 
 void GeneralConfigWidget::resetDialogsSizes()
 {
-	Messagebox msg_box;
-	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
-						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	int res = Messagebox::confirm(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"));
 
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 		widgets_geom.clear();
 }
 

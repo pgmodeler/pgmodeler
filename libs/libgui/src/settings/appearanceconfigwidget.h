@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@
 #include <algorithm>
 
 class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConfigWidget  {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This palette instance holds the current system palette. It is used
 		 * to detect if the system uses dark or light theme and helps pgModeler to
 		 * determine the proper colors when user used System default theme setting */
@@ -152,8 +152,8 @@ class __libgui AppearanceConfigWidget: public BaseConfigWidget, public Ui::Appea
 		//! \brief Applies the selected ui theme to the whole application
 		void applyUiTheme();
 
-		//! \brief Returns the currently selected theme
-		static QString getUiThemeId();
+		//! \brief Returns whether the currently used theme is a dark one
+		static bool isDarkUiTheme();
 
 		/*! \brief Returns the currently UI palette lightness.
 		 * Return values can Attributes::Light or Attributes::Dark */

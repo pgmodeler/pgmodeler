@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "numberedtexteditor.h"
 #include <QTextBlock>
 #include <QScrollBar>
-#include <QDebug>
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "guiutilsns.h"
@@ -30,111 +29,187 @@
 #include "messagebox.h"
 #include "utilsns.h"
 
-bool NumberedTextEditor::line_nums_visible=true;
-bool NumberedTextEditor::highlight_lines=true;
-QColor NumberedTextEditor::line_hl_color=Qt::yellow;
-QFont NumberedTextEditor::default_font=QFont("Source Code Pro", 10);
-double NumberedTextEditor::tab_width=0;
-QString NumberedTextEditor::src_editor_app="";
-QString NumberedTextEditor::src_editor_app_args="";
+bool NumberedTextEditor::line_nums_visible {true};
+bool NumberedTextEditor::highlight_lines {true};
 
-NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, qreal custom_fnt_size) : QPlainTextEdit(parent)
+QColor NumberedTextEditor::line_hl_color { Qt::yellow };
+QFont NumberedTextEditor::default_font {"Source Code Pro", 12};
+
+double NumberedTextEditor::tab_width {0};
+
+QString NumberedTextEditor::src_editor_app;
+QString NumberedTextEditor::src_editor_app_args;
+
+NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool act_btns_enabled, qreal custom_fnt_size) : QPlainTextEdit(parent)
 {
-	this->handle_ext_files = handle_ext_files;
-	line_number_wgt=new LineNumbersWidget(this);
+	file_filters = { tr("SQL file (*.sql)"),	tr("All files (*.*)") };
+	default_ext = "sql";
+	action_btns_enabled = act_btns_enabled;
+	show_act_btns =	false;
+	show_line_nums = line_nums_visible;
+
+	line_numbers_wgt = new LineNumbersWidget(this);
+	line_numbers_wgt->setObjectName("line_numbers_wgt");
+	line_numbers_wgt->setAutoFillBackground(true);
+
 	top_widget = nullptr;
-	load_file_btn = clear_btn	 = nullptr;
+	search_wgt = nullptr;
+	load_file_btn = edit_src_btn = clear_btn = nullptr;
+	save_file_btn = word_wrap_btn = search_btn = nullptr;
 	this->custom_fnt_size = custom_fnt_size;
 
-	if(handle_ext_files)
+	if(act_btns_enabled)
 	{
-		QPalette pal;
-		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
+		QPalette pal = this->palette();
 		QFont font = this->font();
 
+		show_act_btns = true;
 		font.setPointSizeF(font.pointSizeF() * 0.90);
 
+		QVBoxLayout *top_wgt_lt = new QVBoxLayout;
+		top_wgt_lt->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																	 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		top_widget = new QWidget(this);
+		top_widget->setObjectName("top_widget");
 		top_widget->setAutoFillBackground(true);
+		top_widget->setLayout(top_wgt_lt);
 
 		pal.setColor(QPalette::Window, LineNumbersWidget::getBackgroundColor());
 		top_widget->setPalette(pal);
-		top_widget->setVisible(handle_ext_files);
+		top_widget->setVisible(act_btns_enabled);
 		top_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-		hbox->setContentsMargins(GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin,GuiUtilsNs::LtMargin);
-		hbox1->setContentsMargins(0,0,0,0);
+		search_wgt = new SearchReplaceWidget(this, this);
+		search_wgt->setObjectName("search_wgt");
+		search_wgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+		search_wgt->setVisible(false);
+		search_wgt->layout()->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+																						 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 
-		QLabel *ico = new QLabel(this);
-		msg_lbl = new QLabel(this);
+		QHBoxLayout *buttons_lt = new QHBoxLayout;
+		buttons_lt->setContentsMargins(0, 0, 0, 0);
+
+		top_wgt_lt->addLayout(buttons_lt);
+
+		QLabel *ico = new QLabel(top_widget);
+		msg_lbl = new QLabel(top_widget);
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		ico->setPixmap(QPixmap(GuiUtilsNs::getIconPath("alert")));
 		ico->setScaledContents(true);
 
-		editor_alert_wgt = new QWidget(this);
+		editor_alert_wgt = new QWidget(top_widget);
 		editor_alert_wgt->setFont(font);
-		hbox1->addWidget(ico);
-		hbox1->addWidget(msg_lbl);
-		editor_alert_wgt->setLayout(hbox1);
-		editor_alert_wgt->setVisible(false);
 
-		hbox->addWidget(editor_alert_wgt);
-		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
+		QHBoxLayout *alert_lt = new QHBoxLayout;
+		alert_lt->setContentsMargins(0,0,0,0);
+		alert_lt->addWidget(ico);
+		alert_lt->addWidget(msg_lbl);
+		editor_alert_wgt->setVisible(false);
+		editor_alert_wgt->setLayout(alert_lt);
+
+		buttons_lt->addWidget(editor_alert_wgt);
+		buttons_lt->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
 		load_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("open")));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(tr("Load"));
-		load_file_btn->setToolTip(tr("Load text from an external file"));
+		load_file_btn->setShortcut(QKeySequence("Ctrl+L"));
+		load_file_btn->setToolTip(tr("Load text from an external file (%1)")
+															.arg(load_file_btn->shortcut().toString()));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		hbox->addWidget(load_file_btn);
-		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
+		buttons_lt->addWidget(load_file_btn);
 
 		save_file_btn = new QToolButton(top_widget);
 		save_file_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("save")));
 		save_file_btn->setAutoRaise(true);
 		save_file_btn->setText(tr("Save"));
-		save_file_btn->setToolTip(tr("Save the text to a file"));
+		save_file_btn->setShortcut(QKeySequence("Ctrl+S"));
+		save_file_btn->setToolTip(tr("Save the text to a file (%1)")
+															.arg(load_file_btn->shortcut().toString()));
 		save_file_btn->setFont(font);
 		save_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		hbox->addWidget(save_file_btn);
-		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+		buttons_lt->addWidget(save_file_btn);
+
+		copy_btn = new QToolButton(top_widget);
+		copy_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("copy")));
+		copy_btn->setAutoRaise(true);
+		copy_btn->setDisabled(true);
+		copy_btn->setText(tr("Copy"));
+		copy_btn->setShortcut(QKeySequence("Ctrl+C"));
+		copy_btn->setToolTip(tr("Copy the whole text to the clipboard (%1)")
+												 .arg(copy_btn->shortcut().toString()));
+		copy_btn->setFont(font);
+		copy_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		buttons_lt->addWidget(copy_btn);
 
 		edit_src_btn = new QToolButton(top_widget);
 		edit_src_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("edit")));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(tr("Edit"));
-		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor"));
+		edit_src_btn->setShortcut(QKeySequence("Ctrl+E"));
+		edit_src_btn->setToolTip(tr("Edit the text in the defined external editor (%1)")
+														 .arg(edit_src_btn->shortcut().toString()));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		hbox->addWidget(edit_src_btn);
+		buttons_lt->addWidget(edit_src_btn);
 
-		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
+		search_btn = new QToolButton(top_widget);
+		search_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("findtext")));
+		search_btn->setAutoRaise(true);
+		search_btn->setCheckable(true);
+		search_btn->setText(tr("Search"));
+		search_btn->setShortcut(QKeySequence("Ctrl+F"));
+		search_btn->setToolTip(tr("Search in the text field (%1)")
+													 .arg(search_btn->shortcut().toString()));
+		search_btn->setFont(font);
+		search_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		buttons_lt->addWidget(search_btn);
 
 		word_wrap_btn = new QToolButton(top_widget);
 		word_wrap_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("wordwrap")));
 		word_wrap_btn->setAutoRaise(true);
 		word_wrap_btn->setCheckable(true);
 		word_wrap_btn->setText(tr("Wrap"));
-		word_wrap_btn->setToolTip(tr("Toggles the word wrap"));
+		word_wrap_btn->setShortcut(QKeySequence("Ctrl+W"));
+		word_wrap_btn->setToolTip(tr("Toggles the word wrap (%1)")
+															.arg(word_wrap_btn->shortcut().toString()));
 		word_wrap_btn->setFont(font);
 		word_wrap_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		word_wrap_btn->setDisabled(true);
-		hbox->addWidget(word_wrap_btn);
-
-		connect(word_wrap_btn,  &QToolButton::toggled, this, [this](bool checked) {
-			setWordWrapMode(checked ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
-		});
+		buttons_lt->addWidget(word_wrap_btn);
 
 		clear_btn = new QToolButton(top_widget);
 		clear_btn->setIcon(QIcon(GuiUtilsNs::getIconPath("cleartext")));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(tr("Clear"));
+		clear_btn->setToolTip(tr("Clears the entire text"));
 		clear_btn->setFont(font);
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
+
+		buttons_lt->addWidget(clear_btn);
+		ico->setMaximumSize(edit_src_btn->iconSize());
+		top_widget->adjustSize();
+
+		connect(load_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::loadFile);
+		connect(save_file_btn, &QToolButton::clicked, this, &NumberedTextEditor::saveFile);
+		connect(edit_src_btn,  &QToolButton::clicked, this, __slot(this, NumberedTextEditor::editSource));
+
+		connect(copy_btn,  &QToolButton::clicked, this, [this](){
+			qApp->clipboard()->setText(toPlainText());
+		});
+
+		connect(search_btn, &QToolButton::toggled, this, [this](bool checked){
+			search_wgt->setVisible(checked);
+			search_wgt->raise();
+			resizeWidgets();
+		});
+
+		connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_btn, &QToolButton::toggle);
+		connect(word_wrap_btn,  &QToolButton::toggled, this, &NumberedTextEditor::setWordWrap);
 
 		connect(clear_btn, &QToolButton::clicked, this, [this](){
 			this->clear();
@@ -143,25 +218,24 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files, 
 
 		connect(this, &NumberedTextEditor::textChanged, this, [this](){
 			clear_btn->setEnabled(!this->document()->isEmpty() && !this->isReadOnly());
+			search_btn->setEnabled(!this->document()->isEmpty());
+			copy_btn->setEnabled(!this->document()->isEmpty());
 			word_wrap_btn->setEnabled(!document()->isEmpty());
 			save_file_btn->setEnabled(!document()->isEmpty());
 		});
 
-		ico->setMaximumSize(edit_src_btn->iconSize());
-		hbox->addWidget(clear_btn);
-		top_widget->setLayout(hbox);
-		top_widget->adjustSize();
-
-		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 		connect(&src_editor_proc, &QProcess::started, this, &NumberedTextEditor::handleProcessStart);
 		connect(&src_editor_proc, &QProcess::errorOccurred, this, &NumberedTextEditor::handleProcessError);
+		connect(&src_editor_proc, &QProcess::finished, this, __slot_n(this, NumberedTextEditor::updateSource));
 	}
+
+	line_numbers_wgt->raise();
+	this->setFont(default_font);
 
 	setWordWrapMode(QTextOption::NoWrap);
 
 	connect(this, &NumberedTextEditor::cursorPositionChanged, this, &NumberedTextEditor::highlightCurrentLine);
 	connect(this, &NumberedTextEditor::updateRequest, this, &NumberedTextEditor::updateLineNumbers);
-	connect(this, &NumberedTextEditor::blockCountChanged, this, &NumberedTextEditor::updateLineNumbersSize);
 
 	setCustomContextMenuEnabled(true);
 }
@@ -189,6 +263,12 @@ void NumberedTextEditor::setCustomContextMenuEnabled(bool enabled)
 		setContextMenuPolicy(Qt::CustomContextMenu);
 		connect(this, &NumberedTextEditor::customContextMenuRequested, this, &NumberedTextEditor::showContextMenu, Qt::UniqueConnection);
 	}
+}
+
+void NumberedTextEditor::setFilenameFilters(const QStringList &list, const QString &def_ext)
+{
+	file_filters = list;
+	default_ext = def_ext;
 }
 
 void NumberedTextEditor::setDefaultFont(const QFont &font)
@@ -258,21 +338,21 @@ void NumberedTextEditor::showContextMenu()
 	{
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Paste code"), this, &NumberedTextEditor::pasteCode, QKeySequence("Ctrl+Shift+V"));
+		act = ctx_menu->addAction(tr("Paste code"), QKeySequence("Ctrl+Shift+V"), this, &NumberedTextEditor::pasteCode);
 		act->setEnabled(!qApp->clipboard()->text().isEmpty());
 
-		act = ctx_menu->addAction(tr("Upper case"), this, &NumberedTextEditor::changeSelectionToUpper, QKeySequence("Ctrl+U"));
+		act = ctx_menu->addAction(tr("Upper case"), QKeySequence("Ctrl+U"), this, &NumberedTextEditor::changeSelectionToUpper);
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Lower case"), this, &NumberedTextEditor::changeSelectionToLower, QKeySequence("Ctrl+Shift+U"));
+		act = ctx_menu->addAction(tr("Lower case"), QKeySequence("Ctrl+Shift+U"), this, &NumberedTextEditor::changeSelectionToLower);
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act = ctx_menu->addAction(tr("Ident right"), this, &NumberedTextEditor::identSelectionRight, QKeySequence("Tab"));
+		act = ctx_menu->addAction(tr("Ident right"), QKeySequence("Tab"), this, &NumberedTextEditor::identSelectionRight);
 		act->setEnabled(textCursor().hasSelection());
 
-		act = ctx_menu->addAction(tr("Ident left"), this, &NumberedTextEditor::identSelectionLeft, QKeySequence("Shift+Tab"));
+		act = ctx_menu->addAction(tr("Ident left"), QKeySequence("Shift+Tab"), this, &NumberedTextEditor::identSelectionLeft);
 		act->setEnabled(textCursor().hasSelection());
 	}
 
@@ -445,8 +525,7 @@ void NumberedTextEditor::saveFile()
 	{
 		GuiUtilsNs::selectAndSaveFile(toPlainText().toUtf8(), tr("Save file"),
 																	QFileDialog::AnyFile,
-																	{ tr("SQL file (*.sql)"),	tr("All files (*.*)") },
-																	{}, "sql");
+																	file_filters,	{}, default_ext);
 	}
 	catch(Exception &e)
 	{
@@ -529,8 +608,10 @@ void NumberedTextEditor::handleProcessStart()
 {
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(UtilsNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
-																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
+		msg_lbl->setText(tr("The editor <strong>%1</strong> (pid: %2) is running.")
+												.arg(QFileInfo(src_editor_proc.program()).fileName())
+												.arg(src_editor_proc.processId()));
+
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
 		edit_src_btn->setEnabled(false);
@@ -552,14 +633,34 @@ void NumberedTextEditor::handleProcessError()
 
 void NumberedTextEditor::setReadOnly(bool ro)
 {
-	if(handle_ext_files)
+	if(action_btns_enabled)
 	{
 		load_file_btn->setEnabled(!ro);
 		edit_src_btn->setEnabled(!ro);
+		load_file_btn->setVisible(!ro);
+		edit_src_btn->setVisible(!ro);
 		clear_btn->setEnabled(!ro && !this->document()->isEmpty());
+		clear_btn->setVisible(!ro);
 	}
 
 	QPlainTextEdit::setReadOnly(ro);
+}
+
+void NumberedTextEditor::showLineNumbers(bool show)
+{
+	show_line_nums = line_nums_visible && show;
+	line_numbers_wgt->setVisible(show_line_nums);
+	resizeWidgets();
+}
+
+void NumberedTextEditor::showActionButtons(bool show)
+{
+	if(!top_widget)
+		return;
+
+	show_act_btns = show;
+	top_widget->setVisible(show);
+	resizeWidgets();
 }
 
 void NumberedTextEditor::setFocus()
@@ -570,8 +671,10 @@ void NumberedTextEditor::setFocus()
 
 void NumberedTextEditor::updateLineNumbers()
 {
-	line_number_wgt->setVisible(line_nums_visible);
-	if(!line_nums_visible) return;
+	line_numbers_wgt->setVisible(line_nums_visible && show_line_nums);
+
+	if(!line_nums_visible)
+		return;
 
 	QFont fnt = default_font;
 
@@ -579,7 +682,7 @@ void NumberedTextEditor::updateLineNumbers()
 		fnt.setPointSizeF(custom_fnt_size);
 
 	setFont(fnt);
-	line_number_wgt->setFont(fnt);
+	line_numbers_wgt->setFont(fnt);
 
 	QTextBlock block = firstVisibleBlock();
 	int block_number = block.blockNumber(),
@@ -593,6 +696,7 @@ void NumberedTextEditor::updateLineNumbers()
 			height = static_cast<int>(blockBoundingRect(block).height()) / block.lineCount(),
 			bottom = top + height,
 			dy = top;
+
 	unsigned first_line=0, line_count=0;
 	double tab_stop_dist = 0;
 
@@ -614,40 +718,91 @@ void NumberedTextEditor::updateLineNumbers()
 
 		/* Check if the line count converted to widget coordinates is higher than the widget height.
 		 This is done to avoid draw line numbers that are beyond the widget's height */
-		if((static_cast<int>(line_count) * fontMetrics().height()) > this->height())
+		if(bottom > this->height())
 			break;
 	}
 
-	line_number_wgt->drawLineNumbers(first_line, line_count, dy, height);
+	line_numbers_wgt->drawLineNumbers(first_line, line_count, dy, height);
 	tab_stop_dist = this->tabStopDistance();
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
 		setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
-void NumberedTextEditor::updateLineNumbersSize()
+void NumberedTextEditor::resizeWidgets()
 {
-	int py = (handle_ext_files && top_widget ? top_widget->height() : 0);
+	QRect rect = contentsRect();
+	int py = action_btns_enabled && show_act_btns ?
+						top_widget->height()  : 0,
 
-	if(line_nums_visible)
+			lt_margin = line_nums_visible && show_line_nums ? rect.left() : 0,
+
+			bt_margin = 0,
+
+			hscroll_h = horizontalScrollBar()->isVisible() ?
+									horizontalScrollBar()->height(): 0,
+
+			vscroll_w = verticalScrollBar()->isVisible() ?
+									verticalScrollBar()->width() : 0,
+
+			width = rect.width() - vscroll_w;
+
+	if(search_wgt && show_act_btns)
 	{
-		QRect rect=contentsRect();
+		search_wgt->adjustSize();
 
-		setViewportMargins(getLineNumbersWidth(), py, 0, 0);
-		line_number_wgt->setGeometry(QRect(rect.left(), rect.top() + py, getLineNumbersWidth(), rect.height() - py));
+		bt_margin = search_wgt && search_btn->isChecked() ?
+								search_wgt->height() : 0;
 
-		if(top_widget)
-			top_widget->setGeometry(rect.left(), rect.top(),
-															rect.width() - (this->verticalScrollBar()->isVisible() ? this->verticalScrollBar()->width() : 0),
-															top_widget->height());
+		search_wgt->setGeometry(rect.left(),
+														rect.bottom() - (bt_margin +  hscroll_h),
+														width, search_wgt->height());
 	}
-	else
-		setViewportMargins(0, py, 0, 0);
+
+	setViewportMargins(getLineNumbersWidth(), py,
+										 vscroll_w * 0.05,
+										 bt_margin + (hscroll_h * 0.05));
+
+	if(line_nums_visible && show_line_nums)
+	{
+		line_numbers_wgt->setGeometry(lt_margin, rect.top() + py,
+																 getLineNumbersWidth(),
+																 rect.height() - py - (bt_margin + hscroll_h));
+	}
+
+	if(top_widget && show_act_btns)
+	{
+		top_widget->setStyleSheet(QString("QWidget#%1 { background-color: palette(window); }")
+															.arg(top_widget->objectName()));
+
+		top_widget->setGeometry(lt_margin, rect.top(),
+														width, top_widget->height());
+	}
+
+	QString border_pal = AppearanceConfigWidget::isDarkUiTheme() ? "midlight" : "mid",
+
+			vp_style = QString("QWidget#%1 { \
+														background-color: palette(base); \
+														%2 \n \
+														%3 \n \
+														%4 \n \
+														}").arg(viewport()->objectName(),
+																		 show_act_btns ? "border-top: 1px solid palette(" + border_pal + ");" : "",
+																		 line_nums_visible && show_line_nums ? "border-left: 1px solid palette(" + border_pal + ");" : "",
+																		 (search_wgt && search_wgt->isVisible()) ? "border-bottom: 1px solid palette(" + border_pal + ");" : "");
+
+	viewport()->setStyleSheet(vp_style);
+
+	setStyleSheet(QString("NumberedTextEditor { background-color: palette(window); border: 1px solid palette(%1); }")
+								.arg(AppearanceConfigWidget::isDarkUiTheme() ? "midlight" : "mid"));
 }
 
 int NumberedTextEditor::getLineNumbersWidth()
 {
-	int digits=1, max=qMax(1, blockCount()),
+	if(!line_nums_visible || !show_line_nums)
+		return 0;
+
+	int digits = 1, max = qMax(1, blockCount()),
 			chr_width = 0;
 
 	while(max >= 10)
@@ -660,14 +815,31 @@ int NumberedTextEditor::getLineNumbersWidth()
 	return (15 + chr_width * digits);
 }
 
+void NumberedTextEditor::setWordWrapMode(QTextOption::WrapMode policy)
+{
+	QPlainTextEdit::setWordWrapMode(policy);
+}
+
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)
 {
 	QPlainTextEdit::resizeEvent(event);
-	updateLineNumbersSize();
+	resizeWidgets();
+	updateLineNumbers();
 }
 
 void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 {
+	/* Ignoring the command Shift + Enter to breaking the line
+	 * If we don't ignore, the editor will understand that the line
+	 * was broken as if it was wrapped, painting a return character ↪
+	 * instead of the line number in the line numbers widget */
+	if((event->key() == Qt::Key_Enter ||
+			event->key() == Qt::Key_Return) && event->modifiers() == Qt::ShiftModifier)
+	{
+		event->ignore();
+		return;
+	}
+
 	if(!isReadOnly() && event->key()==Qt::Key_V && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
 	{
 		pasteCode();
@@ -710,4 +882,19 @@ void NumberedTextEditor::highlightCurrentLine()
 	}
 
 	setExtraSelections(extraSelections);
+}
+
+void NumberedTextEditor::setWordWrap(bool value)
+{
+	if(word_wrap_btn && sender() != word_wrap_btn)
+	{
+		word_wrap_btn->blockSignals(true);
+		word_wrap_btn->setChecked(value);
+		word_wrap_btn->blockSignals(false);
+	}
+
+	setWordWrapMode(value ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+	setHorizontalScrollBarPolicy(value ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+	resizeWidgets();
+	updateLineNumbers();
 }

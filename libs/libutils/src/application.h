@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,15 +30,24 @@
 #include <QDir>
 #include "globalattributes.h"
 
+extern void logMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+
 class __libutils Application: public QApplication {
+	Q_OBJECT
+
 	private:
+		//! \brief A custom message handler to capture and treat messages from qDebug/qInfo/qWarning
+		static QtMessageHandler message_handler;
+
 		//! \brief Copy files from a path to another recursively
-		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only);
+		void copyFilesRecursively(const QString &src_path, const QString &dst_path, bool missing_only, bool incl_subdirs);
 
 	protected:
-		/*! \brief Creates the pgModeler's configuration dir on user's local storage.
-		 * The output path is platform dependant and is determined by GlobalAttributes::getConfigurationsDir() */
-		void createUserConfiguration(bool missing_only);
+		/*! \brief Creates the pgModeler's configuration directory on user's local storage.
+		 * This method, in the first run of the tool, copies config files from previous versions.
+		 * For next exectutions, the method only recreate missing configuration files that were
+		 * envetually removed */
+		void createUserConfiguration();
 
 		/*! \brief Loads the translation file by its id (e.g. pt_BR, en_US, etc) in the provided directory.
 		 * By default, the files are searched in the pgModeler's default lang files location.
@@ -50,6 +59,15 @@ class __libutils Application: public QApplication {
 
 		//! \brief Loads both UI translations and addition translations provided by plugins (incl_plugins_tr = true)
 		void loadTranslations(const QString &lang_id, bool incl_plugins_tr);
+
+	signals:
+		void s_messageLogged(QtMsgType, const QMessageLogContext &, const QString &);
 };
+
+#if !defined(pgApp)
+	/*! \brief A constant similar to qApp to reference a instance of Application
+	 *  class to give quick access to the signal s_messageLogged */
+	#define pgApp (static_cast<Application *>(Application::instance()))
+#endif
 
 #endif

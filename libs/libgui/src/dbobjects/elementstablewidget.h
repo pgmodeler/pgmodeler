@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,8 +25,7 @@
 #ifndef ELEMENTS_TABLES_WIDGET_H
 #define ELEMENTS_TABLES_WIDGET_H
 
-#include <QtWidgets>
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "indexelement.h"
 #include "excludeelement.h"
 #include "partitionkey.h"
@@ -34,9 +33,9 @@
 #include "elementwidget.h"
 
 class __libgui ElementsTableWidget: public QWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Store an instance of the element being handled (see setAttributes())
 		 * This one is used to determine the settings of the element widget open when the user
 		 * wants to create new elements on the grid */
@@ -51,7 +50,7 @@ class __libgui ElementsTableWidget: public QWidget {
 		BaseObject *parent_obj;
 
 		//! \brief Table widget used to control the index elements
-		ObjectsTableWidget *elements_tab;
+		CustomTableWidget *elements_tab;
 		
 		//! \brief Shows the element data on the elements table at the specified line
 		void showElementData(Element *elem, int elem_idx);

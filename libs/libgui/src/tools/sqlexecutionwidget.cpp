@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,17 +23,24 @@
 #include "utilsns.h"
 #include "csvdocument.h"
 #include "messagebox.h"
+#include "pgmodelerguiplugin.h"
+#include <QClipboard>
 
 std::map<QString, QString> SQLExecutionWidget::cmd_history;
-
-int SQLExecutionWidget::cmd_history_max_len = 1000;
-const QString SQLExecutionWidget::ColumnNullValue("␀");
+int SQLExecutionWidget::cmd_history_max_len {1000};
+const QString SQLExecutionWidget::ColumnNullValue {"␀"};
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	output_wgt->setVisible(false);
+	plugins_wgts_stc->setVisible(false);
+	sql_cmd_splitter->setSizes({800, 200});
+
 	sql_cmd_txt=GuiUtilsNs::createNumberedTextEditor(sql_cmd_wgt);
+	sql_cmd_txt->setObjectName("sql_cmd_txt");
+
 	cmd_history_txt=GuiUtilsNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
@@ -59,8 +66,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	results_parent->setVisible(false);
 	output_tbw->setTabEnabled(0, false);
-
-	snippets_tb->setMenu(&snippets_menu);
 	code_compl_wgt=new CodeCompletionWidget(sql_cmd_txt, true);
 
 	find_replace_wgt=new SearchReplaceWidget(sql_cmd_txt, search_wgt_parent);
@@ -71,31 +76,42 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	run_sql_tb->setToolTip(run_sql_tb->toolTip() + QString(" (%1)").arg(run_sql_tb->shortcut().toString()));
 	stop_tb->setToolTip(stop_tb->toolTip() + QString(" (%1)").arg(stop_tb->shortcut().toString()));
-	export_tb->setToolTip(export_tb->toolTip() + QString(" (%1)").arg(export_tb->shortcut().toString()));
 	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
-	search_tb->setToolTip(search_tb->toolTip() + QString(" (%1)").arg(search_tb->shortcut().toString()));
-	filter_tb->setToolTip(filter_tb->toolTip() + QString(" (%1)").arg(filter_tb->shortcut().toString()));
+	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
-	action_load=new QAction(QIcon(GuiUtilsNs::getIconPath("open")), tr("Load"), this);
-	action_save=new QAction(QIcon(GuiUtilsNs::getIconPath("save")), tr("Save"), this);
-	action_save_as=new QAction(QIcon(GuiUtilsNs::getIconPath("saveas")), tr("Save as"), this);
-
-	file_menu.addAction(action_load);
-	file_menu.addAction(action_save);
-	file_menu.addAction(action_save_as);
+	action_load = file_menu.addAction(QIcon(GuiUtilsNs::getIconPath("open")), tr("Load"), QKeySequence("Ctrl+L"));
+	action_save = file_menu.addAction(QIcon(GuiUtilsNs::getIconPath("save")), tr("Save"), QKeySequence("Ctrl+S"));
+	action_save_as = file_menu.addAction(QIcon(GuiUtilsNs::getIconPath("saveas")), tr("Save as"), QKeySequence("Ctrl+Shift+S"));
 	file_tb->setMenu(&file_menu);
 
-	filter_wgt->setVisible(false);
+	action_search = code_menu.addAction(QIcon(GuiUtilsNs::getIconPath("findtext")), tr("Search"), QKeySequence("Ctrl+F"));
+	action_search->setCheckable(true);
+	action_wrap = code_menu.addAction(QIcon(GuiUtilsNs::getIconPath("wordwrap")), tr("Word wrap"), QKeySequence("Ctrl+W"));
+	action_wrap->setCheckable(true);
 
-	export_tb->setMenu(&export_menu);
+	QAction *act = snippets_menu.menuAction();
+	act->setText(tr("Snippets"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("codesnippet")));
+	code_menu.addSeparator();
+	code_menu.addAction(act);
+	code_tb->setMenu(&code_menu);
 
-	QAction *act = nullptr;
+	action_filter = result_menu.addAction(QIcon(GuiUtilsNs::getIconPath("filter")), tr("Filter"), QKeySequence("Ctrl+T"));
+	action_filter->setCheckable(true);
+
+	act = export_menu.menuAction();
+	act->setText(tr("Export"));
+	act->setIcon(QIcon(GuiUtilsNs::getIconPath("exportdata")));
+	result_menu.addAction(act);
+
+	results_tb->setMenu(&result_menu);
 
 	act = export_menu.addAction(tr("Text file"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("txtfile")));
+	act->setShortcut(QKeySequence("Ctrl+Shift+T"));
 
 	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw, false);
@@ -103,6 +119,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	act = export_menu.addAction(tr("CSV file"));
 	act->setIcon(QIcon(GuiUtilsNs::getIconPath("csvfile")));
+	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
+
+	filter_wgt->setVisible(false);
 
 	connect(act, &QAction::triggered, this, [this](){
 		SQLExecutionWidget::exportResults(results_tbw, true);
@@ -110,9 +129,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	connect(columns_cmb, &QComboBox::currentIndexChanged, this, &SQLExecutionWidget::filterResults);
 	connect(filter_edt, &QLineEdit::textChanged, this, &SQLExecutionWidget::filterResults);
-	connect(hide_tb, &QToolButton::clicked, filter_tb, &QToolButton::click);
+	connect(hide_tb, &QToolButton::clicked, action_filter, &QAction::trigger);
 
-	connect(filter_tb, &QToolButton::toggled, this, [this](bool checked){
+	connect(action_filter, &QAction::toggled, this, [this](bool checked){
 		filter_wgt->setVisible(checked);
 
 		if(checked)
@@ -136,14 +155,18 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(action_save, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 	connect(action_save_as, &QAction::triggered, this, &SQLExecutionWidget::saveCommands);
 
-	connect(clear_btn, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
-	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, &SQLExecutionWidget::enableCommandButtons);
+	connect(clear_all_tb, &QToolButton::clicked, this, &SQLExecutionWidget::clearAll);
 
-	connect(run_sql_tb, &QToolButton::clicked, this, &SQLExecutionWidget::runSQLCommand);
+	connect(sql_cmd_txt, &NumberedTextEditor::textChanged, this, [this](){
+		run_sql_tb->setEnabled(!sql_cmd_txt->document()->isEmpty());
+	});
+
+	connect(run_sql_tb, &QToolButton::clicked, this, qOverload<>(&SQLExecutionWidget::runSQLCommand));
 	connect(output_tb, &QToolButton::toggled, this, &SQLExecutionWidget::toggleOutputPane);
+	connect(action_wrap,  &QAction::toggled, sql_cmd_txt, &NumberedTextEditor::setWordWrap);
 
-	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
-	connect(find_replace_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
+	connect(action_search, &QAction::toggled, search_wgt_parent, &QWidget::setVisible);
+	connect(find_replace_wgt, &SearchReplaceWidget::s_hideRequested, action_search, &QAction::toggle);
 	connect(search_history_wgt, &SearchReplaceWidget::s_hideRequested, search_history_parent, &QWidget::hide);
 
 	connect(results_tbw, &QTableView::doubleClicked, this, [](const QModelIndex &index){
@@ -183,6 +206,10 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, &sql_exec_thread, &QThread::quit);
 	connect(&sql_exec_hlp, &SQLExecutionHelper::s_executionAborted, this, &SQLExecutionWidget::handleExecutionAborted);
 	connect(stop_tb, &QToolButton::clicked, &sql_exec_hlp, &SQLExecutionHelper::cancelCommand, Qt::DirectConnection);
+
+	// After completing the SQLExecutionWidget construction we install the plugins features
+	for(auto &p_wgt : PgModelerGuiPlugin::getPluginsWidgets(this))
+		installPluginWidgets(p_wgt.button, p_wgt.widget);
 }
 
 SQLExecutionWidget::~SQLExecutionWidget()
@@ -242,6 +269,58 @@ void SQLExecutionWidget::reloadHighlightConfigs()
 	}
 }
 
+void SQLExecutionWidget::installPluginWidgets(QToolButton *btn, QWidget *wgt)
+{
+	if(!btn)
+		return;
+
+	plugins_btns_lt->addWidget(btn);
+
+	/* Forcing the button to have the same features of all other buttons in the
+	 * top area when they lie */
+	btn->setIconSize(run_sql_tb->iconSize());
+	btn->setSizePolicy(run_sql_tb->sizePolicy());
+	btn->setToolButtonStyle(run_sql_tb->toolButtonStyle());
+	btn->setAutoRaise(run_sql_tb->autoRaise());
+	btn->setParent(this);
+
+	connect(btn, &QToolButton::toggled, this, &SQLExecutionWidget::togglePluginButton);
+
+	int idx = -1;
+
+	if(wgt)
+		idx = plugins_wgts_stc->addWidget(wgt);
+
+	btn->setProperty(Attributes::Index.toStdString().c_str(), idx);
+}
+
+void SQLExecutionWidget::togglePluginButton(bool checked)
+{
+	QToolButton *p_btn = qobject_cast<QToolButton *>(sender());
+
+	if(!p_btn->isCheckable())
+		return;
+
+	for(auto &btn : findChildren<QToolButton *>())
+	{
+		if(btn != p_btn &&
+			 plugins_btns_lt->indexOf(btn) >= 0 && btn->isChecked())
+		{
+			btn->blockSignals(true);
+			btn->setChecked(false);
+			btn->blockSignals(false);
+		}
+	}
+
+	int wgt_idx = p_btn->property(Attributes::Index.toStdString().c_str()).toInt();
+
+	// Disabling updates prevents flickering when hidding the stacked widgets
+	plugins_wgts_stc->setUpdatesEnabled(false);
+	plugins_wgts_stc->setVisible(checked && wgt_idx >= 0);
+	plugins_wgts_stc->setCurrentIndex(wgt_idx);
+	plugins_wgts_stc->setUpdatesEnabled(true);
+}
+
 void SQLExecutionWidget::setConnection(Connection conn)
 {
 	sql_exec_hlp.setConnection(conn);
@@ -261,16 +340,17 @@ bool SQLExecutionWidget::hasSQLCommand()
 	return !sql_cmd_txt->document()->isEmpty();
 }
 
-QString SQLExecutionWidget::getSQLCommand()
+QString SQLExecutionWidget::getSQLCommand(bool selected)
 {
-	return sql_cmd_txt->toPlainText();
-}
+	QString cmd;
 
-void SQLExecutionWidget::enableCommandButtons()
-{
-	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
-	search_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
-	clear_btn->setEnabled(run_sql_tb->isEnabled());
+	if(selected)
+	{
+		cmd = sql_cmd_txt->textCursor().selectedText();
+		cmd.replace(QChar::ParagraphSeparator, '\n');
+	}
+
+	return !cmd.isEmpty() ? cmd : sql_cmd_txt->toPlainText();
 }
 
 void SQLExecutionWidget::showEvent(QShowEvent *)
@@ -280,23 +360,15 @@ void SQLExecutionWidget::showEvent(QShowEvent *)
 
 void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 {
-	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
+	Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon;
 
 	if(event->size().width() < this->baseSize().width())
-		style=Qt::ToolButtonIconOnly;
+		style = Qt::ToolButtonIconOnly;
 
-
-	if(file_tb->toolButtonStyle()!=style)
+	if(run_sql_tb->toolButtonStyle() != style)
 	{
-		file_tb->setToolButtonStyle(style);
-		run_sql_tb->setToolButtonStyle(style);
-		clear_btn->setToolButtonStyle(style);
-		search_tb->setToolButtonStyle(style);
-		snippets_tb->setToolButtonStyle(style);
-		export_tb->setToolButtonStyle(style);
-		output_tb->setToolButtonStyle(style);
-		stop_tb->setToolButtonStyle(style);
-		filter_tb->setToolButtonStyle(style);
+		for(auto &btn : findChildren<QToolButton *>(Qt::FindDirectChildrenOnly))
+			btn->setToolButtonStyle(style);
 	}
 }
 
@@ -400,32 +472,27 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	QString time_str=QString("[%1]:").arg(QTime::currentTime().toString("hh:mm:ss.zzz"));
 
 	switchToExecutionMode(false);
-	msgoutput_lst->clear();
+	clearOutput();
 
 	GuiUtilsNs::createOutputListItem(msgoutput_lst,
-										UtilsNs::formatMessage(QString("%1 %2").arg(time_str).arg(e.getErrorMessage())),
+										UtilsNs::formatMessage(QString("%1 %2").arg(time_str, e.getErrorMessage())),
 										QPixmap(GuiUtilsNs::getIconPath("error")));
 
 	if(e.getErrorCode()==ErrorCode::ConnectionTimeout ||
 		 e.getErrorCode()==ErrorCode::ConnectionBroken)
 	{
 		GuiUtilsNs::createOutputListItem(msgoutput_lst,
-											QString("%1 %2").arg(time_str).arg(tr("No results retrieved or changes done due to the error above! Run the command again.")),
+											QString("%1 %2").arg(time_str, tr("No results retrieved or changes done due to the error above! Run the command again.")),
 											QPixmap(GuiUtilsNs::getIconPath("alert")), false);
 	}
 
+	output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
+
 	msgoutput_lst->setVisible(true);
 	results_parent->setVisible(false);
-	export_tb->setEnabled(false);
-	filter_tb->setEnabled(false);
-	filter_tb->setChecked(false);
+	results_tb->setEnabled(false);
 
-	output_tbw->setTabText(0, tr("Results"));
-	output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
-	output_tbw->setCurrentIndex(1);
-	output_tbw->setTabEnabled(0, false);
-
-	addToSQLHistory(sql_cmd_txt->toPlainText(), 0, e.getErrorMessage());
+	addToSQLHistory(sql_exec_hlp.getCommand(), 0, e.getErrorMessage());
 	qApp->alert(this);
 }
 
@@ -465,13 +532,12 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		columns_cmb->blockSignals(false);
 
-		addToSQLHistory(sql_cmd_txt->toPlainText(), rows_affected);
+		addToSQLHistory(sql_exec_hlp.getCommand(), rows_affected);
 
 		empty = (!res_model || res_model->rowCount() == 0);
 		output_tbw->setTabEnabled(0, !empty);
 		results_parent->setVisible(!empty);
-		export_tb->setEnabled(!empty);
-		filter_tb->setEnabled(!empty);
+		results_tb->setEnabled(!empty);
 
 		if(!empty)
 		{
@@ -609,15 +675,12 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	run_sql_tb->setVisible(!value);
 	stop_tb->setVisible(value);
 	file_tb->setEnabled(!value);
-	search_tb->setEnabled(!value);
-	clear_btn->setEnabled(!value);
-	snippets_tb->setEnabled(!value);
-	export_tb->setEnabled(!value);
+	code_tb->setEnabled(!value);
+	results_tb->setEnabled(!value);
 	output_tb->setEnabled(!value);
 	sql_cmd_txt->setEnabled(!value);
 	cmd_history_parent->setEnabled(!value);
 	search_history_parent->setEnabled(!value);
-	filter_tb->setEnabled(!value);
 
 	if(value)
 	{
@@ -647,28 +710,24 @@ void SQLExecutionWidget::destroyResultModel()
 
 void SQLExecutionWidget::runSQLCommand()
 {
-	QString cmd=sql_cmd_txt->textCursor().selectedText();
+	runSQLCommand(getSQLCommand(true));
+}
 
+void SQLExecutionWidget::runSQLCommand(const QString &cmd)
+{
 	output_tb->setChecked(true);
-
-	if(cmd.isEmpty())
-		cmd=sql_cmd_txt->toPlainText();
-	else
-		cmd.replace(QChar::ParagraphSeparator, '\n');
-
 	msgoutput_lst->clear();
 	sql_exec_hlp.setCommand(cmd);
-	start_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+	start_exec = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	sql_exec_thread.start();
-	switchToExecutionMode(true);
 
-	output_tbw->setTabEnabled(0, false);
-	output_tbw->setTabText(0, tr("Results"));
-	output_tbw->setCurrentIndex(1);
+	switchToExecutionMode(true);
+	clearOutput();
+
 	GuiUtilsNs::createOutputListItem(msgoutput_lst,
-																			tr("[%1]: SQL command is running...")
-																			.arg(QTime::currentTime().toString("hh:mm:ss.zzz")),
-																			QPixmap(GuiUtilsNs::getIconPath("info")), false);
+																		tr("[%1]: SQL command is running...")
+																				.arg(QTime::currentTime().toString("hh:mm:ss.zzz")),
+																		QPixmap(GuiUtilsNs::getIconPath("info")), false);
 }
 
 void SQLExecutionWidget::saveCommands()
@@ -763,41 +822,47 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw, bool csv_format)
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
 int SQLExecutionWidget::clearAll()
 {
-	Messagebox msg_box;
-	int res = 0;
+	int res = Messagebox::confirm(tr("The SQL input field and the results grid will be cleared! Want to proceed?"));
 
-	msg_box.show(tr("The SQL input field and the results grid will be cleared! Want to proceed?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	res = msg_box.result();
-
-	if(res==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		sql_cmd_txt->setPlainText("");
-		msgoutput_lst->clear();
-		msgoutput_lst->setVisible(true);
-		results_parent->setVisible(false);
-		export_tb->setEnabled(false);
+		output_tb->setChecked(false);
+
+		clearOutput();
+
+		results_tb->setEnabled(results_tbw->model() &&
+													 results_tbw->model()->rowCount() > 0);
 	}
 
 	return res;
 }
 
-QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
+void SQLExecutionWidget::clearOutput()
 {
-	return generateBuffer(results_tbw, CsvDocument::Separator, true, true);
+	msgoutput_lst->clear();
+	output_tbw->setTabText(0, tr("Results"));
+	output_tbw->setTabText(1, tr("Messages"));
+	output_tbw->setCurrentIndex(1);
+	output_tbw->setTabEnabled(0, false);
+	destroyResultModel();
 }
 
-QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
+QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw, bool inc_col_names)
 {
-	return generateBuffer(results_tbw, QChar('\t'), false, false);
+	return generateBuffer(results_tbw, CsvDocument::Separator, inc_col_names, true);
+}
+
+QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw, bool inc_col_names)
+{
+	return generateBuffer(results_tbw, QChar('\t'), inc_col_names, false);
 }
 
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool csv_format)
@@ -805,11 +870,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!results_tbw->selectionModel())
+	if((results_tbw->model() && results_tbw->model()->rowCount() == 0) ||
+		 !results_tbw->selectionModel())
 		return QByteArray();
 
 	QAbstractItemModel *model = results_tbw->model();
-	QModelIndexList sel_indexes = results_tbw->selectionModel()->selectedIndexes();
+	QModelIndexList sel_indexes;
 	QByteArray buf;
 	QStringList line;
 	QModelIndex index;
@@ -820,6 +886,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	int start_row = -1, start_col = -1,
 			row_cnt = 0, col_cnt = 0;
 
+	sel_indexes = results_tbw->selectionModel()->selectedIndexes();
 	start_row = sel_indexes.at(0).row();
 	start_col = sel_indexes.at(0).column();
 	row_cnt = (sel_indexes.last().row() - start_row) + 1;
@@ -861,6 +928,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			index = model->index(row, col);
 			value = index.data().toString();
 
+			/* If the index value is empty but it has a check state value
+			 * we assume the value of the columns as true/false to reflect
+			 * the check state of the item */
+			if(value.isEmpty() && !index.data(Qt::CheckStateRole).isNull())
+				value = index.data(Qt::CheckStateRole) == Qt::Checked ? Attributes::True : Attributes::False;
+
 			if(csv_format)
 				value.replace(CsvDocument::TextDelimiter, QString("%1%1").arg(CsvDocument::TextDelimiter));
 
@@ -875,7 +948,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	return buf;
 }
 
-void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
+void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default, bool incl_col_names)
 {
 	if(!results_tbw)
 		return;
@@ -888,7 +961,7 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 		{
 			QMenu copy_menu, copy_mode_menu, save_menu;
 			QAction *act = nullptr, *act_csv = nullptr, *act_txt = nullptr,
-																											*act_save = nullptr, *act_save_txt = nullptr, *act_save_csv = nullptr;
+							*act_save = nullptr, *act_save_txt = nullptr, *act_save_csv = nullptr;
 
 			if(use_popup)
 			{
@@ -927,8 +1000,8 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 						is_save = (use_popup && (act == act_save_txt || act == act_save_csv));
 
 				buffer = is_csv ?
-										 generateCSVBuffer(results_tbw) :
-										 generateTextBuffer(results_tbw);
+									generateCSVBuffer(results_tbw, incl_col_names) :
+									generateTextBuffer(results_tbw, incl_col_names);
 
 				if(!is_save)
 					qApp->clipboard()->setText(buffer);
@@ -960,16 +1033,10 @@ void SQLExecutionWidget::selectSnippet(QAction *act)
 
 void SQLExecutionWidget::toggleOutputPane(bool visible)
 {
-	if(!visible)
-	{
-		v_splitter->handle(1)->setCursor(Qt::ArrowCursor);
-		v_splitter->handle(1)->setEnabled(false);
-	}
-	else
-		v_splitter->handle(1)->setCursor(Qt::SplitVCursor);
-
-	v_splitter->handle(1)->setEnabled(visible);
+	// Disabling updates prevents flickering when hidding the output panel
+	output_wgt->setUpdatesEnabled(false);
 	output_wgt->setVisible(visible);
+	output_wgt->setUpdatesEnabled(true);
 
 	if(!visible)
 		/* Force the splitter size to be the same as the sql_cmd_wgt maximum height
@@ -1062,12 +1129,9 @@ void SQLExecutionWidget::loadSQLHistory()
 
 void SQLExecutionWidget::destroySQLHistory()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"));
 
-	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
@@ -1092,10 +1156,8 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 	try
 	{
 		sql_cmd_txt->setEnabled(enable);
-		snippets_tb->setEnabled(enable);
-		clear_btn->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
 		run_sql_tb->setEnabled(enable && !sql_cmd_txt->toPlainText().isEmpty());
-		search_tb->setEnabled(enable);
+		code_tb->setEnabled(enable);
 		search_wgt_parent->setEnabled(enable);
 	}
 	catch(Exception &e)
@@ -1129,12 +1191,9 @@ void SQLExecutionWidget::showHistoryContextMenu()
 
 	if(exec_act == action_clear)
 	{
-		Messagebox msg_box;
+		int res = Messagebox::confirm(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"));
 
-		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
-									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-		if(msg_box.result() == QDialog::Accepted)
+		if(Messagebox::isAccepted(res))
 		{
 			cmd_history_txt->clear();
 			cmd_history[sql_cmd_conn.getConnectionId(true,true)].clear();

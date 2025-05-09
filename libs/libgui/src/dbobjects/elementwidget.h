@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,16 +25,15 @@
 #ifndef ELEMENT_WIDGET_H
 #define ELEMENT_WIDGET_H
 
-#include <QtWidgets>
 #include "ui_elementwidget.h"
 #include "widgets/objectselectorwidget.h"
 #include "partitionkey.h"
 #include "syntaxhighlighter.h"
 
 class __libgui ElementWidget: public QWidget, public Ui::ElementWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		Element *element;
 
 		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements

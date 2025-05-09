@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "appearanceconfigwidget.h"
 #include "widgets/modelwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "customuistyle.h"
 #include "guiutilsns.h"
 #include "relationshipview.h"
@@ -26,36 +26,11 @@
 #include "styledtextboxview.h"
 #include "graphicalview.h"
 
-std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
-
 QPalette AppearanceConfigWidget::system_pal;
-
+std::map<QString, attribs_map> AppearanceConfigWidget::config_params;
 QString AppearanceConfigWidget::UiThemeId;
 
-std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors = {
-	{ QPalette::WindowText, {} },
-	{ QPalette::Button, {} },
-	{ QPalette::Light, {} },
-	{ QPalette::Midlight, {} },
-	{ QPalette::Dark, {} },
-	{ QPalette::Mid, {} },
-	{ QPalette::Text, {} },
-	{ QPalette::BrightText, {} },
-	{ QPalette::ButtonText, {} },
-	{ QPalette::Base, {} },
-	{ QPalette::Window, {} },
-	{ QPalette::Shadow, {} },
-	{ QPalette::Highlight, {} },
-	{ QPalette::HighlightedText, {} },
-	{ QPalette::Link, {} },
-	{ QPalette::LinkVisited, {} },
-	{ QPalette::AlternateBase, {} },
-	{ QPalette::ToolTipBase, {} },
-	{ QPalette::ToolTipText, {} },
-	{ QPalette::PlaceholderText, {} }
-};
-
-std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_colors {
 	{ QPalette::WindowText, {"#eff0f1", "#eff0f1", "#626c76"} },
 	{ QPalette::Button, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::Light, {"#181b1d", "#181b1d", "#181b1d"} },
@@ -75,10 +50,10 @@ std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::dark_ui_color
 	{ QPalette::AlternateBase, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::ToolTipBase, {"#31363b", "#31363b", "#31363b"} },
 	{ QPalette::ToolTipText, {"#eff0f1", "#eff0f1", "#eff0f1"} },
-	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
+	{ QPalette::PlaceholderText, {"#48494b", "#48494b", "#48494b"} }
 };
 
-std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colors {
 	{ QPalette::WindowText, {"#232627", "#232627", "#777878"} },
 	{ QPalette::Button, {"#eff0f1", "#eff0f1", "#eff0f1"} },
 	{ QPalette::Light, {"#ffffff", "#ffffff", "#ffffff"} },
@@ -101,13 +76,26 @@ std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::light_ui_colo
 	{ QPalette::PlaceholderText, {"#2e2f30", "#2e2f30", "#2e2f30"} }
 };
 
-QStringList AppearanceConfigWidget::dark_tab_item_colors = {
+std::map<QPalette::ColorRole, QStringList> AppearanceConfigWidget::system_ui_colors {
+	{ QPalette::WindowText, {} }, { QPalette::Button, {} },
+	{ QPalette::Light, {} }, { QPalette::Midlight, {} },
+	{ QPalette::Dark, {} }, { QPalette::Mid, {} },
+	{ QPalette::Text, {} }, { QPalette::BrightText, {} },
+	{ QPalette::ButtonText, {} }, { QPalette::Base, {} },
+	{ QPalette::Window, {} }, { QPalette::Shadow, {} },
+	{ QPalette::Highlight, {} }, { QPalette::HighlightedText, {} },
+	{ QPalette::Link, {} }, { QPalette::LinkVisited, {} },
+	{ QPalette::AlternateBase, {} }, { QPalette::ToolTipBase, {} },
+	{ QPalette::ToolTipText, {} }, { QPalette::PlaceholderText, {} }
+};
+
+QStringList AppearanceConfigWidget::dark_tab_item_colors {
 	"#b54225", "#fff", "#54a800", "#fff",
 	"#54a800", "#fff", "#e2e236", "#000",
 	"#b54225", "#fff", "#fa0000", "#00f000"
 };
 
-QStringList AppearanceConfigWidget::light_tab_item_colors = {
+QStringList AppearanceConfigWidget::light_tab_item_colors {
 	"#ffb4b4", "#303030",	"#a4f9b0", "#303030",
 	"#c0ffc0", "#000", "#ffffc0", "#000",
 	"#ffc0c0", "#000", "#fa0000", "#00f000"
@@ -891,7 +879,7 @@ void AppearanceConfigWidget::previewCodeFontStyle()
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
 	font_preview_txt->setReadOnly(false);
-	font_preview_txt->updateLineNumbersSize();
+	font_preview_txt->resizeWidgets();
 	font_preview_txt->updateLineNumbers();
 	font_preview_txt->highlightCurrentLine();
 	font_preview_txt->setReadOnly(true);	
@@ -942,7 +930,7 @@ void AppearanceConfigWidget::applyUiTheme()
 
 	for(unsigned idx = 0; idx < static_cast<unsigned>(item_colors->size()); idx++)
 	{
-		ObjectsTableWidget::setTableItemColor(static_cast<ObjectsTableWidget::TableItemColor>(idx),
+		CustomTableWidget::setTableItemColor(static_cast<CustomTableWidget::TableItemColor>(idx),
 																					QColor(item_colors->at(idx)));
 	}
 
@@ -978,9 +966,9 @@ QString AppearanceConfigWidget::__getUiThemeId()
 	return getUiLightness(system_pal);
 }
 
-QString AppearanceConfigWidget::getUiThemeId()
+bool AppearanceConfigWidget::isDarkUiTheme()
 {
-	return UiThemeId;
+	return UiThemeId == Attributes::Dark;
 }
 
 QString AppearanceConfigWidget::getUiLightness(const QPalette &pal)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #ifndef SQL_EXECUTION_WIDGET_H
 #define SQL_EXECUTION_WIDGET_H
 
+#include <QThread>
+#include <QMenu>
 #include "ui_sqlexecutionwidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "connection.h"
@@ -35,9 +37,9 @@
 #include "sqlexecutionhelper.h"
 
 class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static std::map<QString, QString> cmd_history;
 
 		static int cmd_history_max_len;
@@ -63,9 +65,15 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		file_menu,
 
-		export_menu;
+		export_menu,
 
-		QAction *action_save, *action_save_as, *action_load;
+		code_menu,
+
+		result_menu;
+
+		QAction *action_save, *action_save_as, *action_load,
+		*action_wrap, *action_clear_all, *action_search,
+		*action_filter, *action_export;
 
 		SearchReplaceWidget *find_replace_wgt;
 
@@ -97,10 +105,13 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		bool eventFilter(QObject *object, QEvent *event);
 		void reloadHighlightConfigs();
 
+		void installPluginWidgets(QToolButton *btn, QWidget *wgt);
+
 	public:
 		static const QString ColumnNullValue;
 
 		SQLExecutionWidget(QWidget * parent = nullptr);
+
 		virtual ~SQLExecutionWidget();
 
 		//! \brief Configures the connection to query the server
@@ -113,20 +124,24 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		bool hasSQLCommand();
 
 		//! \brief Returns the currently typed command
-		QString getSQLCommand();
+		QString getSQLCommand(bool selected);
 
 		/*! \brief Fills up the results grid based upon the specified result set.
 		 * The parameter store_data will make each item store the text as its data. */
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data = false);
 
-		//! \brief Copy to clipboard (in csv format) the current selected items on results grid
-		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false);
+		/*! \brief Copy to clipboard (in csv format) the current selected items on results grid
+		 * Optionally, the column names can be included/excluded in the resulting buffer */
+		static void copySelection(QTableView *results_tbw, bool use_popup=true, bool csv_is_default = false, bool incl_col_names = true);
 
-		//! \brief Generates a CSV buffer based upon the selection on the results grid
-		static QByteArray generateCSVBuffer(QTableView *results_tbw);
+		/*! \brief Generates a CSV buffer based upon the selection on the results grid
+		 *  Optionally, the column names can be included/excluded in the resulting buffer */
+		static QByteArray generateCSVBuffer(QTableView *results_tbw, bool inc_col_names = true);
 
-		//! \brief Generates a Plain text buffer based upon the selection on the results grid (this method does not include the column names)
-		static QByteArray generateTextBuffer(QTableView *results_tbw);
+		/*! \brief Generates a Plain text buffer based upon the selection on the results grid
+		 * Optionally, the column names can be included/excluded in the resulting buffer.
+		 * In this method the column names are by default excluded */
+		static QByteArray generateTextBuffer(QTableView *results_tbw, bool inc_col_names = false);
 
 		/*! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and if the output
 		 *  buffer is whether in CSV format or not */
@@ -153,13 +168,13 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		//! \brief Show the exception message in the output widget
 		void	handleExecutionAborted(Exception e);
 
-	private slots:
-		//! \brief Enables the command buttons when user fills the sql field
-		void enableCommandButtons();
-
 		//! \brief Runs the current typed sql command
 		void runSQLCommand();
 
+		//! \brief Runs the provided sql command
+		void runSQLCommand(const QString &cmd);
+
+	private slots:
 		//! \brief Save the current typed sql command on a file
 		void saveCommands();
 
@@ -168,6 +183,8 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 
 		//! \brief Clears the input field as well the results grid
 		int clearAll();
+
+		void clearOutput();
 
 		void selectSnippet(QAction *act);
 
@@ -178,6 +195,8 @@ class __libgui SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget
 		void finishExecution(int rows_affected = 0);
 
 		void filterResults();
+
+		void togglePluginButton(bool checked);
 
 		friend class SQLToolWidget;
 };

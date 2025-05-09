@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	col_picker_wgt = new ColumnPickerWidget(this);
-	arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	arguments_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^ CustomTableWidget::DuplicateButton, true, this);
 
 	ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, this);
 	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
@@ -46,9 +46,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	configureFormLayout(trigger_grid, ObjectType::Trigger);
 
 	connect(deferrable_chk, &QCheckBox::toggled, deferral_type_cmb, &QComboBox::setEnabled);
-	connect(arguments_tab, &ObjectsTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
-	connect(arguments_tab, &ObjectsTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
-	connect(arguments_tab, &ObjectsTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
+	connect(arguments_tab, &CustomTableWidget::s_rowAdded, this, &TriggerWidget::handleArgument);
+	connect(arguments_tab, &CustomTableWidget::s_rowUpdated, this, &TriggerWidget::handleArgument);
+	connect(arguments_tab, &CustomTableWidget::s_rowEdited, this, &TriggerWidget::editArgument);
 	connect(constraint_rb, &QRadioButton::toggled, this, &TriggerWidget::setConstraintTrigger);
 	connect(update_chk, &QCheckBox::toggled, this, &TriggerWidget::selectUpdateEvent);
 

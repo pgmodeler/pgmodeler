@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #ifndef SOURCE_EDITOR_WIDGET_H
 #define SOURCE_EDITOR_WIDGET_H
 
-#include <QWidget>
+#include <QMenu>
 #include "ui_sourceeditorwidget.h"
 #include "widgets/numberedtexteditor.h"
 #include "utils/syntaxhighlighter.h"
@@ -34,9 +34,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static attribs_map snippets;
 
 		static QPalette def_editor_pal;
@@ -55,7 +55,7 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QAction *act_break_inline_ifs;
 
-		QMenu indent_opts_menu;
+		QMenu indent_opts_menu, metachar_conv_menu;
 
 		bool is_modified;
 
@@ -76,6 +76,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		QString getCurrentSyntaxConfig();
 
+		void convertMetaChars(bool escaped_to_meta);
+
 	private slots:
 		//! \brief Validates the syntax of the editor's content (only for schema micro-language code)
 		void validateSyntax();
@@ -88,6 +90,8 @@ class SourceEditorWidget: public QWidget, public Ui::SourceEditorWidget {
 
 		//! \brief Insert the selected snippet into the editors (only for schema micro-language code)
 		void handleSelectedSnippet(const QString &snippet);
+
+		void toggleComment();
 
 	public slots:
 		void setModified(bool value);

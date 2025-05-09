@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "guiutilsns.h"
 #include "coreutilsns.h"
 #include "messagebox.h"
+#include <QTimer>
 
 ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 {
@@ -115,14 +116,7 @@ void ObjectRenameWidget::updateLabelsButtons()
 bool ObjectRenameWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(object == handle_lbl && event->type() == QEvent::MouseMove)
-	{
-		QMouseEvent *m_event = dynamic_cast<QMouseEvent *>(event);
-
-		move(m_event->globalPosition().x() - width() + (handle_lbl->width() / 2),
-				 m_event->globalPosition().y() - (height() - (handle_lbl->height() / 2)));
-
-		return true;
-	}
+		GuiUtilsNs::moveFloatingWidget(this, handle_lbl, dynamic_cast<QMouseEvent *>(event));
 
 	return QDialog::eventFilter(object, event);
 }
@@ -187,7 +181,7 @@ void ObjectRenameWidget::applyRenaming()
 				msg_box.show(tr("<strong>CAUTION:</strong> You're about to rename multiple objects at once! This operation may cause irreversible changes to other objects not necessarily selected. Do you really want to proceed?"),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-				if(msg_box.result() == QDialog::Rejected)
+				if(msg_box.isRejected())
 					return;
 			}
 

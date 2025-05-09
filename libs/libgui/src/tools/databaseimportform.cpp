@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 #include "defaultlanguages.h"
 #include "settings/connectionsconfigwidget.h"
 #include "objectslistmodel.h"
-#include "schemaview.h"
 
-bool DatabaseImportForm::low_verbosity = false;
+bool DatabaseImportForm::low_verbosity {false};
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -50,7 +49,15 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
+	dbg_output_wgt = new DebugOutputWidget(this);
+	vbox = new QVBoxLayout(settings_tbw->widget(2));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	vbox->addWidget(dbg_output_wgt);
+
 	settings_tbw->setTabEnabled(1, false);
+	settings_tbw->setTabVisible(2, false);
+
 	objs_parent_wgt->setEnabled(false);
 	buttons_wgt->setEnabled(false);
 	connection_gb->setFocusProxy(connections_cmb);
@@ -129,8 +136,18 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 		scattering_lvl_cmb->setEnabled(checked);
 	});
 
+	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked){
+		settings_tbw->setTabVisible(2, checked);
+		dbg_output_wgt->setLogMessages(checked);
+	});
+
+	connect(import_to_model_chk, &QCheckBox::toggled, this, [this](bool checked){
+		ignore_errors_chk->setChecked(checked);
+		ignore_errors_chk->setDisabled(checked);
+	});
+
 #ifdef DEMO_VERSION
-	#warning "DEMO VERSION: forcing ignore errors in reverse engineering due to the object count limit."
+	#warning "DEMO VERSION: forcing ignore errors in reverse engineering."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
 #endif
@@ -213,7 +230,7 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -304,23 +321,26 @@ void DatabaseImportForm::importDatabase()
 {
 	try
 	{
-		Messagebox msg_box;
-
 		std::map<ObjectType, std::vector<unsigned>> obj_oids;
 		std::map<unsigned, std::vector<unsigned>> col_oids;
 
 		if(import_to_model_chk->isChecked())
 		{
+			Messagebox msg_box;
+
 			msg_box.show(tr("<strong>ATTENTION:</strong> You are about to import objects to the current working model! This action will cause irreversible changes to it even in case of critical errors during the process. Do you want to proceed?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result()==QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
+
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
 
 		if(low_verbosity)
 			GuiUtilsNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
@@ -331,7 +351,7 @@ void DatabaseImportForm::importDatabase()
 
 		if(create_model)
 		{
-			model_wgt=new ModelWidget;
+			model_wgt = new ModelWidget;
 			model_wgt->getDatabaseModel()->createSystemObjects(true);
 			model_wgt->updateSceneLayers();
 		}
@@ -340,9 +360,10 @@ void DatabaseImportForm::importDatabase()
 		import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																		resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																		debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true,
-																		comments_as_aliases_chk->isChecked());
+																		comments_as_aliases_chk->isChecked(), import_to_model_chk->isChecked());
 
 		import_helper->setSelectedOIDs(model_wgt->getDatabaseModel(), obj_oids, col_oids);
+
 		import_thread->start();
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
@@ -474,7 +495,7 @@ void DatabaseImportForm::listObjects()
 
 			import_helper->setObjectFilters(obj_filter,
 																			objs_filter_wgt->isOnlyMatching(),
-																			objs_filter_wgt->isMatchSignature(),
+																			objs_filter_wgt->isMatchBySignature(),
 																			objs_filter_wgt->getForceObjectsFilter());
 			if(obj_filter.isEmpty() &&
 				 import_helper->getCatalog().getObjectsCount({ ObjectType::Table, ObjectType::ForeignTable,
@@ -489,7 +510,7 @@ Please, consider using the <strong>Filter</strong> tab in order to refine the se
 Do you really want to proceed?"),
 										Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-				if(msgbox.result() == Messagebox::Rejected)
+				if(msgbox.isRejected())
 				{
 					database_cmb->setCurrentIndex(0);
 					return;
@@ -548,6 +569,9 @@ void DatabaseImportForm::listDatabases()
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 		db_objects_tw->clear();
+
+		dbg_output_wgt->showActionButtons(false);
+		dbg_output_wgt->clear();
 
 		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
@@ -731,6 +755,7 @@ void DatabaseImportForm::handleImportCanceled()
 	ico_lbl->setPixmap(ico);
 
 	GuiUtilsNs::createOutputTreeItem(output_trw, msg, ico);
+	qApp->alert(this);
 }
 
 void DatabaseImportForm::handleImportFinished(Exception e)
@@ -749,7 +774,11 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 	import_helper->closeConnection();
 	import_thread->quit();
 	import_thread->wait();
-	this->accept();
+
+	emit s_importFinished();
+
+	if(!debug_mode_chk->isChecked())
+		this->accept();
 }
 
 void DatabaseImportForm::finishImport(const QString &msg)
@@ -763,7 +792,8 @@ void DatabaseImportForm::finishImport(const QString &msg)
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
 	progress_lbl->repaint();
-	buttons_wgt->setEnabled(false);
+	buttons_wgt->setEnabled(false);	
+	dbg_output_wgt->showActionButtons(true);
 
 	if(model_wgt)
 	{

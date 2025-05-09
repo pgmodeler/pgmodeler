@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@
 #ifndef BASE_FORM_H
 #define BASE_FORM_H
 
-#include <QtWidgets>
 #include "ui_baseform.h"
 #include "messagebox.h"
 #include "dbobjects/baseobjectwidget.h"
 #include <type_traits>
 
 class __libgui BaseForm: public QDialog, public Ui::BaseForm {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
 		/*! \brief Resizes the dialog according to the minimum sizes of the provided widget.
 				If the widget size exceed 70% of the screen size a scroll area will be created and
 				the widget reparented to it. If the minimum size of the widget is 0 then the size

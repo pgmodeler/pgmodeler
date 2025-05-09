@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 #include "tools/databaseimportform.h"
 #include "guiutilsns.h"
 #include "settings/generalconfigwidget.h"
-#include "objectstablewidget.h"
+#include "customtablewidget.h"
+#include <QScrollBar>
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -43,6 +44,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::selectObject);
 	connect(objectstree_tw, &QTreeWidget::itemPressed, this, &ModelObjectsWidget::showObjectMenu);
+	//connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(objectstree_tw, &QTreeWidget::itemCollapsed, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
@@ -51,8 +53,6 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	connect(objectstree_tw, &QTreeWidget::itemExpanded, this, [this](){
 		objectstree_tw->resizeColumnToContents(0);
 	});
-
-	connect(objectstree_tw, &QTreeWidget::itemSelectionChanged, this, &ModelObjectsWidget::selectObject);
 
 	connect(expand_all_tb, &QToolButton::clicked,  this, [this](){
 		objectstree_tw->blockSignals(true);
@@ -96,8 +96,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		model_objs_grid->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
 																				GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
 		setMinimumSize(250, 300);
-		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+		setWindowModality(Qt::ApplicationModal);
 		connect(objectstree_tw, &QTreeWidget::itemDoubleClicked, this, &ModelObjectsWidget::close);
 		connect(select_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
 		connect(cancel_tb, &QToolButton::clicked, this, &ModelObjectsWidget::close);
@@ -133,13 +133,31 @@ void ModelObjectsWidget::hide()
 	emit s_visibilityChanged(false);
 }
 
+void ModelObjectsWidget::show()
+{
+	QWidget::show();
+
+	/* When in simplified view we use an event loop to block the execution in
+	 * the show event until the user takes an action in the widget that
+	 * causes its closing */
+	if(simplified_view)
+	{
+		connect(this, qOverload<BaseObject *, bool>(&ModelObjectsWidget::s_visibilityChanged), this, [this](BaseObject *, bool visible) {
+			if(!visible)
+				event_loop.quit();
+		});
+
+		event_loop.exec();
+	}
+}
 
 void ModelObjectsWidget::showObjectMenu()
 {
-	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
+	if(!selected_objs.empty() &&
+		 QApplication::mouseButtons()==Qt::RightButton &&
+		 model_wgt && !simplified_view)
 	{
 		model_wgt->showObjectMenu();
-		clearSelectedObject();
 	}
 }
 
@@ -150,7 +168,7 @@ void ModelObjectsWidget::editObject()
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
 			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_t(ObjectType::Permission))
-			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
+			model_wgt->showObjectForm(ObjectType::Permission, getTreeItemData(objectstree_tw->currentItem()));
 		//If the user double-clicked a permission on  list view
 		else
 			model_wgt->editObject();
@@ -164,24 +182,23 @@ void ModelObjectsWidget::selectObject()
 	BaseObject *selected_obj = nullptr;
 	ObjectType obj_type = ObjectType::BaseObject;
 	ModelWidget *model_wgt = nullptr;
-
-	selected_objs.clear();
+	QList<QTreeWidgetItem *> sel_items = objectstree_tw->selectedItems();
 
 	if(!simplified_view && this->model_wgt)
 		model_wgt = this->model_wgt;
 	else if(simplified_view)
 		model_wgt = db_model->getModelWidget();
 
+	selected_objs.clear();
 	QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
 
 	if(tree_item)
 	{
-		obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
-		selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+		obj_type = static_cast<ObjectType>(tree_item->data(1, Qt::UserRole).toUInt());
 
-		for(auto &item : objectstree_tw->selectedItems())
+		for(auto &item : sel_items)
 		{
-			selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+			selected_obj = getTreeItemData(item);
 
 			if(selected_obj)
 				selected_objs.push_back(selected_obj);
@@ -190,7 +207,7 @@ void ModelObjectsWidget::selectObject()
 
 	//If user select a group item popups a "New [OBJECT]" menu
 	if((!simplified_view || (simplified_view && enable_obj_creation)) &&
-			!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
+			selected_objs.empty() && QApplication::mouseButtons() == Qt::RightButton &&
 			obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
 			obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 	{
@@ -221,13 +238,39 @@ void ModelObjectsWidget::selectObject()
 
 	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
+		model_wgt->scene->blockSignals(true);
 		model_wgt->scene->clearSelection();
+		model_wgt->scene->blockSignals(false);
+
+		/* If the user has selected only one graphical object in the tree and is holding
+		 * Alt key then the object will be highlighted in the canvas */
+		if(selected_objs.size() == 1 && qApp->keyboardModifiers() == Qt::AltModifier)
+		{
+			BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(selected_objs.at(0));
+
+			if(!graph_obj)
+				return;
+
+			QGraphicsItem *scn_item = dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject());
+
+			scn_item->setSelected(true);
+			model_wgt->scene->views().at(0)->centerOn(scn_item);
+		}
+
 		model_wgt->configurePopupMenu(selected_objs);
 		model_wgt->emitSceneInteracted();
 	}
 }
 
-QVariant ModelObjectsWidget::generateItemValue(BaseObject *object)
+BaseObject *ModelObjectsWidget::getTreeItemData(QTreeWidgetItem *item)
+{
+ if(!item)
+	 return nullptr;
+
+ return reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+}
+
+QVariant ModelObjectsWidget::generateItemData(BaseObject *object)
 {
 	return QVariant::fromValue(reinterpret_cast<void *>(object));
 }
@@ -275,7 +318,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	}
 
 	item->setToolTip(0, QString("%1 (id: %2)").arg(obj_name).arg(object->getObjectId()));
-	item->setData(0, Qt::UserRole, generateItemValue(object));
+	item->setData(0, Qt::UserRole, generateItemData(object));
 	item->setData(2, Qt::UserRole, QString("%1_%2").arg(object->getObjectId()).arg(object->getSchemaName()));
 
 	if(update_perms)
@@ -287,12 +330,12 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	if(tab_obj && tab_obj->isAddedByRelationship())
 	{
 		font.setItalic(true);
-		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::RelAddedItemAltFgColor));
+		item->setForeground(0, CustomTableWidget::getTableItemColor(CustomTableWidget::RelAddedItemAltFgColor));
 	}
 	else if(object->isProtected() || object->isSystemObject())
 	{
 		font.setItalic(true);
-		item->setForeground(0, ObjectsTableWidget::getTableItemColor(ObjectsTableWidget::ProtItemAltFgColor));
+		item->setForeground(0, CustomTableWidget::getTableItemColor(CustomTableWidget::ProtItemAltFgColor));
 	}
 
 	item->setFont(0,font);
@@ -594,7 +637,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 											.arg(BaseObject::getTypeName(ObjectType::Permission))
 											.arg(perms.size()));
 
-			item->setData(0, Qt::UserRole, generateItemValue(object));
+			item->setData(0, Qt::UserRole, generateItemData(object));
 			item->setData(1, Qt::UserRole, static_cast<unsigned>(ObjectType::Permission));
 		}
 	}
@@ -717,13 +760,9 @@ void ModelObjectsWidget::close()
 		selected_objs.clear();
 	else
 	{
-		QVariant data;
 		BaseObject *selected_obj = nullptr;
 
-		if(objectstree_tw->currentItem())
-			data = objectstree_tw->currentItem()->data(0,Qt::UserRole);
-
-		selected_obj = reinterpret_cast<BaseObject *>(data.value<void *>());
+		selected_obj = getTreeItemData(objectstree_tw->currentItem());
 
 		if(selected_obj && std::find(selected_objs.begin(), selected_objs.end(), selected_obj) == selected_objs.end())
 			selected_objs.push_back(selected_obj);
@@ -896,23 +935,16 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 		return nullptr;
 
 	QTreeWidgetItemIterator itr(objectstree_tw);
-	BaseObject *aux_obj = nullptr;
-	QTreeWidgetItem *item = nullptr;
 
 	while(*itr)
 	{
-		aux_obj = reinterpret_cast<BaseObject *>((*itr)->data(0, Qt::UserRole).value<void *>());
-
-		if(aux_obj == object)
-		{
-			item=*itr;
-			break;
-		}
+		if(getTreeItemData(*itr) == object)
+			return *itr;
 
 		++itr;
 	}
 
-	return item;
+	return nullptr;
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(const QString &item_id)

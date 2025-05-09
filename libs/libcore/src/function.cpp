@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -278,38 +278,26 @@ QString Function::getAlterCode(BaseObject *object)
 		attribs_map attribs;
 		attribs = BaseFunction::getAlterCodeAttributes(func);
 
-		if(this->func_source.simplified() != func->func_source.simplified() ||
-			 this->library!=func->library || this->symbol!=func->symbol)
+		if(this->execution_cost != func->execution_cost)
+			attribs[Attributes::ExecutionCost] = QString::number(func->execution_cost);
+
+		if(this->returns_setof && func->returns_setof && this->row_amount != func->row_amount)
 		{
-			attribs[Attributes::Definition]=func->getSourceCode(SchemaParser::SqlCode);
-			attribs[Attributes::Definition].replace("CREATE FUNCTION", "CREATE OR REPLACE FUNCTION");
+			attribs[Attributes::ReturnsSetOf] = Attributes::True;
+			attribs[Attributes::RowAmount] = QString::number(row_amount);
 		}
-		else
-		{
-			if(this->execution_cost!=func->execution_cost)
-				attribs[Attributes::ExecutionCost]=QString::number(func->execution_cost);
 
-			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
-			{
-				attribs[Attributes::ReturnsSetOf]=Attributes::True;
-				attribs[Attributes::RowAmount]=QString::number(row_amount);
-			}
+		if(this->function_type != func->function_type)
+			attribs[Attributes::FunctionType] = ~func->function_type;
 
-			if(this->function_type!=func->function_type)
-				attribs[Attributes::FunctionType]=~func->function_type;
+		if(this->is_leakproof != func->is_leakproof)
+			attribs[Attributes::LeakProof] = (func->is_leakproof ? Attributes::True : Attributes::Unset);
 
-			if(this->is_leakproof!=func->is_leakproof)
-				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::Unset);
+		if(this->behavior_type != func->behavior_type)
+			attribs[Attributes::BehaviorType] = ~func->behavior_type;
 
-			if((this->behavior_type!=func->behavior_type) &&
-					((this->behavior_type==BehaviorType::CalledOnNullInput) ||
-					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
-					  func->function_type==BehaviorType::CalledOnNullInput)))
-				attribs[Attributes::BehaviorType]=~func->behavior_type;
-
-			if(this->parallel_type!=func->parallel_type)
-				attribs[Attributes::ParallelType]=~func->parallel_type;
-		}
+		if(this->parallel_type != func->parallel_type)
+			attribs[Attributes::ParallelType] = ~func->parallel_type;
 
 		copyAttributes(attribs);
 

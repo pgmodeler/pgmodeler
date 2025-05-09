@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,8 +32,10 @@
 #include "tools/modelexporthelper.h"
 
 class __libgui ModelValidationHelper: public QObject {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
+		static const QString SignalMsg;
 
 		//! \brief Reference database model
 		DatabaseModel *db_model;
@@ -52,8 +54,8 @@ class __libgui ModelValidationHelper: public QObject {
 		//! \brief Warning and error counters
 		unsigned warn_count, error_count;
 
-		//! \brief Validation progress
-		int progress;
+		//! \brief Validation progress variables
+		int handled_objs, total_objs;
 
 		//! \brief Indicates if the validation was canceled by the user
 		bool  valid_canceled,
@@ -71,6 +73,20 @@ class __libgui ModelValidationHelper: public QObject {
 		std::vector<BaseObject *> inv_rels;
 
 		void generateValidationInfo(ValidationInfo::ValType val_type, BaseObject *object, std::vector<BaseObject *> refs);
+
+		void checkRelationshipTablesIds(BaseObject *object);
+
+		void checkObjectBrokenRefs(BaseObject *object);
+
+		void checkSpObjectBrokenRefs(BaseObject *object);
+
+		void checkConstrNameConflicts();
+
+		void checkMissingPostgisExt();
+
+		void checkInvalidatedRels();
+
+		void checkUselessUqConstrs();
 
 	public:
 		ModelValidationHelper();

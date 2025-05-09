@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,15 +28,19 @@ PgModelerCliPlugin::~PgModelerCliPlugin()
 
 }
 
-bool PgModelerCliPlugin::isValidOption(const QString &opt) const
+bool PgModelerCliPlugin::isOpModeOption(const QString &opt)
 {
-	for(auto &itr : getShortOptions())
-	{
-		if(itr.first == opt)
-			return true;
-	}
+	return getOpModeOptions().contains(opt);
+}
 
-	return false;
+QStringList PgModelerCliPlugin::getValidOptions()
+{
+	QStringList opts;
+
+	for(auto &[opt, _] : getLongOptions())
+		opts.append(opt);
+
+	return opts;
 }
 
 void PgModelerCliPlugin::initPlugin(PgModelerCliApp *app)

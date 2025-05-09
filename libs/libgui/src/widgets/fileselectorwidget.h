@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,13 +26,15 @@
 #define FILE_SELECTOR_WIDGET_H
 
 #include "guiglobal.h"
-#include <QtWidgets>
+#include <QFileDialog>
+#include <QLabel>
+#include <QRegularExpression>
 #include "ui_fileselectorwidget.h"
 
 class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QStringList name_filters, mime_filters;
 		QString file_dlg_title, def_suffix;
 		QFileDialog::AcceptMode accept_mode;
@@ -51,6 +53,7 @@ class __libgui FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget
 	protected:
 		bool eventFilter(QObject *obj, QEvent *evnt) override;
 		void resizeEvent(QResizeEvent *event) override;
+		void showEvent(QShowEvent *event) override;
 
 	public:
 		FileSelectorWidget(QWidget * parent = nullptr);

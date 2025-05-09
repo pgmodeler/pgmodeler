@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,8 +33,25 @@
 #include "baseobject.h"
 #include "widgets/numberedtexteditor.h"
 #include "csvdocument.h"
+#include "roundedrectitem.h"
+#include "settings/appearanceconfigwidget.h"
 
 namespace GuiUtilsNs {
+	/*! \brief WidgetCornerId used by resizeFloatingWidget() to determine
+	 *  which corners of an widget can be used to resize it */
+	enum WidgetCornerId: unsigned {
+		NoCorners = 0,
+		LeftCorner = 2,
+		TopCorner = 4,
+		RightCorner = 8,
+		BottomCorner = 16,
+		TopLeftCorner = TopCorner | LeftCorner,
+		TopRightCorner = TopCorner | RightCorner,
+		BottomLeftCorner = BottomCorner | LeftCorner,
+		BottomRightCorner = BottomCorner | RightCorner,
+		AllCorners = 31
+	};
+
 	static constexpr int LtMargin = 5,
 	LtSpacing = 5;
 
@@ -49,10 +66,10 @@ namespace GuiUtilsNs {
 	extern __libgui void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
-		This method will create a layout if 'parent' doesn't has one. If parent has a layout
-		the method will do nothing. If parent is null creates an orphan object which means the
+		This function will create a layout if 'parent' doesn't has one. If parent has a layout
+		the function will do nothing. If parent is null creates an orphan object which means the
 		user must take care of the destruction of the object */
-	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files = false, qreal custom_fnt_size = 0);
+	extern __libgui NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool act_btns_enabled = false, qreal custom_fnt_size = 0);
 
 	/*! \brief Creates an item in the specified QTreeWidget instance.
 		The new item is automatically inserted on the QTreeWidget object.
@@ -148,7 +165,57 @@ namespace GuiUtilsNs {
 	//! \brief Creates an action in a QLineEdit that controls the visibility of passwords
 	extern __libgui void createPasswordShowAction(QLineEdit *parent_edt);
 
+	/*! \brief Resizes the toolbuttons under the widget wgt according to its width.
+	 *  If the widget's width isn't enough to display the tool buttons with icons and texts
+	 *  the this function changes the tool buttons to icon-only style */
 	extern __libgui void resizeChildToolButtons(QWidget *wgt, const QSize &new_size);
+
+	/*! \brief Returns the corner id (see WidgetCornerId) that is currently hovered in the provided widget.
+	 *  The event_wgt is the widget that has triggered the mouse event.
+	 *  The corners params holds the corner ids that the hovered is allowed for the widget */
+	extern __libgui WidgetCornerId getWidgetHoveredCorner(QWidget *widget, QWidget *event_wgt, QMouseEvent *event, WidgetCornerId corners);
+
+	/*! \brief Resizes a widget based a mouse move event.
+	 *  The corner param is used to identify from which corner the widget must be resized */
+	extern __libgui void resizeFloatingWidget(QWidget *widget, QMouseEvent *event, WidgetCornerId corner);
+
+	/*! \brief Moves a widget based a mouse move event that is captured by a handle widget
+	 *  in the the edge of the widget */
+	extern __libgui void moveFloatingWidget(QWidget *widget, QWidget *event_wgt, QMouseEvent *event);
+
+	/*! \brief Configures the font family/size of the provided QPlainTextEdit instance
+	 *  to use the global settings defined in AppearanceSettingsWidget */
+	template<class Class, std::enable_if_t<std::is_base_of_v<QPlainTextEdit, Class> ||
+																				 std::is_same_v<Class, QPlainTextEdit> ||
+																				 std::is_same_v<Class, QTextEdit>, bool> = true>
+	void configureTextEditFont(Class *txt, double custom_fnt_size = 0)
+	{
+		if(!txt)
+			return;
+
+		if constexpr (std::is_base_of_v<QPlainTextEdit, Class> ||
+									std::is_class_v<QPlainTextEdit> ||
+									std::is_class_v<QTextEdit>)
+		{
+			std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
+
+			//Configuring font style for output widget
+			if(!confs[Attributes::Code][Attributes::Font].isEmpty())
+			{
+				double size =
+						custom_fnt_size > 0 ? custom_fnt_size :
+						confs[Attributes::Code][Attributes::FontSize].toDouble();
+
+				if(size < 5.0)
+					size = 5.0;
+
+				QFont fnt = txt->font();
+				fnt.setFamily(confs[Attributes::Code][Attributes::Font]);
+				fnt.setPointSizeF(size);
+				txt->setFont(fnt);
+			}
+		}
+	}
 }
 
 #endif

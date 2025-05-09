@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,18 +19,17 @@
 #ifndef SIMPLE_COLUMNS_WIDGET_H
 #define SIMPLE_COLUMNS_WIDGET_H
 
-#include <QWidget>
 #include "ui_simplecolumnswidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui SimpleColumnsWidget: public QWidget, Ui::SimpleColumnsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		PgSQLTypeWidget *pgsqltype_wgt;
 
-		ObjectsTableWidget *columns_tab;
+		CustomTableWidget *columns_tab;
 
 		DatabaseModel *model;
 

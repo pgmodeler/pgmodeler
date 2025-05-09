@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@
 #ifndef UPDATE_NOTIFIER_WIDGET_H
 #define UPDATE_NOTIFIER_WIDGET_H
 
-#include <QtWidgets>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -50,9 +49,9 @@
 #include "guiglobal.h"
 
 class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QString check_versions, blogpost;
 
 		//! \brief Object responsible to make request to server
@@ -60,9 +59,6 @@ class __libgui UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWi
 
 		//! \brief This pointer stores the reply after the update manager make a call to server
 		QNetworkReply *update_chk_reply;
-
-		//! \brief Stores the old mouse position to simulate the widget resizing
-		QPoint old_pos;
 
 		/*! \brief This attribute indicates wether a message informing that no updates are available
 	  must be shown. Generally, this attribute is true when the user call the checkForUpdate()

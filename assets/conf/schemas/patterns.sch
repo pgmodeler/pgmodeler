@@ -1,7 +1,7 @@
 # XML definition for relationship name patterns (part of relationships.conf file)
 # CAUTION: Do not modify this file unless you know what you are doing.
 
-$tb $tb [<patterns type=] "{type}"
+\t \t [<patterns type=] "{type}"
 
 %if {src-col-pattern} %then [ src-col-pattern=] "&{src-col-pattern}" %end
 %if {dst-col-pattern} %then [ dst-col-pattern=] "&{dst-col-pattern}" %end
@@ -10,5 +10,6 @@ $tb $tb [<patterns type=] "{type}"
 %if {pk-pattern} %then [ pk-pattern=] "&{pk-pattern}" %end
 %if {uq-pattern} %then [ uq-pattern=] "&{uq-pattern}" %end
 %if {pk-col-pattern} %then [ pk-col-pattern=] "&{pk-col-pattern}" %end
+%if {fk-idx-pattern} %then [ fk-idx-pattern=] "&{fk-idx-pattern}" %end
 
-[/>] $br
+[/>] \n

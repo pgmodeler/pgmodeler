@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,6 +71,14 @@ void Type::setSchema(BaseObject *schema)
 	prev_name=this->getName(true);
 	BaseObject::setSchema(schema);
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
+}
+
+void Type::setCodeInvalidated(bool value)
+{
+	BaseObject::setCodeInvalidated(value);
+
+	for(auto &typ_attr : type_attribs)
+		typ_attr.setCodeInvalidated(value);
 }
 
 int Type::getAttributeIndex(const QString &attrib_name)

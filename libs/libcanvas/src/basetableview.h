@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #ifndef BASE_TABLE_VIEW_H
 #define BASE_TABLE_VIEW_H
 
+#include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 #include "baseobjectview.h"
 #include "basetable.h"
 #include "tabletitleview.h"
@@ -35,9 +37,9 @@
 #include "attributestoggleritem.h"
 
 class __libcanvas BaseTableView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief This timer is used to control the selection enabling of the object
 		 * in mouse presse event in order to avoid select it instead of a child.
 		 * See mousePressEvent() for details */

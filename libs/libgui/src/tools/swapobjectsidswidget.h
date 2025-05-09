@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@
 #ifndef SWAP_OBJECTS_IDS_WIDGET_H
 #define SWAP_OBJECTS_IDS_WIDGET_H
 
-#include <QWidget>
 #include "ui_swapobjectsidswidget.h"
 #include "widgets/objectselectorwidget.h"
 
 class __libgui SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static const QString IdLabel;
 
 		unsigned selector_idx = 0;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "codecompletionwidget.h"
 
 class __libgui RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SyntaxHighlighter *cond_expr_hl,
 		*command_hl;
 
 		CodeCompletionWidget *command_cp;
 
-		ObjectsTableWidget *commands_tab;
+		CustomTableWidget *commands_tab;
 
 	public:
 		RuleWidget(QWidget * parent = nullptr);

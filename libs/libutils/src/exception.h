@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -164,12 +164,9 @@ enum class ErrorCode: unsigned {
 	InvUseSpecialPrimaryKey,
 	OprRelationshipAddedObject,
 	RemProtectedObject,
-	InvRedeclarationGroup,
 	InvGroupDeclaration,
-	DefNotDeclaredGroup,
 	DefEmptyGroup,
 	DefDuplicatedGroup,
-	InvGroupDeclarationNotDefined,
 	RefColObjectTabInvalidIndex,
 	RefRowObjectTabInvalidIndex,
 	OprReservedObject,
@@ -181,6 +178,7 @@ enum class ErrorCode: unsigned {
 	PluginNotLoaded,
 	PluginsNotLoaded,
 	InvalidSyntax,
+	InvalidInclude,
 	InvalidInstruction,
 	UnkownAttribute,
 	InvalidMetacharacter,
@@ -286,7 +284,6 @@ enum class ErrorCode: unsigned {
 	InvalidObjectFilter,
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
-	InvProcedureParamOutMode,
 	ExportFailureDbSQLDisabled,
 	InvConfigParameterName,
 	EmptyConfigParameterValue,
@@ -301,12 +298,17 @@ enum class ErrorCode: unsigned {
 	RemExtRefChildObject,
 	AddExtDupChildObject,
 	AsgSchExtTypeConflict,
-	MalformedViewDefObject
+	MalformedViewDefObject,
+	InvalidEscapedCharacter,
+	InvExprMultilineGroup,
+	InvExprPersistentGroup,
+	InvExtensionObject,
+	AsgInvSchemaExtension
 };
 
 class __libutils Exception {
 	private:
-		static constexpr unsigned ErrorCount=268;
+		static constexpr unsigned ErrorCount=271;
 
 		//! \brief Constants used to access the error details
 		static constexpr unsigned ErrorCodeId=0, ErrorMessage=1;

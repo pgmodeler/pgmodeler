@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +17,17 @@
 */
 
 #include "modelvalidationhelper.h"
+#include <QThread>
+
+const QString ModelValidationHelper::SignalMsg { "`%1' (%2)" };
 
 ModelValidationHelper::ModelValidationHelper()
 {
-	warn_count=error_count=progress=0;
-	db_model=nullptr;
-	conn=nullptr;
-	valid_canceled=fix_mode=use_tmp_names=false;
+	warn_count = error_count = 0;
+	handled_objs = total_objs = 0;
+	db_model = nullptr;
+	conn = nullptr;
+	valid_canceled = fix_mode = use_tmp_names = false;
 
 	export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
@@ -49,8 +53,13 @@ void ModelValidationHelper::generateValidationInfo(ValidationInfo::ValType val_t
 			 std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
 	{
 		//Configures a validation info
-		ValidationInfo info=ValidationInfo(val_type, object, refs);
-		error_count++;
+		ValidationInfo info = ValidationInfo(val_type, object, refs);
+
+		if(val_type == ValidationInfo::UniqueSameAsPk)
+			warn_count++;
+		else
+			error_count++;
+
 		val_infos.push_back(info);
 
 		if(val_type==ValidationInfo::BrokenRelConfig)
@@ -221,16 +230,6 @@ unsigned ModelValidationHelper::getErrorCount()
 	return error_count;
 }
 
-void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
-{
-	if(!export_thread->isRunning())
-		return;
-
-	progress=41 + (prog * 0.55);
-	if(progress > 99) progress=99;
-	emit s_progressUpdated(progress, msg, obj_type, cmd, is_code_gen);
-}
-
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver, bool use_tmp_names)
 {
 	if(!model)
@@ -264,351 +263,93 @@ void ModelValidationHelper::validateModel()
 
 	try
 	{
-		std::vector<ObjectType> types = { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
-																 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
-																 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
-																 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
-																 ObjectType::ForeignTable, ObjectType::Procedure, ObjectType::Transform },
-				aux_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
-				tab_obj_types = { ObjectType::Constraint, ObjectType::Index };
+		static const std::vector<ObjectType> types {
+			ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
+			ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
+			ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
+			ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
+			ObjectType::ForeignTable, ObjectType::Procedure, ObjectType::Transform
+		};
 
-		ObjectType	obj_type;
-		unsigned i = 0, i1 = 0, cnt = 0, aux_cnt = 0,	count = 0, count1 = 0;
-		BaseObject *object=nullptr, *refer_obj=nullptr;
-		std::vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
+		std::vector<BaseObject *> refs, refs_aux, *obj_list = nullptr, aux_tables;
 		std::vector<BaseObject *>::iterator itr;
-		TableObject *tab_obj=nullptr;
-		PhysicalTable *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
-		BaseTable *base_tab = nullptr;
-		Constraint *constr=nullptr;
-		Column *col=nullptr;
-		Relationship *rel=nullptr;
 		std::map<QString, std::vector<BaseObject *> > dup_objects;
 		std::map<QString, std::vector<BaseObject *> >::iterator mitr;
-		QString name, signal_msg=QString("`%1' (%2)");
-		bool postgis_exists = db_model->getObjectIndex("postgis", ObjectType::Extension) >= 0;
 
-		warn_count=error_count=progress=0;
+		warn_count = error_count = 0;
+		handled_objs = total_objs = 0;
 		val_infos.clear();
 		valid_canceled=false;
 
-		aux_cnt = aux_types.size();
-		count = types.size();
-		count1 = tab_obj_types.size();
+		total_objs = db_model->getObjectsCount(types);
 
 		/* Step 1: Validating broken references. This situation happens when a object references another
 		 which id is smaller than the id of the first one. */
-		for(i=0; i < count && !valid_canceled; i++)
-		{
-			obj_list=db_model->getObjectList(types[i]);
-			itr=obj_list->begin();
 
-			while(itr!=obj_list->end() && !valid_canceled)
+		for(auto &tp : types)
+		{
+			if(valid_canceled)
+				break;
+
+			obj_list = db_model->getObjectList(tp);
+			itr = obj_list->begin();
+
+			for(auto &object : *obj_list)
 			{
-				object=(*itr);
-				obj_type=object->getObjectType();
-				refs_aux.clear();
-				itr++;
+				if(valid_canceled)
+					break;
+
+				//prog++;
+				handled_objs++;
 
 				//Excluding the validation of system objects (created automatically)
-				if(!object->isSystemObject())
-				{
-					emit s_objectProcessed(signal_msg.arg(object->getName()).arg(object->getTypeName()), object->getObjectType());
+				if(object->isSystemObject())
+					continue;
 
-					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
-						 Reference table cannot own an id greater thant receiver table */
-					if(obj_type==ObjectType::Relationship)
-					{
-						rel=dynamic_cast<Relationship *>(object);
-						if(rel->getRelationshipType()==Relationship::RelationshipGen ||
-								rel->getRelationshipType()==Relationship::RelationshipDep ||
-							 rel->getRelationshipType()==Relationship::RelationshipPart)
-						{
-							recv_tab=rel->getReceiverTable();
-							ref_tab=rel->getReferenceTable();
+				emit s_objectProcessed(SignalMsg.arg(object->getName(), object->getTypeName()), object->getObjectType());
 
-							if(ref_tab->getObjectId() > recv_tab->getObjectId())
-							{
-								object=ref_tab;
-								refs_aux.push_back(recv_tab);
-							}
-						}
-					}
-					else
-					{
-						refs = object->getReferences();
+				/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
+					 Reference table cannot own an id greater thant receiver table */
+				checkRelationshipTablesIds(object);
 
-						auto itr= refs.begin();
-						BaseObject *obj = nullptr;
+				// Validating broken references to the object
+				checkObjectBrokenRefs(object);
 
-						while(itr != refs.end() && !valid_canceled)
-						{
-							//Checking if the referrer object is a table object. In this case its parent table is considered
-							obj = *itr;
-							itr++;
-
-							tab_obj = dynamic_cast<TableObject *>(obj);
-							constr = dynamic_cast<Constraint *>(tab_obj);
-							col = dynamic_cast<Column *>(tab_obj);
-
-							/*
-							 * If the current referrer object has an id less than reference object's id
-							 * then it will be pushed into the list of invalid references.
-							 * There's an exception which is that foreign keys are completely discarded from any validation
-							 * since they are always created at end of code definition being free of any reference breaking.
-							 */
-							if(object != obj &&
-								 (
-									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
-										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-									 (!constr && !col && obj->getObjectId() <= object->getObjectId()))
-								 )
-							{
-								if(col || constr)
-									refer_obj = tab_obj->getParentTable();
-								else
-									refer_obj = obj;
-
-								refs_aux.push_back(refer_obj);
-							}
-						}
-
-						/* Validating a special object. The validation made here is to check if the special object
-						 * (constraint/index/trigger/view) references a column added by a relationship and
-						 *  that relationship is being created after the creation of the special object */
-						if(BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::GenericSql)
-						{
-							std::vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
-							std::vector<TableObject *> *tab_objs;
-							std::vector<Column *> ref_cols;
-							std::vector<BaseObject *> rels;
-							BaseObject *rel=nullptr;
-							View *view=nullptr;
-							GenericSQL *gen_sql=nullptr;
-							Constraint *constr=nullptr;
-
-							table=dynamic_cast<PhysicalTable *>(object);
-							view=dynamic_cast<View *>(object);
-							gen_sql = dynamic_cast<GenericSQL *>(object);
-
-							if(table)
-							{
-								/* Checking the table children objects if they references some columns added by relationship.
-								 * If so, the id of the relationships are swapped with the child object if the first is created
-								 * after the latter. */
-								for(auto &obj_tp : tab_aux_types)
-								{
-									tab_objs = table->getObjectList(obj_tp);
-									if(!tab_objs) continue;
-
-									for(auto &tab_obj : (*tab_objs))
-									{
-										ref_cols.clear();
-										rels.clear();
-
-										if(!tab_obj->isAddedByRelationship())
-										{
-											if(obj_tp==ObjectType::Constraint)
-											{
-												constr=dynamic_cast<Constraint *>(tab_obj);
-
-												if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
-													ref_cols=constr->getRelationshipAddedColumns();
-											}
-											else if(obj_tp==ObjectType::Trigger)
-												ref_cols=dynamic_cast<Trigger *>(tab_obj)->getRelationshipAddedColumns();
-											else
-												ref_cols=dynamic_cast<Index *>(tab_obj)->getRelationshipAddedColumns();
-										}
-
-										//Getting the relationships that owns the columns
-										for(auto &ref_col : ref_cols)
-										{
-											rel=ref_col->getParentRelationship();
-											if(rel->getObjectId() > tab_obj->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
-												rels.push_back(rel);
-										}
-
-										generateValidationInfo(ValidationInfo::SpObjBrokenReference, tab_obj, rels);
-									}
-								}
-							}
-							else if(view)
-							{
-								ref_cols=view->getRelationshipAddedColumns();
-
-								//Getting the relationships that owns the columns
-								for(auto &ref_col : ref_cols)
-								{
-									rel=ref_col->getParentRelationship();
-									if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
-										rels.push_back(rel);
-								}
-
-								generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
-							}
-							else
-							{
-								Column *col = nullptr;
-
-								for(auto &ref_obj : gen_sql->getDependencies())
-								{
-									col = dynamic_cast<Column *>(ref_obj);
-									if(!col || !col->isAddedByRelationship()) continue;
-
-									rel = col->getParentRelationship();
-
-									if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel) == rels.end())
-										rels.push_back(rel);
-								}
-
-								generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
-							}
-						}
-					}
-
-					generateValidationInfo(ValidationInfo::BrokenReference, object, refs_aux);
-				}
+				/* Validating a special object. The validation made here is to check if the special object
+				 * (constraint/index/trigger/view) references a column added by a relationship and
+				 *  that relationship is being created after the creation of the special object */
+				checkSpObjectBrokenRefs(object);
 			}
 
 			//Emit a signal containing the validation progress
-			progress=((i+1)/static_cast<double>(count))*20;
-			emit s_progressUpdated(progress, "");
+			emit s_progressUpdated((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 20), "");
 		}
-
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
 		and indexs of all tables/foreign talbes/views. The tables/views names are checked too. */
-		aux_tables = *db_model->getObjectList(ObjectType::Table);
-		aux_tables.insert(aux_tables.end(),
-											db_model->getObjectList(ObjectType::View)->begin(),
-											db_model->getObjectList(ObjectType::View)->end());
-		itr = aux_tables.begin();
-
-		//Searching the model's tables and gathering all the constraints and index
-		while(itr != aux_tables.end() && !valid_canceled)
-		{
-			base_tab = dynamic_cast<BaseTable *>(*itr);
-			emit s_objectProcessed(signal_msg.arg(base_tab->getName()).arg(base_tab->getTypeName()), base_tab->getObjectType());
-
-			itr++;
-
-			for(i=0; i < count1 && !valid_canceled; i++)
-			{
-				cnt=base_tab->getObjectCount(tab_obj_types[i]);
-
-				for(i1=0; i1 < cnt && !valid_canceled; i1++)
-				{
-					//Get the table object (constraint or index)
-					tab_obj=dynamic_cast<TableObject *>(base_tab->getObject(i1, tab_obj_types[i]));
-
-					//Configures the full name of the object including the parent name
-					name=tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
-					//name=tab_obj->TableObject::getSignature(true);
-					name.remove('"');
-
-					//Trying to convert the object to constraint
-					constr=dynamic_cast<Constraint *>(tab_obj);
-
-					/* If the object is an index or	a primary key, unique or exclude constraint,
-					 * insert the object on duplicated	objects map */
-					if((!constr ||
-						(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
-												constr->getConstraintType()==ConstraintType::Unique ||
-												constr->getConstraintType()==ConstraintType::Exclude))))
-						dup_objects[name].push_back(tab_obj);
-				}
-			}
-		}
-
-		/* Inserting the tables and views to the map in order to check if there are
-		 * other table objects that conflicts with them */
-		for(i=0; i < aux_cnt && !valid_canceled; i++)
-		{
-			obj_list=db_model->getObjectList(aux_types[i]);
-			itr=obj_list->begin();
-			while(itr!=obj_list->end() && !valid_canceled)
-			{
-				dup_objects[(*itr)->getSignature(true).remove('"')].push_back(*itr);
-				itr++;
-			}
-		}
-
-		//Checking the map of duplicated objects
-		mitr=dup_objects.begin();
-		i=1;
-		while(mitr!=dup_objects.end() && !valid_canceled)
-		{
-			/* If the vector of the current map element has more the one object
-		indicates the duplicity thus generates a validation info */
-			if(mitr->second.size() > 1)
-			{
-				refs.assign(mitr->second.begin() + 1, mitr->second.end());
-				generateValidationInfo(ValidationInfo::NoUniqueName, mitr->second.front(), refs);
-				refs.clear();
-			}
-
-			//Emit a signal containing the validation progress
-			progress=20 + ((i/static_cast<double>(dup_objects.size()))*20);
-			emit s_progressUpdated(progress, "");
-
-			i++; mitr++;
-		}
+		checkConstrNameConflicts();
 
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
-		if(!postgis_exists)
-		{
-			std::vector<BaseObject *> tabs;
+		checkMissingPostgisExt();
 
-			tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
-									db_model->getObjectList(ObjectType::Table)->end());
-			tabs.insert(tabs.end(),
-									db_model->getObjectList(ObjectType::ForeignTable)->begin(),
-									db_model->getObjectList(ObjectType::ForeignTable)->end());
+		/* Step 4: Checking if there are some invalidated relationship. In some cases, specially with identifier
+		 * and generalization relationships,
+		 * the columns aren't correctly propagated due to creation order and special behavior of those objects. Thus, in order to
+		 * keep all columns synchonized it is need to make this step and change the relationship creation order if needed.
+		 * This step is executed only when there is no validation infos generated because for each broken relationship there
+		 * is the need to do a revalidation of all relationships */
+		checkInvalidatedRels();
 
-			itr=tabs.begin();
-			i=0;
-
-			while(itr!=tabs.end() && !valid_canceled)
-			{
-				table = dynamic_cast<PhysicalTable *>(*itr);
-				itr++;
-
-				for(auto &obj : *table->getObjectList(ObjectType::Column))
-				{
-					col = dynamic_cast<Column *>(obj);
-
-					if(col->getType().isPostGiSType())
-						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
-				}
-
-				progress=30 + ((i/static_cast<double>(obj_list->size()))*20);
-			}
-		}
-
-		/* Step 4: Checking if there are some invalidated relationship. In some cases, specially with identifier and generalization relationships,
-	   the columns aren't correctly propagated due to creation order and special behavior of those objects. Thus, in order to
-	   keep all columns synchonized it is need to make this step and change the relationship creation order if needed. This step is executed
-	   only when there is no validation infos generated because for each broken relationship there is the need to do a revalidation of all relationships */
-		if(val_infos.empty())
-		{
-			obj_list=db_model->getObjectList(ObjectType::Relationship);
-			itr=db_model->getObjectList(ObjectType::Relationship)->begin();
-
-			while(itr!=obj_list->end() && !valid_canceled)
-			{
-				progress=40 + ((i/static_cast<double>(obj_list->size()))*20);
-
-				if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
-					generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});
-
-				itr++;
-			}
-		}
+		/*Step 5: Checking if unique constraints on tables reference the same columns as the primary keys.
+		 * In this, pgModeler emits an alert instead of a validation error this because PostgreSQL will
+		 * ignore the unique constraint having the mentioned configuration but without warn the user.
+		 * So this step is just here to help the user to understand why PostgreSQL doesn't create the
+		 * constraints */
+		checkUselessUqConstrs();
 
 		if(!valid_canceled && !fix_mode)
 		{
-			//Step 3 (optional): Validating the SQL code onto a local DBMS.
+			//Step 6 (optional): Validating the SQL code onto a local DBMS.
 			//Case the connection isn't specified indicates that the SQL validation will not be executed
 			if(!conn)
 			{
@@ -637,6 +378,384 @@ void ModelValidationHelper::validateModel()
 	{
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
+}
+
+void ModelValidationHelper::checkRelationshipTablesIds(BaseObject *object)
+{
+	Relationship *rel = dynamic_cast<Relationship *>(object);
+
+	if(rel && (rel->getRelationshipType()==Relationship::RelationshipGen ||
+						 rel->getRelationshipType()==Relationship::RelationshipDep ||
+						 rel->getRelationshipType()==Relationship::RelationshipPart))
+	{
+		PhysicalTable * recv_tab = rel->getReceiverTable(),
+				*ref_tab = rel->getReferenceTable();
+
+		if(ref_tab->getObjectId() > recv_tab->getObjectId())
+			generateValidationInfo(ValidationInfo::BrokenReference, ref_tab, { recv_tab });
+	}
+}
+
+void ModelValidationHelper::checkObjectBrokenRefs(BaseObject *object)
+{
+	std::vector<BaseObject *> refs_aux;
+	BaseObject *refer_obj=nullptr;
+	TableObject *tab_obj = nullptr;
+	Constraint *constr = nullptr;
+	Column *col = nullptr;
+
+	for(auto &obj : object->getReferences())
+	{
+		if(valid_canceled)
+			return;
+
+		/* Ignoring system objects that somehow references the object
+		 * An example is a schema created by an extension, in this case,
+		 * since the schema is created by pgModeler there is no need
+		 * to check for broken reference */
+		if(obj->isSystemObject())
+			continue;
+
+		//Checking if the referrer object is a table object. In this case its parent table is considered
+		tab_obj = dynamic_cast<TableObject *>(obj);
+		constr = dynamic_cast<Constraint *>(tab_obj);
+		col = dynamic_cast<Column *>(tab_obj);
+
+		/*
+		 * If the current referrer object has an id less than reference object's id
+		 * then it will be pushed into the list of invalid references.
+		 * There's an exception which is that foreign keys are completely discarded from any validation
+		 * since they are always created at end of code definition being free of any reference breaking.
+		 */
+		if(object != obj &&
+			 (
+				 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
+					(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
+				 (!constr && !col && obj->getObjectId() <= object->getObjectId()))
+			 )
+		{
+			if(col || constr)
+				refer_obj = tab_obj->getParentTable();
+			else
+				refer_obj = obj;
+
+			refs_aux.push_back(refer_obj);
+		}
+	}
+
+	generateValidationInfo(ValidationInfo::BrokenReference, object, refs_aux);
+}
+
+void ModelValidationHelper::checkSpObjectBrokenRefs(BaseObject *object)
+{
+	if(!BaseTable::isBaseTable(object->getObjectType()) &&
+		 object->getObjectType() != ObjectType::GenericSql)
+		return;
+
+	std::vector<ObjectType> tab_aux_types { ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
+	std::vector<TableObject *> *tab_objs;
+	std::vector<Column *> ref_cols;
+	std::vector<BaseObject *> rels;
+	BaseObject *rel = nullptr;
+	View *view = nullptr;
+	GenericSQL *gen_sql = nullptr;
+	Constraint *constr = nullptr;
+	PhysicalTable *table = nullptr;
+
+	table = dynamic_cast<PhysicalTable *>(object);
+	view = dynamic_cast<View *>(object);
+	gen_sql = dynamic_cast<GenericSQL *>(object);
+
+	if(table)
+	{
+		/* Checking the table children objects if they references some columns added by relationship.
+		 * If so, the id of the relationships are swapped with the child object if the first is created
+		 * after the latter. */
+		for(auto &obj_tp : tab_aux_types)
+		{
+			tab_objs = table->getObjectList(obj_tp);
+
+			if(!tab_objs)
+				continue;
+
+			for(auto &tab_obj : (*tab_objs))
+			{
+				ref_cols.clear();
+				rels.clear();
+
+				if(!tab_obj->isAddedByRelationship())
+				{
+					if(obj_tp == ObjectType::Constraint)
+					{
+						constr = dynamic_cast<Constraint *>(tab_obj);
+
+						if(constr->getConstraintType() != ConstraintType::PrimaryKey)
+							ref_cols = constr->getRelationshipAddedColumns();
+					}
+					else if(obj_tp == ObjectType::Trigger)
+						ref_cols = dynamic_cast<Trigger *>(tab_obj)->getRelationshipAddedColumns();
+					else
+						ref_cols = dynamic_cast<Index *>(tab_obj)->getRelationshipAddedColumns();
+				}
+
+				//Getting the relationships that owns the columns
+				for(auto &ref_col : ref_cols)
+				{
+					rel = ref_col->getParentRelationship();
+
+					if(rel->getObjectId() > tab_obj->getObjectId() &&
+						 std::find(rels.begin(), rels.end(), rel) == rels.end())
+						rels.push_back(rel);
+				}
+
+				generateValidationInfo(ValidationInfo::SpObjBrokenReference, tab_obj, rels);
+			}
+		}
+	}
+	else if(view)
+	{
+		ref_cols = view->getRelationshipAddedColumns();
+
+		//Getting the relationships that owns the columns
+		for(auto &ref_col : ref_cols)
+		{
+			rel = ref_col->getParentRelationship();
+
+			if(rel->getObjectId() > object->getObjectId() &&
+				 std::find(rels.begin(), rels.end(), rel)==rels.end())
+				rels.push_back(rel);
+		}
+
+		generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
+	}
+	else
+	{
+		Column *col = nullptr;
+
+		for(auto &ref_obj : gen_sql->getDependencies())
+		{
+			col = dynamic_cast<Column *>(ref_obj);
+			if(!col || !col->isAddedByRelationship()) continue;
+
+			rel = col->getParentRelationship();
+
+			if(rel->getObjectId() > object->getObjectId() &&
+				 std::find(rels.begin(), rels.end(), rel) == rels.end())
+				rels.push_back(rel);
+		}
+
+		generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
+	}
+}
+
+void ModelValidationHelper::checkConstrNameConflicts()
+{
+	static const std::vector<ObjectType>
+			tab_types { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
+			tab_obj_types { ObjectType::Constraint, ObjectType::Index };
+
+	unsigned cnt = 0;
+	std::vector<BaseObject *> refs, refs_aux, *obj_list = nullptr, aux_tables;
+	std::vector<BaseObject *>::iterator itr;
+	TableObject *tab_obj=nullptr;
+	BaseTable *base_tab = nullptr;
+	Constraint *constr=nullptr;
+	std::map<QString, std::vector<BaseObject *> > dup_objects;
+	std::map<QString, std::vector<BaseObject *> >::iterator mitr;
+	QString name;
+
+	/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
+	and indexs of all tables/foreign talbes/views. The tables/views names are checked too. */
+	aux_tables = *db_model->getObjectList(ObjectType::Table);
+	aux_tables.insert(aux_tables.end(),
+										db_model->getObjectList(ObjectType::View)->begin(),
+										db_model->getObjectList(ObjectType::View)->end());
+
+
+	//Searching the model's tables and gathering all the constraints and index
+	for(auto &tab : aux_tables)
+	{
+		if(valid_canceled)
+			return;
+
+		base_tab = dynamic_cast<BaseTable *>(tab);
+		emit s_objectProcessed(SignalMsg.arg(base_tab->getName(), base_tab->getTypeName()), base_tab->getObjectType());
+
+		for(auto &tb_obj_typ : tab_obj_types)
+		{
+			if(valid_canceled)
+				break;
+
+			cnt = base_tab->getObjectCount(tb_obj_typ);
+
+			for(unsigned idx = 0; idx < cnt; idx++)
+			{
+				if(valid_canceled)
+					break;
+
+				//Get the table object (constraint or index)
+				tab_obj = dynamic_cast<TableObject *>(base_tab->getObject(idx, tb_obj_typ));
+
+				//Configures the full name of the object including the parent name
+				name = tab_obj->getParentTable()->getSchema()->getName(true) + "." + tab_obj->getName(true);
+				name.remove('"');
+
+				//Trying to convert the object to constraint
+				constr = dynamic_cast<Constraint *>(tab_obj);
+
+				/* If the object is an index or	a primary key, unique or exclude constraint,
+				 * insert the object on duplicated	objects map */
+				if((!constr ||
+					(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
+											constr->getConstraintType()==ConstraintType::Unique ||
+											constr->getConstraintType()==ConstraintType::Exclude))))
+					dup_objects[name].push_back(tab_obj);
+			}
+		}
+	}
+
+	/* Inserting the tables and views to the map in order to check if there are
+	 * other table objects that conflicts with them */
+	for(auto &tb_type : tab_types)
+	{
+		obj_list = db_model->getObjectList(tb_type);
+		itr = obj_list->begin();
+
+		while(itr != obj_list->end() && !valid_canceled)
+		{
+			dup_objects[(*itr)->getSignature(true).remove('"')].push_back(*itr);
+			itr++;
+		}
+	}
+
+	//Checking the map of duplicated objects
+	mitr = dup_objects.begin();
+	total_objs += dup_objects.size();
+
+	while(mitr != dup_objects.end() && !valid_canceled)
+	{
+		/* If the vector of the current map element has more the one object
+		 * indicates the duplicity thus generates a validation info */
+		if(mitr->second.size() > 1)
+		{
+			refs.assign(mitr->second.begin() + 1, mitr->second.end());
+			generateValidationInfo(ValidationInfo::NoUniqueName, mitr->second.front(), refs);
+			refs.clear();
+		}
+
+		emit s_progressUpdated(21 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
+		mitr++;
+	}
+}
+
+void ModelValidationHelper::checkMissingPostgisExt()
+{
+	if(db_model->getObjectIndex("postgis", ObjectType::Extension) >= 0)
+		return;
+
+	std::vector<BaseObject *> tabs;
+
+	tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
+							db_model->getObjectList(ObjectType::Table)->end());
+	tabs.insert(tabs.end(),
+							db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+							db_model->getObjectList(ObjectType::ForeignTable)->end());
+
+	auto itr = tabs.begin();
+	PhysicalTable *table = nullptr;
+	Column *col = nullptr;
+	std::vector<TableObject *> *obj_list = nullptr;
+
+	total_objs += tabs.size();
+
+	while(itr != tabs.end() && !valid_canceled)
+	{
+		table = dynamic_cast<PhysicalTable *>(*itr);
+		obj_list = table->getObjectList(ObjectType::Column);
+		itr++;
+
+		for(auto &obj : *obj_list)
+		{
+			col = dynamic_cast<Column *>(obj);
+
+			if(col->getType().isPostGiSType())
+				generateValidationInfo(ValidationInfo::MissingExtension, col, {});
+		}
+
+		emit s_progressUpdated(31 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
+	}
+}
+
+void ModelValidationHelper::checkInvalidatedRels()
+{
+	if(!val_infos.empty())
+		return;
+
+	auto obj_list = db_model->getObjectList(ObjectType::Relationship);
+	auto itr = db_model->getObjectList(ObjectType::Relationship)->begin();
+
+	total_objs += obj_list->size();
+
+	while(itr != obj_list->end() && !valid_canceled)
+	{
+		if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
+			generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});
+
+		itr++;
+		emit s_progressUpdated(41 + ((handled_objs / static_cast<double>(total_objs)) * (!conn ? 40 : 10)), "");
+		handled_objs++;
+	}
+}
+
+void ModelValidationHelper::checkUselessUqConstrs()
+{
+	PhysicalTable *table = nullptr;
+	Constraint *pk = nullptr, *uq = nullptr;
+	std::vector<BaseObject *> tabs;
+
+	tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
+							db_model->getObjectList(ObjectType::Table)->end());
+
+	tabs.insert(tabs.end(),
+							db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+							db_model->getObjectList(ObjectType::ForeignTable)->end());
+
+	for(auto &tab : tabs)
+	{
+		if(valid_canceled)
+			break;
+
+		table = dynamic_cast<Table *>(tab);
+		pk = table->getPrimaryKey();
+
+		if(!pk)
+			continue;
+
+		for(auto &tab_obj : *table->getObjectList(ObjectType::Constraint))
+		{
+			uq = dynamic_cast<Constraint *>(tab_obj);
+
+			if(uq->getConstraintType() == ConstraintType::Unique &&
+				 uq->isColumnsExist(pk->getColumns(Constraint::SourceCols), Constraint::SourceCols, true))
+			{
+				generateValidationInfo(ValidationInfo::UniqueSameAsPk, uq, { pk });
+			}
+		}
+	}
+}
+
+void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
+{
+	if(!export_thread->isRunning())
+		return;
+
+	if(prog > 100)
+		prog = 100;
+
+	prog = 51 + (prog * 0.40);
+	emit s_progressUpdated(prog, msg, obj_type, cmd, is_code_gen);
 }
 
 void ModelValidationHelper::applyFixes()
@@ -734,6 +853,7 @@ void ModelValidationHelper::emitValidationFinished()
 	db_model->setInvalidated(error_count > 0);
 	emit s_validationFinished();
 
-	progress=100;
-	emit s_progressUpdated(progress,"");
+	//progress=100;
+	//emit s_progressUpdated(progress,"");
+	emit s_progressUpdated(100, "");
 }

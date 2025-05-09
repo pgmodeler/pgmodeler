@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,62 +28,32 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
 
-	hl_sqlcode=nullptr;
-	hl_xmlcode=nullptr;
+	prev_pg_ver = prev_code_opt = -1;
+	hl_sqlcode = nullptr;
+	hl_xmlcode = nullptr;
 
-	sqlcode_txt=GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt);
+	sqlcode_txt = GuiUtilsNs::createNumberedTextEditor(sqlcode_wgt, true);
 	sqlcode_txt->setReadOnly(true);
 
-	xmlcode_txt=GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt);
+	xmlcode_txt = GuiUtilsNs::createNumberedTextEditor(xmlcode_wgt, true);
 	xmlcode_txt->setReadOnly(true);
 
 	name_edt->setReadOnly(true);
 	version_cmb->addItems(PgSqlVersions::AllVersions);
 
-	connect(version_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-	connect(code_options_cmb, &QComboBox::currentIndexChanged, this, &SourceCodeWidget::generateSourceCode);
-	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::setSourceCodeTab);
-	connect(save_sql_tb, &QToolButton::clicked, this, &SourceCodeWidget::saveSQLCode);
+	connect(sourcecode_twg, &QTabWidget::currentChanged, this, &SourceCodeWidget::generateSourceCode);
+	connect(version_cmb, &QComboBox::currentIndexChanged, this, [this](int){
+		generateSourceCode(SchemaParser::SqlCode);
+	});
 
-	search_sql_wgt = new SearchReplaceWidget(sqlcode_txt, search_sql_wgt_parent);
-	search_sql_wgt_parent->setVisible(false);
-
-	QVBoxLayout *vbox = new QVBoxLayout(search_sql_wgt_parent);
-	vbox->addWidget(search_sql_wgt);
-	vbox->setContentsMargins(0,0,0,0);
-
-	search_xml_wgt = new SearchReplaceWidget(xmlcode_txt, search_xml_wgt_parent);
-	search_xml_wgt_parent->setVisible(false);
-
-	vbox = new QVBoxLayout(search_xml_wgt_parent);
-	vbox->addWidget(search_xml_wgt);
-	vbox->setContentsMargins(0,0,0,0);
-
-	connect(search_sql_tb, &QToolButton::toggled, search_sql_wgt_parent, &QWidget::setVisible);
-	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_sql_tb, &QToolButton::toggle);
-
-	connect(search_xml_tb, &QToolButton::toggled, search_xml_wgt_parent, &QWidget::setVisible);
-	connect(search_xml_wgt, &SearchReplaceWidget::s_hideRequested, search_xml_tb, &QToolButton::toggle);
+	connect(code_options_cmb, &QComboBox::currentIndexChanged, this, [this](int) {
+		generateSourceCode(SchemaParser::SqlCode);
+	});
 
 	hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 	hl_xmlcode=new SyntaxHighlighter(xmlcode_txt);
 
-	setMinimumSize(640, 540);
-}
-
-void SourceCodeWidget::setSourceCodeTab(int)
-{
-	QString code_icon;
-	bool enabled=false;
-	ObjectType obj_type=object->getObjectType();
-
-	enabled=(sourcecode_twg->currentIndex()==0 &&
-			 ((obj_type==ObjectType::BaseRelationship &&
-			   dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk)
-			  || (obj_type!=ObjectType::BaseRelationship && obj_type!=ObjectType::Textbox)));
-
-	version_cmb->setEnabled(enabled);
-	pgsql_lbl->setEnabled(enabled);
+	setMinimumSize(800, 600);
 }
 
 void SourceCodeWidget::saveSQLCode()
@@ -102,132 +72,143 @@ void SourceCodeWidget::saveSQLCode()
 	}
 }
 
-void SourceCodeWidget::generateSourceCode(int)
+void SourceCodeWidget::generateSQLCode()
 {
-	ObjectType obj_type;
-	TaskProgressWidget *task_prog_wgt=nullptr;
+	sqlcode_txt->clear();
+	prev_pg_ver = version_cmb->currentIndex();
+	prev_code_opt = code_options_cmb->currentIndex();
 
-	try
-	{
-		sqlcode_txt->clear();
-		xmlcode_txt->clear();
+	BaseObject::setPgSQLVersion(version_cmb->currentText());
 
-		qApp->setOverrideCursor(Qt::WaitCursor);
-
-		obj_type=object->getObjectType();
-		if(obj_type!=ObjectType::Textbox ||
-				(obj_type==ObjectType::BaseRelationship &&
-				 dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipFk))
-		{
-
-			BaseObject::setPgSQLVersion(version_cmb->currentText());
-
-			if(obj_type==ObjectType::Database)
-			{
-				task_prog_wgt=new TaskProgressWidget;
-				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
-				task_prog_wgt->show();
-				connect(this->model, &DatabaseModel::s_objectLoaded, task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
-				sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
-			}
-			else
-			{
-				sqlcode_txt->setPlainText(model->getSQLDefinition(object, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
-			}
+	if(object && object->getObjectType() == ObjectType::Database)
+		sqlcode_txt->setPlainText(object->getSourceCode(SchemaParser::SqlCode));
+	else
+		sqlcode_txt->setPlainText(model->getSQLDefinition(objects, static_cast<DatabaseModel::CodeGenMode>(code_options_cmb->currentIndex())));
 
 #ifdef DEMO_VERSION
-#warning "DEMO VERSION: SQL code preview truncated."
-			if(!sqlcode_txt->toPlainText().isEmpty())
-			{
-				int factor = obj_type == ObjectType::Database ? 4 : 2;
-				QString code = sqlcode_txt->toPlainText();
-				code = code.mid(0, code.size()/factor);
-				code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-				sqlcode_txt->setPlainText(code);
-
-				sqlcode_txt->setCustomContextMenuEnabled(false);
-				sqlcode_txt->setContextMenuPolicy(Qt::NoContextMenu);
-				save_sql_tb->setEnabled(false);
-			}
-#endif
-		}
-
-#ifndef DEMO_VERSION
-		save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
+	if(!sqlcode_txt->toPlainText().isEmpty())
+	{
+		QString code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") +
+		sqlcode_txt->toPlainText();
+		sqlcode_txt->setPlainText(code);
+	}
 #endif
 
-		if(sqlcode_txt->toPlainText().isEmpty())
-			sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));
+	if(sqlcode_txt->toPlainText().isEmpty())
+		sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));		
+}
+
+void SourceCodeWidget::generateXMLCode()
+{
+	xmlcode_txt->clear();
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: XML code preview disabled."
-		xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
+	xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
-		xmlcode_txt->setPlainText(object->getSourceCode(SchemaParser::XmlCode));
+	QString xml_code;
+
+	for(auto &obj : objects)
+		xml_code.append(obj->getSourceCode(SchemaParser::XmlCode));
+
+	xmlcode_txt->setPlainText(xml_code);
 #endif
+}
 
-		setSourceCodeTab();
+void SourceCodeWidget::generateSourceCode(int def_type)
+{
+	if((def_type == SchemaParser::XmlCode && !xmlcode_txt->document()->isEmpty()) ||
+		 (def_type == SchemaParser::SqlCode &&
+			(prev_pg_ver == version_cmb->currentIndex() &&
+			 prev_code_opt == code_options_cmb->currentIndex())))
+		return;
 
-		if(task_prog_wgt)
+	TaskProgressWidget task_prog_wgt;
+
+	try
+	{
+		qApp->setOverrideCursor(Qt::WaitCursor);
+
+		if(object && object->getObjectType() == ObjectType::Database)
 		{
-			task_prog_wgt->close();
-			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete task_prog_wgt;
+			task_prog_wgt.setWindowTitle(tr("Generating source code..."));
+			task_prog_wgt.show();
+			connect(this->model, &DatabaseModel::s_objectLoaded, &task_prog_wgt, qOverload<int, QString, unsigned>(&TaskProgressWidget::updateProgress));
 		}
+
+		if(def_type == SchemaParser::SqlCode)
+			generateSQLCode();
+		else
+			generateXMLCode();
+
+		task_prog_wgt.close();
+		disconnect(this->model, nullptr, &task_prog_wgt, nullptr);
 
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
 	{
-		qApp->restoreOverrideCursor();
+		//qApp->restoreOverrideCursor();
 
-		if(task_prog_wgt)
-		{
-			task_prog_wgt->close();
-			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete task_prog_wgt;
-		}
+		task_prog_wgt.close();
+		disconnect(this->model, nullptr, &task_prog_wgt, nullptr);
 
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 
-void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
+void SourceCodeWidget::setAttributes(DatabaseModel *model, const std::vector<BaseObject *> &objs)
 {
-	if(object)
+	try
 	{
-		try
-		{
-			BaseObjectWidget::setAttributes(model, object, nullptr);
-			ObjectType obj_type=object->getObjectType();
+		objects = objs;
 
-			this->name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
-			this->protected_obj_frm->setVisible(false);
-			this->obj_id_lbl->setVisible(false);
-			this->code_options_cmb->setEnabled(obj_type!=ObjectType::Database &&
-																					obj_type!=ObjectType::Textbox &&
-																					obj_type!=ObjectType::BaseRelationship &&
-																					obj_type!=ObjectType::Relationship);
+		if(objs.size() <= 1)
+		{
+			if(objects.empty())
+				objects.push_back(model);
+
+			BaseObjectWidget::setAttributes(model, objects[0], nullptr);
+			name_edt->setText(QString("%1 (%2)").arg(object->getSignature(), object->getTypeName()));
+			obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
+		}
+		else
+		{
+			BaseObjectWidget::setAttributes(model, static_cast<BaseObject *>(nullptr), nullptr);
+			name_edt->setVisible(false);
+			name_lbl->setVisible(false);
+			obj_icon_lbl->setVisible(false);
+		}
+
+		protected_obj_frm->setVisible(false);
+		obj_id_lbl->setVisible(false);
+
+		code_options_cmb->setEnabled(std::any_of(objs.begin(), objs.end(), [](auto &obj){
+			return obj->getObjectType() != ObjectType::Database &&
+						 obj->getObjectType() != ObjectType::Textbox &&
+						 obj->getObjectType() != ObjectType::BaseRelationship &&
+						 obj->getObjectType() != ObjectType::Relationship;
+		}));
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code display options disabled."
-			code_options_cmb->setEnabled(false);
+		code_options_cmb->setEnabled(false);
 #endif
 
-			obj_icon_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath(object->getObjectType())));
+		if(!hl_sqlcode->isConfigurationLoaded())
+			hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
-			if(!hl_sqlcode->isConfigurationLoaded())
-				hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
+		if(!hl_xmlcode->isConfigurationLoaded())
+			hl_xmlcode->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
-			if(!hl_xmlcode->isConfigurationLoaded())
-				hl_xmlcode->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
-
-			generateSourceCode();
-		}
-		catch(Exception &e)
-		{
-			Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		}
+		generateSourceCode(SchemaParser::SqlCode);
+	}
+	catch(Exception &e)
+	{
+		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
 

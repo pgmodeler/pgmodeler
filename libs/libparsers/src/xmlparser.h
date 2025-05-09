@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,8 +36,9 @@
 
 class __libparsers XmlParser {
 	private:
-		/*! \brief This global counter holds the number of parsers instances created on the application. This is done to control
-		 * when to call xmlInitParser() and xmlCleanupParser() as these functions need to be called only once in the application.
+		/*! \brief This global counter holds the number of parsers instances created
+		 * on the application. This is done to control when to call xmlInitParser() and
+		 * xmlCleanupParser() as these functions need to be called only once in the application.
 		 * Reference: http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser */
 		static int parser_instances;
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ class __libcore ForeignObject {
 
 	public:
 		//! \brief Store the character used to separate options/values in the XML code
-		static const QString OptionsSeparator;
-		static const QString OptionValueSeparator;
+		static const QString OptionsSeparator,
+		OptionValueSeparator;
 
 		ForeignObject();
 

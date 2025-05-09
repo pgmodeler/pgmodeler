@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,39 +23,18 @@
 #include "defaultlanguages.h"
 
 class ProcedureTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		ProcedureTest() : PgModelerUnitTest(SCHEMASDIR) {}
 
 	private slots:
-		void throwsErrorOnInvalidParameter();
 		void generatesNameAndSignatureCorrectly();
 		void generatesSQLCorrectly();
 		void generatesXMLCorrectly();
 		void modelReturnsProcedureDepsRefs();
 		void modelCreatesProcedureFromXML();
 };
-
-void ProcedureTest::throwsErrorOnInvalidParameter()
-{
-	Procedure proc;
-
-	try
-	{
-		Parameter param;
-		param.setName("p1");
-		param.setOut(true);
-		param.setIn(false);
-		proc.addParameter(param);
-		QFAIL("No error related to invalid parameter raised!");
-	}
-	catch(Exception &e)
-	{
-		QCOMPARE(e.getErrorCode(), ErrorCode::InvProcedureParamOutMode);
-	}
-}
 
 void ProcedureTest::generatesNameAndSignatureCorrectly()
 {

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,13 +24,28 @@
 #include "settings/connectionsconfigwidget.h"
 #include "pgsqlversions.h"
 
-bool ModelDatabaseDiffForm::low_verbosity = false;
+bool ModelDatabaseDiffForm::low_verbosity {false};
 std::map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
+
+const QString ModelDatabaseDiffForm::ForceObjsBtnLabel { QT_TR_NOOP("Force re-creation (%1)") };
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
 	setupUi(this);
 	setWindowFlags(flags);
+
+	forced_obj_types_wgt = new ObjectTypesListWidget(this, { /* ObjectType::Column, ObjectType::Constraint, */
+																										ObjectType::Relationship, ObjectType::Permission,
+																										ObjectType::Database, ObjectType::Tag,
+																										ObjectType::Textbox, ObjectType::GenericSql });
+	forced_obj_types_wgt->setTypesCheckState(Qt::Unchecked);
+
+	QWidgetAction *wgt_act = new QWidgetAction(this);
+	wgt_act->setDefaultWidget(forced_obj_types_wgt);
+
+	QMenu *forced_obj_types_menu = new QMenu(this);
+	forced_obj_types_menu->addAction(wgt_act);
+	forced_objs_types_tb->setMenu(forced_obj_types_menu);
 
 	src_server_supported = server_supported = true;
 	pg_version_alert_frm->setVisible(false);
@@ -58,6 +73,13 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	vbox = new QVBoxLayout(search_wgt_parent);
 	vbox->addWidget(search_sql_wgt);
 	vbox->setContentsMargins(0,0,0,0);
+
+	dbg_output_wgt = new DebugOutputWidget(this);
+	vbox = new QVBoxLayout(settings_tbw->widget(4));
+	vbox->setContentsMargins(GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin,
+													 GuiUtilsNs::LtMargin, GuiUtilsNs::LtMargin);
+	vbox->addWidget(dbg_output_wgt);
+	settings_tbw->setTabVisible(4, false);
 
 	connect(search_tb, &QToolButton::toggled, search_wgt_parent, &QWidget::setVisible);
 	connect(search_sql_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
@@ -124,7 +146,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 
 	connect(close_btn, &QPushButton::clicked, this, &ModelDatabaseDiffForm::close);
 	connect(store_in_file_rb, &QRadioButton::clicked, store_in_file_wgt, &QWidget::setEnabled);
-	connect(force_recreation_chk, &QCheckBox::toggled, recreate_unmod_chk, &QCheckBox::setEnabled);
+
 	connect(dont_drop_missing_objs_chk, &QCheckBox::toggled, drop_missing_cols_constr_chk, &QCheckBox::setEnabled);
 	connect(create_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
 	connect(drop_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
@@ -132,6 +154,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	connect(ignore_tb, &QToolButton::toggled, this, &ModelDatabaseDiffForm::filterDiffInfos);
 	connect(ignore_error_codes_chk, &QCheckBox::toggled, error_codes_edt, &QLineEdit::setEnabled);
 	connect(src_model_rb, &QRadioButton::toggled, src_model_name_lbl, &QLabel::setEnabled);
+	connect(src_model_rb, &QRadioButton::toggled, src_model_name_edt, &QLabel::setEnabled);
+
 
 	connect(src_connections_cmb, &QComboBox::activated, this, __slot(this, ModelDatabaseDiffForm::listDatabases));
 	connect(src_database_cmb, &QComboBox::currentIndexChanged, this, &ModelDatabaseDiffForm::enableDiffMode);
@@ -175,16 +199,49 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		GuiUtilsNs::populateObjectsTable(filtered_objs_view, std::vector<attribs_map>());
 	});
 
+	connect(forced_obj_types_wgt, &ObjectTypesListWidget::s_typesCheckStateChanged, this, [this](Qt::CheckState) {
+		forced_objs_types_tb->setText(ForceObjsBtnLabel
+																	.arg(forced_obj_types_wgt->
+																			 getTypesCountPerCheckState(Qt::Checked)));
+	});
+
+	connect(forced_obj_types_wgt, &ObjectTypesListWidget::s_typeCheckStateChanged, this, [this](ObjectType, Qt::CheckState) {
+		forced_objs_types_tb->setText(ForceObjsBtnLabel
+																	.arg(forced_obj_types_wgt->
+																			 getTypesCountPerCheckState(Qt::Checked)));
+	});
+
+	connect(debug_mode_chk, &QCheckBox::toggled, this, [this](bool checked) {
+		dbg_output_wgt->setLogMessages(checked);
+		settings_tbw->setTabVisible(4, checked);
+	});
+
+	auto lmb_slot = [this](bool checked){
+		if(checked)
+			run_in_transaction_chk->setChecked(false);
+	};
+
+	connect(ignore_duplic_chk, &QCheckBox::toggled, this, lmb_slot);
+	connect(ignore_error_codes_chk, &QCheckBox::toggled, this, lmb_slot);
+
+	connect(run_in_transaction_chk, &QCheckBox::toggled, this, [this](bool checked){
+		if(checked)
+		{
+			ignore_error_codes_chk->setChecked(false);
+			ignore_duplic_chk->setChecked(false);
+		}
+	});
+
 #ifdef DEMO_VERSION
-	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
+	#warning "DEMO VERSION: forcing ignore errors in diff."
 	ignore_errors_chk->setChecked(true);
 	ignore_errors_chk->setEnabled(false);
 
 	ignore_error_codes_chk->setChecked(false);
 	ignore_error_codes_chk->setEnabled(false);
 
-	apply_on_server_rb->setChecked(false);
-	apply_on_server_rb->setEnabled(false);
+	apply_on_server_btn->setEnabled(false);
+	open_in_sql_tool_btn->setEnabled(false);
 #endif
 }
 
@@ -207,18 +264,19 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 {
 	if(model_wgt)
 	{
-		QString filename = QFileInfo(model_wgt->getFilename()).fileName();
-		source_model=loaded_model=model_wgt->getDatabaseModel();
-		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(filename.isEmpty() ? tr("not saved") : filename));
-		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? tr("Model not saved yet") : model_wgt->getFilename());
+		source_model = loaded_model = model_wgt->getDatabaseModel();
+		src_model_name_lbl->setText(source_model->getName());
+		src_model_name_edt->setText(QString("%1").arg(model_wgt->getFilename().isEmpty() ? tr("(not yet saved to a file)") : model_wgt->getFilename()));
 	}
 	else
 	{
 		src_model_name_lbl->setText(tr("(none)"));
-		src_model_name_lbl->setToolTip("");
+		src_model_name_edt->setText(tr("(none)"));
 		src_database_rb->setChecked(true);
 		src_model_rb->setEnabled(false);
 	}
+
+	src_model_name_edt->setCursorPosition(0);
 }
 
 void ModelDatabaseDiffForm::setLowVerbosity(bool value)
@@ -416,6 +474,9 @@ void ModelDatabaseDiffForm::destroyModel()
 
 void ModelDatabaseDiffForm::clearOutput()
 {
+	dbg_output_wgt->clear();
+	dbg_output_wgt->showActionButtons(false);
+
 	output_trw->clear();
 	src_import_item=import_item=diff_item=export_item=nullptr;
 
@@ -452,6 +513,8 @@ void ModelDatabaseDiffForm::listDatabases()
 		}
 
 		Connection *conn = reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
+		dbg_output_wgt->clear();
+		dbg_output_wgt->showActionButtons(false);
 
 		if(conn)
 		{
@@ -485,6 +548,7 @@ void ModelDatabaseDiffForm::listDatabases()
 
 void ModelDatabaseDiffForm::enableDiffMode()
 {
+	export_opts_gb->setEnabled(apply_on_server_rb->isChecked());
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
 	file_sel->setFileIsMandatory(store_in_file_rb->isChecked());
 
@@ -517,12 +581,12 @@ void ModelDatabaseDiffForm::generateDiff()
 										 GuiUtilsNs::getIconPath("config"),
 										 GuiUtilsNs::getIconPath("diff"));
 
-			if(msgbox.result() == QDialog::Accepted)
+			if(msgbox.isAccepted())
 			{
 				dont_drop_missing_objs_chk->setChecked(true);
 				drop_missing_cols_constr_chk->setChecked(true);
 			}
-			else if(msgbox.isCancelled())
+			else if(msgbox.isCanceled())
 				return;
 		}
 	}
@@ -551,6 +615,9 @@ void ModelDatabaseDiffForm::generateDiff()
 	}
 	else
 		total_steps=4;
+
+	dbg_output_wgt->setLogMessages(debug_mode_chk->isChecked());
+	settings_tbw->setTabVisible(4, debug_mode_chk->isChecked());
 
 	importDatabase(src_database_rb->isChecked() ? SrcImportThread : ImportThread);
 
@@ -614,12 +681,12 @@ void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
 			if(src_model_rb->isChecked())
-				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, gen_filters_from_log_chk->isChecked() || pd_filter_wgt->isMatchSignature()));
+				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, gen_filters_from_log_chk->isChecked() || pd_filter_wgt->isMatchBySignature()));
 
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),
 															 // When the filter by date is checked we always filter objects by their signature
-															 gen_filters_from_log_chk->isChecked() ? true : pd_filter_wgt->isMatchSignature(),
+															 gen_filters_from_log_chk->isChecked() ? true : pd_filter_wgt->isMatchBySignature(),
 															 pd_filter_wgt->getForceObjectsFilter());
 		}
 
@@ -629,11 +696,12 @@ void ModelDatabaseDiffForm::importDatabase(ThreadId thread_id)
 		 * complete imported model, diminishing false-positive results. */
 
 		/* catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-							   (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : 0) |
-								 (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : 0)); */
+													 (!import_ext_objs_chk->isChecked() ? Catalog::ExclExtensionObjs : Catalog::NoFilter) |
+													 (!import_sys_objs_chk->isChecked() ? Catalog::ExclSystemObjs : Catalog::NoFilter)); */
 
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+														/* Catalog::ExclExtensionObjs | */ Catalog::ExclSystemObjs);
+
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
@@ -670,8 +738,8 @@ void ModelDatabaseDiffForm::diffModels()
 	step_lbl->setText(tr("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
 						.arg(curr_step)
 						.arg(total_steps)
-					  .arg(source_model->getName())
-					  .arg(imported_model->getName()));
+						.arg(source_model->getName(), imported_model->getName()));
+
 	step_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("diff")));
 
 	if(src_import_item)
@@ -684,14 +752,15 @@ void ModelDatabaseDiffForm::diffModels()
 
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, recreate_unmod_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptReplaceModified, replace_modified_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptReuseSequences, reuse_sequences_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, dont_drop_missing_objs_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, drop_missing_cols_constr_chk->isChecked());
 
+	diff_helper->setForcedRecreateTypes(forced_obj_types_wgt->getTypesPerCheckState(Qt::Checked));
 	diff_helper->setModels(source_model, imported_model);
 
 	/* If the user has chosen diff between a model and database
@@ -714,13 +783,15 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
+	{
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 tr("Apply diff"), tr("Preview diff"), "",
 					 GuiUtilsNs::getIconPath("diff"), GuiUtilsNs::getIconPath("sqlcode"));
+	}
 
-	if(!confirm || msg_box.result()==QDialog::Accepted)
+	if(!confirm || msg_box.isAccepted())
 	{
 		export_conn=new Connection;
 		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
@@ -740,14 +811,16 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
-																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
+																				 database_cmb->currentText(), ignore_duplic_chk->isChecked(),
+																				 run_in_transaction_chk->isChecked());
+
 		if(ignore_error_codes_chk->isChecked())
 			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
 
 		export_thread->start();
 		close_btn->setEnabled(false);
 	}
-	else if(msg_box.isCancelled())
+	else if(msg_box.isCanceled())
 		cancelOperation(true);
 	else
 	{
@@ -851,6 +924,8 @@ void ModelDatabaseDiffForm::finishDiff()
 	import_item=GuiUtilsNs::createOutputTreeItem(output_trw, step_lbl->text(), step_ico_lbl->pixmap(Qt::ReturnByValue), nullptr);
 	step_pb->setValue(100);
 	progress_pb->setValue(100);
+
+	qApp->alert(this);
 }
 
 void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
@@ -889,6 +964,8 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 		export_helper->cancelExport();
 		export_thread->quit();
 	}
+
+	dbg_output_wgt->showActionButtons(debug_mode_chk->isChecked());
 
 	resetButtons();
 	process_paused=false;
@@ -939,13 +1016,12 @@ void ModelDatabaseDiffForm::handleDiffFinished()
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
-	if(!sqlcode_txt->toPlainText().isEmpty())
-	{
-		QString code=sqlcode_txt->toPlainText();
-		code=code.mid(0, code.size()/2);
-		code+=tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-		sqlcode_txt->setPlainText(code);
-	}
+	QString code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") +
+	sqlcode_txt->toPlainText();
+	sqlcode_txt->setPlainText(code);
 #endif
 
 	settings_tbw->setTabEnabled(2, true);
@@ -954,7 +1030,17 @@ void ModelDatabaseDiffForm::handleDiffFinished()
 	if(store_in_file_rb->isChecked())
 		saveDiffToFile();
 	else if(!sqlcode_txt->toPlainText().isEmpty())
+	{
+#ifdef DEMO_VERSION
+		#warning "DEMO VERSION: forcing code preview after diff."
+		close_btn->setEnabled(true);
+		settings_tbw->setCurrentIndex(3);
+		settings_tbw->setTabEnabled(3, true);
+		output_trw->collapseItem(diff_item);
+#else
 		exportDiff();
+#endif
+	}
 	else
 		finishDiff();
 
@@ -1038,8 +1124,13 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		if(!low_verbosity)
 		{
-			if(obj_type==ObjectType::BaseObject)
-				ico=QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+			if(obj_type == ObjectType::BaseObject)
+			{
+				if(!cmd.isEmpty())
+					ico = QPixmap(GuiUtilsNs::getIconPath("sqlcode"));
+				else
+					ico = QPixmap(GuiUtilsNs::getIconPath("info"));
+			}
 			else
 				ico=QPixmap(GuiUtilsNs::getIconPath(obj_type));
 
@@ -1069,16 +1160,33 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
 																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
-	ObjectsDiffInfo::DiffType diff_type=diff_info.getDiffType();
-	QToolButton *btn=buttons[diff_type];
-	QTreeWidgetItem *item=nullptr;
+	ObjectsDiffInfo::DiffType diff_type = diff_info.getDiffType();
+	QToolButton *btn = buttons[diff_type];
+	QTreeWidgetItem *item = nullptr;
 
 	if(!low_verbosity)
 	{
-		item=GuiUtilsNs::createOutputTreeItem(output_trw,
-												 UtilsNs::formatMessage(diff_info.getInfoMessage()),
-												 QPixmap(GuiUtilsNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
+		item = GuiUtilsNs::createOutputTreeItem(output_trw,
+																						UtilsNs::formatMessage(diff_info.getInfoMessage()),
+																						QPixmap(GuiUtilsNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
+
 		item->setData(0, Qt::UserRole, diff_info.getDiffType());
+
+		/* If in debug mode we display the XML code of the involved objects
+		 * when the diff info is related to a ALTER Object */
+		if(import_helper->debug_mode &&
+			 diff_info.getDiffType() == ObjectsDiffInfo::AlterObject)
+		{		
+			GuiUtilsNs::createOutputTreeItem(
+						output_trw,
+						QString("** Imported object: %1 \n ** Source object: %2")
+						.arg(diff_info.getOldObject()->getSourceCode(SchemaParser::XmlCode),
+								 diff_info.getObject()->getSourceCode(SchemaParser::XmlCode)),
+						QPixmap(),
+						item, false, true);
+
+			item->setExpanded(false);
+		}
 	}
 
 	if(diff_helper)
@@ -1092,7 +1200,8 @@ void ModelDatabaseDiffForm::loadConfiguration()
 {
 	try
 	{
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params,
+																				{ Attributes::Name }, false);
 		applyConfiguration();
 	}
 	catch(Exception &e)
@@ -1101,7 +1210,7 @@ void ModelDatabaseDiffForm::loadConfiguration()
 		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 			restoreDefaults();
 	}
 }
@@ -1153,11 +1262,9 @@ void ModelDatabaseDiffForm::restoreDefaults()
 {
 	try
 	{
-		Messagebox msg_box;
-		msg_box.show(tr("Do you really want to restore the default settings?"),
-								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
+		int res = Messagebox::confirm(tr("Do you really want to restore the default settings?"));
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(Messagebox::isAccepted(res))
 		{
 			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
 			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
@@ -1176,10 +1283,7 @@ void ModelDatabaseDiffForm::selectPreset()
 	QStringList db_name;
 
 	src_model_rb->setChecked(src_model_rb->isEnabled() && conf[Attributes::CurrentModel] == Attributes::True);
-
 	src_database_rb->setChecked(!conf[Attributes::InputDatabase].isEmpty());
-	//src_connections_cmb->setCurrentIndex(0);
-	//src_connections_cmb->activated(0);
 	db_name = conf[Attributes::InputDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1195,8 +1299,6 @@ void ModelDatabaseDiffForm::selectPreset()
 	}
 
 	// Selecting the database to compare
-	//connections_cmb->setCurrentIndex(0);
-	//connections_cmb->activated(0);
 	db_name = conf[Attributes::CompareToDatabase].split('@');
 
 	if(db_name.size() > 1)
@@ -1227,16 +1329,35 @@ void ModelDatabaseDiffForm::selectPreset()
 	preserve_db_name_chk->setChecked(conf[Attributes::PreserveDbName] == Attributes::True);
 	cascade_mode_chk->setChecked(conf[Attributes::DropTruncCascade] == Attributes::True);
 	reuse_sequences_chk->setChecked(conf[Attributes::ReuseSequences] == Attributes::True);
-	force_recreation_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True);
-	recreate_unmod_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True &&
-																 conf[Attributes::RecreateUnmodObjs] == Attributes::True);
+	recreate_unmod_chk->setChecked(conf[Attributes::RecreateUnmodObjs] == Attributes::True);
+	replace_modified_chk->setChecked(conf[Attributes::ReplaceModObjs] == Attributes::True);
 
 	import_sys_objs_chk->setChecked(conf[Attributes::ImportSysObjs] == Attributes::True);
 	import_ext_objs_chk->setChecked(conf[Attributes::ImportExtObjs] == Attributes::True);
 	ignore_duplic_chk->setChecked(conf[Attributes::IgnoreDuplicErrors] == Attributes::True);
 	ignore_errors_chk->setChecked(conf[Attributes::IgnoreImportErrors] == Attributes::True);
+	run_in_transaction_chk->setChecked(conf[Attributes::RunInTransaction] == Attributes::True);
 	ignore_error_codes_chk->setChecked(!conf[Attributes::IgnoreErrorCodes].isEmpty());
 	error_codes_edt->setText(conf[Attributes::IgnoreErrorCodes]);
+
+	forced_obj_types_wgt->blockSignals(true);
+	forced_obj_types_wgt->setTypesCheckState(Qt::Unchecked);
+	forced_obj_types_wgt->blockSignals(false);
+
+	forced_obj_types_wgt->setTypeNamesCheckState(conf[Attributes::ForceObjsReCreation].split(','), Qt::Checked);
+
+	/* Compatibility with previous versions of diff-presets.conf
+	 * We configure diff filters only when one of the attributes related
+	 * to them is present */
+	if(conf.count(Attributes::MatchBySignature) ||
+		 conf.count(Attributes::OnlyMatching) ||
+		 conf.count(Attributes::ForcedFiltering))
+	{
+		pd_filter_wgt->addFilters(conf[Attributes::Contents].split('\n'));
+		pd_filter_wgt->setForceObjectsFilter(conf[Attributes::ForcedFiltering].split(','));
+		pd_filter_wgt->setMatchBySignature(conf[Attributes::MatchBySignature] != Attributes::False);
+		pd_filter_wgt->setOnlyMatching(conf[Attributes::OnlyMatching] != Attributes::False);
+	}
 }
 
 void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
@@ -1250,7 +1371,7 @@ void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
 	edit_preset_tb->setVisible(!toggle);
 	remove_preset_tb->setVisible(!toggle);
 	preset_name_edt->clear();
-	save_preset_tb->setEnabled(toggle && (is_edit && presets_cmb->count() > 0));
+	//save_preset_tb->setEnabled(toggle && (is_edit && presets_cmb->count() > 0));
 
 	if(is_edit)
 		preset_name_edt->setText(presets_cmb->currentText());
@@ -1269,11 +1390,9 @@ void ModelDatabaseDiffForm::enablePresetButtons()
 
 void ModelDatabaseDiffForm::removePreset()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Are you sure do you want to remove the selected diff preset?"));
 
-	msg_box.show(tr("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result() == QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.erase(presets_cmb->currentText());
 		applyConfiguration();
@@ -1283,65 +1402,80 @@ void ModelDatabaseDiffForm::removePreset()
 
 void ModelDatabaseDiffForm::savePreset()
 {
-	QString name, fmt_name;
-	attribs_map conf;
-	int idx = 0;
-
-	if(!is_adding_new_preset)
+	try
 	{
-		fmt_name = name = preset_name_edt->text().isEmpty() ? presets_cmb->currentText() : preset_name_edt->text();
-		config_params.erase(presets_cmb->currentText());
-		presets_cmb->removeItem(presets_cmb->currentIndex());
+		QString name, fmt_name;
+		attribs_map conf;
+		int idx = 0;
+
+		if(!is_adding_new_preset)
+		{
+			fmt_name = name = preset_name_edt->text().isEmpty() ? presets_cmb->currentText() : preset_name_edt->text();
+			config_params.erase(presets_cmb->currentText());
+			presets_cmb->removeItem(presets_cmb->currentIndex());
+		}
+		else
+			fmt_name = name = preset_name_edt->text();
+
+		// Checking the preset name duplication and performing a basic desambiguation if necessary
+		while(presets_cmb->findText(fmt_name, Qt::MatchExactly) >= 0)
+			fmt_name = name + QString::number(++idx);
+
+		conf[Attributes::Name] = fmt_name;
+		conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
+
+		if(src_database_rb->isChecked())
+		{
+			conf[Attributes::InputDatabase] = QString("%1@%2")
+																				.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : "-")
+																				.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : "-");
+		}
+		else
+			conf[Attributes::InputDatabase] = "";
+
+		conf[Attributes::CompareToDatabase] = QString("%1@%2")
+																					.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
+																					.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
+
+		conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
+		conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
+		conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
+		conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ReplaceModObjs] = replace_modified_chk->isChecked() ? Attributes::True : Attributes::False;
+
+		conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
+		conf[Attributes::RunInTransaction] = run_in_transaction_chk->isChecked() ? Attributes::True : Attributes::False;
+		conf[Attributes::ForceObjsReCreation] = forced_obj_types_wgt->getTypeNamesPerCheckState(Qt::Checked).join(',');
+
+		conf[Attributes::MatchBySignature] = pd_filter_wgt->isMatchBySignature() ? Attributes::True : Attributes::False;
+		conf[Attributes::OnlyMatching] = pd_filter_wgt->isOnlyMatching() ? Attributes::True : Attributes::False;
+		conf[Attributes::ForcedFiltering] = pd_filter_wgt->getForceObjectsFilter().join(',' );
+		conf[Attributes::Filters] = pd_filter_wgt->getObjectFilters().join('\n');
+
+		config_params[fmt_name] = conf;
+
+		saveConfiguration();
+		togglePresetConfiguration(false);
+		applyConfiguration();
+
+		presets_cmb->setCurrentText(fmt_name);
+		selectPreset();
 	}
-	else
-		fmt_name = name = preset_name_edt->text();
-
-	// Checking the preset name duplication and performing a basic desambiguation if necessary
-	while(presets_cmb->findText(fmt_name, Qt::MatchExactly) >= 0)
-		fmt_name = name + QString::number(++idx);
-
-	conf[Attributes::Name] = fmt_name;
-	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
-
-	if(src_database_rb->isChecked())
+	catch(Exception &e)
 	{
-		conf[Attributes::InputDatabase] = QString("%1@%2")
-																			.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : "-")
-																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : "-");
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
-	else
-		conf[Attributes::InputDatabase] = "";
-
-	conf[Attributes::CompareToDatabase] = QString("%1@%2")
-																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : "-")
-																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : "-");
-	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
-	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
-	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
-	conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ForceObjsRecreation] = force_recreation_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
-
-	conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
-	conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
-
-	config_params[fmt_name] = conf;
-
-	saveConfiguration();
-	togglePresetConfiguration(false);
-	applyConfiguration();
-
-	presets_cmb->setCurrentText(fmt_name);
-	selectPreset();
 }
 
 void ModelDatabaseDiffForm::enablePartialDiff()
@@ -1356,8 +1490,9 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 
 	if(src_model_rb->isChecked())
 	{
-		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
-		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
+		pd_input_lbl->setText(QString("<strong>%1 [%2]</strong>").arg(src_model_name_lbl->text(),
+																																	QFileInfo(src_model_name_edt->text()).fileName()));
+		pd_input_lbl->setToolTip(src_model_name_edt->text());
 		pd_input_ico_lbl->setPixmap(QPixmap(GuiUtilsNs::getIconPath("dbmodel")));
 	}
 	else if(src_database_cmb->currentIndex() > 0)
@@ -1386,7 +1521,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		if(src_model_rb->isChecked())
 		{
 			QString search_attr = (gen_filters_from_log_chk->isChecked() ||
-														 pd_filter_wgt->isMatchSignature()) ?
+														 pd_filter_wgt->isMatchBySignature()) ?
 																Attributes::Signature : Attributes::Name;
 
 			std::vector<BaseObject *> flt_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr, false);
@@ -1405,7 +1540,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 			import_helper.setConnection(conn);
 			import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
 																			pd_filter_wgt->isOnlyMatching(),
-																			pd_filter_wgt->isMatchSignature(),
+																			pd_filter_wgt->isMatchBySignature(),
 																			pd_filter_wgt->getForceObjectsFilter());
 
 			DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_view);

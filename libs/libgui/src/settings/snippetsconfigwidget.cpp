@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,14 @@
 #include "baseobject.h"
 #include "messagebox.h"
 #include "guiutilsns.h"
+#include <QMenu>
 
 std::map<QString, attribs_map> SnippetsConfigWidget::config_params;
 
-const QRegularExpression SnippetsConfigWidget::IdFormatRegExp(QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"), QRegularExpression::CaseInsensitiveOption);
+const QRegularExpression SnippetsConfigWidget::IdFormatRegExp {
+	QRegularExpression::anchoredPattern("^([a-z])([a-z]*|(\\d)*|(_)*)+"),
+	QRegularExpression::CaseInsensitiveOption
+};
 
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -53,7 +57,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
-	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt);
+	snippet_txt=GuiUtilsNs::createNumberedTextEditor(snippet_wgt, true);
 
 	snippet_hl=new SyntaxHighlighter(snippet_txt);
 	snippet_hl->loadConfiguration(GlobalAttributes::getSchHighlightConfPath());
@@ -213,7 +217,6 @@ void SnippetsConfigWidget::fillSnippetsCombo(std::map<QString, attribs_map> &con
 
 bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &orig_id)
 {
-	Messagebox msg_box;
 	QString snip_id=attribs.at(Attributes::Id),
 			err_msg;
 
@@ -246,7 +249,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 
 	if(!err_msg.isEmpty())
 	{
-		msg_box.show(err_msg, Messagebox::ErrorIcon, Messagebox::OkButton);
+		Messagebox::error(err_msg);
 		return false;
 	}
 	else
@@ -357,12 +360,9 @@ void SnippetsConfigWidget::removeSnippet()
 
 void SnippetsConfigWidget::removeAllSnippets()
 {
-	Messagebox msg_box;
+	int res = Messagebox::confirm(tr("Do you really want to remove all snippets?"));
 
-	msg_box.show(tr("Do you really want to remove all snippets?"),
-				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 	{
 		config_params.clear();
 		filterSnippets(0);

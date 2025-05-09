@@ -2,7 +2,19 @@ include(../../pgmodeler.pri)
 
 TEMPLATE = lib
 TARGET = gui
+
+# Including the private assets when building private plugins
+isEqual(PRIVATE_PLUGINS, true) {
+	RESOURCES += $$PRIV_RES_FOLDER/logoicons.qrc
+}
+
+# Including the logo related resources
+isEqual(PRIVATE_PLUGINS, false) {
+  RESOURCES += res/logoicons.qrc
+}
+
 RESOURCES += res/resources.qrc
+
 windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 
@@ -69,12 +81,13 @@ src/settings/pluginsconfigwidget.cpp \
 src/settings/snippetsconfigwidget.cpp \
 src/tools/bugreportform.cpp \
 src/tools/databaseimporthelper.cpp \
+	src/tools/datagridwidget.cpp \
+	src/tools/datahandlingform.cpp \
 src/tools/modeldatabasediffform.cpp \
 src/tools/modelfixform.cpp \
 src/tools/objectsdiffinfo.cpp \
 src/tools/sqltoolwidget.cpp \
 src/tools/databaseexplorerwidget.cpp \
-src/tools/datamanipulationform.cpp \
 src/tools/modelexportform.cpp \
 src/tools/modelrestorationform.cpp \
 src/tools/sqlexecutionhelper.cpp \
@@ -89,7 +102,9 @@ src/tools/swapobjectsidswidget.cpp \
 src/tools/modelvalidationwidget.cpp \
 	src/utils/customsortproxymodel.cpp \
 src/utils/deletableitemdelegate.cpp \
+	src/utils/fragmentinfo.cpp \
 src/utils/htmlitemdelegate.cpp \
+	src/utils/matchinfo.cpp \
 	src/utils/objectslistmodel.cpp \
 src/utils/plaintextitemdelegate.cpp \
 src/utils/resultsetmodel.cpp \
@@ -97,6 +112,8 @@ src/utils/syntaxhighlighter.cpp \
 src/utils/textblockinfo.cpp \
 src/widgets/aboutwidget.cpp \
     src/widgets/columndatawidget.cpp \
+	src/widgets/customtablewidget.cpp \
+	src/widgets/debugoutputwidget.cpp \
 src/widgets/donatewidget.cpp \
 src/widgets/modelnavigationwidget.cpp \
 src/widgets/numberedtexteditor.cpp \
@@ -126,7 +143,6 @@ src/widgets/taskprogresswidget.cpp \
 src/widgets/customsqlwidget.cpp \
 src/widgets/linenumberswidget.cpp \
 src/widgets/newobjectoverlaywidget.cpp \
-src/widgets/objectstablewidget.cpp \
 src/widgets/updatenotifierwidget.cpp
 
 HEADERS += src/guiglobal.h \
@@ -191,12 +207,13 @@ src/settings/pluginsconfigwidget.h \
 src/settings/snippetsconfigwidget.h \
 src/tools/bugreportform.h \
 src/tools/databaseimporthelper.h \
+	src/tools/datagridwidget.h \
+	src/tools/datahandlingform.h \
 src/tools/modeldatabasediffform.h \
 src/tools/modelfixform.h \
 src/tools/objectsdiffinfo.h \
 src/tools/sqltoolwidget.h \
 src/tools/databaseexplorerwidget.h \
-src/tools/datamanipulationform.h \
 src/tools/modelexportform.h \
 src/tools/modelrestorationform.h \
 src/tools/sqlexecutionhelper.h \
@@ -211,7 +228,9 @@ src/tools/swapobjectsidswidget.h \
 src/tools/modelvalidationwidget.h \
 	src/utils/customsortproxymodel.h \
 src/utils/deletableitemdelegate.h \
+	src/utils/fragmentinfo.h \
 src/utils/htmlitemdelegate.h \
+	src/utils/matchinfo.h \
 	src/utils/objectslistmodel.h \
 src/utils/plaintextitemdelegate.h \
 src/utils/resultsetmodel.h \
@@ -219,6 +238,8 @@ src/utils/syntaxhighlighter.h \
 src/utils/textblockinfo.h \
 src/widgets/aboutwidget.h \
     src/widgets/columndatawidget.h \
+	src/widgets/customtablewidget.h \
+	src/widgets/debugoutputwidget.h \
 src/widgets/donatewidget.h \
 src/widgets/modelnavigationwidget.h \
 src/widgets/numberedtexteditor.h \
@@ -248,7 +269,6 @@ src/widgets/taskprogresswidget.h \
 src/widgets/customsqlwidget.h \
 src/widgets/linenumberswidget.h \
 src/widgets/newobjectoverlaywidget.h \
-src/widgets/objectstablewidget.h \
 src/widgets/updatenotifierwidget.h
 
 FORMS += ui/baseform.ui \
@@ -305,7 +325,8 @@ ui/settings/configurationform.ui \
 ui/settings/generalconfigwidget.ui \
 ui/settings/relationshipconfigwidget.ui \
 ui/tools/bugreportform.ui \
-ui/tools/datamanipulationform.ui \
+	ui/tools/datagridwidget.ui \
+	ui/tools/datahandlingform.ui \
 ui/tools/modelexportform.ui \
 ui/tools/sqlexecutionwidget.ui \
 ui/tools/databaseexplorerwidget.ui \
@@ -318,6 +339,7 @@ ui/tools/modelrestorationform.ui \
 ui/tools/swapobjectsidswidget.ui \
 ui/tools/modelvalidationwidget.ui \
 ui/widgets/aboutwidget.ui \
+	ui/widgets/customtablewidget.ui \
 ui/widgets/donatewidget.ui \
 ui/widgets/modelobjectswidget.ui \
 ui/widgets/objectrenamewidget.ui \
@@ -334,7 +356,6 @@ ui/widgets/tabledatawidget.ui \
 ui/widgets/colorpickerwidget.ui \
 ui/widgets/layersconfigwidget.ui \
 ui/widgets/newobjectoverlaywidget.ui \
-ui/widgets/objectstablewidget.ui \
 ui/widgets/taskprogresswidget.ui \
 ui/widgets/csvloadwidget.ui \
 ui/widgets/layerswidget.ui \

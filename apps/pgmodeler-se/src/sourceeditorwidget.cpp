@@ -2,10 +2,9 @@
 #include "messagebox.h"
 #include "guiutilsns.h"
 #include "utilsns.h"
+#include <QTextDocumentFragment>
 
-QPalette SourceEditorWidget::def_editor_pal;
-
-attribs_map SourceEditorWidget::snippets = {
+attribs_map SourceEditorWidget::snippets {
 	{"ifend", "%if {} %then\n\n%end\n"},
 	{"ifelseend", "%if {} %then\n\n%else\n\n%end\n"},
 	{"ifexpr", "%if ({}) %then\n\n%end\n"},
@@ -15,6 +14,8 @@ attribs_map SourceEditorWidget::snippets = {
 	{"unsetattr", "%unset {}\n"},
 	{"unsetattr", "%unset {}\n"},
 };
+
+QPalette SourceEditorWidget::def_editor_pal;
 
 SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 {
@@ -53,6 +54,15 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	act_break_inline_ifs->setCheckable(true);
 	act_break_inline_ifs->setChecked(false);
 
+	metachars_tb->setMenu(&metachar_conv_menu);
+	metachar_conv_menu.addAction(tr("Metachar to escaped"), this, [this](){
+		convertMetaChars(false);
+	});
+
+	metachar_conv_menu.addAction(tr("Escaped to metachar"), this, [this](){
+		convertMetaChars(true);
+	});
+
 	connect(code_compl_wgt, &CodeCompletionWidget::s_wordSelected, this, &SourceEditorWidget::handleSelectedSnippet);
 	connect(search_wgt, &SearchReplaceWidget::s_hideRequested, search_tb, &QToolButton::toggle);
 	connect(validate_tb, &QToolButton::clicked, this, &SourceEditorWidget::validateSyntax);
@@ -61,6 +71,11 @@ SourceEditorWidget::SourceEditorWidget(QWidget *parent) : QWidget(parent)
 	connect(editor_txt, &NumberedTextEditor::undoAvailable, this, &SourceEditorWidget::setModified);
 	connect(editor_txt, &NumberedTextEditor::cursorPositionChanged, this, &SourceEditorWidget::restoreEditorPalette);
 	connect(search_tb, &QToolButton::toggled, search_parent, &QWidget::setVisible);
+	connect(comment_tb, &QToolButton::clicked, this, &SourceEditorWidget::toggleComment);
+
+	connect(editor_txt, &NumberedTextEditor::selectionChanged, this, [this]() {
+		comment_tb->setEnabled(editor_txt->textCursor().hasSelection());
+	});
 }
 
 void SourceEditorWidget::saveFile(const QString &filename)
@@ -80,12 +95,93 @@ void SourceEditorWidget::loadSyntaxConfig(const QString &filename)
 	{
 		editor_hl->loadConfiguration(filename);
 		editor_hl->rehighlight();		
-		curr_sytax_cfg = QFileInfo(filename).baseName();
+		curr_sytax_cfg = QFileInfo(filename).baseName();		
+		metachars_tb->setEnabled(curr_sytax_cfg == GlobalAttributes::SchHighlightConf);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
+}
+
+void SourceEditorWidget::toggleComment()
+{
+	QTextCursor tc = editor_txt->textCursor();
+
+	if(tc.hasSelection())
+	{
+		QMap<QString, QStringList> comment_chrs = {
+			{ GlobalAttributes::SchHighlightConf, { "# ", ""}},
+			{ GlobalAttributes::SQLHighlightConf, { "-- ", ""}},
+			{ GlobalAttributes::XMLHighlightConf, { "<!-- ", " -->"}}
+		};
+		QString open_cmt, close_cmt,
+				sel_text = tc.selection().toPlainText();
+
+		open_cmt = comment_chrs[curr_sytax_cfg][0];
+		close_cmt = comment_chrs[curr_sytax_cfg][1];
+
+		if(curr_sytax_cfg == GlobalAttributes::XMLHighlightConf)
+		{
+			sel_text.prepend(open_cmt);
+			sel_text.append(close_cmt);
+		}
+		else
+		{
+			QStringList lines = sel_text.split(QChar::LineFeed);
+
+			for(auto &line : lines)
+			{
+				if(line.isEmpty())
+					continue;
+
+				if(line.startsWith(open_cmt))
+					line.remove(open_cmt);
+				else
+					line.prepend(open_cmt);
+
+				if(line.endsWith(close_cmt))
+					line.remove(close_cmt);
+				else
+					line.append(close_cmt);
+			}
+
+			sel_text = lines.join(QChar::LineFeed);
+		}
+
+		tc.insertText(sel_text);
+	}
+}
+
+void SourceEditorWidget::convertMetaChars(bool escaped_to_meta)
+{
+	attribs_map metas {
+		{"\\#", "$hs"}, {"\\s", "$sp"},
+		{"\\t", "$tb"}, {"\\n", "$br"},
+		{"\\[", "$ob"}, {"\\]", "$cb"},
+		{"\\{", "$oc"}, {"\\}", "$cc"},
+		{"\\\\", "$bs"}, {"\\@", "$at"},
+		{"\\%", "$ps"}, {"\\&", "$am"},
+		{"\\$", "$ms"}, {"\\*", "$ds"}
+	};
+
+	QString code = editor_txt->toPlainText();
+
+	for(const auto &[escaped, metachr] : metas)
+	{
+		if(escaped_to_meta)
+			code.replace(escaped, metachr);
+		else
+			code.replace(metachr, escaped);
+	}
+
+	editor_txt->blockSignals(true);
+	QTextCursor tc = editor_txt->textCursor();
+	tc.setPosition(0);
+	tc.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+	tc.insertText(code);
+	editor_txt->moveCursor(QTextCursor::Start);
+	editor_txt->blockSignals(false);
 }
 
 void SourceEditorWidget::handleSelectedSnippet(const QString &snippet)
@@ -118,31 +214,28 @@ void SourceEditorWidget::loadFile(const QString &filename)
 
 	QString ext = "." + QFileInfo(filename).suffix();
 
-	if(ext == GlobalAttributes::DbModelExt ||
-		 ext == ".xml" ||
-		 ext == GlobalAttributes::ConfigurationExt ||
-		 ext == GlobalAttributes::ObjMetadataExt)
-		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
-	else if(ext == ".sql")
+	if(ext == ".sql")
 		curr_sytax_cfg = GlobalAttributes::SQLHighlightConf;
-	else
+	else if(ext == GlobalAttributes::SchemaExt)
 		curr_sytax_cfg = GlobalAttributes::SchHighlightConf;
+	else
+		curr_sytax_cfg = GlobalAttributes::XMLHighlightConf;
 }
 
 void SourceEditorWidget::validateSyntax()
 {
 	SchemaParser schparser;
-	Messagebox msgbox;
 
 	try
 	{
 		editor_txt->setPalette(def_editor_pal);
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
+		schparser.setSearchPath(QFileInfo(filename).absolutePath());
 		schparser.loadBuffer(editor_txt->toPlainText());
 		schparser.getSourceCode({});
 
-		msgbox.show(tr("No lexical or sytactical errors found."), Messagebox::InfoIcon);
+		Messagebox::info(tr("No lexical or sytactical errors found."));
 	}
 	catch(Exception &e)
 	{
@@ -161,7 +254,6 @@ void SourceEditorWidget::validateSyntax()
 		pal.setColor(QPalette::HighlightedText, QColor("#ffffff"));
 		editor_txt->setPalette(pal);
 
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }

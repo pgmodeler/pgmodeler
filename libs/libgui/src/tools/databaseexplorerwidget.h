@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@
 #include <QMenu>
 
 class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*! \brief Holds the current vertical scrollbar position/value before the tree state saving is executed.
 		 * When the tree state is restored this value is used to return the scrollbar value to its original */
 		int curr_scroll_value;
@@ -176,7 +176,7 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		 *  This can be used to add custom actions for the current database explorer instance.
 		 *  the method will perform the need operations to create a copy of the provided button
 		 *  (icon, connect signal/slots, etc). */
-		void addPluginButton(QToolButton *btn);
+		void installPluginButton(QToolButton *btn);
 
 	public:
 		DatabaseExplorerWidget(QWidget * parent = nullptr);
@@ -220,9 +220,6 @@ class __libgui DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplor
 		
 		//! \brief Cancels the rename and restore the original item's name
 		void cancelObjectRename();
-
-		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema="public", const QString &table="", bool hide_views=true);
 
 		void loadObjectSource(bool show_code);
 

@@ -2,19 +2,15 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 # Code generation can be broken if incorrect changes are made.
 
-[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-[-- ] {drop}
+@include "ddlend"
+@include "objlabel"
+@include "prependedsql"
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-%set {ddl-end} $br [-- ddl-end --] $br
-
-%if {prepended-sql} %then
-	{prepended-sql}
-	{ddl-end} $br
-%end
-
+%if {materialized} %then
 [CREATE ]
+%else
+[CREATE OR REPLACE ]
+%end
 
 %if {recursive} %then
 	[RECURSIVE ]
@@ -27,29 +23,27 @@
 VIEW $sp {name}
 
 %if {columns} %then
-	[ (] {columns} [)]
+	[ (] {columns} [)] 
 %end
-
-$br
 
 %if {materialized} %and {tablespace} %then
-	TABLESPACE $sp {tablespace} $br
+	$br TABLESPACE $sp {tablespace}
 %end
 
-[AS ] $br {definition}
+%if {options} %then
+	$br [WITH (] {options} [)] 
+%end
+
+$br [AS ] $br {definition}
 
 %if {materialized} %and {with-no-data} %then
 	$br [WITH NO DATA]
 %end
 
-[;] {ddl-end}
-
-%if {comment} %then {comment} %end
-%if {owner} %then {owner} %end
-
-%if {appended-sql} %then
-	{appended-sql}
-	{ddl-end}
+%if %not {materialized} %and {check-option} %then
+	$br [WITH ] {check-option} [ OPTION] 
 %end
 
-$br
+[;] 
+
+@include "footer"

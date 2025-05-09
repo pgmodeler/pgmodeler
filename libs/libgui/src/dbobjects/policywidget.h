@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,22 +19,21 @@
 #ifndef POLICY_WIDGET_H
 #define POLICY_WIDGET_H
 
-#include <QWidget>
 #include "baseobjectwidget.h"
 #include "ui_policywidget.h"
 #include "policy.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/modelobjectswidget.h"
 #include "utils/syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
 
 class __libgui PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		ModelObjectsWidget *model_objs_wgt;
 
-		ObjectsTableWidget *roles_tab;
+		CustomTableWidget *roles_tab;
 
 		SyntaxHighlighter *using_hl, *check_hl;
 

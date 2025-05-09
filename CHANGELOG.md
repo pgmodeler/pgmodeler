@@ -1,6 +1,132 @@
 Changelog
 ---------
 
+v1.2.0
+------
+<em>Release date: May 9, 2025</em><br/>
+
+* [New] Setup a wait cursor when loading a diff code in the SQL tool.
+* [New] Added the static methods isAccepted, isRejected, and isCanceled to Messagebox.
+* [New] Added the enum Messagebox::ResultId
+* [New] Added support for multiple objects code preview in SourceCodeWidget.
+* [New] Added the methods BaseObject::setPgOid and BaseObject::getPgOid.
+* [New] Added a confirmation message in DataHandlingForm when the user tries to close the dialog even without uncommitted data.
+* [New] Graphical objects added to the ModelWidget will now blink and the viewport will center on them to indicate to the user where they were put.
+* [New] Added a copy action in NumberedTextEditor that copies all the text to the clipboard
+* [Change] Improved the SyntaxHighlighter and the sql-highlight files so the regular expressions for each group don't take too much to process strings
+* [Change] Messagebox::exec now calls qApp->restoreOverrideCursor
+* [Change] Removed unneeded calls to qApp->restoreOverrideCursor
+* [Change] Changed the return type of all create methods in DatabaseImportHelper to their respective object classes.
+* [Change] In DatabaseImportHelper::createObject the OID is automatically assigned to the object created from XML code.
+* [Change] Minor adjustment in ObjectsScene::addItem. Added an optional parameter to blink added objects.
+* [Change] Adjusted pgmodeler-cli to raise errors when the ignore export error options are used in transactional export mode.
+* [Change] Minor adjustment in ModelDatabaseDiffForm by making transactional mode mutually exclusive with ignore export errors options.
+* [Change] Adjusted the use of Messagebox in several portions of the tool.
+* [Change] Replaced the calls to Messagebox::result() == result_code by the respective isAccepted, isRejected or isCanceled methods.
+* [Change] Adjusted the ModelWidget::configureFadeMenu to stop reallocating new actions on each call.
+* [Change] Removed unused class attribute in ModelObjectsWidget.
+* [Change] Removed the method SourceCodeWidget::setSourceCodeTab.
+* [Change] Forcing the option "Ignore import errors" when the import to working model option is set on DatabaseImportHelper and DatabaseImportForm.
+* [Change] Improved the reverse engineering so columns can also be imported using the option "Import to the working model" in DatabaseImportForm.
+* [Fix] Minor fix in FileSelectorWidget that was not applying correctly the palette colors in the line edit field.
+* [Fix] Minor fix in DatabaseModel::updateExtensionObjects to ignore duplicated schemas and use the ones already available in the model.
+* [Fix] Minor fix in SchemaParser::resetParser to clear include info so the error location in schema code can be correctly informed.
+* [Fix] Fixed a bug in the data dictionary generation for views.
+* [Fix] Fixed a bug in the SQL generation of database model SQL related to an unknown database attribute.
+* [Fix] Fixed the text stack trace in the message box class.
+* [Fix] Fixed the code display for functions in DatabaseExplorerWidget.
+* [Fix] Fixed a bug when importing composite types having attributes using arrays of other user-defined types.
+* [Fix] Fixed a bug when displaying the source, in Database Explorer, of a composite type that has one or more attributes referencing used-defined types.
+* [Fix] Fixed a bug in SyntaxHighlighter::highlightEnclosingChars.
+* [Fix] Fixed a bug in ResultSet::accessTuple that was generating errors when running catalog queries of some objects in older versions of PostgreSQL.
+* [Fix] Fixed a bug in PgModelerCliApp::diffModelDatabase that was informing invalid forced filtered types.
+* [Fix] Minor fix in DatabaseModel::getChangelogDefinition to avoid returning an empty string when the changelog is not persisted to the dbm file.
+* [Fix] Fixed a bug in ModelObjectsWidget::selectObject.
+* [Fix] Minor fix in CodeCompletionWidget to list columns on "Order By".
+
+v1.2.0-beta1
+------
+<em>Release date: March 31, 2025</em><br/>
+
+* [New] Added the method AppearanceConfigWidget::isDarkUiTheme.
+* [New] Added per-instance control of line numbers and action buttons visibility in NumberedTextEditor (previously global-only).
+* [New] Added an integrated search/replace widget in NumberedTextEditor.
+* [New] Added a debug tab in DatabaseImportForm and ModelDatabaseDiffForm to display debug messages during reverse engineering.
+* [New] Added support for force object re-creation in pgmodeler-cli's diff operation.
+* [New] Added a popup menu in ModelDatabaseDiffForm to select object types for forced re-creation.
+* [New] Added a flag in DatabaseModel to control inclusion of disabled SQL code in generated scripts.
+* [New] Added support for toggling disabled objects' code generation in database model properties.
+* [New] Added an attribute in .dbm files to persist system schemas' rectangle visibility.
+* [New] Added the methods Extension::setObjectNames and Extension::getObjectNames.
+* [New] Added struct Extension::ExtObject to manage child objects' metadata.
+* [New] Added support for permission editing for system objects.
+* [Change] Adjusted the UI in SQLExecutionWidget to reorganize action buttons.
+* [Change] Adjusted the NumberedTextEditor internal widgets when the horizontal scrollbar is visible.
+* [Change] Adjusted the class ModelFixForm to use DebugOutputWidget.
+* [Change] Adjusted the object selection in ModelObjectsWidget (ALT + click highlights graphical objects).
+* [Change] Adjusted the query filters in ModelDatabaseDiffForm to exclude only system objects during comparison.
+* [Change] Improved ExtensionWidget to support custom schema names in data types.
+* [Change] Refactored DatabaseImportHelper::createExtension to correctly import extension-owned types/schemas.
+* [Change] Refactored DatabaseModel to use Extension::ExtObject when handling extensions.
+* [Change] Simplified the function behavior types by removing redundant STRICT (merged with RETURNS NULL ON NULL INPUT).
+* [Change] Moved Q_OBJECT macro to the top of class declarations.
+* [Change] Updated catalog queries for indexes to retrieve comments.
+* [Change] Removed redundant search/replace widget from SourceCodeWidget (now integrated in NumberedTextEditor).
+* [Change] Removed unused checkbox from databaseimportform.ui.
+* [Change] Minor adjustments in UtilsNs::saveFile and UtilsNs::loadFile.
+* [Change] Minor adjustments in .pro/.pri files for private plugin assets.
+* [Change] Minor schema adjustments in sql/dbmodel.sch.
+* [Change] Fixed DatabaseImportForm to remain open in debug mode for output inspection.
+* [Fix] Fixed crashes when diffing databases containing extension-created tables.
+* [Fix] Fixed the importing of columns that use arrays of user-defined types.
+* [Fix] Fixed the persistence of time zone state in timestamp types.
+* [Fix] Fixed false-positive diffs for functions with comments or STRICT behavior.
+* [Fix] Fixed reverse engineering of types with uppercase letters in names.
+* [Fix] Fixed a crash in identifier relationships with FK indexes.
+* [Fix] Fixed DatabaseImportHelper::createPermission to skip permissions whose references unavailable system roles.
+* [Fix] Fixed ModelExportHelper::exportBufferToDBMS edge cases.
+* [Fix] Fixed XML code generation for Extension class to include child objects.
+* [Fix] Fixed SQL/XML code exclusion for protected schemas in DatabaseModel::getSourceCode.
+* [Fix] Fixed SQL syntax highlighting files.
+* [Fix] Minor fixes in LineNumbersWidget and NumberedTextEditor.
+* [Fix] Minor fixes in PgModelerCliApp::fixObjectAttributes.
+
+v1.2.0-beta
+------
+<em>Release date: February 10, 2025</em><br/>
+
+* [New] Added the enum PgModelerGuiPlugin::MenuSectionId that controls where the plugin actions are placed in the context menu in the model widget.
+* [New] Added a call to qApp::alert() when the export, import, and diff processes finish so the taskbar blinks when the window is not visible.
+* [New] Added the method PgModelerGuiPlugin::isSelectionValid.
+* [New] Indexes created by relationships can have their parent relationships opened from a specific action in the context menu of the model widget.
+* [New] Added support for the total number of rows in the table being handled in DataHandlingForm.
+* [New] Added support for setting the global settings for FK columns index type in RelationshipConfigWidget.
+* [New] Adding support for the creation of indexes on FK columns generated by relationships.
+* [New] Set the "Stack trace" tab icon in CrashHandlerForm.
+* [Change] Adjusted the method ModelWidget::configurePluginsActions to place actions in menu sections according to the plugins' custom menu sections.
+* [Change] Minor adjustment in BaseForm::setMainWidget to set the default window icon.
+* [Change] Adjusted the plugin API by removing the unnecessary const methods/objects usage.
+* [Change] Added icons for tree widgets collapse and expand actions.
+* [Change] Adjusted the order of types in IndexingType::types.
+* [Change] Minor adjustment in Relationship::setNamePattern.
+* [Change] Minor adjustment in ModelWidget::configurePluginsActionsMenu to enable/disable plugin actions based on the call to isSelectionValid of the plugin that owns the action.
+* [Change] Updates on icons-*.conf files.
+* [Change] Minor layout adjustment in DataGridWidget.
+* [Change] Updated the class RelationshipConfigWidget to include FK column index name pattern.
+* [Change] Adjusted the code generation of relationships to include FK column indexes.
+* [Change] Minor refactor in Relationship::getSourceCode.
+* [Change] Minor refactor in DatabaseModel::getCreationOrder.
+* [Change] Minor adjustment in LayersWidget to accept Enter/Return to apply settings.
+* [Fix] Minor fix in GlobalAttributes::setCustomPaths.
+* [Fix] Fixed some shortcut conflicts in the main window.
+* [Fix] Minor fix in ModelWidget::configurePluginsActionsMenu
+* [Fix] Minor fix in ModelObjectsWidget::show to run in an event loop when configured in simplified view mode.
+* [Fix] Minor fix in ObjectsFilterWidget.
+* [Fix] Minor fix in the "Open relationship" action in ModelWidget.
+* [Fix] Fixed the index catalog queries when using pgModeler in compatibility mode (PG 9.x).
+* [Fix] Minor fix in RelationshipWidget to assign FK index pattern to the relationship being handled.
+* [Fix] Minor fix in buttons' drop shadows in DataHandlingForm.
+
 v1.1.6
 ------
 <em>Release date: December 21, 2024</em><br/>
@@ -92,6 +218,79 @@ v1.1.4
 * [Fix] Fixed a crash in the database import process when destroying detached inherited columns.
 * [Fix] Fixed a bug in the system catalog query class that was crashing the application while trying to retrieve user mapping comments.
 * [Fix] Fix a bug in the index object that was preventing the removal of included columns.
+
+v1.2.0-alpha
+------
+<em>Release date: June 24, 2024</em><br/>
+
+* [New] Added support for @include statements in schema micro language.
+* [New] Added the support for Markdown data dictionaries in ModelExportForm.
+* [New] Added the option "--markdown" to PgModelerCliApp to allow generating markdown data dictionaries.
+* [New] Added support to convert meta chars to escaped (and vice-versa) in pgmodeler-se/SourceEditorWidget.
+* [New] Added support for contiguous escaped metachars in schema microlanguage files, e.g., \s\t\n. Contiguous metachar are also allowed, e.g., $tb$sp$br despite the poor readability.
+* [New] Created the method GlobalAttributes::getDictSchemaFilePath.
+* [New] Added support for using escaped \[ and \] in the middle of plain text expressions in schema microlanguage.
+* [New] Added the method TextBlockInfo::removeFragmentInfo.
+* [New] Created the struct SyntaxHighlighter::MatchInfo that holds the start and end positions of a match.
+* [New] Created the class FragmentInfo that holds some info about formatted text fragments.
+* [New] Added support for escaped characters in SchemaParser the valid ones are: \s (space), \t (tab), \n (line feed), \[, \], \{, \}, \$, \#, \%, \@, \&, \\, \*.
+* [New] Added support for toggling comments on pgmodeler-se/SourceEditorWidget.
+* [New] Added the method GlobalAttributes::getPgModelerBaseVersion.
+* [New] Created the variadic template method GlobalAttributes::getFilePath.
+* [New] Added the folder datadict/html and datadict/md to separate HTML data dictionaries from MD data dictionaries.
+* [New] Added support for data dictionaries in Markdown format.
+* [New] Added support for saving the status of the "Replace modified objects" option in diff presets.
+* [New] Added the option ModelsDiffHelper::OptReplaceModified that toggles the replacement of objects that accept CREATE OR REPLACE.
+* [New] Added the fields in ViewWidget to handle check_option, security_invoker, and security_barrier options
+* [New] Objects that can be created with "CREATE OR REPLACE" are now having their DDL generated with "OR REPLACE".
+* [Change] Removed the restriction of specifying OUT parameters in procedures.
+* [Change] Refactored schema files of HTML data dicts to use the include statement.
+* [Change] SourceCodeWidget now generates code on demand, when the current source code type tab changes.
+* [Change] Moved the type strings from translation units in libcore/pgsqltypes/* to their respective class definition.
+* [Change] Refactored static members initializations to C++17 style, e.g., inline static Type member {value}.
+* [Change] Removed static members initialization from translation units.
+* [Change] Refactored the syntax highlight config files.
+* [Change] Minor adjustment in SyntaxHighlighter::matchExpression to avoid adding duplicated match infos to the list.
+* [Change] Removed the "defaults" folder from assets/conf to avoid duplicate files. This directory will be created via make install according to the settings in pgmodeler.pro
+* [Change] Adjusted SyntaxHighlighter::highlightBlock to allow nested multiline expressions, e.g. [" "], to replace each other.
+* [Change] Several changes in SyntaxHighlighter methods involved highlighting to return key struct in the form of const * to avoid excessive copies.
+* [Change] Minor change in source-code-highlight.dtd making the element <group> optional.
+* [Change] The SyntaxHighlighter::highlightBlock routine is way more simple, and the configuration file structure has been simplified as well.
+* [Change] Removed unused enum and methods in TextBlockInfo
+* [Change] Adjusted the format group loading from file in SyntaxHighlighter::loadConfiguration.
+* [Change] Converted char attributes in SchemaParser to QChar.
+* [Change] Replaced switch statements by ifs in several parts of SchemaParser to handle QChars instead of char.
+* [Change] Refactor in ModelExportForm to handle MD format in data dictionaries.
+* [Change] Refactored the methods in PgModelerPlugin that returns file paths to use GlobalAttributes::getFilePath.
+* [Change] Refactored GlobalAttributes::getTmplConfigurationFilePath and GlobalAttributes::getSchemaFilePath to use GlobalAttributes::getFilePath.
+* [Change] Now pgModeler, in the first run, will try to copy the configuration files from a previous major version immediately before the current one. For example, running 1.2 the files to be copied will be from 1.1 not from 0.9.4 anymore.
+* [Change] Dropped the support for "Forced object recreate" in ModelDatabaseDiffForm and ModelsDiffHelper. The option was confusing and was generating a diff code that was similar to generating the entire SQL of a model and re-export it to a server. So, it was considered not so useful anymore.
+* [Change] Changed the Function::getAlterCode and Procedure::getAlterCode to stop generating CREATE OR REPLACE command, this will now be generated by ModelsDiffHelper.
+* [Change] Minor layout adjustment in ViewWidget.
+* [Change] Minor adjustment in TemplateType::setType to include extra information when raising exceptions.
+* [Change] Minor adjustment in changelog entry validation in DatabaseModel::addChangelogEntry.
+* [Fix] Minor fix in Application::createUserConfiguration to avoid trying to copy legacy configs when older version configurations don't exist.
+* [Fix] Minor fix in SchemaParser::isSpecialCharacter to include CharStartEscaped as a special char.
+* [Fix] Fixed all getDataDictionary methods to be able to generate data dictionaries for both HTML and MD formats
+* [Fix] Fixed a bug in SyntaxHighlighter::loadConfiguration that was not properly setting regular expressions as case-sensitive.
+* [Fix] Fixed a bug in PgModelerApp::createUserConfiguration that was not copying missing files correctly.
+* [Fix] Fixed build process on windows.
+* [Fix] Minor fix in SyntaxHighlighter::setFormat and SyntaxHighlighter::highlightBlock.
+* [Fix] Fixed a crash in SchemaParser::evaluateComparisonExpr when a portion of a string value is commented out.
+* [Fix] Minor adjustment in tooltips in modelexportform.ui.
+* [Fix] Minor fix in GlobalAttributes::setSearchPath to set the path from the environment variable APPDIR when building an ApppImage.
+* [Fix] Minor fix in CodeCompletionWidget::configureCompletion where the elements of keywords are treated.
+* [Fix] Minor fix in HTML data dictionary schema files.
+* [Fix] Fixed a bug in SchemaParser that was generating syntax errors when comment character # was put inside the plaintext operator [].
+* [Fix] Fixed a bug in SchemaParser::getAttribute.
+* [Fix] Minor fix in datadicttest.
+* [Fix] Fixed the method SchemaParser::loadBuffer to parse commented lines as empty ones to keep the line numbers from the original buffer/file synchronized with the resulting parsed schema buffer.
+* [Fix] Adjusted the syntax highlight conf to be used when loading a file in SourceEditorWidget.
+* [Fix] Minor layout adjustment in ModelExportForm.
+* [Fix] Minor fix in HtmlItemDelegate::paint when rendering items without icons and with multiple text lines.
+* [Fix] Fixed a shortcut conflict in SearchReplaceWidget.
+* [Fix] Minor fix in PgModelerCliApp::recreateObjects to warn about invalid changelog entries avoiding aborting the model fix process.
+* [Fix] Fixed a bug in Catalog class that was not retrieving comments of sequences causing false-positive to be generated in diff process.
 
 v1.1.3
 ------

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -150,12 +150,9 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvUseSpecialPrimaryKey", QT_TR_NOOP("The relationship `%1' can not make use of the special primary key because it is marked as identifier or it is a self relationship!")},
 	{"OprRelationshipAddedObject", QT_TR_NOOP("The object `%1' (%2) can not be edited or deleted because it was automatically included through a relationship! If the object is an attribute or constraint the modifications must be done on the relationship editing form.")},
 	{"RemProtectedObject", QT_TR_NOOP("The object `%1' (%2) can not be deleted because it is protected!")},
-	{"InvRedeclarationGroup", QT_TR_NOOP("The group `%1' has already been declared earlier!")},
 	{"InvGroupDeclaration", QT_TR_NOOP("The group `%1' can not be built in the groups declaration block (%2)!")},
-	{"DefNotDeclaredGroup", QT_TR_NOOP("The group `%1' was built but not declared in the groups declaration block (%2)!")},
 	{"DefEmptyGroup", QT_TR_NOOP("The group `%1' can not be built without possessing child elements!")},
 	{"DefDuplicatedGroup", QT_TR_NOOP("The group `%1' can not be built once more because this was done in previous blocks!")},
-	{"InvGroupDeclarationNotDefined", QT_TR_NOOP("The group `%1' has been declared but not built!")},
 	{"RefColObjectTabInvalidIndex", QT_TR_NOOP("Reference to a column of the objects table with invalid index!")},
 	{"RefRowObjectTabInvalidIndex", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
 	{"OprReservedObject", QT_TR_NOOP("The object `%1' (%2) can't be manipulated because it is a protected object which is present in the database model only to be used as dependency of other objects!")},
@@ -167,6 +164,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"PluginNotLoaded", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"PluginsNotLoaded", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
 	{"InvalidSyntax", QT_TR_NOOP("Invalid syntax in file `%1', line %2, column %3!")},
+	{"InvalidInclude", QT_TR_NOOP("Invalid include statement in file `%1', line %2, column %3!")},
 	{"InvalidInstruction", QT_TR_NOOP("Invalid instruction `%1' on file `%2', line %3, column %4!")},
 	{"UnkownAttribute", QT_TR_NOOP("Unknown attribute `%1' in file `%2', line %3, column %4!")},
 	{"InvalidMetacharacter", QT_TR_NOOP("Invalid metacharacter `%1' in file `%2', line %3, column %4!")},
@@ -223,7 +221,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
 	{"RefInvalidNamePatternId", QT_TR_NOOP("Reference to an invalid object name pattern id on the relationship `%1'!")},
 	{"InvUsageVariadicParamMode", QT_TR_NOOP("Invalid use of `variadic' parameter mode! This mode can be used only with an array or \"any\" data type!")},
-	{"MixingIncompExportOptions", QT_TR_NOOP("Mixing incompatibles DBMS export modes: `ignore object duplications', `drop database' or `drop objects' cannot be used with `simulate export'!")},
+	{"MixingIncompExportOptions", QT_TR_NOOP("Mixing incompatibles DBMS export options: `ignore object duplications', `drop database', `drop objects' or `transactional' cannot be used with `simulate export'!")},
 	{"MixingIncompDropOptions", QT_TR_NOOP("Mixing incompatibles DROP options: `drop database' and `drop objects' cannot be used at the same time!")},
 	{"InvIdSwapSameObject", QT_TR_NOOP("Invalid object id swapping operation! The objects involved are the same!")},
 	{"InvIdSwapInvalidObjectType", QT_TR_NOOP("Invalid object swapping operation! The database, tablespaces and roles can have the ids swapped with only other objects of the same kind!")},
@@ -233,7 +231,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvColumnTableType", QT_TR_NOOP("The column `%1' cannot reference it's parent table `%2' as data type!")},
 	{"OprInvalidElementId", QT_TR_NOOP("Operation with an invalid element id `%1'!")},
 	{"RefInvalidElementColorId", QT_TR_NOOP("Reference to an invalid color id `%1' for element `%2'!")},
-	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of type `%3'.")},
+	{"AsgInvalidObjectType", QT_TR_NOOP("Assignment of an invalid object to `%1' (%2)! The assigned object must be of the type(s): `%3'.")},
 	{"IncompColumnTypeForSequence", QT_TR_NOOP("The sequence `%1' can't be assigned to the column `%2' because the data type of the latter is incompatible. The type used must be an integer one!")},
 	{"InvUsageTempNamesExportOption", QT_TR_NOOP("The option to generate temporary object names can only be used in simulation mode!")},
 	{"InvConversionIntegerToSerial", QT_TR_NOOP("It's not possible convert the type of the column `%1' to serial! It must have an `integer' based type and its default value must be a call to `nextval(seq_name::regclass)' function or a sequence object must be directly assigned to the column!")},
@@ -272,7 +270,6 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvalidObjectFilter", QT_TR_NOOP("An invalid object filter was detected: `%1'! Filters should have the following format: `[object type]:[pattern]:[%2]'.")},
 	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")},
 	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values: `%1', `%2', `%3', `%4'!")},
-	{"InvProcedureParamOutMode", QT_TR_NOOP("Parameters using `out' mode are not supported by procedures! Use `inout' instead.") },
 	{"ExportFailureDbSQLDisabled", QT_TR_NOOP("The SQL code of the database `%1' is disabled! The export process can't proceed. Please, enable the SQL code of the mentioned object and try again.")},
 	{"InvConfigParameterName", QT_TR_NOOP("Invalid configuration parameter `%1' assigned to the function `%2'!")},
 	{"EmptyConfigParameterValue", QT_TR_NOOP("Empty value assigned to the configuration parameter `%1' in the function `%2'!")},
@@ -288,6 +285,11 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AddExtDupChildObject", QT_TR_NOOP("The extension `%1' can't be added to the database model because its child object `%2' (%3) has conflicting name and type with another object in the model!")},
 	{"AsgSchExtTypeConflict", QT_TR_NOOP("The schema `%1' can't be assigned to the extension `%2' because the child object `%3' (%4) will have a conflicting name with another object in the model!")},
 	{"MalformedViewDefObject", QT_TR_NOOP("Malformed definition object assigned to view `%1'!")},
+	{"InvalidEscapedCharacter", QT_TR_NOOP("Invalid escaped character `%1' in file `%2', line %3, column %4!")},
+	{"InvExprMultilineGroup", QT_TR_NOOP("The group `%1' contains an expression declared as both initial and final! An expression must be either initial or final, not both.")},
+	{"InvExprPersistentGroup", QT_TR_NOOP("The group `%1' has been declared as persistent but contains initial and/or final expression(s)! Persistent groups must not declare initial or final expressions.")},
+	{"InvExtensionObject", QT_TR_NOOP("Invalid child object being assigned to the extension `%1'!")},
+	{"AsgInvSchemaExtension", QT_TR_NOOP("Assigning the schema `%1' to the extension `%2' is not allowed because the schema is a child of the extension!")},
 };
 
 Exception::Exception()
@@ -306,7 +308,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
+	configureException(qApp->translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"", -1),
 										 error_code, method, file, line, extra_info);
 
 	addException(exception);
@@ -325,7 +327,7 @@ Exception::Exception(ErrorCode error_code, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
+	configureException(qApp->translate("Exception",messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(),"",-1),
 										 error_code, method, file, line, extra_info);
 
 	itr=exceptions.begin();
@@ -385,7 +387,7 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 	 so the translation method is called  directly from the application specifying the
 	 context (Exception) in the ts file and the text to be translated */
-	return QApplication::translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
+	return qApp->translate("Exception", messages[enum_t(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
@@ -445,14 +447,14 @@ QString Exception::getExceptionsText()
 {
 	std::vector<Exception> exceptions;
 	std::vector<Exception>::reverse_iterator itr, itr_end;
-	unsigned idx=0, hidden_errors_cnt = 0;
+	unsigned idx = 0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
 	bool stack_truncated = false;
 
 	//Get the generated exceptions list
 	this->getExceptionsList(exceptions);
-	itr=exceptions.rbegin();
-	itr_end=exceptions.rend();
+	itr = exceptions.rbegin();
+	itr_end = exceptions.rend();
 	idx = 0;
 
 	if(exceptions.size() > MaximumStackSize)
@@ -462,11 +464,11 @@ QString Exception::getExceptionsText()
 	}
 
 	//Append all usefull information about the exceptions on the string
-	while(itr!=itr_end)
+	while(itr != itr_end)
 	{
-		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
+		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile(), itr->getLine());
 		exceptions_txt+=QString("  %1\n").arg(itr->getMethod());
-		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorCode())).arg(itr->getErrorMessage());
+		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorCode()), itr->getErrorMessage().replace('`', '\''));
 
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());

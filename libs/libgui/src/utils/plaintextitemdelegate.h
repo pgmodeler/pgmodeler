@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@
 #include <QPainter>
 
 class __libgui PlainTextItemDelegate : public QStyledItemDelegate {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static int max_display_len;
 
 		static bool txt_editor_enabled;

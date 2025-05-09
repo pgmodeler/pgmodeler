@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,31 +23,37 @@
 #include "tableview.h"
 #include "schemaview.h"
 #include "databasemodel.h"
+#include <QScrollBar>
 
-ObjectsScene::GridPattern ObjectsScene::grid_pattern = ObjectsScene::SquarePattern;
-unsigned ObjectsScene::expansion_factor = 2;
+const QColor ObjectsScene::DefaultGridColor { "#e1e1e1"};
+const QColor ObjectsScene::DefaultCanvasColor {"#fff"};
+const QColor ObjectsScene::DefaultDelimitersColor {"#4b73c3"};
 
-bool ObjectsScene::align_objs_grid=false;
-bool ObjectsScene::show_grid=true;
-bool ObjectsScene::show_page_delim=true;
-bool ObjectsScene::lock_delim_scale = false;
-unsigned ObjectsScene::grid_size=20;
-double ObjectsScene::delimiter_scale = 1;
+ObjectsScene::GridPattern ObjectsScene::grid_pattern { ObjectsScene::SquarePattern };
 
-QPageLayout ObjectsScene::page_layout(QPageSize(QPageSize::A4), QPageLayout::Landscape, QMarginsF(10,10,10,10));
-double ObjectsScene::min_scene_width = ObjectsScene::page_layout.paintRect().width();
-double ObjectsScene::min_scene_height = ObjectsScene::page_layout.paintRect().height();
+QColor ObjectsScene::grid_color { DefaultGridColor };
+QColor ObjectsScene::canvas_color { DefaultCanvasColor };
+QColor ObjectsScene::delimiters_color { DefaultDelimitersColor };
 
-const QColor ObjectsScene::DefaultGridColor(225, 225, 225);
-const QColor ObjectsScene::DefaultCanvasColor(255, 255, 255);
-const QColor ObjectsScene::DefaultDelimitersColor(75,115,195);
+bool ObjectsScene::align_objs_grid {false};
+bool ObjectsScene::show_grid {true};
+bool ObjectsScene::show_page_delim {true};
+bool ObjectsScene::corner_move {true};
+bool ObjectsScene::invert_rangesel_trigger {false};
+bool ObjectsScene::lock_delim_scale {false};
 
-QColor ObjectsScene::grid_color = ObjectsScene::DefaultGridColor;
-QColor ObjectsScene::canvas_color = ObjectsScene::DefaultCanvasColor;
-QColor ObjectsScene::delimiters_color = ObjectsScene::DefaultDelimitersColor;
+unsigned ObjectsScene::grid_size {20};
+unsigned ObjectsScene::expansion_factor {2};
 
-bool ObjectsScene::corner_move=true;
-bool ObjectsScene::invert_rangesel_trigger=false;
+QPageLayout ObjectsScene::page_layout {
+	QPageSize(QPageSize::A4),
+	QPageLayout::Landscape,
+	QMarginsF(10,10,10,10)
+};
+
+double ObjectsScene::delimiter_scale {1};
+double ObjectsScene::min_scene_width { page_layout.paintRect().width() };
+double ObjectsScene::min_scene_height { page_layout.paintRect().height() };
 
 ObjectsScene::ObjectsScene()
 {		
@@ -984,7 +990,7 @@ void ObjectsScene::handleChildrenSelectionChanged()
 	emit s_childrenSelectionChanged();
 }
 
-void ObjectsScene::addItem(QGraphicsItem *item)
+void ObjectsScene::addItem(QGraphicsItem *item, bool blink_new)
 {
 	if(!item)	return;
 
@@ -1020,7 +1026,13 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(obj, &BaseObjectView::s_objectDimensionChanged, this, &ObjectsScene::updateLayerRects);
 	}
 
+	if(blink_new)
+		item->setOpacity(0);
+
 	QGraphicsScene::addItem(item);
+
+	if(blink_new && obj)
+		obj->blink();
 
 	if(tab || txtbox)
 		updateLayerRects();

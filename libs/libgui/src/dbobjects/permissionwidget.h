@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,21 +27,21 @@
 
 #include "baseobjectwidget.h"
 #include "ui_permissionwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "widgets/modelobjectswidget.h"
 #include "utils/syntaxhighlighter.h"
 
 class __libgui PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		SyntaxHighlighter *code_hl;
 
 		//! \brief Stores the permission to be edited
 		Permission *permission;
 
 		//! \brief Table widget that stores the roles that has permission over the object
-		ObjectsTableWidget *roles_tab,
+		CustomTableWidget *roles_tab,
 
 		//! \brief Table widget that stores the permissions related to the object
 		*permissions_tab;

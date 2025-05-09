@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,38 +28,39 @@
 #include "ui_sourcecodewidget.h"
 #include "dbobjects/baseobjectwidget.h"
 #include "numberedtexteditor.h"
-#include "widgets/searchreplacewidget.h"
 #include "utils/syntaxhighlighter.h"
 
 class __libgui SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
+	Q_OBJECT
+
 	private:
-		Q_OBJECT
+		std::vector<BaseObject *> objects;
 
-		NumberedTextEditor *sqlcode_txt,
-				*xmlcode_txt;
+		NumberedTextEditor *sqlcode_txt, *xmlcode_txt;
 
-		SyntaxHighlighter *hl_sqlcode,
-				*hl_xmlcode;
+		SyntaxHighlighter *hl_sqlcode, *hl_xmlcode;
 
-		SearchReplaceWidget *search_sql_wgt,
-				*search_xml_wgt;
+		int prev_pg_ver, prev_code_opt;
+
+		void generateSQLCode();
+
+		void generateXMLCode();
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+		void setAttributes(DatabaseModel *model, const std::vector<BaseObject *> &objects);
 
 		/* Forcing the widget to indicate that the handled object is not protected
-		even if it IS protected. This will avoid the ok button of the parent dialog
-		to be disabled */
-		virtual bool isHandledObjectProtected(void){ return false; }
+		 * even if it IS protected. This will avoid the ok button of the parent dialog
+		 * to be disabled */
+		virtual bool isHandledObjectProtected(){ return false; }
 
 	public slots:
 		void applyConfiguration();
 
 	private slots:
-		void generateSourceCode(int=0);
-		void setSourceCodeTab(int=0);
+		void generateSourceCode(int def_type);
 		void saveSQLCode();
 };
 

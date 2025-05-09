@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@
 #include "utils/resultsetmodel.h"
 
 class __libgui SQLExecutionHelper : public QObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		Connection connection;
 
 		QString command;
@@ -52,6 +52,8 @@ class __libgui SQLExecutionHelper : public QObject {
 		void setConnection(Connection conn);
 
 		void setCommand(const QString &cmd);
+
+		QString getCommand();
 
 		//! \brief Returns the result set model created in the execution. This object is not deleted after the execution.
 		ResultSetModel *getResultSetModel();

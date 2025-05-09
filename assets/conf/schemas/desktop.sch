@@ -1,14 +1,14 @@
-$ob Desktop $sp Entry $cb $br
-[Comment=Create and deploy PostgreSQL database models] $br
-[Exec=]&{application} $br
-[GenericName=PostgreSQL Database Modeler] $br
-[Icon=]&{icon} $br
-[MimeType=application/dbm] $br
-[Name=pgModeler] $br
-[NoDisplay=false] $br
-[Path=]&{working-dir} $br
-[StartupNotify=false] $br
-[Terminal=false] $br
-[TerminalOptions=] $br
-[Type=Application] $br
-[Categories=Development;] $br
+\[ Desktop \s Entry \] \n
+[Comment=Create and deploy PostgreSQL database models] \n
+[Exec=]&{application} \n
+[GenericName=PostgreSQL Database Modeler] \n
+[Icon=]&{icon} \n
+[MimeType=application/dbm] \n
+[Name=pgModeler] \n
+[NoDisplay=false] \n
+[Path=]&{working-dir} \n
+[StartupNotify=false] \n
+[Terminal=false] \n
+[TerminalOptions=] \n
+[Type=Application] \n
+[Categories=Development;] \n

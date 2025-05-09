@@ -3,19 +3,11 @@
 # Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} >=f "11.0") %then
-	[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-	[-- ] {drop}
+	@include "ddlend"
+	@include "objlabel"
+	@include "prependedsql"
 
-	# This is a special token that pgModeler recognizes as end of DDL command
-	# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-	%set {ddl-end} $br [-- ddl-end --] $br
-
-	%if {prepended-sql} %then
-		{prepended-sql}
-		{ddl-end} $br
-	%end
-
-	[CREATE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
+	[CREATE OR REPLACE PROCEDURE ] {name} $sp ( %if {parameters} %then {parameters} %end ) $br
 	$tb [LANGUAGE ] {language} $br
 
 	%if {transform-types} %then
@@ -37,23 +29,14 @@
 			[, ] '{symbol}'
 		%end
 	%else
-		[$$]
+		$br [$function$]
 
-		$br {definition} $br
-		[$$]
+		$br {definition} 
+
+		$br [$function$]
 	%end
 
 	;
 
-	{ddl-end}
-
-	%if {owner} %then {owner} %end
-	%if {comment} %then {comment} %end
-
-	%if {appended-sql} %then
-		{appended-sql}
-		{ddl-end}
-	%end
-
-	$br
+	@include "footer"
 %end

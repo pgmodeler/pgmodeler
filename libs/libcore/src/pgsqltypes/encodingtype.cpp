@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 #include "encodingtype.h"
 
-QStringList EncodingType::type_names = {
+const QStringList EncodingType::type_names {
 	"", // Reserved for Class::Null
-
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
 	"EUC_KR", "EUC_TW", "GB18030", "GBK",
 	"ISO_8859_5", "ISO_8859_6", "ISO_8859_7", "ISO_8859_8",

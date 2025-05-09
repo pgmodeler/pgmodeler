@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ This class is the basis for the reverse engineering feature.
 class __libconnector Catalog {
 	public:
 		enum QueryFilter: unsigned {
+			//! \brief This entry is only for bitwise operation purposes
+			NoFilter = 0,
+
 			//! \brief Excludes the system objects from listing
 			ExclSystemObjs=1,
 
@@ -54,13 +57,24 @@ class __libconnector Catalog {
 	private:
 		SchemaParser schparser;
 
-		static const QString QueryList,	//! \brief Executes a list command on catalog
-		QueryAttribs, //! \brief Executes a attribute retrieving command on catalog
-		PgSqlTrue, //! \brief Replacement for true 't' boolean value
-		PgSqlFalse, //! \brief Replacement for false 'f' boolean value
-		BoolField,     //! \brief Suffix for boolean fields.
+		//! \brief Executes a list command on catalog
+		static const QString QueryList,
 
-		//! \brief Query used to retrieve extension objects.
+		//! \brief Executes a attribute retrieving command on catalog
+		QueryAttribs,
+
+		//! \brief Replacement for true 't' boolean value
+		PgSqlTrue,
+
+		//! \brief Replacement for false 'f' boolean value
+		PgSqlFalse,
+
+		//! \brief Suffix for boolean fields.
+		BoolField,
+
+		/*! \brief Query used to retrieve extension objects.
+		 * This query retrieve all extension child object except for data types because
+		 * they are handled in extension catalog query */
 		GetExtensionObjsSql,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
@@ -91,7 +105,7 @@ class __libconnector Catalog {
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
-		static std::map<ObjectType, QString> oid_fields,
+		static const std::map<ObjectType, QString> oid_fields,
 
 		//! \brief This map stores the relation names in catalogs for each object type
 		obj_relnames,
@@ -169,21 +183,22 @@ class __libconnector Catalog {
 		QString createOidFilter(const std::vector<unsigned> &oids);
 
 	public:
-		Catalog();
-		Catalog(const Catalog &catalog);
-
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj;
+		static const QString PgModelerTempDbObj,
 
 		//! \brief Stores the null char escaped in format \000
-		static const QString EscapedNullChar;		
+		EscapedNullChar;
+
+		Catalog();
+
+		Catalog(const Catalog &catalog);
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
 
 		/*! \brief Closes the connection used by the catalog.
-	Once this method is called the user must call setConnection() again or the
-	catalog queries will fail */
+		 * Once this method is called the user must call setConnection() again or the
+		 * catalog queries will fail */
 		void closeConnection();
 
 		bool isConnectionValid();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,18 +26,17 @@
 #define OBJECTS_FILTER_WIDGET_H
 
 #include "guiglobal.h"
-#include <QWidget>
+#include "ui_objectsfilterwidget.h"
 #include <QComboBox>
 #include <QMenu>
 #include <QWidgetAction>
 #include <QListWidget>
 #include "baseobject.h"
-#include "ui_objectsfilterwidget.h"
 
 class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		std::vector<ObjectType> extra_obj_types;
 
 		QMenu tab_objs_menu, options_menu;
@@ -62,8 +61,15 @@ class __libgui ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		//! \brief Returns a list of table children objects to be filtered forcebly
 		QStringList getForceObjectsFilter();
 
+		/*! \brief Set a list of table children objects to be filtered forcebly
+		 *  Invalid types are ignored by this method */
+		void setForceObjectsFilter(const QStringList &tab_obj_types);
+
+		void setMatchBySignature(bool value);
+		void setOnlyMatching(bool value);
+
 		bool isOnlyMatching();
-		bool isMatchSignature();
+		bool isMatchBySignature();
 		bool hasFiltersConfigured();
 
 		/*! \brief When value is true the widget disable some features that aren't used

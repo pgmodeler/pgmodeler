@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "constraint.h"
+#include "utilsns.h"
 
 Constraint::Constraint()
 {
@@ -633,8 +634,8 @@ void Constraint::configureSearchAttributes()
 	for(auto &col : ref_columns)
 		ref_col_names.append(col->getSignature());
 
-	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
-	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
+	search_attribs[Attributes::SrcColumns] = src_col_names.join(UtilsNs::DataSeparator);
+	search_attribs[Attributes::RefColumns] = ref_col_names.join(UtilsNs::DataSeparator);
 }
 
 QString Constraint::getSourceCode(SchemaParser::CodeType def_type, bool inc_addedbyrel)
@@ -718,7 +719,7 @@ QString Constraint::getDropCode(bool cascade)
 	return TableObject::getDropCode(cascade);
 }
 
-QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
+QString Constraint::getDataDictionary(bool md_format, const attribs_map &extra_attribs)
 {
 	try
 	{
@@ -731,6 +732,8 @@ QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Comment] = comment;
 		attribs[Attributes::RefTable] = ref_table ? ref_table->getSignature().remove('"') : "";
 		attribs[Attributes::Expression] = expression;
+		attribs[Attributes::UpdAction] = ~upd_action;
+		attribs[Attributes::DelAction] = ~del_action;
 
 		// Retrieving the columns that composes the constraint
 		for(auto &col : columns)
@@ -739,8 +742,7 @@ QString Constraint::getDataDictionary(const attribs_map &extra_attribs)
 		attribs[Attributes::Columns] = col_names.join(", ");
 
 		schparser.ignoreEmptyAttributes(true);
-		return schparser.getSourceCode(GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir,
-																																					 getSchemaName()), attribs);
+		return schparser.getSourceCode(GlobalAttributes::getDictSchemaFilePath(md_format, getSchemaName()), attribs);
 	}
 	catch(Exception &e)
 	{

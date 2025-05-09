@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,19 +22,21 @@
 #include "settings/snippetsconfigwidget.h"
 #include "utils/htmlitemdelegate.h"
 #include "utils/textblockinfo.h"
+#include <QScrollBar>
+#include <QToolTip>
 
-const QStringList CodeCompletionWidget::dml_keywords = {
+const QStringList CodeCompletionWidget::dml_keywords {
 	/* ATTENTION: the keywords in this list MUST have a counter part in
 	 * DmlKeywordId. Also, the list MUST follow the same item order
 	 * in DmlKeywordId.
-	 *
-	 * Insert here the keywords that need have their position determined
+	 * 		 * Insert here the keywords that need have their position determined
 	 * in order to call retriveColumnNames() and retrieveObjectsName().
 	 * New keywords here need a new entry in DmlKeywordId enum */
 	"select", "insert", "update", "delete",
 	"truncate", "alter", "drop", "from",
 	"join",	"into", "as", "set", "table",
-	"only", "where",
+	"only", "where", "exists", "partition",
+	"like", "inherits", "on", "by",
 
 	/* Insert new keywords after this point if their position in the SQL command
 	 * is not important but if they are need to do some extra checkings */
@@ -44,7 +46,7 @@ const QStringList CodeCompletionWidget::dml_keywords = {
 	"all"
 };
 
-const QString CodeCompletionWidget::special_chars("(),*;=><|:!@^+-/&~#");
+const QString CodeCompletionWidget::special_chars {"(),*;=><|:!@^+-/&~#"};
 
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
@@ -88,7 +90,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
-	ini_cur_pos = -1;
+	filter_kw_pos = ini_cur_pos = -1;
 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
@@ -132,10 +134,11 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 		if(object == code_field_txt)
 		{
 			TextBlockInfo *blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			int pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			//Filters the trigger char and shows up the code completion only if there is a valid database model in use
 			if(k_event->key() == completion_trigger.unicode() && (db_model || catalog.isConnectionValid()) &&
-				 (!blk_info || (blk_info && blk_info->isCompletionAllowed())))
+				 (!blk_info || (blk_info && blk_info->isCompletionAllowed(pos_in_blk))))
 			{
 				/* If the completion widget is not visible start the timer to give the user
 				a small delay in order to type another character. If no char is typed the completion is triggered */
@@ -251,21 +254,21 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(syntax_hl && keywords.isEmpty())
 		{
 			//Get the keywords from the highlighter
-			std::vector<QRegularExpression> exprs=syntax_hl->getExpressions(keywords_grp);
+			QStringList exprs = syntax_hl->getExpressions(keywords_grp);
+			QRegularExpression regexp("\\(\\?\\=.*");
 
-			while(!exprs.empty())
+			for(auto &expr : exprs)
 			{
-				/* Since keywords are exact match patterns in the form \A(?:keyword)\z"
-				 * we need to remove from the pattern the initial and final regexp operators in
-				 * order to use only the word itself */
-				keywords.push_front(exprs.back().pattern().remove("\\A(?:").remove(")\\z"));
-				exprs.pop_back();
+				/* Since keywords are exact match patterns (see SyntaxHighlighter::loadConfiguration)
+				 * we need to remove from the pattern the regexp operators in order to extract only the
+				 * work itself. */
+				keywords.append(expr.remove("(?<=\\s|\\b)").remove(regexp));
 			}
 
-			completion_trigger=syntax_hl->getCompletionTrigger();
+			completion_trigger = syntax_hl->getCompletionTrigger();
 		}
 		else
-			completion_trigger=QChar('.');
+			completion_trigger = QChar('.');
 
 		if(enable_snippets)
 		{
@@ -467,11 +470,13 @@ bool CodeCompletionWidget::retrieveColumnNames()
 	// If no table name was retrieved from aliases names
 	if(tab_names.isEmpty() && word != completion_trigger)
 	{
-		// Retrieving the table name between FROM ... JOIN/WHERE
+		// Retrieving the table name between FROM ... JOIN/WHERE/BY
 		if(((dml_kwords_pos[Select] >= 0 && dml_kwords_pos[From] >= 0 &&
 				 cur_pos > dml_kwords_pos[Select] && cur_pos < dml_kwords_pos[From]) ||
-			 (dml_kwords_pos[Select] >= 0 &&
-				dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where])))
+
+				(dml_kwords_pos[Select] >= 0 &&
+				((dml_kwords_pos[Where] >= 0 && cur_pos > dml_kwords_pos[Where]) ||
+				 (dml_kwords_pos[By] >= 0 && cur_pos > dml_kwords_pos[By])))))
 		{
 			/* We get the table names until the next SELECT to avoid including table names that is
 			 * out of the context of the current SELECT/FROM */
@@ -651,6 +656,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 	QString curr_word = word, obj_name;
 	QTextCursor tc = code_field_txt->textCursor();
 	bool retrieved = false;
+	ObjectType child_type;
 
 	while(!curr_word.isEmpty())
 	{
@@ -658,9 +664,13 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
 		curr_word = tc.selectedText();
 
+		/* We break the name extraction when:
+		 * 1) Finding a comma indicating a separation of keywords/identifiers
+		 * 2) The current word is a DML keyword
+		 * 3) The current word is a keyword registered in the syntax highlighter config file */
 		if(curr_word == "," ||
 			 dml_keywords.contains(curr_word, Qt::CaseInsensitive) ||
-			 keywords.contains(curr_word))
+			 (curr_word != "public" && keywords.contains(curr_word, Qt::CaseInsensitive)))
 			break;
 
 		curr_word.removeIf([](const QChar &chr){
@@ -680,21 +690,82 @@ bool CodeCompletionWidget::retrieveObjectNames()
 	if(obj_name == completion_trigger)
 		return false;
 
-	QStringList names = obj_name.split(completion_trigger);
+	QStringList names = obj_name.split(completion_trigger),
+			tab_names;
 	QList<ObjectType> obj_types;
-	QString sch_name, disp_name, fmt_name;
+	QString sch_name, tab_name, disp_name, fmt_name;
 
-	if(names.size() == 1)
-		obj_types.append(ObjectType::Schema);
-	else if(names.size() == 2)
+	if(!word.isEmpty())
+		tc.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+	else
+		tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+
+	curr_word = tc.selectedText().trimmed();
+	child_type = BaseObject::getObjectType(curr_word, true);
+	tc = code_field_txt->textCursor();
+
+	/* If the completion was triggered after a ALTER TABLE ... (ALTER/DROP/...) [COLUMN/CONSTRAINT/TRIGGER/RULE]
+	 * We list the children object of the type right before the text cursor */
+	if((BaseTable::isBaseTable(filter_obj_type) &&
+			(child_type == ObjectType::Column || child_type == ObjectType::Constraint ||
+			 child_type == ObjectType::Trigger || child_type == ObjectType::Rule)) ||
+
+		 /* If the completion was triggered after a ALTER/DROP TRIGGER/RULE/POLICY ... ON table
+			* We list the children object of these types right before the text cursor but retrieving
+			* the table name after the ON keyword */
+		 (dml_kwords_pos[On] >= 0 && tc.position() < dml_kwords_pos[On] &&
+			(filter_obj_type == ObjectType::Trigger ||
+			 filter_obj_type == ObjectType::Rule ||
+			 filter_obj_type == ObjectType::Policy)))
 	{
-		obj_types.append({ ObjectType::Table,
-											 ObjectType::ForeignTable,
-											 ObjectType::View,
-											 ObjectType::Aggregate,
-											 ObjectType::Function,
-											 ObjectType::Procedure,
-											 ObjectType::Sequence });
+		if(BaseTable::isBaseTable(filter_obj_type))
+			tab_names = getTableNames(filter_kw_pos, tc.position());
+		else
+			tab_names = getTableNames(dml_kwords_pos[On], dml_kwords_pos[On] + 1);
+
+		if(!tab_names.isEmpty())
+		{
+			names = tab_names[0].split(completion_trigger);
+			sch_name = !names.isEmpty() ? names[0] : "";
+			tab_name = names.size() > 1 ? names[1] : "";
+			obj_types.append(child_type);
+		}
+	}
+	// If the name is not schema-qualified
+	else if(names.size() == 1)
+	{
+		/* If no filter object type was identified or the filter type is a
+		 * schema's child we prepare to list schema names first */
+		if(filter_obj_type == ObjectType::BaseObject ||
+			 BaseObject::isChildObjectType(ObjectType::Schema, filter_obj_type))
+			obj_types.append(ObjectType::Schema);
+
+		/* If filter type is a database's child we prepare to list all database child objects
+		 * of the filter type */
+		else if(BaseObject::isChildObjectType(ObjectType::Database, filter_obj_type))
+			obj_types.append(filter_obj_type);
+	}
+	// For schema-qualified names we only list objects are not database's children
+	else if(names.size() == 2 &&
+					!BaseObject::isChildObjectType(ObjectType::Database, filter_obj_type))
+	{
+		/* If we have no filter object type, we list by default only the table-like
+		 * and function-like objects */
+		if(filter_obj_type == ObjectType::BaseObject ||
+			 filter_obj_type == ObjectType::Trigger ||
+			 filter_obj_type == ObjectType::Rule)
+		{
+			obj_types.append({ ObjectType::Table,
+												 ObjectType::ForeignTable,
+												 ObjectType::View,
+												 ObjectType::Aggregate,
+												 ObjectType::Function,
+												 ObjectType::Procedure,
+												 ObjectType::Sequence });
+		}
+		else
+			obj_types.append(filter_obj_type);
+
 		sch_name = names[0];
 		obj_name = names[1];
 	}
@@ -706,7 +777,7 @@ bool CodeCompletionWidget::retrieveObjectNames()
 		if(!obj_name.isEmpty() && obj_name != completion_trigger)
 			filter[Attributes::NameFilter] = QString("^(%1)").arg(obj_name);
 
-		attribs = catalog.getObjectsNames(obj_type, sch_name, "", filter);
+		attribs = catalog.getObjectsNames(obj_type, sch_name, tab_name, filter);
 
 		for(auto &attr : attribs)
 		{
@@ -720,6 +791,13 @@ bool CodeCompletionWidget::retrieveObjectNames()
 				disp_name.remove(QRegularExpression("(\\()(.*)(\\))"));
 				fmt_name = BaseObject::formatName(disp_name) +
 									 attr.second.remove(disp_name);
+			}
+			// Converting user mapping names from role@server to "FOR role SERVER server"
+			else if(obj_type == ObjectType::UserMapping)
+			{
+				names = disp_name.split("@");
+				fmt_name = " FOR " + BaseObject::formatName(names[0]) +
+									 " SERVER " + BaseObject::formatName(names[1]);
 			}
 			else
 				fmt_name = BaseObject::formatName(attr.second);
@@ -772,6 +850,7 @@ void CodeCompletionWidget::extractTableNames()
 	QString curr_word, tab_name, alias;
 	bool extract_alias = false, tab_name_extracted = false, is_special_char = false;
 	TextBlockInfo *blk_info = nullptr;
+	int pos_in_blk = -1;
 
 	tab_aliases.clear();
 	tab_names_pos.clear();
@@ -783,11 +862,13 @@ void CodeCompletionWidget::extractTableNames()
 		curr_word = tc.selectedText();
 		curr_word.remove('"');
 		blk_info = dynamic_cast<TextBlockInfo *>(tc.block().userData());
+		pos_in_blk = tc.positionInBlock();
+
 		tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
 		/* If the current block doesn't allow completion (e.g. comment block)
 		 * we just skip the table name/alias extraction */
-		if(blk_info && !blk_info->isCompletionAllowed())
+		if(blk_info && !blk_info->isCompletionAllowed(pos_in_blk))
 			continue;
 
 		/* Every time we find a new SELECT keyword we reset name/alias
@@ -803,7 +884,10 @@ void CodeCompletionWidget::extractTableNames()
 			 (curr_word.compare("from", Qt::CaseInsensitive) == 0 ||
 				curr_word.compare("join", Qt::CaseInsensitive) == 0 ||
 				curr_word.compare("into", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("on", Qt::CaseInsensitive) == 0 ||
 				curr_word.compare("update", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("table", Qt::CaseInsensitive) == 0 ||
+				curr_word.compare("view", Qt::CaseInsensitive) == 0 ||
 				(extract_alias && !alias.isEmpty() && curr_word == ",")))
 		{
 			tc.movePosition(QTextCursor::EndOfWord, QTextCursor::MoveAnchor);
@@ -818,11 +902,16 @@ void CodeCompletionWidget::extractTableNames()
 				curr_word.remove('"');
 				tc.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
 
-				if(curr_word.isEmpty())
+				blk_info = dynamic_cast<TextBlockInfo *>(tc.block().userData());
+				pos_in_blk = tc.positionInBlock();
+
+				if(curr_word.isEmpty() ||
+					 (blk_info && !blk_info->isCompletionAllowed(pos_in_blk)))
 					continue;
 
 				// If we found a DML keyword or special char, we abort the table name/alias extraction
 				is_special_char = special_chars.contains(curr_word);
+
 				if(is_special_char ||
 					 (curr_word.compare("as", Qt::CaseInsensitive) != 0 &&
 						dml_keywords.contains(curr_word, Qt::CaseInsensitive)))
@@ -947,12 +1036,49 @@ void CodeCompletionWidget::setCurrentItem(QListWidgetItem *item)
 	}
 }
 
+ObjectType CodeCompletionWidget::identifyObjectType(QTextCursor tc)
+{
+	static QStringList lv1_words {"user", "foreign", "materialized", "event", "operator"},
+										 lv2_words {"family", "class", "data", "table", "view", "mapping", "trigger"};
+	QString word, next_word;
+
+	tc.movePosition(QTextCursor::NextWord);
+	tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+	word = tc.selectedText();
+
+	if(lv1_words.contains(word, Qt::CaseInsensitive))
+	{
+		tc.movePosition(QTextCursor::NextWord);
+		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+
+		next_word = tc.selectedText();
+
+		if(lv2_words.contains(next_word))
+		{
+			word += " " + next_word;
+
+			if(next_word.endsWith("data", Qt::CaseInsensitive))
+			{
+				tc.movePosition(QTextCursor::NextWord);
+				tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+				word += " " + tc.selectedText();
+			}
+			else if(next_word.endsWith("view"))
+			{
+				word.remove("materialized ");
+			}
+		}
+	}
+
+	return BaseObject::getObjectType(word, true);
+}
+
 bool CodeCompletionWidget::updateObjectsList()
 {
 	QTextCursor orig_tc, tc;
 	QStringList dml_cmds;
 	unsigned kw_id = Select;
-	int found_kw_id = -1;
+	int found_kw_id = -1, pos_in_blk = -1;
 	bool cursor_after_kw = false, kw_found = false;
 	TextBlockInfo *blk_info = nullptr;
 	QTextDocument::FindFlags find_flags[2] = { (QTextDocument::FindWholeWords |
@@ -961,6 +1087,7 @@ bool CodeCompletionWidget::updateObjectsList()
 
 	dml_cmds = dml_keywords.mid(Select, 7);
 	orig_tc = tc = code_field_txt->textCursor();
+	filter_obj_type = ObjectType::BaseObject;
 	resetKeywordsPos();
 
 	for(auto &kw : dml_keywords)
@@ -974,14 +1101,24 @@ bool CodeCompletionWidget::updateObjectsList()
 
 			kw_found = code_field_txt->find(kw, flag);
 			blk_info = dynamic_cast<TextBlockInfo *>(code_field_txt->textCursor().block().userData());
+			pos_in_blk = code_field_txt->textCursor().positionInBlock();
 
 			// Avoiding using the position of a found keyword that is in a commented block
-			if(kw_found && blk_info && blk_info->isCompletionAllowed())
+			if(kw_found && blk_info && blk_info->isCompletionAllowed(pos_in_blk))
 			{
 				dml_kwords_pos[kw_id] = code_field_txt->textCursor().position();
 
 				if(found_kw_id < 0 && dml_cmds.contains(kw))
 					found_kw_id = kw_id;
+
+				/* Special case for ALTER/DROP: we try to identify which type
+				 * of object is being altered/dropped by getting the two previous
+				 * words in order */
+				if((kw_id == Alter || kw_id == Drop) && filter_obj_type == ObjectType::BaseObject)
+				{
+					filter_kw_pos = dml_kwords_pos[kw_id];
+					filter_obj_type = identifyObjectType(code_field_txt->textCursor());
+				}
 
 				if(!cursor_after_kw && orig_tc.position() >= dml_kwords_pos[kw_id])
 					cursor_after_kw = true;
@@ -1369,7 +1506,7 @@ void CodeCompletionWidget::adjustNameListSize()
 	{
 		item = name_list->item(row);
 
-		if(item->isHidden())
+		if(!item || item->isHidden())
 			continue;
 
 		vis_item_cnt++;

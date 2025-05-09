@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 
 class __libcore PgSqlType: public TemplateType<PgSqlType>{
 	private:
-		static QStringList type_names;
+		static const QStringList type_names;
 
 		//! \brief Offset for all PostGiS types
 		static constexpr unsigned PostGiSStart = 64,
@@ -241,6 +241,7 @@ class __libcore PgSqlType: public TemplateType<PgSqlType>{
 
 		bool hasVariableLength();
 		bool acceptsPrecision();
+		bool acceptsTimezone();
 
 		/*! \brief Resets the length, precision, interval and spatial attributes of the type to their default values.
 		 * If the all_attrs is true then the dimension and timezone info is reset too.

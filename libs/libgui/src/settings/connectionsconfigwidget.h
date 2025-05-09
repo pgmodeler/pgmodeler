@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,10 +30,12 @@
 #include "connection.h"
 
 class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
+	private:	
 		static const QString DefaultFor;
+
+		bool one_time_conn_edit;
 		
 		//! \brief Stores the connections created by the user
 		static std::vector<Connection *> connections;
@@ -56,6 +58,16 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		virtual void saveConfiguration() override;
 
 		virtual void loadConfiguration() override;
+
+		/*! \brief Puts the connection editing form in one-time edit mode.
+		 *  In this mode, the connection handling buttons are hidden and the
+		 *  host/port fields are locked for edition if a value is specified
+		 *  for them. Once the user accepts or rejects the editions the form
+		 *  returns to the original operation mode */
+		void setOneTimeEditMode(bool one_time_edit,
+														const QString &conn_alias, const QString &dbname,
+														const QString &host, int port,
+														const QString &username, const QString &password);
 		
 		static std::map<QString, attribs_map> getConfigurationParams();
 		
@@ -70,8 +82,23 @@ class __libgui ConnectionsConfigWidget: public BaseConfigWidget, public Ui::Conn
 		
 		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
-		 *  or removing current ones */
+		 *  or removing current ones. The provided combobox is filled with new connections added during the process. */
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);
+
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones. Default values for connection alias, dbname, host, port and user can be provided */
+		/* static bool openConnectionsConfiguration(const QString &conn_alias = "", const QString &dbname = "",
+																						 const QString &host = "", int port = 5432,
+																						 const QString &username = "", const QString &password = ""); */
+
+		/*! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
+		 *  Returns true when the connection were changed somehow, either by restoring the defaults, adding new connections
+		 *  or removing current ones. Default values for connection alias, dbname, host, port and user can be provided. */
+		static bool openConnectionsConfiguration(bool one_time_edit = false,
+																						 const QString &conn_alias = "", const QString &dbname = "",
+																						 const QString &host = "", int port = 5432,
+																						 const QString &username = "", const QString &password = "");
 
 		//! \brief Returns the first connection found which is defined as the default for the specified operation
 		static Connection *getDefaultConnection(Connection::ConnOperation operation);

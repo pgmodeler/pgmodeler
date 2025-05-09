@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 #include "pgmodelerunittest.h"
 
 class DataDictTest: public QObject, public PgModelerUnitTest {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
 	public:
 		DataDictTest() : PgModelerUnitTest(SCHEMASDIR){}
@@ -127,7 +126,7 @@ void DataDictTest::generateASimpleDataDict()
 
 		dbmodel.addTable(table);
 		dbmodel.addTable(table1);
-		dbmodel.saveDataDictionary("./simpledict.html", true, false);
+		dbmodel.saveDataDictionary("./simpledict.html", true, false, false);
 	}
 	catch (Exception &e)
 	{
@@ -142,7 +141,7 @@ void DataDictTest::generateASplittedDataDictFromSampleModel()
 	{
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(QString(SAMPLESDIR)+ "/demo.dbm");
-		dbmodel.saveDataDictionary("./dict_test.html", true, false);
+		dbmodel.saveDataDictionary("./dict_test.html", true, false, false);
 	}
 	catch (Exception &e)
 	{

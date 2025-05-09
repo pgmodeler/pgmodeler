@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 #include "sqlexecutionwidget.h"
 
 class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		QVBoxLayout *corner_wgt_lt;
 
 		QList<QToolButton *> plugins_btns;
@@ -57,7 +57,7 @@ class __libgui SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	protected:
-		void setPluginsButtons(const QList<QToolButton *> &list);
+		//void setPluginsButtons(const QList<QToolButton *> &list);
 
 		void resizeEvent(QResizeEvent *);
 

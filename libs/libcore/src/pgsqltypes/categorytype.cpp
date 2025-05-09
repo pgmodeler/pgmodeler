@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 #include "categorytype.h"
 
-QStringList CategoryType::type_names =
-{
+const QStringList CategoryType::type_names {
 	"", // Reserved for null value
 
-	//See table 44-43 on PostgreSQL 8.4 documentation
+	//See table 44-43 on PostgreSQL documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types

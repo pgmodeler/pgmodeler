@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,9 +68,9 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 class ModelWidget;
 
 class __libcore DatabaseModel:  public QObject, public BaseObject {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Constants used to access the tuple columns in the internal changelog
 		enum LogFields: unsigned {
 			LogDate,
@@ -155,6 +155,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		is_layer_names_visible,
 
 		is_layer_rects_visible,
+
+		//! \brief Indicates that disabled objects' SQL code must appear in the database creation script
+		gen_dis_objs_code,
+
+		/*! \brief Indicates that system schemas (pg_catalog, information_schema, etc) must display their rectangles
+		 *  Since these objects can't have their attributes changes via editing form (except for public schema)
+		 *  this flag helps to persist the visibility state of the rectangles of that schemas */
+		show_sys_sch_rects,
 
 		/*! \brief This flag is used to notify the model to break the code generation/saving.
 		 *  This is only used by the export helper to cancel a running export to file process */
@@ -308,10 +316,11 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Loads the basic attributes, common between all children of BaseFunction, from XML code
 		void setBasicFunctionAttributes(BaseFunction *func);
 
-		//! \brief Updates (creating/removing) in the model the extension data types
-		bool updateExtensionTypes(Extension *ext);
+		//! \brief Updates (creating/removing) in the model the extension children objects
+		bool updateExtensionObjects(Extension *ext);
 
-		void removeExtensionTypes(Extension *ext);
+		//! \brief Removes from the model all the extension children objects
+		void removeExtensionObjects(Extension *ext);
 
 		//! \brief This convenience method forces the redrawn of the tables of a relationship as well as their respective schemas
 		void setRelTablesModified(BaseRelationship *rel);
@@ -320,11 +329,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Constants used to determine the code generation mode:
 		 *  OriginalSql: generates the SQL for the object only (original behavior)
 		 *  DependenciesSql: generates the original SQL code + dependencies SQL
-		 *  ChildrenSql: generates the original SQL code + children SQL */
+		 *  ChildrenSql: generates the original SQL code + children SQL
+		 *  GroupByType: generates the original SQL code but grouping them in a single file
+		 *  for each object type. */
 		enum CodeGenMode: unsigned {
 			OriginalSql,
 			DependenciesSql,
-			ChildrenSql
+			ChildrenSql,
+			GroupByType
 		};
 
 		enum MetaAttrOptions: unsigned {
@@ -375,6 +387,9 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
 		 * If the types list is empty the method will return nullptr. */
 		BaseObject *getObject(const QString &name, const std::vector<ObjectType> &types);
+
+		//! \brief Returns the object by searching it by its pg_oid
+		BaseObject *getObjectByOid(unsigned oid, ObjectType obj_type);
 
 		//! \brief Returns the list of specified object type that belongs to the passed schema
 		std::vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
@@ -451,6 +466,8 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object count for all object types.
 		unsigned getObjectCount();
 
+		unsigned getObjectsCount(const std::vector<ObjectType> &obj_types);
+
 		unsigned getMaxObjectCount();
 
 		//! \brief Retuns the specified localization value
@@ -482,7 +499,7 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Saves the model's SQL code definition by creating separated files for each object
 		 * The provided path must be a directory. If it does not exists then the method will create
 		 * it prior to the generation of the files. */
-		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql);
+		void saveSplitSQLDefinition(const QString &path, CodeGenMode code_gen_mode = OriginalSql, bool gen_drop_file = false);
 
 		/*! \brief Returns the complete SQL/XML defintion for the entire model (including all the other objects).
 		 The parameter 'export_file' is used to format the generated code in a way that can be saved
@@ -495,13 +512,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the code definition only for the database (excluding the definition of the other objects)
 		QString __getSourceCode(SchemaParser::CodeType def_type);
 
-		/*! \brief Returns the code definition for the specified object.
+		/*! \brief Returns the code definition for the specified objects.
 		 *  This method receives the code generation mode option which can be:
 		 *  OriginalSql: generates only the original SQL code of the object.
 		 *  DependenciesSql: generates the original code plus all dependencies needed to properly create the object.
 		 *  ChildrenSql: generates the original code plus all object's children SQL code. This option is used only by schemas, tables and views.
 		 */
-		QString getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode = OriginalSql);
+		//QString getSQLDefinition(BaseObject *object, CodeGenMode code_gen_mode = OriginalSql);
+		QString getSQLDefinition(const std::vector<BaseObject *> objects, CodeGenMode code_gen_mode);
 
 		/*! \brief Returns the creation order of objects in each definition type (SQL or XML).
 
@@ -511,8 +529,13 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 
 		The parameter incl_rel1n_constr when 'true' includes the generated foreign and unique keys
 		of one-to-one|many relationships instead of the relationships themselves. This parameter is
-		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored. */
-		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type, bool incl_relnn_objs=false, bool incl_rel1n_constrs=false);
+		is accepted only when the creation order for SQL code is being generated, for XML, it'll simply ignored.
+
+		The parameter realloc_fk_perms causes foreign keys and permissions to have their position changed to the
+		end of the creation order to avoid being created before their parent objects or referenced objects */
+		std::map<unsigned, BaseObject *> getCreationOrder(SchemaParser::CodeType def_type,
+																											bool incl_relnn_objs = false, bool incl_rel1n_constrs = false,
+																											bool realloc_fk_perms = true);
 
 		/*! \brief Returns a list containig all the object need to create the 'object' in the proper order.
 		If 'only_children' is set only children objects will be included in the list (for tables, views or schemas).
@@ -813,10 +836,10 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		virtual QString getAlterCode(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
-		void getDataDictionary(attribs_map &datadict, bool browsable, bool split);
+		void getDataDictionary(attribs_map &datadict, bool browsable, bool split, bool md_format);
 
 		//! \brief Saves the data dictionary of all tables in a single HTML file or splitted in several files for each table
-		void saveDataDictionary(const QString &path, bool browsable, bool split);
+		void saveDataDictionary(const QString &path, bool browsable, bool split, bool md_format);
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
@@ -867,6 +890,14 @@ class __libcore DatabaseModel:  public QObject, public BaseObject {
 		 *  This is used to restore the original scene geometry when the model is loaded from file */
 		void setSceneRect(const QRectF &rect);
 		QRectF getSceneRect();
+
+		//! \brief Toggles the generation of SQL code of object with code disabled
+		void setGenDisabledObjsCode(bool value);
+
+		bool isGenDisabledObjsCode();
+
+		//! \brief Toggles the display of system schemas rectangles
+		void setShowSysSchemasRects(bool value);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

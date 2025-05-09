@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ void ChangelogWidget::clearChangelog()
 date of modification in partial diff will be unavailable! Do you want to proceed?"),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-	if(msgbox.result() == QDialog::Accepted)
+	if(msgbox.isAccepted())
 	{
 		model->getDatabaseModel()->clearChangelog();
 		model->setModified(true);

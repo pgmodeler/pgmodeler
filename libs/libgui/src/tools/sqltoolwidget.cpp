@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -151,10 +151,10 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
+/* void SQLToolWidget::setPluginsButtons(const QList<QToolButton *> &list)
 {
 	plugins_btns = list;
-}
+} */
 
 void SQLToolWidget::resizeEvent(QResizeEvent *)
 {
@@ -200,7 +200,7 @@ void SQLToolWidget::updateTabs()
 	for(int i=0; i < sql_exec_tbw->count(); i++)
 	{
 		sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->widget(i));
-		sql_exec_wgt->sql_cmd_txt->updateLineNumbersSize();
+		sql_exec_wgt->sql_cmd_txt->resizeWidgets();
 		sql_exec_wgt->sql_cmd_txt->updateLineNumbers();
 		sql_exec_wgt->sql_cmd_hl->rehighlight();
 
@@ -273,7 +273,7 @@ void SQLToolWidget::disconnectFromDatabases()
 					 tr("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result()==QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			database_cmb->clear();
 			connections_cmb->setEnabled(true);
@@ -316,8 +316,8 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
-			for(auto &btn : plugins_btns)
-				db_explorer_wgt->addPluginButton(btn);
+			//for(auto &btn : plugins_btns)
+			//	db_explorer_wgt->addPluginButton(btn);
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
 			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
@@ -422,8 +422,6 @@ void SQLToolWidget::reloadHighlightConfigs()
 	}
 	catch(Exception &e)
 	{
-		//Messagebox msgbox;
-		//msgbox.show(e);
 		Messagebox::error(e, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 }
@@ -441,7 +439,7 @@ void SQLToolWidget::closeDatabaseExplorer(int idx, bool confirm_close)
 					 tr("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() != QDialog::Accepted)
+		if(msg_box.isRejected())
 			return;
 	}
 
@@ -484,7 +482,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx, bool confirm_close)
 									 tr("The SQL execution panel contains a typed command! Do you really want to close it?"),
 									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-			if(msg_box.result() == QDialog::Rejected)
+			if(msg_box.isRejected())
 				return;
 		}
 
@@ -529,12 +527,16 @@ void SQLToolWidget::showSourceCode(const QString &source, bool force_display)
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: SQL code preview truncated."
+	QString code = source;
+
 	if(!source.isEmpty())
 	{
-		QString trunc_code = source.mid(0, source.size() / 2);
-		trunc_code += tr("\n\n-- SQL code purposely truncated at this point in demo version!");
-		sourcecode_txt->setPlainText(trunc_code);
+		code = tr("/*******************************************************/\n\
+/* ATTENTION: The SQL code of the objects is purposely */\n\
+/* truncated in the demo version!                      */\n\
+/*******************************************************/\n\n") + source;
 	}
+	sourcecode_txt->setPlainText(code);
 #else
 	sourcecode_txt->setPlainText(source);
 #endif
@@ -591,7 +593,7 @@ void SQLToolWidget::dropDatabase(int database_idx)
 								.arg(dbname).arg(tmpl_conn->getConnectionId(true)),
 								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
-		if(msg_box.result() == QDialog::Accepted)
+		if(msg_box.isAccepted())
 		{
 			QString extra_opt;
 

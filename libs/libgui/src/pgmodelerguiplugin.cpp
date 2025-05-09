@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 #include "pgmodelerguiplugin.h"
 #include "guiutilsns.h"
+
+QList<PgModelerGuiPlugin *> PgModelerGuiPlugin::reg_plugins;
 
 PgModelerGuiPlugin::PgModelerGuiPlugin()
 {
@@ -82,6 +84,73 @@ PgModelerGuiPlugin::~PgModelerGuiPlugin()
 	delete plugin_info_frm;
 }
 
+bool PgModelerGuiPlugin::registerPlugin(PgModelerGuiPlugin *plugin)
+{
+	if(!plugin || reg_plugins.contains(plugin))
+		return false;
+
+	reg_plugins.append(plugin);
+
+	return true;
+}
+
+QList<QAction *> PgModelerGuiPlugin::getPluginsActions(ActionId act_id)
+{
+	QAction *act {};
+	QList<QAction *> actions;
+
+	for(auto &plug : reg_plugins)
+	{
+		act = plug->getAction(act_id);
+
+		if(!act)
+			continue;
+
+		/* The action's data receives a const reference to the parent plugin,
+		 * so it can be used for specific needs, e.g., in ModelWidget::configurePluginsActionMenu() */
+		act->setData(QVariant::fromValue(dynamic_cast<PgModelerGuiPlugin *>(plug)));
+		actions.append(act);
+	}
+
+	return actions;
+}
+
+QList<QToolButton *> PgModelerGuiPlugin::getPluginsToolButtons()
+{
+	QToolButton *btn {};
+	QList<QToolButton *> buttons;
+
+	for(auto &plug : reg_plugins)
+	{
+		btn = plug->getToolButton();
+
+		if(!btn)
+			continue;
+
+		buttons.append(btn);
+	}
+
+	return buttons;
+}
+
+QList<PgModelerGuiPlugin::PluginWidgets> PgModelerGuiPlugin::getPluginsWidgets(QWidget *parent)
+{
+	QList<PluginWidgets> widgets;
+	PluginWidgets p_wgt;
+
+	for(auto &plug : reg_plugins)
+	{
+		p_wgt = plug->createWidgets(parent);
+
+		if(!p_wgt.button && !p_wgt.widget)
+			continue;
+
+		widgets.append(p_wgt);
+	}
+
+	return widgets;
+}
+
 void PgModelerGuiPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
@@ -110,12 +179,22 @@ void PgModelerGuiPlugin::configurePluginInfo(const QString &title, const QString
 	icon_lbl->setPixmap(QPixmap(getPluginIcon(getPluginName())));
 }
 
-void PgModelerGuiPlugin::showPluginInfo() const
+void PgModelerGuiPlugin::showPluginInfo()
 {
 	plugin_info_frm->show();
 }
 
-QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name) const
+QString PgModelerGuiPlugin::getPluginIcon(const QString &icon_name)
 {
 	return QString(":/%1/%2.png").arg(getPluginName(), icon_name);
+}
+
+PgModelerGuiPlugin::PluginWidgets PgModelerGuiPlugin::createWidgets(QWidget *)
+{
+	return {};
+}
+
+bool PgModelerGuiPlugin::isSelectionValid()
+{
+	return true;
 }

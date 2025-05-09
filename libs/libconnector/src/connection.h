@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ class __libconnector Connection {
 		silence_conn_err,
 
 		/*! \brief Indicates if the PostgreSQL version checking must be ignored during connection.
-		 * This flag allows connecting (poorly!) to older versions ( < 10). */
+		 * This flag allows connecting (poorly and error-prone!) to older versions ( < 10). */
 		ignore_db_version;
 
 		/*! \brief Indicates that the initial database configured in the connection can be automatically

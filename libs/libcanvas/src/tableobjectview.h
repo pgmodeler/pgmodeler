@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 #include "pgsqltypes/pgsqltype.h"
 
 class __libcanvas TableObjectView: public BaseObjectView {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static bool hide_sch_name_usr_type;
 
 		//! \brief Table object descriptor
@@ -63,16 +63,16 @@ class __libcanvas TableObjectView: public BaseObjectView {
 		QString formatUserTypeName(PgSqlType type);
 
 	public:
-		static const QString	ConstrDelimEnd,
-		ConstrDelimStart,
-		TypeSeparator,
+		static const QString	TypeSeparator,
 		ConstrSeparator,
+		TextUnique,
+		TextExclude,
+		TextCheck,
+		TextPrimaryKey,
 		TextForeignKey,
 		TextNotNull,
-		TextPrimaryKey,
-		TextUnique,
-		TextCheck,
-		TextExclude;
+		ConstrDelimStart,
+		ConstrDelimEnd;
 
 		enum ChildObjectId: unsigned {
 			ObjDescriptor,

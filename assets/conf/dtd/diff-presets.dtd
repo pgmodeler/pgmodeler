@@ -4,7 +4,7 @@
 -->
 <!ELEMENT diff-presets (preset*)>
 
-<!ELEMENT preset EMPTY>
+<!ELEMENT preset (#PCDATA)>
 <!ATTLIST preset name CDATA #REQUIRED>
 <!ATTLIST preset current-model CDATA #IMPLIED>
 <!ATTLIST preset input-db CDATA #IMPLIED>
@@ -18,11 +18,16 @@
 <!ATTLIST preset drop-missing-cols-constrs (false|true) "false">
 <!ATTLIST preset preserve-db-name (false|true) "false">
 <!ATTLIST preset drop-trunc-cascade (false|true) "true">
-<!ATTLIST preset force-objs-recreation (false|true) "false">
 <!ATTLIST preset recreate-unmod-objs (false|true) "false">
+<!ATTLIST preset replace-mod-objs (false|true) "false">
 <!ATTLIST preset reuse-sequences (false|true) "false">
 <!ATTLIST preset import-sys-objs (false|true) "false">
 <!ATTLIST preset import-ext-objs (false|true) "false">
 <!ATTLIST preset ignore-import-errors (false|true) "false">
 <!ATTLIST preset ignore-duplic-errors (false|true) "false">
 <!ATTLIST preset ignore-error-codes CDATA #IMPLIED>
+<!ATTLIST preset run-in-transaction (false|true) "false">
+<!ATTLIST preset match-by-signature (false|true) "true">
+<!ATTLIST preset only-matching (false|true) "true">
+<!ATTLIST preset forced-filtering CDATA #IMPLIED>
+<!ATTLIST preset force-objs-re-creation CDATA #IMPLIED>

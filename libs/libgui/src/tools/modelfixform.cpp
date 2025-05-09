@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,22 +17,18 @@
 */
 
 #include "modelfixform.h"
-#include "attribsmap.h"
-#include "attributes.h"
-#include "settings/appearanceconfigwidget.h"
+#include "globalattributes.h"
 
-const QString ModelFixForm::PgModelerCli(
+const QString ModelFixForm::PgModelerCli {
 #ifdef Q_OS_WIN
 	"pgmodeler-cli.exe"
 #else
 	"pgmodeler-cli"
 #endif
-);
+};
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
-	std::map<QString, attribs_map> confs = AppearanceConfigWidget::getConfigurationParams();
-
 	setupUi(this);
 
 	input_file_sel = new FileSelectorWidget(this);
@@ -68,15 +64,8 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	pgmodeler_cli_sel->setNamePattern(QString("(.)+(%1)$").arg(PgModelerCli));
 	model_fix_grid->addWidget(pgmodeler_cli_sel, 0, 2);
 
-	//Configuring font style for output widget
-	if(!confs[Attributes::Code][Attributes::Font].isEmpty())
-	{
-		double size=confs[Attributes::Code][Attributes::FontSize].toDouble();
-		if(size < 5.0) size=5.0;
-
-		output_txt->setFontFamily(confs[Attributes::Code][Attributes::Font]);
-		output_txt->setFontPointSize(size);
-	}
+	dbg_output_wgt = new DebugOutputWidget(this);
+	output_lt->addWidget(dbg_output_wgt);
 
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardOutput, this, &ModelFixForm::updateOutput);
 	connect(&pgmodeler_cli_proc, &QProcess::readyReadStandardError, this, &ModelFixForm::updateOutput);
@@ -105,9 +94,13 @@ void ModelFixForm::resetFixForm()
 	pgmodeler_cli_sel->setVisible(false);
 	input_file_sel->clearSelector();
 	output_file_sel->clearSelector();
-	output_txt->setPlainText(tr("Waiting for the process to start..."));
+
+	dbg_output_wgt->logMessage(tr("Waiting for the process to start..."));
+	dbg_output_wgt->showActionButtons(false);
+
 	load_model_chk->setChecked(true);
 	enableFixOptions(true);
+
 	progress_pb->setVisible(false);
 	cancel_btn->setVisible(false);
 }
@@ -163,17 +156,19 @@ void ModelFixForm::fixModel()
 	args.append(output_file_sel->getSelectedFile());
 	args.append(extra_cli_args);
 
-	output_txt->clear();
-	pgmodeler_cli_proc.blockSignals(false);
-	pgmodeler_cli_proc.setArguments(args);
-	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
-	pgmodeler_cli_proc.start();
-
 	progress_pb->setValue(0);
 	progress_pb->setVisible(true);
 	cancel_btn->setEnabled(true);
 	cancel_btn->setVisible(true);
+
+	dbg_output_wgt->clear();
+
 	enableFixOptions(false);
+
+	pgmodeler_cli_proc.blockSignals(false);
+	pgmodeler_cli_proc.setArguments(args);
+	pgmodeler_cli_proc.setProgram(pgmodeler_cli_sel->getSelectedFile());
+	pgmodeler_cli_proc.start();
 }
 
 void ModelFixForm::cancelFix()
@@ -181,7 +176,7 @@ void ModelFixForm::cancelFix()
 	cancel_btn->setEnabled(false);
 	pgmodeler_cli_proc.terminate();
 	pgmodeler_cli_proc.waitForFinished();
-	output_txt->append(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
+	dbg_output_wgt->logMessage(QString("\n%1\n").arg(tr("** Process cancelled by the user!")));
 	enableFixOptions(true);
 }
 
@@ -216,7 +211,7 @@ void ModelFixForm::updateOutput()
 		}
 	}
 
-	output_txt->append(txt.trimmed());
+	dbg_output_wgt->logMessage(txt.trimmed());
 }
 
 void ModelFixForm::handleProcessFinish(int res)
@@ -224,6 +219,7 @@ void ModelFixForm::handleProcessFinish(int res)
 	enableFixOptions(true);
 	pgmodeler_cli_proc.blockSignals(true);
 	cancel_btn->setEnabled(false);
+	dbg_output_wgt->showActionButtons(true);
 
 	if(res == 0)
 	{

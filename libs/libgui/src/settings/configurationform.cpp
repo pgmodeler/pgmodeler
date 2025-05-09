@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -163,12 +163,13 @@ void ConfigurationForm::loadConfiguration()
 			}
 			else
 			{
-				Messagebox msg_box;
+				Messagebox msg_box;				
 				Exception ex = Exception(Exception::getErrorMessage(ErrorCode::ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
+
+				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage(), tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
 										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", GuiUtilsNs::getIconPath("refresh"));
 
-				if(msg_box.result() == QDialog::Accepted)
+				if(msg_box.isAccepted())
 					config_wgt->restoreDefaults();
 			}
 		}
@@ -177,12 +178,9 @@ void ConfigurationForm::loadConfiguration()
 
 void ConfigurationForm::restoreDefaults()
 {
-	Messagebox msg_box;
-	msg_box.show(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-				 Messagebox::ConfirmIcon,
-				 Messagebox::YesNoButtons);
+	int res = Messagebox::confirm(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"));
 
-	if(msg_box.result()==QDialog::Accepted)
+	if(Messagebox::isAccepted(res))
 		qobject_cast<BaseConfigWidget *>(confs_stw->currentWidget())->restoreDefaults();
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@
 
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 #include "pgmodelerguiplugin.h"
 #include "widgets/fileselectorwidget.h"
 
 class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Loaded plugins
 		QList<PgModelerGuiPlugin *> plugins;
 
 		//! \brief Table used to show the loaded plugins
-		ObjectsTableWidget *plugins_tab;
+		CustomTableWidget *plugins_tab;
 
 		FileSelectorWidget *root_dir_sel;
 
@@ -57,19 +57,11 @@ class __libgui PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsC
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		virtual void loadConfiguration() override;
 
-		/*! \brief Installs the plugins's configuration action in the provided menu.
-		 *  Additionally, it fills a list of actions that is meant to be placed in a toolbar,
-		 *  as well as a list of toolbuttons that is put in all database explorer widget instances. */
-		void installPluginsActions(QMenu *conf_menu, QList<QAction *> &tb_actions, QList<QToolButton *> &db_expl_btns);
-
-		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
+		 //! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
 
 		//! \brief Execute the post initialization of all loaded plugins
 		void postInitPlugins();
-
-		//! \brief Returns a list of actions of the loaded plugins related to model actions only
-		QList<QAction *> getPluginsModelsActions();
 
 	private slots:
 		void showPluginInfo(int idx);

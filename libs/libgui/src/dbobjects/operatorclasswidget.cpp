@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, this);
 	function_sel=new ObjectSelectorWidget(ObjectType::Function, this);
 	storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
-	elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
+	elements_tab=new CustomTableWidget(CustomTableWidget::AllButtons ^ CustomTableWidget::DuplicateButton, true, this);
 
 	elements_tab->setColumnCount(4);
 	elements_tab->setHeaderLabel(tr("Object"),0);
@@ -64,9 +64,9 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 	grid->addWidget(elements_tab, 6,0,1,4);
 
 	connect(elem_type_cmb, &QComboBox::currentIndexChanged, this, &OperatorClassWidget::selectElementType);
-	connect(elements_tab, &ObjectsTableWidget::s_rowAdded, this, __slot_n(this, OperatorClassWidget::handleElement));
-	connect(elements_tab, &ObjectsTableWidget::s_rowUpdated, this, __slot_n(this, OperatorClassWidget::handleElement));
-	connect(elements_tab, &ObjectsTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
+	connect(elements_tab, &CustomTableWidget::s_rowAdded, this, __slot_n(this, OperatorClassWidget::handleElement));
+	connect(elements_tab, &CustomTableWidget::s_rowUpdated, this, __slot_n(this, OperatorClassWidget::handleElement));
+	connect(elements_tab, &CustomTableWidget::s_rowEdited, this, &OperatorClassWidget::editElement);
 
 	selectElementType(0);
 	indexing_cmb->addItems(IndexingType::getTypes());

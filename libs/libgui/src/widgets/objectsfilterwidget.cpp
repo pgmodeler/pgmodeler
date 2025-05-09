@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,11 +61,11 @@ is present has the same effect as performing an exact match searching on the nam
 		tab_objs_lst->addItem(item);
 	}
 
-	action_only_matching = new QAction(tr("Only macthing"));
+	action_only_matching = new QAction(tr("Only macthing"), this);
 	action_only_matching->setCheckable(true);
 	action_only_matching->setChecked(true);
 
-	action_match_signature = new QAction(tr("Match by signature"));
+	action_match_signature = new QAction(tr("Match by signature"), this);
 	action_match_signature->setCheckable(true);
 	action_match_signature->setChecked(true);
 
@@ -123,7 +123,8 @@ void ObjectsFilterWidget::addFilters(const QStringList &filters)
 		values = filter.split(UtilsNs::FilterSeparator);
 
 		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
-		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
+		if(values.size() != 3 || values.indexOf("") >= 0 ||
+			 (values[0] != Attributes::Any && !types.contains(values[0])))
 			continue;
 
 		addFilter();
@@ -220,12 +221,33 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 	return types;
 }
 
+void ObjectsFilterWidget::setForceObjectsFilter(const QStringList &tab_obj_types)
+{
+	for(auto &item : tab_objs_lst->findItems("*", Qt::MatchWildcard))
+	{
+		if(tab_obj_types.contains(item->data(Qt::UserRole).toString()))
+			item->setCheckState(Qt::Checked);
+		else
+			item->setCheckState(Qt::Unchecked);
+	}
+}
+
+void ObjectsFilterWidget::setMatchBySignature(bool value)
+{
+	action_match_signature->setChecked(value);
+}
+
+void ObjectsFilterWidget::setOnlyMatching(bool value)
+{
+	action_only_matching->setChecked(value);
+}
+
 bool ObjectsFilterWidget::isOnlyMatching()
 {
 	return action_only_matching->isChecked();
 }
 
-bool ObjectsFilterWidget::isMatchSignature()
+bool ObjectsFilterWidget::isMatchBySignature()
 {
 	return action_match_signature->isChecked();
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	ret_type_parent->setLayout(vbox);
 	function_grid->addWidget(ret_type_parent, function_grid->count() + 1 , 0, 1, 4);
 
-	return_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
-																			ObjectsTableWidget::UpdateButton, true, this);
+	return_tab = new CustomTableWidget(CustomTableWidget::AllButtons ^
+																			CustomTableWidget::UpdateButton, true, this);
 	return_tab->setColumnCount(2);
 	return_tab->setHeaderLabel(tr("Column"), 0);
 	return_tab->setHeaderIcon(QPixmap(GuiUtilsNs::getIconPath("column")), 0);
@@ -93,13 +93,13 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseFunctionWidget(parent, Obje
 	connect(set_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
 	connect(table_rb, &QRadioButton::clicked, this, &FunctionWidget::alternateReturnTypes);
 
-	connect(parameters_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
-	connect(parameters_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
-	connect(parameters_tab,  &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
+	connect(parameters_tab, &CustomTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab, &CustomTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(parameters_tab,  &CustomTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
-	connect(return_tab, &ObjectsTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
-	connect(return_tab, &ObjectsTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
-	connect(return_tab, &ObjectsTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
+	connect(return_tab, &CustomTableWidget::s_rowAdded, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &CustomTableWidget::s_rowEdited, this, &FunctionWidget::showParameterForm);
+	connect(return_tab, &CustomTableWidget::s_rowDuplicated, this, &FunctionWidget::duplicateParameter);
 
 	setRequiredField(ret_method_lbl);
 	configureTabOrder();
@@ -123,11 +123,11 @@ void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 void FunctionWidget::showParameterForm()
 {
 	QObject *obj_sender=sender();
-	ObjectsTableWidget *table=nullptr;
+	CustomTableWidget *table=nullptr;
 
 	if(obj_sender == parameters_tab || obj_sender == return_tab)
 	{
-		table = dynamic_cast<ObjectsTableWidget *>(obj_sender);
+		table = dynamic_cast<CustomTableWidget *>(obj_sender);
 		BaseFunctionWidget::showParameterForm(table, obj_sender == parameters_tab);
 	}
 }

@@ -8,15 +8,20 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
-contains(CONFIG, debug):DEFINES+=PGMODELER_DEBUG
+contains(CONFIG, debug):{
+	DEFINES+=PGMODELER_DEBUG
 
-# Disables all the APIs deprecated before Qt 6.0.0
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+	# Enabling ccache (https://ccache.dev) in debug mode to speed up recompilations
+	isEqual(USE_CCACHE, true):CONFIG+=ccache
+}
+
+# Disables all the APIs deprecated before Qt 6.4.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060400
 !defined(NO_CHECK_CURR_VER, var):DEFINES+=CHECK_CURR_VER
 
-# Forcing the compilation using Qt 6.x
-!versionAtLeast(QT_VERSION, "6.0.0") {
-   error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.0.0.")
+# Forcing the compilation using Qt 6.4.x
+!versionAtLeast(QT_VERSION, "6.4.0") {
+	 error("Unsupported Qt version detected: $${QT_VERSION}! pgModeler must be compiled with at least Qt 6.4.0")
 }
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files
@@ -75,6 +80,7 @@ PLUGINS_FOLDER=plugins
 isEqual(PRIVATE_PLUGINS, true) {
   DEFINES+=PRIVATE_PLUGINS_SYMBOLS
   PLUGINS_FOLDER=priv-plugins
+	PRIV_RES_FOLDER=$$PWD/$$PLUGINS_FOLDER/res
 }
 
 # Include the plugins subprojects only if exists
@@ -118,6 +124,10 @@ linux {
 
   # If the AppImage generation option is set
   isEqual(APPIMAGE_BUILD, true):{
+
+	# Set the flag passed to compiler to indicate a appimage build
+	DEFINES+=APPIMAGE_BUILD
+
 	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
 	BINDIR = $$PREFIX
 	PRIVATEBINDIR = $$PREFIX
@@ -159,6 +169,15 @@ linux {
 # Windows custom variables settings
 windows {
   CONFIG += windows
+
+  # Removing optimization flag -O2 (level 2) and replacing by
+  # level 0 (the default according to GCC docs) because at level 2
+  # in MingW Clang/GCC some C++17 techniques don't work properly
+  # (e.g. inline static class members). Maybe it's a bug in the code is wrong (more likely)
+  # or is a bug in the compiler? The fact is that reducing the executable/libs code
+  # optmization causes the tool to work as expected.
+  QMAKE_CXXFLAGS_RELEASE -= -O2
+  QMAKE_CXXFLAGS_RELEASE *= -O0
 
   # The default prefix is ./build
   !defined(PREFIX, var):        PREFIX = $$PWD/build

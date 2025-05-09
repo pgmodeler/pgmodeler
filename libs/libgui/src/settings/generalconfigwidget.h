@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@
 #include "widgets/fileselectorwidget.h"
 
 class __libgui GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/* This simple struct is used to store the widgets geometry and maximized state
 		 * in order to save this info to configuration file being possible to restore
 		 * it when reloading the application */

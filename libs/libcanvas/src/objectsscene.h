@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,23 +25,34 @@
 #ifndef OBJECTS_SCENE_H
 #define OBJECTS_SCENE_H
 
-#include <QtWidgets>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPrinter>
+#include <QKeyEvent>
 #include "layeritem.h"
 #include "baseobjectview.h"
 #include "basetableview.h"
 #include "doublenan.h"
 
 class __libcanvas ObjectsScene: public QGraphicsScene {
+	Q_OBJECT
+
 	public:
 		enum GridPattern: unsigned {
 			SquarePattern,
 			DotPattern
 		};
 
-	private:
-		Q_OBJECT
+		//! \brief Stores the default grid line color
+		static const QColor DefaultGridColor,
 
+		//! \brief Stores the default grid line color
+		DefaultCanvasColor,
+
+		//! \brief Stores the default page delimiter lines color
+		DefaultDelimitersColor;
+
+	private:
 		static GridPattern grid_pattern;
 
 		//! \brief Stores the grid line color
@@ -66,15 +77,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		//! \brief Holds the tables/views which have selected children objects
 		QList<BaseTableView *> tabs_sel_children;
-
-		//! \brief Indicates if the corner move is enabled for the scene
-		static bool corner_move,
-
-		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
-		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
-		invert_rangesel_trigger,
-
-		lock_delim_scale;
 
 		//! \brief Indicates if the scene need to be moved
 		bool move_scene,
@@ -105,7 +107,20 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		int scene_move_dx, scene_move_dy;
 
 		//! \brief Object alignemnt, grid showing, page delimiter showing options
-		static bool align_objs_grid, show_grid, show_page_delim;
+		static bool align_objs_grid,
+
+		show_grid,
+
+		show_page_delim,
+
+		//! \brief Indicates if the corner move is enabled for the scene
+		corner_move,
+
+		/*! \brief Indicates that panning mode and range selection model are activate in inverse mode.
+		By default panning model is activated with a single left-click and range selection with SHIFT + left-click */
+		invert_rangesel_trigger,
+
+		lock_delim_scale;
 
 		//! \brief Scene grid size
 		static unsigned grid_size,
@@ -116,10 +131,10 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 		//! \brief Used to store the canvas/printer page layout (size, orientation, margins)
 		static QPageLayout page_layout;
 
-		static double delimiter_scale;
+		static double delimiter_scale,
 
 		//! \brief The minimum scene width is defined to be width of the current page layout * 2
-		static double min_scene_width,
+		min_scene_width,
 
 		//! \brief The minimum scene height is defined to be height of the current page layout * 2
 		min_scene_height;
@@ -217,15 +232,6 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static constexpr unsigned DefaultLayer = 0;
 
-		//! \brief Stores the default grid line color
-		static const QColor DefaultGridColor,
-
-		//! \brief Stores the default grid line color
-		DefaultCanvasColor,
-
-		//! \brief Stores the default page delimiter lines color
-		DefaultDelimitersColor;
-
 		ObjectsScene();
 
 		virtual ~ObjectsScene();
@@ -314,7 +320,7 @@ class __libcanvas ObjectsScene: public QGraphicsScene {
 
 		static QPageLayout getPageLayout();
 
-		void addItem(QGraphicsItem *item);
+		void addItem(QGraphicsItem *item, bool blink_new = false);
 		void removeItem(QGraphicsItem *item);
 
 		/*! \brief Define the geometry of the scene. If the rectangle is invalid or

@@ -4,6 +4,8 @@
 %if {decl-in-table} %then
 	$tb
 %else
+	@include "ddlend"
+
 	[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 
 	%if {table} %then
@@ -76,13 +78,12 @@
 	[ DEFERRABLE ] {defer-type}
 %end
 
-%if {decl-in-table} %then [,]
+%if {decl-in-table} %then 
+	[,]
 %else
-	[;] $br
+	[;] 
 
-	# This is a special token that pgModeler recognizes as end of DDL command
-	# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-	[-- ddl-end --] $br
+	{ddl-end}
 %end
 
 %if %not {decl-in-table} %and {comment} %then

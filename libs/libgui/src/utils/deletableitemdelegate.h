@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ This button is used to trigger a delete action via signal.
 #include <QComboBox>
 
 class __libgui DeletableItemDelegate: public QStyledItemDelegate {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief The tool button which is displayed aside the selected item in the combo box
 		QToolButton *del_btn;
 

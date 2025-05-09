@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,8 +70,6 @@ class __libcore Index: public TableObject{
 		};
 
 		Index();
-
-		virtual ~Index(){}
 
 		//! \brief Adds an element to the index using an column
 		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
@@ -172,7 +170,7 @@ class __libcore Index: public TableObject{
 		//! \brief Returns the non-key view columns (INCLUDE clause) of the index
 		std::vector<SimpleColumn> getSimpleColumns();
 
-		QString getDataDictionary(const attribs_map &extra_attribs = {});
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs = {});
 
 		virtual void updateDependencies() override;
 

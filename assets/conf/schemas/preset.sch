@@ -1,6 +1,6 @@
-%set {spacer} $br $tb $tb
+%set {spacer} \n \t \t
 
-$tb [<preset ] name="&{name}"
+\t [<preset ] name="&{name}"
 
 %if {current-model} %then
 	{spacer} current-model="true"
@@ -28,16 +28,36 @@ $tb [<preset ] name="&{name}"
 {spacer} drop-missing-cols-constrs="{drop-missing-cols-constrs}"
 {spacer} preserve-db-name="{preserve-db-name}"
 {spacer} drop-trunc-cascade="{drop-trunc-cascade}"
-{spacer} force-objs-recreation="{force-objs-recreation}"
 {spacer} recreate-unmod-objs="{recreate-unmod-objs}"
+{spacer} replace-mod-objs="{replace-mod-objs}"
 {spacer} import-sys-objs="{import-sys-objs}"
 {spacer} import-ext-objs="{import-ext-objs}"
 {spacer} reuse-sequences="{reuse-sequences}"
 {spacer} ignore-import-errors="{ignore-import-errors}"
 {spacer} ignore-duplic-errors="{ignore-duplic-errors}"
+{spacer} run-in-transaction="{run-in-transaction}"
+
+%if {force-objs-re-creation} %then
+	{spacer} force-objs-re-creation="{force-objs-re-creation}"
+%end
 
 %if {ignore-error-codes} %then
 	{spacer} ignore-error-codes="{ignore-error-codes}"
 %end
 
-/> $br $br
+{spacer} match-by-signature="{match-by-signature}"
+{spacer} only-matching="{only-matching}" 
+
+%if {forced-filtering} %then
+	{spacer} forced-filtering="{forced-filtering}"
+%end
+
+%if %not {filters} %then
+	/>
+%else
+	>
+	{spacer} [<!] \[ CDATA \[ &{filters} \] \] > \n
+\t </preset>
+%end
+
+\n

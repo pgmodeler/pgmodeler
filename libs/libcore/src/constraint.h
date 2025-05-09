@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -278,7 +278,7 @@ class __libcore Constraint: public TableObject{
 
 		bool isNullsNotDistinct();
 
-		QString getDataDictionary(const attribs_map &extra_attribs);
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs);
 
 		/*! \brief Compares two constratins XML definition and returns if they differs. This methods varies a little from
 		BaseObject::isCodeDiffersFrom() because here we need to generate xml code including relationship added columns */

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@
 #include "baseobjectwidget.h"
 #include "ui_operatorclasswidget.h"
 #include "pgsqltypewidget.h"
-#include "widgets/objectstablewidget.h"
+#include "widgets/customtablewidget.h"
 
 class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidget {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		//! \brief Family, funciton and operator selectors
 		ObjectSelectorWidget *family_sel,
 		*function_sel,
@@ -44,7 +44,7 @@ class __libgui OperatorClassWidget: public BaseObjectWidget, public Ui::Operator
 		*storage_type;
 
 		//! \brief Stores the elements of operator class
-		ObjectsTableWidget *elements_tab;
+		CustomTableWidget *elements_tab;
 
 	public:
 		OperatorClassWidget(QWidget * parent = nullptr);

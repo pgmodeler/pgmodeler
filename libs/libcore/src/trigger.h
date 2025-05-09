@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -187,27 +187,29 @@ class __libcore Trigger: public TableObject{
 		bool isConstraint();
 
 		/*! \brief Returns whether the trigger references columns added
-		 by relationship. This method is used as auxiliary
-		 to control which triggers reference columns added by the
-		 relationship in order to avoid referece breaking due constants
-		 connections and disconnections of relationships */
+		 * by relationship. This method is used as auxiliary
+		 * to control which triggers reference columns added by the
+		 * relationship in order to avoid referece breaking due constants
+		 * connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn();
 
 		/*! \brief Returns the list of all columns that is created by relationships.
-	This method is slower than isReferRelationshipAddedColumn() so it's not
-	recommended to use it only check if the object is referencing columns
-	added by relationship */
+		 * This method is slower than isReferRelationshipAddedColumn() so it's not
+		 * recommended to use it only check if the object is referencing columns
+		 * added by relationship */
 		std::vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
 		virtual QString getSourceCode(SchemaParser::CodeType def_type) final;
 
 		/*! \brief Validates the trigger attributes according to the docs.
-		This method is executed whenever the trigger is added to a table or view.
-		Normally the user don't need to call it explicitly */
+		 * This method is executed whenever the trigger is added to a table or view.
+		 * Normally the user don't need to call it explicitly */
 		void validateTrigger();
 
-		QString getDataDictionary(const attribs_map &extra_attribs);
+		bool acceptsReplaceCommand() override;
+
+		QString getDataDictionary(bool md_format, const attribs_map &extra_attribs);
 
 		virtual void updateDependencies() override;
 		virtual void generateHashCode() override;

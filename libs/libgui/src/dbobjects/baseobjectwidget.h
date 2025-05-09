@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #ifndef BASE_OBJECT_WIDGET_H
 #define BASE_OBJECT_WIDGET_H
 
-#include <QtWidgets>
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "widgets/objectselectorwidget.h"
@@ -33,9 +32,8 @@
 #include "qtconnectmacros.h"
 
 class __libgui BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
-	private:
-		Q_OBJECT
-		
+	Q_OBJECT
+
 	protected:
 		static constexpr int MaxObjectSize=16777215;
 

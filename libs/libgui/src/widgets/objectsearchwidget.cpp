@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,9 +88,6 @@ ObjectSearchWidget::ObjectSearchWidget(QWidget *parent) : QWidget(parent)
 		if(!checked)
 			exact_match_chk->setChecked(false);
 	});
-
-	//for(auto &attr : BaseObject::getSearchAttributesNames())
-	//	search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
 
 	for(auto &attr : BaseObject::getSearchAttributesNames())
 		_search_attrs_cmb->addItem(BaseObject::getSearchAttributeI18N(attr), attr);
@@ -248,7 +245,6 @@ void ObjectSearchWidget::findObjects()
 		return;
 
 	std::vector<ObjectType> types;
-	//QString search_attr = search_attrs_cmb->currentData().toString();
 	QString search_attr = _search_attrs_cmb->currentData().toString();
 
 	qApp->setOverrideCursor(Qt::WaitCursor);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 
 #include "syntaxhighlighter.h"
 #include "widgets/numberedtexteditor.h"
-#include "textblockinfo.h"
 #include "attributes.h"
 #include "exception.h"
 #include "globalattributes.h"
+#include <QClipboard>
+#include <QMimeData>
 
-QFont SyntaxHighlighter::default_font = QFont("Source Code Pro", 12);
-const QString SyntaxHighlighter::UnformattedGroup("__unformatted__");
+QFont SyntaxHighlighter::default_font {"Source Code Pro", 12};
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width, qreal custom_fnt_size) : QSyntaxHighlighter(parent)
 {
@@ -32,7 +32,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	code_field_txt = parent;
-	capt_nearby_separators = false;
+
 	this->setDocument(parent->document());
 	this->single_line_mode = single_line_mode;
 	custom_font_size = custom_fnt_size;
@@ -69,7 +69,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 		});
 	}
 
-	highlight_timer.setInterval(300);
+	highlight_timer.setInterval(200);
 	connect(parent, &QPlainTextEdit::cursorPositionChanged, &highlight_timer, qOverload<>(&QTimer::start));
 
 	connect(&highlight_timer, &QTimer::timeout, this, [this](){
@@ -79,7 +79,10 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 			return;
 
 		for(auto &cfg : enclosing_chrs)
-			highlightEnclosingChars(cfg);
+		{
+			if(highlightEnclosingChars(cfg))
+				break;
+		}
 	});
 }
 
@@ -90,7 +93,7 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 	{
 		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
 
-		if(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter)
+		if(k_event->key() == Qt::Key_Return || k_event->key() == Qt::Key_Enter)
 		{
 			event->ignore();
 			return true;
@@ -114,391 +117,356 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 	return QSyntaxHighlighter::eventFilter(object, event);
 }
 
-bool SyntaxHighlighter::hasInitialAndFinalExprs(const QString &group)
-{
-	return (initial_exprs.count(group) && final_exprs.count(group));
-}
-
 void SyntaxHighlighter::configureAttributes()
 {
-	conf_loaded=false;
+	conf_loaded = false;
 }
 
-void SyntaxHighlighter::highlightBlock(const QString &txt)
+void SyntaxHighlighter::highlightBlock(const QString &text)
 {
-	TextBlockInfo *info=nullptr;
-	TextBlockInfo *prev_info=dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
+	QString open_group;
+	TextBlockInfo *blk_info = nullptr,
+			*prev_blk_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
+	int prev_blk_state = currentBlock().previous().userState();
+	bool match_final_exp = false;
 
+	/* Creating a text block info so we can register
+	 * each position where there is a text formatting */
 	if(!currentBlockUserData())
 	{
-		info=new TextBlockInfo;
-		setCurrentBlockUserData(info);
-		setCurrentBlockState(currentBlock().previous().userState());
+		blk_info = new TextBlockInfo;
+		setCurrentBlockUserData(blk_info);
+		setCurrentBlockState(prev_blk_state == PersistentBlock ? SimpleBlock : prev_blk_state);
 	}
 	else
 	{
 		//Reset the block's info to permit the rehighlighting
-		info=dynamic_cast<TextBlockInfo *>(currentBlockUserData());
-		info->reset();
+		blk_info = dynamic_cast<TextBlockInfo *>(currentBlockUserData());
+		blk_info->reset();
 		setCurrentBlockState(SimpleBlock);
 	}
 
-	/* If the previous block info is an open multiline expression the current block will inherit this settings
-	 * to force the same text formatting.
-	 *
-	 * There is a special case for empty texts that are inserted right after a
-	 * multiline expression, here we force the inheritance of the formatting from the previous block anyway.
-	 * This is done in order to avoid the next line (after the blank one) to lost track of the previous formatting */
-	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
-		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
+	if(prev_blk_info && prev_blk_state >= OpenExprBlock)
 	{
-		info->setGroup(prev_info->getGroup());
-		info->setAllowCompletion(prev_info->isCompletionAllowed());
-		info->setMultiExpr(prev_info->isMultiExpr());
-		info->setClosed(false);
-		setCurrentBlockState(OpenExprBlock);
+		open_group = prev_blk_info->getOpenGroup();
+		setCurrentBlockState(prev_blk_state);
+		match_final_exp = true;
+
+		/* Forcing an empty block to hold the name of the
+		 * previous open block, so a block right after it
+		 * can be highlighted with the correct group format */
+		if(text.isEmpty())
+			blk_info->setOpenGroup(open_group);
 	}
 
-	if(!txt.isEmpty())
+	if(!text.isEmpty())
 	{
-		QString text, word, group;
-		unsigned i=0, len, idx=0, i1;
-		int match_idx, match_len, aux_len, start_col;
-		QChar chr_delim, lookahead_chr;
-		bool force_disable_compl = false;
+		const GroupConfig *group_cfg = nullptr;
+		bool expr_open = false, expr_closed = false;
+		QList<MatchInfo> matches;
+		MatchInfo m_info;
+		const FragmentInfo *f_info = nullptr;
+		int pos = 0, open_expr_idx = -1, grp_idx = multilines_order.indexOf(open_group);
+		auto ml_itr = multilines_order.begin(),
+				ml_itr_end = multilines_order.end();
 
-		text = txt + "\n";
-		len = text.length();
+		/* If we located the open group in the list of multiline groups
+		 * we'll start our search from it */
+		if(grp_idx >= 0)
+			ml_itr += grp_idx;
+		else
+			grp_idx = 0;
 
-		do
+		// Applying multiline expressions format
+		while(ml_itr != ml_itr_end)
 		{
-			//Ignoring the char listed as ingnored on configuration
-			while(i < len && ignored_chars.contains(text[i])) i++;
+			group_cfg = &group_confs[*ml_itr];
 
-			if(i < len)
+			// Searching for the opening expression of the current group
+			if(!match_final_exp && matchGroup(group_cfg, text, pos, false, m_info))
 			{
-				//Stores the curret text positon
-				idx=i;
+				f_info = blk_info->getFragmentInfo(m_info.start, m_info.end);
+				pos = m_info.end + 1;
 
-				//If the char is a word separator
-				if(word_separators.contains(text[i]))
+				/* If we don't have a text fragment in the starting position
+				 * of the current match info or there's a fragment info but
+				 * it is not related to a multiline expression (it's not
+				 * open and closed) */
+				if(!f_info || (!f_info->isOpen() && !f_info->isClosed()))
 				{
-					while(i < len && word_separators.contains(text[i]))
-					{
-						word += text[i];
-						i++;
+					/* Flagging the block state as OpenExprBlock, to force the highliting until its end
+					 * if an closing expression isn't found */
+					match_final_exp = true;
+					setCurrentBlockState(OpenExprBlock + grp_idx);
+					setFormat(m_info, group_cfg, true, false, blk_info);
+					open_group = group_cfg->name;
 
-						/* If the nearby separators capture is not enabled we must
-						 * stop the char capture in order to return the currently formed word */
-						if(!capt_nearby_separators)
-							break;
-					}
-				}
-				//If the char is a word delimiter
-				else if(word_delimiters.contains(text[i]))
-				{
-					chr_delim = text[i++];
-					word += chr_delim;
-
-					while(i < len && chr_delim != text[i])
-					{
-						word += text[i];
-						i++;
-					}
-
-					if(i < len && text[i] == chr_delim)
-					{
-						word += chr_delim;
-						i++;
-					}
-				}
-				else
-				{
-					TextBlockInfo *prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
-
-					while(i < len &&
-						  !word_separators.contains(text[i]) &&
-							!ignored_chars.contains(text[i]) &&
-							!word_delimiters.contains(text[i]))
-					{
-						word += text[i];
-						i++;
-					}
-
-					/* This is an workaround for multi lined groups which use word delimiters
-					in their final expressions. In some cases the highlighter can't undertand that
-					a multi line group was closed and right after another group starts, this way it
-					continues to highlight text as the previous multi lined group.
-
-					An example of that situation is for multi lined string group:
-
-					word delimiter: ' (apostrophe)
-					initial-exp: (')(.)*(\n)
-					final-exp: (.)*(')(\n)*
-
-					String:	'lorem\n ipsum' nextword
-
-					In the example above, without the workaround, the highlighter would highlight the first line
-					"'lorem\n" as string and continue to hightlight the " ipsum' nextword" in the same way as well,
-					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
-					in the last ' we include it in the current evaluated word and increment the position in the text so the next
-					word starts without the word delimiter. */
-					if(i < len && word_delimiters.contains(text[i]) &&
-						 prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr())
-					{
-						for(auto &exp : final_exprs[prev_info->getGroup()])
-						{
-							if(exp.pattern().contains(text[i]))
-							{
-								word += text[i];
-								i++;
-								break;
-							}
-						}
-					}
+					/* Flagging where the open expression was found
+					 * so we can determine if non-multline group need to be
+					 * matched */
+					open_expr_idx = m_info.start;
 				}
 			}
 
-			//If the word is not empty try to identify the group
-			if(!word.isEmpty())
+			// If we find the opening expression, we'll search for the closing expression
+			if(match_final_exp)
 			{
-				i1=i;
-				while(i1 < len && ignored_chars.contains(text[i1])) i1++;
+				match_final_exp = false;
+				matchGroup(group_cfg, text, pos, true, m_info);
+				m_info.start = pos;
 
-				if(i1 < len)
-					lookahead_chr=text[i1];
-				else
-					lookahead_chr='\0';
-
-				match_idx=-1;
-				match_len=0;
-
-				group=identifyWordGroup(word, lookahead_chr, match_idx, match_len);
-
-				if(!group.isEmpty())
+				/* The final expression of the group wasn't found in the block
+				 * so we consider it a open multiline expression (to be closed
+				 * in the next blocks. In that case, we apply the group format until
+				 * the end of this block.*/
+				if(!m_info.isValid())
 				{
-					start_col=idx + match_idx;
-					setFormat(start_col, match_len, group);
+					expr_open = true;
+					expr_closed = false;
+					pos = m_info.end = text.length();
 
-					/* Workaround to avoid the code completion to be triggered inside a delimited string when typing the
-					 * completion trigger char. If the cursor is within a delimited string like:
-					 *
-					 * 'some [cursor]string' other text outside delimiter)
-					 *
-					 * And there are other text typed ahead of the end of the delimited string, we need to force the code
-					 * completion disabling inside that block delimited even the other texts (outside the delimiters) are
-					 * from a group in which the completion is allowed in the settings. */
-					int cursor_pos = code_field_txt->textCursor().positionInBlock();
-					if(!info->isCompletionAllowed() && !force_disable_compl &&
-						 cursor_pos >= static_cast<int>(idx) && cursor_pos <= static_cast<int>(idx + match_len))
-					{
-						force_disable_compl = true;
-					}
-					else if(force_disable_compl)
-						info->setAllowCompletion(false);
+					// Flagging the block state as OpenExprBlock, highliting it until its end
+					setCurrentBlockState(OpenExprBlock + grp_idx);
 				}
-
-				if(info->isMultiExpr() && !info->isClosed() && hasInitialAndFinalExprs(group))
-					setCurrentBlockState(OpenExprBlock);
+				/* If the closing expression is found we need to flag the expression as
+				 * closed and the block state as SimpleBlock so the highlighter can keep
+				 * searching other groups in the same block and formatting accordingly */
 				else
+				{
+					pos = m_info.end + 1;
+					expr_open = false;
+					expr_closed = true;
+					open_expr_idx =  -1;
 					setCurrentBlockState(SimpleBlock);
+				}
 
-				aux_len=(match_idx + match_len);
-				if(match_idx >=0 &&  aux_len != word.length())
-					i-=word.length() - aux_len;
+				setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info);
 
-				word.clear();
+				/* If the current block state is OpenExprBlock at this point
+				 * it means that we have reached the end of the block and no
+				 * closing expression was found, so the next block will
+				 * inconditionally inherit the formatting of portion of this
+				 * block that was not closed. */
+				if(currentBlockState() >= OpenExprBlock)
+					break;
+			}
+
+			if(pos >= text.length())
+			{
+				/* If we have reached the end of the block we restarting the highliting
+				 * in that block but now using the next multiline group */
+				pos = 0;
+				ml_itr++;
+				grp_idx++;
+			}
+			else
+				pos++;
+		}
+
+		/* We abort further groups matching if we have a open expression block
+		 * in which the token was found at the beggining of the text, or the
+		 * block inherited the OpenExprBlock state from a previous block and
+		 * don't have the opening and closing tokens */
+		if(open_expr_idx <= 0 && currentBlockState() >= OpenExprBlock)
+			return;
+
+		for(auto &grp : groups_order)
+		{
+			group_cfg = &group_confs[grp];
+
+			if(matchGroup(group_cfg, text, 0, false, matches))
+			{
+				/* The the current group is a persistent one and its formatting settings were
+				 * applied, then we mark the block state as PersistentBlock this force the rehighlight
+				 * of next block if they are part of a open multiline expression. */
+				if(setFormat(&matches, group_cfg, false, false, blk_info) && group_cfg->persistent)
+					setCurrentBlockState(PersistentBlock);
 			}
 		}
-		while(i < len);
 	}
 }
 
-QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int &match_idx, int &match_len)
+bool SyntaxHighlighter::setFormat(const MatchInfo &m_info, const GroupConfig *group_cfg, bool expr_open,
+																	bool expr_closed, TextBlockInfo *blk_info)
 {
-	QString group;
-	bool match = false;
-	int block_st = currentBlockState();
-	bool match_final_expr= block_st == OpenExprBlock;
-	TextBlockInfo *info = dynamic_cast<TextBlockInfo *>(currentBlockUserData()),
-			*prev_info = dynamic_cast<TextBlockInfo *>(currentBlock().previous().userData());
+	if(!m_info.isValid() || !group_cfg || !blk_info)
+		return false;
 
-	/* Trying to match the word against the gropus
-	 * If the block is marked as OpenExprBlock we'll match the word agains final expression
-	 * in order to check if the word is token that closes a multi line expression */
-	for(auto &itr_group : groups_order)
+	QTextCharFormat fmt = group_cfg ? group_cfg->format : QTextCharFormat();
+	int end = m_info.end, len = m_info.getLength();
+
+	/* No formatting will be applied if we found a formatted
+	 * text fragment in the current postion */
+	if(blk_info->getFragmentInfo(m_info.start, m_info.end))
+		return false;
+
+	/* Forcing the highlighting from the starting position of the matching info to the
+	 * end of the block when the group is a persistent one */
+	if(group_cfg->persistent)
 	{
-		if(isWordMatchGroup(word, itr_group, match_final_expr, lookahead_chr, match_idx, match_len))
-		{
-			group = itr_group;
-			match = true;
-			break;
-		}
+		end = currentBlock().length() - 1;
+		len = end - m_info.start + 1;
 	}
 
-	/* If the word doesn't match any group or it matches but the found group is differnt
-	 * from the current block info group, we need to return a group name that considers
-	 * the state of the previous block (which can be previous line or previous word in the current line) */
-	if(!match || (match && block_st == OpenExprBlock && info->getGroup() != group))
-	{
-		match_idx = 0;
-		match_len = word.length();
+	fmt.setFontFamilies({ default_font.family() });
+	fmt.setFontPointSize(getCurrentFontSize());
+	QSyntaxHighlighter::setFormat(m_info.start, len, fmt);
 
-		/* If the current block info is a multi expression one and it is not closed yet (the closing
-		 * expresion wasn't found previously) we automatically return the info's group to enforce the
-		 * highlighting of the word using the formatting of the info's group no matter if the
-		 * word was matched against another group. The fact of the current info is a multi line expression
-		 * that is still open has precedence over any other situation. */
-		if(!info->getGroup().isEmpty() && info->isMultiExpr() && !info->isClosed())
-		{
-			return info->getGroup();
-		}
-		/* If the word is a simple line feed (\n) and the previous block info is a multi expression one
-		 * that is closed we force the current block to be unformatted. This will avoid that the next line
-		 * starts with the formatting of the previous block info. */
-		else if((word == QChar::LineFeed && prev_info &&
-						 !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && prev_info->isClosed()) ||
+	/* If we are highlighting an open expression we need
+	 * to register the name of the group that the confs
+	 * are being applied to the block so it can be applied
+	 * to the next block */
+	if(expr_open && currentBlockState() >= OpenExprBlock)
+		blk_info->setOpenGroup(group_cfg->name);
 
-						/* If the word doens't match any group and the current block info was closed at least once
-						 * in the current line we also need to force the unformatted mode so the next words in the
-						 * line can be correctly highlighted. For example, supposing the following line in XML syntax:
-						 *  <!-- comment --> <tag>
-						 * Without forcing the format reseting after the token '-->' the next one '<tag>' would receive
-						 * the same highlighting as a XML comment which is not desired. */
-						(group.isEmpty() && info->isClosedOnce()) ||
-						(!info->getGroup().isEmpty() && info->isMultiExpr() && info->isClosed()))
-		{
-			/* We force unformmated group to stay closed so in the next interaction (word extraction / validation)
-			 * the group that matches the word can be properly found */
-			info->setGroup(UnformattedGroup);
-			info->setAllowCompletion(allow_completion[UnformattedGroup]);
-			info->setMultiExpr(true);
-			info->setClosed(true);
-			return info->getGroup();
-		}
-		/* In case of the word doesn't match no group and none of the conditions regarding the current block info are
-		 * met we force the inheritance of formatting style of the previous block (if existent) and if the previous
-		 * block is a multi expression one and is already open. An example of this situation would be adding a new
-		 * text inside a multi line comment:
-		 *
-		 * <!--
-		 *  some comment
-		 * -->
-		 *
-		 * In this case the words "some comment" don't match any group this way they need to be commented since
-		 * they were placed between the comment tokens */
-		else if(prev_info && !prev_info->getGroup().isEmpty() && prev_info->isMultiExpr() && !prev_info->isClosed())
-		{
-			info->setGroup(prev_info->getGroup());
-			info->setAllowCompletion(prev_info->isCompletionAllowed());
+	/* If the block state is SimpleBlock meaning that there's no
+	 * open expression. Or, if the current state is an open expression
+	 * but the expression was closed we clear the name of the group
+	 * so the next block don't inherit formatting */
+	else if(currentBlockState() == SimpleBlock ||
+					 (currentBlockState() >= OpenExprBlock && expr_closed))
+		blk_info->setOpenGroup("");
 
-			/* We force the current info to be a multi expression one (like the previous)
-			 * and close it only if the word is a closing token of the group */
-			info->setMultiExpr(true);
-			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
+	blk_info->addFragmentInfo(FragmentInfo(group_cfg->name, m_info.start, end,
+																				 expr_open, expr_closed,
+																				 group_cfg->allow_completion));
 
-			return info->getGroup();
-		}
-
-		return UnformattedGroup;
-	}
-	else
-	{
-		/* If no group is found related to the word we inherit the previous block
-		 * formatting if and only if the previous block is a multi line expressoin that
-		 * is not closed */
-		if(!group.isEmpty() && info->getGroup().isEmpty() &&
-			 prev_info && prev_info->isMultiExpr() && !prev_info->isClosed())
-		{
-			info->setGroup(prev_info->getGroup());
-			info->setAllowCompletion(prev_info->isCompletionAllowed());
-			info->setMultiExpr(true);
-
-			/* We try to check if the current work matches a final expression of the previous block group
-			 * if so, the current block info will be automatically closed */
-			info->setClosed(isWordMatchGroup(word, prev_info->getGroup(), true, lookahead_chr, match_idx, match_len));
-
-			return info->getGroup();
-		}
-
-		info->setGroup(group);
-		info->setAllowCompletion(group.isEmpty() ? true : allow_completion[group]);
-		info->setMultiExpr(hasInitialAndFinalExprs(group));
-		info->setClosed(match && match_final_expr);
-
-		return group;
-	}
+	return true;
 }
 
-bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &group, bool use_final_expr, const QChar &lookahead_chr, int &match_idx, int &match_len)
+
+bool SyntaxHighlighter::setFormat(const QList<MatchInfo > *matches, const GroupConfig *group_cfg, bool expr_open,
+																	bool expr_closed, TextBlockInfo *blk_info)
 {
-	std::vector<QRegularExpression> *vet_expr = nullptr;
-	bool has_match = false;
-	QRegularExpressionMatch match;
+	if(!matches || !group_cfg || !blk_info)
+		return false;
 
-	if(use_final_expr && final_exprs.count(group))
-		vet_expr = &final_exprs[group];
-	else
-		vet_expr = &initial_exprs[group];
+	bool fmt_applied = false;
 
-	for(auto &expr : *vet_expr)
+	for(auto &m_info : *matches)
 	{
-		if(expr.match(word).hasMatch())
-		{
-			match_idx = 0;
-			match_len = word.length();
-			has_match = true;
-		}
-
-		if(has_match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
-			has_match =false;
-
-		if(has_match)
-			break;
+		if(setFormat(m_info, group_cfg, expr_open, expr_closed, blk_info))
+			fmt_applied = true;
 	}
 
-	return has_match;
+	return fmt_applied;
 }
 
-void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
+template<class Class>
+bool SyntaxHighlighter::matchGroup(const GroupConfig *group_cfg, const QString &text, int txt_pos, bool final_expr, Class &match)
 {
-	QTextCursor tc;
-	QString curr_txt;
+	QMap<QString, QList<QRegularExpression>> *exprs_map = final_expr ? &final_exprs : &initial_exprs;
+
+	match.clear();
+
+	if(!group_cfg || !exprs_map->contains(group_cfg->name))
+		return false;
+
+	for(auto &expr : (*exprs_map)[group_cfg->name])
+		matchExpression(text, txt_pos, expr, match);
+
+	return !match.isEmpty();
+}
+
+bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, QList<MatchInfo> &matches)
+{
+	static QRegularExpressionMatchIterator mt_itr;
+	static QRegularExpressionMatch match;
+	MatchInfo m_info;
+
+	mt_itr = expr.globalMatch(text, txt_pos);
+
+	while(mt_itr.isValid() && mt_itr.hasNext())
+	{
+		match = mt_itr.next();
+		m_info.start = match.capturedStart();
+		m_info.end = match.capturedEnd() - 1;
+
+		if(match.isValid() && m_info.isValid() &&
+				match.capturedLength() > 0 && !matches.contains(m_info))
+		{
+			matches.append(m_info);
+		}
+	}
+
+	return !matches.isEmpty();
+}
+
+bool SyntaxHighlighter::matchExpression(const QString &text, int txt_pos, const QRegularExpression &expr, MatchInfo &m_info)
+{
+	static QRegularExpressionMatch match;
+	int mt_start = -1, mt_end = -1;
+
+	match = expr.match(text, txt_pos);
+	mt_start = match.capturedStart();
+	mt_end = match.capturedEnd() - 1;
+
+	if(mt_start >= 0 && mt_end >= 0 && match.capturedLength() > 0)
+	{
+		m_info.start = mt_start;
+		m_info.end = mt_end;
+	}
+
+	return !m_info.isEmpty();
+}
+
+const SyntaxHighlighter::GroupConfig *SyntaxHighlighter::getGroupConfig(const QString &group)
+{
+	if(!group_confs.contains(group))
+		return nullptr;
+
+	return &group_confs[group];
+}
+
+bool SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
+{
+	QString curr_chr;
 	QPlainTextEdit *code_txt = qobject_cast<QPlainTextEdit *>(parent());
+	QTextCursor tc = code_txt->textCursor();
+	int orig_pos = tc.position();
+	bool is_numbered_editor = (qobject_cast<NumberedTextEditor *>(code_txt) != nullptr);
 
-	tc = code_txt->textCursor();
 	tc.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-	curr_txt = tc.selectedText();
-	tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+	curr_chr = tc.selectedText();
+	tc.setPosition(orig_pos);
 
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
+	/* If the next character from the current cursor position
+	 * is not an enclosing char, we just stop here. */
+	if(curr_chr != cfg.open_char && curr_chr != cfg.close_char)
 	{
-		tc = code_txt->textCursor();
-		tc.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-		curr_txt = tc.selectedText();
-	}
+		/* If the code_txt is not an instance of NumberedTextEditor
+		 * we need to clear the extra selections to undo the highlighting
+		 * of a previously highlighted enclosing chars. */
+		if(!is_numbered_editor)
+			code_txt->setExtraSelections({});
 
-	if(curr_txt != cfg.open_char && curr_txt != cfg.close_char)
-		return;
+		return false;
+	}
 
 	QChar inc_chr, dec_chr;
 	QString code = code_txt->toPlainText();
-	int chr_cnt = 0,
-			pos = tc.position(),
-			ini_pos = pos,
-			inc = curr_txt == cfg.open_char ? 1 : -1;
+	int chr_balance_cnt = 0,
+			pos = 0, ini_pos = 0,
 
-	inc_chr = curr_txt == cfg.open_char ? cfg.open_char : cfg.close_char;
-	dec_chr = curr_txt == cfg.open_char ? cfg.close_char : cfg.open_char;
+			/* If the current text is an open char we
+			 * search for enclosing char ahead of the
+			 * current position (1) otherwise we search
+			 * for a close char behind of the current
+			 * position (-1) */
+			inc = (curr_chr == cfg.open_char ? 1 : -1);
+
+	pos = ini_pos = tc.position();
+	inc_chr = (curr_chr == cfg.open_char ? cfg.open_char : cfg.close_char);
+	dec_chr = (curr_chr == cfg.open_char ? cfg.close_char : cfg.open_char);
 
 	while(pos >= 0 && pos < code.size())
 	{
 		if(code[pos] == inc_chr)
-			chr_cnt++;
+			chr_balance_cnt++;
 		else if(code[pos] == dec_chr)
-			chr_cnt--;
+			chr_balance_cnt--;
 
-		if(chr_cnt == 0)
+		if(chr_balance_cnt == 0)
 			break;
 
 		pos += inc;
@@ -510,7 +478,10 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		QList<QTextEdit::ExtraSelection> selections;
 		QTextEdit::ExtraSelection sel;
 
-		if(NumberedTextEditor::isHighlightLines() && !single_line_mode)
+		/* If the current code_txt instance is a NumberedTextEditor
+		 * we need to keep the line highlighted prior to any enclosing
+		 * char highlighting if the line highlight option is set */
+		if(is_numbered_editor && NumberedTextEditor::isHighlightLines() && !single_line_mode)
 		{
 			sel.format.setBackground(NumberedTextEditor::getLineHighlightColor());
 			sel.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -534,12 +505,14 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 			fmt.setForeground(Qt::white);
 		}
 
-		sel.format = fmt;
+		// Highlighting the found enclosing char
 		tc.setPosition(ini_pos);
 		tc.setPosition(ini_pos + 1, QTextCursor::KeepAnchor);
 		sel.cursor = tc;
+		sel.format = fmt;
 		selections.append(sel);
 
+		// Highlighting the matching closing/opening char if found
 		if(pos >= 0 && pos < code.size())
 		{
 			tc.setPosition(pos);
@@ -549,7 +522,10 @@ void SyntaxHighlighter::highlightEnclosingChars(const EnclosingCharsCfg &cfg)
 		}
 
 		code_txt->setExtraSelections(selections);
+		return true;
 	}
+
+	return false;
 }
 
 qreal SyntaxHighlighter::getCurrentFontSize()
@@ -565,276 +541,227 @@ bool SyntaxHighlighter::isConfigurationLoaded()
 
 void SyntaxHighlighter::clearConfiguration()
 {
+	groups_order.clear();
+	group_confs.clear();
 	initial_exprs.clear();
 	final_exprs.clear();
-	formats.clear();
-	groups_order.clear();
-	word_separators.clear();
-	word_delimiters.clear();
-	ignored_chars.clear();
-	lookahead_char.clear();
-
 	configureAttributes();
 }
 
 void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
-	if(!filename.isEmpty())
+	if(filename.isEmpty())
+		return;
+
+	attribs_map attribs;
+	QString elem, group, pattern;
+	bool bold = false, italic = false, strikeout = false,
+			underline = false, initial_expr = false,
+			final_expr = false, case_sensitive = false;
+	QTextCharFormat format;
+	QColor bg_color, fg_color;
+	GroupConfig group_cfg;
+	QRegularExpression regexp;
+
+	try
 	{
-		attribs_map attribs;
-		QString elem, expr_type, group;
-		bool groups_decl=false, chr_sensitive=false,
-				bold=false, italic=false, strikeout = false,
-				underline=false;
-		QTextCharFormat format;
-		QRegularExpression regexp;
-		QColor bg_color, fg_color;
-		std::vector<QString>::iterator itr, itr_end;
+		clearConfiguration();
+		xmlparser.restartParser();
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				GlobalAttributes::CodeHighlightConf +
+																																				GlobalAttributes::ObjectDTDExt),
+												 GlobalAttributes::CodeHighlightConf);
 
-		try
+		xmlparser.loadXMLFile(filename);
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
-			clearConfiguration();
-			xmlparser.restartParser();
-			xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
-																																					GlobalAttributes::CodeHighlightConf +
-																																					GlobalAttributes::ObjectDTDExt),
-													 GlobalAttributes::CodeHighlightConf);
-
-			xmlparser.loadXMLFile(filename);
-
-			if(xmlparser.accessElement(XmlParser::ChildElement))
+			do
 			{
-				do
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 				{
-					if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+					elem = xmlparser.getElementName();
+
+					if(elem == Attributes::CompletionTrigger)
 					{
-						elem=xmlparser.getElementName();
+						xmlparser.getElementAttributes(attribs);
 
-						if(elem==Attributes::WordSeparators)
-						{
-							xmlparser.getElementAttributes(attribs);
-							word_separators=attribs[Attributes::Value];
-							capt_nearby_separators = attribs[Attributes::CaptureNearby] == Attributes::True;
-						}
-						else if(elem==Attributes::WordDelimiters)
-						{
-							xmlparser.getElementAttributes(attribs);
-							word_delimiters=attribs[Attributes::Value];
-						}
-						else if(elem==Attributes::IgnoredChars)
-						{
-							xmlparser.getElementAttributes(attribs);
-							ignored_chars=attribs[Attributes::Value];
-						}
-						else if(elem==Attributes::CompletionTrigger)
-						{
-							xmlparser.getElementAttributes(attribs);
+						if(attribs[Attributes::Value].size() >= 1)
+							completion_trigger = attribs[Attributes::Value].at(0);
+					}
+					else if(elem == Attributes::EnclosingChars)
+					{
+						xmlparser.getElementAttributes(attribs);
 
-							if(attribs[Attributes::Value].size() >= 1)
-								completion_trigger=attribs[Attributes::Value].at(0);
-						}
-						else if(elem == Attributes::EnclosingChars)
-						{
-							xmlparser.getElementAttributes(attribs);
+						EnclosingCharsCfg cfg;
+						cfg.open_char = attribs[Attributes::OpenChar].front();
+						cfg.close_char = attribs[Attributes::CloseChar].front();
+						cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+						cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
 
-							EnclosingCharsCfg cfg;
-							cfg.open_char = attribs[Attributes::OpenChar].front();
-							cfg.close_char = attribs[Attributes::CloseChar].front();
-
-							#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-								cfg.fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
-								cfg.bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
-							#else
-								cfg.fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
-								cfg.bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
-							#endif
-
-							enclosing_chrs.push_back(cfg);
-						}
-
-						/*	If the element is what defines the order of application of the groups
-								highlight in the (highlight-order). Is in this block that are declared
-								the groups used to highlight the source code. ALL groups
-								in this block must be declared before they are built
-								otherwise an error will be triggered. */
-						else if(elem==Attributes::HighlightOrder)
-						{
-							//Marks a flag indication that groups are being declared
-							groups_decl=true;
-							xmlparser.savePosition();
-							xmlparser.accessElement(XmlParser::ChildElement);
-							elem=xmlparser.getElementName();
-						}
-
-						if(elem==Attributes::Group)
-						{
-							xmlparser.getElementAttributes(attribs);
-							group=attribs[Attributes::Name];
-
-							/* If the parser is on the group declaration block and not in the build block
-								 some validations are made. */
-							if(groups_decl)
-							{
-								//Raises an error if the group was declared before
-								if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::InvRedeclarationGroup).arg(group),
-																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
-								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclaration)
-																	.arg(group).arg(Attributes::HighlightOrder),
-																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-
-								groups_order.push_back(group);
-							}
-							//Case the parser is on the contruction block and not in declaration of groups
-							else
-							{
-								//Raises an error if the group is being constructed by a second time
-								if(initial_exprs.count(group)!=0)
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
-																	ErrorCode::DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group is being constructed without being declared
-								else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefNotDeclaredGroup)
-																	.arg(group).arg(Attributes::HighlightOrder),
-																	ErrorCode::DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-								//Raises an error if the group does not have children element
-								else if(!xmlparser.hasElement(XmlParser::ChildElement))
-								{
-									throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
-																	ErrorCode::DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-								}
-
-								chr_sensitive=(attribs[Attributes::CaseSensitive]==Attributes::True);
-								italic=(attribs[Attributes::Italic]==Attributes::True);
-								bold=(attribs[Attributes::Bold]==Attributes::True);
-								underline=(attribs[Attributes::Underline]==Attributes::True);
-								strikeout=(attribs[Attributes::Stikeout]==Attributes::True);
-								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
-
-								//If the attribute isn't defined the bg color will be transparent
-								if(attribs[Attributes::BackgroundColor].isEmpty())
-									bg_color.setRgb(0,0,0,0);
-								else
-									bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
-
-								if(!attribs[Attributes::LookaheadChar].isEmpty())
-									lookahead_char[group]=attribs[Attributes::LookaheadChar][0];
-
-								format.setFontFamily(default_font.family());
-								format.setFontPointSize(default_font.pointSizeF());
-								format.setFontItalic(italic);
-								format.setFontUnderline(underline);
-								format.setFontStrikeOut(strikeout);
-
-								if(bold)
-									format.setFontWeight(QFont::Bold);
-								else
-									format.setFontWeight(QFont::Normal);
-
-								format.setForeground(fg_color);
-								format.setBackground(bg_color);
-								formats[group]=format;
-
-								allow_completion[group] =
-										attribs[Attributes::AllowCompletion] != Attributes::False;
-
-								xmlparser.savePosition();
-								xmlparser.accessElement(XmlParser::ChildElement);
-
-								if(!chr_sensitive)
-									regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-
-								do
-								{
-									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-									{
-										xmlparser.getElementAttributes(attribs);
-										expr_type=attribs[Attributes::Type];
-
-										if(attribs[Attributes::RegularExp] == Attributes::True)
-											regexp.setPattern(attribs[Attributes::Value]);
-										else if(attribs[Attributes::Wildcard] == Attributes::True)
-											regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
-										else
-											regexp.setPattern(QRegularExpression::anchoredPattern(QRegularExpression::escape(attribs[Attributes::Value])));
-
-										// We thrown an error aborting the loading if the regepx has an invalid pattern
-										if(!regexp.isValid())
-										{
-											throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
-																			ErrorCode::InvGroupRegExpPattern,
-																			__PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr, tr("Pattern: %1").arg(regexp.pattern()));
-										}
-
-										if(expr_type.isEmpty() ||
-											 expr_type==Attributes::SimpleExp ||
-											 expr_type==Attributes::InitialExp)
-											initial_exprs[group].push_back(regexp);
-										else
-											final_exprs[group].push_back(regexp);
-									}
-								}
-								while(xmlparser.accessElement(XmlParser::NextElement));
-								xmlparser.restorePosition();
-							}
-						}
+						enclosing_chrs.push_back(cfg);
 					}
 
-					/* Check if there are some other groups to be declared, if not,
-							continues to reading to the other part of configuration */
-					if(groups_decl && !xmlparser.hasElement(XmlParser::NextElement))
+					if(elem == Attributes::Group)
 					{
-						groups_decl=false;
+						xmlparser.getElementAttributes(attribs);
+						group = attribs[Attributes::Name];
+
+						//Raises an error if the group is being constructed by a second time
+						if(group_confs.contains(group))
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
+															 ErrorCode::DefDuplicatedGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+						}
+						//Raises an error if the group does not have children element
+						else if(!xmlparser.hasElement(XmlParser::ChildElement))
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
+															ErrorCode::DefEmptyGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+						}
+
+						case_sensitive = attribs[Attributes::CaseSensitive] == Attributes::True;
+						italic = attribs[Attributes::Italic] == Attributes::True;
+						bold = attribs[Attributes::Bold] == Attributes::True;
+						underline = attribs[Attributes::Underline] == Attributes::True;
+						strikeout = attribs[Attributes::Stikeout] == Attributes::True;
+
+						/* If the attribute isn't defined the fg color will be the same as the
+						 * parent's default text color */
+						if(attribs[Attributes::ForegroundColor].isEmpty())
+							fg_color = code_field_txt->palette().color(QPalette::WindowText);
+						else
+							fg_color = QColor::fromString(attribs[Attributes::ForegroundColor]);
+
+						// If the attribute isn't defined the default the bg color will be transparent
+						if(attribs[Attributes::BackgroundColor].isEmpty())
+							bg_color = Qt::transparent;
+						else
+							bg_color = QColor::fromString(attribs[Attributes::BackgroundColor]);
+
+						format.setFontFamilies({ default_font.family() });
+						format.setFontPointSize(default_font.pointSizeF());
+						format.setFontItalic(italic);
+						format.setFontUnderline(underline);
+						format.setFontStrikeOut(strikeout);
+
+						if(bold)
+							format.setFontWeight(QFont::Bold);
+						else
+							format.setFontWeight(QFont::Normal);
+
+						format.setForeground(fg_color);
+						format.setBackground(bg_color);
+
+						group_cfg = GroupConfig(group, format,
+																		attribs[Attributes::AllowCompletion] != Attributes::False,
+																		attribs[Attributes::Persistent] == Attributes::True,
+																		false);
+
+						xmlparser.savePosition();
+						xmlparser.accessElement(XmlParser::ChildElement);
+
+						do
+						{
+							if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+							{
+								xmlparser.getElementAttributes(attribs);
+
+								initial_expr = attribs[Attributes::Initial] == Attributes::True;
+								final_expr = attribs[Attributes::Final] == Attributes::True;
+
+								if(!group_cfg.multiline && (initial_expr || final_expr))
+									group_cfg.multiline = true;
+
+								regexp.setPattern(pattern);
+
+								// Regular expression matching
+								if(attribs[Attributes::Type] == Attributes::RegularExp)
+									regexp.setPattern(attribs[Attributes::Value]);
+								// Wildcard matching
+								else if(attribs[Attributes::Type] == Attributes::Wildcard)
+									regexp.setPattern(QRegularExpression::wildcardToRegularExpression(attribs[Attributes::Value]));
+								// Word boundary matching regexp
+								else if(attribs[Attributes::Type] == Attributes::Word)
+								{
+									/* For matching words we use the pattern \s\b[word]\s\b which indicate that the word must
+									 * have at least on space or tab attached, or is delimited by be a word boundary,
+									 * or be the only word in the text block. Additionally, we use lookahead(?=) and lookbehind(?<=)
+									 * operators to avoid that the space character/word boundary is captured/computed.
+									 * This can match the entire word and not parts of it in the text block */
+									regexp.setPattern(QString("(?<=\\s|\\b)%1(?=\\s|\\b)")
+																		.arg(QRegularExpression::escape(attribs[Attributes::Value])));
+								}
+								// Exact (escaped) regular expression
+								else
+									regexp.setPattern(QRegularExpression::escape(attribs[Attributes::Value]));
+
+								regexp.setPatternOptions(!case_sensitive ?
+																					QRegularExpression::CaseInsensitiveOption :
+																					QRegularExpression::NoPatternOption |
+																					QRegularExpression::DontCaptureOption);
+
+								// We throw an error aborting the loading if the regepx has an invalid pattern
+								if(!regexp.isValid())
+								{
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupRegExpPattern).arg(group, filename, regexp.errorString()),
+																	ErrorCode::InvGroupRegExpPattern, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																	tr("Pattern: %1").arg(regexp.pattern()));
+								}
+								else if(group_cfg.persistent && (initial_expr || final_expr))
+								{
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvExprPersistentGroup).arg(group, filename),
+																	 ErrorCode::InvExprPersistentGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																	 tr("Pattern: %1").arg(regexp.pattern()));
+								}
+								else if(initial_expr && final_expr)
+								{
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvExprMultilineGroup).arg(group, filename),
+																	 ErrorCode::InvExprMultilineGroup, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,
+																	 tr("Pattern: %1").arg(regexp.pattern()));
+								}
+
+								if(final_expr)
+									final_exprs[group].append(regexp);
+								else
+									initial_exprs[group].append(regexp);
+							}
+						}
+						while(xmlparser.accessElement(XmlParser::NextElement));
+
+						group_confs[group] = group_cfg;
+
+						if(group_cfg.multiline)
+							multilines_order.append(group);
+						else
+							groups_order.append(group);
+
 						xmlparser.restorePosition();
 					}
-
-				}
-				while(xmlparser.accessElement(XmlParser::NextElement));
-			}
-
-			itr=groups_order.begin();
-			itr_end=groups_order.end();
-
-			while(itr!=itr_end)
-			{
-				group=(*itr);
-				itr++;
-
-				if(initial_exprs[group].size()==0)
-				{
-					//Raises an error if the group was declared but not constructed
-					throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclarationNotDefined).arg(group),
-													ErrorCode::InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
 
-			conf_loaded=true;
-		}
-		catch(Exception &e)
-		{
-			throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, filename);
-		}
+		conf_loaded = true;
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e, filename);
 	}
 }
 
-std::vector<QRegularExpression> SyntaxHighlighter::getExpressions(const QString &group_name, bool final_expr)
+QStringList SyntaxHighlighter::getExpressions(const QString &group_name)
 {
-	std::map<QString, std::vector<QRegularExpression> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
+	QStringList exprs;
 
-	if(expr_map->count(group_name) > 0)
-		return expr_map->at(group_name);
-	else
-		return std::vector<QRegularExpression>();
+	if(initial_exprs.contains(group_name))
+	{
+		for(auto &expr : initial_exprs[group_name])
+			exprs.append(expr.pattern());
+	}
+
+	return exprs;
 }
 
 QChar SyntaxHighlighter::getCompletionTrigger()
@@ -842,16 +769,7 @@ QChar SyntaxHighlighter::getCompletionTrigger()
 	return completion_trigger;
 }
 
-void SyntaxHighlighter::setFormat(int start, int count, const QString &group)
-{
-	QTextCharFormat format=formats[group];
-	format.setFontFamily(default_font.family());
-	//format.setFontPointSize(default_font.pointSizeF());
-	format.setFontPointSize(getCurrentFontSize());
-	QSyntaxHighlighter::setFormat(start, count, format);
-}
-
 void SyntaxHighlighter::setDefaultFont(const QFont &fnt)
 {
-	SyntaxHighlighter::default_font=fnt;
+	SyntaxHighlighter::default_font = fnt;
 }

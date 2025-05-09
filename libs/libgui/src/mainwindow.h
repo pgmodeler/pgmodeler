@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2024 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2025 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <QtWidgets>
+#include <QMainWindow>
 #include <QPrintDialog>
 #include "ui_mainwindow.h"
 #include "widgets/modelwidget.h"
@@ -47,14 +47,14 @@
 #include "widgets/changelogwidget.h"
 
 class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		static int ToolsActionsCount;
 
-		static constexpr int InfinityInterval = INT_MAX;
-
 		static bool confirm_validation;
+
+		static constexpr int InfinityInterval = INT_MAX;
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
 		enum PendingOpId: unsigned {
@@ -137,6 +137,8 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Stores the actions related to recent models
 		QMenu *recent_models_menu,
 
+		clear_recent_menu,
+
 		main_menu,
 
 		sample_mdls_menu,
@@ -198,8 +200,6 @@ class __libgui MainWindow: public QMainWindow, public Ui::MainWindow {
 		void createMainWidgets();
 
 		void configureMenusActionsWidgets();
-
-		void setPluginsActions(ModelWidget *model_wgt);
 
 		void dragEnterEvent(QDragEnterEvent *event) override;
 
@@ -333,10 +333,15 @@ public:
 		void loadModelFromAction();
 
 		//! \brief Clears the recent models menu/list
-		void clearRecentModelsMenu();
+		void clearRecentModelsMenu(bool missing_only);
 
 		//! \brief Update the recent models menu entries
 		void updateRecentModelsMenu();
+
+		/*! \brief Validates if the current entries in the recent models menu
+		 *  points to valid files. In case an action contains an invalid file (not accessible)
+		 *  the item is striked out indicating the invalid status */
+		void validateRecentModelsActions();
 
 		//! \brief Save the temp files for all opened models
 		void saveTemporaryModels();
@@ -380,6 +385,7 @@ public:
 
 		bool mimeDataHasModelFiles(const QMimeData *mime_data);
 		void loadModelsFromMimeData(const QMimeData *mime_data);
+		void addNewLayer(const QString &layer_name);
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);
