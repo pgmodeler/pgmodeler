@@ -75,6 +75,9 @@ isEqual(DEMO_VERSION, true) {
 # Set up the flag passed to compiler to disable all code related to update checking
 isEqual(NO_UPDATE_CHECK, true): DEFINES+=NO_UPDATE_CHECK
 
+# Set forcing PRIVATE_PLUGINS to false when it is not specified via qmake args
+isEmpty(PRIVATE_PLUGINS): PRIVATE_PLUGINS=false
+
 # Set up the plugin folder to be used
 PLUGINS_FOLDER=plugins
 isEqual(PRIVATE_PLUGINS, true) {
