@@ -5,19 +5,30 @@
 *.exe
 *.so.*
 *.so
-*.pro.user
+*.user*
 *.directory
 *.run
 *.Debug
 *.Release
 *.old
+*-old
+*.moc
 
 moc_*.cpp
 moc_*.h
-qrc_resources.cpp
+qrc_*.cpp
 ui_*.h
-windeploy.log
+*.log
 Makefile
+SQtCQg.json
+
+.qtc_clangd/*
+*qmake2cmake*
+
+*_BACKUP*
+*_LOCAL*
+*_REMOTE*
+*_BASE*
 
 build/*
 dist/*
