@@ -17,6 +17,7 @@ find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui Network PrintSupport Svg Test Widgets)
 
 qt_standard_project_setup()
+set(CMAKE_AUTORCC ON)
 
 add_compile_definitions(
     QT_DISABLE_DEPRECATED_BEFORE=0x060400
