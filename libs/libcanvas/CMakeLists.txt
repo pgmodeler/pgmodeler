@@ -26,12 +26,6 @@ target_include_directories(canvas PUBLIC
 )
 
 target_link_libraries(canvas PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     core
     parsers
     utils

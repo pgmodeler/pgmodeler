@@ -14,12 +14,6 @@ target_include_directories(connector PUBLIC
 )
 
 target_link_libraries(connector PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     ${PGSQL_LIBS}
     core
     parsers

@@ -259,12 +259,6 @@ target_include_directories(gui PUBLIC
 )
 
 target_link_libraries(gui PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     connector
     canvas
     connector

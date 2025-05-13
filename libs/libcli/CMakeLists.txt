@@ -19,12 +19,6 @@ target_include_directories(cli PUBLIC
 )
 
 target_link_libraries(cli PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     canvas
     connector
     core

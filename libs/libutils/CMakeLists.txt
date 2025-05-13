@@ -20,15 +20,6 @@ target_include_directories(utils PUBLIC
     ../../plugins/src
 )
 
-target_link_libraries(utils PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
-)
-
 install(TARGETS utils
     LIBRARY DESTINATION ${PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PRIVATELIBDIR}

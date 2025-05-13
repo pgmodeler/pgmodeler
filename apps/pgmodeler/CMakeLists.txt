@@ -13,13 +13,8 @@ target_include_directories(pgmodeler PRIVATE
     ../../plugins/src
 )
 
+
 target_link_libraries(pgmodeler PRIVATE
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     canvas
     cli
     connector

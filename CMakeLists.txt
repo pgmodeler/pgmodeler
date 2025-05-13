@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 project(pgmodeler VERSION 2.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(BuildConfs)
 include(DefaultPaths)
 include(BuildNumDate)
 include(PrintSummary)
@@ -9,20 +11,6 @@ include(InstallAssets)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
-# By default the compiler used is clang/clang++
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-
-# Importing Qt6 components
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Network PrintSupport Svg Test Widgets)
-
-qt_standard_project_setup()
-set(CMAKE_AUTORCC ON)
-
-add_compile_definitions(
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
-)
 
 add_subdirectory(libs/libutils)
 add_subdirectory(libs/libparsers)

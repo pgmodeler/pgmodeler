@@ -94,12 +94,6 @@ target_include_directories(core PUBLIC
 )
 
 target_link_libraries(core PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     parsers
     utils
 )

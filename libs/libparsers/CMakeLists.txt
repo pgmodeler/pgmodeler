@@ -13,12 +13,6 @@ target_include_directories(parsers PUBLIC
 )
 
 target_link_libraries(parsers PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     ${XML2_LIBS}
     utils
 )
