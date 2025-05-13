@@ -15,8 +15,7 @@ execute_process(
     COMMAND ${build_num_cmd}
     OUTPUT_VARIABLE build_num
     RESULT_VARIABLE build_num_res
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 if(NOT build_num_res EQUAL 0)
     message(FATAL_ERROR "Command failed: ${build_num_cmd}")
@@ -27,8 +26,7 @@ execute_process(
     COMMAND ${date_cmd} ${date_cmd_param}
     OUTPUT_VARIABLE date
     RESULT_VARIABLE date_res
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 if(NOT date_res EQUAL 0)
     message(FATAL_ERROR "Command failed: ${date_cmd} ${date_cmd_param}")
@@ -38,6 +36,4 @@ endif()
 # BUILDNUM and BUILDDATE in .cpp files
 add_compile_definitions(
     BUILDNUM="${build_num}"
-    BUILDDATE="${date}"
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
-)
+    BUILDDATE="${date}")

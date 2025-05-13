@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 project(pgmodeler VERSION 2.0 LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
 include(BuildConfs)
 include(DefaultPaths)
 include(BuildNumDate)
 include(PrintSummary)
 include(InstallAssets)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_VERBOSE_MAKEFILE ON)
 
 add_subdirectory(libs/libutils)
 add_subdirectory(libs/libparsers)

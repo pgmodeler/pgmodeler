@@ -1,4 +1,4 @@
-set(utils_src
+add_library(utils SHARED
     src/application.cpp src/application.h
     src/attribsmap.h
     src/customuistyle.cpp src/customuistyle.h
@@ -9,19 +9,11 @@ set(utils_src
     src/pgmodelerplugin.cpp src/pgmodelerplugin.h
     src/pgsqlversions.cpp src/pgsqlversions.h
     src/utilsglobal.h
-    src/utilsns.cpp src/utilsns.h
-)
+    src/utilsns.cpp src/utilsns.h)
 
-qt_add_library(utils SHARED
-    ${utils_src}
-)
-
-target_include_directories(utils PUBLIC
-    ../../plugins/src
-)
+target_include_directories(utils PUBLIC ../../plugins/src)
 
 install(TARGETS utils
-    LIBRARY DESTINATION ${PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PRIVATELIBDIR}
-)
+    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

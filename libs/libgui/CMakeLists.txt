@@ -123,8 +123,7 @@ set(GUI_SOURCES
     src/widgets/tabledatawidget.cpp src/widgets/tabledatawidget.h
     src/widgets/taskprogresswidget.cpp src/widgets/taskprogresswidget.h
     src/widgets/updatenotifierwidget.cpp src/widgets/updatenotifierwidget.h
-    src/widgets/welcomewidget.cpp src/widgets/welcomewidget.h
-)
+    src/widgets/welcomewidget.cpp src/widgets/welcomewidget.h)
 
 set(GUI_FORMS
     ui/baseform.ui
@@ -221,8 +220,7 @@ set(GUI_FORMS
     ui/widgets/customsqlwidget.ui
     ui/widgets/modelnavigationwidget.ui
     ui/widgets/sceneinfowidget.ui
-    ui/widgets/welcomewidget.ui
-)
+    ui/widgets/welcomewidget.ui)
 
 set(GUI_RESOURCES res/logoicons.qrc res/resources.qrc)
 
@@ -236,11 +234,10 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS
     ui/widgets
     ui/tools)
 
-qt_add_library(gui SHARED
+add_library(gui SHARED
     ${GUI_SOURCES}
     ${GUI_FORMS}
-    ${GUI_RESOURCES}
-)
+    ${GUI_RESOURCES})
 
 target_include_directories(gui PUBLIC
     ${LIBCANVAS_INC}
@@ -255,8 +252,7 @@ target_include_directories(gui PUBLIC
     src/tools
     src/utils
     src/widgets
-    ../../plugins/src
-)
+    ../../plugins/src)
 
 target_link_libraries(gui PUBLIC
     connector
@@ -264,12 +260,10 @@ target_link_libraries(gui PUBLIC
     connector
     core
     parsers
-    utils
-)
+    utils)
 
 install(TARGETS gui
-    LIBRARY DESTINATION ${PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PRIVATELIBDIR}
-)
+    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})
 

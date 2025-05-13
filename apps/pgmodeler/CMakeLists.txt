@@ -1,7 +1,7 @@
 qt_add_executable(pgmodeler WIN32 MACOSX_BUNDLE
     src/main.cpp
-    src/pgmodelerapp.cpp src/pgmodelerapp.h
-)
+    src/pgmodelerapp.cpp src/pgmodelerapp.h)
+
 target_include_directories(pgmodeler PRIVATE
     ${LIBCANVAS_INC}
     ${LIBCLI_INC}
@@ -10,9 +10,7 @@ target_include_directories(pgmodeler PRIVATE
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    ../../plugins/src
-)
-
+    ../../plugins/src)
 
 target_link_libraries(pgmodeler PRIVATE
     canvas
@@ -21,18 +19,8 @@ target_link_libraries(pgmodeler PRIVATE
     core
     gui
     parsers
-    utils
-)
+    utils)
 
 install(TARGETS pgmodeler
     BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${BINDIR}
-)
-
-#qt_generate_deploy_app_script(
-#    TARGET pgmodeler
-#    FILENAME_VARIABLE deploy_script
-#    NO_UNSUPPORTED_PLATFORM_ERROR
-#)
-
-#install(SCRIPT ${deploy_script})
+    RUNTIME DESTINATION ${PGM_BINDIR})

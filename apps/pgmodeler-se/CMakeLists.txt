@@ -11,8 +11,7 @@ qt_add_executable(pgmodeler-se WIN32 MACOSX_BUNDLE
     ui/aboutsewidget.ui
     ui/schemaeditorform.ui
     ui/sourceeditorwidget.ui
-    ../pgmodeler/src/pgmodelerapp.cpp
-)
+    ../pgmodeler/src/pgmodelerapp.cpp)
 
 target_include_directories(pgmodeler-se PRIVATE
     ${LIBCANVAS_INC}
@@ -24,34 +23,17 @@ target_include_directories(pgmodeler-se PRIVATE
     ${LIBUTILS_INC}
     pgmodeler-se_autogen
     ../../plugins/src
-    ../pgmodeler/src
-)
+    ../pgmodeler/src)
 
 target_link_libraries(pgmodeler-se PRIVATE
-    Qt::Core
-    Qt::Gui
-    Qt::Network
-    Qt::PrintSupport
-    Qt::Svg
-    Qt::Widgets
     canvas
     cli
     connector
     core
     gui
     parsers
-    utils
-)
+    utils)
 
 install(TARGETS pgmodeler-se
     BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${PRIVATEBINDIR}
-)
-
-#qt_generate_deploy_app_script(
-#    TARGET pgmodeler-se
-#    FILENAME_VARIABLE deploy_script
-#    NO_UNSUPPORTED_PLATFORM_ERROR
-#)
-
-#install(SCRIPT ${deploy_script})
+    RUNTIME DESTINATION ${PGM_PRIVATEBINDIR})

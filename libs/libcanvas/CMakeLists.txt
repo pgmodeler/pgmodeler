@@ -1,4 +1,4 @@
-qt_add_library(canvas SHARED
+add_library(canvas SHARED
     src/attributestoggleritem.cpp src/attributestoggleritem.h
     src/baseobjectview.cpp src/baseobjectview.h
     src/basetableview.cpp src/basetableview.h
@@ -15,24 +15,20 @@ qt_add_library(canvas SHARED
     src/tabletitleview.cpp src/tabletitleview.h
     src/tableview.cpp src/tableview.h
     src/textboxview.cpp src/textboxview.h
-    src/textpolygonitem.cpp src/textpolygonitem.h
-)
+    src/textpolygonitem.cpp src/textpolygonitem.h)
 
 target_include_directories(canvas PUBLIC
     ${LIBCORE_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    ../../plugins/src
-)
+    ../../plugins/src)
 
 target_link_libraries(canvas PUBLIC
     core
     parsers
-    utils
-)
+    utils)
 
 install(TARGETS canvas
-    LIBRARY DESTINATION ${PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PRIVATELIBDIR}
-)
+    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

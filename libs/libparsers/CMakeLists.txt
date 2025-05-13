@@ -4,21 +4,18 @@ qt_add_library(parsers SHARED
     src/csvparser.cpp src/csvparser.h
     src/parsersglobal.h
     src/schemaparser.cpp src/schemaparser.h
-    src/xmlparser.cpp src/xmlparser.h
-)
+    src/xmlparser.cpp src/xmlparser.h)
+
 target_include_directories(parsers PUBLIC
     ${LIBUTILS_INC}
     ${XML2_INC}
-    ../../plugins/src
-)
+    ../../plugins/src)
 
 target_link_libraries(parsers PUBLIC
     ${XML2_LIBS}
-    utils
-)
+    utils)
 
 install(TARGETS parsers
-    LIBRARY DESTINATION ${PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PRIVATELIBDIR}
-)
+    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

@@ -1,4 +1,4 @@
-qt_add_library(core SHARED
+add_library(core SHARED
     src/aggregate.cpp src/aggregate.h
     src/basefunction.cpp src/basefunction.h
     src/basegraphicobject.cpp src/basegraphicobject.h
@@ -84,22 +84,18 @@ qt_add_library(core SHARED
     src/type.cpp src/type.h
     src/typeattribute.cpp src/typeattribute.h
     src/usermapping.cpp src/usermapping.h
-    src/view.cpp src/view.h
-)
+    src/view.cpp src/view.h)
 
 target_include_directories(core PUBLIC
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    ../../plugins/src
-)
+    ../../plugins/src)
 
 target_link_libraries(core PUBLIC
     parsers
-    utils
-)
+    utils)
 
 install(TARGETS core
-    LIBRARY DESTINATION ${PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PRIVATELIBDIR}
-)
+    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

@@ -1,6 +1,6 @@
 # Copying the samples/*.dbm to the destination
 install(DIRECTORY assets/samples/
-        DESTINATION ${SAMPLESDIR}
+        DESTINATION ${PGM_SAMPLESDIR}
         FILES_MATCHING
         PATTERN "*.dbm")
 
@@ -20,39 +20,39 @@ foreach(sch_dir ${sch_dirs})
 
     if(IS_DIRECTORY ${sch_dir})
         install(DIRECTORY ${sch_dir}
-                DESTINATION ${SCHEMASDIR}
+                DESTINATION ${PGM_SCHEMASDIR}
                 USE_SOURCE_PERMISSIONS)
     endif()
 endforeach()
 
 # Copying all template configs from assets/conf
 install(DIRECTORY assets/conf/
-        DESTINATION ${CONFDIR}
+        DESTINATION ${PGM_CONFDIR}
         FILES_MATCHING
         PATTERN "*.conf"
         PATTERN "*.dbm"
         PATTERN "*.png")
 
 install(DIRECTORY assets/conf/schemas
-        DESTINATION ${CONFDIR})
+        DESTINATION ${PGM_CONFDIR})
 
 install(DIRECTORY assets/conf/dtd
-        DESTINATION ${CONFDIR})
+        DESTINATION ${PGM_CONFDIR})
 
 # Copying  the highlight configs from dark theme to be the initial one
 install(DIRECTORY assets/conf/themes/dark/
-        DESTINATION ${CONFDIR}
+        DESTINATION ${PGM_CONFDIR}
         FILES_MATCHING
         PATTERN "*-highlight.conf")
 
 # Creating the "defaults" configs dir containing the files from the initial template config dir
 install(DIRECTORY assets/conf/themes/dark/
-        DESTINATION ${CONFDIR}/defaults
+        DESTINATION ${PGM_CONFDIR}/defaults
         FILES_MATCHING
         PATTERN "*-highlight.conf")
 
 install(DIRECTORY assets/conf/
-        DESTINATION ${CONFDIR}/defaults
+        DESTINATION ${PGM_CONFDIR}/defaults
         FILES_MATCHING
         PATTERN "*.conf"
         PATTERN "*.dbm"
@@ -66,7 +66,7 @@ install(FILES
         CHANGELOG.md
         LICENSE
         RELEASENOTES.md
-        DESTINATION ${DOCDIR})
+        DESTINATION ${PGM_DOCDIR})
 
 # # Including some private assets to deploy
 # isEqual(PRIVATE_PLUGINS, true) {

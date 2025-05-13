@@ -1,62 +1,17 @@
 # Defining default values of the path-related variables
 if(LINUX)
-  # Default configuration for package pgModeler.
-  # The default prefix is /usr/local
-  if(NOT DEFINED PREFIX)
-    set(PREFIX ${CMAKE_INSTALL_PREFIX})
-  endif()
-
-  if(NOT DEFINED BINDIR)
-    set(BINDIR ${PREFIX}/bin)
-  endif()
-
-  if(NOT DEFINED PRIVATEBINDIR)
-    set(PRIVATEBINDIR ${PREFIX}/bin)
-  endif()
-
-  if(NOT DEFINED PRIVATELIBDIR)
-    set(PRIVATELIBDIR ${PREFIX}/lib/pgmodeler)
-  endif()
-
-  if(NOT DEFINED PLUGINSDIR)
-    set(PLUGINSDIR ${PREFIX}/lib/pgmodeler/plugins)
-  endif()
-
-  if(NOT DEFINED SHAREDIR)
-    set(SHAREDIR ${PREFIX}/share/pgmodeler)
-  endif()
-
-  if(NOT DEFINED CONFDIR)
-    set(CONFDIR ${PREFIX}/conf)
-  endif()
-
-  if(NOT DEFINED DOCDIR)
-    set(DOCDIR ${SHAREDIR})
-  endif()
-
-  if(NOT DEFINED LANGDIR)
-    set(LANGDIR ${PREFIX}/lang)
-  endif()
-
-  if(NOT DEFINED SAMPLESDIR)
-    set(SAMPLESDIR ${PREFIX}/samples)
-  endif()
-
-  if(NOT DEFINED SCHEMASDIR)
-    set(SCHEMASDIR ${PREFIX}/schemas)
-  endif()
+  include(LinuxPaths)
 endif()
 
 add_compile_definitions(
-    BINDIR="${BINDIR}"
-    CONFDIR="${CONFDIR}"
-    DOCDIR="${DOCDIR}"
-    LANGDIR="${LANGDIR}"
-    PLUGINSDIR="${PLUGINSDIR}"
-    PRIVATEBINDIR="${PRIVATEBINDIR}"
-    SAMPLESDIR="${SAMPLESDIR}"
-    SCHEMASDIR="${SCHEMASDIR}"
-)
+    BINDIR="${PGM_BINDIR}"
+    CONFDIR="${PGM_CONFDIR}"
+    DOCDIR="${PGM_DOCDIR}"
+    LANGDIR="${PGM_LANGDIR}"
+    PLUGINSDIR="${PGM_PLUGINSDIR}"
+    PRIVATEBINDIR="${PGM_PRIVATEBINDIR}"
+    SAMPLESDIR="${PGM_SAMPLESDIR}"
+    SCHEMASDIR="${PGM_SCHEMASDIR}")
 
 # Searching for PostgreSQL headers/libraries
 # This command attempts to find the library, REQUIRED argument is optional
@@ -105,7 +60,7 @@ set(LIBCLI_INC ${LIBCLI_ROOT}/src)
 
 # Configuring the relative paths so the binaries can find the libraries correclty
 # First we determine the relative path between BINDIR e PRIVATELIBDIR
-file(RELATIVE_PATH RELATIVE_PRIVATELIBDIR ${BINDIR} ${PRIVATELIBDIR})
+file(RELATIVE_PATH RELATIVE_PRIVATELIBDIR ${PGM_BINDIR} ${PGM_PRIVATELIBDIR})
 
 # Setting the RPATH to including $ORIGIN and $ORIGIN/relative_path
 set(CMAKE_INSTALL_RPATH "\$ORIGIN;\$ORIGIN/${RELATIVE_PRIVATELIBDIR}")
