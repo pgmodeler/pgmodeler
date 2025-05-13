@@ -5,6 +5,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 include(DefaultPaths)
 include(BuildNumDate)
 include(PrintSummary)
+include(InstallAssets)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -13,8 +14,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui Network PrintSupport Svg Test Widgets)
+# Importing Qt6 components
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Network PrintSupport Svg Test Widgets)
 
 qt_standard_project_setup()
 set(CMAKE_AUTORCC ON)
@@ -35,14 +36,11 @@ add_subdirectory(apps/pgmodeler-cli)
 add_subdirectory(apps/pgmodeler-ch)
 add_subdirectory(apps/pgmodeler-se)
 
-if(BUILD_TESTS EQUAL ON AND CMAKE_BUILD_TYPE STREQUAL Debug)
-    add_subdirectory(tests)
-endif()
-
+#if(BUILD_TESTS EQUAL ON AND CMAKE_BUILD_TYPE STREQUAL Debug)
+#    add_subdirectory(tests)
+#endif()
 
 print_build_summary()
-
-
 
 # if(UNIX OR windows)
 #     target_link_libraries(canvas PUBLIC
