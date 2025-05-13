@@ -24,6 +24,13 @@ SQtCQg.json
 
 .qtc_clangd/*
 *qmake2cmake*
+*CMakeFiles*
+*autogen*
+.qt/*
+*meta_types*
+cmake_install.cmake
+CMakeCache.txt
+
 
 *_BACKUP*
 *_LOCAL*

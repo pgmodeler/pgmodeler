@@ -1,4 +1,4 @@
-set(gui_src
+set(GUI_SOURCES
     src/baseform.cpp src/baseform.h
     src/dbobjects/aggregatewidget.cpp src/dbobjects/aggregatewidget.h
     src/dbobjects/basefunctionwidget.cpp src/dbobjects/basefunctionwidget.h
@@ -126,7 +126,7 @@ set(gui_src
     src/widgets/welcomewidget.cpp src/widgets/welcomewidget.h
 )
 
-set(gui_ui
+set(GUI_FORMS
     ui/baseform.ui
     ui/dbobjects/columnpickerwidget.ui
     ui/dbobjects/referenceswidget.ui
@@ -224,44 +224,38 @@ set(gui_ui
     ui/widgets/welcomewidget.ui
 )
 
-set(gui_res res/logoicons.qrc res/resources.qrc)
+set(GUI_RESOURCES res/logoicons.qrc res/resources.qrc)
 
-qt_wrap_ui(gui_ui_h ${gui_ui})
+# By default, the AUTOUIC option makes the uic look for the .ui files
+# under the same folder as the sources. In this case, we force the uic
+# command to look for .ui files under ui/*
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ui
+    ui/dbobjects
+    ui/settings
+    ui/widgets
+    ui/tools)
 
 qt_add_library(gui SHARED
-    ${gui_src}
-    ${gui_ui_h}
-    ${gui_res}
+    ${GUI_SOURCES}
+    ${GUI_FORMS}
+    ${GUI_RESOURCES}
 )
 
 target_include_directories(gui PUBLIC
-    ../libcanvas/src
-    ../libconnector/src
-    ../libcore/src
-    ../libparsers/src
-    ../libutils/src
-    ../../plugins/src
+    ${LIBCANVAS_INC}
+    ${LIBCONNECTOR_INC}
+    ${LIBCORE_INC}
+    ${LIBPARSERS_INC}
+    ${LIBUTILS_INC}
+    gui_autogen/include
     src/
     src/dbobjects
     src/settings
     src/tools
     src/utils
     src/widgets
-)
-
-target_compile_definitions(gui PUBLIC
-    BINDIR=\\\"\\\"
-    BUILDDATE=\\\"\\\"
-    BUILDNUM=\\\"\\\"
-    CONFDIR=\\\"\\\"
-    DOCDIR=\\\"\\\"
-    GUI_SYMBOLS
-    LANGDIR=\\\"\\\"
-    PLUGINSDIR=\\\"\\\"
-    PRIVATEBINDIR=\\\"\\\"
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
-    SAMPLESDIR=\\\"\\\"
-    SCHEMASDIR=\\\"\\\"
+    ../../plugins/src
 )
 
 target_link_libraries(gui PUBLIC
@@ -278,3 +272,10 @@ target_link_libraries(gui PUBLIC
     parsers
     utils
 )
+
+install(TARGETS gui
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
