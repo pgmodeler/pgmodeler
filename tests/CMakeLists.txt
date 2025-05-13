@@ -1,12 +1,22 @@
-cmake_minimum_required(VERSION 3.16)
-project(tests VERSION 1.0 LANGUAGES C CXX)
+find_package(Qt6 REQUIRED COMPONENTS Test)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories(
+    ${LIBCANVAS_INC}
+    ${LIBCONNECTOR_INC}
+    ${LIBCORE_INC}
+    ${LIBGUI_INC}
+    ${LIBPARSERS_INC}
+    src/
+)
 
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
-
-qt_standard_project_setup()
-
+link_libraries(
+    Qt::Test
+    canvas
+    connector
+    core
+    gui
+    parsers
+    utils)
 
 add_subdirectory(src/main)
 add_subdirectory(src/schemafilessyntaxtest)
