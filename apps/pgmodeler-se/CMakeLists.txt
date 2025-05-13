@@ -11,6 +11,7 @@ qt_add_executable(pgmodeler-se WIN32 MACOSX_BUNDLE
     ui/aboutsewidget.ui
     ui/schemaeditorform.ui
     ui/sourceeditorwidget.ui
+    ../pgmodeler/src/pgmodelerapp.cpp
 )
 
 target_include_directories(pgmodeler-se PRIVATE
@@ -44,13 +45,13 @@ target_link_libraries(pgmodeler-se PRIVATE
 
 install(TARGETS pgmodeler-se
     BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    RUNTIME DESTINATION ${PRIVATEBINDIR}
 )
 
-qt_generate_deploy_app_script(
-    TARGET pgmodeler-se
-    FILENAME_VARIABLE deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-)
+#qt_generate_deploy_app_script(
+#    TARGET pgmodeler-se
+#    FILENAME_VARIABLE deploy_script
+#    NO_UNSUPPORTED_PLATFORM_ERROR
+#)
 
-install(SCRIPT ${deploy_script})
+#install(SCRIPT ${deploy_script})

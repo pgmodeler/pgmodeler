@@ -29,10 +29,15 @@ target_link_libraries(pgmodeler-cli PRIVATE
     utils
 )
 
-qt_generate_deploy_app_script(
-    TARGET pgmodeler-cli
-    FILENAME_VARIABLE deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
+install(TARGETS pgmodeler-cli
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION ${BINDIR}
 )
 
-install(SCRIPT ${deploy_script})
+#qt_generate_deploy_app_script(
+#    TARGET pgmodeler-cli
+#    FILENAME_VARIABLE deploy_script
+#    NO_UNSUPPORTED_PLATFORM_ERROR
+#)
+
+#install(SCRIPT ${deploy_script})

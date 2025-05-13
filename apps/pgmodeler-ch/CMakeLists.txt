@@ -31,13 +31,13 @@ target_link_libraries(pgmodeler-ch PRIVATE
 
 install(TARGETS pgmodeler-ch
     BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    RUNTIME DESTINATION ${PRIVATEBINDIR}
 )
 
-qt_generate_deploy_app_script(
-    TARGET pgmodeler-ch
-    FILENAME_VARIABLE deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-)
+#qt_generate_deploy_app_script(
+#    TARGET pgmodeler-ch
+#    FILENAME_VARIABLE deploy_script
+#    NO_UNSUPPORTED_PLATFORM_ERROR
+#)
 
-install(SCRIPT ${deploy_script})
+#install(SCRIPT ${deploy_script})

@@ -31,7 +31,7 @@ if(LINUX)
   endif()
 
   if(NOT DEFINED DOCDIR)
-    set(DOCDIR ${PREFIX})
+    set(DOCDIR ${SHAREDIR})
   endif()
 
   if(NOT DEFINED LANGDIR)
@@ -72,41 +72,43 @@ set(XML2_LIBS ${LIBXML2_LIBRARY})
 
 # Store the absolute paths to library subprojects to be referenced in other .pro files
 # *_ROOT -> the path to the root folder of the subproject
-# *_LIB -> the libary flags (-L -l) (LIBS on qmake) passed to the compiler that points to the library generated from a subproject
 # *_INC -> the path to the source code folder (src), used by the flag -I (INCLUDEPATH on qmake) passed to the compiler
 set(CWD ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIBCANVAS libcanvas)
 set(LIBCANVAS_ROOT ${CWD}/libs/${LIBCANVAS})
 set(LIBCANVAS_INC ${LIBCANVAS_ROOT}/src)
-#LIBCANVAS_LIB = -L$$LIBCANVAS_ROOT -lcanvas
 
 set(LIBCONNECTOR libconnector)
 set(LIBCONNECTOR_ROOT ${CWD}/libs/${LIBCONNECTOR})
 set(LIBCONNECTOR_INC ${LIBCONNECTOR_ROOT}/src)
-#LIBCONNECTOR_LIB = -L$$LIBCONNECTOR_ROOT -lconnector
 
 set(LIBCORE libcore)
 set(LIBCORE_ROOT ${CWD}/libs/${LIBCORE})
 set(LIBCORE_INC ${LIBCORE_ROOT}/src)
-#LIBCORE_LIB = -L$$LIBCORE_ROOT -lcore
 
 set(LIBPARSERS libparsers)
 set(LIBPARSERS_ROOT ${CWD}/libs/${LIBPARSERS})
 set(LIBPARSERS_INC ${LIBPARSERS_ROOT}/src)
-#LIBPARSERS_LIB = -L$$LIBPARSERS_ROOT -lparsers
 
 set(LIBGUI libgui)
 set(LIBGUI_ROOT ${CWD}/libs/${LIBGUI})
 set(LIBGUI_INC ${LIBGUI_ROOT}/src)
-#LIBGUI_LIB = -L$$LIBGUI_ROOT -lgui
 
 set(LIBUTILS libutils)
 set(LIBUTILS_ROOT ${CWD}/libs/${LIBUTILS})
 set(LIBUTILS_INC ${LIBUTILS_ROOT}/src)
-#LIBUTILS_LIB = -L$$LIBUTILS_ROOT -lutils
 
 set(LIBCLI libcli)
 set(LIBCLI_ROOT ${CWD}/libs/${LIBCLI})
 set(LIBCLI_INC ${LIBCLI_ROOT}/src)
-#LIBCLI_LIB = -L$$LIBCLI_ROOT -lcli
+
+# Configuring the relative paths so the binaries can find the libraries correclty
+# First we determine the relative path between BINDIR e PRIVATELIBDIR
+file(RELATIVE_PATH RELATIVE_PRIVATELIBDIR ${BINDIR} ${PRIVATELIBDIR})
+
+# Setting the RPATH to including $ORIGIN and $ORIGIN/relative_path
+set(CMAKE_INSTALL_RPATH "\$ORIGIN;\$ORIGIN/${RELATIVE_PRIVATELIBDIR}")
+
+# Making sure that RPATH is used during install
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
