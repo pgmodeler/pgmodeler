@@ -25,6 +25,19 @@ link_libraries(
     Qt::Svg
     Qt::Widgets)
 
+# Private plugins source detection
+# If the folder when the sources are stored we configure a
+# set of variables and compiler defs that instruct cmake to
+# include private code and resources
+set(PRIV_PLUGINS_DIR priv-plugins)
+
+if(EXISTS ${PRIV_PLUGINS_DIR})
+    set(PRIVATE_PLUGINS ON)
+    set(PRIV_PLUGINS_RES ${CMAKE_CURRENT_SOURCE_DIR}/${PRIV_PLUGINS_DIR}/res)
+    set(PRIV_PLUGINS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${PRIV_PLUGINS_DIR}/src)
+    add_compile_definitions(PRIVATE_PLUGINS_SYMBOLS)
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_compile_definitions(PGMODELER_DEBUG)
 endif()
@@ -43,10 +56,6 @@ endif()
 
 if(NO_UPDATE_CHECK)
     add_compile_definitions(NO_UPDATE_CHECK)
-endif()
-
-if(PRIVATE_PLUGINS)
-    add_compile_definitions(PRIVATE_PLUGINS)
 endif()
 
 if(APPIMAGE_BUILD AND LINUX)

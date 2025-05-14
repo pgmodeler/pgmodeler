@@ -226,6 +226,17 @@ set(FORMS
     ui/widgets/sceneinfowidget.ui
     ui/widgets/welcomewidget.ui)
 
+set(RESOURCES res/resources.qrc)
+
+if(PRIVATE_PLUGINS)
+    list(APPEND SOURCES
+        ${PRIV_PLUGINS_SRC}/privpluginsns.h
+        ${PRIV_PLUGINS_SRC}/privpluginsns.cpp)
+    list(APPEND RESOURCES ${PRIV_PLUGINS_RES}/logoicons.qrc)
+else()
+    list(APPEND RESOURCES res/logoicons.qrc)
+endif()
+
 # By default, the AUTOUIC option makes the uic look for the .ui files
 # under the same folder as the sources. In this case, we force the uic
 # command to look for .ui files under ui/*
@@ -239,8 +250,7 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS
 add_library(${TARGET} SHARED
     ${SOURCES}
     ${FORMS}
-    res/logoicons.qrc
-    res/resources.qrc)
+    ${RESOURCES})
 
 target_include_directories(${TARGET} PUBLIC
     ${LIBCANVAS_INC}
@@ -254,7 +264,8 @@ target_include_directories(${TARGET} PUBLIC
     src/settings
     src/tools
     src/utils
-    src/widgets)
+    src/widgets
+    ${PRIV_PLUGINS_SRC})
 
 target_link_libraries(${TARGET} PUBLIC
     connector
