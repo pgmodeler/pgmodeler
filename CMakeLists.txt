@@ -28,4 +28,8 @@ if(EXISTS plugins)
     add_subdirectory(plugins)
 endif()
 
+#if(EXISTS priv-plugins AND PRIVATE_PLUGINS)
+#    add_subdirectory(priv-plugins)
+#endif()
+
 print_build_summary()
