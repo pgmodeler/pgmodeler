@@ -1,4 +1,9 @@
-add_library(canvas SHARED
+set(TARGET canvas)
+
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTOMOC ON)
+
+add_library(${TARGET} SHARED
     src/attributestoggleritem.cpp src/attributestoggleritem.h
     src/baseobjectview.cpp src/baseobjectview.h
     src/basetableview.cpp src/basetableview.h
@@ -17,18 +22,17 @@ add_library(canvas SHARED
     src/textboxview.cpp src/textboxview.h
     src/textpolygonitem.cpp src/textpolygonitem.h)
 
-target_include_directories(canvas PUBLIC
+target_include_directories(${TARGET} PUBLIC
     ${LIBCORE_INC}
     ${LIBPARSERS_INC}
-    ${LIBUTILS_INC}
-    ../../plugins/src)
+    ${LIBUTILS_INC})
 
-target_link_libraries(canvas PUBLIC
+target_link_libraries(${TARGET} PUBLIC
     core
     parsers
     utils)
 
-install(TARGETS canvas
+install(TARGETS ${TARGET}
     LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
     RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

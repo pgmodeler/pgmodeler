@@ -1,4 +1,9 @@
-add_library(cli SHARED
+set(TARGET cli)
+
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTOMOC ON)
+
+add_library(${TARGET} SHARED
     src/cliglobal.h
     src/compat/compatns.cpp src/compat/compatns.h
     src/compat/reference.cpp src/compat/reference.h
@@ -6,17 +11,16 @@ add_library(cli SHARED
     src/pgmodelercliapp.cpp src/pgmodelercliapp.h
     src/pgmodelercliplugin.cpp src/pgmodelercliplugin.h)
 
-target_include_directories(cli PUBLIC
+target_include_directories(${TARGET} PUBLIC
     ${LIBCANVAS_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    ../../plugins/src
     src/compat)
 
-target_link_libraries(cli PUBLIC
+target_link_libraries(${TARGET} PUBLIC
     canvas
     connector
     core
@@ -24,7 +28,7 @@ target_link_libraries(cli PUBLIC
     parsers
     utils)
 
-install(TARGETS cli
+install(TARGETS ${TARGET}
     LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
     RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

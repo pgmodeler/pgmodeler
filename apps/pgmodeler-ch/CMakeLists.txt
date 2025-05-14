@@ -1,18 +1,19 @@
-qt_add_executable(pgmodeler-ch WIN32 MACOSX_BUNDLE
+set(TARGET pgmodeler-ch)
+
+qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE
     src/crashhandlerform.cpp src/crashhandlerform.h
     src/main.cpp)
 
-target_include_directories(pgmodeler-ch PRIVATE
+target_include_directories(${TARGET} PRIVATE
     ${LIBCANVAS_INC}
     ${LIBCLI_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
-    ${LIBUTILS_INC}
-    ../../plugins/src)
+    ${LIBUTILS_INC})
 
-target_link_libraries(pgmodeler-ch PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     canvas
     cli
     connector
@@ -21,6 +22,6 @@ target_link_libraries(pgmodeler-ch PRIVATE
     parsers
     utils)
 
-install(TARGETS pgmodeler-ch
+install(TARGETS ${TARGET}
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${PGM_PRIVATEBINDIR})

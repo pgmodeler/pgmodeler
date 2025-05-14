@@ -1,17 +1,18 @@
-qt_add_executable(pgmodeler-cli MACOSX_BUNDLE
+set(TARGET pgmodeler-cli)
+
+qt_add_executable(${TARGET} MACOSX_BUNDLE
     src/main.cpp)
 
-target_include_directories(pgmodeler-cli PRIVATE
+target_include_directories(${TARGET} PRIVATE
     ${LIBCANVAS_INC}
     ${LIBCLI_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
-    ${LIBUTILS_INC}
-    ../../plugins/src)
+    ${LIBUTILS_INC})
 
-target_link_libraries(pgmodeler-cli PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     canvas
     cli
     connector
@@ -20,6 +21,6 @@ target_link_libraries(pgmodeler-cli PRIVATE
     parsers
     utils)
 
-install(TARGETS pgmodeler-cli
+install(TARGETS ${TARGET}
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${PGM_BINDIR})

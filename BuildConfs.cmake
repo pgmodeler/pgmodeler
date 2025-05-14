@@ -12,7 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Network PrintSupport Svg Widgets)
 
 qt_standard_project_setup()
-set(CMAKE_AUTORCC ON)
 
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060400)
 

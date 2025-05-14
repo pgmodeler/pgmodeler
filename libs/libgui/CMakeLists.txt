@@ -1,4 +1,8 @@
-set(GUI_SOURCES
+set(TARGET gui)
+
+set(CMAKE_AUTORCC ON)
+
+set(SOURCES
     src/baseform.cpp src/baseform.h
     src/dbobjects/aggregatewidget.cpp src/dbobjects/aggregatewidget.h
     src/dbobjects/basefunctionwidget.cpp src/dbobjects/basefunctionwidget.h
@@ -125,7 +129,7 @@ set(GUI_SOURCES
     src/widgets/updatenotifierwidget.cpp src/widgets/updatenotifierwidget.h
     src/widgets/welcomewidget.cpp src/widgets/welcomewidget.h)
 
-set(GUI_FORMS
+set(FORMS
     ui/baseform.ui
     ui/dbobjects/columnpickerwidget.ui
     ui/dbobjects/referenceswidget.ui
@@ -222,8 +226,6 @@ set(GUI_FORMS
     ui/widgets/sceneinfowidget.ui
     ui/widgets/welcomewidget.ui)
 
-set(GUI_RESOURCES res/logoicons.qrc res/resources.qrc)
-
 # By default, the AUTOUIC option makes the uic look for the .ui files
 # under the same folder as the sources. In this case, we force the uic
 # command to look for .ui files under ui/*
@@ -234,27 +236,27 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS
     ui/widgets
     ui/tools)
 
-add_library(gui SHARED
-    ${GUI_SOURCES}
-    ${GUI_FORMS}
-    ${GUI_RESOURCES})
+add_library(${TARGET} SHARED
+    ${SOURCES}
+    ${FORMS}
+    res/logoicons.qrc
+    res/resources.qrc)
 
-target_include_directories(gui PUBLIC
+target_include_directories(${TARGET} PUBLIC
     ${LIBCANVAS_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    gui_autogen/include
+    ${TARGET}_autogen/include
     src/
     src/dbobjects
     src/settings
     src/tools
     src/utils
-    src/widgets
-    ../../plugins/src)
+    src/widgets)
 
-target_link_libraries(gui PUBLIC
+target_link_libraries(${TARGET} PUBLIC
     connector
     canvas
     connector
@@ -262,7 +264,7 @@ target_link_libraries(gui PUBLIC
     parsers
     utils)
 
-install(TARGETS gui
+install(TARGETS ${TARGET}
     LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
     RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

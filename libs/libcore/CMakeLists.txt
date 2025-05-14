@@ -1,4 +1,9 @@
-add_library(core SHARED
+set(TARGET core)
+
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTOMOC ON)
+
+add_library(${TARGET} SHARED
     src/aggregate.cpp src/aggregate.h
     src/basefunction.cpp src/basefunction.h
     src/basegraphicobject.cpp src/basegraphicobject.h
@@ -86,16 +91,15 @@ add_library(core SHARED
     src/usermapping.cpp src/usermapping.h
     src/view.cpp src/view.h)
 
-target_include_directories(core PUBLIC
+target_include_directories(${TARGET} PUBLIC
     ${LIBPARSERS_INC}
-    ${LIBUTILS_INC}
-    ../../plugins/src)
+    ${LIBUTILS_INC})
 
-target_link_libraries(core PUBLIC
+target_link_libraries(${TARGET} PUBLIC
     parsers
     utils)
 
-install(TARGETS core
+install(TARGETS ${TARGET}
     LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
     RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})

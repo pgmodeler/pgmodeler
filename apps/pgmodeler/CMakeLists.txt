@@ -1,18 +1,19 @@
-qt_add_executable(pgmodeler WIN32 MACOSX_BUNDLE
+set(TARGET pgmodeler)
+
+qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE
     src/main.cpp
     src/pgmodelerapp.cpp src/pgmodelerapp.h)
 
-target_include_directories(pgmodeler PRIVATE
+target_include_directories(${TARGET} PRIVATE
     ${LIBCANVAS_INC}
     ${LIBCLI_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
-    ${LIBUTILS_INC}
-    ../../plugins/src)
+    ${LIBUTILS_INC})
 
-target_link_libraries(pgmodeler PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     canvas
     cli
     connector
@@ -21,6 +22,6 @@ target_link_libraries(pgmodeler PRIVATE
     parsers
     utils)
 
-install(TARGETS pgmodeler
+install(TARGETS ${TARGET}
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${PGM_BINDIR})

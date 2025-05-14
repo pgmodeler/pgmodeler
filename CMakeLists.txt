@@ -24,4 +24,8 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug AND BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+if(EXISTS plugins)
+    add_subdirectory(plugins)
+endif()
+
 print_build_summary()

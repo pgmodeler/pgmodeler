@@ -1,9 +1,11 @@
+set(TARGET pgmodeler-se)
+
 # By default, the AUTOUIC option makes the uic look for the .ui files
 # under the same folder as the sources. In this case, we force the uic
 # command to look for .ui files under ui/*
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui)
 
-qt_add_executable(pgmodeler-se WIN32 MACOSX_BUNDLE
+qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE
     src/aboutsewidget.cpp src/aboutsewidget.h
     src/main.cpp
     src/schemaeditorform.cpp src/schemaeditorform.h
@@ -13,7 +15,7 @@ qt_add_executable(pgmodeler-se WIN32 MACOSX_BUNDLE
     ui/sourceeditorwidget.ui
     ../pgmodeler/src/pgmodelerapp.cpp)
 
-target_include_directories(pgmodeler-se PRIVATE
+target_include_directories(${TARGET} PRIVATE
     ${LIBCANVAS_INC}
     ${LIBCLI_INC}
     ${LIBCONNECTOR_INC}
@@ -21,11 +23,10 @@ target_include_directories(pgmodeler-se PRIVATE
     ${LIBGUI_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
-    pgmodeler-se_autogen
-    ../../plugins/src
+    ${TARGET}_autogen
     ../pgmodeler/src)
 
-target_link_libraries(pgmodeler-se PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     canvas
     cli
     connector
@@ -34,6 +35,6 @@ target_link_libraries(pgmodeler-se PRIVATE
     parsers
     utils)
 
-install(TARGETS pgmodeler-se
+install(TARGETS ${TARGET}
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${PGM_PRIVATEBINDIR})

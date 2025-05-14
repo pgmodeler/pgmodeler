@@ -1,4 +1,10 @@
-add_library(utils SHARED
+set(TARGET utils)
+
+set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTORCC OFF)
+set(CMAKE_AUTOMOC ON)
+
+add_library(${TARGET} SHARED
     src/application.cpp src/application.h
     src/attribsmap.h
     src/customuistyle.cpp src/customuistyle.h
@@ -11,9 +17,7 @@ add_library(utils SHARED
     src/utilsglobal.h
     src/utilsns.cpp src/utilsns.h)
 
-target_include_directories(utils PUBLIC ../../plugins/src)
-
-install(TARGETS utils
+install(TARGETS ${TARGET}
     LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
     FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
     RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})
