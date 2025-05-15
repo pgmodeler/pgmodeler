@@ -11,7 +11,7 @@ set(SOURCES
     src/pgmodelercliapp.cpp src/pgmodelercliapp.h
     src/pgmodelercliplugin.cpp src/pgmodelercliplugin.h)
 
-if(PRIVATE_PLUGINS)
+if(BUILD_PRIV_PLUGINS)
     list(APPEND SOURCES
         ${PRIV_PLUGINS_SRC}/privpluginsns.h
         ${PRIV_PLUGINS_SRC}/privpluginsns.cpp)

@@ -24,11 +24,11 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug AND BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-if(EXISTS plugins)
-    add_subdirectory(plugins)
+if(BUILD_PLUGINS)
+    add_subdirectory(${PLUGINS_DIR})
 endif()
 
-if(PRIVATE_PLUGINS)
+if(BUILD_PRIV_PLUGINS)
     add_subdirectory(${PRIV_PLUGINS_DIR})
 endif()
 
