@@ -78,3 +78,26 @@ endif()
 #         MACOSX_BUNDLE FALSE
 #     )
 # endif()
+
+# This function configures the deployment settings of a library.
+function(pgm_install_library TARGET)
+    install(TARGETS ${TARGET}
+        LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
+        FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
+        RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})
+endfunction()
+
+# This function configures the deployment settings of an executable.
+# The IS_PRIVBIN, when true, indicates that the output folder of the binary
+# must be the one configured in PGM_PRIVATEBINDIR otherwise will be PGM_BINDIR
+function(pgm_install_executable TARGET IS_PRIVBIN)
+    if(IS_PRIVBIN)
+        set(DEST ${PGM_PRIVATEBINDIR})
+    else()
+        set(DEST ${PGM_BINDIR})
+    endif()
+
+    install(TARGETS ${TARGET}
+        BUNDLE DESTINATION .
+        RUNTIME DESTINATION ${DEST})
+endfunction()

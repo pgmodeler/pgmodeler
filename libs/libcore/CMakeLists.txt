@@ -99,7 +99,4 @@ target_link_libraries(${TARGET} PUBLIC
     parsers
     utils)
 
-install(TARGETS ${TARGET}
-    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})
+pgm_install_library(${TARGET})

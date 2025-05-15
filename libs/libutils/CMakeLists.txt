@@ -17,7 +17,4 @@ add_library(${TARGET} SHARED
     src/utilsglobal.h
     src/utilsns.cpp src/utilsns.h)
 
-install(TARGETS ${TARGET}
-    LIBRARY DESTINATION ${PGM_PRIVATELIBDIR}
-    FRAMEWORK DESTINATION ${PGM_PRIVATELIBDIR}
-    RUNTIME DESTINATION ${PGM_PRIVATELIBDIR})
+pgm_install_library(${TARGET})

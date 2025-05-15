@@ -21,6 +21,4 @@ target_link_libraries(${TARGET} PRIVATE
     parsers
     utils)
 
-install(TARGETS ${TARGET}
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${PGM_BINDIR})
+pgm_install_executable(${TARGET} OFF)

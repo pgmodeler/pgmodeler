@@ -44,6 +44,40 @@ if(BUILD_PRIV_PLUGINS)
         ${PRIV_PLUGINS_SRC}/privpluginsglobal.h)
 endif()
 
+# This function wraps a call to qt_add_plugin and set a
+# variable named PGM_TARGET in the parent scope (where the function
+# was called).
+function(pgm_add_plugin TARGET IS_PRIV_PLUGIN IS_CLI_PLUGIN)
+    qt_add_plugin(${TARGET})
+    set(PGM_TARGET ${TARGET} PARENT_SCOPE)
+
+    if(IS_PRIV_PLUGIN)
+        if(IS_CLI_PLUGIN)
+            set(PRIV_SOURCES ${PRIV_CLI_SOURCES})
+        else()
+            set(PRIV_SOURCES ${PRIV_GUI_SOURCES})
+        endif()
+
+        target_sources(${TARGET} PRIVATE ${PRIV_SOURCES})
+    endif()
+endfunction()
+
+# This function calls pgm_add_plugin setting the IS_CLI_PLUGIN to OFF
+# Like pg_add_plugin, it creates a variable called PGM_TARGET in the
+# parent scope that registers the name of the plugin
+function(pgm_add_gui_plugin TARGET IS_PRIV_PLUGIN)
+    pgm_add_plugin(${TARGET} ${IS_PRIV_PLUGIN} OFF)
+    set(PGM_TARGET ${PGM_TARGET} PARENT_SCOPE)
+endfunction()
+
+# This function calls pgm_add_plugin setting the IS_CLI_PLUGIN to ON
+# Like pg_add_plugin, it creates a variable called PGM_TARGET in the
+# parent scope that registers the name of the plugin
+function(pgm_add_cli_plugin TARGET IS_PRIV_PLUGIN)
+    pgm_add_plugin(${TARGET} ${IS_PRIV_PLUGIN} ON)
+    set(PGM_TARGET ${PGM_TARGET} PARENT_SCOPE)
+endfunction()
+
 # This function adds the resource file (icons/images)
 # in the list of plugin's sources to be compiled
 # this will cause the RCC command to be called and
@@ -54,17 +88,33 @@ function(pgm_set_plugin_res TARGET)
     target_sources(${TARGET} PRIVATE ${PLUGIN_RES})
 endfunction()
 
-# This function configures the deployment settings
-# of the plugin library.
-function(pgm_install_plugin_files)
-    set(TARGET ${ARGV0})
+# This function configures the assets deployment
+# of the plugin library. The first argument TARGET
+# is the name of the plugin.
+# Arguments specified after TARGET when calling
+# this function is considered to be the files and
+# directories to be deployed. The files and directory
+# will always be considered in relative path to the
+# plugin's root diretory. So, make sure to inform only
+# the name of the files/dirs not their absolute paths
+function(pgm_install_plugin_files TARGET)
     set(SRC_PATH ${PRIV_PLUGINS_ROOT}/${TARGET})
 
     foreach(file IN LISTS ARGN)
-        list(APPEND FILES ${SRC_PATH}/${file})
+        # Putting directories and files in separate variables
+        if(IS_DIRECTORY ${SRC_PATH}/${file})
+            list(APPEND _DIRS ${SRC_PATH}/${file})
+        else()
+            list(APPEND _FILES ${SRC_PATH}/${file})
+        endif()
     endforeach()
 
-    install(FILES ${FILES}
+    # Deploying files
+    install(FILES ${_FILES}
+        DESTINATION ${PGM_PLUGINSDIR}/${TARGET})
+
+    # Deploying directories
+    install(DIRECTORY ${_DIRS}
         DESTINATION ${PGM_PLUGINSDIR}/${TARGET})
 endfunction()
 

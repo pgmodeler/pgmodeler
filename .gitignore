@@ -1,5 +1,6 @@
 .qmake.stash
 
+*.tmp
 *.[oa]
 *.dll
 *.exe
@@ -26,10 +27,12 @@ SQtCQg.json
 *qmake2cmake*
 *CMakeFiles*
 *autogen*
+CMakeLists.gen.txt
 .qt/*
 *meta_types*
 cmake_install.cmake
 CMakeCache.txt
+cmake-build/*
 
 
 *_BACKUP*
