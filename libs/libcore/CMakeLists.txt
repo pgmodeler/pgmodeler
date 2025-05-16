@@ -1,9 +1,7 @@
-set(TARGET core)
-
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTOMOC ON)
 
-add_library(${TARGET} SHARED
+pgm_add_library(core
     src/aggregate.cpp src/aggregate.h
     src/basefunction.cpp src/basefunction.h
     src/basegraphicobject.cpp src/basegraphicobject.h
@@ -91,12 +89,12 @@ add_library(${TARGET} SHARED
     src/usermapping.cpp src/usermapping.h
     src/view.cpp src/view.h)
 
-target_include_directories(${TARGET} PUBLIC
+target_include_directories(${PGM_TARGET} PUBLIC
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC})
 
-target_link_libraries(${TARGET} PUBLIC
+target_link_libraries(${PGM_TARGET} PUBLIC
     parsers
     utils)
 
-pgm_install_library(${TARGET})
+pgm_install_library(${PGM_TARGET})

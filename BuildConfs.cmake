@@ -1,10 +1,16 @@
 set(CMAKE_WARN_DEPRECATED OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # By default the compiler used is clang/clang++
-set(CMAKE_C_COMPILER /usr/bin/clang)
-set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+if(LINUX)
+  set(CMAKE_C_COMPILER /usr/bin/clang)
+  set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+elseif(WIN32)
+  set(CMAKE_C_COMPILER C:/msys64/mingw64/bin/clang)
+  set(CMAKE_CXX_COMPILER C:/msys64/mingw64/bin/clang++)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -73,11 +79,64 @@ if(APPIMAGE_BUILD AND LINUX)
     add_compile_definitions(APPIMAGE_BUILD)
 endif()
 
-# if(MACOS)
-#     set_target_properties(canvas PROPERTIES
-#         MACOSX_BUNDLE FALSE
-#     )
-# endif()
+# This function wraps a call to qt_add_executable and set a
+# variable named PGM_TARGET in the parent scope (where the function
+# was called). In macOS, the executable is always built as standalone
+# not as a application bundle
+# The parameter USE_PRIV_EXEC_ICONS when ON indicates that the executable
+# icon must be the one available in private resources dir otherwise
+# the one in the target's res/ is used instead. This options has
+# effect only when building Windows binaries
+function(pgm_add_executable TARGET)
+  list(APPEND SOURCES ${ARGN})
+
+  if(WIN32)
+	set(PRIV_ICO_RES ${PRIV_PLUGINS_RES}/${TARGET}/windows_ico.rc)
+
+	if(BUILD_PRIV_PLUGINS AND EXISTS ${PRIV_ICO_RES})
+	  set(EXEC_ICO_RES ${PRIV_ICO_RES})
+	else()
+	  set(EXEC_ICO_RES res/windows_ico.rc)
+	endif()
+
+	list(APPEND SOURCES ${EXEC_ICO_RES})
+  endif()
+
+  qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
+  set(PGM_TARGET ${TARGET} PARENT_SCOPE)
+endfunction()
+
+function(pgm_set_default_inc_libs TARGET)
+  target_include_directories(${TARGET} PRIVATE
+	  ${LIBCANVAS_INC}
+	  ${LIBCLI_INC}
+	  ${LIBCONNECTOR_INC}
+	  ${LIBCORE_INC}
+	  ${LIBGUI_INC}
+	  ${LIBPARSERS_INC}
+	  ${LIBUTILS_INC})
+
+  target_link_libraries(${TARGET} PRIVATE
+	  canvas
+	  cli
+	  connector
+	  core
+	  gui
+	  parsers
+	  utils)
+endfunction()
+
+# This function wraps a call to qt_add_library and set a
+# variable named PGM_TARGET in the parent scope (where the function
+# was called). The library is always built as with option SHARED
+function(pgm_add_library TARGET)
+  string(TOUPPER  "${TARGET}_SYMBOLS" LIB_SYMBOLS)
+  add_compile_definitions(${LIB_SYMBOLS})
+
+  add_library(${TARGET} SHARED ${ARGN})
+
+  set(PGM_TARGET ${TARGET} PARENT_SCOPE)
+endfunction()
 
 # This function configures the deployment settings of a library.
 function(pgm_install_library TARGET)

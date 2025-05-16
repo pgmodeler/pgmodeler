@@ -1,25 +1,6 @@
-set(TARGET pgmodeler-ch)
-
-qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE
+pgm_add_executable(pgmodeler-ch
     src/crashhandlerform.cpp src/crashhandlerform.h
     src/main.cpp)
 
-target_include_directories(${TARGET} PRIVATE
-    ${LIBCANVAS_INC}
-    ${LIBCLI_INC}
-    ${LIBCONNECTOR_INC}
-    ${LIBCORE_INC}
-    ${LIBGUI_INC}
-    ${LIBPARSERS_INC}
-    ${LIBUTILS_INC})
-
-target_link_libraries(${TARGET} PRIVATE
-    canvas
-    cli
-    connector
-    core
-    gui
-    parsers
-    utils)
-
-pgm_install_executable(${TARGET} ON)
+pgm_set_default_inc_libs(${PGM_TARGET})
+pgm_install_executable(${PGM_TARGET} ON)

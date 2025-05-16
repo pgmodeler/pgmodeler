@@ -1,5 +1,3 @@
-set(TARGET gui)
-
 set(CMAKE_AUTORCC ON)
 
 set(SOURCES
@@ -247,12 +245,12 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS
     ui/widgets
     ui/tools)
 
-add_library(${TARGET} SHARED
+pgm_add_library(gui
     ${SOURCES}
     ${FORMS}
     ${RESOURCES})
 
-target_include_directories(${TARGET} PUBLIC
+target_include_directories(${PGM_TARGET} PUBLIC
     ${LIBCANVAS_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
@@ -267,7 +265,7 @@ target_include_directories(${TARGET} PUBLIC
     src/widgets
     ${PRIV_PLUGINS_SRC})
 
-target_link_libraries(${TARGET} PUBLIC
+target_link_libraries(${PGM_TARGET} PUBLIC
     connector
     canvas
     connector
@@ -275,4 +273,4 @@ target_link_libraries(${TARGET} PUBLIC
     parsers
     utils)
 
-pgm_install_library(${TARGET})
+pgm_install_library(${PGM_TARGET})

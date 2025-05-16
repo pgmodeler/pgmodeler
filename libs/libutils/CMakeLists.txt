@@ -1,10 +1,8 @@
-set(TARGET utils)
-
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOMOC ON)
 
-add_library(${TARGET} SHARED
+pgm_add_library(utils
     src/application.cpp src/application.h
     src/attribsmap.h
     src/customuistyle.cpp src/customuistyle.h
@@ -17,4 +15,4 @@ add_library(${TARGET} SHARED
     src/utilsglobal.h
     src/utilsns.cpp src/utilsns.h)
 
-pgm_install_library(${TARGET})
+pgm_install_library(${PGM_TARGET})

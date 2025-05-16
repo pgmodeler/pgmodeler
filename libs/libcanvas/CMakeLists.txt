@@ -1,8 +1,7 @@
-set(TARGET canvas)
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTOMOC ON)
 
-add_library(${TARGET} SHARED
+pgm_add_library(canvas
     src/attributestoggleritem.cpp src/attributestoggleritem.h
     src/baseobjectview.cpp src/baseobjectview.h
     src/basetableview.cpp src/basetableview.h
@@ -21,14 +20,14 @@ add_library(${TARGET} SHARED
     src/textboxview.cpp src/textboxview.h
     src/textpolygonitem.cpp src/textpolygonitem.h)
 
-target_include_directories(${TARGET} PUBLIC
+target_include_directories(${PGM_TARGET} PUBLIC
     ${LIBCORE_INC}
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC})
 
-target_link_libraries(${TARGET} PUBLIC
+target_link_libraries(${PGM_TARGET} PUBLIC
     core
     parsers
     utils)
 
-pgm_install_library(${TARGET})
+pgm_install_library(${PGM_TARGET})

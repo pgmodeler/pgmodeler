@@ -1,6 +1,8 @@
 # Defining default values of the path-related variables
 if(LINUX)
   include(LinuxPaths)
+elseif(WIN32)
+  include(WindowsPaths)
 endif()
 
 add_compile_definitions(

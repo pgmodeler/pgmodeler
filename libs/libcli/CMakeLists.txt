@@ -1,5 +1,3 @@
-set(TARGET cli)
-
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTOMOC ON)
 
@@ -17,9 +15,9 @@ if(BUILD_PRIV_PLUGINS)
         ${PRIV_PLUGINS_SRC}/privpluginsns.cpp)
 endif()
 
-add_library(${TARGET} SHARED ${SOURCES})
+pgm_add_library(cli ${SOURCES})
 
-target_include_directories(${TARGET} PUBLIC
+target_include_directories(${PGM_TARGET} PUBLIC
     ${LIBCANVAS_INC}
     ${LIBCONNECTOR_INC}
     ${LIBCORE_INC}
@@ -29,7 +27,7 @@ target_include_directories(${TARGET} PUBLIC
     src/compat
     ${PRIV_PLUGINS_SRC})
 
-target_link_libraries(${TARGET} PUBLIC
+target_link_libraries(${PGM_TARGET} PUBLIC
     canvas
     connector
     core
@@ -37,4 +35,4 @@ target_link_libraries(${TARGET} PUBLIC
     parsers
     utils)
 
-pgm_install_library(${TARGET})
+pgm_install_library(${PGM_TARGET})
