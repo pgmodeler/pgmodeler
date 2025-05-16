@@ -4,12 +4,6 @@ install(DIRECTORY assets/samples/
         FILES_MATCHING
         PATTERN "*.dbm")
 
-# Copying the lang/* to the destination
-#install(DIRECTORY ../../assets/lang/
-#        DESTINATION ${LANGDIR}
-#        FILES_MATCHING
-#        PATTERN "*.*")
-
 # Copying all folder under schemas/ to the destination
 # Without recreating the schemas/ folder in the destination
 file(GLOB sch_dirs LIST_DIRECTORIES true "assets/schemas/*")

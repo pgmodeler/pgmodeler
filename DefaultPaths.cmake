@@ -5,6 +5,8 @@ elseif(WIN32)
   include(WindowsPaths)
 endif()
 
+# Creting C defines with the custom paths provided
+# in the cmake command call
 add_compile_definitions(
     BINDIR="${PGM_BINDIR}"
     CONFDIR="${PGM_CONFDIR}"
@@ -27,7 +29,7 @@ find_package(LibXml2 REQUIRED)
 set(XML2_INC ${LIBXML2_INCLUDE_DIR})
 set(XML2_LIBS ${LIBXML2_LIBRARY})
 
-# Store the absolute paths to library subprojects to be referenced in other .pro files
+# Store the absolute paths to library subprojects to be referenced in other CMakeLists.txt files
 # *_ROOT -> the path to the root folder of the subproject
 # *_INC -> the path to the source code folder (src), used by the flag -I (INCLUDEPATH on qmake) passed to the compiler
 set(CWD ${CMAKE_CURRENT_SOURCE_DIR})
@@ -68,4 +70,4 @@ file(RELATIVE_PATH RELATIVE_PRIVATELIBDIR ${PGM_BINDIR} ${PGM_PRIVATELIBDIR})
 set(CMAKE_INSTALL_RPATH "\$ORIGIN;\$ORIGIN/${RELATIVE_PRIVATELIBDIR}")
 
 # Making sure that RPATH is used during install
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)

@@ -1,3 +1,18 @@
+# Below, the user can specify where all generated file can be placed
+# through a set of variables, being them:
+#
+# PGM_PREFIX        -> the root directory where the files will be placed
+# PGM_BINDIR        -> where executables accessible by the user resides
+# PGM_PRIVATEBINDIR -> where executables not directly accessible by the user resides
+# PGM_PRIVATELIBDIR -> where libraries not directly shared through the system resides
+# PGM_PLUGINSDIR    -> where third party plugins are installed
+# PGM_SHAREDIR      -> where shared files and resources should be placed
+# PGM_CONFDIR       -> where the pgModeler's configuration folder (conf) resides
+# PGM_DOCDIR        -> where documentation related files are placed
+# PGM_LANGDIR       -> where the UI translation folder (lang) resides
+# PGM_SAMPLESDIR    -> where the sample models folder (samples) resides
+# PGM_SCHEMASDIR    -> where the object's schemas folder (schema) resides
+
 # Default configuration for package pgModeler.
 # The default prefix is  C:/Program Files (x86)/
 if(NOT DEFINED PGM_PREFIX)

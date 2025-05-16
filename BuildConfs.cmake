@@ -1,3 +1,5 @@
+
+
 set(CMAKE_WARN_DEPRECATED OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -31,7 +33,8 @@ link_libraries(
     Qt::Svg
     Qt::Widgets)
 
-# Plugins sources detection
+# Enable the compilation of sample plugins
+# if their sources exists in plugins/*
 set(PLUGINS_DIR plugins)
 set(PLUGINS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/${PLUGINS_DIR})
 
@@ -55,6 +58,7 @@ if(EXISTS ${PRIV_PLUGINS_ROOT})
     add_compile_definitions(PRIVATE_PLUGINS_SYMBOLS)
 endif()
 
+# Adding custom C defs if some cmake variables are set
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_compile_definitions(PGMODELER_DEBUG)
 endif()
@@ -106,6 +110,8 @@ function(pgm_add_executable TARGET)
   set(PGM_TARGET ${TARGET} PARENT_SCOPE)
 endfunction()
 
+# This function configure the default includes and link libraries
+# as being the libs subprojects sources and generated libs
 function(pgm_set_default_inc_libs TARGET)
   target_include_directories(${TARGET} PRIVATE
 	  ${LIBCANVAS_INC}
