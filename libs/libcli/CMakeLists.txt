@@ -25,6 +25,7 @@ target_include_directories(${PGM_TARGET} PUBLIC
     ${LIBPARSERS_INC}
     ${LIBUTILS_INC}
     src/compat
+    ../${LIBGUI}/gui_autogen/include
     ${PRIV_PLUGINS_SRC})
 
 target_link_libraries(${PGM_TARGET} PUBLIC
