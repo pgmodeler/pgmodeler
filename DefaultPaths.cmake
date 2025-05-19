@@ -3,6 +3,8 @@ if(LINUX)
   include(LinuxPaths)
 elseif(WIN32)
   include(WindowsPaths)
+elseif(APPLE)
+	include(MacOsPaths)
 endif()
 
 # Creting C defines with the custom paths provided
@@ -17,17 +19,25 @@ add_compile_definitions(
     SAMPLESDIR="${PGM_SAMPLESDIR}"
     SCHEMASDIR="${PGM_SCHEMASDIR}")
 
-# Searching for PostgreSQL headers/libraries
-# This command attempts to find the library, REQUIRED argument is optional
-find_package(PostgreSQL REQUIRED)
-set(PGSQL_INC ${PostgreSQL_INCLUDE_DIRS})
-set(PGSQL_LIBS ${PostgreSQL_LIBRARIES})
+if(APPLE)
+	set(PGSQL_INC /Library/PostgreSQL/15/include)
+	set(PGSQL_LIBS /Library/PostgreSQL/15/lib/libpq.dylib)
 
-# Searching for libxml2 headers/libraries
-# This command attempts to find the library, REQUIRED argument is optional
-find_package(LibXml2 REQUIRED)
-set(XML2_INC ${LIBXML2_INCLUDE_DIR})
-set(XML2_LIBS ${LIBXML2_LIBRARY})
+	set(XML2_INC /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2)
+	set(XML2_LIBS /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libxml2.tbd)
+else()
+	# Searching for PostgreSQL headers/libraries
+	# This command attempts to find the library, REQUIRED argument is optional
+	find_package(PostgreSQL REQUIRED)
+	set(PGSQL_INC ${PostgreSQL_INCLUDE_DIRS})
+	set(PGSQL_LIBS ${PostgreSQL_LIBRARIES})
+
+	# Searching for libxml2 headers/libraries
+	# This command attempts to find the library, REQUIRED argument is optional
+	find_package(LibXml2 REQUIRED)
+	set(XML2_INC ${LIBXML2_INCLUDE_DIR})
+	set(XML2_LIBS ${LIBXML2_LIBRARY})
+endif()
 
 # Subproject variables
 # Store the absolute paths to library subprojects to be referenced in other CMakeLists.txt files

@@ -1,6 +1,6 @@
 # Determining the build date and build number
 # The commands changes from OS to OS
-if(LINUX OR MACOS)
+if(LINUX OR APPLE)
     set(date_cmd date)
     set(date_cmd_param +%Y%m%d)
     set(build_num_cmd ${CMAKE_SOURCE_DIR}/getbuildnum.sh)

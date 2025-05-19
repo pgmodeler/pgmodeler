@@ -90,22 +90,31 @@ endif()
 # the one in the target's res/ is used instead. This options has
 # effect only when building Windows binaries
 function(pgm_add_executable TARGET)
-  list(APPEND SOURCES ${ARGN})
+	list(APPEND _SOURCES ${ARGN})
 
   if(WIN32)
-	set(PRIV_ICO_RES ${PRIV_PLUGINS_RES}/${TARGET}/windows_ico.rc)
+		set(PRIV_ICO_RES ${PRIV_PLUGINS_RES}/${TARGET}/windows_ico.rc)
 
-	if(BUILD_PRIV_PLUGINS AND EXISTS ${PRIV_ICO_RES})
-	  set(EXEC_ICO_RES ${PRIV_ICO_RES})
-	else()
-	  set(EXEC_ICO_RES res/windows_ico.rc)
+		if(BUILD_PRIV_PLUGINS AND EXISTS ${PRIV_ICO_RES})
+			set(EXEC_ICO_RES ${PRIV_ICO_RES})
+		else()
+			set(EXEC_ICO_RES res/windows_ico.rc)
+		endif()
+
+		list(APPEND _SOURCES ${EXEC_ICO_RES})
 	endif()
 
-	list(APPEND SOURCES ${EXEC_ICO_RES})
-  endif()
+	add_executable(${TARGET} ${_SOURCES})
+	set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE FALSE)
+	set_target_properties(${TARGET} PROPERTIES WIN32 TRUE)
 
-  qt_add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES})
-  set(PGM_TARGET ${TARGET} PARENT_SCOPE)
+	if(APPLE)
+		set_target_properties(${TARGET} PROPERTIES
+				BUILD_WITH_INSTALL_RPATH TRUE
+				INSTALL_NAME_DIR "@executable_path/../Frameworks")
+	endif()
+
+	set(PGM_TARGET ${TARGET} PARENT_SCOPE)
 endfunction()
 
 # This function configure the default includes and link libraries
@@ -139,6 +148,12 @@ function(pgm_add_library TARGET)
 
   add_library(${TARGET} SHARED ${ARGN})
 
+	if(APPLE)
+		set_target_properties(${TARGET} PROPERTIES
+				BUILD_WITH_INSTALL_RPATH TRUE
+				INSTALL_NAME_DIR "@executable_path/../Frameworks")
+	endif()
+
   set(PGM_TARGET ${TARGET} PARENT_SCOPE)
 endfunction()
 
@@ -161,6 +176,6 @@ function(pgm_install_executable TARGET IS_PRIVBIN)
     endif()
 
     install(TARGETS ${TARGET}
-        BUNDLE DESTINATION .
+				BUNDLE DESTINATION ${DEST}
         RUNTIME DESTINATION ${DEST})
 endfunction()

@@ -1,4 +1,5 @@
 .qmake.stash
+.DS_Store
 
 *.tmp
 *.[oa]
@@ -6,6 +7,7 @@
 *.exe
 *.so.*
 *.so
+*.dylib*
 *.user*
 *.directory
 *.run
