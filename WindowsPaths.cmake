@@ -14,9 +14,9 @@
 # PGM_SCHEMASDIR    -> where the object's schemas folder (schema) resides
 
 # Default configuration for package pgModeler.
-# The default prefix is  C:/Program Files (x86)/
+# The default prefix is  C:/Program Files/
 if(NOT DEFINED PGM_PREFIX)
-    set(PGM_PREFIX ${CMAKE_INSTALL_PREFIX})
+		set(PGM_PREFIX "C:/Program Files/")
 endif()
 
 if(NOT DEFINED PGM_BINDIR)

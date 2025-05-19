@@ -16,7 +16,7 @@
 # Default configuration for package pgModeler.
 # The default prefix is /usr/local
 if(NOT DEFINED PGM_PREFIX)
-    set(PGM_PREFIX ${CMAKE_INSTALL_PREFIX})
+    set(PGM_PREFIX /usr/local)
 endif()
 
 if(NOT DEFINED PGM_BINDIR)
