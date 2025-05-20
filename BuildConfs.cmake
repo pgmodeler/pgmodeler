@@ -47,11 +47,11 @@ endif()
 # include private code and resources
 set(PRIV_PLUGINS_DIR priv-plugins)
 set(PRIV_PLUGINS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/${PRIV_PLUGINS_DIR})
+set(PRIV_PLUGINS_RES ${PRIV_PLUGINS_ROOT}/res)
 
-if(EXISTS ${PRIV_PLUGINS_ROOT})
+if(NOT DEMO_VERSION AND PLUS_VERSION AND EXISTS ${PRIV_PLUGINS_ROOT})
     # Enabling the private plugins build
     set(BUILD_PRIV_PLUGINS ON)
-    set(PRIV_PLUGINS_RES ${PRIV_PLUGINS_ROOT}/res)
     set(PRIV_PLUGINS_SRC ${PRIV_PLUGINS_ROOT}/src)
     add_compile_definitions(PRIVATE_PLUGINS_SYMBOLS)
 endif()
@@ -92,10 +92,10 @@ endif()
 function(pgm_add_executable TARGET)
 	list(APPEND _SOURCES ${ARGN})
 
-  if(WIN32)
+        if(WIN32)
 		set(PRIV_ICO_RES ${PRIV_PLUGINS_RES}/${TARGET}/windows_ico.rc)
 
-		if(BUILD_PRIV_PLUGINS AND EXISTS ${PRIV_ICO_RES})
+                if((PLUS_VERSION OR BUILD_PRIV_PLUGINS) AND EXISTS ${PRIV_ICO_RES})
 			set(EXEC_ICO_RES ${PRIV_ICO_RES})
 		else()
 			set(EXEC_ICO_RES res/windows_ico.rc)
@@ -105,11 +105,14 @@ function(pgm_add_executable TARGET)
 	endif()
 
 	add_executable(${TARGET} ${_SOURCES})
-	set_target_properties(${TARGET} PROPERTIES MACOSX_BUNDLE FALSE)
-	set_target_properties(${TARGET} PROPERTIES WIN32 TRUE)
 
-	if(APPLE)
+        if(WIN32)
+                set_target_properties(${TARGET} PROPERTIES
+                                      WIN32_EXECUTABLE TRUE
+                                      LINK_FLAGS "-mwindows")
+        elseif(APPLE)
 		set_target_properties(${TARGET} PROPERTIES
+                                  MACOSX_BUNDLE FALSE
 				BUILD_WITH_INSTALL_RPATH TRUE
 				INSTALL_NAME_DIR "@executable_path/../Frameworks")
 	endif()

@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	ObjectsScene::setShowPageDelimiters(action_show_delimiters->isChecked());
 	ObjectsScene::setAlignObjectsToGrid(action_alin_objs_grade->isChecked());
 
-	#ifndef Q_OS_MAC
+	#ifndef Q_OS_MACOS
 		//Hiding/showing the main menu bar depending on the retrieved conf
 		bool show_main_menu = confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True;
 		main_menu_mb->setVisible(show_main_menu);
@@ -343,7 +343,7 @@ void MainWindow::configureMenusActionsWidgets()
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
 	v_splitter1->setSizes({500, 250, 500});
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 //	model_acts_tb->removeAction(action_main_menu);
 //	action_main_menu->setEnabled(false);
 #else
@@ -729,7 +729,7 @@ void MainWindow::connectSignalsToSlots()
 
 	connect(&tmpmodel_save_timer, &QTimer::timeout, this, &MainWindow::saveTemporaryModels);
 
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	connect(action_show_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 	connect(action_hide_main_menu, &QAction::triggered, this, &MainWindow::showMainMenu);
 #endif

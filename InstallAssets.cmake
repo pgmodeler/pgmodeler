@@ -27,7 +27,7 @@ install(DIRECTORY assets/conf/
         PATTERN "*.dbm"
         PATTERN "*.png")
 
-if(BUILD_PRIV_PLUGINS)
+if(PLUS_VERSION OR BUILD_PRIV_PLUGINS)
     install(FILES ${PRIV_PLUGINS_RES}/icons/pgmodeler_logo.png
             DESTINATION ${PGM_CONFDIR})
 endif()
@@ -66,12 +66,3 @@ install(FILES
         LICENSE
         RELEASENOTES.md
         DESTINATION ${PGM_DOCDIR})
-
-# # Including some private assets to deploy
-# isEqual(PRIVATE_PLUGINS, true) {
-# 	privicons.files = $$PRIV_RES_FOLDER/icons/pgmodeler_logo.png
-# 	privicons.path = $$CONFDIR
-
-# 	INSTALLS += privicons
-# 	INSTALLS -= conficos
-# }

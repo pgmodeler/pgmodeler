@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 		splash.finish(&fmain);
 
 		//Loading models via command line on MacOSX are disabled until the file association work correclty on that system
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 		QStringList params=app.arguments();
 		params.pop_front();
 

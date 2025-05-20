@@ -143,7 +143,7 @@ void ModelFixForm::fixModel()
 	QString cmd = QString("\"%1\"");
 	QStringList args;
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	cmd+=" pgmodeler-cli";
 #endif
 

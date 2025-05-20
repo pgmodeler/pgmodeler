@@ -504,7 +504,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr(" %1, %2\t\t  Tries to fix the structure of the input model file to make it loadable again.").arg(short_opts[FixModel], FixModel));
 	printText(tr(" %1, %2\t\t  Creates pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs], CreateConfigs));
 
-	#ifndef Q_OS_MAC
+	#ifndef Q_OS_MACOS
 		printText(tr(" %1, %2 [ACTION]\t  Handles the DBM file association to pgModeler binaries. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType], DbmMimeType, Install, Uninstall));
 	#endif
 
@@ -598,7 +598,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr(" %1, %2 [NUMBER]\t  Model fix attempts. When reaching the maximum count, invalid objects will be discarded.").arg(short_opts[FixTries], FixTries));
 	printText();
 
-	#ifndef Q_OS_MAC
+	#ifndef Q_OS_MACOS
 		printText(tr("File association options: "));
 		printText(tr(" %1, %2\t\t  Applies DBM file association system-wide instead of for the current user only.").arg(short_opts[SystemWide], SystemWide));
 		printText(tr(" %1, %2 \t\t\t  Forces mime type installation or uninstallation.").arg(short_opts[Force], Force));
@@ -2371,7 +2371,7 @@ void PgModelerCliApp::diffModelDatabase()
 
 void PgModelerCliApp::updateMimeType()
 {
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	try
 	{
 		printMessage(tr("Starting mime update..."));
@@ -2741,7 +2741,7 @@ void PgModelerCliApp::loadPlugins()
 							GlobalAttributes::DirSeparator  +
 							plugin_name + ".dll";
 		#else
-			#ifdef Q_OS_MAC
+			#ifdef Q_OS_MACOS
 					lib = dir_plugins + plugin_name +
 								GlobalAttributes::DirSeparator  +
 								"lib" + plugin_name + ".dylib";

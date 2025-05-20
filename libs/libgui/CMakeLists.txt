@@ -230,6 +230,9 @@ if(BUILD_PRIV_PLUGINS)
     list(APPEND SOURCES
         ${PRIV_PLUGINS_SRC}/privpluginsns.h
         ${PRIV_PLUGINS_SRC}/privpluginsns.cpp)
+endif()
+
+if(PLUS_VERSION)
     list(APPEND RESOURCES ${PRIV_PLUGINS_RES}/logoicons.qrc)
 else()
     list(APPEND RESOURCES res/logoicons.qrc)
