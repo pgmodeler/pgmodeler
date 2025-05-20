@@ -336,7 +336,7 @@ void GlobalAttributes::setSearchPath(const QString &search_path)
 	PluginsPath=getPathFromEnv(EnvPluginsPath, PLUGINSDIR, QString("%1/%2").arg(search_path, PluginsDir));
 
 #if defined(Q_OS_UNIX)
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
 																																																					 //For MacOSX the crash handler path is fixed (inside bundle)
 	PgModelerCHandlerPath=getPathFromEnv(EnvPgModelerChPath, QString("%1/pgmodeler-ch").arg(BINDIR), QString("%1/pgmodeler-ch").arg(search_path));
 #else
