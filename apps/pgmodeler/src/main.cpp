@@ -31,6 +31,9 @@
 
 #ifndef Q_OS_WIN
 	#include "execinfo.h"
+#else
+	#include <windows.h>
+	#include <stdio.h>
 #endif
 
 namespace {
@@ -77,8 +80,76 @@ namespace {
 			}
 			free(symbols);
 	#else
-			lin = "** Stack trace unavailable on Windows system **";
+		void *win_stack[30];
+		USHORT win_stack_size = CaptureStackBackTrace(1, 29, win_stack, nullptr);
+
+		char exe_path[MAX_PATH];
+		GetModuleFileNameA(nullptr, exe_path, MAX_PATH);
+		DWORD64 exe_base = reinterpret_cast<DWORD64>(GetModuleHandle(nullptr));
+
+		lin = QString("Executable: %1\n\n").arg(exe_path);
+		output.write(lin.toStdString().c_str(), lin.size());
+
+		// Compute per-frame module base and offset
+		struct FrameInfo { DWORD64 base, offset; char path[MAX_PATH]; };
+		FrameInfo frames[30];
+
+		for(USHORT i = 0; i < win_stack_size; i++)
+		{
+			HMODULE mod = nullptr;
+			GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+												 GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+												 reinterpret_cast<LPCSTR>(win_stack[i]), &mod);
+			frames[i].base = reinterpret_cast<DWORD64>(mod);
+			frames[i].offset = reinterpret_cast<DWORD64>(win_stack[i]) - frames[i].base;
+			frames[i].path[0] = '\0';
+			if(mod) GetModuleFileNameA(mod, frames[i].path, MAX_PATH);
+		}
+
+		// Locate addr2line.exe next to this executable (only available in debug/dev builds)
+		QString exe_dir = QString(exe_path).replace('/', '\\').section('\\', 0, -2);
+		QString addr2line_bin = exe_dir + "\\addr2line.exe";
+
+		QStringList resolved;
+
+		if(QFile::exists(addr2line_bin))
+		{
+			// Pass exe-relative offsets for exe frames; 0x0 placeholder for DLL frames
+			// so addr2line output lines stay aligned with frame indices
+			QString addr_args;
+			for(USHORT i = 0; i < win_stack_size; i++)
+				addr_args += (frames[i].base == exe_base)
+					? QString(" 0x%1").arg(frames[i].offset, 0, 16)
+					: QString(" 0x0");
+
+			// addr2line -f (function) -C (demangle) -p (pretty-print combined line)
+			// Windows-style path works fine with MinGW addr2line for both binary and -e arg
+			QString addr2line_cmd = QString("\"%1\" -e \"%2\" -f -C -p%3 2>&1")
+					.arg(addr2line_bin).arg(exe_path).arg(addr_args);
+
+			FILE *pipe = _popen(addr2line_cmd.toLocal8Bit().constData(), "r");
+			if(pipe)
+			{
+				char pipe_buf[512];
+				while(fgets(pipe_buf, sizeof(pipe_buf), pipe))
+					resolved.append(QString(pipe_buf).trimmed());
+				_pclose(pipe);
+			}
+		}
+
+		for(USHORT i = 0; i < win_stack_size; i++)
+		{
+			USHORT disp_idx = win_stack_size - 1 - i;
+			QString mod_name = QString(frames[i].path).replace('\\', '/').section('/', -1);
+
+			if(frames[i].base == exe_base && i < resolved.size() && !resolved[i].startsWith("??"))
+				lin = QString("[%1] %2").arg(disp_idx).arg(resolved[i]);
+			else
+				lin = QString("[%1] %2+0x%3").arg(disp_idx).arg(mod_name).arg(frames[i].offset, 0, 16);
+
+			lin += "\n";
 			output.write(lin.toStdString().c_str(), lin.size());
+		}
 	#endif
 
 			output.close();
