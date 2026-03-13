@@ -1630,7 +1630,11 @@ void BaseObject::clearDependencies()
 
 void BaseObject::clearReferences()
 {
-	for(auto &obj : object_refs)
+	/* Iterate over a snapshot: unsetDependency calls back into this->unsetReference
+	 * which erases from object_refs, invalidating the range-for iterator. */
+	auto refs_snapshot = object_refs;
+
+	for(auto &obj : refs_snapshot)
 		obj->unsetDependency(this);
 
 	object_refs.clear();

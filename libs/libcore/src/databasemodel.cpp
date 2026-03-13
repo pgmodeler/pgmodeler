@@ -836,10 +836,22 @@ void DatabaseModel::destroyObjects()
 	ritr = objects.rbegin();
 	ritr_end = objects.rend();
 
+	/* Pass 1: clear all deps/refs across every object before any deletion.
+	 * This prevents dangling pointers when Relationship::destroyObjects() later
+	 * frees intermediate columns/constraints that are still referenced by other objects. */
+	while(ritr != ritr_end)
+	{
+		ritr->second->clearAllDepsRefs();
+		ritr++;
+	}
+
+	ritr = objects.rbegin();
+	ritr_end = objects.rend();
+
+	/* Pass 2: now safe to delete — no object can hold live pointers to another. */
 	while(ritr != ritr_end)
 	{
 		object = ritr->second;
-		object->clearAllDepsRefs();
 		ritr++;
 
 		// We ignore the database itself, permission objects (destroyed separetely) and table children objects
