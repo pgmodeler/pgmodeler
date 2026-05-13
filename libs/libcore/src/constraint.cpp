@@ -626,6 +626,8 @@ void Constraint::setDeclInTableAttribute()
 		attributes[Attributes::DeclInTable]="";
 	else if(!isReferRelationshipAddedColumns() || constr_type==ConstraintType::PrimaryKey)
 		attributes[Attributes::DeclInTable]=Attributes::True;
+	else
+		attributes[Attributes::DeclInTable]="";
 }
 
 void Constraint::configureSearchAttributes()
