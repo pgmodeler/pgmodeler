@@ -275,6 +275,7 @@ class __libcli PgModelerCliApp: public Application {
 		MissingOnly,
 		IgnoreFaultyPlugins,
 		ListPlugins,
+		NoEscapeComments,
 
 		ConnOptions,
 		TagExpr,
