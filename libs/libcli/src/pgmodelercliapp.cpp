@@ -115,6 +115,7 @@ const QString PgModelerCliApp::CreateConfigs {"--create-configs"};
 const QString PgModelerCliApp::MissingOnly {"--missing-only"};
 const QString PgModelerCliApp::IgnoreFaultyPlugins {"--ignore-faulty"};
 const QString PgModelerCliApp::ListPlugins {"--list-plugins"};
+const QString PgModelerCliApp::NoEscapeComments {"--no-escape-comments"};
 
 const QString PgModelerCliApp::ConnOptions {"connopts"};
 const QString PgModelerCliApp::TagExpr {"<%1"};
@@ -155,7 +156,8 @@ std::map<QString, bool> PgModelerCliApp::long_opts {
 	{ CreateConfigs, false }, { Force, false }, { MissingOnly, false },
 	{ DependenciesSql, false }, { ChildrenSql, false }, { GenDropScript, false },
 	{ GroupByType, false }, { CommentsAsAliases, false }, { IgnoreFaultyPlugins, false },
-	{ ListPlugins, false }, { Markdown, false }, { NonTransactional, false }
+	{ ListPlugins, false }, { Markdown, false }, { NonTransactional, false },
+	{ NoEscapeComments, false }
 };
 
 attribs_map PgModelerCliApp::short_opts {
@@ -184,19 +186,19 @@ attribs_map PgModelerCliApp::short_opts {
 	{ MissingOnly, "-mo" }, { DependenciesSql, "-ds" }, { ChildrenSql, "-cs" },
 	{ GroupByType, "-gt" },	{ GenDropScript, "-gd" }, { CommentsAsAliases, "-cl" },
 	{ IgnoreFaultyPlugins, "-ip" }, { ListPlugins, "-lp" }, { Markdown, "-md" },
-	{ NonTransactional, "-nt" }
+	{ NonTransactional, "-nt" }, { NoEscapeComments, "-nec" }
 };
 
 std::map<QString, QStringList> PgModelerCliApp::accepted_opts {
 	{{ ConnOptions }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
-	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript }},
-	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor }},
-	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-	{{ ExportToDict }, { Input, Output, Split, NoIndex, Markdown }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer, Split, DependenciesSql, ChildrenSql, GroupByType, GenDropScript, NoEscapeComments }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor, OverrideBgColor, NoEscapeComments }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters, NoEscapeComments }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex, Markdown, NoEscapeComments }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
 												DropDatabase, DropObjects, Simulate, UseTmpNames, Force,
-												NonTransactional }},
+												NonTransactional, NoEscapeComments }},
 
 	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
 										FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
@@ -520,6 +522,7 @@ void PgModelerCliApp::showMenu()
 	printText(tr(" %1, %2 [FILE|DIRECTORY]   Output file or directory. Required for fixing models or exporting to SQL, HTML, PNG, or SVG.").arg(short_opts[Output], Output));
 	printText(tr(" %1, %2\t\t  Force the PostgreSQL syntax to the specified version when generating SQL code. The version string must be in the form [major].[minor], e.g., %3.").arg(short_opts[PgSqlVer], PgSqlVer, PgSqlVersions::DefaulVersion));
 	printText(tr(" %1, %2\t\t\t  Silent execution. Only critical messages and errors are displayed during the process.").arg(short_opts[Silent], Silent));
+	printText(tr(" %1, %2\t  Disables E'' escape-string syntax on COMMENT ON statements during export. All comments are emitted as plain strings.").arg(short_opts[NoEscapeComments], NoEscapeComments));
 	printText();
 
 	printText(tr("SQL file export options: "));
@@ -769,6 +772,9 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		import_hlp = new DatabaseImportHelper;
 		diff_hlp = new ModelsDiffHelper;
 	}
+
+	if(opts.count(NoEscapeComments))
+		BaseObject::setEscapeComments(false);
 
 	if(opts.empty() || opts.count(Help))
 		showMenu();
